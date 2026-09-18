@@ -3,20 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>조경노트 - 프리미엄 조경 관리 솔루션</title>
+  <title>조경노트 PRO - 프리미엄 조경 관리 솔루션</title>
   
-  <meta name="apple-mobile-web-app-title" content="조경노트">
-  <meta name="application-name" content="조경노트">
+  <meta name="apple-mobile-web-app-title" content="조경노트PRO">
+  <meta name="application-name" content="조경노트PRO">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%23151E2D'/%3E%3Cpath d='M180 140v232h168' fill='none' stroke='%2384CC16' stroke-width='48' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='348' cy='140' r='32' fill='%23C5A880'/%3E%3C/svg%3E">
-  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23151E2D'/%3E%3Cpath d='M180 140v232h168' fill='none' stroke='%2384CC16' stroke-width='48' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='348' cy='140' r='32' fill='%23C5A880'/%3E%3C/svg%3E">
+  <!-- PRO 버전용 블랙 & 골드 아이콘으로 변경 -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%23000000'/%3E%3Cpath d='M180 140v232h168' fill='none' stroke='%23C5A880' stroke-width='48' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='348' cy='140' r='32' fill='%2384CC16'/%3E%3C/svg%3E">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23000000'/%3E%3Cpath d='M180 140v232h168' fill='none' stroke='%23C5A880' stroke-width='48' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='348' cy='140' r='32' fill='%2384CC16'/%3E%3C/svg%3E">
   
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#151E2D">
 
-  <meta property="og:title" content="[조경노트] 프리미엄 조경 관리 솔루션">
+  <meta property="og:title" content="[조경노트 PRO] 프리미엄 조경 관리 솔루션">
   <meta property="og:description" content="고객님의 현장 작업 리포트 및 견적서를 확인해 주십시오.">
   <meta property="og:image" content="https://i.ibb.co/60874178/c608741782ce.jpg">
   <meta property="og:type" content="website">
@@ -56,14 +57,14 @@
         <i data-lucide="leaf" class="w-12 h-12 text-[#84CC16]"></i>
       </div>
       <span class="text-[11px] bg-[#84CC16]/20 text-[#84CC16] font-extrabold px-3.5 py-1.5 rounded-full uppercase tracking-[0.25em] border border-[#84CC16]/30 mb-3">Landscape Solution</span>
-      <h1 class="text-white font-black text-[38px] tracking-tight mb-2">조경노트</h1>
+      <h1 class="text-white font-black text-[38px] tracking-tight mb-2">조경노트 PRO</h1>
       <p class="text-[#A3A8A3] text-[15px] font-bold tracking-wide">by <span id="company-name-splash">업체명</span></p>
     </div>
   </div>
 
   <datalist id="clientDatalist"></datalist>
 
-  <!-- [핀셋 추가] 타 업체 가입(Onboarding) 화면 -->
+  <!-- 타 업체 가입(Onboarding) 화면 -->
   <section id="onboardingView" class="hidden fixed inset-0 z-[2000] bg-[#151E2D] flex flex-col items-center justify-center px-6">
     <div class="bg-white/5 backdrop-blur-md p-8 rounded-[32px] w-full max-w-sm border border-white/10 shadow-2xl flex flex-col items-center">
       <div class="w-16 h-16 bg-[#84CC16] rounded-[18px] flex items-center justify-center mb-5 shadow-[0_0_20px_rgba(132,204,22,0.3)]"><i data-lucide="building" class="w-7 h-7 text-[#12261E]"></i></div>
@@ -101,7 +102,7 @@
         <div class="flex flex-col">
           <div class="flex items-center gap-2">
               <span id="company-name-header" class="font-black text-[19px] text-white tracking-tight">업체명</span>
-              <span class="text-[10px] bg-[#84CC16]/20 text-[#84CC16] font-extrabold px-2 py-0.5 rounded uppercase tracking-widest border border-[#84CC16]/30">V2.0 DB</span>
+              <span class="text-[10px] bg-[#84CC16]/20 text-[#84CC16] font-extrabold px-2 py-0.5 rounded uppercase tracking-widest border border-[#84CC16]/30">PRO</span>
               <span id="cloudStatusBadge" class="text-[10px] bg-blue-500/20 text-blue-400 font-extrabold px-2 py-0.5 rounded uppercase tracking-widest border border-blue-500/30 flex items-center gap-1"><i data-lucide="cloud" class="w-3 h-3"></i> 동기화 대기</span>
           </div>
           <span class="text-[13px] font-bold text-[#A3A8A3] tracking-wide mt-0.5">스마트 관리 솔루션 <strong class="text-[#84CC16]">조경노트</strong></span>
@@ -137,12 +138,12 @@
         
         <div class="grid grid-cols-2 gap-3 relative z-10">
           <div><label class="block text-[11px] font-bold text-[#7A827A] mb-2">연락처</label><input type="tel" id="inputClientPhone" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-3.5 text-xs font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] transition-all"></div>
-          <div><label class="block text-[11px] font-bold text-[#7A827A] mb-2">작업 회차</label><input type="text" id="inputRound" value="2026년 정기관리" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-3.5 text-xs font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] transition-all"></div>
+          <div><label class="block text-[11px] font-bold text-[#7A827A] mb-2">작업타이틀</label><input type="text" id="inputRound" value="" placeholder="작업타이틀 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-3.5 text-xs font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] transition-all"></div>
         </div>
 
         <div class="relative z-10 mt-1">
           <label class="block text-[11px] font-bold text-[#7A827A] mb-2">현장 주소</label>
-          <input type="text" id="inputClientAddress" placeholder="현장 주소 (예: 수원시 장안구 율전동)" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-3.5 text-xs font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] transition-all">
+          <input type="text" id="inputClientAddress" placeholder="현장주소 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-3.5 text-xs font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] transition-all">
         </div>
       </div>
 
@@ -203,7 +204,7 @@
 
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-3">
         <label class="block text-[16px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="pen-tool" class="w-4 h-4 text-[#84CC16]"></i> 현장 작업자 코멘트</label>
-        <textarea id="inputDiagnosis" rows="3" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[18px] p-4 text-[14px] font-medium text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] leading-relaxed">화단 내 위해 잡초 제거 및 잔디 예초 작업을 완료했습니다. 수목 상태 양호하며 다음 점검 시 수세 회복 여부를 중점 확인하겠습니다.</textarea>
+        <textarea id="inputDiagnosis" rows="3" placeholder="예: 소나무전지와 단풍나무 가지치기를 해주었습니다. 병해충소독을 진행했습니다. 화단의 관목을 전정하고 잡초를 제초,예초 하였습니다 등" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[18px] p-4 text-[14px] font-medium text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] leading-relaxed"></textarea>
       </div>
 
       <button id="btnGenerateReport" onclick="generateReport()" class="w-full py-5 bg-[#84CC16] text-[#12261E] rounded-[22px] font-black text-[18px] flex items-center justify-center gap-3 shadow-[0_10px_25px_rgba(132,204,22,0.4)] hover:bg-[#9BE32D] active:scale-[0.98] transition-all mb-4"><i data-lucide="send" class="w-5 h-5 stroke-[2.5]"></i> 리포트 발행 및 저장</button>
@@ -226,7 +227,7 @@
 
         <div class="relative z-10 mt-1">
           <label class="block text-[11px] font-bold text-[#7A827A] mb-2">현장 주소</label>
-          <input type="text" id="quoteInputClientAddress" placeholder="현장 주소 (예: 수원시 장안구 율전동)" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-3.5 text-xs font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] transition-all">
+          <input type="text" id="quoteInputClientAddress" placeholder="현장주소 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-3.5 text-xs font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] transition-all">
         </div>
         
         <div class="pt-2 relative z-10">
@@ -368,7 +369,8 @@
     <section id="lensView" class="hidden space-y-4">
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
         <div class="flex items-center justify-between pb-4 border-b border-[#F4F5F4]">
-          <h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="scan" class="w-5 h-5 text-[#84CC16]"></i> AI 식별 렌즈</h2>
+          <!-- AI 안내 주석 추가됨 -->
+          <h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="scan" class="w-5 h-5 text-[#84CC16]"></i> AI 식별 렌즈 <span class="text-[11px] font-medium text-[#888] ml-1 tracking-tight">*오픈ai의 최신버전자동연결로 정보와 상태에 따라 인식이 안될수도 있다-</span></h2>
         </div>
         
         <div class="grid grid-cols-1 gap-4">
@@ -492,8 +494,8 @@
 
         <div class="pt-5 flex justify-between items-end opacity-90 relative z-10 border-t border-[#EAEBEA] mt-5">
           <div class="flex flex-col">
-             <span class="text-[9px] font-bold text-[#A3A8A3] tracking-wider uppercase mb-0.5">Powered by</span>
-             <span class="text-[12px] font-black text-[#84CC16] tracking-tight">조경노트</span>
+              <span class="text-[9px] font-bold text-[#A3A8A3] tracking-wider uppercase mb-0.5">Powered by</span>
+              <span class="text-[12px] font-black text-[#84CC16] tracking-tight">조경노트</span>
           </div>
           <div class="flex items-center gap-2">
             <span class="text-[17px] font-black text-[#12261E] tracking-tight"><span id="doc-company-name-sign">업체명</span> 드림</span>
@@ -706,19 +708,9 @@
       return null;
     }
 
-    let defaultClients = [{ id: '1', name: '율전동 본사', phone: '010-0000-0000', address: '', type: '정기 관리' }];
-    const defaultMaterials = [
-      { item: "트래버틴스톤", spec: "보도용(멀티) 60T", price: "m2당 : 33,000원\n1파렛: 12.48m2 =514,800원", contact: "010-5391-9943 (비비앤코:조재훈)" },
-      { item: "트래버틴스톤", spec: "기본형 80T", price: "m2당 : 33,000원\n1파렛: 9.6m2 =316,800원", contact: "010-5391-9943 (비비앤코:조재훈)" },
-      { item: "플래그스톤(화단조적)", spec: "본체 : 300*175*100(h)\n캡 : 300*200*50(h)\n무게 : 본체 10kg, 캡:6kg\n1파렛당 시공면적 4.8m2", price: "m2당 : 120,000원\n개당 : 7,000원\n1P 당 상차무게 : 1,535kg\n1파렛: 4.8m2 =576,000원", contact: "010-5391-9943 (비비앤코:조재훈)" },
-      { item: "현무암 정형", spec: "정사각 50T (500*500*50)", price: "1P : 40장 (10m2) = 410,000원", contact: "010-8900-4932 (자재판매 : 금 신규)" },
-      { item: "현무암 정형", spec: "직사각 30T (300*600*30)", price: "1P : 120장 (21m2) = 750,000원", contact: "010-8900-4932 (자재판매 : 금 신규)" },
-      { item: "현무암 부정형", spec: "부정형 50T", price: "1P : 50장 (11m2) = 310,000원", contact: "010-8900-4932 (자재판매 : 금 신규)" },
-      { item: "현무암 경계석", spec: "1000*100*100", price: "개당 : 8,000원", contact: "010-8900-4932 (자재판매 : 금 신규)" },
-      { item: "현무암 사구석", spec: "100*100*100", price: "개당 : 750원. 1P: 500개 300,000원", contact: "010-8900-4932 (자재판매 : 금 신규)" },
-      { item: "현무암 메주석", spec: "가로 300*외 비규격", price: "1P : 90개( 310,000원)", contact: "010-8900-4932 (자재판매 : 금 신규)" },
-      { item: "해미석 (10~20mm)", spec: "20kg 포장", price: "개당: 7,500원. 1P : 50포( 310,000원)", contact: "010-8900-4932 (자재판매 : 금 신규)" }
-    ];
+    // 예시 데이터 완전 삭제 처리
+    let defaultClients = [];
+    const defaultMaterials = [];
 
     let clients = [];
     let records = [];
@@ -748,7 +740,6 @@
     let editingRecordId = null;
     let activeTextEditorId = null;
 
-    // [핀셋 추가] 업체 가입 정보 데이터베이스 처리
     let myCompanyProfile = JSON.parse(localStorage.getItem('shinhwa_my_profile'));
 
     function applyCompanyProfile() {
@@ -1430,10 +1421,8 @@
       } else {
         localStorage.removeItem('shinhwa_auth'); 
         if (!myCompanyProfile) {
-          // 등록된 업체 정보가 없으면 가입 화면 띄우기
           document.getElementById('onboardingView').classList.remove('hidden');
         } else {
-          // 정보가 있으면 기존 로그인 화면 띄우고 빈칸 채우기
           applyCompanyProfile();
           document.getElementById('loginView').classList.remove('hidden');
         }
@@ -2543,20 +2532,17 @@
     }
 
     function selectAndGoAdmin(name, phone) { 
-        // 1. 이름과 전화번호 연동
         document.getElementById('clientSelect').value = name; 
         document.getElementById('quoteClientSelect').value = name; 
         document.getElementById('inputClientPhone').value = phone; 
         document.getElementById('quoteInputClientPhone').value = phone; 
         
-        // 2. 이름으로 주소를 찾아 일지/견적 화면에 자동 연동
         const foundClient = clients.find(c => c.name === name);
         if (foundClient) {
             if(document.getElementById('inputClientAddress')) document.getElementById('inputClientAddress').value = foundClient.address || '';
             if(document.getElementById('quoteInputClientAddress')) document.getElementById('quoteInputClientAddress').value = foundClient.address || '';
         }
         
-        // 3. 일지 작성 화면으로 이동
         switchView('admin'); 
     }
     
@@ -2645,7 +2631,3 @@
   </script>
 </body>
 </html>
-
-
-
-
