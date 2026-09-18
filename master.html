@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>조경노트 마스터 관리자 센터</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+    * { font-family: 'Pretendard', sans-serif; }
+    body { background-color: #0B1120; color: #F8FAFC; }
+    .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col md:flex-row">
+
+  <!-- 마스터 로그인 화면 -->
+  <section id="masterLoginView" class="fixed inset-0 z-[5000] bg-[#0B1120] flex flex-col items-center justify-center p-6">
+    <div class="glass-panel p-10 rounded-[32px] w-full max-w-md shadow-2xl flex flex-col items-center">
+      <div class="w-20 h-20 bg-[#1E3A8A] rounded-[24px] flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(30,58,138,0.5)]">
+        <i data-lucide="shield-alert" class="w-10 h-10 text-white"></i>
+      </div>
+      <h2 class="text-white font-black text-[28px] mb-2 tracking-tight">마스터 관리자</h2>
+      <p class="text-[#94A3B8] text-[13px] font-medium mb-8 text-center leading-relaxed">조경노트 PRO 중앙 통제 시스템입니다.<br>최고 관리자 계정으로 접속해 주십시오.</p>
+      
+      <div class="w-full space-y-3 mb-8">
+        <input type="text" id="masterId" placeholder="관리자 아이디" autocomplete="off" class="w-full bg-[#0F172A] border border-white/10 rounded-[14px] px-5 py-4 text-white text-[15px] font-bold focus:outline-none focus:border-[#3B82F6]">
+        <input type="password" id="masterPw" placeholder="관리자 비밀번호" autocomplete="off" class="w-full bg-[#0F172A] border border-white/10 rounded-[14px] px-5 py-4 text-white text-[15px] font-bold focus:outline-none focus:border-[#3B82F6]" onkeypress="if(event.key === 'Enter') loginMaster()">
+      </div>
+      
+      <button onclick="loginMaster()" class="w-full py-4.5 bg-[#3B82F6] text-white rounded-[16px] font-black text-[16px] hover:bg-[#2563EB] shadow-[0_8px_20px_rgba(59,130,246,0.3)] transition-all">통제실 접속</button>
+    </div>
+  </section>
+
+  <!-- 좌측 사이드바 (PC) / 하단 네비게이션 (모바일) -->
+  <aside id="sidebar" class="hidden md:flex w-64 glass-panel flex-col h-screen sticky top-0 border-r border-white/10 p-5">
+    <div class="flex items-center gap-3 mb-10 pl-2 mt-4">
+      <div class="w-10 h-10 bg-[#3B82F6] rounded-[12px] flex items-center justify-center"><i data-lucide="shield-check" class="w-5 h-5 text-white"></i></div>
+      <div>
+        <div class="text-[16px] font-black tracking-tight text-white">Master Control</div>
+        <div class="text-[11px] font-bold text-[#3B82F6]">조경노트 PRO 운영본부</div>
+      </div>
+    </div>
+    <nav class="flex flex-col gap-2">
+      <button onclick="switchTab('dashboard')" class="nav-btn w-full flex items-center gap-3 px-4 py-3.5 rounded-[12px] bg-[#3B82F6] text-white font-bold transition-all"><i data-lucide="layout-dashboard" class="w-5 h-5"></i> 대시보드</button>
+      <button onclick="switchTab('approval')" class="nav-btn w-full flex items-center justify-between px-4 py-3.5 rounded-[12px] text-[#94A3B8] hover:bg-white/5 hover:text-white font-bold transition-all">
+        <div class="flex items-center gap-3"><i data-lucide="user-check" class="w-5 h-5"></i> 가입 승인</div>
+        <span class="bg-red-500 text-white text-[11px] px-2 py-0.5 rounded-full">2</span>
+      </button>
+      <button onclick="switchTab('companies')" class="nav-btn w-full flex items-center gap-3 px-4 py-3.5 rounded-[12px] text-[#94A3B8] hover:bg-white/5 hover:text-white font-bold transition-all"><i data-lucide="building-2" class="w-5 h-5"></i> 사용 업체 관리</button>
+      <button onclick="switchTab('settings')" class="nav-btn w-full flex items-center gap-3 px-4 py-3.5 rounded-[12px] text-[#94A3B8] hover:bg-white/5 hover:text-white font-bold transition-all"><i data-lucide="settings" class="w-5 h-5"></i> 공지 및 설정</button>
+    </nav>
+    <div class="mt-auto">
+      <button onclick="logoutMaster()" class="w-full flex items-center gap-3 px-4 py-3 rounded-[12px] text-red-400 hover:bg-red-500/10 font-bold transition-all"><i data-lucide="log-out" class="w-4 h-4"></i> 시스템 로그아웃</button>
+    </div>
+  </aside>
+
+  <!-- 메인 콘텐츠 영역 -->
+  <main id="mainContent" class="hidden flex-1 p-5 md:p-10 overflow-y-auto w-full max-w-6xl mx-auto">
+    
+    <!-- 1. 대시보드 화면 -->
+    <div id="view-dashboard" class="space-y-6">
+      <h1 class="text-[24px] font-black tracking-tight flex items-center gap-2"><i data-lucide="activity" class="w-6 h-6 text-[#3B82F6]"></i> 실시간 플랫폼 현황</h1>
+      
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="glass-panel p-5 rounded-[20px]">
+          <div class="text-[#94A3B8] text-[13px] font-bold mb-1">총 사용 업체</div>
+          <div class="text-white text-[32px] font-black">5<span class="text-[14px] text-[#94A3B8] font-medium ml-1">개사</span></div>
+        </div>
+        <div class="glass-panel p-5 rounded-[20px] border-[#3B82F6]/30 relative overflow-hidden">
+          <div class="absolute inset-0 bg-blue-500/10"></div>
+          <div class="text-blue-400 text-[13px] font-bold mb-1 relative z-10">승인 대기 중</div>
+          <div class="text-white text-[32px] font-black relative z-10">2<span class="text-[14px] text-blue-400 font-medium ml-1">건</span></div>
+        </div>
+        <div class="glass-panel p-5 rounded-[20px]">
+          <div class="text-[#94A3B8] text-[13px] font-bold mb-1">누적 발생 리포트</div>
+          <div class="text-white text-[32px] font-black">124<span class="text-[14px] text-[#94A3B8] font-medium ml-1">건</span></div>
+        </div>
+        <div class="glass-panel p-5 rounded-[20px]">
+          <div class="text-[#94A3B8] text-[13px] font-bold mb-1">이번 달 트래픽</div>
+          <div class="text-white text-[32px] font-black">1.2<span class="text-[14px] text-[#94A3B8] font-medium ml-1">GB</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. 가입 승인 대기 화면 -->
+    <div id="view-approval" class="hidden space-y-6">
+      <div class="flex items-center justify-between">
+        <h1 class="text-[24px] font-black tracking-tight flex items-center gap-2"><i data-lucide="user-check" class="w-6 h-6 text-red-400"></i> 신규 가입 심사 대기 <span class="bg-red-500 text-white text-[13px] px-2.5 py-1 rounded-full align-middle ml-1">2건</span></h1>
+      </div>
+
+      <!-- 대기 업체 리스트 (임시 데이터) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <!-- 업체 1 -->
+        <div class="glass-panel rounded-[24px] p-6 space-y-4">
+          <div class="flex justify-between items-start border-b border-white/10 pb-4">
+            <div>
+              <div class="flex items-center gap-2 mb-1"><span class="bg-yellow-500/20 text-yellow-500 px-2 py-0.5 rounded text-[10px] font-black uppercase">심사 대기</span><span class="text-[#94A3B8] text-[12px] font-bold">2026.09.18 신청</span></div>
+              <h3 class="text-[20px] font-black text-white">푸른솔 조경관리</h3>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-y-3 text-[13px]">
+            <div><span class="text-[#94A3B8] block text-[11px] mb-0.5">아이디</span><strong class="text-white">greensol_01</strong></div>
+            <div><span class="text-[#94A3B8] block text-[11px] mb-0.5">대표자명</span><strong class="text-white">김푸름</strong></div>
+            <div><span class="text-[#94A3B8] block text-[11px] mb-0.5">사업자번호</span><strong class="text-white">123-45-67890</strong></div>
+            <div><span class="text-[#94A3B8] block text-[11px] mb-0.5">연락처</span><strong class="text-white">010-1234-5678</strong></div>
+          </div>
+          <button class="w-full py-3 bg-white/5 border border-white/10 rounded-[12px] text-[13px] font-bold hover:bg-white/10 flex items-center justify-center gap-2 transition-colors"><i data-lucide="file-image" class="w-4 h-4"></i> 사업자등록증 사본 확인</button>
+          <div class="flex gap-2 pt-2">
+            <button onclick="approveDemo()" class="flex-1 py-3.5 bg-[#84CC16] text-[#12261E] rounded-[14px] font-black text-[14px] hover:bg-[#9BE32D] shadow-[0_4px_12px_rgba(132,204,22,0.3)] transition-all">사용 승인 허가</button>
+            <button class="px-5 py-3.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-[14px] font-bold text-[14px] hover:bg-red-500/20 transition-all">반려</button>
+          </div>
+        </div>
+
+        <!-- 업체 2 -->
+        <div class="glass-panel rounded-[24px] p-6 space-y-4">
+          <div class="flex justify-between items-start border-b border-white/10 pb-4">
+            <div>
+              <div class="flex items-center gap-2 mb-1"><span class="bg-yellow-500/20 text-yellow-500 px-2 py-0.5 rounded text-[10px] font-black uppercase">심사 대기</span><span class="text-[#94A3B8] text-[12px] font-bold">2026.09.18 신청</span></div>
+              <h3 class="text-[20px] font-black text-white">에코가든 디자인</h3>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-y-3 text-[13px]">
+            <div><span class="text-[#94A3B8] block text-[11px] mb-0.5">아이디</span><strong class="text-white">eco_gd99</strong></div>
+            <div><span class="text-[#94A3B8] block text-[11px] mb-0.5">대표자명</span><strong class="text-white">이정원</strong></div>
+            <div><span class="text-[#94A3B8] block text-[11px] mb-0.5">사업자번호</span><strong class="text-white">223-45-67890</strong></div>
+            <div><span class="text-[#94A3B8] block text-[11px] mb-0.5">연락처</span><strong class="text-white">010-9876-5432</strong></div>
+          </div>
+          <button class="w-full py-3 bg-white/5 border border-white/10 rounded-[12px] text-[13px] font-bold hover:bg-white/10 flex items-center justify-center gap-2 transition-colors"><i data-lucide="file-image" class="w-4 h-4"></i> 사업자등록증 사본 확인</button>
+          <div class="flex gap-2 pt-2">
+            <button onclick="approveDemo()" class="flex-1 py-3.5 bg-[#84CC16] text-[#12261E] rounded-[14px] font-black text-[14px] hover:bg-[#9BE32D] shadow-[0_4px_12px_rgba(132,204,22,0.3)] transition-all">사용 승인 허가</button>
+            <button class="px-5 py-3.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-[14px] font-bold text-[14px] hover:bg-red-500/20 transition-all">반려</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. 사용 업체 관리 화면 -->
+    <div id="view-companies" class="hidden space-y-6">
+      <h1 class="text-[24px] font-black tracking-tight flex items-center gap-2"><i data-lucide="building-2" class="w-6 h-6 text-[#3B82F6]"></i> 사용 업체 관리 (베타 테스터)</h1>
+      
+      <div class="glass-panel rounded-[24px] overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse whitespace-nowrap">
+            <thead class="bg-white/5 text-[#94A3B8] text-[12px] font-bold border-b border-white/10">
+              <tr>
+                <th class="p-4 pl-6">상태</th>
+                <th class="p-4">상호명</th>
+                <th class="p-4">아이디</th>
+                <th class="p-4">대표자</th>
+                <th class="p-4">등록 거래처</th>
+                <th class="p-4">발행 문서</th>
+                <th class="p-4 pr-6 text-right">관리</th>
+              </tr>
+            </thead>
+            <tbody class="text-[14px] text-white font-medium divide-y divide-white/5">
+              <tr class="hover:bg-white/5 transition-colors">
+                <td class="p-4 pl-6"><span class="bg-[#84CC16]/20 text-[#84CC16] px-2 py-1 rounded-md text-[10px] font-black">정상 이용</span></td>
+                <td class="p-4 font-bold">신화토탈조경</td>
+                <td class="p-4 text-[#94A3B8]">shinhwa_pro</td>
+                <td class="p-4">신화대표</td>
+                <td class="p-4">12곳</td>
+                <td class="p-4">45건</td>
+                <td class="p-4 pr-6 text-right">
+                  <button class="px-3 py-1.5 bg-white/10 border border-white/20 rounded-md text-[11px] font-bold hover:bg-white/20">상세보기</button>
+                </td>
+              </tr>
+              <tr class="hover:bg-white/5 transition-colors">
+                <td class="p-4 pl-6"><span class="bg-[#84CC16]/20 text-[#84CC16] px-2 py-1 rounded-md text-[10px] font-black">정상 이용</span></td>
+                <td class="p-4 font-bold">자연창조 조경</td>
+                <td class="p-4 text-[#94A3B8]">nature_01</td>
+                <td class="p-4">박자연</td>
+                <td class="p-4">8곳</td>
+                <td class="p-4">22건</td>
+                <td class="p-4 pr-6 text-right">
+                  <button class="px-3 py-1.5 bg-white/10 border border-white/20 rounded-md text-[11px] font-bold hover:bg-white/20">상세보기</button>
+                </td>
+              </tr>
+              <tr class="hover:bg-white/5 transition-colors">
+                <td class="p-4 pl-6"><span class="bg-red-500/20 text-red-400 px-2 py-1 rounded-md text-[10px] font-black">이용 정지</span></td>
+                <td class="p-4 font-bold text-white/50">아름다운 정원</td>
+                <td class="p-4 text-[#94A3B8]">beauty_gd</td>
+                <td class="p-4 text-white/50">최아름</td>
+                <td class="p-4 text-white/50">0곳</td>
+                <td class="p-4 text-white/50">0건</td>
+                <td class="p-4 pr-6 text-right">
+                  <button class="px-3 py-1.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-md text-[11px] font-bold hover:bg-red-500/20">정지 해제</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 모바일 하단 네비게이션 바 -->
+  <nav class="md:hidden glass-panel fixed bottom-0 w-full flex justify-around p-3 pb-8 z-50 border-t border-white/10">
+    <button onclick="switchTab('dashboard')" class="mob-nav-btn flex flex-col items-center gap-1.5 text-[#3B82F6] font-bold"><i data-lucide="layout-dashboard" class="w-6 h-6"></i><span class="text-[10px]">대시보드</span></button>
+    <button onclick="switchTab('approval')" class="mob-nav-btn flex flex-col items-center gap-1.5 text-[#94A3B8] font-bold relative"><div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-[#0B1120]"></div><i data-lucide="user-check" class="w-6 h-6"></i><span class="text-[10px]">승인대기</span></button>
+    <button onclick="switchTab('companies')" class="mob-nav-btn flex flex-col items-center gap-1.5 text-[#94A3B8] font-bold"><i data-lucide="building-2" class="w-6 h-6"></i><span class="text-[10px]">업체관리</span></button>
+  </nav>
+
+  <script>
+    // 마스터 비밀번호 설정 (데모용)
+    const MASTER_ID = "admin";
+    const MASTER_PW = "1234"; // 테스트용 비번
+
+    function loginMaster() {
+      const id = document.getElementById('masterId').value;
+      const pw = document.getElementById('masterPw').value;
+      
+      if(id === MASTER_ID && pw === MASTER_PW) {
+        document.getElementById('masterLoginView').classList.add('hidden');
+        document.getElementById('mainContent').classList.remove('hidden');
+        lucide.createIcons();
+      } else {
+        alert('마스터 접근 권한이 없습니다.');
+      }
+    }
+
+    function logoutMaster() {
+      if(confirm('통제실에서 로그아웃 하시겠습니까?')) {
+        location.reload();
+      }
+    }
+
+    function switchTab(tabId) {
+      // 모든 컨텐츠 숨기기
+      const views = ['view-dashboard', 'view-approval', 'view-companies'];
+      views.forEach(v => {
+        const el = document.getElementById(v);
+        if(el) el.classList.add('hidden');
+      });
+      
+      // 선택된 컨텐츠 보이기
+      const activeView = document.getElementById('view-' + tabId);
+      if(activeView) activeView.classList.remove('hidden');
+
+      // PC 사이드바 스타일 업데이트
+      const navBtns = document.querySelectorAll('.nav-btn');
+      navBtns.forEach(btn => {
+        btn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3.5 rounded-[12px] text-[#94A3B8] hover:bg-white/5 hover:text-white font-bold transition-all";
+        if(btn.innerHTML.includes('가입 승인') && tabId !== 'approval') {
+             btn.className += " justify-between";
+        }
+      });
+      
+      let pcActiveIndex = 0;
+      if(tabId === 'approval') pcActiveIndex = 1;
+      if(tabId === 'companies') pcActiveIndex = 2;
+      
+      if(navBtns[pcActiveIndex]) {
+          navBtns[pcActiveIndex].className = "nav-btn w-full flex items-center gap-3 px-4 py-3.5 rounded-[12px] bg-[#3B82F6] text-white font-bold transition-all";
+          if(tabId === 'approval') navBtns[pcActiveIndex].className += " justify-between";
+      }
+
+      // 모바일 네비게이션 스타일 업데이트
+      const mobBtns = document.querySelectorAll('.mob-nav-btn');
+      mobBtns.forEach(btn => {
+        btn.classList.remove('text-[#3B82F6]');
+        btn.classList.add('text-[#94A3B8]');
+      });
+      
+      let mobActiveIndex = 0;
+      if(tabId === 'approval') mobActiveIndex = 1;
+      if(tabId === 'companies') mobActiveIndex = 2;
+      
+      if(mobBtns[mobActiveIndex]) {
+          mobBtns[mobActiveIndex].classList.remove('text-[#94A3B8]');
+          mobBtns[mobActiveIndex].classList.add('text-[#3B82F6]');
+      }
+    }
+
+    function approveDemo() {
+        alert("승인이 완료되었습니다.\n해당 업체는 이제 조경노트 PRO에 로그인할 수 있습니다.");
+    }
+
+    lucide.createIcons();
+  </script>
+</body>
+</html>
