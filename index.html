@@ -10,7 +10,6 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   
-  <!-- PRO 버전용 블랙 & 골드 아이콘으로 변경 -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%23000000'/%3E%3Cpath d='M180 140v232h168' fill='none' stroke='%23C5A880' stroke-width='48' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='348' cy='140' r='32' fill='%2384CC16'/%3E%3C/svg%3E">
   <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23000000'/%3E%3Cpath d='M180 140v232h168' fill='none' stroke='%23C5A880' stroke-width='48' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='348' cy='140' r='32' fill='%2384CC16'/%3E%3C/svg%3E">
   
@@ -58,41 +57,61 @@
       </div>
       <span class="text-[11px] bg-[#84CC16]/20 text-[#84CC16] font-extrabold px-3.5 py-1.5 rounded-full uppercase tracking-[0.25em] border border-[#84CC16]/30 mb-3">Landscape Solution</span>
       <h1 class="text-white font-black text-[38px] tracking-tight mb-2">조경노트 PRO</h1>
-      <p class="text-[#A3A8A3] text-[15px] font-bold tracking-wide">by <span id="company-name-splash">업체명</span></p>
+      <p class="text-[#A3A8A3] text-[15px] font-bold tracking-wide" id="splash-loading-text">데이터 동기화 중...</p>
     </div>
   </div>
 
-  <datalist id="clientDatalist"></datalist>
-
-  <!-- 타 업체 가입(Onboarding) 화면 -->
-  <section id="onboardingView" class="hidden fixed inset-0 z-[2000] bg-[#151E2D] flex flex-col items-center justify-center px-6">
+  <!-- [추가됨] 1. 기본 로그인 화면 -->
+  <section id="authView" class="hidden fixed inset-0 z-[2000] bg-[#151E2D] flex flex-col items-center justify-center px-6">
     <div class="bg-white/5 backdrop-blur-md p-8 rounded-[32px] w-full max-w-sm border border-white/10 shadow-2xl flex flex-col items-center">
-      <div class="w-16 h-16 bg-[#84CC16] rounded-[18px] flex items-center justify-center mb-5 shadow-[0_0_20px_rgba(132,204,22,0.3)]"><i data-lucide="building" class="w-7 h-7 text-[#12261E]"></i></div>
-      <h2 class="text-white font-black text-[22px] mb-2">조경노트 PRO 시작하기</h2>
-      <p class="text-[#A3A8A3] text-[12px] font-medium mb-6 text-center leading-relaxed">우리 업체만의 전용 환경을 설정합니다.<br>입력된 정보는 리포트와 견적서에 사용됩니다.</p>
+      <div class="w-16 h-16 bg-[#84CC16] rounded-[18px] flex items-center justify-center mb-5 shadow-[0_0_20px_rgba(132,204,22,0.3)]"><i data-lucide="user" class="w-7 h-7 text-[#12261E]"></i></div>
+      <h2 class="text-white font-black text-[22px] mb-2">조경노트 PRO 로그인</h2>
+      <p class="text-[#A3A8A3] text-[12px] font-medium mb-6 text-center leading-relaxed">계정을 연동하여 PC, 태블릿, 모바일<br>어디서든 내 장부를 관리하세요.</p>
       
-      <div class="w-full space-y-3 mb-6">
-        <input type="text" id="obCompanyName" placeholder="상호명 (예: 홍길동조경)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[12px] px-4 py-3.5 text-white text-[14px] font-bold focus:outline-none focus:border-[#84CC16]">
-        <input type="text" id="obCompanyCeo" placeholder="대표자명 (예: 홍길동)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[12px] px-4 py-3.5 text-white text-[14px] font-bold focus:outline-none focus:border-[#84CC16]">
-        <input type="tel" id="obCompanyPhone" placeholder="대표 연락처 (예: 010-0000-0000)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[12px] px-4 py-3.5 text-white text-[14px] font-bold focus:outline-none focus:border-[#84CC16]">
-        <input type="text" id="obCompanyBizNum" placeholder="사업자등록번호 (예: 123-45-67890)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[12px] px-4 py-3.5 text-white text-[14px] font-bold focus:outline-none focus:border-[#84CC16]">
-        <input type="password" id="obCompanyPin" placeholder="앱 접속용 비밀번호 4자리 설정" inputmode="numeric" pattern="[0-9]*" class="w-full bg-[#0F1722] border border-[#84CC16]/50 rounded-[12px] px-4 py-3.5 text-center text-[#84CC16] text-[16px] font-bold tracking-[0.5em] focus:outline-none focus:border-[#84CC16] mt-2 placeholder:tracking-normal placeholder:text-[13px] placeholder:text-white/40">
+      <div class="w-full space-y-3 mb-4">
+        <input type="text" id="loginId" placeholder="아이디" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[12px] px-4 py-3.5 text-white text-[14px] font-bold focus:outline-none focus:border-[#84CC16]">
+        <input type="password" id="loginPw" placeholder="비밀번호" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[12px] px-4 py-3.5 text-white text-[14px] font-bold focus:outline-none focus:border-[#84CC16]" onkeypress="if(event.key === 'Enter') doLogin()">
       </div>
       
-      <button onclick="saveOnboarding()" class="w-full py-4 bg-[#84CC16] text-[#12261E] rounded-[16px] font-extrabold text-[16px] hover:bg-[#9BE32D] shadow-[0_8px_20px_rgba(132,204,22,0.2)] transition-all">설정 완료 및 시작하기</button>
+      <div class="w-full flex items-center mb-6 px-1">
+        <label class="flex items-center gap-2 cursor-pointer text-[#A3A8A3] text-[13px] font-bold hover:text-white transition-colors">
+          <input type="checkbox" id="autoLoginCheck" class="w-4 h-4 rounded border-white/20 bg-transparent text-[#84CC16] focus:ring-[#84CC16]" checked>
+          자동 로그인
+        </label>
+      </div>
+      
+      <button onclick="doLogin()" class="w-full py-4 bg-[#84CC16] text-[#12261E] rounded-[16px] font-extrabold text-[16px] hover:bg-[#9BE32D] shadow-[0_8px_20px_rgba(132,204,22,0.2)] transition-all mb-4">로그인</button>
+      
+      <div class="w-full border-t border-white/10 pt-5 mt-2">
+        <button onclick="showSignUp()" class="w-full py-3.5 bg-transparent border border-white/20 text-white rounded-[16px] font-extrabold text-[14px] hover:bg-white/10 transition-all flex items-center justify-center gap-2">신규 업체 회원가입 (무료) <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+      </div>
     </div>
   </section>
 
-  <!-- 로그인 화면 (관리자 전용) -->
-  <section id="loginView" class="hidden fixed inset-0 z-[500] bg-[#151E2D] flex flex-col items-center justify-center px-6">
-    <div class="bg-white/5 backdrop-blur-md p-8 rounded-[32px] w-full max-w-sm border border-white/10 shadow-2xl flex flex-col items-center">
-      <div class="w-16 h-16 bg-[#84CC16] rounded-[18px] flex items-center justify-center mb-5 shadow-[0_0_20px_rgba(132,204,22,0.3)]"><i data-lucide="lock" class="w-7 h-7 text-[#12261E]"></i></div>
-      <h2 class="text-white font-black text-[22px] mb-2">시스템 보안 접속</h2>
-      <p class="text-[#A3A8A3] text-[12px] font-medium mb-8 text-center leading-relaxed">허가된 관리자만 접근할 수 있는<br><span id="company-name-login">업체명</span> 내부 보안 영역입니다.</p>
-      <input type="password" id="adminPwInput" placeholder="비밀번호 4자리" inputmode="numeric" pattern="[0-9]*" class="w-full bg-[#0F1722] border border-white/20 rounded-[16px] px-5 py-4.5 text-center text-white text-[20px] font-bold tracking-[0.5em] focus:outline-none focus:border-[#84CC16] mb-5" onkeypress="if(event.key === 'Enter') loginAdmin()">
-      <button onclick="loginAdmin()" class="w-full py-4.5 bg-[#84CC16] text-[#12261E] rounded-[16px] font-extrabold text-[16px] hover:bg-[#9BE32D] shadow-[0_8px_20px_rgba(132,204,22,0.2)] transition-all">접속하기</button>
+  <!-- [수정됨] 2. 회원가입(Onboarding) 화면 -->
+  <section id="onboardingView" class="hidden fixed inset-0 z-[2000] bg-[#151E2D] flex flex-col items-center justify-center px-6">
+    <div class="bg-white/5 backdrop-blur-md p-7 rounded-[32px] w-full max-w-sm border border-white/10 shadow-2xl flex flex-col items-center max-h-[90vh] overflow-y-auto nav-scroll">
+      <div class="w-14 h-14 bg-[#84CC16] rounded-[16px] flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(132,204,22,0.3)] shrink-0"><i data-lucide="building" class="w-6 h-6 text-[#12261E]"></i></div>
+      <h2 class="text-white font-black text-[20px] mb-2 shrink-0">새로운 업체 등록</h2>
+      <p class="text-[#A3A8A3] text-[11px] font-medium mb-5 text-center leading-relaxed shrink-0">입력하신 정보는 고객에게 발송되는<br>모든 리포트와 견적서에 자동 입력됩니다.</p>
+      
+      <div class="w-full space-y-2.5 mb-5">
+        <div class="bg-black/20 p-3 rounded-[16px] border border-white/5 mb-2">
+          <input type="text" id="obId" placeholder="사용할 아이디" autocomplete="off" class="w-full bg-[#0F1722] border border-[#84CC16]/40 rounded-[10px] px-4 py-3 text-white text-[13px] font-bold focus:outline-none focus:border-[#84CC16] mb-2">
+          <input type="password" id="obPw" placeholder="비밀번호 설정" autocomplete="off" class="w-full bg-[#0F1722] border border-[#84CC16]/40 rounded-[10px] px-4 py-3 text-white text-[13px] font-bold focus:outline-none focus:border-[#84CC16]">
+        </div>
+        <input type="text" id="obCompanyName" placeholder="상호명 (예: 홍길동조경)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[10px] px-4 py-3 text-white text-[13px] font-bold focus:outline-none focus:border-[#84CC16]">
+        <input type="text" id="obCompanyCeo" placeholder="대표자명 (예: 홍길동)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[10px] px-4 py-3 text-white text-[13px] font-bold focus:outline-none focus:border-[#84CC16]">
+        <input type="tel" id="obCompanyPhone" placeholder="대표 연락처 (예: 010-0000-0000)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[10px] px-4 py-3 text-white text-[13px] font-bold focus:outline-none focus:border-[#84CC16]">
+        <input type="text" id="obCompanyBizNum" placeholder="사업자등록번호 (예: 123-45-67890)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[10px] px-4 py-3 text-white text-[13px] font-bold focus:outline-none focus:border-[#84CC16]">
+      </div>
+      
+      <button onclick="saveOnboarding()" class="w-full py-4 bg-[#84CC16] text-[#12261E] rounded-[16px] font-extrabold text-[15px] hover:bg-[#9BE32D] shadow-[0_8px_20px_rgba(132,204,22,0.2)] transition-all mb-3 shrink-0">가입 완료 및 시작하기</button>
+      <button onclick="showLogin()" class="w-full py-3 bg-transparent text-[#A3A8A3] rounded-[16px] font-bold text-[13px] hover:text-white transition-all shrink-0">이전 화면으로 돌아가기</button>
     </div>
   </section>
+
+  <datalist id="clientDatalist"></datalist>
 
   <!-- 상단 네비게이션바 -->
   <header id="mainHeader" class="no-print sticky top-0 z-40 glass-nav px-5 py-4 shadow-md" style="display: none;">
@@ -317,7 +336,7 @@
           <div class="space-y-2.5">
             <input type="text" id="newClientName" placeholder="고객명 또는 현장명" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3 text-xs font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
             <input type="tel" id="newClientPhone" placeholder="연락처" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3 text-xs font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
-            <input type="text" id="newClientAddress" placeholder="주소 (예: 수원시 장안구 율전동)" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3 text-xs font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
+            <input type="text" id="newClientAddress" placeholder="주소 입력" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3 text-xs font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
             
             <select id="newClientType" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3 text-xs font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
               <option value="정기 관리">정기 관리 (계약처)</option>
@@ -339,7 +358,7 @@
         </div>
 
         <div class="mt-6 bg-[#0F1722] rounded-[20px] p-5 shadow-lg border border-white/10 space-y-3">
-          <div class="flex justify-between items-center"><h3 class="text-[13px] font-bold text-[#84CC16] flex items-center gap-1.5"><i data-lucide="shield-check" class="w-4 h-4"></i> 데이터 보안 센터</h3><button onclick="logoutAdmin()" class="text-[10px] bg-red-500/10 text-red-400 px-2 py-1 rounded border border-red-500/20 hover:bg-red-500/20">시스템 잠금</button></div>
+          <div class="flex justify-between items-center"><h3 class="text-[13px] font-bold text-[#84CC16] flex items-center gap-1.5"><i data-lucide="shield-check" class="w-4 h-4"></i> 데이터 보안 센터</h3><button onclick="logoutAdmin()" class="text-[10px] bg-red-500/10 text-red-400 px-2 py-1 rounded border border-red-500/20 hover:bg-red-500/20">로그아웃</button></div>
           <p class="text-[11px] text-[#A3A8A3] leading-relaxed">기기 분실/변경에 대비해 소중한 장부를 백업하세요.</p>
           <div class="grid grid-cols-2 gap-2">
             <button onclick="backupData()" class="py-3 bg-white/10 hover:bg-white/20 text-white rounded-[12px] font-bold text-[11px] flex items-center justify-center gap-1.5 transition-all shadow-md"><i data-lucide="download" class="w-3.5 h-3.5"></i> 파일로 백업 (수동)</button>
@@ -369,7 +388,6 @@
     <section id="lensView" class="hidden space-y-4">
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
         <div class="flex items-center justify-between pb-4 border-b border-[#F4F5F4]">
-          <!-- AI 안내 주석 추가됨 -->
           <h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="scan" class="w-5 h-5 text-[#84CC16]"></i> AI 식별 렌즈 <span class="text-[11px] font-medium text-[#888] ml-1 tracking-tight">*오픈ai의 최신버전자동연결로 정보와 상태에 따라 인식이 안될수도 있다-</span></h2>
         </div>
         
@@ -700,18 +718,20 @@
   <script>
     const IMGBB_API_KEY = '50848129249d0bb58dbbc06da8af132d'; 
     const OPENAI_API_KEY = "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"; 
-    // PRO 전용 DB 통신 경로로 완벽 분리
-    const MAIN_DB_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_db";
     
+    // [핵심 변경] 클라우드 로그인/가입을 위한 계정 전용 독립 DB 설계
+    const DB_BASE_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/accounts";
+    let currentUserId = "";
+
     function getValidApiKey() {
       const hardcoded = IMGBB_API_KEY.trim();
       if (hardcoded && hardcoded.length > 20) return hardcoded;
       return null;
     }
 
-    // 예시 데이터 완전 삭제 처리
     let defaultClients = [];
-    const defaultMaterials = [];
+    // [핵심 변경] 자재단가표 기본 10칸 빈칸 제공
+    const defaultMaterials = Array.from({length: 10}, () => ({ item: "", spec: "", price: "", contact: "" }));
 
     let clients = [];
     let records = [];
@@ -741,14 +761,12 @@
     let editingRecordId = null;
     let activeTextEditorId = null;
 
-    // PRO 전용 로컬스토리지 키로 완벽 분리
-    let myCompanyProfile = JSON.parse(localStorage.getItem('shinhwa_pro_my_profile'));
+    let myCompanyProfile = null;
 
     function applyCompanyProfile() {
         if (!myCompanyProfile) return;
         const textTargets = [
             { id: 'company-name-splash', key: 'name' },
-            { id: 'company-name-login', key: 'name' },
             { id: 'company-name-header', key: 'name' },
             { id: 'doc-company-name', key: 'name' },
             { id: 'doc-company-ceo', key: 'ceo' },
@@ -764,36 +782,121 @@
         });
     }
 
-    function saveOnboarding() {
+    function showSignUp() {
+        document.getElementById('authView').classList.add('hidden');
+        document.getElementById('onboardingView').classList.remove('hidden');
+    }
+
+    function showLogin() {
+        document.getElementById('onboardingView').classList.add('hidden');
+        document.getElementById('authView').classList.remove('hidden');
+    }
+
+    // [추가] 클라우드 회원가입 처리
+    async function saveOnboarding() {
+        const id = document.getElementById('obId').value.trim();
+        const pw = document.getElementById('obPw').value.trim();
         const name = document.getElementById('obCompanyName').value.trim();
         const ceo = document.getElementById('obCompanyCeo').value.trim();
         const phone = document.getElementById('obCompanyPhone').value.trim();
         const bizNum = document.getElementById('obCompanyBizNum').value.trim();
-        const pin = document.getElementById('obCompanyPin').value.trim();
 
-        if (!name || !ceo || !phone || !bizNum || !pin) return alert("모든 항목을 입력해 주세요.");
-        if (pin.length !== 4) return alert("비밀번호는 4자리로 설정해 주세요.");
-
-        myCompanyProfile = { name, ceo, phone, bizNum, pin };
-        localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile));
+        if (!id || !pw || !name || !ceo || !phone || !bizNum) return alert("모든 항목을 입력해 주세요.");
         
-        applyCompanyProfile();
-        document.getElementById('onboardingView').classList.add('hidden');
-        document.getElementById('loginView').classList.remove('hidden');
+        showLoadingOverlay("가입 처리 및 클라우드 생성 중...");
+        try {
+            const res = await fetch(`${DB_BASE_URL}/${id}/profile.json`);
+            const existing = await res.json();
+            if(existing) {
+                document.getElementById('loadingOverlay')?.remove();
+                return alert("이미 사용 중인 아이디입니다. 다른 아이디를 입력해주세요.");
+            }
+
+            const profileData = { id, pw, name, ceo, phone, bizNum };
+            
+            await fetch(`${DB_BASE_URL}/${id}/profile.json`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(profileData)
+            });
+            
+            alert("회원가입이 완료되었습니다! 로그인해주세요.");
+            showLogin();
+            document.getElementById('loginId').value = id;
+            document.getElementById('loginPw').value = '';
+        } catch(e) {
+            alert("서버 연결에 실패했습니다. 인터넷 연결을 확인하세요.");
+        } finally {
+            document.getElementById('loadingOverlay')?.remove();
+        }
     }
 
-    async function syncWithCloud() {
+    // [추가] 클라우드 로그인 처리
+    async function doLogin() {
+        const id = document.getElementById('loginId').value.trim();
+        const pw = document.getElementById('loginPw').value.trim();
+        if(!id || !pw) return alert("아이디와 비밀번호를 입력해주세요.");
+        
+        showLoadingOverlay("클라우드 서버에 접속 중...");
         try {
-            const res = await fetch(`${MAIN_DB_URL}.json`);
+            const res = await fetch(`${DB_BASE_URL}/${id}/profile.json`);
+            const profile = await res.json();
+            
+            if(!profile) {
+                alert("존재하지 않는 아이디입니다.");
+            } else if(profile.pw !== pw) {
+                alert("비밀번호가 일치하지 않습니다.");
+            } else {
+                currentUserId = id;
+                myCompanyProfile = profile;
+                
+                localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(profile));
+                localStorage.setItem('shinhwa_pro_logged_in_id', id);
+                
+                if(document.getElementById('autoLoginCheck').checked) {
+                    localStorage.setItem('shinhwa_pro_auto_login', 'true');
+                } else {
+                    localStorage.removeItem('shinhwa_pro_auto_login');
+                }
+                
+                applyCompanyProfile();
+                document.getElementById('authView').classList.add('hidden');
+                document.getElementById('mainHeader').style.display = 'block';
+                
+                await syncWithCloud();
+                
+                history.replaceState({ view: 'admin' }, "", ""); 
+                switchView('admin', false);
+            }
+        } catch(e) {
+            alert("서버 통신 오류가 발생했습니다.");
+        } finally {
+            document.getElementById('loadingOverlay')?.remove();
+        }
+    }
+
+    function logoutAdmin() {
+      if(confirm('기기에서 로그아웃 하시겠습니까?\n다음 접속 시 다시 로그인해야 합니다.')) {
+        localStorage.removeItem('shinhwa_pro_auto_login'); 
+        localStorage.removeItem('shinhwa_pro_logged_in_id'); 
+        location.reload(); 
+      }
+    }
+
+    // [수정] 내 아이디 전용 클라우드 동기화
+    async function syncWithCloud() {
+        const DATA_URL = `${DB_BASE_URL}/${currentUserId}/data.json`;
+        try {
+            const res = await fetch(DATA_URL);
             let cloudData = await res.json();
             
             if (!cloudData) {
                 cloudData = {
-                    clients: JSON.parse(localStorage.getItem('shinhwa_pro_clients')) || defaultClients,
-                    records: JSON.parse(localStorage.getItem('shinhwa_pro_records')) || [],
-                    materials: JSON.parse(localStorage.getItem('shinhwa_pro_materials')) || defaultMaterials
+                    clients: defaultClients,
+                    records: [],
+                    materials: defaultMaterials
                 };
-                await fetch(`${MAIN_DB_URL}.json`, {
+                await fetch(DATA_URL, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(cloudData)
@@ -803,10 +906,6 @@
             clients = cloudData.clients || [];
             records = cloudData.records || [];
             materialsData = cloudData.materials || [];
-            
-            localStorage.setItem('shinhwa_pro_clients', JSON.stringify(clients));
-            localStorage.setItem('shinhwa_pro_records', JSON.stringify(records));
-            localStorage.setItem('shinhwa_pro_materials', JSON.stringify(materialsData));
             
             renderClientSelect();
             renderClientsList();
@@ -818,26 +917,15 @@
                 badge.className = 'text-[10px] bg-blue-500/20 text-blue-400 font-extrabold px-2 py-0.5 rounded uppercase tracking-widest border border-blue-500/30 flex items-center gap-1';
             }
         } catch(e) {
-            clients = JSON.parse(localStorage.getItem('shinhwa_pro_clients')) || defaultClients;
-            records = JSON.parse(localStorage.getItem('shinhwa_pro_records')) || [];
-            materialsData = JSON.parse(localStorage.getItem('shinhwa_pro_materials')) || defaultMaterials;
-            renderClientSelect();
-            renderClientsList();
-            renderQuoteList();
-            
-            const badge = document.getElementById('cloudStatusBadge');
-            if(badge) {
-                badge.innerHTML = '<i data-lucide="cloud-off" class="w-3 h-3 text-red-400"></i> 오프라인';
-                badge.className = 'text-[10px] bg-red-500/20 text-red-400 font-extrabold px-2 py-0.5 rounded uppercase tracking-widest border border-red-500/30 flex items-center gap-1';
-            }
+            alert("클라우드 동기화 실패. 일부 기능이 제한될 수 있습니다.");
         } finally {
             lucide.createIcons();
         }
     }
 
     function updateData(key, dataObj) {
-        localStorage.setItem('shinhwa_pro_' + key, JSON.stringify(dataObj));
-        fetch(`${MAIN_DB_URL}/${key}.json`, {
+        const DATA_URL = `${DB_BASE_URL}/${currentUserId}/data/${key}.json`;
+        fetch(DATA_URL, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(dataObj)
@@ -1306,8 +1394,8 @@
         let shortCloudId = existingId || ("doc_" + Date.now()); 
         
         try {
-            // PRO 전용 DB 저장소
-            const uploadRes = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_records/${shortCloudId}.json`, { 
+            // 외부 공유 링크용 글로벌 저장소 유지 (고객 접속용)
+            const uploadRes = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_shared_docs/${shortCloudId}.json`, { 
                 method: 'PUT', 
                 headers: { 'Content-Type': 'application/json' }, 
                 body: JSON.stringify(clean) 
@@ -1369,6 +1457,7 @@
         }
     }
 
+    // [핵심 변경] 로그인 상태 체크 로직
     window.addEventListener('DOMContentLoaded', async () => {
       loadQuoteTemplate('residential'); 
 
@@ -1394,7 +1483,7 @@
               loadedData = JSON.parse(decodeURIComponent(escape(atob(encodedData))));
           } else if (reportId) {
               try {
-                  const res = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_records/${reportId}.json`);
+                  const res = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_shared_docs/${reportId}.json`);
                   if (res.ok) {
                       const json = await res.json();
                       if (json && Object.keys(json).length > 0) {
@@ -1422,45 +1511,31 @@
           document.body.innerHTML = `<div class="p-10 text-center font-bold text-lg mt-20 text-white">존재하지 않거나 보안상 만료된 문서입니다.</div>`;
         }
       } else {
-        localStorage.removeItem('shinhwa_pro_auth'); 
-        if (!myCompanyProfile) {
-          document.getElementById('onboardingView').classList.remove('hidden');
+        // [로그인 로직]
+        const savedId = localStorage.getItem('shinhwa_pro_logged_in_id');
+        const autoLogin = localStorage.getItem('shinhwa_pro_auto_login');
+        
+        if (savedId && autoLogin === 'true') {
+            currentUserId = savedId;
+            myCompanyProfile = JSON.parse(localStorage.getItem('shinhwa_pro_my_profile'));
+            applyCompanyProfile();
+            document.getElementById('mainHeader').style.display = 'block';
+            
+            // 병렬로 동기화 후 화면 진입
+            syncWithCloud().then(() => {
+                switchView('admin', false);
+            });
         } else {
-          applyCompanyProfile();
-          document.getElementById('loginView').classList.remove('hidden');
+            document.getElementById('authView').classList.remove('hidden');
         }
         lucide.createIcons();
       }
     });
 
-    async function loginAdmin() {
-      const inputPw = document.getElementById('adminPwInput').value;
-      if(myCompanyProfile && inputPw === myCompanyProfile.pin) {
-        localStorage.setItem('shinhwa_pro_auth', 'true');
-        document.getElementById('loginView').classList.add('hidden');
-        document.getElementById('mainHeader').style.display = 'block';
-        
-        await syncWithCloud();
-
-        history.replaceState({ view: 'admin' }, "", ""); 
-        switchView('admin', false);
-      } else {
-        alert("비밀번호가 일치하지 않습니다."); document.getElementById('adminPwInput').value = '';
-      }
-    }
-
-    function logoutAdmin() {
-      if(confirm('시스템을 안전하게 잠그시겠습니까?\n로그인 화면으로 이동합니다.')) {
-        localStorage.removeItem('shinhwa_pro_auth'); 
-        location.reload(); 
-      }
-    }
-
     window.addEventListener('popstate', (e) => {
       const modal = document.getElementById('imageModal');
       const promoModal = document.getElementById('promoCardModal');
       const msgMockupModal = document.getElementById('msgMockupModal');
-      const manualRestoreModal = document.getElementById('manualRestoreModal');
       const textEditorModal = document.getElementById('textEditorModal');
       const lensResultModal = document.getElementById('lensResultModal');
       const materialModal = document.getElementById('materialModal');
@@ -1468,7 +1543,6 @@
       if (modal && !modal.classList.contains('hidden')) { modal.classList.add('hidden'); document.getElementById('modalImg').src = ''; return; }
       if (promoModal && !promoModal.classList.contains('hidden')) { promoModal.classList.add('hidden'); return; }
       if (msgMockupModal && !msgMockupModal.classList.contains('hidden')) { msgMockupModal.classList.add('hidden'); return; }
-      if (manualRestoreModal && !manualRestoreModal.classList.contains('hidden')) { manualRestoreModal.classList.add('hidden'); return; }
       if (textEditorModal && !textEditorModal.classList.contains('hidden')) { closeTextEditor(true); return; }
       if (lensResultModal && !lensResultModal.classList.contains('hidden')) { closeLensResult(true); return; }
       if (materialModal && !materialModal.classList.contains('hidden')) { closeMaterialModal(true); return; }
