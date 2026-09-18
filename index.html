@@ -136,13 +136,13 @@
     </div>
     
     <div class="max-w-md mx-auto mt-4">
-      <!-- 시인성 극대화 된 메인 메뉴 목록 -->
-      <nav class="grid grid-cols-2 gap-2 bg-[#0F1722] p-2.5 rounded-2xl border border-white/10 shadow-inner">
-        <button id="tabAdmin" onclick="switchView('admin')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#A3A8A3] font-bold text-[13px] hover:text-white transition-all text-center flex items-center justify-center gap-1.5 border border-transparent">일지작성</button>
-        <button id="tabQuote" onclick="switchView('quote')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#A3A8A3] font-bold text-[13px] hover:text-white transition-all text-center flex items-center justify-center gap-1.5 border border-transparent">견적작성</button>
-        <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#A3A8A3] font-bold text-[13px] hover:text-white transition-all text-center flex items-center justify-center gap-1.5 border border-transparent">견적보관함</button>
-        <button id="tabClient" onclick="switchView('clients')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#A3A8A3] font-bold text-[13px] hover:text-white transition-all text-center flex items-center justify-center gap-1.5 border border-transparent">거래처관리</button>
-        <button id="tabLens" onclick="switchView('lens')" class="col-span-2 w-full py-3.5 rounded-[12px] bg-transparent text-[#A3A8A3] font-bold text-[13px] hover:text-white transition-all text-center flex items-center justify-center gap-1.5 border border-transparent"><i data-lucide="scan" class="w-4 h-4"></i> 수목식별 렌즈</button>
+      <!-- 시인성 극대화 된 메인 메뉴 목록 (전체 배경 연두색) -->
+      <nav class="grid grid-cols-2 gap-2 bg-[#84CC16] p-2.5 rounded-2xl shadow-[0_4px_15px_rgba(132,204,22,0.3)] border border-[#65A30D]">
+        <button id="tabAdmin" onclick="switchView('admin')" class="w-full py-3.5 rounded-[12px] bg-white text-[#1E3A8A] font-black text-[14px] shadow-md transition-all text-center flex items-center justify-center gap-1.5 border border-white/50">일지작성</button>
+        <button id="tabQuote" onclick="switchView('quote')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-extrabold text-[13px] hover:bg-white/40 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent">견적작성</button>
+        <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-extrabold text-[13px] hover:bg-white/40 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent">견적보관함</button>
+        <button id="tabClient" onclick="switchView('clients')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-extrabold text-[13px] hover:bg-white/40 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent">거래처관리</button>
+        <button id="tabLens" onclick="switchView('lens')" class="col-span-2 w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-extrabold text-[13px] hover:bg-white/40 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent"><i data-lucide="scan" class="w-4 h-4"></i> 수목식별 렌즈</button>
       </nav>
     </div>
   </header>
@@ -1558,7 +1558,7 @@
       tabs.forEach(t => {
         const el = document.getElementById(t);
         if(el) {
-          let baseClass = "w-full py-3.5 rounded-[12px] bg-transparent text-[#A3A8A3] font-bold text-[13px] hover:text-white transition-all text-center flex items-center justify-center gap-1.5 border border-transparent";
+          let baseClass = "w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-extrabold text-[13px] hover:bg-white/40 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent";
           if (t === 'tabLens') baseClass = "col-span-2 " + baseClass;
           el.className = baseClass;
         }
@@ -1579,7 +1579,7 @@
       if(activeTabId) {
         const activeEl = document.getElementById(activeTabId);
         if(activeEl) {
-          let activeClass = "w-full py-3.5 rounded-[12px] bg-[#84CC16] text-[#1E3A8A] font-black text-[14px] shadow-[0_4px_12px_rgba(132,204,22,0.3)] transition-all text-center flex items-center justify-center gap-1.5 border border-[#65A30D]";
+          let activeClass = "w-full py-3.5 rounded-[12px] bg-white text-[#1E3A8A] font-black text-[14px] shadow-md transition-all text-center flex items-center justify-center gap-1.5 border border-white/50";
           if (activeTabId === 'tabLens') activeClass = "col-span-2 " + activeClass;
           activeEl.className = activeClass;
         }
