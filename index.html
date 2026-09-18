@@ -86,7 +86,7 @@
         <button onclick="showSignUp()" class="w-full py-4 bg-[#FEE500] text-[#12261E] rounded-[16px] font-extrabold text-[16px] shadow-[0_8px_20px_rgba(254,229,0,0.2)] hover:bg-[#FACC15] transition-all flex items-center justify-center gap-2">업체 등록하기 <i data-lucide="arrow-right" class="w-5 h-5"></i></button>
       </div>
 
-      <!-- 홍보 문구 -->
+      <!-- 홍보 문구 추가 -->
       <div class="mt-5 text-center flex flex-col items-center bg-[#000000]/30 py-3.5 px-4 rounded-xl border border-[#84CC16]/20 w-full shadow-inner">
         <p class="text-[12px] font-bold text-[#EAEBEA] tracking-wide leading-relaxed"><span class="text-[#84CC16]">'조경현장의 든든한 동반자!'</span><br>스마트한 조경노트와 성공하세요~!</p>
         <p class="text-[11px] text-[#A3A8A3] mt-2"><i data-lucide="phone-call" class="w-3.5 h-3.5 inline-block align-middle pb-0.5"></i> 시스템 도입 문의 : <a href="tel:010-4712-8523" class="font-bold text-[#60A5FA] hover:text-blue-300 underline transition-colors">010-4712-8523</a></p>
@@ -99,25 +99,24 @@
     <div class="bg-white/5 backdrop-blur-md p-7 rounded-[32px] w-full max-w-sm border border-white/10 shadow-2xl flex flex-col items-center max-h-[90vh] overflow-y-auto nav-scroll">
       <div class="w-14 h-14 bg-[#84CC16] rounded-[16px] flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(132,204,22,0.3)] shrink-0"><i data-lucide="building" class="w-6 h-6 text-[#12261E]"></i></div>
       
-      <!-- 수정: 타이틀 변경 및 안내문구 노란색 -->
       <h2 class="text-white font-black text-[22px] mb-2 shrink-0">사용자 업체 등록</h2>
       <p class="text-[#FEE500] text-[12px] font-extrabold mb-5 text-center leading-relaxed shrink-0">입력하신 정보는 고객에게 발송되는<br>모든 리포트와 견적서에 자동 입력됩니다.</p>
       
       <div class="w-full space-y-3 mb-5">
-        <!-- 수정: 계정 설정칸 시인성 극대화 및 플레이스홀더 적용 -->
+        <!-- 수정: 예시 문구(Placeholder)를 밝은 흰색(text-white)과 굵은 글씨(font-bold)로 변경하여 시인성 극대화 -->
         <div class="bg-black/40 p-4 rounded-[18px] border border-white/10 mb-2 space-y-3 shadow-inner">
-          <input type="text" id="obId" placeholder="사용할 아이디 (한글,영문 모두가능 / 업체명 사용가능)" autocomplete="off" class="w-full bg-[#0F1722] border border-[#84CC16]/50 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white/40 placeholder:font-medium placeholder:text-[12px]">
-          <input type="password" id="obPw" placeholder="비밀번호 설정 (4자리 이상 숫자)" inputmode="numeric" pattern="[0-9]*" autocomplete="off" class="w-full bg-[#0F1722] border border-[#84CC16]/50 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white/40 placeholder:font-medium placeholder:text-[12px]">
+          <input type="text" id="obId" placeholder="사용할 아이디 (한글,영문 모두가능 / 업체명 사용가능)" autocomplete="off" class="w-full bg-[#0F1722] border border-[#84CC16]/50 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
+          <input type="password" id="obPw" placeholder="비밀번호 설정 (4자리 이상 숫자)" inputmode="numeric" pattern="[0-9]*" autocomplete="off" class="w-full bg-[#0F1722] border border-[#84CC16]/50 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
         </div>
         
-        <input type="text" id="obCompanyName" placeholder="상호명 (예: 홍길동조경)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white/40 placeholder:font-medium placeholder:text-[13px]">
-        <input type="text" id="obCompanyCeo" placeholder="대표자명 (예: 홍길동)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white/40 placeholder:font-medium placeholder:text-[13px]">
-        <input type="tel" id="obCompanyPhone" placeholder="대표 연락처 (예: 010-0000-0000)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white/40 placeholder:font-medium placeholder:text-[13px]">
-        <input type="text" id="obCompanyBizNum" placeholder="사업자등록번호 (예: 123-45-67890)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] mb-1 placeholder:text-white/40 placeholder:font-medium placeholder:text-[13px]">
+        <input type="text" id="obCompanyName" placeholder="상호명 (예: 홍길동조경)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
+        <input type="text" id="obCompanyCeo" placeholder="대표자명 (예: 홍길동)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
+        <input type="tel" id="obCompanyPhone" placeholder="대표 연락처 (예: 010-0000-0000)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
+        <input type="text" id="obCompanyBizNum" placeholder="사업자등록번호 (예: 123-45-67890)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] mb-1 placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
         
         <!-- 사업자등록증 첨부 영역 -->
         <div class="bg-[#0F1722] border border-white/20 rounded-[14px] p-3.5 flex items-center justify-between">
-            <span class="text-white/60 text-[13px] font-bold" id="obBizLicenseLabel">사업자등록증 첨부 (필수)</span>
+            <span class="text-white text-[13px] font-bold" id="obBizLicenseLabel">사업자등록증 첨부 (필수)</span>
             <label class="bg-white/10 hover:bg-white/20 text-white border border-white/20 text-[12px] font-bold py-2.5 px-3.5 rounded-[10px] cursor-pointer transition-colors flex items-center gap-1.5 shrink-0">
                 <i data-lucide="camera" class="w-4 h-4"></i> 파일 선택
                 <input type="file" id="obBizLicense" accept="image/*,application/pdf" class="hidden" onchange="handleBizLicense(event)">
@@ -127,11 +126,11 @@
         <!-- 개인정보 이용동의서 체크박스 -->
         <label class="flex items-start gap-2 cursor-pointer text-[#A3A8A3] text-[11px] leading-relaxed text-left bg-black/20 p-4 rounded-[14px] border border-white/5 mt-3">
             <input type="checkbox" id="obPrivacyCheck" class="w-4 h-4 rounded border-white/20 bg-transparent text-[#84CC16] focus:ring-[#84CC16] mt-0.5 shrink-0">
-            <span>[필수] 개인정보 수집 및 이용 동의<br>
-                <span class="text-[10px] text-white/50 block mt-1.5 leading-snug">
+            <span><strong class="text-white">[필수] 개인정보 수집 및 이용 동의</strong><br>
+                <span class="text-[10px] text-white/70 block mt-1.5 leading-snug">
                 수집항목: 상호, 대표자, 연락처, 사업자등록증, 거래처 목록 등<br>
                 이용목적: 서비스 제공, 본인/업체 인증, 고객 지원<br>
-                <strong class="text-[#C5A880]">* 관리자가 신원 확인 및 업체 승인 목적으로 열람합니다.</strong>
+                <strong class="text-[#FEE500]">* 관리자가 신원 확인 및 업체 승인 목적으로 열람합니다.</strong>
                 </span>
             </span>
         </label>
@@ -161,14 +160,12 @@
     </div>
     
     <div class="max-w-md mx-auto mt-4">
-      <!-- 1. 메인 4개 탭 (연두색 박스, 남색 글씨 통일) -->
       <nav class="grid grid-cols-2 gap-2 bg-[#84CC16] p-2.5 rounded-2xl shadow-[0_4px_15px_rgba(132,204,22,0.3)] border border-[#65A30D]">
-        <button id="tabAdmin" onclick="switchView('admin')" class="w-full py-3.5 rounded-[12px] bg-white text-[#1E3A8A] font-black text-[16px] shadow-md transition-all text-center flex items-center justify-center gap-1.5 border border-white/50">일지작성</button>
+        <button id="tabAdmin" onclick="switchView('admin')" class="w-full py-3.5 rounded-[12px] bg-white text-[#12261E] font-black text-[16px] shadow-md transition-all text-center flex items-center justify-center gap-1.5 border border-white/50">일지작성</button>
         <button id="tabQuote" onclick="switchView('quote')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-black text-[15px] hover:bg-black/5 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent">견적작성</button>
         <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-black text-[15px] hover:bg-black/5 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent">견적보관함</button>
         <button id="tabClient" onclick="switchView('clients')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-black text-[15px] hover:bg-black/5 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent">거래처관리</button>
       </nav>
-      <!-- 2. 수목식별렌즈 단독 남색 박스로 분리 -->
       <button id="tabLens" onclick="switchView('lens')" class="w-full mt-2.5 py-3.5 rounded-2xl bg-[#1E3A8A] text-white font-black text-[15px] shadow-md hover:bg-[#172554] transition-all text-center flex items-center justify-center gap-1.5 border border-[#172554]">
         <i data-lucide="scan" class="w-4 h-4 text-[#84CC16]"></i> 수목식별 렌즈
       </button>
@@ -416,7 +413,7 @@
     <section id="lensView" class="hidden space-y-4">
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
         <div class="flex items-center justify-between pb-4 border-b border-[#F4F5F4]">
-          <h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="scan" class="w-5 h-5 text-[#84CC16]"></i> AI 식별 렌즈</h2>
+          <h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="scan" class="w-5 h-5 text-[#84CC16]"></i> AI 식별 렌즈 <span class="text-[11px] font-medium text-[#888] ml-1 tracking-tight">*오픈ai의 최신버전자동연결로 정보와 상태에 따라 인식이 안될수도 있다-</span></h2>
         </div>
         
         <div class="grid grid-cols-1 gap-4">
@@ -437,7 +434,7 @@
         
         <div class="bg-[#F9F9F8] rounded-[16px] p-4 border border-[#EAEBEA] mt-2">
            <h3 class="text-[12px] font-bold text-[#1A1D1A] mb-1.5 flex items-center gap-1.5"><i data-lucide="info" class="w-4 h-4 text-[#A3A8A3]"></i> 이용 안내</h3>
-           <p class="text-[11px] text-[#7A827A] leading-relaxed break-keep">현장에서 스마트폰 카메라로 직접 대상을 촬영하시거나 갤러리 사진을 업로드해 주세요. 결과값 복사를 통해 일지 작성 시 바로 활용하실 수 있습니다.<br><span class="text-[#888] mt-1 inline-block">* 오픈AI의 최신 버전 자동 연결로 정보와 상태에 따라 인식이 안될 수도 있습니다.</span></p>
+           <p class="text-[11px] text-[#7A827A] leading-relaxed break-keep">현장에서 스마트폰 카메라로 직접 대상을 촬영하시거나 갤러리 사진을 업로드해 주세요. 결과값 복사를 통해 일지 작성 시 바로 활용하실 수 있습니다.</p>
         </div>
       </div>
     </section>
@@ -1514,7 +1511,7 @@
         const reportId = params.get('id') || params.get('blob');
         const encodedData = params.get('data');
         history.replaceState({ view: 'client_shared' }, "", "");
-        const overlay = document.createElement('div'); overlay.id = 'loadingOverlay'; overlay.className = 'fixed inset-0 z-[200] bg-[#151E2D] flex flex-col items-center justify-center'; overlay.innerHTML = `<div class="w-12 h-12 border-4 border-[#84CC16]/30 border-t-[#84CC16] rounded-full animate-spin mb-4"></div><div class="text-white font-bold text-[15px]">프리미 문서를 불러오는 중...</div>`; document.body.appendChild(overlay);
+        const overlay = document.createElement('div'); overlay.id = 'loadingOverlay'; overlay.className = 'fixed inset-0 z-[200] bg-[#151E2D] flex flex-col items-center justify-center'; overlay.innerHTML = `<div class="w-12 h-12 border-4 border-[#84CC16]/30 border-t-[#84CC16] rounded-full animate-spin mb-4"></div><div class="text-white font-bold text-[15px]">프리미엄 문서를 불러오는 중...</div>`; document.body.appendChild(overlay);
         
         let loadedData = null;
         
