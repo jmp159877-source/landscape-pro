@@ -72,7 +72,7 @@
       <p class="text-[#A3A8A3] text-[12px] font-medium mb-6 text-center leading-relaxed">우리 업체만의 전용 환경을 설정합니다.<br>입력된 정보는 리포트와 견적서에 사용됩니다.</p>
       
       <div class="w-full space-y-3 mb-6">
-        <input type="text" id="obCompanyName" placeholder="상호명 (예: 신화토탈조경)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[12px] px-4 py-3.5 text-white text-[14px] font-bold focus:outline-none focus:border-[#84CC16]">
+        <input type="text" id="obCompanyName" placeholder="상호명 (예: 홍길동조경)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[12px] px-4 py-3.5 text-white text-[14px] font-bold focus:outline-none focus:border-[#84CC16]">
         <input type="text" id="obCompanyCeo" placeholder="대표자명 (예: 홍길동)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[12px] px-4 py-3.5 text-white text-[14px] font-bold focus:outline-none focus:border-[#84CC16]">
         <input type="tel" id="obCompanyPhone" placeholder="대표 연락처 (예: 010-0000-0000)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[12px] px-4 py-3.5 text-white text-[14px] font-bold focus:outline-none focus:border-[#84CC16]">
         <input type="text" id="obCompanyBizNum" placeholder="사업자등록번호 (예: 123-45-67890)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[12px] px-4 py-3.5 text-white text-[14px] font-bold focus:outline-none focus:border-[#84CC16]">
@@ -1948,7 +1948,7 @@
       let vat = 0; 
       let total = sum;
 
-      showLoadingOverlay("프리미 견적서 발행 중...");
+      showLoadingOverlay("프리미엄 견적서 발행 중...");
       try {
         const qUrls = await uploadImagesToCloud(quoteImages); 
         const quoteMemo = document.getElementById('quoteInputMemo') ? document.getElementById('quoteInputMemo').value : '';
