@@ -136,13 +136,13 @@
     </div>
     
     <div class="max-w-md mx-auto mt-4">
-      <!-- 시인성 극대화 된 메인 메뉴 목록 (전체 배경 연두색) -->
+      <!-- 시인성 극대화 된 메인 메뉴 목록 (전체 배경 연두색, 글씨 확대, 색상 흰색/남색 교체) -->
       <nav class="grid grid-cols-2 gap-2 bg-[#84CC16] p-2.5 rounded-2xl shadow-[0_4px_15px_rgba(132,204,22,0.3)] border border-[#65A30D]">
-        <button id="tabAdmin" onclick="switchView('admin')" class="w-full py-3.5 rounded-[12px] bg-white text-[#1E3A8A] font-black text-[14px] shadow-md transition-all text-center flex items-center justify-center gap-1.5 border border-white/50">일지작성</button>
-        <button id="tabQuote" onclick="switchView('quote')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-extrabold text-[13px] hover:bg-white/40 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent">견적작성</button>
-        <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-extrabold text-[13px] hover:bg-white/40 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent">견적보관함</button>
-        <button id="tabClient" onclick="switchView('clients')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-extrabold text-[13px] hover:bg-white/40 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent">거래처관리</button>
-        <button id="tabLens" onclick="switchView('lens')" class="col-span-2 w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-extrabold text-[13px] hover:bg-white/40 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent"><i data-lucide="scan" class="w-4 h-4"></i> 수목식별 렌즈</button>
+        <button id="tabAdmin" onclick="switchView('admin')" class="w-full py-3.5 rounded-[12px] bg-white text-[#12261E] font-black text-[16px] shadow-md transition-all text-center flex items-center justify-center gap-1.5 border border-white/50">일지작성</button>
+        <button id="tabQuote" onclick="switchView('quote')" class="w-full py-3.5 rounded-[12px] bg-transparent text-white font-black text-[15px] drop-shadow-sm hover:bg-black/10 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent">견적작성</button>
+        <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-3.5 rounded-[12px] bg-transparent text-white font-black text-[15px] drop-shadow-sm hover:bg-black/10 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent">견적보관함</button>
+        <button id="tabClient" onclick="switchView('clients')" class="w-full py-3.5 rounded-[12px] bg-transparent text-white font-black text-[15px] drop-shadow-sm hover:bg-black/10 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent">거래처관리</button>
+        <button id="tabLens" onclick="switchView('lens')" class="col-span-2 w-full py-3.5 rounded-[12px] bg-transparent text-white font-black text-[15px] drop-shadow-sm hover:bg-black/10 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent"><i data-lucide="scan" class="w-4 h-4"></i> 수목식별 렌즈</button>
       </nav>
     </div>
   </header>
@@ -719,7 +719,6 @@
     const IMGBB_API_KEY = '50848129249d0bb58dbbc06da8af132d'; 
     const OPENAI_API_KEY = "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"; 
     
-    // [핵심 변경] 클라우드 로그인/가입을 위한 계정 전용 독립 DB 설계
     const DB_BASE_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/accounts";
     let currentUserId = "";
 
@@ -1558,7 +1557,7 @@
       tabs.forEach(t => {
         const el = document.getElementById(t);
         if(el) {
-          let baseClass = "w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-extrabold text-[13px] hover:bg-white/40 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent";
+          let baseClass = "w-full py-3.5 rounded-[12px] bg-transparent text-white font-black text-[15px] hover:bg-black/10 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent drop-shadow-sm";
           if (t === 'tabLens') baseClass = "col-span-2 " + baseClass;
           el.className = baseClass;
         }
@@ -1579,7 +1578,7 @@
       if(activeTabId) {
         const activeEl = document.getElementById(activeTabId);
         if(activeEl) {
-          let activeClass = "w-full py-3.5 rounded-[12px] bg-white text-[#1E3A8A] font-black text-[14px] shadow-md transition-all text-center flex items-center justify-center gap-1.5 border border-white/50";
+          let activeClass = "w-full py-3.5 rounded-[12px] bg-white text-[#12261E] font-black text-[16px] shadow-md transition-all text-center flex items-center justify-center gap-1.5 border border-white/50";
           if (activeTabId === 'tabLens') activeClass = "col-span-2 " + activeClass;
           activeEl.className = activeClass;
         }
