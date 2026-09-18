@@ -16,11 +16,6 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#151E2D">
 
-  <meta property="og:title" content="[조경노트 PRO] 프리미엄 조경 관리 솔루션">
-  <meta property="og:description" content="고객님의 현장 작업 리포트 및 견적서를 확인해 주십시오.">
-  <meta property="og:image" content="https://i.ibb.co/60874178/c608741782ce.jpg">
-  <meta property="og:type" content="website">
-
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -112,14 +107,21 @@
         <input type="tel" id="obCompanyPhone" placeholder="대표 연락처 (예: 010-0000-0000)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
         <input type="text" id="obCompanyBizNum" placeholder="사업자등록번호 (예: 123-45-67890)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] mb-1 placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
 
-        <!-- 사업자등록증 첨부 영역 완전 삭제됨 -->
+        <!-- [부활] 구글 클라우드 직결 방식의 사업자등록증 첨부 영역 -->
+        <div class="bg-[#0F1722] border border-[#84CC16]/40 rounded-[14px] p-3.5 flex items-center justify-between shadow-sm">
+            <span class="text-white text-[13px] font-bold" id="obBizLicenseLabel">사업자등록증 첨부 (필수)</span>
+            <label class="bg-white/10 hover:bg-white/20 text-[#84CC16] border border-[#84CC16]/30 text-[12px] font-bold py-2.5 px-3.5 rounded-[10px] cursor-pointer transition-colors flex items-center gap-1.5 shrink-0">
+                <i data-lucide="camera" class="w-4 h-4"></i> 사진 첨부
+                <input type="file" id="obBizLicense" accept="image/*,application/pdf" class="hidden" onchange="handleBizLicense(event)">
+            </label>
+        </div>
 
         <!-- 개인정보 이용동의서 체크박스 -->
         <label class="flex items-start gap-2 cursor-pointer text-[#A3A8A3] text-[11px] leading-relaxed text-left bg-black/20 p-4 rounded-[14px] border border-white/5 mt-3">
             <input type="checkbox" id="obPrivacyCheck" class="w-4 h-4 rounded border-white/20 bg-transparent text-[#84CC16] focus:ring-[#84CC16] mt-0.5 shrink-0">
             <span><strong class="text-white">[필수] 개인정보 수집 및 이용 동의</strong><br>
                 <span class="text-[10px] text-white/70 block mt-1.5 leading-snug">
-                수집항목: 상호, 대표자, 연락처, 사업자등록번호, 거래처 목록 등<br>
+                수집항목: 상호, 대표자, 연락처, 사업자등록번호, 사업자등록증, 거래처 목록 등<br>
                 이용목적: 서비스 제공, 본인/업체 인증, 고객 지원<br>
                 <strong class="text-[#FEE500]">* 관리자가 신원 확인 및 업체 승인 목적으로 열람합니다.</strong>
                 </span>
@@ -337,7 +339,6 @@
         </div>
       </div>
 
-      <!-- 자재 단가표 팝업 오픈 버튼 (관리자 전용) -->
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-3">
         <div class="flex items-center justify-between">
           <label class="block text-[16px] font-black text-[#12261E] flex items-center gap-2">
@@ -778,16 +779,33 @@
   </div>
 
   <script>
-    const IMGBB_API_KEY = '50848129249d0bb58dbbc06da8af132d'; 
-    const OPENAI_API_KEY = "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"; 
-    
     const DB_BASE_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/accounts";
     let currentUserId = "";
 
-    function getValidApiKey() {
-      const hardcoded = IMGBB_API_KEY.trim();
-      if (hardcoded && hardcoded.length > 20) return hardcoded;
-      return null;
+    // [핵심 변경]: ImgBB 무료 서버에서 구글 파이어베이스 스토리지(GCS) 직결 업로드 엔진으로 전면 교체
+    // (용량 무제한, 속도 개선, 브라우저 튕김 방지)
+    async function uploadToFirebaseStorage(base64Data, folder="images") {
+        const bucket = "shinhwa-landnote.appspot.com"; 
+        const fileName = encodeURIComponent(`${folder}/img_${Date.now()}_${Math.floor(Math.random()*1000)}.jpg`);
+        const url = `https://firebasestorage.googleapis.com/v0/b/${bucket}/o?name=${fileName}`;
+
+        const res = await fetch(base64Data);
+        const blob = await res.blob();
+
+        const uploadRes = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': blob.type },
+            body: blob
+        });
+        const data = await uploadRes.json();
+        
+        // 업로드 실패 시 예외 처리 강화
+        if(data.error) {
+            console.error("Firebase Storage Upload Error:", data.error);
+            throw new Error("서버 스토리지 권한 오류입니다. 관리자에게 문의하세요.");
+        }
+
+        return `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${fileName}?alt=media&token=${data.downloadTokens}`;
     }
 
     let defaultClients = [];
@@ -857,6 +875,19 @@
         return encodeURIComponent(rawId.replace(/[.#$\[\]]/g, '_'));
     }
 
+    // 사업자등록증 이미지 선택 시 메모리에 임시 저장 (용량 압축)
+    let obBizLicenseBase64 = "";
+    function handleBizLicense(e) {
+        const file = e.target.files[0];
+        if(!file) return;
+        document.getElementById('obBizLicenseLabel').innerText = file.name;
+        document.getElementById('obBizLicenseLabel').classList.add('text-[#84CC16]');
+        
+        compressImage(file, (base64) => {
+            obBizLicenseBase64 = base64;
+        });
+    }
+
     async function saveOnboarding() {
         const id = document.getElementById('obId').value.trim();
         const pw = document.getElementById('obPw').value.trim();
@@ -869,9 +900,10 @@
         if (!id || !pw || !name || !ceo || !phone || !bizNum) return alert("모든 항목을 입력해 주세요.");
         if (/[.#$\[\]]/.test(id)) return alert("아이디에는 특수기호(., #, $, [, ])를 사용할 수 없습니다.");
         if (pw.length < 4) return alert("비밀번호는 4자리 이상 숫자로 설정해 주세요.");
+        if (!obBizLicenseBase64) return alert("사업자등록증 사진을 첨부해 주세요.");
         if (!privacyChecked) return alert("개인정보 수집 및 이용에 동의해 주세요.");
         
-        showLoadingOverlay("가입 처리 및 클라우드 생성 중...");
+        showLoadingOverlay("가입 서류를 서버에 업로드 중입니다...");
         try {
             const safeKey = getSafeKey(id);
             const res = await fetch(`${DB_BASE_URL}/${safeKey}/profile.json`);
@@ -889,8 +921,18 @@
                 return alert("이미 사용 중인 아이디입니다. 다른 아이디를 입력해주세요.");
             }
 
-            // 사업자등록증 파라미터(license) 완전 삭제, status를 pending으로 세팅
-            const profileData = { id: id, pw: pw, name: name, ceo: ceo, phone: phone, bizNum: bizNum, status: 'pending' };
+            // 1. 구글 클라우드 서버에 사업자등록증 사진 먼저 업로드
+            let licenseUrl = "";
+            try {
+                licenseUrl = await uploadToFirebaseStorage(obBizLicenseBase64, "licenses");
+            } catch(uploadErr) {
+                document.getElementById('loadingOverlay')?.remove();
+                alert("사진 업로드 중 서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+                return;
+            }
+
+            // 2. 가입 정보 저장 (거대한 Base64 텍스트 대신, 짧은 URL 링크만 저장 -> 브라우저 튕김 방지)
+            const profileData = { id: id, pw: pw, name: name, ceo: ceo, phone: phone, bizNum: bizNum, license: licenseUrl, status: 'pending' };
             
             await fetch(`${DB_BASE_URL}/${safeKey}/profile.json`, {
                 method: 'PUT',
@@ -902,6 +944,10 @@
             showLogin();
             document.getElementById('loginId').value = id;
             document.getElementById('loginPw').value = '';
+            obBizLicenseBase64 = ""; // 메모리 초기화
+            document.getElementById('obBizLicenseLabel').innerText = "사업자등록증 첨부 (필수)";
+            document.getElementById('obBizLicenseLabel').classList.remove('text-[#84CC16]');
+            
         } catch(e) {
             alert("서버 연결에 실패했습니다. 인터넷 연결을 확인하세요.");
         } finally {
@@ -949,8 +995,8 @@
                 currentUserId = id;
                 myCompanyProfile = profile;
                 
-                // 만약 구버전 계정에 엄청나게 큰 사진(license) 데이터가 남아있다면 브라우저 폭발 방지를 위해 삭제
-                if (myCompanyProfile.license) {
+                // 만약 구버전 계정에 엄청나게 큰 사진(license Base64) 데이터가 남아있다면 브라우저 폭발 방지를 위해 삭제
+                if (myCompanyProfile.license && myCompanyProfile.license.startsWith('data:image')) {
                     delete myCompanyProfile.license;
                 }
                 
@@ -1551,6 +1597,20 @@
       document.getElementById('quoteGrandTotal').innerText = total.toLocaleString('ko-KR') + "원";
     }
 
+    // [핵심 변경]: URL 저장 방식 개선 (서버 통신 강화)
+    async function uploadImagesToCloud(base64Array) {
+      const urls = [];
+      for(let b64 of base64Array) { 
+          try { 
+              const url = await uploadToFirebaseStorage(b64, "reports");
+              urls.push(url);
+          } catch (e) { 
+              console.error("업로드 오류:", e); 
+          } 
+      }
+      return urls;
+    }
+
     async function createShortCloudLink(payload, existingId = null) {
         let clean = JSON.parse(JSON.stringify(payload));
         let shortCloudId = existingId || ("doc_" + Date.now()); 
@@ -2083,12 +2143,6 @@
       lucide.createIcons();
     }
 
-    async function uploadImagesToCloud(base64Array) {
-      const apiKey = getValidApiKey(); if(!apiKey) return []; const urls = [];
-      for(let b64 of base64Array) { try { const formData = new FormData(); formData.append('image', b64.split(',')[1]); const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, { method: 'POST', body: formData }); const data = await res.json(); if(data.success) urls.push(data.data.url); } catch (e) { console.error("업로드 오류:", e); } }
-      return urls;
-    }
-
     function showLoadingOverlay(msg) {
       const overlay = document.createElement('div'); overlay.id = 'loadingOverlay'; overlay.className = 'fixed inset-0 z-[200] bg-black/80 flex flex-col items-center justify-center backdrop-blur-sm';
       overlay.innerHTML = `<div class="w-12 h-12 border-4 border-[#84CC16]/30 border-t-[#84CC16] rounded-full animate-spin mb-4"></div><div class="text-white font-bold text-[15px] mb-1">${msg}</div><div class="text-[#84CC16] text-[11px] font-medium">데이터를 안전하게 처리하고 있습니다.</div>`;
@@ -2189,7 +2243,7 @@
       let vat = 0; 
       let total = sum;
 
-      showLoadingOverlay("프리미엄 견적서 발행 중...");
+      showLoadingOverlay("프리미 견적서 발행 중...");
       try {
         const qUrls = await uploadImagesToCloud(quoteImages); 
         const quoteMemo = document.getElementById('quoteInputMemo') ? document.getElementById('quoteInputMemo').value : '';
