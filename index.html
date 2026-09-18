@@ -86,7 +86,6 @@
         <button onclick="showSignUp()" class="w-full py-4 bg-[#FEE500] text-[#12261E] rounded-[16px] font-extrabold text-[16px] shadow-[0_8px_20px_rgba(254,229,0,0.2)] hover:bg-[#FACC15] transition-all flex items-center justify-center gap-2">업체 등록하기 <i data-lucide="arrow-right" class="w-5 h-5"></i></button>
       </div>
 
-      <!-- 홍보 문구 -->
       <div class="mt-5 text-center flex flex-col items-center bg-[#000000]/30 py-3.5 px-4 rounded-xl border border-[#84CC16]/20 w-full shadow-inner">
         <p class="text-[12px] font-bold text-[#EAEBEA] tracking-wide leading-relaxed"><span class="text-[#84CC16]">'조경현장의 든든한 동반자!'</span><br>스마트한 조경노트와 성공하세요~!</p>
         <p class="text-[11px] text-[#A3A8A3] mt-2"><i data-lucide="phone-call" class="w-3.5 h-3.5 inline-block align-middle pb-0.5"></i> 시스템 도입 문의 : <a href="tel:010-4712-8523" class="font-bold text-[#60A5FA] hover:text-blue-300 underline transition-colors">010-4712-8523</a></p>
@@ -112,22 +111,15 @@
         <input type="text" id="obCompanyCeo" placeholder="대표자명 (예: 홍길동)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
         <input type="tel" id="obCompanyPhone" placeholder="대표 연락처 (예: 010-0000-0000)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
         <input type="text" id="obCompanyBizNum" placeholder="사업자등록번호 (예: 123-45-67890)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] mb-1 placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
-        
-        <!-- 사업자등록증 첨부 영역 -->
-        <div class="bg-[#0F1722] border border-white/20 rounded-[14px] p-3.5 flex items-center justify-between">
-            <span class="text-white text-[13px] font-bold" id="obBizLicenseLabel">사업자등록증 첨부 (필수)</span>
-            <label class="bg-white/10 hover:bg-white/20 text-white border border-white/20 text-[12px] font-bold py-2.5 px-3.5 rounded-[10px] cursor-pointer transition-colors flex items-center gap-1.5 shrink-0">
-                <i data-lucide="camera" class="w-4 h-4"></i> 파일 선택
-                <input type="file" id="obBizLicense" accept="image/*,application/pdf" class="hidden" onchange="handleBizLicense(event)">
-            </label>
-        </div>
+
+        <!-- 사업자등록증 첨부 영역 완전 삭제됨 -->
 
         <!-- 개인정보 이용동의서 체크박스 -->
         <label class="flex items-start gap-2 cursor-pointer text-[#A3A8A3] text-[11px] leading-relaxed text-left bg-black/20 p-4 rounded-[14px] border border-white/5 mt-3">
             <input type="checkbox" id="obPrivacyCheck" class="w-4 h-4 rounded border-white/20 bg-transparent text-[#84CC16] focus:ring-[#84CC16] mt-0.5 shrink-0">
             <span><strong class="text-white">[필수] 개인정보 수집 및 이용 동의</strong><br>
                 <span class="text-[10px] text-white/70 block mt-1.5 leading-snug">
-                수집항목: 상호, 대표자, 연락처, 사업자등록증, 거래처 목록 등<br>
+                수집항목: 상호, 대표자, 연락처, 사업자등록번호, 거래처 목록 등<br>
                 이용목적: 서비스 제공, 본인/업체 인증, 고객 지원<br>
                 <strong class="text-[#FEE500]">* 관리자가 신원 확인 및 업체 승인 목적으로 열람합니다.</strong>
                 </span>
@@ -151,7 +143,6 @@
         <p class="text-[11px] text-[#A3A8A3] leading-relaxed break-keep mb-2">* 등록된 업체 기본 정보는 임의로 수정할 수 없습니다. 상호 변경 등이 필요한 경우 관리자(010-4712-8523)에게 문의해 주십시오.</p>
         
         <div class="space-y-3">
-          <!-- 수정불가 읽기전용 필드들 -->
           <div>
               <label class="block text-[11px] font-bold text-[#A3A8A3] ml-1 mb-1">상호명 <span class="text-[10px] text-white/30 font-normal">(수정불가)</span></label>
               <input type="text" id="setCompanyName" readonly class="w-full bg-white/5 border border-white/10 rounded-[12px] px-4 py-3 text-white/50 text-[14px] font-bold outline-none cursor-not-allowed">
@@ -195,10 +186,8 @@
               <span id="company-name-header" class="font-black text-[19px] text-white tracking-tight">업체명</span>
               <span class="text-[10px] bg-[#84CC16]/20 text-[#84CC16] font-extrabold px-2 py-0.5 rounded uppercase tracking-widest border border-[#84CC16]/30">PRO</span>
               
-              <!-- 동기화 뱃지와 설정 버튼을 나란히 배치 -->
               <div class="flex items-center gap-1.5 ml-1">
                  <span id="cloudStatusBadge" class="text-[10px] bg-blue-500/20 text-blue-400 font-extrabold px-2 py-0.5 rounded uppercase tracking-widest border border-blue-500/30 flex items-center gap-1"><i data-lucide="cloud" class="w-3 h-3"></i> 동기화 대기</span>
-                 <!-- 사용자 정보 수정(설정) 버튼 -->
                  <button onclick="openSettings()" class="w-7 h-7 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all border border-white/20 shadow-sm"><i data-lucide="settings" class="w-3.5 h-3.5 text-white"></i></button>
               </div>
           </div>
@@ -863,16 +852,9 @@
         document.getElementById('authView').classList.remove('hidden');
     }
 
-    let obBizLicenseBase64 = "";
-    function handleBizLicense(e) {
-        const file = e.target.files[0];
-        if(!file) return;
-        document.getElementById('obBizLicenseLabel').innerText = file.name;
-        document.getElementById('obBizLicenseLabel').classList.add('text-[#84CC16]');
-        
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => { obBizLicenseBase64 = reader.result; };
+    // 아이디를 안전한 Firebase Key로 변환하는 함수
+    function getSafeKey(rawId) {
+        return encodeURIComponent(rawId.replace(/[.#$\[\]]/g, '_'));
     }
 
     async function saveOnboarding() {
@@ -885,28 +867,38 @@
         const privacyChecked = document.getElementById('obPrivacyCheck').checked;
 
         if (!id || !pw || !name || !ceo || !phone || !bizNum) return alert("모든 항목을 입력해 주세요.");
+        if (/[.#$\[\]]/.test(id)) return alert("아이디에는 특수기호(., #, $, [, ])를 사용할 수 없습니다.");
         if (pw.length < 4) return alert("비밀번호는 4자리 이상 숫자로 설정해 주세요.");
-        if (!obBizLicenseBase64) return alert("사업자등록증 사본을 첨부해 주세요.");
         if (!privacyChecked) return alert("개인정보 수집 및 이용에 동의해 주세요.");
         
         showLoadingOverlay("가입 처리 및 클라우드 생성 중...");
         try {
-            const res = await fetch(`${DB_BASE_URL}/${id}/profile.json`);
+            const safeKey = getSafeKey(id);
+            const res = await fetch(`${DB_BASE_URL}/${safeKey}/profile.json`);
+            
+            // Firebase 규칙 만료 체크
+            if(res.status === 401 || res.status === 403) {
+                document.getElementById('loadingOverlay')?.remove();
+                alert("❌ 파이어베이스(데이터베이스) 보안 규칙 기한이 만료되었습니다!\n관리자 콘솔에서 보안 규칙의 읽기/쓰기를 수정해야 합니다.");
+                return;
+            }
+
             const existing = await res.json();
-            if(existing) {
+            if(existing && !existing.error) {
                 document.getElementById('loadingOverlay')?.remove();
                 return alert("이미 사용 중인 아이디입니다. 다른 아이디를 입력해주세요.");
             }
 
-            const profileData = { id, pw, name, ceo, phone, bizNum, license: obBizLicenseBase64, status: 'pending' };
+            // 사업자등록증 파라미터(license) 완전 삭제, status를 pending으로 세팅
+            const profileData = { id: id, pw: pw, name: name, ceo: ceo, phone: phone, bizNum: bizNum, status: 'pending' };
             
-            await fetch(`${DB_BASE_URL}/${id}/profile.json`, {
+            await fetch(`${DB_BASE_URL}/${safeKey}/profile.json`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(profileData)
             });
             
-            alert("✅ 업체 등록 신청이 완료되었습니다!\n(현재 데모 환경에서는 즉시 자동 승인 처리됩니다.)\n로그인하여 서비스를 시작하세요.");
+            alert("✅ 사용자 업체 등록 신청이 완료되었습니다!\n관리자의 가입 승인 후 이용이 가능합니다.");
             showLogin();
             document.getElementById('loginId').value = id;
             document.getElementById('loginPw').value = '';
@@ -923,19 +915,46 @@
         if(!id || !pw) return alert("아이디와 비밀번호를 입력해주세요.");
         
         showLoadingOverlay("클라우드 서버에 접속 중...");
+        
+        let profile = null;
         try {
-            const res = await fetch(`${DB_BASE_URL}/${id}/profile.json`);
-            const profile = await res.json();
+            const safeKey = getSafeKey(id);
+            const res = await fetch(`${DB_BASE_URL}/${safeKey}/profile.json`);
             
-            if(!profile) {
+            // 데이터베이스 규칙 만료 등 치명적 에러 방어
+            if(res.status === 401 || res.status === 403) {
+                document.getElementById('loadingOverlay')?.remove();
+                alert("❌ 데이터베이스 접근이 거부되었습니다.\n파이어베이스 규칙 만료 또는 권한 오류입니다.");
+                return;
+            }
+            if(!res.ok) throw new Error("서버 응답 오류");
+            
+            profile = await res.json();
+        } catch(e) {
+            document.getElementById('loadingOverlay')?.remove();
+            alert("로그인 중 서버 통신 오류가 발생했습니다: " + e.message);
+            return;
+        }
+
+        try {
+            if(!profile || profile.error) {
                 alert("존재하지 않는 아이디입니다.");
             } else if(profile.pw !== pw) {
                 alert("비밀번호가 일치하지 않습니다.");
+            } else if(profile.status === 'pending') {
+                alert("⏳ 관리자의 가입 승인을 기다리고 있습니다.\n승인 완료 후 로그인할 수 있습니다.");
+            } else if(profile.status === 'suspended') {
+                alert("⛔ 이용이 정지된 계정입니다. 관리자에게 문의하세요.");
             } else {
                 currentUserId = id;
                 myCompanyProfile = profile;
                 
-                localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(profile));
+                // 만약 구버전 계정에 엄청나게 큰 사진(license) 데이터가 남아있다면 브라우저 폭발 방지를 위해 삭제
+                if (myCompanyProfile.license) {
+                    delete myCompanyProfile.license;
+                }
+                
+                localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile));
                 localStorage.setItem('shinhwa_pro_logged_in_id', id);
                 
                 if(document.getElementById('autoLoginCheck').checked) {
@@ -954,7 +973,7 @@
                 switchView('admin', false);
             }
         } catch(e) {
-            alert("서버 통신 오류가 발생했습니다.");
+            console.error(e);
         } finally {
             document.getElementById('loadingOverlay')?.remove();
         }
@@ -975,7 +994,7 @@
         document.getElementById('setCompanyCeo').value = myCompanyProfile.ceo || '';
         document.getElementById('setCompanyPhone').value = myCompanyProfile.phone || '';
         document.getElementById('setCompanyBizNum').value = myCompanyProfile.bizNum || '';
-        document.getElementById('setCompanyPw').value = myCompanyProfile.pw || '';
+        document.getElementById('setCompanyPw').value = ''; // 항상 빈칸으로 시작
         
         const modal = document.getElementById('settingsModal');
         const box = document.getElementById('settingsBox');
@@ -998,7 +1017,6 @@
         if(!fromPopstate && history.state && history.state.modalOpen) history.back();
     }
 
-    // 내 정보 설정 저장 함수
     async function saveSettings() {
         const pw = document.getElementById('setCompanyPw').value.trim();
 
@@ -1007,16 +1025,14 @@
 
         showLoadingOverlay("비밀번호 업데이트 중...");
         try {
-            // 다른 정보는 덮어쓰지 않고 비밀번호만 변경
             myCompanyProfile.pw = pw;
-
             localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile));
             
-            // 클라우드 서버에 비밀번호 변경사항 즉각 덮어쓰기
-            await fetch(`${DB_BASE_URL}/${currentUserId}/profile.json`, {
-                method: 'PUT',
+            const safeKey = getSafeKey(currentUserId);
+            await fetch(`${DB_BASE_URL}/${safeKey}/profile.json`, {
+                method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(myCompanyProfile)
+                body: JSON.stringify({ pw: pw })
             });
 
             alert("비밀번호가 안전하게 변경되었습니다.");
@@ -1029,7 +1045,8 @@
     }
 
     async function syncWithCloud() {
-        const DATA_URL = `${DB_BASE_URL}/${currentUserId}/data.json`;
+        const safeKey = getSafeKey(currentUserId);
+        const DATA_URL = `${DB_BASE_URL}/${safeKey}/data.json`;
         try {
             const res = await fetch(DATA_URL);
             let cloudData = await res.json();
@@ -1068,7 +1085,8 @@
     }
 
     function updateData(key, dataObj) {
-        const DATA_URL = `${DB_BASE_URL}/${currentUserId}/data/${key}.json`;
+        const safeKey = getSafeKey(currentUserId);
+        const DATA_URL = `${DB_BASE_URL}/${safeKey}/data/${key}.json`;
         fetch(DATA_URL, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -1538,7 +1556,6 @@
         let shortCloudId = existingId || ("doc_" + Date.now()); 
         
         try {
-            // 외부 공유 링크용 글로벌 저장소 유지 (고객 접속용)
             const uploadRes = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_shared_docs/${shortCloudId}.json`, { 
                 method: 'PUT', 
                 headers: { 'Content-Type': 'application/json' }, 
@@ -1601,7 +1618,6 @@
         }
     }
 
-    // [핵심 변경] 로그인 상태 체크 로직
     window.addEventListener('DOMContentLoaded', async () => {
       loadQuoteTemplate('residential'); 
 
@@ -1655,7 +1671,6 @@
           document.body.innerHTML = `<div class="p-10 text-center font-bold text-lg mt-20 text-white">존재하지 않거나 보안상 만료된 문서입니다.</div>`;
         }
       } else {
-        // [로그인 로직]
         const savedId = localStorage.getItem('shinhwa_pro_logged_in_id');
         const autoLogin = localStorage.getItem('shinhwa_pro_auto_login');
         
@@ -1665,7 +1680,6 @@
             applyCompanyProfile();
             document.getElementById('mainHeader').style.display = 'block';
             
-            // 병렬로 동기화 후 화면 진입
             syncWithCloud().then(() => {
                 switchView('admin', false);
             });
