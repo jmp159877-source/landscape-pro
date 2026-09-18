@@ -700,7 +700,8 @@
   <script>
     const IMGBB_API_KEY = '50848129249d0bb58dbbc06da8af132d'; 
     const OPENAI_API_KEY = "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"; 
-    const MAIN_DB_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/main_db";
+    // PRO 전용 DB 통신 경로로 완벽 분리
+    const MAIN_DB_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_db";
     
     function getValidApiKey() {
       const hardcoded = IMGBB_API_KEY.trim();
@@ -740,7 +741,8 @@
     let editingRecordId = null;
     let activeTextEditorId = null;
 
-    let myCompanyProfile = JSON.parse(localStorage.getItem('shinhwa_my_profile'));
+    // PRO 전용 로컬스토리지 키로 완벽 분리
+    let myCompanyProfile = JSON.parse(localStorage.getItem('shinhwa_pro_my_profile'));
 
     function applyCompanyProfile() {
         if (!myCompanyProfile) return;
@@ -773,7 +775,7 @@
         if (pin.length !== 4) return alert("비밀번호는 4자리로 설정해 주세요.");
 
         myCompanyProfile = { name, ceo, phone, bizNum, pin };
-        localStorage.setItem('shinhwa_my_profile', JSON.stringify(myCompanyProfile));
+        localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile));
         
         applyCompanyProfile();
         document.getElementById('onboardingView').classList.add('hidden');
@@ -787,9 +789,9 @@
             
             if (!cloudData) {
                 cloudData = {
-                    clients: JSON.parse(localStorage.getItem('shinhwa_clients')) || defaultClients,
-                    records: JSON.parse(localStorage.getItem('shinhwa_records')) || [],
-                    materials: JSON.parse(localStorage.getItem('shinhwa_materials')) || defaultMaterials
+                    clients: JSON.parse(localStorage.getItem('shinhwa_pro_clients')) || defaultClients,
+                    records: JSON.parse(localStorage.getItem('shinhwa_pro_records')) || [],
+                    materials: JSON.parse(localStorage.getItem('shinhwa_pro_materials')) || defaultMaterials
                 };
                 await fetch(`${MAIN_DB_URL}.json`, {
                     method: 'PUT',
@@ -802,9 +804,9 @@
             records = cloudData.records || [];
             materialsData = cloudData.materials || [];
             
-            localStorage.setItem('shinhwa_clients', JSON.stringify(clients));
-            localStorage.setItem('shinhwa_records', JSON.stringify(records));
-            localStorage.setItem('shinhwa_materials', JSON.stringify(materialsData));
+            localStorage.setItem('shinhwa_pro_clients', JSON.stringify(clients));
+            localStorage.setItem('shinhwa_pro_records', JSON.stringify(records));
+            localStorage.setItem('shinhwa_pro_materials', JSON.stringify(materialsData));
             
             renderClientSelect();
             renderClientsList();
@@ -816,9 +818,9 @@
                 badge.className = 'text-[10px] bg-blue-500/20 text-blue-400 font-extrabold px-2 py-0.5 rounded uppercase tracking-widest border border-blue-500/30 flex items-center gap-1';
             }
         } catch(e) {
-            clients = JSON.parse(localStorage.getItem('shinhwa_clients')) || defaultClients;
-            records = JSON.parse(localStorage.getItem('shinhwa_records')) || [];
-            materialsData = JSON.parse(localStorage.getItem('shinhwa_materials')) || defaultMaterials;
+            clients = JSON.parse(localStorage.getItem('shinhwa_pro_clients')) || defaultClients;
+            records = JSON.parse(localStorage.getItem('shinhwa_pro_records')) || [];
+            materialsData = JSON.parse(localStorage.getItem('shinhwa_pro_materials')) || defaultMaterials;
             renderClientSelect();
             renderClientsList();
             renderQuoteList();
@@ -834,7 +836,7 @@
     }
 
     function updateData(key, dataObj) {
-        localStorage.setItem('shinhwa_' + key, JSON.stringify(dataObj));
+        localStorage.setItem('shinhwa_pro_' + key, JSON.stringify(dataObj));
         fetch(`${MAIN_DB_URL}/${key}.json`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -1304,7 +1306,8 @@
         let shortCloudId = existingId || ("doc_" + Date.now()); 
         
         try {
-            const uploadRes = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/records/${shortCloudId}.json`, { 
+            // PRO 전용 DB 저장소
+            const uploadRes = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_records/${shortCloudId}.json`, { 
                 method: 'PUT', 
                 headers: { 'Content-Type': 'application/json' }, 
                 body: JSON.stringify(clean) 
@@ -1318,7 +1321,7 @@
             return null;
         }
 
-        let savedRecords = JSON.parse(localStorage.getItem('shinhwa_records')) || [];
+        let savedRecords = JSON.parse(localStorage.getItem('shinhwa_pro_records')) || [];
         let existingIdx = savedRecords.findIndex(r => r.id === shortCloudId);
         
         let recordObj = {
@@ -1391,7 +1394,7 @@
               loadedData = JSON.parse(decodeURIComponent(escape(atob(encodedData))));
           } else if (reportId) {
               try {
-                  const res = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/records/${reportId}.json`);
+                  const res = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_records/${reportId}.json`);
                   if (res.ok) {
                       const json = await res.json();
                       if (json && Object.keys(json).length > 0) {
@@ -1403,7 +1406,7 @@
               }
               
               if (!loadedData) {
-                  const savedRecords = JSON.parse(localStorage.getItem('shinhwa_records')) || [];
+                  const savedRecords = JSON.parse(localStorage.getItem('shinhwa_pro_records')) || [];
                   const foundRec = savedRecords.find(rec => rec.id === reportId);
                   if (foundRec && foundRec.payload) {
                       loadedData = foundRec.payload;
@@ -1419,7 +1422,7 @@
           document.body.innerHTML = `<div class="p-10 text-center font-bold text-lg mt-20 text-white">존재하지 않거나 보안상 만료된 문서입니다.</div>`;
         }
       } else {
-        localStorage.removeItem('shinhwa_auth'); 
+        localStorage.removeItem('shinhwa_pro_auth'); 
         if (!myCompanyProfile) {
           document.getElementById('onboardingView').classList.remove('hidden');
         } else {
@@ -1433,7 +1436,7 @@
     async function loginAdmin() {
       const inputPw = document.getElementById('adminPwInput').value;
       if(myCompanyProfile && inputPw === myCompanyProfile.pin) {
-        localStorage.setItem('shinhwa_auth', 'true');
+        localStorage.setItem('shinhwa_pro_auth', 'true');
         document.getElementById('loginView').classList.add('hidden');
         document.getElementById('mainHeader').style.display = 'block';
         
@@ -1448,7 +1451,7 @@
 
     function logoutAdmin() {
       if(confirm('시스템을 안전하게 잠그시겠습니까?\n로그인 화면으로 이동합니다.')) {
-        localStorage.removeItem('shinhwa_auth'); 
+        localStorage.removeItem('shinhwa_pro_auth'); 
         location.reload(); 
       }
     }
@@ -1945,7 +1948,7 @@
       let vat = 0; 
       let total = sum;
 
-      showLoadingOverlay("프리미엄 견적서 발행 중...");
+      showLoadingOverlay("프리미 견적서 발행 중...");
       try {
         const qUrls = await uploadImagesToCloud(quoteImages); 
         const quoteMemo = document.getElementById('quoteInputMemo') ? document.getElementById('quoteInputMemo').value : '';
