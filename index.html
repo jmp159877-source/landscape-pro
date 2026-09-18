@@ -136,14 +136,23 @@
     </div>
     
     <div class="max-w-md mx-auto mt-4">
-      <!-- 시인성 극대화 된 메인 메뉴 목록 (전체 배경 연두색, 글씨 확대, 색상 흰색/남색 교체) -->
+      <!-- 1. 메인 4개 탭 (연두색 박스, 남색 글씨 통일) -->
       <nav class="grid grid-cols-2 gap-2 bg-[#84CC16] p-2.5 rounded-2xl shadow-[0_4px_15px_rgba(132,204,22,0.3)] border border-[#65A30D]">
-        <button id="tabAdmin" onclick="switchView('admin')" class="w-full py-3.5 rounded-[12px] bg-white text-[#12261E] font-black text-[16px] shadow-md transition-all text-center flex items-center justify-center gap-1.5 border border-white/50">일지작성</button>
-        <button id="tabQuote" onclick="switchView('quote')" class="w-full py-3.5 rounded-[12px] bg-transparent text-white font-black text-[15px] drop-shadow-sm hover:bg-black/10 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent">견적작성</button>
-        <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-3.5 rounded-[12px] bg-transparent text-white font-black text-[15px] drop-shadow-sm hover:bg-black/10 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent">견적보관함</button>
-        <button id="tabClient" onclick="switchView('clients')" class="w-full py-3.5 rounded-[12px] bg-transparent text-white font-black text-[15px] drop-shadow-sm hover:bg-black/10 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent">거래처관리</button>
-        <button id="tabLens" onclick="switchView('lens')" class="col-span-2 w-full py-3.5 rounded-[12px] bg-transparent text-white font-black text-[15px] drop-shadow-sm hover:bg-black/10 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent"><i data-lucide="scan" class="w-4 h-4"></i> 수목식별 렌즈</button>
+        <button id="tabAdmin" onclick="switchView('admin')" class="w-full py-3.5 rounded-[12px] bg-white text-[#1E3A8A] font-black text-[16px] shadow-md transition-all text-center flex items-center justify-center gap-1.5 border border-white/50">일지작성</button>
+        <button id="tabQuote" onclick="switchView('quote')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-black text-[15px] hover:bg-black/5 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent">견적작성</button>
+        <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-black text-[15px] hover:bg-black/5 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent">견적보관함</button>
+        <button id="tabClient" onclick="switchView('clients')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-black text-[15px] hover:bg-black/5 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent">거래처관리</button>
       </nav>
+      <!-- 2. 수목식별렌즈 단독 남색 박스로 분리 -->
+      <button id="tabLens" onclick="switchView('lens')" class="w-full mt-2.5 py-3.5 rounded-2xl bg-[#1E3A8A] text-white font-black text-[15px] shadow-md hover:bg-[#172554] transition-all text-center flex items-center justify-center gap-1.5 border border-[#172554]">
+        <i data-lucide="scan" class="w-4 h-4 text-[#84CC16]"></i> 수목식별 렌즈
+      </button>
+      
+      <!-- 메인화면 홍보 배너 -->
+      <div class="mt-3 text-center flex flex-col items-center bg-[#0F1722] border border-white/5 py-2.5 rounded-xl shadow-inner">
+        <p class="text-[11px] font-bold text-[#EAEBEA] tracking-wide"><span class="text-[#84CC16]">'조경현장의 든든한 동반자!'</span> 스마트한 조경노트와 성공하세요~!</p>
+        <p class="text-[10px] text-[#A3A8A3] mt-1"><i data-lucide="phone-call" class="w-3 h-3 inline-block align-middle pb-0.5"></i> 시스템 도입 문의 : <a href="tel:010-4712-8523" class="font-bold text-blue-400 hover:text-blue-300 underline transition-colors">010-4712-8523</a></p>
+      </div>
     </div>
   </header>
 
@@ -719,6 +728,7 @@
     const IMGBB_API_KEY = '50848129249d0bb58dbbc06da8af132d'; 
     const OPENAI_API_KEY = "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"; 
     
+    // [핵심 변경] 클라우드 로그인/가입을 위한 계정 전용 독립 DB 설계
     const DB_BASE_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/accounts";
     let currentUserId = "";
 
@@ -1553,15 +1563,19 @@
         if(el) el.classList.add('hidden');
       });
       
-      const tabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient', 'tabLens'];
-      tabs.forEach(t => {
+      const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient'];
+      mainTabs.forEach(t => {
         const el = document.getElementById(t);
         if(el) {
-          let baseClass = "w-full py-3.5 rounded-[12px] bg-transparent text-white font-black text-[15px] hover:bg-black/10 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent drop-shadow-sm";
-          if (t === 'tabLens') baseClass = "col-span-2 " + baseClass;
-          el.className = baseClass;
+          el.className = "w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-black text-[15px] hover:bg-black/5 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent";
         }
       });
+      
+      const lensTab = document.getElementById('tabLens');
+      if(lensTab) {
+          lensTab.className = "w-full mt-2.5 py-3.5 rounded-2xl bg-[#1E3A8A] text-white font-black text-[15px] shadow-md hover:bg-[#172554] transition-all text-center flex items-center justify-center gap-1.5 border border-[#172554]";
+          lensTab.innerHTML = '<i data-lucide="scan" class="w-4 h-4 text-[#84CC16]"></i> 수목식별 렌즈';
+      }
       
       let activeTabId = '';
       if (mode === 'admin') { document.getElementById('adminView').classList.remove('hidden'); activeTabId = 'tabAdmin'; }
@@ -1578,9 +1592,12 @@
       if(activeTabId) {
         const activeEl = document.getElementById(activeTabId);
         if(activeEl) {
-          let activeClass = "w-full py-3.5 rounded-[12px] bg-white text-[#12261E] font-black text-[16px] shadow-md transition-all text-center flex items-center justify-center gap-1.5 border border-white/50";
-          if (activeTabId === 'tabLens') activeClass = "col-span-2 " + activeClass;
-          activeEl.className = activeClass;
+          if (activeTabId === 'tabLens') {
+              activeEl.className = "w-full mt-2.5 py-3.5 rounded-2xl bg-[#84CC16] text-[#1E3A8A] font-black text-[16px] shadow-[0_4px_12px_rgba(132,204,22,0.3)] transition-all text-center flex items-center justify-center gap-1.5 border border-[#65A30D]";
+              activeEl.innerHTML = '<i data-lucide="scan" class="w-5 h-5 text-[#1E3A8A]"></i> 수목식별 렌즈';
+          } else {
+              activeEl.className = "w-full py-3.5 rounded-[12px] bg-white text-[#1E3A8A] font-black text-[16px] shadow-md transition-all text-center flex items-center justify-center gap-1.5 border border-white/50";
+          }
         }
       }
       
