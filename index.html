@@ -129,7 +129,7 @@
         </label>
       </div>
       
-      <button onclick="saveOnboarding()" class="w-full py-4.5 bg-[#84CC16] text-[#12261E] rounded-[16px] font-black text-[18px] hover:bg-[#9BE32D] shadow-[0_8px_20px_rgba(132,204,22,0.2)] transition-all mb-3 shrink-0">등록 신청 및 승인요청</button>
+      <button onclick="saveOnboarding()" class="w-full py-4.5 bg-[#84CC16] text-[#12261E] rounded-[16px] font-extrabold text-[18px] hover:bg-[#9BE32D] shadow-[0_8px_20px_rgba(132,204,22,0.2)] transition-all mb-3 shrink-0">등록 신청 및 승인요청</button>
       <button onclick="showLogin()" class="w-full py-3 bg-transparent text-[#A3A8A3] rounded-[16px] font-bold text-[14px] hover:text-white transition-all shrink-0">이전 화면으로 돌아가기</button>
     </div>
   </section>
@@ -193,7 +193,7 @@
                  <span id="cloudStatusBadge" class="text-[11px] bg-blue-500/20 text-blue-400 font-black px-2 py-0.5 rounded uppercase tracking-widest border border-blue-500/30 flex items-center gap-1"><i data-lucide="cloud" class="w-3.5 h-3.5"></i> 연동됨</span>
                  <!-- 사용자 정보 수정(설정) 버튼 -->
                  <button onclick="openSettings()" class="w-8 h-8 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all border border-white/20 shadow-sm"><i data-lucide="settings" class="w-4 h-4 text-white"></i></button>
-                 <!-- 로그아웃 버튼 (새 위치) -->
+                 <!-- 로그아웃 버튼 -->
                  <button onclick="logoutAdmin()" class="w-8 h-8 bg-red-500/10 hover:bg-red-500/20 rounded-full flex items-center justify-center transition-all border border-red-500/20 shadow-sm"><i data-lucide="power" class="w-4 h-4 text-red-500"></i></button>
               </div>
           </div>
@@ -207,9 +207,10 @@
       <nav class="grid grid-cols-3 gap-2 bg-[#84CC16] p-2.5 rounded-2xl shadow-[0_4px_15px_rgba(132,204,22,0.3)] border border-[#65A30D]">
         <button id="tabAdmin" onclick="switchView('admin')" class="w-full py-3.5 rounded-[12px] bg-white text-[#12261E] font-black text-[14px] shadow-md transition-all text-center flex flex-col items-center justify-center gap-1 border border-white/50"><i data-lucide="pen-tool" class="w-5 h-5"></i>일지작성</button>
         <button id="tabQuote" onclick="switchView('quote')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="calculator" class="w-5 h-5"></i>견적작성</button>
-        <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="folder-open" class="w-5 h-5"></i>보관함</button>
-        
-        <button id="tabClient" onclick="switchView('clients')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="building-2" class="w-5 h-5"></i>거래처</button>
+        <!-- 핀셋 수정 완료: 견적보관함 -->
+        <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="folder-open" class="w-5 h-5"></i>견적보관함</button>
+        <!-- 핀셋 수정 완료: 거래처 목록 -->
+        <button id="tabClient" onclick="switchView('clients')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="building-2" class="w-5 h-5"></i>거래처 목록</button>
         <button id="tabContacts" onclick="switchView('contacts')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="users" class="w-5 h-5"></i>연락처</button>
         <button id="tabLens" onclick="switchView('lens')" class="w-full py-3.5 rounded-[12px] bg-[#1E3A8A] text-white font-black text-[14px] shadow-md hover:bg-[#172554] transition-all text-center flex flex-col items-center justify-center gap-1 border border-[#172554]"><i data-lucide="scan" class="w-5 h-5 text-[#84CC16]"></i>AI렌즈</button>
       </nav>
@@ -646,7 +647,7 @@
   <div id="textEditorModal" class="hidden fixed inset-0 z-[2500] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200">
     <div class="bg-white w-full max-w-sm rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200" id="textEditorBox" onclick="event.stopPropagation()">
       <div class="p-5 border-b border-[#EAEBEA] flex justify-between items-center bg-[#F9F9F8]">
-        <h3 class="text-[16px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="edit-3" class="w-5 h-5 text-[#84CC16]"></i> 내용 상세 수정</h3>
+        <h3 class="text-[15px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="edit-3" class="w-5 h-5 text-[#84CC16]"></i> 내용 상세 수정</h3>
         <button onclick="closeTextEditor()" class="text-[#A3A8A3] hover:text-[#12261E] p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
       <div class="p-5 bg-white">
