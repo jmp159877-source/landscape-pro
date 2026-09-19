@@ -76,7 +76,6 @@
       </button>
       <button onclick="switchTab('companies')" class="nav-btn w-full flex items-center gap-3 px-4 py-3.5 rounded-[12px] text-[#94A3B8] hover:bg-white/5 hover:text-white font-bold transition-all"><i data-lucide="building-2" class="w-5 h-5"></i> 사용 업체 관리</button>
       
-      <!-- 플랫폼 설정 탭 -->
       <button onclick="switchTab('settings')" class="nav-btn w-full flex items-center gap-3 px-4 py-3.5 rounded-[12px] text-[#94A3B8] hover:bg-white/5 hover:text-white font-bold transition-all"><i data-lucide="settings" class="w-5 h-5"></i> 플랫폼 설정</button>
     </nav>
     <div class="mt-auto">
@@ -165,6 +164,7 @@
       </div>
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
         <div class="glass-panel rounded-[24px] p-6 space-y-4">
             <h3 class="text-white font-black text-[16px] flex items-center gap-2 mb-2"><i data-lucide="shield" class="w-5 h-5 text-blue-400"></i> 마스터 관리자 계정 변경</h3>
             <div class="space-y-3">
@@ -288,7 +288,7 @@
     </div>
   </div>
 
-  <!-- 🔥 신규 핀셋: 업체 정보 강제 수정 모달 (테스트용) 🔥 -->
+  <!-- 업체 정보 강제 수정 모달 (테스트용) -->
   <div id="editCompanyModal" class="hidden fixed inset-0 z-[6000] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200" onclick="closeEditCompanyModal()">
     <div class="bg-[#0F172A] w-full max-w-md rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-white/10" id="editCompanyBox" onclick="event.stopPropagation()">
       <div class="p-5 border-b border-white/10 flex justify-between items-center bg-[#1E293B]">
@@ -335,8 +335,11 @@
   </div>
 
   <script>
+    // ==========================================
+    // 마스터 기본 세팅 및 서버 연동
+    // ==========================================
     const DB_BASE_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/accounts";
-    const SETTINGS_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/settings";
+    const SETTINGS_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/settings"; 
     
     let allAccounts = [];
     let knownPendingIds = new Set();
@@ -344,6 +347,9 @@
     let autoRefreshTimer = null;
     let masterRealId = "admin";
     let masterRealPw = "1234";
+
+    // 🔥 신규 추가: 팝업 열 때 체크된 상태를 안전하게 저장하는 변수
+    let currentTargetNoticeIds = [];
 
     async function initMasterSettings() {
         try {
@@ -479,7 +485,6 @@
             renderPendingList(pendingAccounts);
             renderActiveList(activeAccounts);
 
-            lucide.createIcons();
         } catch (e) { console.error("서버 통신 실패:", e); }
     }
 
@@ -584,6 +589,9 @@
     }
 
     function renderActiveList(activeAccounts) {
+        // 🔥 핵심 핀셋: 자동 갱신 시 체크 풀림 방지
+        const checkedIds = getSelectedCompanies();
+        
         const tbody = document.getElementById('activeCompaniesTbody');
         tbody.innerHTML = '';
 
@@ -617,7 +625,6 @@
                         <i data-lucide="database" class="w-3.5 h-3.5 inline"></i> 데이터 열람
                     </button>
 
-                    <!-- 🔥 신규: 업체 강제 수정 버튼 -->
                     <button onclick="openEditCompanyModal('${acc.id}')" class="px-3 py-2 bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20 rounded-[8px] text-[11px] font-bold hover:bg-[#F59E0B]/20 transition-all mr-1" title="정보 강제 수정 (테스트용)">
                         <i data-lucide="edit-3" class="w-3.5 h-3.5 inline"></i> 수정
                     </button>
@@ -632,11 +639,83 @@
             `;
             tbody.appendChild(tr);
         });
+        
+        // 🔥 체크박스 복구 로직 (자동 새로고침 방어)
+        document.querySelectorAll('.company-check').forEach(cb => {
+            if(checkedIds.includes(cb.value)) cb.checked = true;
+        });
+        
         lucide.createIcons();
     }
 
     // ==========================================
-    // 🔥 신규: 업체 정보 강제 수정 (테스트용)
+    // 타겟팅 공지 팝업 기능 로직 (오류 수정됨)
+    // ==========================================
+    function toggleAllCompanies() {
+        const isChecked = document.getElementById('selectAllCompanies').checked;
+        const checkboxes = document.querySelectorAll('.company-check');
+        checkboxes.forEach(cb => cb.checked = isChecked);
+    }
+
+    function getSelectedCompanies() {
+        const checkboxes = document.querySelectorAll('.company-check:checked');
+        return Array.from(checkboxes).map(cb => cb.value);
+    }
+
+    function openTargetNoticeModal() {
+        currentTargetNoticeIds = getSelectedCompanies(); // 🔥 모달 여는 순간의 명단 고정 저장
+        
+        if (currentTargetNoticeIds.length === 0) {
+            alert("공지/팝업을 전송할 업체를 목록에서 먼저 체크해 주세요.");
+            return;
+        }
+        document.getElementById('targetNoticeCount').innerText = currentTargetNoticeIds.length;
+        document.getElementById('targetNoticeText').value = '';
+        
+        const modal = document.getElementById('targetNoticeModal');
+        modal.classList.remove('hidden');
+        setTimeout(() => modal.classList.remove('opacity-0'), 10);
+    }
+
+    function closeTargetNoticeModal() {
+        const modal = document.getElementById('targetNoticeModal');
+        modal.classList.add('opacity-0');
+        setTimeout(() => modal.classList.add('hidden'), 200);
+    }
+
+    async function sendTargetNotice() {
+        const selectedIds = currentTargetNoticeIds; // 🔥 고정 저장된 아이디 배열 사용
+        const msg = document.getElementById('targetNoticeText').value.trim();
+        
+        if (!msg) return alert("전송할 메시지 내용을 입력해 주세요.");
+        if (!confirm(`선택한 ${selectedIds.length}개 업체에게 이 팝업 메시지를 전송하시겠습니까?`)) return;
+
+        try {
+            const promises = selectedIds.map(id => {
+                const safeId = encodeURIComponent(id);
+                return fetch(`${DB_BASE_URL}/${safeId}/profile.json`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ targetNotice: msg })
+                });
+            });
+
+            await Promise.all(promises);
+            alert(`✅ ${selectedIds.length}개 업체로 팝업 전송이 완료되었습니다!\n(해당 업체가 다음에 앱을 켤 때 팝업이 노출됩니다)`);
+            closeTargetNoticeModal();
+            
+            document.getElementById('selectAllCompanies').checked = false;
+            document.querySelectorAll('.company-check').forEach(cb => cb.checked = false);
+            currentTargetNoticeIds = []; // 금고 비우기
+
+        } catch (e) {
+            alert("전송 중 서버 오류가 발생했습니다.");
+            console.error(e);
+        }
+    }
+
+    // ==========================================
+    // 업체 정보 강제 수정 로직
     // ==========================================
     function openEditCompanyModal(id) {
         const acc = allAccounts.find(a => a.id === id);
@@ -676,7 +755,6 @@
 
         try {
             if (oldId !== newId) {
-                // 아이디(DB Key)가 바뀐 경우: 데이터 복사 후 이전 폴더 삭제
                 const safeNewId = encodeURIComponent(newId);
                 const safeOldId = encodeURIComponent(oldId);
 
@@ -686,31 +764,24 @@
                     return alert("이미 존재하는 아이디입니다. 다른 아이디를 입력해주세요.");
                 }
 
-                // 기존 데이터 통째로 가져오기
                 const oldRes = await fetch(`${DB_BASE_URL}/${safeOldId}.json`);
                 const oldData = await oldRes.json();
 
-                // 프로필 정보 덮어쓰기
                 oldData.profile.id = newId;
                 oldData.profile.name = newName;
                 oldData.profile.ceo = newCeo;
                 oldData.profile.phone = newPhone;
                 oldData.profile.bizNum = newBizNum;
 
-                // 새 폴더에 데이터 통째로 심기
                 await fetch(`${DB_BASE_URL}/${safeNewId}.json`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(oldData)
                 });
 
-                // 기존 폴더 완전 파괴
-                await fetch(`${DB_BASE_URL}/${safeOldId}.json`, {
-                    method: 'DELETE'
-                });
+                await fetch(`${DB_BASE_URL}/${safeOldId}.json`, { method: 'DELETE' });
 
             } else {
-                // 아이디는 같고 정보만 바뀐 경우 (PATCH)
                 await fetch(`${DB_BASE_URL}/${encodeURIComponent(oldId)}/profile.json`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
@@ -725,79 +796,16 @@
 
             alert("✅ 업체 정보가 성공적으로 수정되었습니다.");
             closeEditCompanyModal();
-            fetchAccounts(); // 목록 새로고침
+            fetchAccounts(); 
         } catch(e) {
             console.error(e);
             alert("정보 수정 중 오류가 발생했습니다.");
         }
     }
 
-    // ==========================================
-    // 타겟팅 공지 팝업 기능 로직
-    // ==========================================
-    function toggleAllCompanies() {
-        const isChecked = document.getElementById('selectAllCompanies').checked;
-        const checkboxes = document.querySelectorAll('.company-check');
-        checkboxes.forEach(cb => cb.checked = isChecked);
-    }
-
-    function getSelectedCompanies() {
-        const checkboxes = document.querySelectorAll('.company-check:checked');
-        return Array.from(checkboxes).map(cb => cb.value);
-    }
-
-    function openTargetNoticeModal() {
-        const selectedIds = getSelectedCompanies();
-        if (selectedIds.length === 0) {
-            alert("공지/팝업을 전송할 업체를 목록에서 먼저 체크해 주세요.");
-            return;
-        }
-        document.getElementById('targetNoticeCount').innerText = selectedIds.length;
-        document.getElementById('targetNoticeText').value = '';
-        
-        const modal = document.getElementById('targetNoticeModal');
-        modal.classList.remove('hidden');
-        setTimeout(() => modal.classList.remove('opacity-0'), 10);
-    }
-
-    function closeTargetNoticeModal() {
-        const modal = document.getElementById('targetNoticeModal');
-        modal.classList.add('opacity-0');
-        setTimeout(() => modal.classList.add('hidden'), 200);
-    }
-
-    async function sendTargetNotice() {
-        const selectedIds = getSelectedCompanies();
-        const msg = document.getElementById('targetNoticeText').value.trim();
-        
-        if (!msg) return alert("전송할 메시지 내용을 입력해 주세요.");
-        if (!confirm(`선택한 ${selectedIds.length}개 업체에게 이 팝업 메시지를 전송하시겠습니까?`)) return;
-
-        try {
-            const promises = selectedIds.map(id => {
-                const safeId = encodeURIComponent(id);
-                return fetch(`${DB_BASE_URL}/${safeId}/profile.json`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ targetNotice: msg })
-                });
-            });
-
-            await Promise.all(promises);
-            alert(`✅ ${selectedIds.length}개 업체로 팝업 전송이 완료되었습니다!\n(해당 업체가 다음에 앱을 켤 때 팝업이 노출됩니다)`);
-            closeTargetNoticeModal();
-            
-            document.getElementById('selectAllCompanies').checked = false;
-            document.querySelectorAll('.company-check').forEach(cb => cb.checked = false);
-
-        } catch (e) {
-            alert("전송 중 서버 오류가 발생했습니다.");
-            console.error(e);
-        }
-    }
 
     // ==========================================
-    // DB 제어 API 액션
+    // DB 기타 통제 API 액션
     // ==========================================
     async function approveAccount(id) {
         if(!confirm(`해당 업체의 조경노트 PRO 플랫폼 이용을 최종 승인하시겠습니까?`)) return;
