@@ -104,7 +104,7 @@
         
         <input type="text" id="obCompanyName" placeholder="상호명 (예: 홍길동조경)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
         <input type="text" id="obCompanyCeo" placeholder="대표자명 (예: 홍길동)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
-        <input type="tel" id="obCompanyPhone" placeholder="대표 연락처 (예: 010-0000-0000)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
+        <input type="tel" id="obCompanyPhone" placeholder="대표 연락처 (예: 010-0000-0000)" oninput="autoHyphen(this)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
         <input type="text" id="obCompanyBizNum" placeholder="사업자등록번호 (예: 123-45-67890)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] mb-1 placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
 
         <!-- 구글 클라우드 직결 방식의 사업자등록증 첨부 영역 -->
@@ -167,7 +167,7 @@
           </div>
           <div>
               <label class="block text-[12px] font-black text-[#A3A8A3] ml-1 mb-1">연락처 <span class="text-[11px] text-white/30 font-normal">(수정불가)</span></label>
-              <input type="tel" id="setCompanyPhone" readonly class="w-full bg-white/5 border border-white/10 rounded-[12px] px-4 py-3 text-white/50 text-[15px] font-black outline-none cursor-not-allowed">
+              <input type="tel" id="setCompanyPhone" oninput="autoHyphen(this)" readonly class="w-full bg-white/5 border border-white/10 rounded-[12px] px-4 py-3 text-white/50 text-[15px] font-black outline-none cursor-not-allowed">
           </div>
           <div>
               <label class="block text-[12px] font-black text-[#A3A8A3] ml-1 mb-1">사업자등록번호 <span class="text-[11px] text-white/30 font-normal">(수정불가)</span></label>
@@ -242,13 +242,28 @@
         </div>
         
         <div class="grid grid-cols-2 gap-3 relative z-10">
-          <div><label class="block text-[13px] font-black text-[#12261E] mb-2">연락처</label><input type="tel" id="inputClientPhone" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] transition-all placeholder:text-[#4E5968] placeholder:font-bold"></div>
+          <div><label class="block text-[13px] font-black text-[#12261E] mb-2">연락처</label><input type="tel" id="inputClientPhone" oninput="autoHyphen(this)" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] transition-all placeholder:text-[#4E5968] placeholder:font-bold"></div>
           <div><label class="block text-[13px] font-black text-[#12261E] mb-2">작업타이틀</label><input type="text" id="inputRound" value="" placeholder="작업타이틀 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] transition-all placeholder:text-[#4E5968] placeholder:font-bold"></div>
         </div>
 
         <div class="relative z-10 mt-1">
           <label class="block text-[13px] font-black text-[#12261E] mb-2">현장 주소</label>
           <input type="text" id="inputClientAddress" placeholder="현장주소 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] transition-all placeholder:text-[#4E5968] placeholder:font-bold">
+        </div>
+        
+        <!-- 🔥 핀셋 추가 1: 신규 고객 등록 시 유형 선택 폼 -->
+        <div class="relative z-10 mt-3 pt-4 border-t border-[#F4F5F4]">
+          <label class="block text-[13px] font-black text-[#12261E] mb-2">신규 고객 등록 시 유형 지정 <span class="text-[#A3A8A3] text-[11px] font-bold">(기존 고객은 자동 무시됨)</span></label>
+          <div class="flex gap-2">
+            <label class="flex-1 flex items-center justify-center gap-2 py-3 rounded-[12px] bg-[#F4F5F4] border border-[#EAEBEA] cursor-pointer has-[:checked]:bg-[#12261E] has-[:checked]:text-[#84CC16] has-[:checked]:border-[#12261E] transition-all shadow-sm">
+                <input type="radio" name="newClientTypeReport" value="정기 관리" checked class="hidden">
+                <span class="text-[13px] font-black">정기 관리처</span>
+            </label>
+            <label class="flex-1 flex items-center justify-center gap-2 py-3 rounded-[12px] bg-[#F4F5F4] border border-[#EAEBEA] cursor-pointer has-[:checked]:bg-[#12261E] has-[:checked]:text-[#84CC16] has-[:checked]:border-[#12261E] transition-all shadow-sm">
+                <input type="radio" name="newClientTypeReport" value="개별 고객" class="hidden">
+                <span class="text-[13px] font-black">개별 고객처</span>
+            </label>
+          </div>
         </div>
       </div>
 
@@ -323,10 +338,11 @@
         </div>
         <div class="relative z-10">
           <label class="block text-[13px] font-black text-[#12261E] mb-2">고객명 / 현장명</label>
-          <input type="text" id="quoteClientSelect" list="clientDatalist" oninput="onSelectQuoteClient(this.value)" placeholder="기존 거래처 선택 또는 새 고객명 직접 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] transition-all placeholder:text-[#4E5968] placeholder:font-bold">
+          <!-- 🔥 핀셋 수정 2: 견적 작성 시 고객명 드롭다운 자동완성 해제 (list 속성 삭제) -->
+          <input type="text" id="quoteClientSelect" autocomplete="off" placeholder="고객명 직접 입력" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] transition-all placeholder:text-[#4E5968] placeholder:font-bold">
         </div>
         <div class="grid grid-cols-2 gap-3 relative z-10 mt-3">
-          <div><label class="block text-[13px] font-black text-[#12261E] mb-2">연락처</label><input type="tel" id="quoteInputClientPhone" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] transition-all placeholder:text-[#4E5968] placeholder:font-bold"></div>
+          <div><label class="block text-[13px] font-black text-[#12261E] mb-2">연락처</label><input type="tel" id="quoteInputClientPhone" oninput="autoHyphen(this)" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] transition-all placeholder:text-[#4E5968] placeholder:font-bold"></div>
           <div><label class="block text-[13px] font-black text-[#12261E] mb-2">견적 제목</label><input type="text" id="quoteInputRound" value="연간 정기 조경 관리 견적서" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] transition-all placeholder:text-[#4E5968] placeholder:font-bold"></div>
         </div>
 
@@ -354,7 +370,6 @@
         </div>
       </div>
 
-      <!-- 자재 단가표 팝업 오픈 버튼 (관리자 전용) -->
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-4">
         <div class="flex items-center justify-between mb-2">
           <label class="block text-[18px] font-black text-[#12261E] flex items-center gap-2">
@@ -423,7 +438,7 @@
           <h3 id="clientFormTitle" class="text-[14px] font-black text-[#12261E] flex items-center gap-1.5"><i data-lucide="plus" class="w-5 h-5 text-[#84CC16]"></i> <span>신규 등록</span></h3>
           <div class="space-y-2.5">
             <input type="text" id="newClientName" placeholder="고객명 또는 현장명" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] placeholder:text-[#4E5968] placeholder:font-bold">
-            <input type="tel" id="newClientPhone" placeholder="연락처" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] placeholder:text-[#4E5968] placeholder:font-bold">
+            <input type="tel" id="newClientPhone" oninput="autoHyphen(this)" placeholder="연락처" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] placeholder:text-[#4E5968] placeholder:font-bold">
             <input type="text" id="newClientAddress" placeholder="주소 입력" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] placeholder:text-[#4E5968] placeholder:font-bold">
             
             <select id="newClientType" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16]">
@@ -438,6 +453,12 @@
         </div>
 
         <div class="space-y-3 pt-2 mt-4">
+          <!-- 🔥 핀셋 7: 거래처 빠른 검색기능 추가 -->
+          <div class="relative mb-3">
+              <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none"><i data-lucide="search" class="w-4 h-4 text-[#A3A8A3]"></i></div>
+              <input type="text" id="clientSearchInput" oninput="renderClientsList()" placeholder="고객명, 연락처, 주소로 빠른 검색" class="w-full bg-[#F4F5F4] border border-[#EAEBEA] rounded-[12px] pl-9 pr-4 py-3 text-[14px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] placeholder:font-bold shadow-inner">
+          </div>
+
           <div class="flex bg-[#F4F5F4] p-1.5 rounded-[14px]">
             <button id="btnFilterRegular" onclick="setClientFilter('정기 관리')" class="flex-1 py-3 rounded-[12px] bg-white shadow-sm text-[#12261E] font-black text-[14px] transition-all border border-[#EAEBEA]">정기 관리처</button>
             <button id="btnFilterSingle" onclick="setClientFilter('개별 고객')" class="flex-1 py-3 rounded-[12px] text-[#4E5968] font-black text-[14px] hover:text-[#12261E] transition-all border border-transparent">개별 고객처</button>
@@ -465,7 +486,7 @@
           <h3 class="text-[14px] font-black text-[#12261E] flex items-center gap-1.5"><i data-lucide="user-plus" class="w-5 h-5 text-[#84CC16]"></i> <span>새 연락처 추가</span></h3>
           <div class="space-y-2.5">
             <input type="text" id="newContactName" placeholder="업체명 (또는 성명) 입력" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] placeholder:font-bold placeholder:text-[#4E5968]">
-            <input type="tel" id="newContactPhone" placeholder="연락처 (저장 후 터치 시 자동 연결)" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] placeholder:font-bold placeholder:text-[#4E5968]">
+            <input type="tel" id="newContactPhone" oninput="autoHyphen(this)" placeholder="연락처 (저장 후 터치 시 자동 연결)" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] placeholder:font-bold placeholder:text-[#4E5968]">
             <input type="text" id="newContactMemo" placeholder="기타 사항 (주소, 단가, 특징 등)" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] placeholder:font-bold placeholder:text-[#4E5968]">
           </div>
           <button onclick="saveContact()" class="w-full py-4 bg-[#12261E] text-[#84CC16] rounded-[12px] text-[15px] font-black shadow-md hover:bg-black transition-colors flex items-center justify-center gap-1.5"><i data-lucide="save" class="w-5 h-5"></i> 연락처 저장하기</button>
@@ -513,7 +534,7 @@
         
         <div class="bg-[#F9F9F8] rounded-[16px] p-5 border border-[#EAEBEA] mt-2">
            <h3 class="text-[14px] font-black text-[#1A1D1A] mb-2 flex items-center gap-1.5"><i data-lucide="info" class="w-5 h-5 text-[#4E5968]"></i> 이용 안내</h3>
-           <p class="text-[13px] text-[#12261E] font-bold leading-relaxed break-keep">현장에서 스마트폰 카메라로 직접 대상을 촬영하시거나 갤러리 사진을 업로드해 주세요. 결과값 복사를 통해 일지 작성 시 바로 활용하실 수 있습니다.<br><span class="text-red-500 font-black mt-1 inline-block">* 오픈AI의 최신 버전 자동 연결로 정보와 상태에 따라 인식이 안될 수도 있습니다.</span></p>
+           <p class="text-[13px] text-[#12261E] font-bold leading-relaxed break-keep">현장에서 스마트폰 카메라로 직접 대상을 촬영하시거나 갤러리 사진을 업로드해 주세요. 결과값 복사를 통해 일지 작성 시 바로 활용하실 수 있습니다.<br><span class="text-red-500 font-black mt-1 inline-block">* 현재 버전은 유료 API 연동 전 테스트 모드이므로 가상(데모) 식별 텍스트만 출력됩니다.</span></p>
         </div>
       </div>
     </section>
@@ -750,6 +771,24 @@
     const DB_BASE_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/accounts";
     const SETTINGS_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/settings"; // 공지사항 확인용
     let currentUserId = "";
+
+    // 🔥 신규 추가: 자동 하이픈 함수
+    function autoHyphen(target) {
+        let str = target.value.replace(/[^0-9]/g, '');
+        let tmp = '';
+        if (str.length < 4) { target.value = str; return; }
+        else if (str.length < 7) {
+            if (str.startsWith('02')) { tmp += str.substr(0, 2) + '-' + str.substr(2); }
+            else { tmp += str.substr(0, 3) + '-' + str.substr(3); }
+        } else if (str.length < 11) {
+            if (str.startsWith('02')) { tmp += str.substr(0, 2) + '-' + str.substr(2, 3) + '-' + str.substr(5); }
+            else { tmp += str.substr(0, 3) + '-' + str.substr(3, 3) + '-' + str.substr(6); }
+        } else {
+            if (str.startsWith('02')) { tmp += str.substr(0, 2) + '-' + str.substr(2, 4) + '-' + str.substr(6); }
+            else { tmp += str.substr(0, 3) + '-' + str.substr(3, 4) + '-' + str.substr(7); }
+        }
+        target.value = tmp;
+    }
 
     async function uploadToFirebaseStorage(base64Data, folder="images") {
         const bucket = "shinhwa-landnote.appspot.com"; 
@@ -992,43 +1031,37 @@
     }
 
     // ==========================================
-    // 🔥 신규 핀셋: 앱 공지사항 수신기 (메모리 기능 추가) 🔥
+    // 🔥 앱 공지사항 수신기 (메모리 기능 추가) 🔥
     // ==========================================
     let noticeQueue = [];
-    let currentShowingNotice = null; // 현재 화면에 떠 있는 공지사항 데이터 저장용
+    let currentShowingNotice = null;
 
     async function checkAppNotices() {
         noticeQueue = [];
         
-        // 1. 전체 공지 확인
         try {
             const res = await fetch(`${SETTINGS_URL}/globalNotice.json`);
             const globalNotice = await res.json();
             
-            // 서버에 전체 공지가 활성화되어 있다면
             if(globalNotice && globalNotice.active && globalNotice.text && globalNotice.text.trim() !== '') {
-                // 이미 읽은 공지사항인지 스마트폰 메모리 확인
                 const readNotice = localStorage.getItem('shinhwa_pro_read_global_notice');
                 
-                // 내가 마지막으로 읽은 텍스트와 현재 서버의 텍스트가 다를 때만 띄움!
                 if (globalNotice.text !== readNotice) {
                     noticeQueue.push({ type: 'global', title: '운영본부 전체 공지', text: globalNotice.text });
                 }
             }
         } catch(e) { console.log("전체 공지 확인 실패", e); }
 
-        // 2. 개별 타겟팅 팝업 확인 (내 프로필에 targetNotice 가 있는지)
         if(myCompanyProfile && myCompanyProfile.targetNotice && myCompanyProfile.targetNotice.trim() !== '') {
             noticeQueue.push({ type: 'target', title: '운영본부 개별 안내', text: myCompanyProfile.targetNotice });
         }
 
-        // 팝업 띄우기 시작
         showNextNotice();
     }
 
     function showNextNotice() {
         if(noticeQueue.length === 0) return;
-        currentShowingNotice = noticeQueue.shift(); // 큐에서 첫 번째 꺼내기
+        currentShowingNotice = noticeQueue.shift(); 
         
         document.getElementById('appNoticeTitle').innerText = currentShowingNotice.title;
         document.getElementById('appNoticeContent').innerText = currentShowingNotice.text;
@@ -1042,7 +1075,6 @@
         }, 10);
         lucide.createIcons();
         
-        // 개별 타겟 팝업이었다면 띄우자마자 서버에서 바로 삭제 (다시 안 뜨게)
         if(currentShowingNotice.type === 'target') {
             clearTargetNotice();
         }
@@ -1054,7 +1086,6 @@
         modal.classList.add('opacity-0');
         box.classList.add('scale-95');
         
-        // 🔥 사용자가 '확인했습니다'를 눌러 닫으면, 그 내용을 폰에 영구 저장 (다음에 안 뜨게)
         if (currentShowingNotice && currentShowingNotice.type === 'global') {
             localStorage.setItem('shinhwa_pro_read_global_notice', currentShowingNotice.text);
         }
@@ -1063,7 +1094,6 @@
             modal.classList.add('hidden');
             currentShowingNotice = null;
             
-            // 큐에 남은 공지 있으면 연속으로 띄움 (전체 공지 닫으면 바로 개별 공지 뜨도록)
             if(noticeQueue.length > 0) {
                 setTimeout(showNextNotice, 300); 
             }
@@ -1876,8 +1906,7 @@
                 switchView('admin', false);
             });
 
-            // 🔥 앱 재진입/자동로그인 시 공지사항 체크
-            setTimeout(checkAppNotices, 2500); // 메인화면 로딩 후 띄움
+            setTimeout(checkAppNotices, 2500); 
         } else {
             document.getElementById('authView').classList.remove('hidden');
         }
@@ -2280,19 +2309,6 @@
       lucide.createIcons();
     }
 
-    async function uploadImagesToCloud(base64Array) {
-      const urls = [];
-      for(let b64 of base64Array) { 
-          try { 
-              const url = await uploadToFirebaseStorage(b64, "reports");
-              urls.push(url);
-          } catch (e) { 
-              console.error("업로드 오류:", e); 
-          } 
-      }
-      return urls;
-    }
-
     function showLoadingOverlay(msg) {
       const overlay = document.createElement('div'); overlay.id = 'loadingOverlay'; overlay.className = 'fixed inset-0 z-[200] bg-black/80 flex flex-col items-center justify-center backdrop-blur-sm';
       overlay.innerHTML = `<div class="w-12 h-12 border-4 border-[#84CC16]/30 border-t-[#84CC16] rounded-full animate-spin mb-4"></div><div class="text-white font-bold text-[15px] mb-1">${msg}</div><div class="text-[#84CC16] text-[11px] font-medium">데이터를 안전하게 처리하고 있습니다.</div>`;
@@ -2332,9 +2348,11 @@
             return; 
         }
 
+        // 🔥 핀셋 수정 1: 일지 작성 시 선택한 고객 유형 반영
         let existingClient = clients.find(c => c.name === clientName);
         if (!existingClient) {
-            clients.push({ id: Date.now().toString(), name: clientName, phone: clientPhone, address: clientAddress, type: '정기 관리' });
+            let selectedType = document.querySelector('input[name="newClientTypeReport"]:checked').value;
+            clients.push({ id: Date.now().toString(), name: clientName, phone: clientPhone, address: clientAddress, type: selectedType });
         } else {
             if(clientAddress) existingClient.address = clientAddress;
         }
@@ -2409,18 +2427,9 @@
             return; 
         }
 
-        let existingClient = clients.find(c => c.name === clientName);
-        if (!existingClient) {
-            clients.push({ id: Date.now().toString(), name: clientName, phone: clientPhone, address: clientAddress, type: '정기 관리' });
-        } else {
-            if(clientAddress) existingClient.address = clientAddress;
-        }
+        // 🔥 핀셋 수정 4: 견적서 발행 시 고객 DB에 자동 저장하지 않음 (로직 삭제)
         
-        updateData('clients', clients);
-        renderClientSelect();
-        renderClientsList();
-
-        alert("✅ 서버 클라우드 저장 완료! 안전하게 링크가 생성되었습니다.");
+        alert("✅ 견적서 저장이 완료되어 견적 보관함으로 이동했습니다.");
         editingRecordId = null;
         let genBtn = document.getElementById('btnGenerateQuote');
         if(genBtn) genBtn.innerHTML = '<i data-lucide="file-check-2" class="w-6 h-6 stroke-[2.5]"></i> 견적서 발행 및 보관함 저장';
@@ -2894,18 +2903,29 @@
       renderClientsList();
     }
 
+    // 🔥 핀셋 수정 7: 검색 엔진 및 필터 연동
     function renderClientsList() {
       const container = document.getElementById('clientsListContainer'); 
+      const searchKeyword = (document.getElementById('clientSearchInput')?.value || '').toLowerCase();
+      
       const filteredClients = clients.filter(c => {
-        if(currentClientFilter === '개별 고객') return c.type === '개별 고객';
-        return c.type !== '개별 고객';
+        // 1. 유형 필터
+        const matchType = currentClientFilter === '개별 고객' ? c.type === '개별 고객' : c.type !== '개별 고객';
+        if(!matchType) return false;
+        
+        // 2. 검색어 필터
+        if(searchKeyword) {
+            const searchStr = `${c.name} ${c.phone} ${c.address}`.toLowerCase();
+            if(!searchStr.includes(searchKeyword)) return false;
+        }
+        return true;
       });
 
       document.getElementById('clientCountBadge').innerText = `${filteredClients.length}건`; 
       container.innerHTML = '';
       
       if(filteredClients.length === 0) {
-        container.innerHTML = `<div class="p-6 text-center text-[#4E5968] text-[13px] font-bold bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA]">등록된 고객이 없습니다.</div>`;
+        container.innerHTML = `<div class="p-6 text-center text-[#4E5968] text-[13px] font-bold bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA]">조건에 맞는 고객이 없습니다.</div>`;
       } else {
         filteredClients.forEach(c => {
           const originalIdx = clients.indexOf(c); 
