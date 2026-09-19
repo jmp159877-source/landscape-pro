@@ -107,12 +107,21 @@
         <input type="tel" id="obCompanyPhone" placeholder="대표 연락처 (예: 010-0000-0000)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
         <input type="text" id="obCompanyBizNum" placeholder="사업자등록번호 (예: 123-45-67890)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] mb-1 placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
 
+        <!-- [부활] 구글 클라우드 직결 방식의 사업자등록증 첨부 영역 -->
+        <div class="bg-[#0F1722] border border-[#84CC16]/40 rounded-[14px] p-3.5 flex items-center justify-between shadow-sm">
+            <span class="text-white text-[13px] font-bold" id="obBizLicenseLabel">사업자등록증 첨부 (필수)</span>
+            <label class="bg-white/10 hover:bg-white/20 text-[#84CC16] border border-[#84CC16]/30 text-[12px] font-bold py-2.5 px-3.5 rounded-[10px] cursor-pointer transition-colors flex items-center gap-1.5 shrink-0">
+                <i data-lucide="camera" class="w-4 h-4"></i> 사진 첨부
+                <input type="file" id="obBizLicense" accept="image/*,application/pdf" class="hidden" onchange="handleBizLicense(event)">
+            </label>
+        </div>
+
         <!-- 개인정보 이용동의서 체크박스 -->
         <label class="flex items-start gap-2 cursor-pointer text-[#A3A8A3] text-[11px] leading-relaxed text-left bg-black/20 p-4 rounded-[14px] border border-white/5 mt-3">
             <input type="checkbox" id="obPrivacyCheck" class="w-4 h-4 rounded border-white/20 bg-transparent text-[#84CC16] focus:ring-[#84CC16] mt-0.5 shrink-0">
             <span><strong class="text-white">[필수] 개인정보 수집 및 이용 동의</strong><br>
                 <span class="text-[10px] text-white/70 block mt-1.5 leading-snug">
-                수집항목: 상호, 대표자, 연락처, 사업자등록번호, 거래처 목록 등<br>
+                수집항목: 상호, 대표자, 연락처, 사업자등록번호, 사업자등록증, 거래처 목록 등<br>
                 이용목적: 서비스 제공, 본인/업체 인증, 고객 지원<br>
                 <strong class="text-[#FEE500]">* 관리자가 신원 확인 및 업체 승인 목적으로 열람합니다.</strong>
                 </span>
@@ -179,12 +188,11 @@
               <span id="company-name-header" class="font-black text-[19px] text-white tracking-tight">업체명</span>
               <span class="text-[10px] bg-[#84CC16]/20 text-[#84CC16] font-extrabold px-2 py-0.5 rounded uppercase tracking-widest border border-[#84CC16]/30">PRO</span>
               
-              <!-- 동기화 뱃지, 설정, 로그아웃 버튼 나란히 배치 -->
               <div class="flex items-center gap-1.5 ml-1">
                  <span id="cloudStatusBadge" class="text-[10px] bg-blue-500/20 text-blue-400 font-extrabold px-2 py-0.5 rounded uppercase tracking-widest border border-blue-500/30 flex items-center gap-1"><i data-lucide="cloud" class="w-3 h-3"></i> 동기화 대기</span>
                  <!-- 사용자 정보 수정(설정) 버튼 -->
                  <button onclick="openSettings()" class="w-7 h-7 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all border border-white/20 shadow-sm"><i data-lucide="settings" class="w-3.5 h-3.5 text-white"></i></button>
-                 <!-- 로그아웃 버튼 (새 위치) -->
+                 <!-- 로그아웃 버튼 -->
                  <button onclick="logoutAdmin()" class="w-7 h-7 bg-red-500/10 hover:bg-red-500/20 rounded-full flex items-center justify-center transition-all border border-red-500/20 shadow-sm"><i data-lucide="power" class="w-3.5 h-3.5 text-red-400"></i></button>
               </div>
           </div>
@@ -198,9 +206,9 @@
       <nav class="grid grid-cols-3 gap-2 bg-[#84CC16] p-2.5 rounded-2xl shadow-[0_4px_15px_rgba(132,204,22,0.3)] border border-[#65A30D]">
         <button id="tabAdmin" onclick="switchView('admin')" class="w-full py-3.5 rounded-[12px] bg-white text-[#1E3A8A] font-black text-[13px] shadow-md transition-all text-center flex flex-col items-center justify-center gap-1"><i data-lucide="pen-tool" class="w-4 h-4"></i>일지작성</button>
         <button id="tabQuote" onclick="switchView('quote')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-black text-[13px] hover:bg-black/5 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="calculator" class="w-4 h-4"></i>견적작성</button>
-        <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-black text-[13px] hover:bg-black/5 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="folder-open" class="w-4 h-4"></i>보관함</button>
+        <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-black text-[13px] hover:bg-black/5 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="folder-open" class="w-4 h-4"></i>견적보관함</button>
         
-        <button id="tabClient" onclick="switchView('clients')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-black text-[13px] hover:bg-black/5 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="building-2" class="w-4 h-4"></i>거래처</button>
+        <button id="tabClient" onclick="switchView('clients')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-black text-[13px] hover:bg-black/5 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="building-2" class="w-4 h-4"></i>거래처관리</button>
         <button id="tabContacts" onclick="switchView('contacts')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-black text-[13px] hover:bg-black/5 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="users" class="w-4 h-4"></i>연락처</button>
         <button id="tabLens" onclick="switchView('lens')" class="w-full py-3.5 rounded-[12px] bg-[#1E3A8A] text-white font-black text-[13px] shadow-md hover:bg-[#172554] transition-all text-center flex flex-col items-center justify-center gap-1 border border-[#172554]"><i data-lucide="scan" class="w-4 h-4 text-[#84CC16]"></i>AI렌즈</button>
       </nav>
@@ -422,7 +430,6 @@
           </div>
           <div id="clientsListContainer" class="space-y-2.5 mt-3 max-h-[50vh] overflow-y-auto pr-1"></div>
         </div>
-        <!-- 로그아웃 박스 제거됨 -->
       </div>
     </section>
 
