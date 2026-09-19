@@ -127,6 +127,18 @@
                 </span>
             </span>
         </label>
+        
+        <!-- 서비스 이용약관 동의 체크박스 (신규 핀셋 추가) -->
+        <label class="flex items-start gap-2 cursor-pointer text-[#A3A8A3] text-[12px] leading-relaxed text-left bg-black/20 p-4 rounded-[14px] border border-white/5 mt-2">
+            <input type="checkbox" id="obTermsCheck" class="w-5 h-5 rounded border-white/20 bg-transparent text-[#84CC16] focus:ring-[#84CC16] mt-0.5 shrink-0">
+            <span><strong class="text-white text-[13px]">[필수] 서비스 이용약관 동의</strong><br>
+                <span class="text-[11px] text-white/70 block mt-1.5 leading-snug">
+                1. <strong>이용 제한:</strong> 일정 기간 요금 미납 시, 서비스 접속 및 이용이 임시 제한(정지)될 수 있습니다.<br>
+                2. <strong>데이터 보관:</strong> 계정 영구 해지(탈퇴) 시, 작성된 모든 데이터는 30일 보관 후 복구 불가능하게 완전 파기됩니다.<br>
+                3. <strong>권한:</strong> 부적절한 목적의 사용 적발 시 관리자 직권으로 계정이 강제 해지될 수 있습니다.
+                </span>
+            </span>
+        </label>
       </div>
       
       <button onclick="saveOnboarding()" class="w-full py-4.5 bg-[#84CC16] text-[#12261E] rounded-[16px] font-extrabold text-[18px] hover:bg-[#9BE32D] shadow-[0_8px_20px_rgba(132,204,22,0.2)] transition-all mb-3 shrink-0">등록 신청 및 승인요청</button>
@@ -207,9 +219,8 @@
       <nav class="grid grid-cols-3 gap-2 bg-[#84CC16] p-2.5 rounded-2xl shadow-[0_4px_15px_rgba(132,204,22,0.3)] border border-[#65A30D]">
         <button id="tabAdmin" onclick="switchView('admin')" class="w-full py-3.5 rounded-[12px] bg-white text-[#12261E] font-black text-[14px] shadow-md transition-all text-center flex flex-col items-center justify-center gap-1 border border-white/50"><i data-lucide="pen-tool" class="w-5 h-5"></i>일지작성</button>
         <button id="tabQuote" onclick="switchView('quote')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="calculator" class="w-5 h-5"></i>견적작성</button>
-        <!-- 핀셋 수정 완료: 견적보관함 -->
         <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="folder-open" class="w-5 h-5"></i>견적보관함</button>
-        <!-- 핀셋 수정 완료: 거래처 목록 -->
+        
         <button id="tabClient" onclick="switchView('clients')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="building-2" class="w-5 h-5"></i>거래처 목록</button>
         <button id="tabContacts" onclick="switchView('contacts')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="users" class="w-5 h-5"></i>연락처</button>
         <button id="tabLens" onclick="switchView('lens')" class="w-full py-3.5 rounded-[12px] bg-[#1E3A8A] text-white font-black text-[14px] shadow-md hover:bg-[#172554] transition-all text-center flex flex-col items-center justify-center gap-1 border border-[#172554]"><i data-lucide="scan" class="w-5 h-5 text-[#84CC16]"></i>AI렌즈</button>
@@ -834,12 +845,14 @@
         const phone = document.getElementById('obCompanyPhone').value.trim();
         const bizNum = document.getElementById('obCompanyBizNum').value.trim();
         const privacyChecked = document.getElementById('obPrivacyCheck').checked;
+        const termsChecked = document.getElementById('obTermsCheck').checked;
 
         if (!id || !pw || !name || !ceo || !phone || !bizNum) return alert("모든 항목을 입력해 주세요.");
         if (/[.#$\[\]]/.test(id)) return alert("아이디에는 특수기호(., #, $, [, ])를 사용할 수 없습니다.");
         if (pw.length < 4) return alert("비밀번호는 4자리 이상 숫자로 설정해 주세요.");
         if (!obBizLicenseBase64) return alert("사업자등록증 사진을 첨부해 주세요.");
         if (!privacyChecked) return alert("개인정보 수집 및 이용에 동의해 주세요.");
+        if (!termsChecked) return alert("서비스 이용약관에 동의해 주세요.");
         
         showLoadingOverlay("가입 서류를 서버에 업로드 중입니다...");
         try {
@@ -1701,7 +1714,7 @@
         const reportId = params.get('id') || params.get('blob');
         const encodedData = params.get('data');
         history.replaceState({ view: 'client_shared' }, "", "");
-        const overlay = document.createElement('div'); overlay.id = 'loadingOverlay'; overlay.className = 'fixed inset-0 z-[200] bg-[#151E2D] flex flex-col items-center justify-center'; overlay.innerHTML = `<div class="w-12 h-12 border-4 border-[#84CC16]/30 border-t-[#84CC16] rounded-full animate-spin mb-4"></div><div class="text-white font-bold text-[15px]">프리미엄 문서를 불러오는 중...</div>`; document.body.appendChild(overlay);
+        const overlay = document.createElement('div'); overlay.id = 'loadingOverlay'; overlay.className = 'fixed inset-0 z-[200] bg-[#151E2D] flex flex-col items-center justify-center'; overlay.innerHTML = `<div class="w-12 h-12 border-4 border-[#84CC16]/30 border-t-[#84CC16] rounded-full animate-spin mb-4"></div><div class="text-white font-bold text-[15px]">프리미문을 불러오는 중...</div>`; document.body.appendChild(overlay);
         
         let loadedData = null;
         
@@ -2148,19 +2161,6 @@
         listContainer.appendChild(div);
       });
       lucide.createIcons();
-    }
-
-    async function uploadImagesToCloud(base64Array) {
-      const urls = [];
-      for(let b64 of base64Array) { 
-          try { 
-              const url = await uploadToFirebaseStorage(b64, "reports");
-              urls.push(url);
-          } catch (e) { 
-              console.error("업로드 오류:", e); 
-          } 
-      }
-      return urls;
     }
 
     function showLoadingOverlay(msg) {
