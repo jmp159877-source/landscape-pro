@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>조경노트 PRO - 프리미엄 조경 관리 솔루션</title>
   
+  <!-- 🔥 신규: 구글/네이버 검색 엔진 노출 최적화(SEO) 태그 -->
+  <meta name="description" content="조경노트 PRO - 현장 작업자를 위한 스마트 조경 관리 플랫폼. 일지 작성, 견적서, AI 수목 식별, 거래처 연락처 관리를 모바일에서 한 번에 해결하세요.">
+  <meta name="keywords" content="조경노트, 조경노트 프로, 조경관리, 조경일지, 조경견적, 조경앱, 스마트조경, 수목식별">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="조경노트 PRO">
+  <meta property="og:description" content="프리미엄 조경 현장 관리 솔루션">
+  <meta property="og:url" content="https://jogyeongnote.com">
+  <meta property="og:site_name" content="조경노트 PRO">
+  
   <meta name="apple-mobile-web-app-title" content="조경노트PRO">
   <meta name="application-name" content="조경노트PRO">
   <meta name="mobile-web-app-capable" content="yes">
@@ -104,7 +113,7 @@
         
         <input type="text" id="obCompanyName" placeholder="상호명 (예: 홍길동조경)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
         <input type="text" id="obCompanyCeo" placeholder="대표자명 (예: 홍길동)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
-        <input type="tel" id="obCompanyPhone" placeholder="대표 연락처 (예: 010-0000-0000)" oninput="autoHyphen(this)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
+        <input type="tel" id="obCompanyPhone" oninput="autoHyphen(this)" placeholder="대표 연락처 (예: 010-0000-0000)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
         <input type="text" id="obCompanyBizNum" placeholder="사업자등록번호 (예: 123-45-67890)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] mb-1 placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
 
         <!-- 구글 클라우드 직결 방식의 사업자등록증 첨부 영역 -->
@@ -251,7 +260,7 @@
           <input type="text" id="inputClientAddress" placeholder="현장주소 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] transition-all placeholder:text-[#4E5968] placeholder:font-bold">
         </div>
         
-        <!-- 🔥 핀셋 추가 1: 신규 고객 등록 시 유형 선택 폼 -->
+        <!-- 신규 고객 등록 시 유형 선택 폼 -->
         <div class="relative z-10 mt-3 pt-4 border-t border-[#F4F5F4]">
           <label class="block text-[13px] font-black text-[#12261E] mb-2">신규 고객 등록 시 유형 지정 <span class="text-[#A3A8A3] text-[11px] font-bold">(기존 고객은 자동 무시됨)</span></label>
           <div class="flex gap-2">
@@ -338,7 +347,6 @@
         </div>
         <div class="relative z-10">
           <label class="block text-[13px] font-black text-[#12261E] mb-2">고객명 / 현장명</label>
-          <!-- 🔥 핀셋 수정 2: 견적 작성 시 고객명 드롭다운 자동완성 해제 (list 속성 삭제) -->
           <input type="text" id="quoteClientSelect" autocomplete="off" placeholder="고객명 직접 입력" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] transition-all placeholder:text-[#4E5968] placeholder:font-bold">
         </div>
         <div class="grid grid-cols-2 gap-3 relative z-10 mt-3">
@@ -453,7 +461,6 @@
         </div>
 
         <div class="space-y-3 pt-2 mt-4">
-          <!-- 🔥 핀셋 7: 거래처 빠른 검색기능 추가 -->
           <div class="relative mb-3">
               <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none"><i data-lucide="search" class="w-4 h-4 text-[#A3A8A3]"></i></div>
               <input type="text" id="clientSearchInput" oninput="renderClientsList()" placeholder="고객명, 연락처, 주소로 빠른 검색" class="w-full bg-[#F4F5F4] border border-[#EAEBEA] rounded-[12px] pl-9 pr-4 py-3 text-[14px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] placeholder:font-bold shadow-inner">
@@ -481,15 +488,20 @@
           <button id="btnContactLabor" onclick="switchContactTab('labors')" class="flex-1 py-3 rounded-[12px] text-[#4E5968] font-black text-[14px] hover:text-[#12261E] transition-all border border-transparent bg-transparent">인력 전화번호</button>
         </div>
 
-        <!-- 연락처 등록 폼 -->
+        <!-- 연락처 등록/수정 폼 -->
         <div class="bg-[#F9F9F8] p-5 rounded-[20px] border border-[#EAEBEA] space-y-3.5">
-          <h3 class="text-[14px] font-black text-[#12261E] flex items-center gap-1.5"><i data-lucide="user-plus" class="w-5 h-5 text-[#84CC16]"></i> <span>새 연락처 추가</span></h3>
+          <!-- 🔥 수정 기능 타이틀 변경을 위한 ID 추가 -->
+          <h3 id="contactFormTitle" class="text-[14px] font-black text-[#12261E] flex items-center gap-1.5"><i data-lucide="user-plus" class="w-5 h-5 text-[#84CC16]"></i> <span>새 연락처 추가</span></h3>
           <div class="space-y-2.5">
             <input type="text" id="newContactName" placeholder="업체명 (또는 성명) 입력" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] placeholder:font-bold placeholder:text-[#4E5968]">
             <input type="tel" id="newContactPhone" oninput="autoHyphen(this)" placeholder="연락처 (저장 후 터치 시 자동 연결)" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] placeholder:font-bold placeholder:text-[#4E5968]">
             <input type="text" id="newContactMemo" placeholder="기타 사항 (주소, 단가, 특징 등)" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] placeholder:font-bold placeholder:text-[#4E5968]">
           </div>
-          <button onclick="saveContact()" class="w-full py-4 bg-[#12261E] text-[#84CC16] rounded-[12px] text-[15px] font-black shadow-md hover:bg-black transition-colors flex items-center justify-center gap-1.5"><i data-lucide="save" class="w-5 h-5"></i> 연락처 저장하기</button>
+          <!-- 🔥 수정 기능 취소 버튼 추가 -->
+          <div class="flex gap-2">
+            <button id="saveContactBtn" onclick="saveContact()" class="flex-1 py-4 bg-[#12261E] text-[#84CC16] rounded-[12px] text-[15px] font-black shadow-md hover:bg-black transition-colors flex items-center justify-center gap-1.5"><i data-lucide="save" class="w-5 h-5"></i> 연락처 저장하기</button>
+            <button id="cancelContactEditBtn" onclick="cancelContactEdit()" class="hidden px-4 py-4 bg-[#EAEBEA] text-[#4E5968] rounded-[12px] text-[15px] font-black">취소</button>
+          </div>
         </div>
 
         <!-- 리스트 출력 영역 -->
@@ -749,7 +761,7 @@
     </div>
   </div>
 
-  <!-- 🔥 신규: 마스터 공지사항/경고 수신용 팝업 모달 🔥 -->
+  <!-- 마스터 공지사항/경고 수신용 팝업 모달 -->
   <div id="appNoticeModal" class="hidden fixed inset-0 z-[6000] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200">
     <div class="bg-white w-full max-w-sm rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-[#EAEBEA]" id="appNoticeBox">
       <div class="p-5 border-b border-[#F4F5F4] flex justify-between items-center bg-[#F9F9F8]">
@@ -772,7 +784,7 @@
     const SETTINGS_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/settings"; // 공지사항 확인용
     let currentUserId = "";
 
-    // 🔥 신규 추가: 자동 하이픈 함수
+    // 자동 하이픈 함수
     function autoHyphen(target) {
         let str = target.value.replace(/[^0-9]/g, '');
         let tmp = '';
@@ -823,6 +835,8 @@
     
     let isMaterialEditMode = false;
     let editingClientIndex = null;
+    let editingContactIndex = null; // 🔥 핀셋: 연락처 수정 인덱스 변수
+    
     let beforeImages = [];
     let afterImages = [];
     let issueImages = []; 
@@ -1020,7 +1034,6 @@
                 history.replaceState({ view: 'admin' }, "", ""); 
                 switchView('admin', false);
 
-                // 🔥 로그인 성공 후 공지사항/개별안내 체크 실행
                 setTimeout(checkAppNotices, 800);
             }
         } catch(e) {
@@ -1031,7 +1044,7 @@
     }
 
     // ==========================================
-    // 🔥 앱 공지사항 수신기 (메모리 기능 추가) 🔥
+    // 앱 공지사항 수신기 (메모리 기능 추가)
     // ==========================================
     let noticeQueue = [];
     let currentShowingNotice = null;
@@ -1256,6 +1269,7 @@
         renderContactsList();
     }
 
+    // 🔥 핀셋: 연락처 저장 및 수정 기능 강화
     function saveContact() {
         const name = document.getElementById('newContactName').value.trim();
         const phone = document.getElementById('newContactPhone').value.trim();
@@ -1265,22 +1279,56 @@
         if(!phone) return alert("연락처를 입력해 주세요.");
 
         if(!contactsData[currentContactTab]) contactsData[currentContactTab] = [];
-        contactsData[currentContactTab].push({ name, phone, memo });
+        
+        if(editingContactIndex !== null) {
+            contactsData[currentContactTab][editingContactIndex] = { name, phone, memo };
+            alert("연락처가 수정되었습니다.");
+        } else {
+            contactsData[currentContactTab].push({ name, phone, memo });
+            alert("연락처가 추가되었습니다.");
+        }
 
         updateData('contacts', contactsData);
+        cancelContactEdit(); // 폼 초기화 및 수정상태 해제
+        renderContactsList();
+    }
+
+    // 🔥 핀셋: 연락처 수정 폼 열기
+    function editContact(tab, index) {
+        editingContactIndex = index;
+        if (currentContactTab !== tab) switchContactTab(tab);
         
+        const c = contactsData[tab][index];
+        document.getElementById('newContactName').value = c.name;
+        document.getElementById('newContactPhone').value = c.phone;
+        document.getElementById('newContactMemo').value = c.memo || '';
+        
+        document.getElementById('contactFormTitle').innerHTML = `<i data-lucide="edit-3" class="w-5 h-5 text-[#84CC16]"></i> <span>연락처 수정</span>`;
+        document.getElementById('saveContactBtn').innerHTML = `<i data-lucide="save" class="w-5 h-5"></i> 수정 완료`;
+        document.getElementById('cancelContactEditBtn').classList.remove('hidden');
+        
+        lucide.createIcons();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 🔥 핀셋: 연락처 수정 취소
+    function cancelContactEdit() {
+        editingContactIndex = null;
         document.getElementById('newContactName').value = '';
         document.getElementById('newContactPhone').value = '';
         document.getElementById('newContactMemo').value = '';
         
-        renderContactsList();
-        alert("연락처가 추가되었습니다.");
+        document.getElementById('contactFormTitle').innerHTML = `<i data-lucide="user-plus" class="w-5 h-5 text-[#84CC16]"></i> <span>새 연락처 추가</span>`;
+        document.getElementById('saveContactBtn').innerHTML = `<i data-lucide="save" class="w-5 h-5"></i> 연락처 저장하기`;
+        document.getElementById('cancelContactEditBtn').classList.add('hidden');
+        lucide.createIcons();
     }
 
     function deleteContact(tab, index) {
         if(confirm("이 연락처를 삭제하시겠습니까?")) {
             contactsData[tab].splice(index, 1);
             updateData('contacts', contactsData);
+            if(editingContactIndex === index) cancelContactEdit();
             renderContactsList();
         }
     }
@@ -1309,18 +1357,23 @@
             
             let memoHtml = item.memo ? `<div class="text-[12px] text-[#4E5968] mt-2 bg-[#F4F5F4] px-2.5 py-1.5 rounded-lg inline-block font-bold">${item.memo}</div>` : '';
             
+            // 🔥 핀셋: 수정 버튼 추가
             div.innerHTML = `
                 <div>
                     <div class="font-black text-[#1A1D1A] text-[15px] flex items-center gap-1.5"><i data-lucide="${currentContactTab === 'clients' ? 'building' : 'user'}" class="w-4 h-4 text-[#4E5968]"></i> ${item.name}</div>
                     <div class="text-[15px] mt-1.5"><i data-lucide="phone" class="w-4 h-4 inline-block text-blue-500 mr-1"></i> ${formatPhoneToLink(item.phone)}</div>
                     ${memoHtml}
                 </div>
-                <button onclick="deleteContact('${currentContactTab}', ${idx})" class="p-3 text-[#A3A8A3] hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+                <div class="flex gap-1.5 shrink-0">
+                    <button onclick="editContact('${currentContactTab}', ${idx})" class="p-3 text-[#A3A8A3] hover:text-[#84CC16] bg-gray-50 rounded-xl transition-all"><i data-lucide="edit-2" class="w-5 h-5"></i></button>
+                    <button onclick="deleteContact('${currentContactTab}', ${idx})" class="p-3 text-[#A3A8A3] hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+                </div>
             `;
             container.appendChild(div);
         });
         lucide.createIcons();
     }
+    // ========================================================
 
     function openMaterialModal() {
         if (!materialsData || materialsData.length === 0) {
@@ -2348,7 +2401,6 @@
             return; 
         }
 
-        // 🔥 핀셋 수정 1: 일지 작성 시 선택한 고객 유형 반영
         let existingClient = clients.find(c => c.name === clientName);
         if (!existingClient) {
             let selectedType = document.querySelector('input[name="newClientTypeReport"]:checked').value;
@@ -2427,7 +2479,7 @@
             return; 
         }
 
-        // 🔥 핀셋 수정 4: 견적서 발행 시 고객 DB에 자동 저장하지 않음 (로직 삭제)
+        // 견적서는 DB에 등록하지 않음 (이전 피드백 반영)
         
         alert("✅ 견적서 저장이 완료되어 견적 보관함으로 이동했습니다.");
         editingRecordId = null;
@@ -2903,17 +2955,14 @@
       renderClientsList();
     }
 
-    // 🔥 핀셋 수정 7: 검색 엔진 및 필터 연동
     function renderClientsList() {
       const container = document.getElementById('clientsListContainer'); 
       const searchKeyword = (document.getElementById('clientSearchInput')?.value || '').toLowerCase();
       
       const filteredClients = clients.filter(c => {
-        // 1. 유형 필터
         const matchType = currentClientFilter === '개별 고객' ? c.type === '개별 고객' : c.type !== '개별 고객';
         if(!matchType) return false;
         
-        // 2. 검색어 필터
         if(searchKeyword) {
             const searchStr = `${c.name} ${c.phone} ${c.address}`.toLowerCase();
             if(!searchStr.includes(searchKeyword)) return false;
