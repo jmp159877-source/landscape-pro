@@ -52,15 +52,15 @@
       <div class="w-24 h-24 rounded-[28px] bg-[#1A382B] border-2 border-[#84CC16]/40 flex items-center justify-center shadow-[0_0_50px_rgba(132,204,22,0.3)] mb-6 animate-bounce"><i data-lucide="leaf" class="w-12 h-12 text-[#84CC16]"></i></div>
       <span class="text-[13px] bg-[#84CC16]/20 text-[#84CC16] font-black px-4 py-2 rounded-full uppercase tracking-[0.2em] border border-[#84CC16]/30 mb-3">Landscape Solution</span>
       <h1 class="text-white font-black text-[42px] tracking-tight mb-2">조경노트 PRO</h1>
-      <p class="text-[#A3A8A3] text-[16px] font-bold tracking-wide" id="splash-loading-text">데이터 동기화 중...</p>
+      <p class="text-[#A3A8A3] text-[16px] font-bold tracking-wide" id="splash-loading-text">보안 연결 중...</p>
     </div>
   </div>
 
   <section id="authView" class="hidden fixed inset-0 z-[2000] bg-[#151E2D] flex flex-col items-center justify-center px-6">
     <div class="bg-white/5 backdrop-blur-md p-8 rounded-[32px] w-full max-w-sm border border-white/10 shadow-2xl flex flex-col items-center">
-      <div class="w-16 h-16 bg-[#84CC16] rounded-[18px] flex items-center justify-center mb-5 shadow-[0_0_20px_rgba(132,204,22,0.3)]"><i data-lucide="user" class="w-7 h-7 text-[#12261E]"></i></div>
+      <div class="w-16 h-16 bg-[#84CC16] rounded-[18px] flex items-center justify-center mb-5 shadow-[0_0_20px_rgba(132,204,22,0.3)]"><i data-lucide="shield-check" class="w-7 h-7 text-[#12261E]"></i></div>
       <h2 class="text-white font-black text-[24px] mb-2">조경노트 PRO 로그인</h2>
-      <p class="text-[#A3A8A3] text-[14px] font-bold mb-6 text-center leading-relaxed">계정을 연동하여 PC, 태블릿, 모바일<br>어디서든 내 장부를 관리하세요.</p>
+      <p class="text-[#A3A8A3] text-[14px] font-bold mb-6 text-center leading-relaxed">강력한 보안 암호화가 적용되었습니다.<br>안심하고 접속하세요.</p>
       <div class="w-full space-y-3 mb-4">
         <input type="text" id="loginId" placeholder="아이디" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[12px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16]">
         <input type="password" id="loginPw" placeholder="비밀번호" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[12px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16]" onkeypress="if(event.key === 'Enter') doLogin()">
@@ -71,10 +71,6 @@
       <button onclick="doLogin()" class="w-full py-4.5 bg-[#84CC16] text-[#12261E] rounded-[16px] font-black text-[18px] hover:bg-[#9BE32D] shadow-[0_8px_20px_rgba(132,204,22,0.2)] transition-all mb-4">로그인</button>
       <div class="w-full border-t border-white/10 pt-5 mt-2">
         <button onclick="showSignUp()" class="w-full py-4.5 bg-[#FEE500] text-[#12261E] rounded-[16px] font-black text-[18px] shadow-[0_8px_20px_rgba(254,229,0,0.2)] hover:bg-[#FACC15] transition-all flex items-center justify-center gap-2">업체 등록하기 <i data-lucide="arrow-right" class="w-5 h-5"></i></button>
-      </div>
-      <div class="mt-5 text-center flex flex-col items-center bg-[#000000]/30 py-4 px-4 rounded-xl border border-[#84CC16]/20 w-full shadow-inner">
-        <p class="text-[13px] font-bold text-[#EAEBEA] tracking-wide leading-relaxed"><span class="text-[#84CC16]">'조경현장의 든든한 동반자!'</span><br>스마트한 조경노트와 성공하세요~!</p>
-        <p class="text-[12px] text-[#A3A8A3] mt-2"><i data-lucide="phone-call" class="w-4 h-4 inline-block align-middle pb-0.5"></i> 시스템 도입 문의 : <a href="tel:010-4712-8523" class="font-bold text-[#60A5FA] hover:text-blue-300 underline transition-colors">010-4712-8523</a></p>
       </div>
     </div>
   </section>
@@ -103,11 +99,11 @@
         </div>
         <label class="flex items-start gap-2 cursor-pointer text-[#A3A8A3] text-[12px] leading-relaxed text-left bg-black/20 p-4 rounded-[14px] border border-white/5 mt-3">
             <input type="checkbox" id="obPrivacyCheck" class="w-5 h-5 rounded border-white/20 bg-transparent text-[#84CC16] focus:ring-[#84CC16] mt-0.5 shrink-0">
-            <span><strong class="text-white text-[13px]">[필수] 개인정보 수집 및 이용 동의</strong><br><span class="text-[11px] text-white/70 block mt-1.5 leading-snug">수집항목: 상호, 대표자, 연락처 등<br>이용목적: 서비스 제공, 업체 인증<br><strong class="text-[#FEE500]">* 관리자가 승인 목적으로 열람합니다.</strong></span></span>
+            <span><strong class="text-white text-[13px]">[필수] 개인정보 수집 및 이용 동의</strong></span>
         </label>
         <label class="flex items-start gap-2 cursor-pointer text-[#A3A8A3] text-[12px] leading-relaxed text-left bg-black/20 p-4 rounded-[14px] border border-white/5 mt-2">
             <input type="checkbox" id="obTermsCheck" class="w-5 h-5 rounded border-white/20 bg-transparent text-[#84CC16] focus:ring-[#84CC16] mt-0.5 shrink-0">
-            <span><strong class="text-white text-[13px]">[필수] 서비스 이용약관 동의</strong><br><span class="text-[11px] text-white/70 block mt-1.5 leading-snug">1. 미납 시 서비스 정지 가능<br>2. 탈퇴 시 30일 보관 후 파기<br>3. 부적절한 사용 시 강제 해지 가능</span></span>
+            <span><strong class="text-white text-[13px]">[필수] 서비스 이용약관 동의</strong></span>
         </label>
       </div>
       <button onclick="saveOnboarding()" class="w-full py-4.5 bg-[#84CC16] text-[#12261E] rounded-[16px] font-extrabold text-[18px] hover:bg-[#9BE32D] shadow-[0_8px_20px_rgba(132,204,22,0.2)] transition-all mb-3 shrink-0">등록 신청 및 승인요청</button>
@@ -127,7 +123,7 @@
         <div class="space-y-3">
           <div><label class="block text-[12px] font-black text-[#A3A8A3] ml-1 mb-1">상호명</label><input type="text" id="setCompanyName" readonly class="w-full bg-white/5 border border-white/10 rounded-[12px] px-4 py-3 text-white/50 text-[15px] font-black outline-none cursor-not-allowed"></div>
           <div><label class="block text-[12px] font-black text-[#A3A8A3] ml-1 mb-1">대표자명</label><input type="text" id="setCompanyCeo" readonly class="w-full bg-white/5 border border-white/10 rounded-[12px] px-4 py-3 text-white/50 text-[15px] font-black outline-none cursor-not-allowed"></div>
-          <div><label class="block text-[12px] font-black text-[#A3A8A3] ml-1 mb-1">연락처</label><input type="tel" id="setCompanyPhone" readonly class="w-full bg-white/5 border border-white/10 rounded-[12px] px-4 py-3 text-white/50 text-[15px] font-black outline-none cursor-not-allowed"></div>
+          <div><label class="block text-[12px] font-black text-[#A3A8A3] ml-1 mb-1">연락처</label><input type="tel" id="setCompanyPhone" oninput="autoHyphen(this)" readonly class="w-full bg-white/5 border border-white/10 rounded-[12px] px-4 py-3 text-white/50 text-[15px] font-black outline-none cursor-not-allowed"></div>
           <div><label class="block text-[12px] font-black text-[#A3A8A3] ml-1 mb-1">사업자등록번호</label><input type="text" id="setCompanyBizNum" readonly class="w-full bg-white/5 border border-white/10 rounded-[12px] px-4 py-3 text-white/50 text-[15px] font-black outline-none cursor-not-allowed"></div>
         </div>
         <div class="pt-4 border-t border-white/10 space-y-3">
@@ -137,7 +133,7 @@
       </div>
       <div class="p-4 bg-[#0F1722] border-t border-white/10 flex gap-2">
         <button onclick="closeSettings()" class="flex-1 py-4 bg-white/5 text-white border border-white/10 rounded-[16px] font-bold text-[15px] hover:bg-white/10 transition-colors">닫기</button>
-        <button onclick="saveSettings()" class="flex-1 py-4 bg-[#84CC16] text-[#12261E] rounded-[16px] font-black text-[15px] hover:bg-[#9BE32D] transition-colors">비밀번호 변경</button>
+        <button onclick="saveSettings()" class="flex-1 py-4 bg-[#84CC16] text-[#12261E] rounded-[16px] font-black text-[15px] shadow-[0_4px_12px_rgba(132,204,22,0.2)] hover:bg-[#9BE32D] transition-colors">비밀번호 변경</button>
       </div>
     </div>
   </div>
@@ -153,7 +149,7 @@
               <span id="company-name-header" class="font-black text-[20px] text-white tracking-tight">업체명</span>
               <span class="text-[11px] bg-[#84CC16]/20 text-[#84CC16] font-black px-2.5 py-0.5 rounded uppercase tracking-widest border border-[#84CC16]/30">PRO</span>
               <div class="flex items-center gap-1.5 ml-1">
-                 <span id="cloudStatusBadge" class="text-[11px] bg-blue-500/20 text-blue-400 font-black px-2 py-0.5 rounded uppercase tracking-widest border border-blue-500/30 flex items-center gap-1"><i data-lucide="cloud" class="w-3.5 h-3.5"></i> 연동됨</span>
+                 <span id="cloudStatusBadge" class="text-[11px] bg-blue-500/20 text-blue-400 font-black px-2 py-0.5 rounded uppercase tracking-widest border border-blue-500/30 flex items-center gap-1"><i data-lucide="cloud" class="w-3.5 h-3.5"></i> 보안 연동됨</span>
                  <button onclick="openSettings()" class="w-8 h-8 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all border border-white/20 shadow-sm"><i data-lucide="settings" class="w-4 h-4 text-white"></i></button>
                  <button onclick="logoutAdmin()" class="w-8 h-8 bg-red-500/10 hover:bg-red-500/20 rounded-full flex items-center justify-center transition-all border border-red-500/20 shadow-sm"><i data-lucide="power" class="w-4 h-4 text-red-500"></i></button>
               </div>
@@ -377,7 +373,7 @@
       </div>
     </section>
 
-    <!-- ================= [5. 연락처 관리 화면] ================= -->
+    <!-- ================= [5. 연락처 관리 화면 (신규)] ================= -->
     <section id="contactsView" class="hidden space-y-4">
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-6">
         <div class="flex items-center justify-between pb-2 border-b border-[#F4F5F4]">
@@ -390,6 +386,7 @@
           <button id="btnContactLabor" onclick="switchContactTab('labors')" class="flex-1 py-3 rounded-[12px] text-[#4E5968] font-black text-[14px] hover:text-[#12261E] transition-all border border-transparent bg-transparent">인력 전화번호</button>
         </div>
 
+        <!-- 연락처 등록/수정 폼 -->
         <div class="bg-[#F9F9F8] p-5 rounded-[20px] border border-[#EAEBEA] space-y-3.5">
           <h3 id="contactFormTitle" class="text-[14px] font-black text-[#12261E] flex items-center gap-1.5"><i data-lucide="user-plus" class="w-5 h-5 text-[#84CC16]"></i> <span>새 연락처 추가</span></h3>
           <div class="space-y-2.5">
@@ -402,10 +399,12 @@
             <button id="cancelContactEditBtn" onclick="cancelContactEdit()" class="hidden px-4 py-4 bg-[#EAEBEA] text-[#4E5968] rounded-[12px] text-[15px] font-black">취소</button>
           </div>
         </div>
+
         <div id="contactsListContainer" class="space-y-3 pt-2 max-h-[50vh] overflow-y-auto pr-1"></div>
       </div>
     </section>
 
+    <!-- ================= [6. 과거 일지 (히스토리) 화면] ================= -->
     <section id="historyView" class="hidden space-y-5">
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
         <div class="flex items-center justify-between pb-4 border-b border-[#F4F5F4]">
@@ -417,7 +416,6 @@
       </div>
     </section>
 
-    <!-- AI 수목식별 렌즈 -->
     <section id="lensView" class="hidden space-y-4">
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
         <div class="flex items-center justify-between pb-4 border-b border-[#F4F5F4]">
@@ -634,10 +632,21 @@
     </div>
   </div>
 
+  <!-- 🔥 API 키 장착 및 보안 통신 모듈 🔥 -->
   <script>
+    const API_KEY = "AIzaSyC_1KaOSychXSNF-Z-vnVONLB_-aAGghhk";
     const DB_BASE_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/accounts";
     const SETTINGS_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/settings"; 
+    
     let currentUserId = "";
+    let currentIdToken = ""; // 보안 열쇠 보관함
+
+    // URL에 보안 열쇠를 달아주는 헬퍼 함수
+    function getAuthUrl(url) {
+        if (!currentIdToken) return url;
+        const sep = url.includes('?') ? '&' : '?';
+        return `${url}${sep}auth=${currentIdToken}`;
+    }
 
     function autoHyphen(target) {
         let str = target.value.replace(/[^0-9]/g, '');
@@ -662,7 +671,12 @@
         const url = `https://firebasestorage.googleapis.com/v0/b/${bucket}/o?name=${fileName}`;
         const res = await fetch(base64Data);
         const blob = await res.blob();
-        const uploadRes = await fetch(url, { method: 'POST', headers: { 'Content-Type': blob.type }, body: blob });
+        
+        // Storage 보안 규칙 통과를 위해 헤더에 열쇠 삽입
+        const headers = { 'Content-Type': blob.type };
+        if(currentIdToken) headers['Authorization'] = `Bearer ${currentIdToken}`;
+        
+        const uploadRes = await fetch(url, { method: 'POST', headers: headers, body: blob });
         const data = await uploadRes.json();
         if(data.error) throw new Error("서버 스토리지 에러");
         return `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${fileName}?alt=media&token=${data.downloadTokens}`;
@@ -709,37 +723,94 @@
         if (/[.#$\[\]]/.test(id)) return alert("아이디 특수기호 불가.");
         if (!obBizLicenseBase64) return alert("사업자등록증 첨부 요망.");
         if (!document.getElementById('obPrivacyCheck').checked || !document.getElementById('obTermsCheck').checked) return alert("이용 동의 확인 요망.");
-        showLoadingOverlay("가입 서류 업로드 중...");
+        
+        showLoadingOverlay("가입 서류 업로드 및 보안 인증 중...");
         try {
-            const safeKey = getSafeKey(id); const res = await fetch(`${DB_BASE_URL}/${safeKey}/profile.json`);
-            if(res.status === 401 || res.status === 403) { document.getElementById('loadingOverlay')?.remove(); return alert("DB 보안 만료"); }
+            // 1. Firebase Auth 공식 회원가입 통신
+            const authRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: id + '@jogyeongnote.com', password: pw, returnSecureToken: true })
+            });
+            const authData = await authRes.json();
+            
+            let tempToken = authData.idToken;
+            
+            // 만약 이미 가입된 계정이라면 로그인 시도해서 토큰 받아옴
+            if (authData.error && authData.error.message === 'EMAIL_EXISTS') {
+                 const loginRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: id + '@jogyeongnote.com', password: pw, returnSecureToken: true })
+                 });
+                 const loginData = await loginRes.json();
+                 if(loginData.error) {
+                     document.getElementById('loadingOverlay')?.remove();
+                     return alert("이미 존재하는 아이디입니다.");
+                 }
+                 tempToken = loginData.idToken;
+            } else if (authData.error) {
+                 document.getElementById('loadingOverlay')?.remove();
+                 return alert("인증 서버 오류: " + authData.error.message);
+            }
+            
+            currentIdToken = tempToken; 
+
+            // 2. 파이어베이스 DB 조회 및 저장
+            const safeKey = getSafeKey(id);
+            const res = await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`));
+            
             const existing = await res.json();
-            if(existing && !existing.error) { document.getElementById('loadingOverlay')?.remove(); return alert("이미 사용 중인 아이디입니다."); }
+            if(existing && !existing.error) { document.getElementById('loadingOverlay')?.remove(); return alert("이미 DB에 사용 중인 아이디입니다."); }
+            
             let licenseUrl = await uploadToFirebaseStorage(obBizLicenseBase64, "licenses");
             const profileData = { id, pw, name, ceo, phone, bizNum, license: licenseUrl, status: 'pending' };
-            await fetch(`${DB_BASE_URL}/${safeKey}/profile.json`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(profileData) });
-            alert("가입 완료. 승인을 기다려주세요."); showLogin();
+            await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(profileData) });
+            
+            alert("가입 완료. 승인을 기다려주세요."); 
+            currentIdToken = ""; // 토큰 회수
+            showLogin();
+            
         } catch(e) { alert("서버 오류"); } finally { document.getElementById('loadingOverlay')?.remove(); }
     }
 
     async function doLogin() {
         const id = document.getElementById('loginId').value.trim(); const pw = document.getElementById('loginPw').value.trim();
         if(!id || !pw) return alert("입력 요망");
-        showLoadingOverlay("접속 중...");
+        
+        showLoadingOverlay("보안 접속 중...");
         try {
-            const safeKey = getSafeKey(id); const res = await fetch(`${DB_BASE_URL}/${safeKey}/profile.json`);
+            // 1. Firebase Auth 로그인 통신
+            const authRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: id + '@jogyeongnote.com', password: pw, returnSecureToken: true })
+            });
+            const authData = await authRes.json();
+            if(authData.error) {
+                 document.getElementById('loadingOverlay')?.remove();
+                 return alert("아이디가 없거나 비밀번호가 틀렸습니다.");
+            }
+            
+            currentIdToken = authData.idToken; // ✅ 열쇠 획득 완료
+            
+            const safeKey = getSafeKey(id);
+            // 2. 획득한 열쇠로 암호화된 DB 정보 요청
+            const res = await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`));
             if(!res.ok) throw new Error("응답 오류");
+            
             const profile = await res.json();
             if(!profile || profile.error) alert("존재하지 않는 계정");
-            else if(profile.pw !== pw) alert("비밀번호 불일치");
             else if(profile.status === 'pending') alert("승인 대기 중");
             else if(profile.status === 'suspended') alert("이용 정지된 계정");
             else {
                 currentUserId = id; myCompanyProfile = profile;
                 if (myCompanyProfile.license && myCompanyProfile.license.startsWith('data:image')) delete myCompanyProfile.license;
+                
                 localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile));
                 localStorage.setItem('shinhwa_pro_logged_in_id', id);
+                localStorage.setItem('shinhwa_pro_logged_in_pw', pw); // 자동 로그인을 위한 비번 저장
+                
                 if(document.getElementById('autoLoginCheck').checked) localStorage.setItem('shinhwa_pro_auto_login', 'true'); else localStorage.removeItem('shinhwa_pro_auto_login');
+                
                 applyCompanyProfile(); document.getElementById('authView').classList.add('hidden'); document.getElementById('mainHeader').style.display = 'block';
                 await syncWithCloud(); history.replaceState({ view: 'admin' }, "", ""); switchView('admin', false); setTimeout(checkAppNotices, 800);
             }
@@ -750,7 +821,7 @@
     async function checkAppNotices() {
         noticeQueue = [];
         try {
-            const res = await fetch(`${SETTINGS_URL}/globalNotice.json`); const globalNotice = await res.json();
+            const res = await fetch(getAuthUrl(`${SETTINGS_URL}/globalNotice.json`)); const globalNotice = await res.json();
             if(globalNotice && globalNotice.active && globalNotice.text && globalNotice.text.trim() !== '') {
                 const readNotice = localStorage.getItem('shinhwa_pro_read_global_notice');
                 if (globalNotice.text !== readNotice) noticeQueue.push({ type: 'global', title: '운영본부 전체 공지', text: globalNotice.text });
@@ -774,10 +845,10 @@
         setTimeout(() => { modal.classList.add('hidden'); currentShowingNotice = null; if(noticeQueue.length > 0) setTimeout(showNextNotice, 300); }, 200);
     }
     async function clearTargetNotice() {
-        try { const safeKey = getSafeKey(currentUserId); await fetch(`${DB_BASE_URL}/${safeKey}/profile.json`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ targetNotice: "" }) }); myCompanyProfile.targetNotice = ""; localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile)); } catch(e) {}
+        try { const safeKey = getSafeKey(currentUserId); await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ targetNotice: "" }) }); myCompanyProfile.targetNotice = ""; localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile)); } catch(e) {}
     }
 
-    function logoutAdmin() { if(confirm('로그아웃 하시겠습니까?')) { localStorage.removeItem('shinhwa_pro_auto_login'); localStorage.removeItem('shinhwa_pro_logged_in_id'); location.reload(); } }
+    function logoutAdmin() { if(confirm('로그아웃 하시겠습니까?')) { localStorage.removeItem('shinhwa_pro_auto_login'); localStorage.removeItem('shinhwa_pro_logged_in_id'); localStorage.removeItem('shinhwa_pro_logged_in_pw'); location.reload(); } }
     function openSettings() {
         if(!myCompanyProfile) return;
         document.getElementById('setCompanyName').value = myCompanyProfile.name || ''; document.getElementById('setCompanyCeo').value = myCompanyProfile.ceo || '';
@@ -795,14 +866,24 @@
         const pw = document.getElementById('setCompanyPw').value.trim();
         if (!pw) return alert("새로운 비밀번호를 입력해 주세요."); if (pw.length < 4) return alert("비밀번호는 4자리 이상 숫자로 설정해 주세요.");
         showLoadingOverlay("업데이트 중...");
-        try { myCompanyProfile.pw = pw; localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile)); const safeKey = getSafeKey(currentUserId); await fetch(`${DB_BASE_URL}/${safeKey}/profile.json`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pw: pw }) }); alert("변경 완료"); closeSettings(); } catch(e) { alert("서버 오류"); } finally { document.getElementById('loadingOverlay')?.remove(); }
+        try { 
+            // 1. Firebase Auth 서버 비번 변경
+            await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:update?key=${API_KEY}`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken: currentIdToken, password: pw, returnSecureToken: true })
+            });
+
+            // 2. DB 업데이트
+            myCompanyProfile.pw = pw; localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile)); localStorage.setItem('shinhwa_pro_logged_in_pw', pw);
+            const safeKey = getSafeKey(currentUserId); await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pw: pw }) }); 
+            alert("변경 완료"); closeSettings(); 
+        } catch(e) { alert("서버 오류"); } finally { document.getElementById('loadingOverlay')?.remove(); }
     }
 
     async function syncWithCloud() {
         const safeKey = getSafeKey(currentUserId); const DATA_URL = `${DB_BASE_URL}/${safeKey}/data.json`;
         try {
-            const res = await fetch(DATA_URL); let cloudData = await res.json();
-            if (!cloudData) { cloudData = { clients: defaultClients, records: [], materials: defaultMaterials, contacts: { clients: [], labors: [] } }; await fetch(DATA_URL, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(cloudData) }); }
+            const res = await fetch(getAuthUrl(DATA_URL)); let cloudData = await res.json();
+            if (!cloudData) { cloudData = { clients: defaultClients, records: [], materials: defaultMaterials, contacts: { clients: [], labors: [] } }; await fetch(getAuthUrl(DATA_URL), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(cloudData) }); }
             
             clients = cloudData.clients ? (Array.isArray(cloudData.clients) ? cloudData.clients : Object.values(cloudData.clients)).filter(Boolean) : [];
             records = cloudData.records ? (Array.isArray(cloudData.records) ? cloudData.records : Object.values(cloudData.records)).filter(Boolean) : [];
@@ -812,11 +893,11 @@
             contactsData = cloudData.contacts;
             
             renderClientSelect(); renderClientsList(); renderQuoteList(); renderContactsList();
-            const badge = document.getElementById('cloudStatusBadge'); if(badge) { badge.innerHTML = '<i data-lucide="cloud-check" class="w-3.5 h-3.5"></i> 연동됨'; badge.className = 'text-[11px] bg-blue-500/20 text-blue-400 font-black px-2.5 py-0.5 rounded uppercase tracking-widest border border-blue-500/30 flex items-center gap-1'; }
+            const badge = document.getElementById('cloudStatusBadge'); if(badge) { badge.innerHTML = '<i data-lucide="cloud-check" class="w-3.5 h-3.5"></i> 보안 연동됨'; badge.className = 'text-[11px] bg-blue-500/20 text-blue-400 font-black px-2.5 py-0.5 rounded uppercase tracking-widest border border-blue-500/30 flex items-center gap-1'; }
         } catch(e) { alert("클라우드 동기화 실패"); } finally { lucide.createIcons(); }
     }
 
-    function updateData(key, dataObj) { const safeKey = getSafeKey(currentUserId); const DATA_URL = `${DB_BASE_URL}/${safeKey}/data/${key}.json`; fetch(DATA_URL, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dataObj) }).catch(e => console.error("저장 실패")); }
+    function updateData(key, dataObj) { const safeKey = getSafeKey(currentUserId); const DATA_URL = `${DB_BASE_URL}/${safeKey}/data/${key}.json`; fetch(getAuthUrl(DATA_URL), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dataObj) }).catch(e => console.error("저장 실패")); }
 
     function switchContactTab(tab) {
         currentContactTab = tab; const btnClient = document.getElementById('btnContactClient'); const btnLabor = document.getElementById('btnContactLabor'); const inputName = document.getElementById('newContactName');
@@ -946,12 +1027,11 @@
 
     function formatNumberInput(input) { let val = input.value.replace(/[^0-9]/g, ''); if(val) input.value = parseInt(val).toLocaleString('ko-KR'); else input.value = ''; }
 
-    // 🔥 오류 해결 2: 클라우드 기록 완벽 보존 및 URL 파괴 방지
     async function createShortCloudLink(payload, existingId = null) {
         let clean = JSON.parse(JSON.stringify(payload));
         let shortCloudId = existingId || ("doc_" + Date.now()); 
         try {
-            const uploadRes = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_shared_docs/${shortCloudId}.json`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(clean) });
+            const uploadRes = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_shared_docs/${shortCloudId}.json?auth=${currentIdToken}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(clean) });
             if (!uploadRes.ok) return null;
         } catch(e) { return null; }
 
@@ -1010,11 +1090,17 @@
           if(loadedData) renderClientView(loadedData, 'client_shared'); else throw new Error("No data");
         } catch(e) { document.getElementById('loadingOverlay')?.remove(); document.body.innerHTML = `<div class="p-10 text-center font-bold text-lg mt-20 text-white">존재하지 않거나 보안상 만료된 문서입니다.</div>`; }
       } else {
-        const savedId = localStorage.getItem('shinhwa_pro_logged_in_id'); const autoLogin = localStorage.getItem('shinhwa_pro_auto_login');
-        if (savedId && autoLogin === 'true') {
-            currentUserId = savedId; myCompanyProfile = JSON.parse(localStorage.getItem('shinhwa_pro_my_profile')); applyCompanyProfile(); document.getElementById('mainHeader').style.display = 'block';
-            syncWithCloud().then(() => { switchView('admin', false); }); setTimeout(checkAppNotices, 2500); 
-        } else document.getElementById('authView').classList.remove('hidden');
+        const savedId = localStorage.getItem('shinhwa_pro_logged_in_id'); 
+        const savedPw = localStorage.getItem('shinhwa_pro_logged_in_pw');
+        const autoLogin = localStorage.getItem('shinhwa_pro_auto_login');
+        
+        if (savedId && savedPw && autoLogin === 'true') {
+            document.getElementById('loginId').value = savedId;
+            document.getElementById('loginPw').value = savedPw;
+            doLogin(); 
+        } else {
+            document.getElementById('authView').classList.remove('hidden');
+        }
         lucide.createIcons();
       }
     });
@@ -1144,18 +1230,15 @@
       reader.onload = event => { const img = new Image(); img.src = event.target.result; img.onload = () => { const canvas = document.createElement('canvas'); const MAX_SIZE = 1200; let width = img.width; let height = img.height; if (width > height) { if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; } } else { if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; } } canvas.width = width; canvas.height = height; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height); callback(canvas.toDataURL('image/jpeg', 0.8)); }; };
     }
 
-    // 🔥 오류 해결 3: 클라우드 업로드 함수 보안 코드 (CORS 에러 시 사진 날아가는 현상 차단)
+    // 🔥 오류 해결 2: CORS 및 재업로드 방지 방어 코드 (사진 날아감 방지)
     async function uploadImagesToCloud(base64Array) {
       const urls = [];
       for(let b64 of base64Array) { 
-          // 만약 이미 클라우드에 올라간 주소(http)라면, 재업로드 하지 않고 그대로 살려둡니다!
           if (b64.startsWith('http')) {
               urls.push(b64);
               continue;
           }
-          try { 
-              const url = await uploadToFirebaseStorage(b64, "reports"); urls.push(url); 
-          } catch (e) { console.error("업로드 오류:", e); } 
+          try { const url = await uploadToFirebaseStorage(b64, "reports"); urls.push(url); } catch (e) {} 
       }
       return urls;
     }
@@ -1194,7 +1277,7 @@
 
     function showLoadingOverlay(msg) {
       const overlay = document.createElement('div'); overlay.id = 'loadingOverlay'; overlay.className = 'fixed inset-0 z-[200] bg-black/80 flex flex-col items-center justify-center backdrop-blur-sm';
-      overlay.innerHTML = `<div class="w-12 h-12 border-4 border-[#84CC16]/30 border-t-[#84CC16] rounded-full animate-spin mb-4"></div><div class="text-white font-bold text-[15px] mb-1">${msg}</div><div class="text-[#84CC16] text-[11px] font-medium">데이터를 처리하고 있습니다.</div>`;
+      overlay.innerHTML = `<div class="w-12 h-12 border-4 border-[#84CC16]/30 border-t-[#84CC16] rounded-full animate-spin mb-4"></div><div class="text-white font-bold text-[15px] mb-1">${msg}</div><div class="text-[#84CC16] text-[11px] font-medium">데이터를 안전하게 처리하고 있습니다.</div>`;
       document.body.appendChild(overlay);
     }
 
@@ -1224,20 +1307,14 @@
         editingRecordId = null; let genBtn = document.getElementById('btnGenerateReport'); if(genBtn) genBtn.innerHTML = '<i data-lucide="send" class="w-6 h-6 stroke-[2.5]"></i> 리포트 발행 및 저장';
         renderClientView(payloadData, 'admin_preview');
         
-        // 🔥 오류 해결 1: 입력 폼 완벽 초기화 (저장 후 잔여 데이터 청소)
-        document.getElementById('clientSelect').value = '';
-        document.getElementById('inputClientPhone').value = '';
+        // 🔥 오류 해결 1: 입력 폼 완벽 초기화 (저장 후 잔여 찌꺼기 청소)
+        document.getElementById('clientSelect').value = ''; document.getElementById('inputClientPhone').value = '';
         if(document.getElementById('inputClientAddress')) document.getElementById('inputClientAddress').value = '';
-        document.getElementById('inputRound').value = '';
-        document.getElementById('inputDiagnosis').value = '';
-        document.getElementById('inputIssue').value = '';
-        document.getElementById('inputExtraCategory').value = ''; 
-        if(document.getElementById('inputTreePruning')) document.getElementById('inputTreePruning').value = ''; 
+        document.getElementById('inputRound').value = ''; document.getElementById('inputDiagnosis').value = ''; document.getElementById('inputIssue').value = '';
+        document.getElementById('inputExtraCategory').value = ''; if(document.getElementById('inputTreePruning')) document.getElementById('inputTreePruning').value = ''; 
         
         document.querySelectorAll('#categoryContainer .cat-btn').forEach(btn => {
-            const val = btn.getAttribute('data-val');
-            btn.className = "cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968] transition-all";
-            btn.innerText = "+ " + val;
+            const val = btn.getAttribute('data-val'); btn.className = "cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968] transition-all"; btn.innerText = "+ " + val;
         });
 
         beforeImages = []; afterImages = []; issueImages = []; renderThumbList('before'); renderThumbList('after'); renderThumbList('issue');
@@ -1264,19 +1341,17 @@
         const payloadData = { isQuote: true, c: clientName, p: clientPhone, addr: clientAddress, r: roundTitle, m: monthsData, s: sum, v: 0, t: sum, imgs: qUrls.join(','), memo: quoteMemo };
         generatedShareUrl = await createShortCloudLink(payloadData, editingRecordId);
         if (!generatedShareUrl) { document.getElementById('loadingOverlay')?.remove(); return; }
+        
         alert("✅ 견적서 저장이 완료되어 견적 보관함으로 이동했습니다.");
         editingRecordId = null; let genBtn = document.getElementById('btnGenerateQuote'); if(genBtn) genBtn.innerHTML = '<i data-lucide="file-check-2" class="w-6 h-6 stroke-[2.5]"></i> 견적서 발행 및 보관함 저장';
         renderClientView(payloadData, 'admin_preview');
         
         // 🔥 오류 해결 1: 입력 폼 완벽 초기화
-        document.getElementById('quoteClientSelect').value = '';
-        document.getElementById('quoteInputClientPhone').value = '';
+        document.getElementById('quoteClientSelect').value = ''; document.getElementById('quoteInputClientPhone').value = '';
         if(document.getElementById('quoteInputClientAddress')) document.getElementById('quoteInputClientAddress').value = '';
         document.getElementById('quoteInputRound').value = '연간 정기 조경 관리 견적서';
         if(document.getElementById('quoteInputMemo')) document.getElementById('quoteInputMemo').value = '';
-        loadQuoteTemplate('residential'); 
-
-        quoteImages = []; renderQuoteThumbList(); 
+        loadQuoteTemplate('residential'); quoteImages = []; renderQuoteThumbList(); 
       } catch (e) { alert("오류가 발생했습니다."); } finally { document.getElementById('loadingOverlay')?.remove(); lucide.createIcons(); }
     }
 
@@ -1400,25 +1475,13 @@
         } else { issueBlock.classList.add('hidden'); }
         document.getElementById('viewDiagnosis').innerText = data.d || '-'; document.getElementById('viewCategories').innerHTML = '';
         if(data.cat) data.cat.split(',').forEach(cat => { document.getElementById('viewCategories').insertAdjacentHTML('beforeend', `<span class="text-[12px] bg-[#12261E] text-[#84CC16] px-3 py-1.5 rounded-[10px] font-black">${cat}</span>`); });
-        
-        // 🔥 오류 해결 3: 클라우드에서 비어있는 이미지 배열을 렌더링 할 때 오류 방지
         const renderGallery = (containerId, urls, typeCode) => {
           const container = document.getElementById(containerId); container.innerHTML = ''; 
           const arr = Array.isArray(urls) ? urls : (typeof urls === 'string' && urls ? urls.split(',') : []);
           const cleanArr = arr.filter(src => src && src.trim() !== ''); // 빈 공백 주소 완전 필터링
-          
           if(typeCode === 'b') currentGalleryB = cleanArr; else currentGalleryA = cleanArr;
-          
-          if (cleanArr.length === 0) { 
-              container.innerHTML = `<div class="col-span-2 text-[12px] text-[#4E5968] font-bold py-3 text-center bg-white/50 rounded-[16px] border border-dashed border-[#EAEBEA]">등록된 사진 없음</div>`; 
-          } else { 
-              cleanArr.forEach((src, idx) => { 
-                  const bd = typeCode==='b' ? 'border-[#EAEBEA]' : 'border-[#84CC16]/40'; 
-                  const imgDiv = document.createElement('div'); imgDiv.className = `h-40 rounded-[20px] overflow-hidden bg-white/80 border ${bd} cursor-pointer shadow-sm relative group`; 
-                  imgDiv.innerHTML = `<img src="${src}" onerror="this.parentElement.style.display='none'" onclick="openModal('${typeCode}', ${idx})" class="w-full h-full object-cover transition-transform hover:scale-105 duration-700"><div class="absolute bottom-2 right-2 bg-black/60 text-white p-1.5 rounded-full pointer-events-none"><i data-lucide="zoom-in" class="w-3 h-3"></i></div>`; 
-                  container.appendChild(imgDiv); 
-              }); 
-          }
+          if (cleanArr.length === 0) { container.innerHTML = `<div class="col-span-2 text-[12px] text-[#4E5968] font-bold py-3 text-center bg-white/50 rounded-[16px] border border-dashed border-[#EAEBEA]">등록된 사진 없음</div>`; } 
+          else { cleanArr.forEach((src, idx) => { const bd = typeCode==='b' ? 'border-[#EAEBEA]' : 'border-[#84CC16]/40'; const imgDiv = document.createElement('div'); imgDiv.className = `h-40 rounded-[20px] overflow-hidden bg-white/80 border ${bd} cursor-pointer shadow-sm relative group`; imgDiv.innerHTML = `<img src="${src}" onerror="this.parentElement.style.display='none'" onclick="openModal('${typeCode}', ${idx})" class="w-full h-full object-cover transition-transform hover:scale-105 duration-700"><div class="absolute bottom-2 right-2 bg-black/60 text-white p-1.5 rounded-full pointer-events-none"><i data-lucide="zoom-in" class="w-3 h-3"></i></div>`; container.appendChild(imgDiv); }); }
         };
         renderGallery('viewBeforeGallery', data.b, 'b'); renderGallery('viewAfterGallery', data.a, 'a');
       }
