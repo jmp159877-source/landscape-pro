@@ -827,8 +827,8 @@
             currentIdToken = ""; // 토큰 회수
             showLogin();
             
-         { document.getElementById('loadingOverlay')?.remove(); }
-    } catch(e) { alert("서버 오류: " + e.message); } finally
+        } catch(e) { alert("서버 오류: " + e.message); } finally { document.getElementById('loadingOverlay')?.remove(); }
+    }
 
     async function doLogin() {
         const id = document.getElementById('loginId').value.trim(); const pw = document.getElementById('loginPw').value.trim();
