@@ -107,7 +107,7 @@
         <input type="tel" id="obCompanyPhone" placeholder="대표 연락처 (예: 010-0000-0000)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
         <input type="text" id="obCompanyBizNum" placeholder="사업자등록번호 (예: 123-45-67890)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] mb-1 placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
 
-        <!-- [부활] 구글 클라우드 직결 방식의 사업자등록증 첨부 영역 -->
+        <!-- 구글 클라우드 직결 방식의 사업자등록증 첨부 영역 -->
         <div class="bg-[#0F1722] border border-[#84CC16]/40 rounded-[14px] p-3.5 flex items-center justify-between shadow-sm">
             <span class="text-white text-[13px] font-bold" id="obBizLicenseLabel">사업자등록증 첨부 (필수)</span>
             <label class="bg-white/10 hover:bg-white/20 text-[#84CC16] border border-[#84CC16]/30 text-[12px] font-bold py-2.5 px-3.5 rounded-[10px] cursor-pointer transition-colors flex items-center gap-1.5 shrink-0">
@@ -128,7 +128,7 @@
             </span>
         </label>
         
-        <!-- 서비스 이용약관 동의 체크박스 (신규 핀셋 추가) -->
+        <!-- 서비스 이용약관 동의 체크박스 -->
         <label class="flex items-start gap-2 cursor-pointer text-[#A3A8A3] text-[12px] leading-relaxed text-left bg-black/20 p-4 rounded-[14px] border border-white/5 mt-2">
             <input type="checkbox" id="obTermsCheck" class="w-5 h-5 rounded border-white/20 bg-transparent text-[#84CC16] focus:ring-[#84CC16] mt-0.5 shrink-0">
             <span><strong class="text-white text-[13px]">[필수] 서비스 이용약관 동의</strong><br>
@@ -992,9 +992,10 @@
     }
 
     // ==========================================
-    // 🔥 신규: 앱 공지사항 수신기 (Queue 시스템) 🔥
+    // 🔥 신규 핀셋: 앱 공지사항 수신기 (메모리 기능 추가) 🔥
     // ==========================================
     let noticeQueue = [];
+    let currentShowingNotice = null; // 현재 화면에 떠 있는 공지사항 데이터 저장용
 
     async function checkAppNotices() {
         noticeQueue = [];
@@ -1003,8 +1004,16 @@
         try {
             const res = await fetch(`${SETTINGS_URL}/globalNotice.json`);
             const globalNotice = await res.json();
+            
+            // 서버에 전체 공지가 활성화되어 있다면
             if(globalNotice && globalNotice.active && globalNotice.text && globalNotice.text.trim() !== '') {
-                noticeQueue.push({ type: 'global', title: '운영본부 전체 공지', text: globalNotice.text });
+                // 이미 읽은 공지사항인지 스마트폰 메모리 확인
+                const readNotice = localStorage.getItem('shinhwa_pro_read_global_notice');
+                
+                // 내가 마지막으로 읽은 텍스트와 현재 서버의 텍스트가 다를 때만 띄움!
+                if (globalNotice.text !== readNotice) {
+                    noticeQueue.push({ type: 'global', title: '운영본부 전체 공지', text: globalNotice.text });
+                }
             }
         } catch(e) { console.log("전체 공지 확인 실패", e); }
 
@@ -1013,16 +1022,16 @@
             noticeQueue.push({ type: 'target', title: '운영본부 개별 안내', text: myCompanyProfile.targetNotice });
         }
 
-        // 팝업 띄우기
+        // 팝업 띄우기 시작
         showNextNotice();
     }
 
     function showNextNotice() {
         if(noticeQueue.length === 0) return;
-        const currentNotice = noticeQueue.shift(); // 큐에서 첫 번째 꺼내기
+        currentShowingNotice = noticeQueue.shift(); // 큐에서 첫 번째 꺼내기
         
-        document.getElementById('appNoticeTitle').innerText = currentNotice.title;
-        document.getElementById('appNoticeContent').innerText = currentNotice.text;
+        document.getElementById('appNoticeTitle').innerText = currentShowingNotice.title;
+        document.getElementById('appNoticeContent').innerText = currentShowingNotice.text;
         
         const modal = document.getElementById('appNoticeModal');
         const box = document.getElementById('appNoticeBox');
@@ -1033,8 +1042,8 @@
         }, 10);
         lucide.createIcons();
         
-        // 개별 타겟 팝업이었다면 띄우자마자 서버에서 삭제 (다시 안 뜨게)
-        if(currentNotice.type === 'target') {
+        // 개별 타겟 팝업이었다면 띄우자마자 서버에서 바로 삭제 (다시 안 뜨게)
+        if(currentShowingNotice.type === 'target') {
             clearTargetNotice();
         }
     }
@@ -1044,9 +1053,17 @@
         const box = document.getElementById('appNoticeBox');
         modal.classList.add('opacity-0');
         box.classList.add('scale-95');
+        
+        // 🔥 사용자가 '확인했습니다'를 눌러 닫으면, 그 내용을 폰에 영구 저장 (다음에 안 뜨게)
+        if (currentShowingNotice && currentShowingNotice.type === 'global') {
+            localStorage.setItem('shinhwa_pro_read_global_notice', currentShowingNotice.text);
+        }
+
         setTimeout(() => {
             modal.classList.add('hidden');
-            // 큐에 남은 공지 있으면 연속으로 띄움 (전체 공지 닫으면 개별 공지 뜨도록)
+            currentShowingNotice = null;
+            
+            // 큐에 남은 공지 있으면 연속으로 띄움 (전체 공지 닫으면 바로 개별 공지 뜨도록)
             if(noticeQueue.length > 0) {
                 setTimeout(showNextNotice, 300); 
             }
