@@ -720,7 +720,7 @@
     }
 
     async function uploadToFirebaseStorage(base64Data, folder="images") {
-        const bucket = "shinhwa-landnote.appspot.com"; 
+        const bucket = "shinhwa-landnote.firebasestorage.app"; 
         const fileName = encodeURIComponent(`${folder}/img_${Date.now()}_${Math.floor(Math.random()*1000)}.jpg`);
         const url = `https://firebasestorage.googleapis.com/v0/b/${bucket}/o?name=${fileName}`;
         const res = await fetch(base64Data);
@@ -827,8 +827,8 @@
             currentIdToken = ""; // 토큰 회수
             showLogin();
             
-        } catch(e) { alert("서버 오류"); } finally { document.getElementById('loadingOverlay')?.remove(); }
-    }
+         { document.getElementById('loadingOverlay')?.remove(); }
+    } catch(e) { alert("서버 오류: " + e.message); } finally
 
     async function doLogin() {
         const id = document.getElementById('loginId').value.trim(); const pw = document.getElementById('loginPw').value.trim();
