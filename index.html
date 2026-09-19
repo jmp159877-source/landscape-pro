@@ -63,7 +63,7 @@
       <h2 class="text-white font-black text-[24px] mb-2">조경노트 PRO 로그인</h2>
       <p class="text-[#A3A8A3] text-[14px] font-bold mb-6 text-center leading-relaxed">강력한 보안 암호화가 적용되었습니다.<br>안심하고 접속하세요.</p>
       <div class="w-full space-y-3 mb-4">
-        <input type="text" id="loginId" placeholder="아이디 (한글/영문/숫자)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[12px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16]">
+        <input type="text" id="loginId" placeholder="아이디 (영문/숫자 조합)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[12px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16]">
         <input type="password" id="loginPw" placeholder="비밀번호" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[12px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16]" onkeypress="if(event.key === 'Enter') doLogin()">
       </div>
       <div class="w-full flex items-center mb-6 px-1">
@@ -83,7 +83,7 @@
       <p class="text-[#FEE500] text-[13px] font-black mb-5 text-center leading-relaxed shrink-0">입력하신 정보는 고객에게 발송되는<br>모든 리포트와 견적서에 자동 입력됩니다.</p>
       <div class="w-full space-y-3 mb-5">
         <div class="bg-black/40 p-4 rounded-[18px] border border-white/10 mb-2 space-y-3 shadow-inner">
-          <input type="text" id="obId" placeholder="사용할 아이디 (한글/영문/숫자)" autocomplete="off" class="w-full bg-[#0F1722] border border-[#84CC16]/50 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
+          <input type="text" id="obId" placeholder="사용할 아이디 (영문/숫자 조합)" autocomplete="off" class="w-full bg-[#0F1722] border border-[#84CC16]/50 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
           <input type="password" id="obPw" placeholder="비밀번호 설정 (6자리 이상 숫자)" inputmode="numeric" pattern="[0-9]*" autocomplete="off" class="w-full bg-[#0F1722] border border-[#84CC16]/50 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
         </div>
         <input type="text" id="obCompanyName" placeholder="상호명 (예: 홍길동조경)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
@@ -666,7 +666,7 @@
         const content = document.getElementById('termsContent');
         if (type === 'privacy') {
             title.innerText = '개인정보 수집 및 이용 동의';
-            content.innerText = '1. 수집 항목: 아이디(한글/영문/숫자), 비밀번호, 업체명, 연락처\n2. 수집 목적: 조경노트 PRO 서비스 제공, 사용자 식별, 견적서/일지 발송 등 맞춤형 기능 제공\n3. 보유 기간: 회원 탈퇴 또는 서비스 종료 시까지 (관련 법령에 의거 보존할 필요가 있는 경우 해당 기간까지 보존)\n\n※ 내용을 꼼꼼히 확인하신 후 [동의합니다] 버튼을 눌러주세요.';
+            content.innerText = '1. 수집 항목: 아이디, 비밀번호, 업체명, 연락처\n2. 수집 목적: 조경노트 PRO 서비스 제공, 사용자 식별, 견적서/일지 발송 등 맞춤형 기능 제공\n3. 보유 기간: 회원 탈퇴 또는 서비스 종료 시까지 (관련 법령에 의거 보존할 필요가 있는 경우 해당 기간까지 보존)\n\n※ 내용을 꼼꼼히 확인하신 후 [동의합니다] 버튼을 눌러주세요.';
         } else {
             title.innerText = '서비스 이용 약관 동의';
             content.innerText = '제 1조 (목적)\n본 약관은 조경노트 PRO가 제공하는 스마트 조경 일지 및 견적 관리 서비스의 이용 조건 및 절차, 권리 및 의무를 규정함을 목적으로 합니다.\n\n제 2조 (서비스의 제공)\n1. AI 수목 식별 및 병해충 진단 보조\n2. 스마트 작업 일지 작성 및 클라우드 저장\n3. 거래처 및 견적서 관리 기능 등\n\n※ 내용을 꼼꼼히 확인하신 후 [동의합니다] 버튼을 눌러주세요.';
@@ -773,8 +773,10 @@
         const id = document.getElementById('obId').value.trim(); const pw = document.getElementById('obPw').value.trim();
         const name = document.getElementById('obCompanyName').value.trim(); const ceo = document.getElementById('obCompanyCeo').value.trim();
         const phone = document.getElementById('obCompanyPhone').value.trim(); const bizNum = document.getElementById('obCompanyBizNum').value.trim();
+        
         if (!id || !pw || !name || !ceo || !phone || !bizNum) return alert("모든 항목을 입력해 주세요.");
-        if (/[.#$\[\]\s]/.test(id)) return alert("아이디에 특수기호나 공백은 사용할 수 없습니다. (한글, 영문, 숫자만 가능)");
+        // 한글 입력 차단 및 영문 숫자만 허용하는 로직
+        if (/[^a-zA-Z0-9]/.test(id)) return alert("아이디는 영문과 숫자만 사용해 주세요. (한글, 특수문자, 공백 불가)");
         if (id.length < 2) return alert("아이디는 2글자 이상 입력해 주세요.");
         if (pw.length < 6) return alert("보안을 위해 비밀번호는 6자리 이상 입력해 주세요.");
         if (!obBizLicenseBase64) return alert("사업자등록증 사진을 첨부해 주세요.");
@@ -782,7 +784,7 @@
         
         showLoadingOverlay("가입 서류 업로드 및 보안 인증 중...");
         try {
-            // 1. Firebase Auth 공식 회원가입 통신
+            // 1. Firebase Auth 공식 회원가입 통신 (이메일 형식이 필수이므로 보이지 않게 도메인만 붙여줍니다)
             const authRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${API_KEY}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
