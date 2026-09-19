@@ -107,21 +107,12 @@
         <input type="tel" id="obCompanyPhone" placeholder="대표 연락처 (예: 010-0000-0000)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
         <input type="text" id="obCompanyBizNum" placeholder="사업자등록번호 (예: 123-45-67890)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] mb-1 placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
 
-        <!-- [부활] 구글 클라우드 직결 방식의 사업자등록증 첨부 영역 -->
-        <div class="bg-[#0F1722] border border-[#84CC16]/40 rounded-[14px] p-3.5 flex items-center justify-between shadow-sm">
-            <span class="text-white text-[13px] font-bold" id="obBizLicenseLabel">사업자등록증 첨부 (필수)</span>
-            <label class="bg-white/10 hover:bg-white/20 text-[#84CC16] border border-[#84CC16]/30 text-[12px] font-bold py-2.5 px-3.5 rounded-[10px] cursor-pointer transition-colors flex items-center gap-1.5 shrink-0">
-                <i data-lucide="camera" class="w-4 h-4"></i> 사진 첨부
-                <input type="file" id="obBizLicense" accept="image/*,application/pdf" class="hidden" onchange="handleBizLicense(event)">
-            </label>
-        </div>
-
         <!-- 개인정보 이용동의서 체크박스 -->
         <label class="flex items-start gap-2 cursor-pointer text-[#A3A8A3] text-[11px] leading-relaxed text-left bg-black/20 p-4 rounded-[14px] border border-white/5 mt-3">
             <input type="checkbox" id="obPrivacyCheck" class="w-4 h-4 rounded border-white/20 bg-transparent text-[#84CC16] focus:ring-[#84CC16] mt-0.5 shrink-0">
             <span><strong class="text-white">[필수] 개인정보 수집 및 이용 동의</strong><br>
                 <span class="text-[10px] text-white/70 block mt-1.5 leading-snug">
-                수집항목: 상호, 대표자, 연락처, 사업자등록번호, 사업자등록증, 거래처 목록 등<br>
+                수집항목: 상호, 대표자, 연락처, 사업자등록번호, 거래처 목록 등<br>
                 이용목적: 서비스 제공, 본인/업체 인증, 고객 지원<br>
                 <strong class="text-[#FEE500]">* 관리자가 신원 확인 및 업체 승인 목적으로 열람합니다.</strong>
                 </span>
@@ -188,9 +179,13 @@
               <span id="company-name-header" class="font-black text-[19px] text-white tracking-tight">업체명</span>
               <span class="text-[10px] bg-[#84CC16]/20 text-[#84CC16] font-extrabold px-2 py-0.5 rounded uppercase tracking-widest border border-[#84CC16]/30">PRO</span>
               
+              <!-- 동기화 뱃지, 설정, 로그아웃 버튼 나란히 배치 -->
               <div class="flex items-center gap-1.5 ml-1">
                  <span id="cloudStatusBadge" class="text-[10px] bg-blue-500/20 text-blue-400 font-extrabold px-2 py-0.5 rounded uppercase tracking-widest border border-blue-500/30 flex items-center gap-1"><i data-lucide="cloud" class="w-3 h-3"></i> 동기화 대기</span>
+                 <!-- 사용자 정보 수정(설정) 버튼 -->
                  <button onclick="openSettings()" class="w-7 h-7 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all border border-white/20 shadow-sm"><i data-lucide="settings" class="w-3.5 h-3.5 text-white"></i></button>
+                 <!-- 로그아웃 버튼 (새 위치) -->
+                 <button onclick="logoutAdmin()" class="w-7 h-7 bg-red-500/10 hover:bg-red-500/20 rounded-full flex items-center justify-center transition-all border border-red-500/20 shadow-sm"><i data-lucide="power" class="w-3.5 h-3.5 text-red-400"></i></button>
               </div>
           </div>
           <span class="text-[13px] font-bold text-[#A3A8A3] tracking-wide mt-0.5">스마트 관리 솔루션 <strong class="text-[#84CC16]">조경노트</strong></span>
@@ -199,15 +194,16 @@
     </div>
     
     <div class="max-w-md mx-auto mt-4">
-      <nav class="grid grid-cols-2 gap-2 bg-[#84CC16] p-2.5 rounded-2xl shadow-[0_4px_15px_rgba(132,204,22,0.3)] border border-[#65A30D]">
-        <button id="tabAdmin" onclick="switchView('admin')" class="w-full py-3.5 rounded-[12px] bg-white text-[#12261E] font-black text-[16px] shadow-md transition-all text-center flex items-center justify-center gap-1.5 border border-white/50">일지작성</button>
-        <button id="tabQuote" onclick="switchView('quote')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-black text-[15px] hover:bg-black/5 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent">견적작성</button>
-        <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-black text-[15px] hover:bg-black/5 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent">견적보관함</button>
-        <button id="tabClient" onclick="switchView('clients')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-black text-[15px] hover:bg-black/5 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent">거래처관리</button>
+      <!-- 메인 네비게이션 3x2 그리드 배열 -->
+      <nav class="grid grid-cols-3 gap-2 bg-[#84CC16] p-2.5 rounded-2xl shadow-[0_4px_15px_rgba(132,204,22,0.3)] border border-[#65A30D]">
+        <button id="tabAdmin" onclick="switchView('admin')" class="w-full py-3.5 rounded-[12px] bg-white text-[#1E3A8A] font-black text-[13px] shadow-md transition-all text-center flex flex-col items-center justify-center gap-1"><i data-lucide="pen-tool" class="w-4 h-4"></i>일지작성</button>
+        <button id="tabQuote" onclick="switchView('quote')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-black text-[13px] hover:bg-black/5 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="calculator" class="w-4 h-4"></i>견적작성</button>
+        <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-black text-[13px] hover:bg-black/5 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="folder-open" class="w-4 h-4"></i>보관함</button>
+        
+        <button id="tabClient" onclick="switchView('clients')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-black text-[13px] hover:bg-black/5 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="building-2" class="w-4 h-4"></i>거래처</button>
+        <button id="tabContacts" onclick="switchView('contacts')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-black text-[13px] hover:bg-black/5 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="users" class="w-4 h-4"></i>연락처</button>
+        <button id="tabLens" onclick="switchView('lens')" class="w-full py-3.5 rounded-[12px] bg-[#1E3A8A] text-white font-black text-[13px] shadow-md hover:bg-[#172554] transition-all text-center flex flex-col items-center justify-center gap-1 border border-[#172554]"><i data-lucide="scan" class="w-4 h-4 text-[#84CC16]"></i>AI렌즈</button>
       </nav>
-      <button id="tabLens" onclick="switchView('lens')" class="w-full mt-2.5 py-3.5 rounded-2xl bg-[#1E3A8A] text-white font-black text-[15px] shadow-md hover:bg-[#172554] transition-all text-center flex items-center justify-center gap-1.5 border border-[#172554]">
-        <i data-lucide="scan" class="w-4 h-4 text-[#84CC16]"></i> 수목식별 렌즈
-      </button>
     </div>
   </header>
 
@@ -339,6 +335,7 @@
         </div>
       </div>
 
+      <!-- 자재 단가표 팝업 오픈 버튼 (관리자 전용) -->
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-3">
         <div class="flex items-center justify-between">
           <label class="block text-[16px] font-black text-[#12261E] flex items-center gap-2">
@@ -396,7 +393,6 @@
     <!-- ================= [4. 거래처 관리 화면] ================= -->
     <section id="clientsView" class="hidden space-y-4">
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-6">
-        
         <div class="flex items-center justify-between pb-2">
           <div><h2 class="text-[18px] font-black text-[#12261E]">거래처 데이터베이스</h2></div><span id="clientCountBadge" class="text-[11px] font-extrabold bg-[#12261E] text-[#84CC16] px-3 py-1.5 rounded-lg shadow-sm"></span>
         </div>
@@ -426,16 +422,40 @@
           </div>
           <div id="clientsListContainer" class="space-y-2.5 mt-3 max-h-[50vh] overflow-y-auto pr-1"></div>
         </div>
-
-        <div class="mt-6 bg-[#0F1722] rounded-[20px] p-5 shadow-lg border border-white/10 space-y-3">
-          <div class="flex justify-between items-center"><h3 class="text-[13px] font-bold text-[#84CC16] flex items-center gap-1.5"><i data-lucide="shield-check" class="w-4 h-4"></i> 계정 및 보안 센터</h3></div>
-          <p class="text-[11px] text-[#A3A8A3] leading-relaxed">기기에 저장된 로그인 정보를 삭제하고 안전하게 로그아웃합니다.</p>
-          <button onclick="logoutAdmin()" class="w-full py-3.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-[14px] font-bold text-[13px] flex items-center justify-center gap-1.5 transition-all shadow-sm border border-red-500/20"><i data-lucide="log-out" class="w-4 h-4"></i> 안전하게 로그아웃</button>
-        </div>
+        <!-- 로그아웃 박스 제거됨 -->
       </div>
     </section>
 
-    <!-- ================= [5. 과거 일지 (히스토리) 화면] ================= -->
+    <!-- ================= [5. 연락처 관리 화면 (신규)] ================= -->
+    <section id="contactsView" class="hidden space-y-4">
+      <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-6">
+        <div class="flex items-center justify-between pb-2 border-b border-[#F4F5F4]">
+          <h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="book-open" class="w-5 h-5 text-[#84CC16]"></i> 스마트 전화번호부</h2>
+          <span id="contactCountBadge" class="text-[11px] font-extrabold bg-[#12261E] text-[#84CC16] px-3 py-1.5 rounded-lg shadow-sm">0건</span>
+        </div>
+
+        <div class="flex bg-[#F4F5F4] p-1 rounded-xl mb-4">
+          <button id="btnContactClient" onclick="switchContactTab('clients')" class="flex-1 py-2.5 rounded-[10px] bg-white shadow-sm text-[#12261E] font-bold text-[13px] transition-all border border-[#EAEBEA]">거래처 연락처</button>
+          <button id="btnContactLabor" onclick="switchContactTab('labors')" class="flex-1 py-2.5 rounded-[10px] text-[#7A827A] font-semibold text-[13px] hover:text-[#12261E] transition-all border border-transparent">인력 전화번호</button>
+        </div>
+
+        <!-- 연락처 등록 폼 -->
+        <div class="bg-[#F9F9F8] p-5 rounded-[20px] border border-[#EAEBEA] space-y-3.5">
+          <h3 class="text-[13px] font-black text-[#12261E] flex items-center gap-1.5"><i data-lucide="user-plus" class="w-4 h-4 text-[#84CC16]"></i> <span>새 연락처 추가</span></h3>
+          <div class="space-y-2.5">
+            <input type="text" id="newContactName" placeholder="업체명 (또는 성명) 입력" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3 text-[13px] font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
+            <input type="tel" id="newContactPhone" placeholder="연락처 (저장 후 터치 시 자동 연결)" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3 text-[13px] font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
+            <input type="text" id="newContactMemo" placeholder="기타 사항 (주소, 단가, 특징 등)" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3 text-[13px] font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
+          </div>
+          <button onclick="saveContact()" class="w-full py-3.5 bg-[#12261E] text-[#84CC16] rounded-[12px] text-[14px] font-black shadow-md hover:bg-black transition-colors flex items-center justify-center gap-1.5"><i data-lucide="save" class="w-4 h-4"></i> 연락처 저장하기</button>
+        </div>
+
+        <!-- 리스트 출력 영역 -->
+        <div id="contactsListContainer" class="space-y-2.5 pt-2 max-h-[50vh] overflow-y-auto pr-1"></div>
+      </div>
+    </section>
+
+    <!-- ================= [6. 과거 일지 (히스토리) 화면] ================= -->
     <section id="historyView" class="hidden space-y-5">
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
         <div class="flex items-center justify-between pb-4 border-b border-[#F4F5F4]">
@@ -477,7 +497,7 @@
       </div>
     </section>
 
-    <!-- ================= [6. 리포트/견적서 공통 뷰어 (고객용/관리자용)] ================= -->
+    <!-- ================= [8. 리포트/견적서 공통 뷰어 (고객용/관리자용)] ================= -->
     <section id="clientView" class="hidden space-y-5">
       <div id="adminControlsPanel" class="no-print bg-[#12261E] text-white rounded-[28px] p-6 shadow-xl space-y-4 border border-[#1c3829]">
         <div class="flex items-center justify-between"><span class="text-[14px] font-bold text-[#84CC16] flex items-center gap-1.5"><i data-lucide="share" class="w-4 h-4"></i> 문서 발송 센터</span></div>
@@ -782,8 +802,6 @@
     const DB_BASE_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/accounts";
     let currentUserId = "";
 
-    // [핵심 변경]: ImgBB 무료 서버에서 구글 파이어베이스 스토리지(GCS) 직결 업로드 엔진으로 전면 교체
-    // (용량 무제한, 속도 개선, 브라우저 튕김 방지)
     async function uploadToFirebaseStorage(base64Data, folder="images") {
         const bucket = "shinhwa-landnote.appspot.com"; 
         const fileName = encodeURIComponent(`${folder}/img_${Date.now()}_${Math.floor(Math.random()*1000)}.jpg`);
@@ -799,7 +817,6 @@
         });
         const data = await uploadRes.json();
         
-        // 업로드 실패 시 예외 처리 강화
         if(data.error) {
             console.error("Firebase Storage Upload Error:", data.error);
             throw new Error("서버 스토리지 권한 오류입니다. 관리자에게 문의하세요.");
@@ -814,6 +831,7 @@
     let clients = [];
     let records = [];
     let materialsData = [];
+    let contactsData = { clients: [], labors: [] }; // 신규 연락처 데이터
     
     let isMaterialEditMode = false;
     let editingClientIndex = null;
@@ -827,6 +845,7 @@
     let currentVatRate = 0.1; 
     let currentQuoteRowCount = 12;
     let currentClientFilter = '정기 관리';
+    let currentContactTab = 'clients'; // 'clients' or 'labors'
 
     let currentGalleryB = [];
     let currentGalleryA = [];
@@ -870,12 +889,10 @@
         document.getElementById('authView').classList.remove('hidden');
     }
 
-    // 아이디를 안전한 Firebase Key로 변환하는 함수
     function getSafeKey(rawId) {
         return encodeURIComponent(rawId.replace(/[.#$\[\]]/g, '_'));
     }
 
-    // 사업자등록증 이미지 선택 시 메모리에 임시 저장 (용량 압축)
     let obBizLicenseBase64 = "";
     function handleBizLicense(e) {
         const file = e.target.files[0];
@@ -908,7 +925,6 @@
             const safeKey = getSafeKey(id);
             const res = await fetch(`${DB_BASE_URL}/${safeKey}/profile.json`);
             
-            // Firebase 규칙 만료 체크
             if(res.status === 401 || res.status === 403) {
                 document.getElementById('loadingOverlay')?.remove();
                 alert("❌ 파이어베이스(데이터베이스) 보안 규칙 기한이 만료되었습니다!\n관리자 콘솔에서 보안 규칙의 읽기/쓰기를 수정해야 합니다.");
@@ -921,7 +937,6 @@
                 return alert("이미 사용 중인 아이디입니다. 다른 아이디를 입력해주세요.");
             }
 
-            // 1. 구글 클라우드 서버에 사업자등록증 사진 먼저 업로드
             let licenseUrl = "";
             try {
                 licenseUrl = await uploadToFirebaseStorage(obBizLicenseBase64, "licenses");
@@ -931,7 +946,6 @@
                 return;
             }
 
-            // 2. 가입 정보 저장 (거대한 Base64 텍스트 대신, 짧은 URL 링크만 저장 -> 브라우저 튕김 방지)
             const profileData = { id: id, pw: pw, name: name, ceo: ceo, phone: phone, bizNum: bizNum, license: licenseUrl, status: 'pending' };
             
             await fetch(`${DB_BASE_URL}/${safeKey}/profile.json`, {
@@ -944,7 +958,7 @@
             showLogin();
             document.getElementById('loginId').value = id;
             document.getElementById('loginPw').value = '';
-            obBizLicenseBase64 = ""; // 메모리 초기화
+            obBizLicenseBase64 = ""; 
             document.getElementById('obBizLicenseLabel').innerText = "사업자등록증 첨부 (필수)";
             document.getElementById('obBizLicenseLabel').classList.remove('text-[#84CC16]');
             
@@ -967,7 +981,6 @@
             const safeKey = getSafeKey(id);
             const res = await fetch(`${DB_BASE_URL}/${safeKey}/profile.json`);
             
-            // 데이터베이스 규칙 만료 등 치명적 에러 방어
             if(res.status === 401 || res.status === 403) {
                 document.getElementById('loadingOverlay')?.remove();
                 alert("❌ 데이터베이스 접근이 거부되었습니다.\n파이어베이스 규칙 만료 또는 권한 오류입니다.");
@@ -995,7 +1008,6 @@
                 currentUserId = id;
                 myCompanyProfile = profile;
                 
-                // 만약 구버전 계정에 엄청나게 큰 사진(license Base64) 데이터가 남아있다면 브라우저 폭발 방지를 위해 삭제
                 if (myCompanyProfile.license && myCompanyProfile.license.startsWith('data:image')) {
                     delete myCompanyProfile.license;
                 }
@@ -1033,14 +1045,13 @@
       }
     }
 
-    // 내 정보 설정창 오픈 함수
     function openSettings() {
         if(!myCompanyProfile) return;
         document.getElementById('setCompanyName').value = myCompanyProfile.name || '';
         document.getElementById('setCompanyCeo').value = myCompanyProfile.ceo || '';
         document.getElementById('setCompanyPhone').value = myCompanyProfile.phone || '';
         document.getElementById('setCompanyBizNum').value = myCompanyProfile.bizNum || '';
-        document.getElementById('setCompanyPw').value = ''; // 항상 빈칸으로 시작
+        document.getElementById('setCompanyPw').value = ''; 
         
         const modal = document.getElementById('settingsModal');
         const box = document.getElementById('settingsBox');
@@ -1101,7 +1112,8 @@
                 cloudData = {
                     clients: defaultClients,
                     records: [],
-                    materials: defaultMaterials
+                    materials: defaultMaterials,
+                    contacts: { clients: [], labors: [] }
                 };
                 await fetch(DATA_URL, {
                     method: 'PUT',
@@ -1114,9 +1126,15 @@
             records = cloudData.records || [];
             materialsData = cloudData.materials || [];
             
+            if(!cloudData.contacts) {
+                cloudData.contacts = { clients: [], labors: [] };
+            }
+            contactsData = cloudData.contacts;
+            
             renderClientSelect();
             renderClientsList();
             renderQuoteList();
+            renderContactsList();
             
             const badge = document.getElementById('cloudStatusBadge');
             if(badge) {
@@ -1140,11 +1158,93 @@
         }).catch(e => console.error("백그라운드 저장 실패"));
     }
 
+    // ================= [연락처 보기 (신규)] =================
+    function switchContactTab(tab) {
+        currentContactTab = tab;
+        
+        const btnClient = document.getElementById('btnContactClient');
+        const btnLabor = document.getElementById('btnContactLabor');
+        const inputName = document.getElementById('newContactName');
+
+        if(tab === 'clients') {
+            btnClient.className = "flex-1 py-2.5 rounded-[10px] bg-white shadow-sm text-[#12261E] font-bold text-[13px] transition-all border border-[#EAEBEA]";
+            btnLabor.className = "flex-1 py-2.5 rounded-[10px] text-[#7A827A] font-semibold text-[13px] hover:text-[#12261E] transition-all border border-transparent";
+            inputName.placeholder = "업체명 입력";
+        } else {
+            btnClient.className = "flex-1 py-2.5 rounded-[10px] text-[#7A827A] font-semibold text-[13px] hover:text-[#12261E] transition-all border border-transparent";
+            btnLabor.className = "flex-1 py-2.5 rounded-[10px] bg-white shadow-sm text-[#12261E] font-bold text-[13px] transition-all border border-[#EAEBEA]";
+            inputName.placeholder = "성명 입력";
+        }
+        
+        renderContactsList();
+    }
+
+    function saveContact() {
+        const name = document.getElementById('newContactName').value.trim();
+        const phone = document.getElementById('newContactPhone').value.trim();
+        const memo = document.getElementById('newContactMemo').value.trim();
+
+        if(!name) return alert("업체명(성명)을 입력해 주세요.");
+        if(!phone) return alert("연락처를 입력해 주세요.");
+
+        if(!contactsData[currentContactTab]) contactsData[currentContactTab] = [];
+        contactsData[currentContactTab].push({ name, phone, memo });
+
+        updateData('contacts', contactsData);
+        
+        document.getElementById('newContactName').value = '';
+        document.getElementById('newContactPhone').value = '';
+        document.getElementById('newContactMemo').value = '';
+        
+        renderContactsList();
+        alert("연락처가 추가되었습니다.");
+    }
+
+    function deleteContact(tab, index) {
+        if(confirm("이 연락처를 삭제하시겠습니까?")) {
+            contactsData[tab].splice(index, 1);
+            updateData('contacts', contactsData);
+            renderContactsList();
+        }
+    }
+
     function formatPhoneToLink(text) {
         if(!text) return "";
         const phoneRegex = /(0\d{1,2}[-\s]?\d{3,4}[-\s]?\d{4})/g;
         return text.replace(phoneRegex, '<a href="tel:$1" onclick="event.stopPropagation();" class="text-blue-600 font-extrabold underline hover:text-blue-800">$1</a>');
     }
+
+    function renderContactsList() {
+        const container = document.getElementById('contactsListContainer');
+        const list = contactsData[currentContactTab] || [];
+        
+        document.getElementById('contactCountBadge').innerText = `${list.length}건`;
+        container.innerHTML = '';
+
+        if(list.length === 0) {
+            container.innerHTML = `<div class="p-6 text-center text-[#8B95A1] text-xs bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA]">등록된 연락처가 없습니다.</div>`;
+            return;
+        }
+
+        list.forEach((item, idx) => {
+            const div = document.createElement('div');
+            div.className = "bg-white p-4 rounded-[16px] border border-[#EAEBEA] shadow-sm flex justify-between items-center transition-all hover:border-[#84CC16]";
+            
+            let memoHtml = item.memo ? `<div class="text-[11px] text-[#7A827A] mt-1.5 bg-[#F4F5F4] px-2 py-1 rounded inline-block font-medium">${item.memo}</div>` : '';
+            
+            div.innerHTML = `
+                <div>
+                    <div class="font-bold text-[#1A1D1A] text-[14px] flex items-center gap-1.5"><i data-lucide="${currentContactTab === 'clients' ? 'building' : 'user'}" class="w-3.5 h-3.5 text-[#A3A8A3]"></i> ${item.name}</div>
+                    <div class="text-[14px] mt-1.5"><i data-lucide="phone" class="w-3 h-3 inline-block text-blue-500 mr-1"></i> ${formatPhoneToLink(item.phone)}</div>
+                    ${memoHtml}
+                </div>
+                <button onclick="deleteContact('${currentContactTab}', ${idx})" class="p-2.5 text-[#A3A8A3] hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+            `;
+            container.appendChild(div);
+        });
+        lucide.createIcons();
+    }
+    // ========================================================
 
     function openMaterialModal() {
         if (!materialsData || materialsData.length === 0) {
@@ -1597,20 +1697,6 @@
       document.getElementById('quoteGrandTotal').innerText = total.toLocaleString('ko-KR') + "원";
     }
 
-    // [핵심 변경]: URL 저장 방식 개선 (서버 통신 강화)
-    async function uploadImagesToCloud(base64Array) {
-      const urls = [];
-      for(let b64 of base64Array) { 
-          try { 
-              const url = await uploadToFirebaseStorage(b64, "reports");
-              urls.push(url);
-          } catch (e) { 
-              console.error("업로드 오류:", e); 
-          } 
-      }
-      return urls;
-    }
-
     async function createShortCloudLink(payload, existingId = null) {
         let clean = JSON.parse(JSON.stringify(payload));
         let shortCloudId = existingId || ("doc_" + Date.now()); 
@@ -1772,24 +1858,23 @@
     });
 
     function switchView(mode, pushHistory = true) {
-      const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView'];
+      const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView'];
       views.forEach(v => {
         const el = document.getElementById(v);
         if(el) el.classList.add('hidden');
       });
       
-      const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient'];
+      const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient', 'tabContacts'];
       mainTabs.forEach(t => {
         const el = document.getElementById(t);
         if(el) {
-          el.className = "w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-extrabold text-[15px] hover:bg-black/5 transition-all text-center flex items-center justify-center gap-1.5 border border-transparent";
+          el.className = "w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-black text-[13px] hover:bg-black/5 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent";
         }
       });
       
       const lensTab = document.getElementById('tabLens');
       if(lensTab) {
-          lensTab.className = "w-full mt-2.5 py-3.5 rounded-2xl bg-[#1E3A8A] text-white font-black text-[15px] shadow-md hover:bg-[#172554] transition-all text-center flex items-center justify-center gap-1.5 border border-[#172554]";
-          lensTab.innerHTML = '<i data-lucide="scan" class="w-4 h-4 text-[#84CC16]"></i> 수목식별 렌즈';
+          lensTab.className = "w-full py-3.5 rounded-[12px] bg-[#1E3A8A] text-white font-black text-[13px] shadow-md hover:bg-[#172554] transition-all text-center flex flex-col items-center justify-center gap-1 border border-[#172554]";
       }
       
       let activeTabId = '';
@@ -1797,6 +1882,7 @@
       else if (mode === 'quote') { document.getElementById('quoteAdminView').classList.remove('hidden'); activeTabId = 'tabQuote'; }
       else if (mode === 'quoteList') { document.getElementById('quoteListView').classList.remove('hidden'); activeTabId = 'tabQuoteList'; renderQuoteList(); }
       else if (mode === 'clients') { document.getElementById('clientsView').classList.remove('hidden'); activeTabId = 'tabClient'; }
+      else if (mode === 'contacts') { document.getElementById('contactsView').classList.remove('hidden'); activeTabId = 'tabContacts'; renderContactsList(); }
       else if (mode === 'history') { document.getElementById('historyView').classList.remove('hidden'); activeTabId = 'tabClient'; }
       else if (mode === 'lens') { document.getElementById('lensView').classList.remove('hidden'); activeTabId = 'tabLens'; }
       else { 
@@ -1808,10 +1894,9 @@
         const activeEl = document.getElementById(activeTabId);
         if(activeEl) {
           if (activeTabId === 'tabLens') {
-              activeEl.className = "w-full mt-2.5 py-3.5 rounded-2xl bg-[#84CC16] text-[#1E3A8A] font-black text-[16px] shadow-[0_4px_12px_rgba(132,204,22,0.3)] transition-all text-center flex items-center justify-center gap-1.5 border border-[#65A30D]";
-              activeEl.innerHTML = '<i data-lucide="scan" class="w-5 h-5 text-[#1E3A8A]"></i> 수목식별 렌즈';
+              activeEl.className = "w-full py-3.5 rounded-[12px] bg-[#84CC16] text-[#1E3A8A] font-black text-[13px] shadow-[0_4px_12px_rgba(132,204,22,0.3)] transition-all text-center flex flex-col items-center justify-center gap-1 border border-[#65A30D]";
           } else {
-              activeEl.className = "w-full py-3.5 rounded-[12px] bg-white text-[#1E3A8A] font-black text-[16px] shadow-md transition-all text-center flex items-center justify-center gap-1.5 border border-white/50";
+              activeEl.className = "w-full py-3.5 rounded-[12px] bg-white text-[#1E3A8A] font-black text-[13px] shadow-md transition-all text-center flex flex-col items-center justify-center gap-1 border border-white/50";
           }
         }
       }
@@ -1820,7 +1905,7 @@
       if (pushHistory && mode !== 'client_shared') history.pushState({ view: mode }, "", "");
     }
 
-    const mainTabsOrder = ['admin', 'quote', 'quoteList', 'clients', 'lens'];
+    const mainTabsOrder = ['admin', 'quote', 'quoteList', 'clients', 'contacts', 'lens'];
     const swipeContainerEl = document.getElementById('swipeContainer');
     
     swipeContainerEl.addEventListener('touchstart', e => {
@@ -1842,6 +1927,7 @@
         if (!document.getElementById('quoteAdminView').classList.contains('hidden')) currentActiveMode = 'quote';
         else if (!document.getElementById('quoteListView').classList.contains('hidden')) currentActiveMode = 'quoteList';
         else if (!document.getElementById('clientsView').classList.contains('hidden')) currentActiveMode = 'clients';
+        else if (!document.getElementById('contactsView').classList.contains('hidden')) currentActiveMode = 'contacts';
         else if (!document.getElementById('lensView').classList.contains('hidden')) currentActiveMode = 'lens';
         else if (!document.getElementById('clientView').classList.contains('hidden')) return; 
         
@@ -2143,6 +2229,19 @@
       lucide.createIcons();
     }
 
+    async function uploadImagesToCloud(base64Array) {
+      const urls = [];
+      for(let b64 of base64Array) { 
+          try { 
+              const url = await uploadToFirebaseStorage(b64, "reports");
+              urls.push(url);
+          } catch (e) { 
+              console.error("업로드 오류:", e); 
+          } 
+      }
+      return urls;
+    }
+
     function showLoadingOverlay(msg) {
       const overlay = document.createElement('div'); overlay.id = 'loadingOverlay'; overlay.className = 'fixed inset-0 z-[200] bg-black/80 flex flex-col items-center justify-center backdrop-blur-sm';
       overlay.innerHTML = `<div class="w-12 h-12 border-4 border-[#84CC16]/30 border-t-[#84CC16] rounded-full animate-spin mb-4"></div><div class="text-white font-bold text-[15px] mb-1">${msg}</div><div class="text-[#84CC16] text-[11px] font-medium">데이터를 안전하게 처리하고 있습니다.</div>`;
@@ -2243,7 +2342,7 @@
       let vat = 0; 
       let total = sum;
 
-      showLoadingOverlay("프리미 견적서 발행 중...");
+      showLoadingOverlay("프리미엄 견적서 발행 중...");
       try {
         const qUrls = await uploadImagesToCloud(quoteImages); 
         const quoteMemo = document.getElementById('quoteInputMemo') ? document.getElementById('quoteInputMemo').value : '';
@@ -2898,6 +2997,7 @@
             renderClientsList(); 
         } 
     }
+
     function toggleBadge(btn) { const val = btn.getAttribute('data-val'); if (btn.classList.contains('bg-[#12261E]')) { btn.className = "cat-btn p-4 text-[12px] rounded-[16px] font-semibold text-left bg-white border border-[#EAEBEA] text-[#7A827A] transition-all"; btn.innerText = "+ " + val; } else { btn.className = "cat-btn p-4 text-[12px] rounded-[16px] font-bold text-left bg-[#12261E] text-[#84CC16] shadow-md border border-transparent"; btn.innerText = "✓ " + val; } }
     
     function backupData() { const data = { clients: clients, records: records, materials: materialsData }; const blob = new Blob([JSON.stringify(data)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; const dateStr = new Date().toISOString().slice(0,10).replace(/-/g, ''); a.download = `조경노트_백업_${dateStr}.json`; a.click(); URL.revokeObjectURL(url); }
