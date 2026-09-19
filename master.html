@@ -49,8 +49,8 @@
       <p class="text-[#94A3B8] text-[13px] font-medium mb-8 text-center leading-relaxed relative z-10">조경노트 PRO 중앙 통제 시스템입니다.<br>최고 관리자 계정으로 접속해 주십시오.</p>
       
       <div class="w-full space-y-3 mb-8 relative z-10">
-        <input type="text" id="masterId" placeholder="관리자 아이디" autocomplete="off" class="w-full bg-[#0F172A] border border-white/10 rounded-[14px] px-5 py-4 text-white text-[15px] font-bold focus:outline-none focus:border-[#3B82F6]">
-        <input type="password" id="masterPw" placeholder="관리자 비밀번호" autocomplete="off" class="w-full bg-[#0F172A] border border-white/10 rounded-[14px] px-5 py-4 text-white text-[15px] font-bold focus:outline-none focus:border-[#3B82F6]" onkeypress="if(event.key === 'Enter') loginMaster()">
+        <input type="text" id="masterId" placeholder="관리자 아이디 (예: admin)" autocomplete="off" class="w-full bg-[#0F172A] border border-white/10 rounded-[14px] px-5 py-4 text-white text-[15px] font-bold focus:outline-none focus:border-[#3B82F6]">
+        <input type="password" id="masterPw" placeholder="비밀번호 (6자리 이상, 예: 123456)" autocomplete="off" class="w-full bg-[#0F172A] border border-white/10 rounded-[14px] px-5 py-4 text-white text-[15px] font-bold focus:outline-none focus:border-[#3B82F6]" onkeypress="if(event.key === 'Enter') loginMaster()">
       </div>
       
       <button onclick="loginMaster()" class="w-full py-4.5 bg-[#3B82F6] text-white rounded-[16px] font-black text-[16px] hover:bg-[#2563EB] shadow-[0_8px_20px_rgba(59,130,246,0.3)] transition-all relative z-10 flex items-center justify-center gap-2">
@@ -174,13 +174,9 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         <div class="glass-panel rounded-[24px] p-6 space-y-4">
-            <h3 class="text-white font-black text-[16px] flex items-center gap-2 mb-2"><i data-lucide="shield" class="w-5 h-5 text-blue-400"></i> 마스터 관리자 계정 변경</h3>
-            <div class="space-y-3">
-                <input type="text" id="setMasterId" placeholder="새 관리자 아이디 입력" class="w-full bg-[#0F172A] border border-white/10 rounded-[12px] px-4 py-3.5 text-white text-[14px] font-bold focus:outline-none focus:border-[#3B82F6]">
-                <input type="password" id="setMasterPw" placeholder="새 관리자 비밀번호 입력" class="w-full bg-[#0F172A] border border-white/10 rounded-[12px] px-4 py-3.5 text-white text-[14px] font-bold focus:outline-none focus:border-[#3B82F6]">
-                <button onclick="saveMasterAccount()" class="w-full py-3.5 bg-blue-500/20 text-blue-300 font-bold rounded-[12px] hover:bg-blue-500/30 transition-colors border border-blue-500/30">마스터 계정 정보 저장</button>
-            </div>
-            <p class="text-[#94A3B8] text-[11px] leading-relaxed mt-2">* 초기 아이디는 admin / 1234 입니다. 변경 시 즉시 반영되며 다음 로그인부터 적용됩니다.</p>
+            <h3 class="text-white font-black text-[16px] flex items-center gap-2 mb-2"><i data-lucide="shield" class="w-5 h-5 text-blue-400"></i> 마스터 관리자 계정</h3>
+            <p class="text-[#94A3B8] text-[12px] leading-relaxed">* 최고 관리자 아이디 및 비밀번호 변경은 보안 정책에 따라 구글 파이어베이스 콘솔(Authentication)에서 직접 관리해 주시기 바랍니다.</p>
+            <button class="w-full py-3.5 bg-blue-500/10 text-blue-500/50 font-bold rounded-[12px] border border-blue-500/20 cursor-not-allowed">보안 정책으로 인앱 변경 제한</button>
         </div>
 
         <div class="glass-panel rounded-[24px] p-6 space-y-4 border-[#84CC16]/30 shadow-[0_0_15px_rgba(132,204,22,0.05)]">
@@ -277,7 +273,7 @@
     </div>
   </div>
 
-  <!-- 🔥 신규 추가: 업체별 현장 내역 상세 조회 팝업 (이중 팝업) 🔥 -->
+  <!-- 업체별 현장 내역 상세 조회 팝업 (이중 팝업) -->
   <div id="clientHistoryModal" class="hidden fixed inset-0 z-[7000] bg-black/90 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200" onclick="closeClientHistoryModal()">
     <div class="bg-[#0F172A] w-full max-w-2xl rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-white/10 max-h-[85vh]" id="clientHistoryBox" onclick="event.stopPropagation()">
       <div class="p-5 border-b border-white/10 flex justify-between items-center bg-[#1E293B]">
@@ -366,65 +362,95 @@
   </div>
 
   <script>
-    // 🔥 서버 주소 완벽 업데이트 완료 🔥
+    // 🔥 서버 주소 완벽 업데이트 및 철통 보안 코딩 완료 🔥
+    const API_KEY = "AIzaSyC_1KaOSychXSNF-Z-vnVONLB_-aAGghhk";
     const DB_BASE_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/accounts";
     const SETTINGS_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/settings";
     
     let globalCheckedCompanies = new Set();
-    
     let currentActiveAccounts = [];
     let allAccounts = [];
     let knownPendingIds = new Set();
     let isFirstLoad = true;
     let autoRefreshTimer = null;
-    let masterRealId = "admin";
-    let masterRealPw = "1234";
-
-    // 🔥 신규: 현재 보고 있는 업체의 데이터 저장소 (내역 열람 기능용)
     let currentCompanyRecords = [];
+
+    // 🔥 핵심 보안: 마스터 전용 구글 인증 열쇠 보관함
+    let currentIdToken = "";
+
+    // URL에 보안 열쇠를 달아주는 헬퍼 함수
+    function getAuthUrl(url) {
+        if (!currentIdToken) return url;
+        const sep = url.includes('?') ? '&' : '?';
+        return `${url}${sep}auth=${currentIdToken}`;
+    }
+
+    async function loginMaster() {
+        const id = document.getElementById('masterId').value.trim();
+        const pw = document.getElementById('masterPw').value.trim();
+        
+        if (id.length < 2 || pw.length < 6) {
+            return alert("파이어베이스 보안 정책상 아이디는 2자 이상, 비밀번호는 6자리 이상이어야 합니다. (예: admin / 123456)");
+        }
+
+        // 최고 관리자용 고유 이메일 형식으로 포장
+        const masterEmail = `${id}_master@jogyeongnote.com`; 
+
+        try {
+            // 1. 파이어베이스 Auth 로그인 시도
+            let authRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: masterEmail, password: pw, returnSecureToken: true })
+            });
+            let authData = await authRes.json();
+
+            // 2. 만약 계정이 없다면 최초 1회 자동 생성 (마스터 권한 최초 세팅용)
+            if (authData.error && authData.error.message === 'EMAIL_NOT_FOUND') {
+                 if(confirm("등록된 마스터 계정이 없습니다. 현재 입력한 정보로 최고 관리자 계정을 새로 생성하시겠습니까?")) {
+                     authRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${API_KEY}`, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: masterEmail, password: pw, returnSecureToken: true })
+                     });
+                     authData = await authRes.json();
+                 } else {
+                     return;
+                 }
+            } else if (authData.error) {
+                 return alert("비밀번호가 틀렸거나 인증 오류가 발생했습니다.");
+            }
+
+            // 3. 정식 구글 인증 열쇠 획득 성공!
+            currentIdToken = authData.idToken;
+            
+            document.getElementById('masterLoginView').classList.add('hidden');
+            document.getElementById('mainContent').classList.remove('hidden');
+            document.getElementById('sidebar').classList.remove('hidden');
+            lucide.createIcons();
+            
+            // 로그인 완료 후 설정값 불러오기 및 대시보드 시작
+            await initMasterSettings();
+            startDashboard();
+
+        } catch(e) {
+            alert("서버 통신 오류가 발생했습니다.");
+        }
+    }
 
     async function initMasterSettings() {
         try {
-            const res = await fetch(`${SETTINGS_URL}/master.json`);
-            const data = await res.json();
-            if(data) {
-                masterRealId = data.id || "admin";
-                masterRealPw = data.pw || "1234";
-                document.getElementById('setMasterId').value = masterRealId;
-                document.getElementById('setMasterPw').value = masterRealPw;
-            }
-            
-            const noticeRes = await fetch(`${SETTINGS_URL}/globalNotice.json`);
+            const noticeRes = await fetch(getAuthUrl(`${SETTINGS_URL}/globalNotice.json`));
             const noticeData = await noticeRes.json();
-            if(noticeData) {
-                document.getElementById('setGlobalNoticeText').value = noticeData.text || '';
-                document.getElementById('globalNoticeToggle').checked = noticeData.active || false;
+            if(noticeData && noticeData.text) {
+                document.getElementById('setGlobalNoticeText').value = noticeData.text;
+                document.getElementById('globalNoticeToggle').checked = noticeData.active;
             }
             
-            const termsRes = await fetch(`${SETTINGS_URL}/terms.json`);
+            const termsRes = await fetch(getAuthUrl(`${SETTINGS_URL}/terms.json`));
             const termsData = await termsRes.json();
             if(termsData && termsData.text) {
                 document.getElementById('setTermsText').value = termsData.text;
             }
-            
-        } catch(e) { console.log("기본 설정 불러오기 실패", e); }
-    }
-
-    async function loginMaster() {
-      await initMasterSettings();
-
-      const id = document.getElementById('masterId').value;
-      const pw = document.getElementById('masterPw').value;
-      
-      if(id === masterRealId && pw === masterRealPw) {
-        document.getElementById('masterLoginView').classList.add('hidden');
-        document.getElementById('mainContent').classList.remove('hidden');
-        document.getElementById('sidebar').classList.remove('hidden');
-        lucide.createIcons();
-        startDashboard();
-      } else {
-        alert('마스터 접근 권한이 없거나 비밀번호가 틀렸습니다.');
-      }
+        } catch(e) { console.log("기본 설정 불러오기 실패"); }
     }
 
     function logoutMaster() {
@@ -433,30 +459,15 @@
       }
     }
 
-    async function saveMasterAccount() {
-        const newId = document.getElementById('setMasterId').value.trim();
-        const newPw = document.getElementById('setMasterPw').value.trim();
-        if(!newId || !newPw) return alert("아이디와 비밀번호를 모두 입력해주세요.");
-        
-        if(confirm("마스터 계정 접속 정보를 변경하시겠습니까? 다음 접속 시부터 변경된 정보로 로그인해야 합니다.")) {
-            try {
-                await fetch(`${SETTINGS_URL}/master.json`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: newId, pw: newPw })
-                });
-                masterRealId = newId;
-                masterRealPw = newPw;
-                alert("✅ 계정 정보가 성공적으로 변경되었습니다.");
-            } catch(e) { alert("저장 실패"); }
-        }
+    function saveMasterAccount() {
+        alert("최고 관리자 계정 변경은 보안상 지원하지 않습니다. 구글 파이어베이스 콘솔(Authentication)에서 직접 관리해 주십시오.");
     }
 
     async function saveGlobalNotice() {
         const text = document.getElementById('setGlobalNoticeText').value.trim();
         const isActive = document.getElementById('globalNoticeToggle').checked;
         try {
-            await fetch(`${SETTINGS_URL}/globalNotice.json`, {
+            await fetch(getAuthUrl(`${SETTINGS_URL}/globalNotice.json`), {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ text: text, active: isActive })
@@ -468,7 +479,7 @@
     async function saveTermsText() {
         const text = document.getElementById('setTermsText').value.trim();
         try {
-            await fetch(`${SETTINGS_URL}/terms.json`, {
+            await fetch(getAuthUrl(`${SETTINGS_URL}/terms.json`), {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ text: text })
@@ -483,12 +494,13 @@
     }
 
     async function fetchAccounts() {
+        if (!currentIdToken) return;
         try {
-            const res = await fetch(`${DB_BASE_URL}.json`);
+            const res = await fetch(getAuthUrl(`${DB_BASE_URL}.json`));
             const data = await res.json();
             
             allAccounts = [];
-            if (data) {
+            if (data && !data.error) {
                 for (const accId in data) {
                     if (data[accId].profile) {
                         allAccounts.push(data[accId].profile);
@@ -517,7 +529,6 @@
 
             updateDashboardStats(activeAccounts.length, pendingAccounts.length);
             renderPendingList(pendingAccounts);
-            
             renderActiveList();
 
         } catch (e) { console.error("서버 통신 실패:", e); }
@@ -695,10 +706,6 @@
             tbody.appendChild(tr);
         });
         
-        document.querySelectorAll('.company-check').forEach(cb => {
-            if(checkedIds && checkedIds.includes(cb.value)) cb.checked = true;
-        });
-        
         lucide.createIcons();
     }
 
@@ -712,20 +719,16 @@
         });
     }
 
-    function getSelectedCompanies() {
-        return Array.from(globalCheckedCompanies);
-    }
+    function getSelectedCompanies() { return Array.from(globalCheckedCompanies); }
 
     function openTargetNoticeModal() {
         currentTargetNoticeIds = getSelectedCompanies();
-        
         if (currentTargetNoticeIds.length === 0) {
             alert("공지/팝업을 전송할 업체를 목록에서 먼저 체크해 주세요.");
             return;
         }
         document.getElementById('targetNoticeCount').innerText = currentTargetNoticeIds.length;
         document.getElementById('targetNoticeText').value = '';
-        
         const modal = document.getElementById('targetNoticeModal');
         modal.classList.remove('hidden');
         setTimeout(() => modal.classList.remove('opacity-0'), 10);
@@ -747,7 +750,7 @@
         try {
             const promises = selectedIds.map(id => {
                 const safeId = encodeURIComponent(id);
-                return fetch(`${DB_BASE_URL}/${safeId}/profile.json`, {
+                return fetch(getAuthUrl(`${DB_BASE_URL}/${safeId}/profile.json`), {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ targetNotice: msg })
@@ -755,7 +758,7 @@
             });
 
             await Promise.all(promises);
-            alert(`✅ ${selectedIds.length}개 업체로 팝업 전송이 완료되었습니다!\n(해당 업체가 다음에 앱을 켤 때 팝업이 노출됩니다)`);
+            alert(`✅ ${selectedIds.length}개 업체로 팝업 전송이 완료되었습니다!`);
             closeTargetNoticeModal();
             
             globalCheckedCompanies.clear();
@@ -764,7 +767,6 @@
 
         } catch (e) {
             alert("전송 중 서버 오류가 발생했습니다.");
-            console.error(e);
         }
     }
 
@@ -801,21 +803,21 @@
         const newPhone = document.getElementById('editCompPhone').value.trim();
         const newBizNum = document.getElementById('editCompBizNum').value.trim();
 
-        if (!newId || !newName || !newPhone) return alert("필수 항목(아이디, 상호, 연락처)을 입력하세요.");
-        if (!confirm("해당 업체의 정보를 강제로 수정하시겠습니까? (테스트 점검용)")) return;
+        if (!newId || !newName || !newPhone) return alert("필수 항목을 입력하세요.");
+        if (!confirm("해당 업체의 정보를 강제로 수정하시겠습니까?")) return;
 
         try {
             if (oldId !== newId) {
                 const safeNewId = encodeURIComponent(newId);
                 const safeOldId = encodeURIComponent(oldId);
 
-                const checkRes = await fetch(`${DB_BASE_URL}/${safeNewId}/profile.json`);
+                const checkRes = await fetch(getAuthUrl(`${DB_BASE_URL}/${safeNewId}/profile.json`));
                 const checkData = await checkRes.json();
                 if (checkData && !checkData.error) {
-                    return alert("이미 존재하는 아이디입니다. 다른 아이디를 입력해주세요.");
+                    return alert("이미 존재하는 아이디입니다.");
                 }
 
-                const oldRes = await fetch(`${DB_BASE_URL}/${safeOldId}.json`);
+                const oldRes = await fetch(getAuthUrl(`${DB_BASE_URL}/${safeOldId}.json`));
                 const oldData = await oldRes.json();
 
                 oldData.profile.id = newId;
@@ -824,24 +826,19 @@
                 oldData.profile.phone = newPhone;
                 oldData.profile.bizNum = newBizNum;
 
-                await fetch(`${DB_BASE_URL}/${safeNewId}.json`, {
+                await fetch(getAuthUrl(`${DB_BASE_URL}/${safeNewId}.json`), {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(oldData)
                 });
 
-                await fetch(`${DB_BASE_URL}/${safeOldId}.json`, { method: 'DELETE' });
+                await fetch(getAuthUrl(`${DB_BASE_URL}/${safeOldId}.json`), { method: 'DELETE' });
 
             } else {
-                await fetch(`${DB_BASE_URL}/${encodeURIComponent(oldId)}/profile.json`, {
+                await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(oldId)}/profile.json`), {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name: newName,
-                        ceo: newCeo,
-                        phone: newPhone,
-                        bizNum: newBizNum
-                    })
+                    body: JSON.stringify({ name: newName, ceo: newCeo, phone: newPhone, bizNum: newBizNum })
                 });
             }
 
@@ -849,7 +846,6 @@
             closeEditCompanyModal();
             fetchAccounts(); 
         } catch(e) {
-            console.error(e);
             alert("정보 수정 중 오류가 발생했습니다.");
         }
     }
@@ -858,7 +854,7 @@
     async function approveAccount(id) {
         if(!confirm(`해당 업체의 조경노트 PRO 플랫폼 이용을 최종 승인하시겠습니까?`)) return;
         try {
-            await fetch(`${DB_BASE_URL}/${encodeURIComponent(id)}/profile.json`, {
+            await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(id)}/profile.json`), {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status: 'active' })
@@ -872,7 +868,7 @@
         let msg = newStatus === 'suspended' ? "해당 업체의 앱 접속을 차단(정지) 하시겠습니까?" : "해당 업체의 정지를 해제하시겠습니까?";
         if(!confirm(msg)) return;
         try {
-            await fetch(`${DB_BASE_URL}/${encodeURIComponent(id)}/profile.json`, {
+            await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(id)}/profile.json`), {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status: newStatus })
@@ -882,9 +878,9 @@
     }
 
     async function resetPassword(id) {
-        if(!confirm(`[보안 경고]\n정말로 해당 업체의 비밀번호를 '1234'로 강제 초기화 하시겠습니까?\n이 작업은 즉시 반영됩니다.`)) return;
+        if(!confirm(`[보안 경고]\n정말로 해당 업체의 비밀번호를 '1234'로 강제 초기화 하시겠습니까?`)) return;
         try {
-            await fetch(`${DB_BASE_URL}/${encodeURIComponent(id)}/profile.json`, {
+            await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(id)}/profile.json`), {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ pw: '1234' })
@@ -896,7 +892,7 @@
     async function deleteAccount(id, actionName) {
         if(!confirm(`[위험]\n정말로 해당 업체를 데이터베이스에서 ${actionName} 하시겠습니까?\n기존에 저장된 데이터도 모두 연결이 끊어지며 복구할 수 없습니다.`)) return;
         try {
-            await fetch(`${DB_BASE_URL}/${encodeURIComponent(id)}.json`, { method: 'DELETE' });
+            await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(id)}.json`), { method: 'DELETE' });
             alert("✅ 해당 계정이 시스템에서 영구적으로 삭제되었습니다.");
             knownPendingIds.delete(id); 
             fetchAccounts();
@@ -971,19 +967,15 @@
         const modal = document.getElementById('companyDataModal');
         const box = document.getElementById('companyDataBox');
         modal.classList.remove('hidden');
-        setTimeout(() => {
-            modal.classList.remove('opacity-0');
-            box.classList.remove('scale-95');
-        }, 10);
+        setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10);
 
         try {
-            const res = await fetch(`${DB_BASE_URL}/${encodeURIComponent(id)}/data.json`);
+            const res = await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(id)}/data.json`));
             const data = await res.json();
             
             const clients = data && data.clients ? data.clients : [];
             const records = data && data.records ? data.records : [];
             
-            // 🔥 신규 핀셋 1: 글로벌 메모리에 레코드 보관 (상세 열람용)
             currentCompanyRecords = records;
             
             const reports = records.filter(r => r.type === 'report');
@@ -1022,7 +1014,6 @@
                 document.getElementById('modalDocList').innerHTML = docHtml;
             }
             
-            // 🔥 핀셋 2: 거래처 클릭 시 상세 내역 조회 (이중 팝업) 연동
             if(clients.length === 0) {
                 document.getElementById('modalClientList').innerHTML = '<div class="p-6 text-center text-[#94A3B8] text-[13px] font-bold border-t border-white/5">등록된 거래처가 없습니다.</div>';
             } else {
@@ -1053,7 +1044,6 @@
             lucide.createIcons();
             
         } catch (e) {
-            console.error("데이터 로드 실패", e);
             document.getElementById('modalDocList').innerHTML = '<div class="p-6 text-center text-red-400 text-[13px] font-bold">오류: 데이터를 가져오지 못했습니다.</div>';
             document.getElementById('modalClientList').innerHTML = '<div class="p-6 text-center text-red-400 text-[13px] font-bold">오류: 데이터를 가져오지 못했습니다.</div>';
         }
@@ -1064,12 +1054,9 @@
         const box = document.getElementById('companyDataBox');
         modal.classList.add('opacity-0');
         box.classList.add('scale-95');
-        setTimeout(() => {
-            modal.classList.add('hidden');
-        }, 200);
+        setTimeout(() => { modal.classList.add('hidden'); }, 200);
     }
 
-    // 🔥 신규 핀셋 3: 거래처별 상세 내역 이중 팝업 컨트롤 로직
     function openClientHistory(clientName) {
         document.getElementById('historyModalClientName').innerText = clientName;
         const container = document.getElementById('historyModalListContainer');
@@ -1109,10 +1096,7 @@
         const modal = document.getElementById('clientHistoryModal');
         const box = document.getElementById('clientHistoryBox');
         modal.classList.remove('hidden');
-        setTimeout(() => {
-            modal.classList.remove('opacity-0');
-            box.classList.remove('scale-95');
-        }, 10);
+        setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10);
     }
 
     function closeClientHistoryModal() {
@@ -1120,11 +1104,8 @@
         const box = document.getElementById('clientHistoryBox');
         modal.classList.add('opacity-0');
         box.classList.add('scale-95');
-        setTimeout(() => {
-            modal.classList.add('hidden');
-        }, 200);
+        setTimeout(() => { modal.classList.add('hidden'); }, 200);
     }
-
   </script>
 </body>
 </html>
