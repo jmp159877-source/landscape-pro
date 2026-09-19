@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>조경노트 PRO - 프리미엄 조경 관리 솔루션</title>
   
-  <!-- 🔥 신규: 구글/네이버 검색 엔진 노출 최적화(SEO) 태그 -->
+  <!-- 구글/네이버 검색 엔진 노출 최적화(SEO) 태그 -->
   <meta name="description" content="조경노트 PRO - 현장 작업자를 위한 스마트 조경 관리 플랫폼. 일지 작성, 견적서, AI 수목 식별, 거래처 연락처 관리를 모바일에서 한 번에 해결하세요.">
   <meta name="keywords" content="조경노트, 조경노트 프로, 조경관리, 조경일지, 조경견적, 조경앱, 스마트조경, 수목식별">
   <meta property="og:type" content="website">
@@ -490,14 +490,12 @@
 
         <!-- 연락처 등록/수정 폼 -->
         <div class="bg-[#F9F9F8] p-5 rounded-[20px] border border-[#EAEBEA] space-y-3.5">
-          <!-- 🔥 수정 기능 타이틀 변경을 위한 ID 추가 -->
           <h3 id="contactFormTitle" class="text-[14px] font-black text-[#12261E] flex items-center gap-1.5"><i data-lucide="user-plus" class="w-5 h-5 text-[#84CC16]"></i> <span>새 연락처 추가</span></h3>
           <div class="space-y-2.5">
             <input type="text" id="newContactName" placeholder="업체명 (또는 성명) 입력" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] placeholder:font-bold placeholder:text-[#4E5968]">
             <input type="tel" id="newContactPhone" oninput="autoHyphen(this)" placeholder="연락처 (저장 후 터치 시 자동 연결)" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] placeholder:font-bold placeholder:text-[#4E5968]">
             <input type="text" id="newContactMemo" placeholder="기타 사항 (주소, 단가, 특징 등)" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] placeholder:font-bold placeholder:text-[#4E5968]">
           </div>
-          <!-- 🔥 수정 기능 취소 버튼 추가 -->
           <div class="flex gap-2">
             <button id="saveContactBtn" onclick="saveContact()" class="flex-1 py-4 bg-[#12261E] text-[#84CC16] rounded-[12px] text-[15px] font-black shadow-md hover:bg-black transition-colors flex items-center justify-center gap-1.5"><i data-lucide="save" class="w-5 h-5"></i> 연락처 저장하기</button>
             <button id="cancelContactEditBtn" onclick="cancelContactEdit()" class="hidden px-4 py-4 bg-[#EAEBEA] text-[#4E5968] rounded-[12px] text-[15px] font-black">취소</button>
@@ -676,115 +674,11 @@
     </section>
   </div>
 
-  <!-- 이미지 모달 (공용 줌 모달) -->
-  <div id="imageModal" class="hidden fixed inset-0 z-[3000] bg-black/95 flex flex-col items-center justify-center" onclick="closeModal()">
-    <button class="absolute top-6 right-6 text-white p-2.5 bg-white/10 hover:bg-white/20 rounded-full transition-colors z-50"><i data-lucide="x" class="w-6 h-6"></i></button>
-    <button id="prevBtn" onclick="prevImage(event)" class="absolute left-3 top-1/2 -translate-y-1/2 text-white p-2 bg-black/50 hover:bg-black/80 rounded-full transition-colors z-50"><i data-lucide="chevron-left" class="w-8 h-8"></i></button>
-    <button id="nextBtn" onclick="nextImage(event)" class="absolute right-3 top-1/2 -translate-y-1/2 text-white p-2 bg-black/50 hover:bg-black/80 rounded-full transition-colors z-50"><i data-lucide="chevron-right" class="w-8 h-8"></i></button>
-    <img id="modalImg" src="" class="max-w-full max-h-[85vh] object-contain modal-enter transition-transform duration-300" onclick="event.stopPropagation()">
-    <div id="modalIndicator" class="absolute bottom-8 text-white font-bold text-sm bg-black/50 px-4 py-1.5 rounded-full tracking-widest z-50"></div>
-  </div>
-
-  <!-- 텍스트 편집 모달 -->
-  <div id="textEditorModal" class="hidden fixed inset-0 z-[2500] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200">
-    <div class="bg-white w-full max-w-sm rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200" id="textEditorBox" onclick="event.stopPropagation()">
-      <div class="p-5 border-b border-[#EAEBEA] flex justify-between items-center bg-[#F9F9F8]">
-        <h3 class="text-[15px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="edit-3" class="w-5 h-5 text-[#84CC16]"></i> 내용 상세 수정</h3>
-        <button onclick="closeTextEditor()" class="text-[#A3A8A3] hover:text-[#12261E] p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
-      </div>
-      <div class="p-5 bg-white">
-        <textarea id="modalTextInput" rows="5" placeholder="수정할 내용을 입력하세요" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] p-4 text-[16px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] leading-relaxed resize-none"></textarea>
-      </div>
-      <div class="p-4 bg-white border-t border-[#F4F5F4] flex gap-2">
-        <button onclick="closeTextEditor()" class="flex-1 py-4 bg-[#EAEBEA] text-[#4E5968] rounded-[14px] font-black text-[15px] hover:bg-[#D4D8D4] transition-colors">취소</button>
-        <button onclick="saveTextEditor()" class="flex-1 py-4 bg-[#84CC16] text-[#12261E] rounded-[14px] font-black text-[15px] shadow-md hover:bg-[#9BE32D] transition-colors">입력 완료</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- AI 렌즈 결과 팝업 모달 -->
-  <div id="lensResultModal" class="hidden fixed inset-0 z-[2500] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200">
-    <div class="bg-white w-full max-w-sm rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200" id="lensResultBox" onclick="event.stopPropagation()">
-      <div class="p-5 border-b border-[#EAEBEA] flex justify-between items-center bg-[#F9F9F8]">
-        <h3 id="lensResultTitle" class="text-[16px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="scan" class="w-5 h-5 text-[#84CC16]"></i> AI 분석 결과</h3>
-        <button onclick="closeLensResult()" class="text-[#A3A8A3] hover:text-[#12261E] p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
-      </div>
-      <div class="p-5 bg-white space-y-4 max-h-[60vh] overflow-y-auto">
-        <div class="w-full aspect-video bg-[#F4F5F4] rounded-[16px] overflow-hidden relative cursor-pointer group shadow-sm border border-[#EAEBEA]" onclick="openModalForLens()">
-          <img id="lensResultImg" src="" class="w-full h-full object-cover">
-          <div class="absolute bottom-2 right-2 bg-black/60 text-white px-2 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1 backdrop-blur-sm"><i data-lucide="zoom-in" class="w-3 h-3"></i> 터치하여 확대</div>
-        </div>
-        <div id="lensResultContent" class="bg-[#F9F9F8] p-5 rounded-[16px] border border-[#EAEBEA] text-[14px] leading-relaxed text-[#1A1D1A] font-bold whitespace-pre-wrap break-keep">
-        </div>
-      </div>
-      <div class="p-4 bg-white border-t border-[#F4F5F4] flex gap-2">
-        <button onclick="closeLensResult()" class="flex-1 py-4 bg-[#EAEBEA] text-[#4E5968] rounded-[14px] font-black text-[14px] hover:bg-[#D4D8D4] transition-colors">닫기</button>
-        <button onclick="copyLensResult()" class="flex-1 py-4 bg-[#12261E] text-[#84CC16] rounded-[14px] font-black text-[14px] shadow-md transition-colors flex items-center justify-center gap-1.5"><i data-lucide="copy" class="w-4 h-4"></i> 결과 복사</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 자재정보 관리 팝업 모달 -->
-  <div id="materialModal" class="hidden fixed inset-0 z-[3500] bg-black/80 flex flex-col items-center justify-center p-2 sm:p-4 opacity-0 transition-opacity duration-200">
-    <div class="bg-white w-full max-w-4xl max-h-[90vh] rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200" id="materialBox" onclick="event.stopPropagation()">
-      <div class="p-4 sm:p-5 border-b border-[#EAEBEA] flex justify-between items-center bg-[#12261E] text-white">
-        <h3 class="text-[16px] font-black flex items-center gap-2"><i data-lucide="package-search" class="w-5 h-5 text-[#84CC16]"></i> 자재 단가표 (관리자 전용)</h3>
-        <button onclick="closeMaterialModal()" class="text-[#A3A8A3] hover:text-white p-1 transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
-      </div>
-      
-      <div class="px-4 py-3 bg-white flex justify-between items-center border-b border-[#EAEBEA] shrink-0">
-          <span class="text-[12px] text-[#4E5968] font-bold">* 파란색 연락처 터치 시 자동 전화 연결</span>
-          <button id="btnToggleMaterialEdit" onclick="toggleMaterialEdit()" class="text-[13px] bg-[#F4F5F4] hover:bg-[#EAEBEA] text-[#12261E] font-black px-3.5 py-2 rounded-[10px] transition-colors border border-[#EAEBEA] shadow-sm flex items-center gap-1.5"><i data-lucide="edit-3" class="w-4 h-4"></i> 수정 모드 켜기</button>
-      </div>
-
-      <div class="flex-1 overflow-auto p-4 bg-[#F9F9F8] relative">
-        <div class="min-w-[700px] bg-white border border-[#EAEBEA] shadow-sm rounded-[12px] overflow-hidden">
-          <table class="w-full text-[13px] text-left border-collapse" id="materialTable">
-            <thead class="bg-[#2E3440] text-white font-bold text-center text-[14px] tracking-wide">
-              <tr>
-                <th class="border border-[#4C566A] p-3 w-[15%]">품 목</th>
-                <th class="border border-[#4C566A] p-3 w-[25%]">규 격</th>
-                <th class="border border-[#4C566A] p-3 w-[30%]">단가 (부가세 별도)</th>
-                <th class="border border-[#4C566A] p-3 w-[30%]">연락처 및 상호</th>
-                <th id="matActionTh" class="border border-[#4C566A] p-3 w-[60px] hidden">관리</th>
-              </tr>
-            </thead>
-            <tbody id="materialTableBody" class="text-[#1A1D1A]">
-            </tbody>
-          </table>
-        </div>
-        
-        <div id="matAddBtnContainer" class="mt-4 hidden">
-           <button onclick="addMaterialRow()" class="w-full py-4.5 border-2 border-dashed border-[#84CC16]/50 bg-[#F2FBEC] text-[#65A30D] rounded-[16px] font-black text-[15px] hover:bg-[#E8F5E9] transition-colors flex items-center justify-center gap-2"><i data-lucide="plus-circle" class="w-5 h-5"></i> 새 자재 항목 추가하기</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 마스터 공지사항/경고 수신용 팝업 모달 -->
-  <div id="appNoticeModal" class="hidden fixed inset-0 z-[6000] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200">
-    <div class="bg-white w-full max-w-sm rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-[#EAEBEA]" id="appNoticeBox">
-      <div class="p-5 border-b border-[#F4F5F4] flex justify-between items-center bg-[#F9F9F8]">
-        <h3 class="text-[18px] font-black text-[#12261E] flex items-center gap-2">
-            <i data-lucide="bell-ring" class="w-5 h-5 text-[#F59E0B]"></i> <span id="appNoticeTitle">알림</span>
-        </h3>
-        <button onclick="closeAppNotice()" class="text-[#A3A8A3] hover:text-[#12261E] p-1"><i data-lucide="x" class="w-6 h-6"></i></button>
-      </div>
-      <div class="p-6 bg-white text-center min-h-[120px] flex items-center justify-center">
-        <p id="appNoticeContent" class="text-[15px] text-[#1A1D1A] font-black leading-[1.7] whitespace-pre-wrap break-keep"></p>
-      </div>
-      <div class="p-4 bg-[#F9F9F8] border-t border-[#F4F5F4] flex gap-2">
-        <button onclick="closeAppNotice()" class="w-full py-4 bg-[#12261E] text-[#84CC16] rounded-[14px] font-black text-[16px] shadow-md hover:bg-black transition-colors">확인했습니다</button>
-      </div>
-    </div>
-  </div>
-
   <script>
     const DB_BASE_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/accounts";
-    const SETTINGS_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/settings"; // 공지사항 확인용
+    const SETTINGS_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/settings";
     let currentUserId = "";
 
-    // 자동 하이픈 함수
     function autoHyphen(target) {
         let str = target.value.replace(/[^0-9]/g, '');
         let tmp = '';
@@ -835,7 +729,7 @@
     
     let isMaterialEditMode = false;
     let editingClientIndex = null;
-    let editingContactIndex = null; // 🔥 핀셋: 연락처 수정 인덱스 변수
+    let editingContactIndex = null; 
     
     let beforeImages = [];
     let afterImages = [];
@@ -1043,9 +937,6 @@
         }
     }
 
-    // ==========================================
-    // 앱 공지사항 수신기 (메모리 기능 추가)
-    // ==========================================
     let noticeQueue = [];
     let currentShowingNotice = null;
 
@@ -1125,7 +1016,6 @@
             localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile));
         } catch(e) { console.error("개별 공지 삭제 실패", e); }
     }
-    // ==========================================
 
 
     function logoutAdmin() {
@@ -1269,7 +1159,6 @@
         renderContactsList();
     }
 
-    // 🔥 핀셋: 연락처 저장 및 수정 기능 강화
     function saveContact() {
         const name = document.getElementById('newContactName').value.trim();
         const phone = document.getElementById('newContactPhone').value.trim();
@@ -1289,11 +1178,10 @@
         }
 
         updateData('contacts', contactsData);
-        cancelContactEdit(); // 폼 초기화 및 수정상태 해제
+        cancelContactEdit(); 
         renderContactsList();
     }
 
-    // 🔥 핀셋: 연락처 수정 폼 열기
     function editContact(tab, index) {
         editingContactIndex = index;
         if (currentContactTab !== tab) switchContactTab(tab);
@@ -1311,7 +1199,6 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // 🔥 핀셋: 연락처 수정 취소
     function cancelContactEdit() {
         editingContactIndex = null;
         document.getElementById('newContactName').value = '';
@@ -1357,7 +1244,6 @@
             
             let memoHtml = item.memo ? `<div class="text-[12px] text-[#4E5968] mt-2 bg-[#F4F5F4] px-2.5 py-1.5 rounded-lg inline-block font-bold">${item.memo}</div>` : '';
             
-            // 🔥 핀셋: 수정 버튼 추가
             div.innerHTML = `
                 <div>
                     <div class="font-black text-[#1A1D1A] text-[15px] flex items-center gap-1.5"><i data-lucide="${currentContactTab === 'clients' ? 'building' : 'user'}" class="w-4 h-4 text-[#4E5968]"></i> ${item.name}</div>
@@ -1373,7 +1259,6 @@
         });
         lucide.createIcons();
     }
-    // ========================================================
 
     function openMaterialModal() {
         if (!materialsData || materialsData.length === 0) {
@@ -1706,12 +1591,6 @@
       }
     };
 
-    function formatNumberInput(input) {
-      let val = input.value.replace(/[^0-9]/g, '');
-      if(val) input.value = parseInt(val).toLocaleString('ko-KR');
-      else input.value = '';
-    }
-
     function toggleSingleTag(btn, inputIdx) {
         let inputEl = document.getElementById(`quoteDesc_${inputIdx}`);
         
@@ -1845,7 +1724,8 @@
             return null;
         }
 
-        let savedRecords = JSON.parse(localStorage.getItem('shinhwa_pro_records')) || [];
+        // 🔥 수정됨: localStorage.getItem 대신 메모리에 있는 최신 records를 기반으로 함
+        let savedRecords = [...records];
         let existingIdx = savedRecords.findIndex(r => r.id === shortCloudId);
         
         let recordObj = {
@@ -1873,6 +1753,8 @@
         
         updateData('records', savedRecords);
         records = savedRecords;
+        // 안전을 위해 로컬 스토리지에도 최신 동기화 백업
+        localStorage.setItem('shinhwa_pro_records', JSON.stringify(records));
 
         let validBaseUrl = window.location.origin !== 'null' && !window.location.origin.startsWith('file') ? window.location.origin + window.location.pathname : 'https://jogyeongnote.com/';
         return `${validBaseUrl}?id=${shortCloudId}`;
@@ -2479,8 +2361,6 @@
             return; 
         }
 
-        // 견적서는 DB에 등록하지 않음 (이전 피드백 반영)
-        
         alert("✅ 견적서 저장이 완료되어 견적 보관함으로 이동했습니다.");
         editingRecordId = null;
         let genBtn = document.getElementById('btnGenerateQuote');
@@ -2982,8 +2862,11 @@
           
           let addrHtml = c.address ? `<div class="text-[12px] text-[#4E5968] flex items-center gap-1 font-bold mt-1"><i data-lucide="map-pin" class="w-3.5 h-3.5"></i> ${c.address}</div>` : '';
           
+          // 🔥 버그 3 수정: HTML 렌더링 시 작은따옴표(')로 인한 깨짐 방지
+          const safeName = c.name.replace(/'/g, "\\'");
+          
           div.innerHTML = `<div class="flex items-center justify-between"><div><div class="flex items-center gap-1.5"><span class="text-[10px] bg-[#12261E] text-[#84CC16] px-2 py-0.5 rounded font-black uppercase">${c.type}</span><strong class="text-[15px] font-black text-[#1A1D1A]">${c.name}</strong></div><div class="text-[13px] text-[#4E5968] mt-2 flex items-center gap-1 font-bold"><i data-lucide="phone" class="w-3.5 h-3.5 text-blue-500"></i> ${formatPhoneToLink(c.phone)}</div>${addrHtml}</div><div class="flex gap-1.5"><button onclick="editClient(${originalIdx})" class="p-2.5 text-[#A3A8A3] hover:text-[#84CC16] bg-gray-50 rounded-xl"><i data-lucide="edit-2" class="w-4 h-4"></i></button><button onclick="deleteClient(${originalIdx})" class="p-2.5 text-[#A3A8A3] hover:text-red-500 bg-gray-50 rounded-xl"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></div>
-          <div class="grid grid-cols-2 gap-2 border-t border-[#F4F5F4] pt-3 mt-1"><button onclick="selectAndGoAdmin('${c.name}', '${c.phone}')" class="py-2.5 bg-[#F9F9F8] hover:bg-[#EAEBEA] text-[#12261E] rounded-[10px] text-[12px] font-black">새 일지/견적 쓰기</button><button onclick="showHistory('${c.name}')" class="py-2.5 bg-[#E8F5E9] text-[#12261E] rounded-[10px] text-[12px] font-black flex items-center justify-center gap-1"><i data-lucide="history" class="w-4 h-4"></i> 현장 일지 보기</button></div>`;
+          <div class="grid grid-cols-2 gap-2 border-t border-[#F4F5F4] pt-3 mt-1"><button onclick="selectAndGoAdmin('${safeName}', '${c.phone}')" class="py-2.5 bg-[#F9F9F8] hover:bg-[#EAEBEA] text-[#12261E] rounded-[10px] text-[12px] font-black">새 일지/견적 쓰기</button><button onclick="showHistory('${safeName}')" class="py-2.5 bg-[#E8F5E9] text-[#12261E] rounded-[10px] text-[12px] font-black flex items-center justify-center gap-1"><i data-lucide="history" class="w-4 h-4"></i> 현장 일지 보기</button></div>`;
           container.appendChild(div);
         });
       }
@@ -2992,7 +2875,8 @@
     
     function renderQuoteList() {
       const container = document.getElementById('quoteListContainer');
-      const quoteRecords = records.filter(r => r.type === 'quote').sort((a, b) => b.id - a.id);
+      // 🔥 버그 2 수정: NaN 발생 방지를 위해 id 값의 문자열 비교 알고리즘 적용 (localeCompare)
+      const quoteRecords = records.filter(r => r.type === 'quote').sort((a, b) => b.id.localeCompare(a.id));
       document.getElementById('quoteCountBadge').innerText = `${quoteRecords.length}건`;
       container.innerHTML = '';
       
@@ -3026,7 +2910,8 @@
     }
     
     function showHistory(clientName) {
-      const clientRecords = records.filter(r => r.clientName === clientName && r.type !== 'quote').sort((a,b) => b.id - a.id);
+      // 🔥 버그 2 수정: NaN 발생 방지를 위해 id 값의 문자열 비교 알고리즘 적용 (localeCompare)
+      const clientRecords = records.filter(r => r.clientName === clientName && r.type !== 'quote').sort((a,b) => b.id.localeCompare(a.id));
       document.getElementById('historyClientName').innerText = clientName;
       const container = document.getElementById('historyListContainer'); container.innerHTML = '';
       if(clientRecords.length === 0) container.innerHTML = `<div class="p-6 text-center text-[#4E5968] text-[13px] font-bold bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA]">저장된 일지 기록이 없습니다.</div>`;
