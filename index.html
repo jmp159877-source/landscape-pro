@@ -50,9 +50,9 @@
       <div class="w-24 h-24 rounded-[28px] bg-[#1A382B] border-2 border-[#84CC16]/40 flex items-center justify-center shadow-[0_0_50px_rgba(132,204,22,0.3)] mb-6 animate-bounce">
         <i data-lucide="leaf" class="w-12 h-12 text-[#84CC16]"></i>
       </div>
-      <span class="text-[11px] bg-[#84CC16]/20 text-[#84CC16] font-extrabold px-3.5 py-1.5 rounded-full uppercase tracking-[0.25em] border border-[#84CC16]/30 mb-3">Landscape Solution</span>
-      <h1 class="text-white font-black text-[38px] tracking-tight mb-2">조경노트 PRO</h1>
-      <p class="text-[#A3A8A3] text-[15px] font-bold tracking-wide" id="splash-loading-text">데이터 동기화 중...</p>
+      <span class="text-[13px] bg-[#84CC16]/20 text-[#84CC16] font-black px-4 py-2 rounded-full uppercase tracking-[0.2em] border border-[#84CC16]/30 mb-3">Landscape Solution</span>
+      <h1 class="text-white font-black text-[42px] tracking-tight mb-2">조경노트 PRO</h1>
+      <p class="text-[#A3A8A3] text-[16px] font-bold tracking-wide" id="splash-loading-text">데이터 동기화 중...</p>
     </div>
   </div>
 
@@ -60,30 +60,30 @@
   <section id="authView" class="hidden fixed inset-0 z-[2000] bg-[#151E2D] flex flex-col items-center justify-center px-6">
     <div class="bg-white/5 backdrop-blur-md p-8 rounded-[32px] w-full max-w-sm border border-white/10 shadow-2xl flex flex-col items-center">
       <div class="w-16 h-16 bg-[#84CC16] rounded-[18px] flex items-center justify-center mb-5 shadow-[0_0_20px_rgba(132,204,22,0.3)]"><i data-lucide="user" class="w-7 h-7 text-[#12261E]"></i></div>
-      <h2 class="text-white font-black text-[22px] mb-2">조경노트 PRO 로그인</h2>
-      <p class="text-[#A3A8A3] text-[12px] font-medium mb-6 text-center leading-relaxed">계정을 연동하여 PC, 태블릿, 모바일<br>어디서든 내 장부를 관리하세요.</p>
+      <h2 class="text-white font-black text-[24px] mb-2">조경노트 PRO 로그인</h2>
+      <p class="text-[#A3A8A3] text-[14px] font-bold mb-6 text-center leading-relaxed">계정을 연동하여 PC, 태블릿, 모바일<br>어디서든 내 장부를 관리하세요.</p>
       
       <div class="w-full space-y-3 mb-4">
-        <input type="text" id="loginId" placeholder="아이디" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[12px] px-4 py-3.5 text-white text-[14px] font-bold focus:outline-none focus:border-[#84CC16]">
-        <input type="password" id="loginPw" placeholder="비밀번호" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[12px] px-4 py-3.5 text-white text-[14px] font-bold focus:outline-none focus:border-[#84CC16]" onkeypress="if(event.key === 'Enter') doLogin()">
+        <input type="text" id="loginId" placeholder="아이디" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[12px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16]">
+        <input type="password" id="loginPw" placeholder="비밀번호" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[12px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16]" onkeypress="if(event.key === 'Enter') doLogin()">
       </div>
       
       <div class="w-full flex items-center mb-6 px-1">
-        <label class="flex items-center gap-2 cursor-pointer text-[#A3A8A3] text-[13px] font-bold hover:text-white transition-colors">
-          <input type="checkbox" id="autoLoginCheck" class="w-4 h-4 rounded border-white/20 bg-transparent text-[#84CC16] focus:ring-[#84CC16]" checked>
+        <label class="flex items-center gap-2 cursor-pointer text-[#A3A8A3] text-[14px] font-bold hover:text-white transition-colors">
+          <input type="checkbox" id="autoLoginCheck" class="w-5 h-5 rounded border-white/20 bg-transparent text-[#84CC16] focus:ring-[#84CC16]" checked>
           자동 로그인
         </label>
       </div>
       
-      <button onclick="doLogin()" class="w-full py-4 bg-[#84CC16] text-[#12261E] rounded-[16px] font-extrabold text-[16px] hover:bg-[#9BE32D] shadow-[0_8px_20px_rgba(132,204,22,0.2)] transition-all mb-4">로그인</button>
+      <button onclick="doLogin()" class="w-full py-4.5 bg-[#84CC16] text-[#12261E] rounded-[16px] font-black text-[18px] hover:bg-[#9BE32D] shadow-[0_8px_20px_rgba(132,204,22,0.2)] transition-all mb-4">로그인</button>
       
       <div class="w-full border-t border-white/10 pt-5 mt-2">
-        <button onclick="showSignUp()" class="w-full py-4 bg-[#FEE500] text-[#12261E] rounded-[16px] font-extrabold text-[16px] shadow-[0_8px_20px_rgba(254,229,0,0.2)] hover:bg-[#FACC15] transition-all flex items-center justify-center gap-2">업체 등록하기 <i data-lucide="arrow-right" class="w-5 h-5"></i></button>
+        <button onclick="showSignUp()" class="w-full py-4.5 bg-[#FEE500] text-[#12261E] rounded-[16px] font-black text-[18px] shadow-[0_8px_20px_rgba(254,229,0,0.2)] hover:bg-[#FACC15] transition-all flex items-center justify-center gap-2">업체 등록하기 <i data-lucide="arrow-right" class="w-5 h-5"></i></button>
       </div>
 
-      <div class="mt-5 text-center flex flex-col items-center bg-[#000000]/30 py-3.5 px-4 rounded-xl border border-[#84CC16]/20 w-full shadow-inner">
-        <p class="text-[12px] font-bold text-[#EAEBEA] tracking-wide leading-relaxed"><span class="text-[#84CC16]">'조경현장의 든든한 동반자!'</span><br>스마트한 조경노트와 성공하세요~!</p>
-        <p class="text-[11px] text-[#A3A8A3] mt-2"><i data-lucide="phone-call" class="w-3.5 h-3.5 inline-block align-middle pb-0.5"></i> 시스템 도입 문의 : <a href="tel:010-4712-8523" class="font-bold text-[#60A5FA] hover:text-blue-300 underline transition-colors">010-4712-8523</a></p>
+      <div class="mt-5 text-center flex flex-col items-center bg-[#000000]/30 py-4 px-4 rounded-xl border border-[#84CC16]/20 w-full shadow-inner">
+        <p class="text-[13px] font-bold text-[#EAEBEA] tracking-wide leading-relaxed"><span class="text-[#84CC16]">'조경현장의 든든한 동반자!'</span><br>스마트한 조경노트와 성공하세요~!</p>
+        <p class="text-[12px] text-[#A3A8A3] mt-2"><i data-lucide="phone-call" class="w-4 h-4 inline-block align-middle pb-0.5"></i> 시스템 도입 문의 : <a href="tel:010-4712-8523" class="font-bold text-[#60A5FA] hover:text-blue-300 underline transition-colors">010-4712-8523</a></p>
       </div>
     </div>
   </section>
@@ -94,7 +94,7 @@
       <div class="w-14 h-14 bg-[#84CC16] rounded-[16px] flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(132,204,22,0.3)] shrink-0"><i data-lucide="building" class="w-6 h-6 text-[#12261E]"></i></div>
       
       <h2 class="text-white font-black text-[22px] mb-2 shrink-0">사용자 업체 등록</h2>
-      <p class="text-[#FEE500] text-[12px] font-extrabold mb-5 text-center leading-relaxed shrink-0">입력하신 정보는 고객에게 발송되는<br>모든 리포트와 견적서에 자동 입력됩니다.</p>
+      <p class="text-[#FEE500] text-[13px] font-black mb-5 text-center leading-relaxed shrink-0">입력하신 정보는 고객에게 발송되는<br>모든 리포트와 견적서에 자동 입력됩니다.</p>
       
       <div class="w-full space-y-3 mb-5">
         <div class="bg-black/40 p-4 rounded-[18px] border border-white/10 mb-2 space-y-3 shadow-inner">
@@ -117,10 +117,10 @@
         </div>
 
         <!-- 개인정보 이용동의서 체크박스 -->
-        <label class="flex items-start gap-2 cursor-pointer text-[#A3A8A3] text-[11px] leading-relaxed text-left bg-black/20 p-4 rounded-[14px] border border-white/5 mt-3">
-            <input type="checkbox" id="obPrivacyCheck" class="w-4 h-4 rounded border-white/20 bg-transparent text-[#84CC16] focus:ring-[#84CC16] mt-0.5 shrink-0">
-            <span><strong class="text-white">[필수] 개인정보 수집 및 이용 동의</strong><br>
-                <span class="text-[10px] text-white/70 block mt-1.5 leading-snug">
+        <label class="flex items-start gap-2 cursor-pointer text-[#A3A8A3] text-[12px] leading-relaxed text-left bg-black/20 p-4 rounded-[14px] border border-white/5 mt-3">
+            <input type="checkbox" id="obPrivacyCheck" class="w-5 h-5 rounded border-white/20 bg-transparent text-[#84CC16] focus:ring-[#84CC16] mt-0.5 shrink-0">
+            <span><strong class="text-white text-[13px]">[필수] 개인정보 수집 및 이용 동의</strong><br>
+                <span class="text-[11px] text-white/70 block mt-1.5 leading-snug">
                 수집항목: 상호, 대표자, 연락처, 사업자등록번호, 사업자등록증, 거래처 목록 등<br>
                 이용목적: 서비스 제공, 본인/업체 인증, 고객 지원<br>
                 <strong class="text-[#FEE500]">* 관리자가 신원 확인 및 업체 승인 목적으로 열람합니다.</strong>
@@ -129,8 +129,8 @@
         </label>
       </div>
       
-      <button onclick="saveOnboarding()" class="w-full py-4 bg-[#84CC16] text-[#12261E] rounded-[16px] font-extrabold text-[16px] hover:bg-[#9BE32D] shadow-[0_8px_20px_rgba(132,204,22,0.2)] transition-all mb-3 shrink-0">등록 신청 및 승인요청</button>
-      <button onclick="showLogin()" class="w-full py-3 bg-transparent text-[#A3A8A3] rounded-[16px] font-bold text-[13px] hover:text-white transition-all shrink-0">이전 화면으로 돌아가기</button>
+      <button onclick="saveOnboarding()" class="w-full py-4.5 bg-[#84CC16] text-[#12261E] rounded-[16px] font-black text-[18px] hover:bg-[#9BE32D] shadow-[0_8px_20px_rgba(132,204,22,0.2)] transition-all mb-3 shrink-0">등록 신청 및 승인요청</button>
+      <button onclick="showLogin()" class="w-full py-3 bg-transparent text-[#A3A8A3] rounded-[16px] font-bold text-[14px] hover:text-white transition-all shrink-0">이전 화면으로 돌아가기</button>
     </div>
   </section>
 
@@ -138,40 +138,40 @@
   <div id="settingsModal" class="hidden fixed inset-0 z-[3500] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200">
     <div class="bg-[#151E2D] w-full max-w-sm rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-white/10" id="settingsBox" onclick="event.stopPropagation()">
       <div class="p-5 border-b border-white/10 flex justify-between items-center bg-[#0F1722]">
-        <h3 class="text-[16px] font-black text-white flex items-center gap-2"><i data-lucide="settings" class="w-5 h-5 text-[#84CC16]"></i> 내 정보 확인 및 설정</h3>
-        <button onclick="closeSettings()" class="text-[#A3A8A3] hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <h3 class="text-[18px] font-black text-white flex items-center gap-2"><i data-lucide="settings" class="w-5 h-5 text-[#84CC16]"></i> 내 정보 확인 및 설정</h3>
+        <button onclick="closeSettings()" class="text-[#A3A8A3] hover:text-white p-1"><i data-lucide="x" class="w-6 h-6"></i></button>
       </div>
       <div class="p-5 bg-[#151E2D] space-y-4 max-h-[70vh] overflow-y-auto nav-scroll">
-        <p class="text-[11px] text-[#A3A8A3] leading-relaxed break-keep mb-2">* 등록된 업체 기본 정보는 임의로 수정할 수 없습니다. 상호 변경 등이 필요한 경우 관리자(010-4712-8523)에게 문의해 주십시오.</p>
+        <p class="text-[12px] text-[#A3A8A3] leading-relaxed break-keep font-bold mb-2">* 등록된 업체 기본 정보는 임의로 수정할 수 없습니다. 상호 변경 등이 필요한 경우 관리자(010-4712-8523)에게 문의해 주십시오.</p>
         
         <div class="space-y-3">
           <div>
-              <label class="block text-[11px] font-bold text-[#A3A8A3] ml-1 mb-1">상호명 <span class="text-[10px] text-white/30 font-normal">(수정불가)</span></label>
-              <input type="text" id="setCompanyName" readonly class="w-full bg-white/5 border border-white/10 rounded-[12px] px-4 py-3 text-white/50 text-[14px] font-bold outline-none cursor-not-allowed">
+              <label class="block text-[12px] font-black text-[#A3A8A3] ml-1 mb-1">상호명 <span class="text-[11px] text-white/30 font-normal">(수정불가)</span></label>
+              <input type="text" id="setCompanyName" readonly class="w-full bg-white/5 border border-white/10 rounded-[12px] px-4 py-3 text-white/50 text-[15px] font-black outline-none cursor-not-allowed">
           </div>
           <div>
-              <label class="block text-[11px] font-bold text-[#A3A8A3] ml-1 mb-1">대표자명 <span class="text-[10px] text-white/30 font-normal">(수정불가)</span></label>
-              <input type="text" id="setCompanyCeo" readonly class="w-full bg-white/5 border border-white/10 rounded-[12px] px-4 py-3 text-white/50 text-[14px] font-bold outline-none cursor-not-allowed">
+              <label class="block text-[12px] font-black text-[#A3A8A3] ml-1 mb-1">대표자명 <span class="text-[11px] text-white/30 font-normal">(수정불가)</span></label>
+              <input type="text" id="setCompanyCeo" readonly class="w-full bg-white/5 border border-white/10 rounded-[12px] px-4 py-3 text-white/50 text-[15px] font-black outline-none cursor-not-allowed">
           </div>
           <div>
-              <label class="block text-[11px] font-bold text-[#A3A8A3] ml-1 mb-1">연락처 <span class="text-[10px] text-white/30 font-normal">(수정불가)</span></label>
-              <input type="tel" id="setCompanyPhone" readonly class="w-full bg-white/5 border border-white/10 rounded-[12px] px-4 py-3 text-white/50 text-[14px] font-bold outline-none cursor-not-allowed">
+              <label class="block text-[12px] font-black text-[#A3A8A3] ml-1 mb-1">연락처 <span class="text-[11px] text-white/30 font-normal">(수정불가)</span></label>
+              <input type="tel" id="setCompanyPhone" readonly class="w-full bg-white/5 border border-white/10 rounded-[12px] px-4 py-3 text-white/50 text-[15px] font-black outline-none cursor-not-allowed">
           </div>
           <div>
-              <label class="block text-[11px] font-bold text-[#A3A8A3] ml-1 mb-1">사업자등록번호 <span class="text-[10px] text-white/30 font-normal">(수정불가)</span></label>
-              <input type="text" id="setCompanyBizNum" readonly class="w-full bg-white/5 border border-white/10 rounded-[12px] px-4 py-3 text-white/50 text-[14px] font-bold outline-none cursor-not-allowed">
+              <label class="block text-[12px] font-black text-[#A3A8A3] ml-1 mb-1">사업자등록번호 <span class="text-[11px] text-white/30 font-normal">(수정불가)</span></label>
+              <input type="text" id="setCompanyBizNum" readonly class="w-full bg-white/5 border border-white/10 rounded-[12px] px-4 py-3 text-white/50 text-[15px] font-black outline-none cursor-not-allowed">
           </div>
         </div>
         
         <!-- 오직 비밀번호만 수정 가능 -->
         <div class="pt-4 border-t border-white/10 space-y-3">
-          <label class="block text-[12px] font-bold text-[#84CC16] ml-1"><i data-lucide="key" class="w-3.5 h-3.5 inline-block -mt-0.5"></i> 새로운 비밀번호 설정 (4자리 이상 숫자)</label>
-          <input type="password" id="setCompanyPw" placeholder="새 비밀번호 입력" inputmode="numeric" pattern="[0-9]*" class="w-full bg-black/40 border border-[#84CC16]/50 rounded-[14px] px-4 py-3.5 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16]">
+          <label class="block text-[13px] font-black text-[#84CC16] ml-1"><i data-lucide="key" class="w-4 h-4 inline-block -mt-0.5"></i> 새로운 비밀번호 설정 (4자리 이상 숫자)</label>
+          <input type="password" id="setCompanyPw" placeholder="새 비밀번호 입력" inputmode="numeric" pattern="[0-9]*" class="w-full bg-black/40 border border-[#84CC16]/50 rounded-[14px] px-4 py-4 text-white text-[18px] font-black focus:outline-none focus:border-[#84CC16]">
         </div>
       </div>
       <div class="p-4 bg-[#0F1722] border-t border-white/10 flex gap-2">
-        <button onclick="closeSettings()" class="flex-1 py-4 bg-white/5 text-white border border-white/10 rounded-[16px] font-bold text-[14px] hover:bg-white/10 transition-colors">닫기</button>
-        <button onclick="saveSettings()" class="flex-1 py-4 bg-[#84CC16] text-[#12261E] rounded-[16px] font-black text-[14px] shadow-[0_4px_12px_rgba(132,204,22,0.2)] hover:bg-[#9BE32D] transition-colors">비밀번호 변경</button>
+        <button onclick="closeSettings()" class="flex-1 py-4 bg-white/5 text-white border border-white/10 rounded-[16px] font-bold text-[15px] hover:bg-white/10 transition-colors">닫기</button>
+        <button onclick="saveSettings()" class="flex-1 py-4 bg-[#84CC16] text-[#12261E] rounded-[16px] font-black text-[15px] shadow-[0_4px_12px_rgba(132,204,22,0.2)] hover:bg-[#9BE32D] transition-colors">비밀번호 변경</button>
       </div>
     </div>
   </div>
@@ -185,18 +185,19 @@
         <div class="w-12 h-12 rounded-[16px] bg-[#84CC16] flex items-center justify-center shadow-lg"><i data-lucide="leaf" class="w-6 h-6 text-[#12261E]"></i></div>
         <div class="flex flex-col">
           <div class="flex items-center gap-2">
-              <span id="company-name-header" class="font-black text-[19px] text-white tracking-tight">업체명</span>
-              <span class="text-[10px] bg-[#84CC16]/20 text-[#84CC16] font-extrabold px-2 py-0.5 rounded uppercase tracking-widest border border-[#84CC16]/30">PRO</span>
+              <span id="company-name-header" class="font-black text-[20px] text-white tracking-tight">업체명</span>
+              <span class="text-[11px] bg-[#84CC16]/20 text-[#84CC16] font-black px-2.5 py-0.5 rounded uppercase tracking-widest border border-[#84CC16]/30">PRO</span>
               
+              <!-- 동기화 뱃지, 설정, 로그아웃 버튼 나란히 배치 -->
               <div class="flex items-center gap-1.5 ml-1">
-                 <span id="cloudStatusBadge" class="text-[10px] bg-blue-500/20 text-blue-400 font-extrabold px-2 py-0.5 rounded uppercase tracking-widest border border-blue-500/30 flex items-center gap-1"><i data-lucide="cloud" class="w-3 h-3"></i> 동기화 대기</span>
+                 <span id="cloudStatusBadge" class="text-[11px] bg-blue-500/20 text-blue-400 font-black px-2 py-0.5 rounded uppercase tracking-widest border border-blue-500/30 flex items-center gap-1"><i data-lucide="cloud" class="w-3.5 h-3.5"></i> 연동됨</span>
                  <!-- 사용자 정보 수정(설정) 버튼 -->
-                 <button onclick="openSettings()" class="w-7 h-7 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all border border-white/20 shadow-sm"><i data-lucide="settings" class="w-3.5 h-3.5 text-white"></i></button>
-                 <!-- 로그아웃 버튼 -->
-                 <button onclick="logoutAdmin()" class="w-7 h-7 bg-red-500/10 hover:bg-red-500/20 rounded-full flex items-center justify-center transition-all border border-red-500/20 shadow-sm"><i data-lucide="power" class="w-3.5 h-3.5 text-red-400"></i></button>
+                 <button onclick="openSettings()" class="w-8 h-8 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all border border-white/20 shadow-sm"><i data-lucide="settings" class="w-4 h-4 text-white"></i></button>
+                 <!-- 로그아웃 버튼 (새 위치) -->
+                 <button onclick="logoutAdmin()" class="w-8 h-8 bg-red-500/10 hover:bg-red-500/20 rounded-full flex items-center justify-center transition-all border border-red-500/20 shadow-sm"><i data-lucide="power" class="w-4 h-4 text-red-500"></i></button>
               </div>
           </div>
-          <span class="text-[13px] font-bold text-[#A3A8A3] tracking-wide mt-0.5">스마트 관리 솔루션 <strong class="text-[#84CC16]">조경노트</strong></span>
+          <span class="text-[14px] font-bold text-[#A3A8A3] tracking-wide mt-0.5">스마트 관리 솔루션 <strong class="text-[#84CC16]">조경노트</strong></span>
         </div>
       </div>
     </div>
@@ -204,13 +205,13 @@
     <div class="max-w-md mx-auto mt-4">
       <!-- 메인 네비게이션 3x2 그리드 배열 -->
       <nav class="grid grid-cols-3 gap-2 bg-[#84CC16] p-2.5 rounded-2xl shadow-[0_4px_15px_rgba(132,204,22,0.3)] border border-[#65A30D]">
-        <button id="tabAdmin" onclick="switchView('admin')" class="w-full py-3.5 rounded-[12px] bg-white text-[#1E3A8A] font-black text-[13px] shadow-md transition-all text-center flex flex-col items-center justify-center gap-1"><i data-lucide="pen-tool" class="w-4 h-4"></i>일지작성</button>
-        <button id="tabQuote" onclick="switchView('quote')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-black text-[13px] hover:bg-black/5 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="calculator" class="w-4 h-4"></i>견적작성</button>
-        <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-black text-[13px] hover:bg-black/5 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="folder-open" class="w-4 h-4"></i>견적보관함</button>
+        <button id="tabAdmin" onclick="switchView('admin')" class="w-full py-3.5 rounded-[12px] bg-white text-[#12261E] font-black text-[14px] shadow-md transition-all text-center flex flex-col items-center justify-center gap-1 border border-white/50"><i data-lucide="pen-tool" class="w-5 h-5"></i>일지작성</button>
+        <button id="tabQuote" onclick="switchView('quote')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="calculator" class="w-5 h-5"></i>견적작성</button>
+        <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="folder-open" class="w-5 h-5"></i>보관함</button>
         
-        <button id="tabClient" onclick="switchView('clients')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-black text-[13px] hover:bg-black/5 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="building-2" class="w-4 h-4"></i>거래처관리</button>
-        <button id="tabContacts" onclick="switchView('contacts')" class="w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-black text-[13px] hover:bg-black/5 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="users" class="w-4 h-4"></i>연락처</button>
-        <button id="tabLens" onclick="switchView('lens')" class="w-full py-3.5 rounded-[12px] bg-[#1E3A8A] text-white font-black text-[13px] shadow-md hover:bg-[#172554] transition-all text-center flex flex-col items-center justify-center gap-1 border border-[#172554]"><i data-lucide="scan" class="w-4 h-4 text-[#84CC16]"></i>AI렌즈</button>
+        <button id="tabClient" onclick="switchView('clients')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="building-2" class="w-5 h-5"></i>거래처</button>
+        <button id="tabContacts" onclick="switchView('contacts')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="users" class="w-5 h-5"></i>연락처</button>
+        <button id="tabLens" onclick="switchView('lens')" class="w-full py-3.5 rounded-[12px] bg-[#1E3A8A] text-white font-black text-[14px] shadow-md hover:bg-[#172554] transition-all text-center flex flex-col items-center justify-center gap-1 border border-[#172554]"><i data-lucide="scan" class="w-5 h-5 text-[#84CC16]"></i>AI렌즈</button>
       </nav>
     </div>
   </header>
@@ -222,177 +223,179 @@
     <section id="adminView" class="hidden space-y-5">
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5 relative overflow-hidden">
         <div class="flex items-center justify-between pb-4 border-b border-[#F4F5F4] relative z-10">
-          <h2 class="text-[16px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="map-pin" class="w-4 h-4 text-[#84CC16]"></i> 현장 기본 정보</h2>
+          <h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="map-pin" class="w-5 h-5 text-[#84CC16]"></i> 현장 기본 정보</h2>
         </div>
         
         <div class="relative z-10">
-          <label class="block text-[11px] font-bold text-[#7A827A] mb-2">고객명 / 현장명</label>
-          <input type="text" id="clientSelect" list="clientDatalist" oninput="onSelectClient(this.value)" placeholder="기존 거래처 선택 또는 새 고객명 직접 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[14px] font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] transition-all">
+          <label class="block text-[13px] font-black text-[#12261E] mb-2">고객명 / 현장명</label>
+          <input type="text" id="clientSelect" list="clientDatalist" oninput="onSelectClient(this.value)" placeholder="기존 거래처 선택 또는 새 고객명 직접 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] transition-all placeholder:text-[#4E5968] placeholder:font-bold">
         </div>
         
         <div class="grid grid-cols-2 gap-3 relative z-10">
-          <div><label class="block text-[11px] font-bold text-[#7A827A] mb-2">연락처</label><input type="tel" id="inputClientPhone" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-3.5 text-xs font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] transition-all"></div>
-          <div><label class="block text-[11px] font-bold text-[#7A827A] mb-2">작업타이틀</label><input type="text" id="inputRound" value="" placeholder="작업타이틀 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-3.5 text-xs font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] transition-all"></div>
+          <div><label class="block text-[13px] font-black text-[#12261E] mb-2">연락처</label><input type="tel" id="inputClientPhone" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] transition-all placeholder:text-[#4E5968] placeholder:font-bold"></div>
+          <div><label class="block text-[13px] font-black text-[#12261E] mb-2">작업타이틀</label><input type="text" id="inputRound" value="" placeholder="작업타이틀 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] transition-all placeholder:text-[#4E5968] placeholder:font-bold"></div>
         </div>
 
         <div class="relative z-10 mt-1">
-          <label class="block text-[11px] font-bold text-[#7A827A] mb-2">현장 주소</label>
-          <input type="text" id="inputClientAddress" placeholder="현장주소 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-3.5 text-xs font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] transition-all">
+          <label class="block text-[13px] font-black text-[#12261E] mb-2">현장 주소</label>
+          <input type="text" id="inputClientAddress" placeholder="현장주소 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] transition-all placeholder:text-[#4E5968] placeholder:font-bold">
         </div>
       </div>
 
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-4">
-        <label class="block text-[16px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="check-square" class="w-4 h-4 text-[#84CC16]"></i> 당일 작업 내역</label>
+        <label class="block text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="check-square" class="w-5 h-5 text-[#84CC16]"></i> 당일 작업 내역</label>
         <div class="grid grid-cols-2 gap-2.5" id="categoryContainer">
-          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[12px] rounded-[16px] font-bold text-left bg-[#12261E] text-[#84CC16]" data-val="소나무 전지작업">✓ 소나무 전지작업</button>
-          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[12px] rounded-[16px] font-bold text-left bg-[#12261E] text-[#84CC16]" data-val="병해충 방제 및 약제">✓ 병해충 방제 및 약제</button>
-          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[12px] rounded-[16px] font-bold text-left bg-[#12261E] text-[#84CC16]" data-val="잔디깍기, 잡초예초작업">✓ 잔디깍기, 잡초예초작업</button>
-          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[12px] rounded-[16px] font-semibold text-left bg-white border border-[#EAEBEA] text-[#7A827A]" data-val="화단관리 (잡초·예초)">+ 화단관리 (잡초·예초)</button>
-          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[12px] rounded-[16px] font-semibold text-left bg-white border border-[#EAEBEA] text-[#7A827A]" data-val="관목전정작업">+ 관목전정작업</button>
-          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[12px] rounded-[16px] font-semibold text-left bg-white border border-[#EAEBEA] text-[#7A827A]" data-val="수목 시비 및 영양">+ 수목 시비 및 영양</button>
-          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[12px] rounded-[16px] font-semibold text-left bg-white border border-[#EAEBEA] text-[#7A827A]" data-val="수목 월동 조치">+ 수목 월동 조치</button>
-          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[12px] rounded-[16px] font-semibold text-left bg-white border border-[#EAEBEA] text-[#7A827A]" data-val="작업부산물 수거처리">+ 작업부산물 수거처리</button>
+          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-[#12261E] text-[#84CC16]" data-val="소나무 전지작업">✓ 소나무 전지작업</button>
+          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-[#12261E] text-[#84CC16]" data-val="병해충 방제 및 약제">✓ 병해충 방제 및 약제</button>
+          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-[#12261E] text-[#84CC16]" data-val="잔디깍기, 잡초예초작업">✓ 잔디깍기, 잡초예초작업</button>
+          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968]" data-val="화단관리 (잡초·예초)">+ 화단관리 (잡초·예초)</button>
+          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968]" data-val="관목전정작업">+ 관목전정작업</button>
+          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968]" data-val="수목 시비 및 영양">+ 수목 시비 및 영양</button>
+          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968]" data-val="수목 월동 조치">+ 수목 월동 조치</button>
+          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968]" data-val="작업부산물 수거처리">+ 작업부산물 수거처리</button>
           
           <div class="col-span-2 pt-1 flex flex-col gap-2.5">
             <div class="relative w-full">
-              <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none"><i data-lucide="edit-3" class="w-4 h-4 text-[#65A30D]"></i></div>
-              <input type="text" id="inputTreePruning" placeholder="수목가지치기 수목명 수기 입력 (단풍나무 2주 등)" autocomplete="off" class="w-full bg-[#F6FDF3] border border-[#84CC16]/50 rounded-[16px] pl-10 pr-4 py-3.5 text-[13px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] transition-all placeholder:font-extrabold placeholder:text-[#84CC16]/80 shadow-sm">
+              <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none"><i data-lucide="edit-3" class="w-5 h-5 text-[#65A30D]"></i></div>
+              <input type="text" id="inputTreePruning" placeholder="수목가지치기 수목명 수기 입력 (단풍나무 2주 등)" autocomplete="off" class="w-full bg-[#F6FDF3] border border-[#84CC16]/50 rounded-[16px] pl-11 pr-4 py-4 text-[14px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] transition-all placeholder:font-black placeholder:text-[#84CC16]/80 shadow-sm">
             </div>
-            <input type="text" id="inputExtraCategory" placeholder="+ 기타 작업 직접 입력 (예: 벌초, 잔디배토, 철거 등)" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-3.5 text-[12px] font-bold text-[#12261E] focus:outline-none focus:border-[#84CC16] transition-all placeholder:font-medium placeholder:text-[#A3A8A3]">
+            <input type="text" id="inputExtraCategory" placeholder="+ 기타 작업 직접 입력 (예: 벌초, 잔디배토, 철거 등)" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[14px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] transition-all placeholder:font-bold placeholder:text-[#4E5968]">
           </div>
         </div>
       </div>
 
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
-        <label class="block text-[16px] font-black text-[#12261E] flex items-center justify-between"><span class="flex items-center gap-2"><i data-lucide="image" class="w-4 h-4 text-[#84CC16]"></i> 현장 비교 사진</span></label>
+        <label class="block text-[18px] font-black text-[#12261E] flex items-center justify-between"><span class="flex items-center gap-2"><i data-lucide="image" class="w-5 h-5 text-[#84CC16]"></i> 현장 비교 사진</span></label>
         
         <div class="space-y-3">
-          <div class="flex items-center justify-between"><span class="text-[12px] font-extrabold text-[#7A827A] flex items-center gap-1.5 uppercase"><span class="w-1.5 h-1.5 rounded-full bg-[#A3A8A3]"></span> 작업 전 & 과정</span><span id="beforeCount" class="text-[11px] font-bold text-[#A3A8A3]">0장</span></div>
+          <div class="flex items-center justify-between"><span class="text-[13px] font-black text-[#12261E] flex items-center gap-1.5 uppercase"><span class="w-2 h-2 rounded-full bg-[#4E5968]"></span> 작업 전 & 과정</span><span id="beforeCount" class="text-[13px] font-black text-[#4E5968]">0장</span></div>
           <div class="flex gap-2.5 overflow-x-auto pb-2" id="beforeThumbRow">
-            <label class="flex-shrink-0 w-24 h-24 rounded-[18px] border-[1.5px] border-dashed border-[#D4D8D4] bg-[#FAFAFA] flex flex-col items-center justify-center cursor-pointer hover:border-[#84CC16] hover:bg-[#F2FBEC] transition-all"><i data-lucide="plus" class="w-5 h-5 text-[#A3A8A3] mb-1.5"></i><span class="text-[10px] font-bold text-[#7A827A]">추가하기</span><input type="file" accept="image/*" multiple onchange="handleImageUpload(event, 'before')" class="hidden"></label>
+            <label class="flex-shrink-0 w-24 h-24 rounded-[18px] border-[1.5px] border-dashed border-[#D4D8D4] bg-[#FAFAFA] flex flex-col items-center justify-center cursor-pointer hover:border-[#84CC16] hover:bg-[#F2FBEC] transition-all"><i data-lucide="plus" class="w-6 h-6 text-[#4E5968] mb-1.5"></i><span class="text-[12px] font-black text-[#12261E]">추가하기</span><input type="file" accept="image/*" multiple onchange="handleImageUpload(event, 'before')" class="hidden"></label>
             <div id="beforeThumbList" class="flex gap-2.5"></div>
           </div>
         </div>
         
         <div class="space-y-3 pt-4 border-t border-[#F4F5F4]">
-          <div class="flex items-center justify-between"><span class="text-[12px] font-extrabold text-[#12261E] flex items-center gap-1.5 uppercase"><span class="w-1.5 h-1.5 rounded-full bg-[#12261E]"></span> 작업 후</span><span id="afterCount" class="text-[11px] font-bold text-[#12261E]">0장</span></div>
+          <div class="flex items-center justify-between"><span class="text-[13px] font-black text-[#12261E] flex items-center gap-1.5 uppercase"><span class="w-2 h-2 rounded-full bg-[#12261E]"></span> 작업 후</span><span id="afterCount" class="text-[13px] font-black text-[#12261E]">0장</span></div>
           <div class="flex gap-2.5 overflow-x-auto pb-2" id="afterThumbRow">
-            <label class="flex-shrink-0 w-24 h-24 rounded-[18px] border-[1.5px] border-dashed border-[#84CC16]/60 bg-[#F6FDF3] flex flex-col items-center justify-center cursor-pointer hover:border-[#84CC16] transition-all"><i data-lucide="camera" class="w-5 h-5 text-[#84CC16] mb-1.5"></i><span class="text-[10px] font-bold text-[#65A30D]">추가하기</span><input type="file" accept="image/*" multiple onchange="handleImageUpload(event, 'after')" class="hidden"></label>
+            <label class="flex-shrink-0 w-24 h-24 rounded-[18px] border-[1.5px] border-dashed border-[#84CC16]/60 bg-[#F6FDF3] flex flex-col items-center justify-center cursor-pointer hover:border-[#84CC16] transition-all"><i data-lucide="camera" class="w-6 h-6 text-[#84CC16] mb-1.5"></i><span class="text-[12px] font-black text-[#12261E]">추가하기</span><input type="file" accept="image/*" multiple onchange="handleImageUpload(event, 'after')" class="hidden"></label>
             <div id="afterThumbList" class="flex gap-2.5"></div>
           </div>
         </div>
       </div>
 
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-4">
-        <label class="block text-[16px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="alert-circle" class="w-4 h-4 text-[#C5A880]"></i> 특이사항</label>
-        <textarea id="inputIssue" rows="3" placeholder="예: 소나무에 응애 발견하여 친환경 약제 살포 완료" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[18px] p-4 text-[14px] font-medium text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] leading-relaxed"></textarea>
+        <label class="block text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="alert-circle" class="w-5 h-5 text-[#C5A880]"></i> 특이사항</label>
+        <textarea id="inputIssue" rows="3" placeholder="예: 소나무에 응애 발견하여 친환경 약제 살포 완료" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[18px] p-4 text-[15px] font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] leading-relaxed placeholder:font-bold placeholder:text-[#4E5968]"></textarea>
         
         <div class="space-y-3 pt-2">
-          <div class="flex items-center justify-between"><span class="text-[12px] font-extrabold text-[#C5A880] flex items-center gap-1.5 uppercase"><span class="w-1.5 h-1.5 rounded-full bg-[#C5A880]"></span> 특이사항</span><span id="issueCount" class="text-[11px] font-bold text-[#A3A8A3]">0장</span></div>
+          <div class="flex items-center justify-between"><span class="text-[13px] font-black text-[#12261E] flex items-center gap-1.5 uppercase"><span class="w-2 h-2 rounded-full bg-[#C5A880]"></span> 특이사항</span><span id="issueCount" class="text-[13px] font-black text-[#4E5968]">0장</span></div>
           <div class="flex gap-2.5 overflow-x-auto pb-2" id="issueThumbRow">
-            <label class="flex-shrink-0 w-24 h-24 rounded-[18px] border-[1.5px] border-dashed border-[#C5A880]/60 bg-[#FFFDF9] flex flex-col items-center justify-center cursor-pointer hover:border-[#C5A880] transition-all"><i data-lucide="camera" class="w-5 h-5 text-[#C5A880] mb-1.5"></i><span class="text-[10px] font-bold text-[#C5A880]">특이사항</span><input type="file" accept="image/*" multiple onchange="handleImageUpload(event, 'issue')" class="hidden"></label>
+            <label class="flex-shrink-0 w-24 h-24 rounded-[18px] border-[1.5px] border-dashed border-[#C5A880]/60 bg-[#FFFDF9] flex flex-col items-center justify-center cursor-pointer hover:border-[#C5A880] transition-all"><i data-lucide="camera" class="w-6 h-6 text-[#C5A880] mb-1.5"></i><span class="text-[12px] font-black text-[#12261E]">특이사항</span><input type="file" accept="image/*" multiple onchange="handleImageUpload(event, 'issue')" class="hidden"></label>
             <div id="issueThumbList" class="flex gap-2.5"></div>
           </div>
         </div>
       </div>
 
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-3">
-        <label class="block text-[16px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="pen-tool" class="w-4 h-4 text-[#84CC16]"></i> 현장 작업자 코멘트</label>
-        <textarea id="inputDiagnosis" rows="3" placeholder="예: 소나무전지와 단풍나무 가지치기를 해주었습니다. 병해충소독을 진행했습니다. 화단의 관목을 전정하고 잡초를 제초,예초 하였습니다 등" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[18px] p-4 text-[14px] font-medium text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] leading-relaxed"></textarea>
+        <label class="block text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="pen-tool" class="w-5 h-5 text-[#84CC16]"></i> 현장 작업자 코멘트</label>
+        <textarea id="inputDiagnosis" rows="3" placeholder="예: 소나무전지와 단풍나무 가지치기를 해주었습니다. 병해충소독을 진행했습니다. 화단의 관목을 전정하고 잡초를 제초,예초 하였습니다 등" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[18px] p-4 text-[15px] font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] leading-relaxed placeholder:font-bold placeholder:text-[#4E5968]"></textarea>
       </div>
 
-      <button id="btnGenerateReport" onclick="generateReport()" class="w-full py-5 bg-[#84CC16] text-[#12261E] rounded-[22px] font-black text-[18px] flex items-center justify-center gap-3 shadow-[0_10px_25px_rgba(132,204,22,0.4)] hover:bg-[#9BE32D] active:scale-[0.98] transition-all mb-4"><i data-lucide="send" class="w-5 h-5 stroke-[2.5]"></i> 리포트 발행 및 저장</button>
+      <button id="btnGenerateReport" onclick="generateReport()" class="w-full py-5 bg-[#84CC16] text-[#12261E] rounded-[22px] font-black text-[20px] flex items-center justify-center gap-3 shadow-[0_10px_25px_rgba(132,204,22,0.4)] hover:bg-[#9BE32D] active:scale-[0.98] transition-all mb-4"><i data-lucide="send" class="w-6 h-6 stroke-[2.5]"></i> 리포트 발행 및 저장</button>
     </section>
 
     <!-- ================= [2. 견적서 작성 화면] ================= -->
     <section id="quoteAdminView" class="hidden space-y-5">
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5 relative overflow-hidden">
         <div class="flex items-center justify-between pb-4 border-b border-[#F4F5F4] relative z-10">
-          <h2 class="text-[16px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="calculator" class="w-4 h-4 text-[#84CC16]"></i> 견적 기본 정보</h2>
+          <h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="calculator" class="w-5 h-5 text-[#84CC16]"></i> 견적 기본 정보</h2>
         </div>
         <div class="relative z-10">
-          <label class="block text-[11px] font-bold text-[#7A827A] mb-2">고객명 / 현장명</label>
-          <input type="text" id="quoteClientSelect" list="clientDatalist" oninput="onSelectQuoteClient(this.value)" placeholder="기존 거래처 선택 또는 새 고객명 직접 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[14px] font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] transition-all">
+          <label class="block text-[13px] font-black text-[#12261E] mb-2">고객명 / 현장명</label>
+          <input type="text" id="quoteClientSelect" list="clientDatalist" oninput="onSelectQuoteClient(this.value)" placeholder="기존 거래처 선택 또는 새 고객명 직접 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] transition-all placeholder:text-[#4E5968] placeholder:font-bold">
         </div>
         <div class="grid grid-cols-2 gap-3 relative z-10 mt-3">
-          <div><label class="block text-[11px] font-bold text-[#7A827A] mb-2">연락처</label><input type="tel" id="quoteInputClientPhone" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-3.5 text-xs font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] transition-all"></div>
-          <div><label class="block text-[11px] font-bold text-[#7A827A] mb-2">견적 제목</label><input type="text" id="quoteInputRound" value="연간 정기 조경 관리 견적서" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-3.5 text-xs font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] transition-all"></div>
+          <div><label class="block text-[13px] font-black text-[#12261E] mb-2">연락처</label><input type="tel" id="quoteInputClientPhone" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] transition-all placeholder:text-[#4E5968] placeholder:font-bold"></div>
+          <div><label class="block text-[13px] font-black text-[#12261E] mb-2">견적 제목</label><input type="text" id="quoteInputRound" value="연간 정기 조경 관리 견적서" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] transition-all placeholder:text-[#4E5968] placeholder:font-bold"></div>
         </div>
 
         <div class="relative z-10 mt-1">
-          <label class="block text-[11px] font-bold text-[#7A827A] mb-2">현장 주소</label>
-          <input type="text" id="quoteInputClientAddress" placeholder="현장주소 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-3.5 text-xs font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] transition-all">
+          <label class="block text-[13px] font-black text-[#12261E] mb-2">현장 주소</label>
+          <input type="text" id="quoteInputClientAddress" placeholder="현장주소 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] transition-all placeholder:text-[#4E5968] placeholder:font-bold">
         </div>
         
         <div class="pt-2 relative z-10">
-          <label class="block text-[11px] font-bold text-[#7A827A] uppercase tracking-wider mb-2">맞춤형 견적 템플릿 (터치 시 자동 작성)</label>
+          <label class="block text-[13px] font-black text-[#12261E] uppercase tracking-wider mb-2">맞춤형 견적 템플릿 (터치 시 자동 작성)</label>
           <div class="grid grid-cols-2 gap-2">
-            <button onclick="loadQuoteTemplate('single')" class="py-3 bg-[#FFF8ED] text-[#F59E0B] border border-[#F59E0B]/40 rounded-[14px] font-bold text-[12px] hover:bg-[#F59E0B] hover:text-white transition-all flex flex-col items-center justify-center">
-              <span>단건 의뢰</span><span class="text-[9px] font-medium opacity-80">(VAT 별도)</span>
+            <button onclick="loadQuoteTemplate('single')" class="py-3.5 bg-[#FFF8ED] text-[#F59E0B] border border-[#F59E0B]/40 rounded-[14px] font-black text-[13px] hover:bg-[#F59E0B] hover:text-white transition-all flex flex-col items-center justify-center">
+              <span>단건 의뢰</span><span class="text-[11px] font-bold mt-0.5">(VAT 별도)</span>
             </button>
-            <button onclick="loadQuoteTemplate('residential')" class="py-3 bg-[#F2FBEC] text-[#65A30D] border border-[#84CC16]/40 rounded-[14px] font-bold text-[13px] hover:bg-[#84CC16] hover:text-white transition-all flex flex-col items-center justify-center">
-              <span>개인주택</span><span class="text-[9px] font-medium opacity-80">(VAT 면제)</span>
+            <button onclick="loadQuoteTemplate('residential')" class="py-3.5 bg-[#F2FBEC] text-[#65A30D] border border-[#84CC16]/40 rounded-[14px] font-black text-[14px] hover:bg-[#84CC16] hover:text-white transition-all flex flex-col items-center justify-center">
+              <span>개인주택</span><span class="text-[11px] font-bold mt-0.5">(VAT 면제)</span>
             </button>
-            <button onclick="loadQuoteTemplate('commercial')" class="py-3 bg-[#F0F4F8] text-[#3B82F6] border border-[#3B82F6]/40 rounded-[14px] font-bold text-[13px] hover:bg-[#3B82F6] hover:text-white transition-all flex flex-col items-center justify-center">
-              <span>상업/빌딩</span><span class="text-[9px] font-medium opacity-80">(VAT 10%)</span>
+            <button onclick="loadQuoteTemplate('commercial')" class="py-3.5 bg-[#F0F4F8] text-[#3B82F6] border border-[#3B82F6]/40 rounded-[14px] font-black text-[14px] hover:bg-[#3B82F6] hover:text-white transition-all flex flex-col items-center justify-center">
+              <span>상업/빌딩</span><span class="text-[11px] font-bold mt-0.5">(VAT 10%)</span>
             </button>
-            <button onclick="loadQuoteTemplate('construction')" class="py-3 bg-[#F3E8FF] text-[#8B5CF6] border border-[#8B5CF6]/40 rounded-[14px] font-bold text-[13px] hover:bg-[#8B5CF6] hover:text-white transition-all flex flex-col items-center justify-center">
-              <span>조경공사</span><span class="text-[9px] font-medium opacity-80">(맞춤 견적)</span>
+            <button onclick="loadQuoteTemplate('construction')" class="py-3.5 bg-[#F3E8FF] text-[#8B5CF6] border border-[#8B5CF6]/40 rounded-[14px] font-black text-[14px] hover:bg-[#8B5CF6] hover:text-white transition-all flex flex-col items-center justify-center">
+              <span>조경공사</span><span class="text-[11px] font-bold mt-0.5">(맞춤 견적)</span>
             </button>
           </div>
         </div>
       </div>
 
       <!-- 자재 단가표 팝업 오픈 버튼 (관리자 전용) -->
-      <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-3">
-        <div class="flex items-center justify-between">
-          <label class="block text-[16px] font-black text-[#12261E] flex items-center gap-2">
-            <i data-lucide="package-search" class="w-4 h-4 text-[#84CC16]"></i> 자재 단가 정보 (관리자용)
+      <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-4">
+        <div class="flex items-center justify-between mb-2">
+          <label class="block text-[18px] font-black text-[#12261E] flex items-center gap-2">
+            <i data-lucide="package-search" class="w-5 h-5 text-[#84CC16]"></i> 자재 단가 정보 (관리자용)
           </label>
-          <button onclick="openMaterialModal()" class="text-[12px] font-black bg-[#12261E] text-[#84CC16] px-4 py-2 rounded-[12px] shadow-md flex items-center gap-1.5 transition-colors hover:bg-black"><i data-lucide="external-link" class="w-3.5 h-3.5"></i> 단가표 열기</button>
+          <button onclick="openMaterialModal()" class="text-[13px] font-black bg-[#12261E] text-[#84CC16] px-4 py-2.5 rounded-[12px] shadow-md flex items-center gap-1.5 transition-colors hover:bg-black"><i data-lucide="external-link" class="w-4 h-4"></i> 단가표 열기</button>
         </div>
-        <p class="text-[11px] text-[#A3A8A3] leading-relaxed break-keep">* 현장 견적 참고용 자재 원가표입니다. 고객에게 발송되는 견적서 뷰어에는 절대 노출되지 않습니다.</p>
+        <div class="bg-red-50 border border-red-200 p-3 rounded-[12px]">
+            <p class="text-[12px] text-red-600 font-black leading-relaxed break-keep"><i data-lucide="info" class="w-4 h-4 inline -mt-0.5"></i> 현장 견적 참고용 자재 원가표입니다. 고객에게 발송되는 견적서 뷰어에는 절대 노출되지 않습니다.</p>
+        </div>
       </div>
 
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-4">
-        <label class="block text-[16px] font-black text-[#12261E] flex items-center gap-2">
-          <i data-lucide="camera" class="w-4 h-4 text-[#84CC16]"></i> 현장 상태 사진 
-          <span class="text-[11px] text-[#A3A8A3] font-medium ml-1 bg-[#F4F5F4] px-2 py-0.5 rounded">(고객 미노출/내부 기록용)</span>
+        <label class="block text-[18px] font-black text-[#12261E] flex items-center gap-2">
+          <i data-lucide="camera" class="w-5 h-5 text-[#84CC16]"></i> 현장 상태 사진 
+          <span class="text-[12px] text-red-500 font-black ml-1 bg-red-50 px-2.5 py-1 rounded-md border border-red-100">(고객 미노출 / 내부 기록용)</span>
         </label>
         <div class="flex gap-2.5 overflow-x-auto pb-2" id="quoteThumbRow">
-          <label class="flex-shrink-0 w-24 h-24 rounded-[18px] border-[1.5px] border-dashed border-[#D4D8D4] bg-[#FAFAFA] flex flex-col items-center justify-center cursor-pointer hover:border-[#84CC16] hover:bg-[#F2FBEC] transition-all"><i data-lucide="plus" class="w-5 h-5 text-[#A3A8A3] mb-1.5"></i><span class="text-[10px] font-bold text-[#7A827A]">추가하기</span><input type="file" accept="image/*" multiple onchange="handleQuoteImageUpload(event)" class="hidden"></label>
+          <label class="flex-shrink-0 w-24 h-24 rounded-[18px] border-[1.5px] border-dashed border-[#D4D8D4] bg-[#FAFAFA] flex flex-col items-center justify-center cursor-pointer hover:border-[#84CC16] hover:bg-[#F2FBEC] transition-all"><i data-lucide="plus" class="w-6 h-6 text-[#4E5968] mb-1.5"></i><span class="text-[12px] font-black text-[#12261E]">추가하기</span><input type="file" accept="image/*" multiple onchange="handleQuoteImageUpload(event)" class="hidden"></label>
           <div id="quoteThumbList" class="flex gap-2.5"></div>
         </div>
       </div>
 
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-4">
         <div class="flex items-center justify-between mb-2">
-          <label class="block text-[16px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="list" class="w-4 h-4 text-[#84CC16]"></i> 세부 견적 내역</label>
-          <span class="text-[10px] text-[#A3A8A3] font-medium">* 텍스트를 터치하여 편하게 수정하세요.</span>
+          <label class="block text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="list" class="w-5 h-5 text-[#84CC16]"></i> 세부 견적 내역</label>
+          <span class="text-[12px] text-blue-600 font-black bg-blue-50 px-2.5 py-1 rounded-md">* 텍스트를 터치하여 편하게 수정하세요.</span>
         </div>
         <div id="quoteItemsContainer" class="space-y-3"></div>
       </div>
 
       <div class="bg-[#12261E] rounded-[28px] p-6 luxury-shadow space-y-3 text-white border border-[#1c3829]">
-        <div class="flex justify-between items-center text-[14px] text-white font-extrabold"><span>공급가액 총합</span><span id="quoteSubtotal">0원</span></div>
-        <div class="flex justify-between items-center text-[13px] text-[#A3A8A3] font-medium pb-3 border-b border-white/10"><span id="quoteVatLabel">부가가치세</span><span id="quoteVat">0원</span></div>
-        <div class="flex justify-between items-center pt-1"><span class="text-[16px] font-bold text-white">견적 총액</span><span id="quoteGrandTotal" class="text-[18px] font-black text-[#84CC16]">0원</span></div>
+        <div class="flex justify-between items-center text-[15px] text-white font-extrabold"><span>공급가액 총합</span><span id="quoteSubtotal">0원</span></div>
+        <div class="flex justify-between items-center text-[14px] text-[#A3A8A3] font-bold pb-3 border-b border-white/10"><span id="quoteVatLabel">부가가치세</span><span id="quoteVat">0원</span></div>
+        <div class="flex justify-between items-center pt-1"><span class="text-[18px] font-black text-white">견적 총액</span><span id="quoteGrandTotal" class="text-[20px] font-black text-[#84CC16]">0원</span></div>
       </div>
 
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-3 mt-4">
-        <label class="block text-[16px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="pen-tool" class="w-4 h-4 text-[#84CC16]"></i> 참고 및 특이사항</label>
-        <textarea id="quoteInputMemo" rows="3" placeholder="현장에서 추가 설명할 부분을 입력하세요 (고객 견적서 하단에 노출됩니다)" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[18px] p-4 text-[14px] font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] leading-relaxed"></textarea>
+        <label class="block text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="pen-tool" class="w-5 h-5 text-[#84CC16]"></i> 참고 및 특이사항</label>
+        <textarea id="quoteInputMemo" rows="3" placeholder="현장에서 추가 설명할 부분을 입력하세요 (고객 견적서 하단에 노출됩니다)" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[18px] p-4 text-[15px] font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] leading-relaxed placeholder:font-bold placeholder:text-[#4E5968]"></textarea>
       </div>
 
-      <button id="btnGenerateQuote" onclick="generateQuote()" class="w-full py-5 bg-[#84CC16] text-[#12261E] rounded-[22px] font-black text-[18px] flex items-center justify-center gap-3 shadow-[0_10px_25px_rgba(132,204,22,0.4)] hover:bg-[#9BE32D] active:scale-[0.98] transition-all mt-4 mb-4"><i data-lucide="file-check-2" class="w-5 h-5 stroke-[2.5]"></i> 견적서 발행 및 보관함 저장</button>
+      <button id="btnGenerateQuote" onclick="generateQuote()" class="w-full py-5 bg-[#84CC16] text-[#12261E] rounded-[22px] font-black text-[20px] flex items-center justify-center gap-3 shadow-[0_10px_25px_rgba(132,204,22,0.4)] hover:bg-[#9BE32D] active:scale-[0.98] transition-all mt-4 mb-4"><i data-lucide="file-check-2" class="w-6 h-6 stroke-[2.5]"></i> 견적서 발행 및 보관함 저장</button>
     </section>
 
     <!-- ================= [3. 견적서 보관함] ================= -->
     <section id="quoteListView" class="hidden space-y-4">
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
         <div class="flex items-center justify-between pb-4 border-b border-[#F4F5F4]">
-          <h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="folder-open" class="w-5 h-5 text-[#84CC16]"></i> 발행된 견적서 보관함</h2>
-          <span id="quoteCountBadge" class="text-[11px] font-extrabold bg-[#12261E] text-[#84CC16] px-3 py-1.5 rounded-lg shadow-sm">0건</span>
+          <h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="folder-open" class="w-6 h-6 text-[#84CC16]"></i> 발행된 견적서 보관함</h2>
+          <span id="quoteCountBadge" class="text-[13px] font-black bg-[#12261E] text-[#84CC16] px-3 py-1.5 rounded-lg shadow-sm">0건</span>
         </div>
         <div id="quoteListContainer" class="space-y-3 max-h-[65vh] overflow-y-auto pr-1"></div>
       </div>
@@ -401,34 +404,35 @@
     <!-- ================= [4. 거래처 관리 화면] ================= -->
     <section id="clientsView" class="hidden space-y-4">
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-6">
-        <div class="flex items-center justify-between pb-2">
-          <div><h2 class="text-[18px] font-black text-[#12261E]">거래처 데이터베이스</h2></div><span id="clientCountBadge" class="text-[11px] font-extrabold bg-[#12261E] text-[#84CC16] px-3 py-1.5 rounded-lg shadow-sm"></span>
+        <div class="flex items-center justify-between pb-2 border-b border-[#F4F5F4]">
+          <h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="building-2" class="w-6 h-6 text-[#84CC16]"></i> 거래처 데이터베이스</h2>
+          <span id="clientCountBadge" class="text-[13px] font-black bg-[#12261E] text-[#84CC16] px-3 py-1.5 rounded-lg shadow-sm">0건</span>
         </div>
 
         <div id="clientFormBox" class="bg-[#F9F9F8] p-5 rounded-[20px] border border-[#EAEBEA] space-y-3.5">
-          <h3 id="clientFormTitle" class="text-[13px] font-black text-[#12261E] flex items-center gap-1.5"><i data-lucide="plus" class="w-4 h-4 text-[#84CC16]"></i> <span>신규 등록</span></h3>
+          <h3 id="clientFormTitle" class="text-[14px] font-black text-[#12261E] flex items-center gap-1.5"><i data-lucide="plus" class="w-5 h-5 text-[#84CC16]"></i> <span>신규 등록</span></h3>
           <div class="space-y-2.5">
-            <input type="text" id="newClientName" placeholder="고객명 또는 현장명" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3 text-xs font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
-            <input type="tel" id="newClientPhone" placeholder="연락처" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3 text-xs font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
-            <input type="text" id="newClientAddress" placeholder="주소 입력" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3 text-xs font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
+            <input type="text" id="newClientName" placeholder="고객명 또는 현장명" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] placeholder:text-[#4E5968] placeholder:font-bold">
+            <input type="tel" id="newClientPhone" placeholder="연락처" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] placeholder:text-[#4E5968] placeholder:font-bold">
+            <input type="text" id="newClientAddress" placeholder="주소 입력" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] placeholder:text-[#4E5968] placeholder:font-bold">
             
-            <select id="newClientType" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3 text-xs font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
+            <select id="newClientType" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16]">
               <option value="정기 관리">정기 관리 (계약처)</option>
               <option value="개별 고객">개별 고객 (단건/일반)</option>
             </select>
           </div>
           <div class="flex gap-2">
-            <button id="saveClientBtn" onclick="saveClient()" class="flex-1 py-3.5 bg-[#12261E] text-[#84CC16] rounded-[12px] text-[13px] font-bold shadow-md hover:bg-black transition-colors">데이터 저장</button>
-            <button id="cancelEditBtn" onclick="cancelEdit()" class="hidden px-4 py-3.5 bg-[#EAEBEA] text-[#4E5968] rounded-[12px] text-[13px] font-bold">취소</button>
+            <button id="saveClientBtn" onclick="saveClient()" class="flex-1 py-4 bg-[#12261E] text-[#84CC16] rounded-[12px] text-[15px] font-black shadow-md hover:bg-black transition-colors">데이터 저장</button>
+            <button id="cancelEditBtn" onclick="cancelEdit()" class="hidden px-4 py-4 bg-[#EAEBEA] text-[#4E5968] rounded-[12px] text-[15px] font-black">취소</button>
           </div>
         </div>
 
-        <div class="space-y-3 pt-2 border-t border-[#F4F5F4] mt-4">
-          <div class="flex bg-[#F4F5F4] p-1 rounded-xl">
-            <button id="btnFilterRegular" onclick="setClientFilter('정기 관리')" class="flex-1 py-2 rounded-[10px] bg-white shadow-sm text-[#12261E] font-bold text-[12px] transition-all border border-[#EAEBEA]">정기 관리처</button>
-            <button id="btnFilterSingle" onclick="setClientFilter('개별 고객')" class="flex-1 py-2 rounded-[10px] text-[#7A827A] font-semibold text-[12px] hover:text-[#12261E] transition-all border border-transparent">개별 고객처</button>
+        <div class="space-y-3 pt-2 mt-4">
+          <div class="flex bg-[#F4F5F4] p-1.5 rounded-[14px]">
+            <button id="btnFilterRegular" onclick="setClientFilter('정기 관리')" class="flex-1 py-3 rounded-[12px] bg-white shadow-sm text-[#12261E] font-black text-[14px] transition-all border border-[#EAEBEA]">정기 관리처</button>
+            <button id="btnFilterSingle" onclick="setClientFilter('개별 고객')" class="flex-1 py-3 rounded-[12px] text-[#4E5968] font-black text-[14px] hover:text-[#12261E] transition-all border border-transparent">개별 고객처</button>
           </div>
-          <div id="clientsListContainer" class="space-y-2.5 mt-3 max-h-[50vh] overflow-y-auto pr-1"></div>
+          <div id="clientsListContainer" class="space-y-3 mt-3 max-h-[50vh] overflow-y-auto pr-1"></div>
         </div>
       </div>
     </section>
@@ -437,28 +441,28 @@
     <section id="contactsView" class="hidden space-y-4">
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-6">
         <div class="flex items-center justify-between pb-2 border-b border-[#F4F5F4]">
-          <h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="book-open" class="w-5 h-5 text-[#84CC16]"></i> 스마트 전화번호부</h2>
-          <span id="contactCountBadge" class="text-[11px] font-extrabold bg-[#12261E] text-[#84CC16] px-3 py-1.5 rounded-lg shadow-sm">0건</span>
+          <h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="book-open" class="w-6 h-6 text-[#84CC16]"></i> 스마트 전화번호부</h2>
+          <span id="contactCountBadge" class="text-[13px] font-black bg-[#12261E] text-[#84CC16] px-3 py-1.5 rounded-lg shadow-sm">0건</span>
         </div>
 
-        <div class="flex bg-[#F4F5F4] p-1 rounded-xl mb-4">
-          <button id="btnContactClient" onclick="switchContactTab('clients')" class="flex-1 py-2.5 rounded-[10px] bg-white shadow-sm text-[#12261E] font-bold text-[13px] transition-all border border-[#EAEBEA]">거래처 연락처</button>
-          <button id="btnContactLabor" onclick="switchContactTab('labors')" class="flex-1 py-2.5 rounded-[10px] text-[#7A827A] font-semibold text-[13px] hover:text-[#12261E] transition-all border border-transparent">인력 전화번호</button>
+        <div class="flex bg-[#F4F5F4] p-1.5 rounded-[14px] mb-4">
+          <button id="btnContactClient" onclick="switchContactTab('clients')" class="flex-1 py-3 rounded-[12px] bg-white shadow-sm text-[#12261E] font-black text-[14px] transition-all border border-[#EAEBEA]">거래처 연락처</button>
+          <button id="btnContactLabor" onclick="switchContactTab('labors')" class="flex-1 py-3 rounded-[12px] text-[#4E5968] font-black text-[14px] hover:text-[#12261E] transition-all border border-transparent bg-transparent">인력 전화번호</button>
         </div>
 
         <!-- 연락처 등록 폼 -->
         <div class="bg-[#F9F9F8] p-5 rounded-[20px] border border-[#EAEBEA] space-y-3.5">
-          <h3 class="text-[13px] font-black text-[#12261E] flex items-center gap-1.5"><i data-lucide="user-plus" class="w-4 h-4 text-[#84CC16]"></i> <span>새 연락처 추가</span></h3>
+          <h3 class="text-[14px] font-black text-[#12261E] flex items-center gap-1.5"><i data-lucide="user-plus" class="w-5 h-5 text-[#84CC16]"></i> <span>새 연락처 추가</span></h3>
           <div class="space-y-2.5">
-            <input type="text" id="newContactName" placeholder="업체명 (또는 성명) 입력" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3 text-[13px] font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
-            <input type="tel" id="newContactPhone" placeholder="연락처 (저장 후 터치 시 자동 연결)" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3 text-[13px] font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
-            <input type="text" id="newContactMemo" placeholder="기타 사항 (주소, 단가, 특징 등)" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3 text-[13px] font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
+            <input type="text" id="newContactName" placeholder="업체명 (또는 성명) 입력" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] placeholder:font-bold placeholder:text-[#4E5968]">
+            <input type="tel" id="newContactPhone" placeholder="연락처 (저장 후 터치 시 자동 연결)" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] placeholder:font-bold placeholder:text-[#4E5968]">
+            <input type="text" id="newContactMemo" placeholder="기타 사항 (주소, 단가, 특징 등)" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] placeholder:font-bold placeholder:text-[#4E5968]">
           </div>
-          <button onclick="saveContact()" class="w-full py-3.5 bg-[#12261E] text-[#84CC16] rounded-[12px] text-[14px] font-black shadow-md hover:bg-black transition-colors flex items-center justify-center gap-1.5"><i data-lucide="save" class="w-4 h-4"></i> 연락처 저장하기</button>
+          <button onclick="saveContact()" class="w-full py-4 bg-[#12261E] text-[#84CC16] rounded-[12px] text-[15px] font-black shadow-md hover:bg-black transition-colors flex items-center justify-center gap-1.5"><i data-lucide="save" class="w-5 h-5"></i> 연락처 저장하기</button>
         </div>
 
         <!-- 리스트 출력 영역 -->
-        <div id="contactsListContainer" class="space-y-2.5 pt-2 max-h-[50vh] overflow-y-auto pr-1"></div>
+        <div id="contactsListContainer" class="space-y-3 pt-2 max-h-[50vh] overflow-y-auto pr-1"></div>
       </div>
     </section>
 
@@ -466,11 +470,11 @@
     <section id="historyView" class="hidden space-y-5">
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
         <div class="flex items-center justify-between pb-4 border-b border-[#F4F5F4]">
-          <h2 class="text-[16px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="history" class="w-4 h-4 text-[#84CC16]"></i> <span id="historyClientName" class="text-[#12261E]">거래처명</span></h2>
-          <span class="text-[10px] bg-[#12261E] text-white px-2 py-1 rounded">현장 일지 기록</span>
+          <h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="history" class="w-6 h-6 text-[#84CC16]"></i> <span id="historyClientName" class="text-[#12261E]">거래처명</span></h2>
+          <span class="text-[12px] font-bold bg-[#12261E] text-white px-2.5 py-1 rounded">현장 일지 기록</span>
         </div>
         <div id="historyListContainer" class="space-y-3 max-h-[60vh] overflow-y-auto pr-1"></div>
-        <button onclick="switchView('clients')" class="w-full py-3.5 bg-[#F4F5F4] text-[#4E5968] rounded-[16px] font-bold text-[13px] hover:bg-[#EAEBEA]">거래처 목록으로 돌아가기</button>
+        <button onclick="switchView('clients')" class="w-full py-4 bg-[#F4F5F4] text-[#4E5968] rounded-[16px] font-black text-[15px] hover:bg-[#EAEBEA]">거래처 목록으로 돌아가기</button>
       </div>
     </section>
 
@@ -478,28 +482,28 @@
     <section id="lensView" class="hidden space-y-4">
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
         <div class="flex items-center justify-between pb-4 border-b border-[#F4F5F4]">
-          <h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="scan" class="w-5 h-5 text-[#84CC16]"></i> AI 식별 렌즈</h2>
+          <h2 class="text-[20px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="scan" class="w-6 h-6 text-[#84CC16]"></i> AI 식별 렌즈</h2>
         </div>
         
         <div class="grid grid-cols-1 gap-4">
-          <label class="relative overflow-hidden bg-[#F2FBEC] border border-[#84CC16]/40 rounded-[20px] p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-[#E8F5E9] transition-all shadow-sm">
-            <i data-lucide="camera" class="w-10 h-10 text-[#65A30D] mb-3"></i>
-            <span class="text-[16px] font-black text-[#12261E]">1. 수목·초화류 식별 렌즈</span>
-            <span class="text-[12px] text-[#7A827A] mt-1.5 font-medium text-center">식물의 잎이나 꽃을 촬영하면<br>AI가 품종을 분석합니다.</span>
+          <label class="relative overflow-hidden bg-[#F2FBEC] border border-[#84CC16]/40 rounded-[20px] p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-[#E8F5E9] transition-all shadow-sm">
+            <i data-lucide="camera" class="w-12 h-12 text-[#65A30D] mb-4"></i>
+            <span class="text-[18px] font-black text-[#12261E]">1. 수목·초화류 식별 렌즈</span>
+            <span class="text-[14px] text-[#4E5968] font-bold mt-2 text-center leading-relaxed">식물의 잎이나 꽃을 촬영하면<br>AI가 품종을 분석합니다.</span>
             <input type="file" accept="image/*" onchange="handleLensUpload(event, 'plant')" class="hidden">
           </label>
 
-          <label class="relative overflow-hidden bg-[#FFF8ED] border border-[#F59E0B]/40 rounded-[20px] p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-[#FFF3E0] transition-all shadow-sm">
-            <i data-lucide="bug" class="w-10 h-10 text-[#F59E0B] mb-3"></i>
-            <span class="text-[16px] font-black text-[#12261E]">2. 병해충·벌레 식별 렌즈</span>
-            <span class="text-[12px] text-[#7A827A] mt-1.5 font-medium text-center">피해 부위나 벌레를 촬영하면<br>원인과 방제법을 안내합니다.</span>
+          <label class="relative overflow-hidden bg-[#FFF8ED] border border-[#F59E0B]/40 rounded-[20px] p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-[#FFF3E0] transition-all shadow-sm">
+            <i data-lucide="bug" class="w-12 h-12 text-[#F59E0B] mb-4"></i>
+            <span class="text-[18px] font-black text-[#12261E]">2. 병해충·벌레 식별 렌즈</span>
+            <span class="text-[14px] text-[#4E5968] font-bold mt-2 text-center leading-relaxed">피해 부위나 벌레를 촬영하면<br>원인과 방제법을 안내합니다.</span>
             <input type="file" accept="image/*" onchange="handleLensUpload(event, 'pest')" class="hidden">
           </label>
         </div>
         
-        <div class="bg-[#F9F9F8] rounded-[16px] p-4 border border-[#EAEBEA] mt-2">
-           <h3 class="text-[12px] font-bold text-[#1A1D1A] mb-1.5 flex items-center gap-1.5"><i data-lucide="info" class="w-4 h-4 text-[#A3A8A3]"></i> 이용 안내</h3>
-           <p class="text-[11px] text-[#7A827A] leading-relaxed break-keep">현장에서 스마트폰 카메라로 직접 대상을 촬영하시거나 갤러리 사진을 업로드해 주세요. 결과값 복사를 통해 일지 작성 시 바로 활용하실 수 있습니다.<br><span class="text-[#888] mt-1 inline-block">* 오픈AI의 최신 버전 자동 연결로 정보와 상태에 따라 인식이 안될 수도 있습니다.</span></p>
+        <div class="bg-[#F9F9F8] rounded-[16px] p-5 border border-[#EAEBEA] mt-2">
+           <h3 class="text-[14px] font-black text-[#1A1D1A] mb-2 flex items-center gap-1.5"><i data-lucide="info" class="w-5 h-5 text-[#4E5968]"></i> 이용 안내</h3>
+           <p class="text-[13px] text-[#12261E] font-bold leading-relaxed break-keep">현장에서 스마트폰 카메라로 직접 대상을 촬영하시거나 갤러리 사진을 업로드해 주세요. 결과값 복사를 통해 일지 작성 시 바로 활용하실 수 있습니다.<br><span class="text-red-500 font-black mt-1 inline-block">* 오픈AI의 최신 버전 자동 연결로 정보와 상태에 따라 인식이 안될 수도 있습니다.</span></p>
         </div>
       </div>
     </section>
@@ -507,21 +511,21 @@
     <!-- ================= [8. 리포트/견적서 공통 뷰어 (고객용/관리자용)] ================= -->
     <section id="clientView" class="hidden space-y-5">
       <div id="adminControlsPanel" class="no-print bg-[#12261E] text-white rounded-[28px] p-6 shadow-xl space-y-4 border border-[#1c3829]">
-        <div class="flex items-center justify-between"><span class="text-[14px] font-bold text-[#84CC16] flex items-center gap-1.5"><i data-lucide="share" class="w-4 h-4"></i> 문서 발송 센터</span></div>
+        <div class="flex items-center justify-between"><span class="text-[15px] font-black text-[#84CC16] flex items-center gap-1.5"><i data-lucide="share" class="w-5 h-5"></i> 문서 발송 센터</span></div>
         <div class="grid grid-cols-2 gap-3">
-          <button onclick="shareKakaoTalk()" class="py-3.5 bg-[#FEE500] text-[#3C1E1E] rounded-[16px] font-extrabold text-[13px] flex items-center justify-center gap-2 shadow-lg hover:brightness-95 transition-all"><i data-lucide="message-circle" class="w-4 h-4 fill-current"></i> 카카오톡 전송</button>
-          <button onclick="sendSMS()" class="py-3.5 bg-[#84CC16] text-[#12261E] rounded-[16px] font-extrabold text-[13px] flex items-center justify-center gap-2 shadow-lg hover:bg-[#9BE32D] transition-all"><i data-lucide="smartphone" class="w-4 h-4"></i> 문자(SMS) 전송</button>
+          <button onclick="shareKakaoTalk()" class="py-4 bg-[#FEE500] text-[#3C1E1E] rounded-[16px] font-black text-[14px] flex items-center justify-center gap-2 shadow-lg hover:brightness-95 transition-all"><i data-lucide="message-circle" class="w-5 h-5 fill-current"></i> 카카오톡 전송</button>
+          <button onclick="sendSMS()" class="py-4 bg-[#84CC16] text-[#12261E] rounded-[16px] font-black text-[14px] flex items-center justify-center gap-2 shadow-lg hover:bg-[#9BE32D] transition-all"><i data-lucide="smartphone" class="w-5 h-5"></i> 문자(SMS) 전송</button>
         </div>
-        <button onclick="copyReportText()" class="w-full py-3 bg-white/10 border border-white/20 text-white/90 rounded-[14px] font-medium text-[12px] flex items-center justify-center gap-1.5 hover:bg-white/20 transition-all"><i data-lucide="copy" class="w-3.5 h-3.5"></i> 문자 발송용 메시지 복사하기</button>
+        <button onclick="copyReportText()" class="w-full py-3.5 bg-white/10 border border-white/20 text-white/90 rounded-[14px] font-bold text-[13px] flex items-center justify-center gap-1.5 hover:bg-white/20 transition-all"><i data-lucide="copy" class="w-4 h-4"></i> 문자 발송용 메시지 복사하기</button>
         
-        <button onclick="editCurrentQuote()" class="w-full py-3.5 bg-[#F9F9F8] text-[#12261E] rounded-[16px] font-extrabold text-[13px] items-center justify-center gap-2 shadow-lg hover:bg-[#EAEBEA] transition-all border border-[#EAEBEA] mt-3 hidden" id="editQuoteBtnBox"><i data-lucide="edit-3" class="w-4 h-4 inline-block -mt-0.5"></i> 현재 견적서 수정하기</button>
+        <button onclick="editCurrentQuote()" class="w-full py-4 bg-[#F9F9F8] text-[#12261E] rounded-[16px] font-black text-[14px] items-center justify-center gap-2 shadow-lg hover:bg-[#EAEBEA] transition-all border border-[#EAEBEA] mt-3 hidden" id="editQuoteBtnBox"><i data-lucide="edit-3" class="w-5 h-5 inline-block -mt-0.5"></i> 현재 견적서 수정하기</button>
         
-        <button onclick="editCurrentReport()" class="w-full py-3.5 bg-[#F9F9F8] text-[#12261E] rounded-[16px] font-extrabold text-[13px] items-center justify-center gap-2 shadow-lg hover:bg-[#EAEBEA] transition-all border border-[#EAEBEA] mt-3 hidden" id="editReportBtnBox"><i data-lucide="edit-3" class="w-4 h-4 inline-block -mt-0.5"></i> 현재 일지 수정하기</button>
+        <button onclick="editCurrentReport()" class="w-full py-4 bg-[#F9F9F8] text-[#12261E] rounded-[16px] font-black text-[14px] items-center justify-center gap-2 shadow-lg hover:bg-[#EAEBEA] transition-all border border-[#EAEBEA] mt-3 hidden" id="editReportBtnBox"><i data-lucide="edit-3" class="w-5 h-5 inline-block -mt-0.5"></i> 현재 일지 수정하기</button>
 
-        <div class="grid grid-cols-1 gap-2 pt-2 border-t border-white/10 mt-2">
-           <button id="promoCardBtn" onclick="openPromoCard()" class="w-full py-3.5 bg-[#C5A880] text-[#12261E] rounded-[16px] font-extrabold text-[13px] flex items-center justify-center gap-2 shadow-lg hover:bg-[#b0946d] transition-all"><i data-lucide="image" class="w-4 h-4"></i> 블로그 홍보용 썸네일 카드 만들기</button>
-           <button onclick="openMsgMockup()" class="w-full py-3.5 bg-[#3B82F6] text-white rounded-[16px] font-extrabold text-[13px] flex items-center justify-center gap-2 shadow-lg hover:bg-[#2563EB] transition-all"><i data-lucide="message-square" class="w-4 h-4"></i> 고객 발송 화면(카톡/문자) 캡처 만들기</button>
-           <button onclick="downloadFullReport()" class="w-full py-3.5 bg-white/10 border border-white/20 text-[#84CC16] rounded-[16px] font-extrabold text-[13px] flex items-center justify-center gap-2 shadow-lg hover:bg-white/20 transition-all"><i data-lucide="download" class="w-4 h-4"></i> 리포트 전체 이미지로 다운로드</button>
+        <div class="grid grid-cols-1 gap-2 pt-3 border-t border-white/10 mt-3">
+           <button id="promoCardBtn" onclick="openPromoCard()" class="w-full py-4 bg-[#C5A880] text-[#12261E] rounded-[16px] font-black text-[14px] flex items-center justify-center gap-2 shadow-lg hover:bg-[#b0946d] transition-all"><i data-lucide="image" class="w-5 h-5"></i> 블로그 홍보용 썸네일 카드 만들기</button>
+           <button onclick="openMsgMockup()" class="w-full py-4 bg-[#3B82F6] text-white rounded-[16px] font-black text-[14px] flex items-center justify-center gap-2 shadow-lg hover:bg-[#2563EB] transition-all"><i data-lucide="message-square" class="w-5 h-5"></i> 고객 발송 화면(카톡/문자) 캡처 만들기</button>
+           <button onclick="downloadFullReport()" class="w-full py-4 bg-white/10 border border-white/20 text-[#84CC16] rounded-[16px] font-black text-[14px] flex items-center justify-center gap-2 shadow-lg hover:bg-white/20 transition-all"><i data-lucide="download" class="w-5 h-5"></i> 리포트 전체 이미지로 다운로드</button>
         </div>
       </div>
 
@@ -531,32 +535,32 @@
 
         <div class="border-b border-[#EAEBEA] pb-5 relative z-10">
           <div class="flex items-center justify-between mb-4">
-            <span id="docTypeLabel" class="text-[12px] font-black text-[#C5A880] tracking-widest uppercase flex items-center gap-1.5"><i data-lucide="shield-check" class="w-4 h-4 text-[#84CC16]"></i> Prestige Care</span>
-            <span id="docStatusLabel" class="text-[11px] bg-[#12261E] text-[#84CC16] font-bold px-3 py-1 rounded-lg">완료</span>
+            <span id="docTypeLabel" class="text-[13px] font-black text-[#C5A880] tracking-widest uppercase flex items-center gap-1.5"><i data-lucide="shield-check" class="w-5 h-5 text-[#84CC16]"></i> Prestige Care</span>
+            <span id="docStatusLabel" class="text-[12px] bg-[#12261E] text-[#84CC16] font-black px-3 py-1 rounded-lg">완료</span>
           </div>
           
-          <h1 id="viewRound" class="text-[22px] font-black text-[#12261E] tracking-tight leading-snug mb-5">-</h1>
+          <h1 id="viewRound" class="text-[24px] font-black text-[#12261E] tracking-tight leading-snug mb-5">-</h1>
           
           <div class="flex flex-col gap-3">
             
             <div class="bg-[#F2FBEC] p-4 rounded-[18px] border border-[#EAEBEA] shadow-sm flex flex-col gap-1.5">
               <div class="flex justify-between items-start w-full gap-2">
-                <div class="text-[14px] font-black text-[#12261E] break-keep leading-snug">수신: <span id="viewDocClientName">-</span> 귀하</div>
-                <div class="text-[11px] font-bold text-[#7A827A] flex-shrink-0 mt-0.5 whitespace-nowrap">발행일: <span id="viewDate">-</span></div>
+                <div class="text-[15px] font-black text-[#12261E] break-keep leading-snug">수신: <span id="viewDocClientName">-</span> 귀하</div>
+                <div class="text-[12px] font-bold text-[#4E5968] flex-shrink-0 mt-0.5 whitespace-nowrap">발행일: <span id="viewDate">-</span></div>
               </div>
-              <div class="text-[11px] font-medium text-[#7A827A] flex items-center gap-1"><i data-lucide="phone" class="w-3 h-3"></i> <span id="viewDocClientPhone">-</span></div>
-              <div class="text-[11px] font-medium text-[#7A827A] flex items-center gap-1 mt-0.5"><i data-lucide="map-pin" class="w-3 h-3"></i> <span id="viewDocClientAddress">-</span></div>
+              <div class="text-[12px] font-bold text-[#4E5968] flex items-center gap-1"><i data-lucide="phone" class="w-3.5 h-3.5"></i> <span id="viewDocClientPhone">-</span></div>
+              <div class="text-[12px] font-bold text-[#4E5968] flex items-center gap-1 mt-0.5"><i data-lucide="map-pin" class="w-3.5 h-3.5"></i> <span id="viewDocClientAddress">-</span></div>
             </div>
 
             <div class="bg-[#F0F9FF] p-4 rounded-[18px] border border-[#BAE6FD] shadow-sm">
-              <div class="text-[12px] font-black text-[#0369A1] mb-2.5">공급자 (Supplier)</div>
-              <div class="flex justify-between items-center gap-2 text-[12px] mb-2">
-                <div class="flex items-center min-w-0"><span class="w-12 text-[#0284C7] font-bold flex-shrink-0">상호명</span><strong id="doc-company-name" class="text-[14px] font-black text-[#0C4A6E] whitespace-nowrap">업체명</strong></div>
-                <div class="flex items-center flex-shrink-0"><span class="w-11 text-[#0284C7] font-bold flex-shrink-0">대표자</span><strong id="doc-company-ceo" class="text-[#0C4A6E] font-bold whitespace-nowrap">대표자명</strong></div>
+              <div class="text-[13px] font-black text-[#0369A1] mb-2.5">공급자 (Supplier)</div>
+              <div class="flex justify-between items-center gap-2 text-[13px] mb-2">
+                <div class="flex items-center min-w-0"><span class="w-14 text-[#0284C7] font-black flex-shrink-0">상호명</span><strong id="doc-company-name" class="text-[15px] font-black text-[#0C4A6E] whitespace-nowrap">업체명</strong></div>
+                <div class="flex items-center flex-shrink-0"><span class="w-12 text-[#0284C7] font-black flex-shrink-0">대표자</span><strong id="doc-company-ceo" class="text-[14px] text-[#0C4A6E] font-black whitespace-nowrap">대표자명</strong></div>
               </div>
-              <div class="flex flex-col gap-y-1.5 text-[12px]">
-                <div class="flex items-center"><span class="w-14 text-[#0284C7] font-bold flex-shrink-0">등록번호</span><strong id="doc-company-biz-num" class="text-[#0C4A6E] font-bold">000-00-00000</strong></div>
-                <div class="flex items-start"><span class="w-14 text-[#0284C7] font-bold flex-shrink-0 mt-0.5">연락처</span><strong id="doc-company-phone" class="text-[14px] font-black text-[#0C4A6E] break-keep leading-tight">0000-0000</strong></div>
+              <div class="flex flex-col gap-y-1.5 text-[13px]">
+                <div class="flex items-center"><span class="w-16 text-[#0284C7] font-black flex-shrink-0">등록번호</span><strong id="doc-company-biz-num" class="text-[14px] text-[#0C4A6E] font-black">000-00-00000</strong></div>
+                <div class="flex items-start"><span class="w-16 text-[#0284C7] font-black flex-shrink-0 mt-0.5">연락처</span><strong id="doc-company-phone" class="text-[15px] font-black text-[#0C4A6E] break-keep leading-tight">0000-0000</strong></div>
               </div>
             </div>
             
@@ -564,66 +568,66 @@
         </div>
 
         <div id="reportContentBlock" class="space-y-7 hidden">
-          <div class="space-y-3 relative z-10"><h2 class="text-[16px] font-extrabold text-[#12261E] flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-[#84CC16]"></span> 작업 전 & 과정 <span class="text-[11px] font-normal ml-1 text-[#8B95A1]">(사진 터치시 확대)</span></h2><div id="viewBeforeGallery" class="grid grid-cols-2 gap-3"></div></div>
-          <div class="space-y-3 relative z-10"><h2 class="text-[16px] font-extrabold text-[#12261E] flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-[#84CC16]"></span> 작업 후 <span class="text-[11px] font-normal ml-1 text-[#8B95A1]">(사진 터치시 확대)</span></h2><div id="viewAfterGallery" class="grid grid-cols-2 gap-3"></div></div>
+          <div class="space-y-3 relative z-10"><h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#84CC16]"></span> 작업 전 & 과정 <span class="text-[12px] font-bold ml-1 text-[#4E5968]">(사진 터치시 확대)</span></h2><div id="viewBeforeGallery" class="grid grid-cols-2 gap-3"></div></div>
+          <div class="space-y-3 relative z-10"><h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#84CC16]"></span> 작업 후 <span class="text-[12px] font-bold ml-1 text-[#4E5968]">(사진 터치시 확대)</span></h2><div id="viewAfterGallery" class="grid grid-cols-2 gap-3"></div></div>
           
           <div id="viewIssueBlock" class="space-y-3 relative z-10 hidden bg-[#FFFDF9] p-5 rounded-[20px] border border-[#C5A880]/30 shadow-sm">
-            <h2 class="text-[16px] font-extrabold text-[#12261E] flex items-center gap-1.5"><i data-lucide="alert-circle" class="w-4 h-4 text-[#C5A880]"></i> 특이사항</h2>
-            <p id="viewIssue" class="text-[14px] leading-[1.7] text-[#4E5968] font-medium">-</p>
+            <h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-1.5"><i data-lucide="alert-circle" class="w-5 h-5 text-[#C5A880]"></i> 특이사항</h2>
+            <p id="viewIssue" class="text-[15px] leading-[1.7] text-[#12261E] font-bold">-</p>
             <div id="viewIssueGallery" class="grid grid-cols-2 gap-3 pt-2"></div>
           </div>
 
-          <div class="space-y-3 relative z-10"><h2 class="text-[16px] font-extrabold text-[#12261E] flex items-center gap-1.5"><i data-lucide="list-checks" class="w-4 h-4 text-[#84CC16]"></i> 작업 목록</h2><div id="viewCategories" class="flex flex-wrap gap-2"></div></div>
-          <div class="space-y-3 relative z-10"><h2 class="text-[16px] font-extrabold text-[#12261E] flex items-center gap-1.5"><i data-lucide="check-circle" class="w-4 h-4 text-[#84CC16]"></i> 현장 작업자 코멘트</h2><p id="viewDiagnosis" class="text-[15px] leading-[1.7] text-[#4E5968] bg-white/70 p-5 rounded-[20px] font-medium border border-[#EBE9E0] shadow-sm">-</p></div>
+          <div class="space-y-3 relative z-10"><h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-1.5"><i data-lucide="list-checks" class="w-5 h-5 text-[#84CC16]"></i> 작업 목록</h2><div id="viewCategories" class="flex flex-wrap gap-2"></div></div>
+          <div class="space-y-3 relative z-10"><h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-1.5"><i data-lucide="check-circle" class="w-5 h-5 text-[#84CC16]"></i> 현장 작업자 코멘트</h2><p id="viewDiagnosis" class="text-[15px] leading-[1.7] text-[#12261E] bg-white/70 p-5 rounded-[20px] font-bold border border-[#EBE9E0] shadow-sm">-</p></div>
         </div>
 
         <div id="quoteContentBlock" class="space-y-5 hidden relative z-10">
           <div id="viewQuotePhotosBlock" class="space-y-3 hidden relative z-10 mb-6 bg-[#F9F9F8] p-4 rounded-[20px] border border-dashed border-[#A3A8A3]">
-            <h2 class="text-[14px] font-bold text-[#12261E] flex items-center gap-1.5"><i data-lucide="lock" class="w-4 h-4 text-[#84CC16]"></i> 현장 상태 기록 (고객 미노출)</h2>
+            <h2 class="text-[15px] font-black text-[#12261E] flex items-center gap-1.5"><i data-lucide="lock" class="w-5 h-5 text-[#84CC16]"></i> 현장 상태 기록 (고객 미노출)</h2>
             <div id="viewQuotePhotoGrid" class="grid grid-cols-2 gap-3"></div>
           </div>
 
-          <h2 class="text-[16px] font-extrabold text-[#12261E] flex items-center gap-1.5"><i data-lucide="list" class="w-4 h-4 text-[#84CC16]"></i> 세부 견적 내역</h2>
+          <h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-1.5"><i data-lucide="list" class="w-5 h-5 text-[#84CC16]"></i> 세부 견적 내역</h2>
           <div id="viewQuoteMonths" class="space-y-2"></div>
           
           <div class="mt-6 bg-[#F9F9F8] p-5 rounded-[20px] border border-[#EAEBEA] space-y-3">
-            <div class="flex justify-between items-center text-[14px] text-[#1A1D1A] font-extrabold"><span>공급가액</span><span id="viewQuoteSubtotal">0원</span></div>
-            <div class="flex justify-between items-center text-[13px] text-[#7A827A] font-bold pb-3 border-b border-[#EAEBEA]">
+            <div class="flex justify-between items-center text-[15px] text-[#1A1D1A] font-black"><span>공급가액</span><span id="viewQuoteSubtotal">0원</span></div>
+            <div class="flex justify-between items-center text-[14px] text-[#4E5968] font-black pb-3 border-b border-[#EAEBEA]">
               <span id="viewQuoteVatLabel">부가가치세</span>
-              <span id="viewQuoteVat"><span class="text-[#3B82F6] font-extrabold">부가세 별도(요청시)</span></span>
+              <span id="viewQuoteVat"><span class="text-[#3B82F6] font-black">부가세 별도(요청시)</span></span>
             </div>
-            <div class="flex justify-between items-center pt-1"><span class="text-[16px] font-bold text-white">견적 총액</span><span id="viewQuoteGrandTotal" class="text-[18px] font-black text-[#84CC16]">0원</span></div>
+            <div class="flex justify-between items-center pt-1"><span class="text-[18px] font-black text-[#1A1D1A]">견적 총액</span><span id="viewQuoteGrandTotal" class="text-[20px] font-black text-[#84CC16]">0원</span></div>
           </div>
           
           <div id="viewQuoteMemoBlock"></div>
 
-          <p class="text-[11px] text-[#A3A8A3] text-center mt-2 leading-relaxed">* 본 문서는 현장 여건 및 기상 상황에 따라 내역이 일부 조정될 수 있습니다.</p>
+          <p class="text-[12px] text-[#4E5968] font-bold text-center mt-3 bg-[#F4F5F4] py-2 rounded-lg">* 본 문서는 현장 여건 및 기상 상황에 따라 내역이 일부 조정될 수 있습니다.</p>
         </div>
 
         <div class="pt-5 flex justify-between items-end opacity-90 relative z-10 border-t border-[#EAEBEA] mt-5">
           <div class="flex flex-col">
-              <span class="text-[9px] font-bold text-[#A3A8A3] tracking-wider uppercase mb-0.5">Powered by</span>
-              <span class="text-[12px] font-black text-[#84CC16] tracking-tight">조경노트</span>
+              <span class="text-[10px] font-black text-[#A3A8A3] tracking-wider uppercase mb-0.5">Powered by</span>
+              <span class="text-[14px] font-black text-[#84CC16] tracking-tight">조경노트</span>
           </div>
           <div class="flex items-center gap-2">
-            <span class="text-[17px] font-black text-[#12261E] tracking-tight"><span id="doc-company-name-sign">업체명</span> 드림</span>
+            <span class="text-[18px] font-black text-[#12261E] tracking-tight"><span id="doc-company-name-sign">업체명</span> 드림</span>
           </div>
         </div>
 
         <div id="printBtnBox" class="no-print pt-6 relative z-10 space-y-2">
-          <div class="text-[12px] font-bold text-[#7A827A] mb-1.5 px-1">문서 전달 및 보관</div>
+          <div class="text-[13px] font-bold text-[#4E5968] mb-1.5 px-1">문서 전달 및 보관</div>
           <div class="grid grid-cols-2 gap-2">
-            <button onclick="shareKakaoTalk()" class="py-3.5 bg-[#FEE500] text-[#3C1E1E] rounded-[14px] font-extrabold text-[13px] flex items-center justify-center gap-1.5 shadow-sm hover:brightness-95 transition-all"><i data-lucide="message-circle" class="w-4 h-4 fill-current"></i> 카톡으로 전달</button>
-            <button onclick="sendSMS()" class="py-3.5 bg-[#84CC16] text-[#12261E] rounded-[14px] font-extrabold text-[13px] flex items-center justify-center gap-1.5 shadow-sm hover:bg-[#9BE32D] transition-all"><i data-lucide="smartphone" class="w-4 h-4"></i> 문자로 전달</button>
+            <button onclick="shareKakaoTalk()" class="py-4 bg-[#FEE500] text-[#3C1E1E] rounded-[14px] font-black text-[14px] flex items-center justify-center gap-1.5 shadow-sm hover:brightness-95 transition-all"><i data-lucide="message-circle" class="w-5 h-5 fill-current"></i> 카톡으로 전달</button>
+            <button onclick="sendSMS()" class="py-4 bg-[#84CC16] text-[#12261E] rounded-[14px] font-black text-[14px] flex items-center justify-center gap-1.5 shadow-sm hover:bg-[#9BE32D] transition-all"><i data-lucide="smartphone" class="w-5 h-5"></i> 문자로 전달</button>
           </div>
           <div class="grid grid-cols-2 gap-2">
-            <button onclick="downloadFullReport()" class="py-3.5 bg-[#3B82F6] text-white rounded-[14px] font-extrabold text-[13px] flex items-center justify-center gap-1.5 shadow-sm hover:bg-[#2563EB] transition-all"><i data-lucide="image" class="w-4 h-4"></i> 갤러리에 이미지 저장</button>
-            <button onclick="window.print()" class="py-3.5 bg-white border border-[#EAEBEA] hover:bg-[#F9F9F8] text-[#12261E] rounded-[14px] font-bold text-[13px] flex items-center justify-center gap-1.5 transition-colors shadow-sm"><i data-lucide="printer" class="w-4 h-4"></i> PDF 저장/인쇄</button>
+            <button onclick="downloadFullReport()" class="py-4 bg-[#3B82F6] text-white rounded-[14px] font-black text-[14px] flex items-center justify-center gap-1.5 shadow-sm hover:bg-[#2563EB] transition-all"><i data-lucide="image" class="w-5 h-5"></i> 갤러리에 저장</button>
+            <button onclick="window.print()" class="py-4 bg-white border border-[#EAEBEA] hover:bg-[#F9F9F8] text-[#12261E] rounded-[14px] font-black text-[14px] flex items-center justify-center gap-1.5 transition-colors shadow-sm"><i data-lucide="printer" class="w-5 h-5"></i> PDF 저장/인쇄</button>
           </div>
         </div>
 
         <div id="backToAdminBtnBox" class="no-print pt-3 relative z-10">
-          <button id="btnBackFromReport" onclick="switchView('admin')" class="w-full py-3 text-[#A3A8A3] font-semibold text-xs hover:text-[#12261E]">작업 화면으로 돌아가기</button>
+          <button id="btnBackFromReport" onclick="switchView('admin')" class="w-full py-4 text-[#4E5968] font-bold text-[14px] hover:text-[#12261E]">작업 화면으로 돌아가기</button>
         </div>
       </div>
     </section>
@@ -642,15 +646,15 @@
   <div id="textEditorModal" class="hidden fixed inset-0 z-[2500] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200">
     <div class="bg-white w-full max-w-sm rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200" id="textEditorBox" onclick="event.stopPropagation()">
       <div class="p-5 border-b border-[#EAEBEA] flex justify-between items-center bg-[#F9F9F8]">
-        <h3 class="text-[15px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="edit-3" class="w-5 h-5 text-[#84CC16]"></i> 내용 상세 수정</h3>
+        <h3 class="text-[16px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="edit-3" class="w-5 h-5 text-[#84CC16]"></i> 내용 상세 수정</h3>
         <button onclick="closeTextEditor()" class="text-[#A3A8A3] hover:text-[#12261E] p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
       <div class="p-5 bg-white">
-        <textarea id="modalTextInput" rows="5" placeholder="수정할 내용을 입력하세요" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] p-4 text-[16px] font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] leading-relaxed resize-none"></textarea>
+        <textarea id="modalTextInput" rows="5" placeholder="수정할 내용을 입력하세요" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] p-4 text-[16px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] leading-relaxed resize-none"></textarea>
       </div>
       <div class="p-4 bg-white border-t border-[#F4F5F4] flex gap-2">
-        <button onclick="closeTextEditor()" class="flex-1 py-3.5 bg-[#EAEBEA] text-[#4E5968] rounded-[14px] font-bold text-[14px] hover:bg-[#D4D8D4] transition-colors">취소</button>
-        <button onclick="saveTextEditor()" class="flex-1 py-3.5 bg-[#84CC16] text-[#12261E] rounded-[14px] font-black text-[14px] shadow-md hover:bg-[#9BE32D] transition-colors">입력 완료</button>
+        <button onclick="closeTextEditor()" class="flex-1 py-4 bg-[#EAEBEA] text-[#4E5968] rounded-[14px] font-black text-[15px] hover:bg-[#D4D8D4] transition-colors">취소</button>
+        <button onclick="saveTextEditor()" class="flex-1 py-4 bg-[#84CC16] text-[#12261E] rounded-[14px] font-black text-[15px] shadow-md hover:bg-[#9BE32D] transition-colors">입력 완료</button>
       </div>
     </div>
   </div>
@@ -659,20 +663,20 @@
   <div id="lensResultModal" class="hidden fixed inset-0 z-[2500] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200">
     <div class="bg-white w-full max-w-sm rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200" id="lensResultBox" onclick="event.stopPropagation()">
       <div class="p-5 border-b border-[#EAEBEA] flex justify-between items-center bg-[#F9F9F8]">
-        <h3 id="lensResultTitle" class="text-[15px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="scan" class="w-5 h-5 text-[#84CC16]"></i> AI 분석 결과</h3>
+        <h3 id="lensResultTitle" class="text-[16px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="scan" class="w-5 h-5 text-[#84CC16]"></i> AI 분석 결과</h3>
         <button onclick="closeLensResult()" class="text-[#A3A8A3] hover:text-[#12261E] p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
       <div class="p-5 bg-white space-y-4 max-h-[60vh] overflow-y-auto">
         <div class="w-full aspect-video bg-[#F4F5F4] rounded-[16px] overflow-hidden relative cursor-pointer group shadow-sm border border-[#EAEBEA]" onclick="openModalForLens()">
           <img id="lensResultImg" src="" class="w-full h-full object-cover">
-          <div class="absolute bottom-2 right-2 bg-black/60 text-white px-2 py-1 rounded-lg text-[10px] font-bold flex items-center gap-1 backdrop-blur-sm"><i data-lucide="zoom-in" class="w-3 h-3"></i> 터치하여 확대</div>
+          <div class="absolute bottom-2 right-2 bg-black/60 text-white px-2 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1 backdrop-blur-sm"><i data-lucide="zoom-in" class="w-3 h-3"></i> 터치하여 확대</div>
         </div>
-        <div id="lensResultContent" class="bg-[#F9F9F8] p-5 rounded-[16px] border border-[#EAEBEA] text-[13px] leading-relaxed text-[#1A1D1A] font-medium whitespace-pre-wrap break-keep">
+        <div id="lensResultContent" class="bg-[#F9F9F8] p-5 rounded-[16px] border border-[#EAEBEA] text-[14px] leading-relaxed text-[#1A1D1A] font-bold whitespace-pre-wrap break-keep">
         </div>
       </div>
       <div class="p-4 bg-white border-t border-[#F4F5F4] flex gap-2">
-        <button onclick="closeLensResult()" class="flex-1 py-3.5 bg-[#EAEBEA] text-[#4E5968] rounded-[14px] font-bold text-[13px] hover:bg-[#D4D8D4] transition-colors">닫기</button>
-        <button onclick="copyLensResult()" class="flex-1 py-3.5 bg-[#12261E] text-[#84CC16] rounded-[14px] font-black text-[13px] shadow-md transition-colors flex items-center justify-center gap-1.5"><i data-lucide="copy" class="w-4 h-4"></i> 결과 복사</button>
+        <button onclick="closeLensResult()" class="flex-1 py-4 bg-[#EAEBEA] text-[#4E5968] rounded-[14px] font-black text-[14px] hover:bg-[#D4D8D4] transition-colors">닫기</button>
+        <button onclick="copyLensResult()" class="flex-1 py-4 bg-[#12261E] text-[#84CC16] rounded-[14px] font-black text-[14px] shadow-md transition-colors flex items-center justify-center gap-1.5"><i data-lucide="copy" class="w-4 h-4"></i> 결과 복사</button>
       </div>
     </div>
   </div>
@@ -681,25 +685,25 @@
   <div id="materialModal" class="hidden fixed inset-0 z-[3500] bg-black/80 flex flex-col items-center justify-center p-2 sm:p-4 opacity-0 transition-opacity duration-200">
     <div class="bg-white w-full max-w-4xl max-h-[90vh] rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200" id="materialBox" onclick="event.stopPropagation()">
       <div class="p-4 sm:p-5 border-b border-[#EAEBEA] flex justify-between items-center bg-[#12261E] text-white">
-        <h3 class="text-[15px] font-black flex items-center gap-2"><i data-lucide="package-search" class="w-5 h-5 text-[#84CC16]"></i> 자재 단가표 (관리자 전용)</h3>
+        <h3 class="text-[16px] font-black flex items-center gap-2"><i data-lucide="package-search" class="w-5 h-5 text-[#84CC16]"></i> 자재 단가표 (관리자 전용)</h3>
         <button onclick="closeMaterialModal()" class="text-[#A3A8A3] hover:text-white p-1 transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
       </div>
       
       <div class="px-4 py-3 bg-white flex justify-between items-center border-b border-[#EAEBEA] shrink-0">
-          <span class="text-[11px] text-[#7A827A] font-bold">* 파란색 연락처 터치 시 자동 전화 연결</span>
-          <button id="btnToggleMaterialEdit" onclick="toggleMaterialEdit()" class="text-[12px] bg-[#F4F5F4] hover:bg-[#EAEBEA] text-[#12261E] font-extrabold px-3 py-1.5 rounded-[8px] transition-colors border border-[#EAEBEA] shadow-sm flex items-center gap-1.5"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i> 수정 모드 켜기</button>
+          <span class="text-[12px] text-[#4E5968] font-bold">* 파란색 연락처 터치 시 자동 전화 연결</span>
+          <button id="btnToggleMaterialEdit" onclick="toggleMaterialEdit()" class="text-[13px] bg-[#F4F5F4] hover:bg-[#EAEBEA] text-[#12261E] font-black px-3.5 py-2 rounded-[10px] transition-colors border border-[#EAEBEA] shadow-sm flex items-center gap-1.5"><i data-lucide="edit-3" class="w-4 h-4"></i> 수정 모드 켜기</button>
       </div>
 
       <div class="flex-1 overflow-auto p-4 bg-[#F9F9F8] relative">
         <div class="min-w-[700px] bg-white border border-[#EAEBEA] shadow-sm rounded-[12px] overflow-hidden">
-          <table class="w-full text-[12px] text-left border-collapse" id="materialTable">
-            <thead class="bg-[#2E3440] text-white font-bold text-center text-[13px] tracking-wide">
+          <table class="w-full text-[13px] text-left border-collapse" id="materialTable">
+            <thead class="bg-[#2E3440] text-white font-bold text-center text-[14px] tracking-wide">
               <tr>
-                <th class="border border-[#4C566A] p-2.5 w-[15%]">품 목</th>
-                <th class="border border-[#4C566A] p-2.5 w-[25%]">규 격</th>
-                <th class="border border-[#4C566A] p-2.5 w-[30%]">단가 (부가세 별도)</th>
-                <th class="border border-[#4C566A] p-2.5 w-[30%]">연락처 및 상호</th>
-                <th id="matActionTh" class="border border-[#4C566A] p-2.5 w-[60px] hidden">관리</th>
+                <th class="border border-[#4C566A] p-3 w-[15%]">품 목</th>
+                <th class="border border-[#4C566A] p-3 w-[25%]">규 격</th>
+                <th class="border border-[#4C566A] p-3 w-[30%]">단가 (부가세 별도)</th>
+                <th class="border border-[#4C566A] p-3 w-[30%]">연락처 및 상호</th>
+                <th id="matActionTh" class="border border-[#4C566A] p-3 w-[60px] hidden">관리</th>
               </tr>
             </thead>
             <tbody id="materialTableBody" class="text-[#1A1D1A]">
@@ -708,100 +712,9 @@
         </div>
         
         <div id="matAddBtnContainer" class="mt-4 hidden">
-           <button onclick="addMaterialRow()" class="w-full py-4 border-2 border-dashed border-[#84CC16]/50 bg-[#F2FBEC] text-[#65A30D] rounded-[14px] font-black text-[13px] hover:bg-[#E8F5E9] transition-colors flex items-center justify-center gap-2"><i data-lucide="plus-circle" class="w-5 h-5"></i> 새 자재 항목 추가하기</button>
+           <button onclick="addMaterialRow()" class="w-full py-4.5 border-2 border-dashed border-[#84CC16]/50 bg-[#F2FBEC] text-[#65A30D] rounded-[16px] font-black text-[15px] hover:bg-[#E8F5E9] transition-colors flex items-center justify-center gap-2"><i data-lucide="plus-circle" class="w-5 h-5"></i> 새 자재 항목 추가하기</button>
         </div>
       </div>
-    </div>
-  </div>
-
-  <!-- 블로그 홍보용 썸네일 카드 모달창 -->
-  <div id="promoCardModal" class="hidden fixed inset-0 z-[2000] bg-black/95 flex flex-col items-center justify-center p-4">
-    <div class="flex justify-between items-center w-full max-w-sm mb-3 px-2">
-       <span class="text-[#84CC16] font-bold text-[13px] flex items-center gap-1.5"><i data-lucide="info" class="w-4 h-4"></i> 화면 캡처용 썸네일 생성기</span>
-       <button onclick="closePromoCard()" class="text-white p-2 bg-white/10 hover:bg-white/20 transition-all rounded-full"><i data-lucide="x" class="w-4 h-4"></i></button>
-    </div>
-    
-    <div id="promoCardCaptureArea" class="bg-[#151E2D] w-full max-w-sm rounded-[24px] overflow-hidden shadow-2xl relative border border-white/20">
-       <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(132,204,22,0.1)_0%,transparent_60%)] pointer-events-none"></div>
-       <div class="p-6 relative z-10">
-          <div class="flex justify-between items-start mb-5">
-             <div>
-                <div class="text-[#84CC16] text-[10px] font-black tracking-widest mb-1 uppercase">Smart Landscape Care</div>
-                <h2 class="text-white text-[20px] font-black tracking-tight leading-tight"><span id="promo-company-name">업체명</span><br>모바일 리포트</h2>
-             </div>
-             <div class="w-10 h-10 rounded-[12px] bg-[#84CC16] flex items-center justify-center shadow-lg"><i data-lucide="leaf" class="w-5 h-5 text-[#12261E]"></i></div>
-          </div>
-          
-          <div class="bg-[#0F1722] rounded-[16px] p-4 mb-5 border border-white/10">
-             <div class="text-white font-bold text-[15px] mb-0.5 truncate" id="promoClientName">고객명</div>
-             <div class="text-[#A3A8A3] text-[11px] font-medium truncate" id="promoRound">라운드</div>
-          </div>
-
-          <div class="flex gap-2.5 mb-5">
-             <div class="flex-1">
-                <div class="text-[#A3A8A3] text-[10px] font-bold mb-1.5 text-center" id="promoLabelBefore">작업 전</div>
-                <div class="aspect-square bg-[#0F1722] rounded-[12px] overflow-hidden border border-white/5"><img id="promoImgBefore" src="" class="w-full h-full object-cover"></div>
-             </div>
-             <div class="flex-1">
-                <div class="text-[#84CC16] text-[10px] font-bold mb-1.5 text-center" id="promoLabelAfter">작업 후</div>
-                <div class="aspect-square bg-[#0F1722] rounded-[12px] overflow-hidden border border-[#84CC16]/30"><img id="promoImgAfter" src="" class="w-full h-full object-cover"></div>
-             </div>
-          </div>
-
-          <div id="promoDiagnosisContainer" class="bg-white/5 rounded-[16px] p-4 hidden">
-             <div class="text-[#C5A880] text-[10px] font-bold mb-1">작업 요약 코멘트</div>
-             <div class="text-[#EAEBEA] text-[12px] leading-relaxed line-clamp-3 font-medium" id="promoDiagnosis">진단내용</div>
-          </div>
-       </div>
-    </div>
-    
-    <div class="w-full max-w-sm mt-4 px-2 no-print text-white flex flex-col gap-3">
-       <div class="flex gap-2 w-full">
-           <label class="flex-1 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg text-center text-[12px] font-bold text-white cursor-pointer transition-all flex items-center justify-center gap-1.5">
-               <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> 작업 전 교체
-               <input type="file" accept="image/*" class="hidden" onchange="changePromoImg(event, 'promoImgBefore')">
-           </label>
-           <label class="flex-1 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg text-center text-[12px] font-bold text-[#84CC16] cursor-pointer transition-all flex items-center justify-center gap-1.5">
-               <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> 작업 후 교체
-               <input type="file" accept="image/*" class="hidden" onchange="changePromoImg(event, 'promoImgAfter')">
-           </label>
-       </div>
-
-       <div class="flex justify-between items-center w-full pt-1 border-t border-white/10 mt-1">
-           <button id="promoPrevBtn" onclick="prevPromo()" class="px-4 py-2 text-[12px] font-bold text-white hover:text-[#84CC16] transition-all flex items-center gap-1"><i data-lucide="chevron-left" class="w-4 h-4"></i> 이전컷</button>
-           <span id="promoPageIndicator" class="text-[12px] font-bold text-[#A3A8A3] tracking-widest">1 / 1</span>
-           <button id="promoNextBtn" onclick="nextPromo()" class="px-4 py-2 text-[12px] font-bold text-white hover:text-[#84CC16] transition-all flex items-center gap-1">다음컷 <i data-lucide="chevron-right" class="w-4 h-4"></i></button>
-       </div>
-    </div>
-  </div>
-
-  <!-- 고객 발송 화면(카톡/문자) 캡처 모달창 -->
-  <div id="msgMockupModal" class="hidden fixed inset-0 z-[2000] bg-black/95 flex flex-col items-center justify-center p-4">
-    <div class="flex justify-between items-center w-full max-w-sm mb-3 px-2">
-       <span class="text-[#3B82F6] font-bold text-[13px] flex items-center gap-1.5"><i data-lucide="message-square" class="w-4 h-4"></i> 고객 발송 화면 캡처기</span>
-       <button onclick="closeMsgMockup()" class="text-white p-2 bg-white/10 hover:bg-white/20 transition-all rounded-full"><i data-lucide="x" class="w-4 h-4"></i></button>
-    </div>
-
-    <div class="flex gap-2 w-full max-w-sm mb-4">
-        <button onclick="setMsgMockupType('kakao')" id="btnMockupKakao" class="flex-1 py-2.5 rounded-xl bg-[#FEE500] text-[#3C1E1E] font-bold text-[13px] transition-all shadow-md">카카오톡</button>
-        <button onclick="setMsgMockupType('sms')" id="btnMockupSms" class="flex-1 py-2.5 rounded-xl bg-white/10 text-white font-bold text-[13px] transition-all border border-white/20 hover:bg-white/20">아이폰 문자</button>
-    </div>
-    
-    <div id="msgMockupCaptureArea" class="w-full max-w-sm rounded-[24px] overflow-hidden relative bg-[#BACEE0] p-5 pb-8 flex flex-col items-end shadow-2xl">
-       <div id="msgMockupBubble" class="bg-[#FEE500] text-[#1A1D1A] rounded-[18px] rounded-tr-[4px] p-3.5 mb-2 max-w-[85%] shadow-sm relative text-left">
-          <div id="msgMockupText" class="text-[14px] leading-[1.5] whitespace-pre-wrap font-medium break-all"></div>
-       </div>
-
-       <div class="bg-white rounded-[14px] overflow-hidden max-w-[85%] w-full shadow-sm border border-gray-200/50 flex flex-col">
-          <div class="bg-[#F4F5F4] h-24 w-full overflow-hidden flex items-center justify-center border-b border-gray-100 relative">
-             <div class="w-12 h-12 bg-[#84CC16] rounded-[14px] flex items-center justify-center shadow-md"><i data-lucide="leaf" class="w-6 h-6 text-[#12261E]"></i></div>
-          </div>
-          <div class="p-3.5 bg-white text-left">
-             <div class="font-bold text-[#1A1D1A] text-[13px] mb-1 truncate">[<span id="mockup-company-name">업체명</span>] 프리미엄 조경 관리 솔루션</div>
-             <div class="text-[#7A827A] text-[11px] mb-1.5 line-clamp-2 leading-snug">고객님의 현장 작업 리포트 및 견적서를 확인해 주십시오.</div>
-             <div class="text-[#A3A8A3] text-[10px] mt-1.5">www.landnote.net</div>
-          </div>
-       </div>
     </div>
   </div>
 
@@ -838,7 +751,7 @@
     let clients = [];
     let records = [];
     let materialsData = [];
-    let contactsData = { clients: [], labors: [] }; // 신규 연락처 데이터
+    let contactsData = { clients: [], labors: [] };
     
     let isMaterialEditMode = false;
     let editingClientIndex = null;
@@ -852,7 +765,7 @@
     let currentVatRate = 0.1; 
     let currentQuoteRowCount = 12;
     let currentClientFilter = '정기 관리';
-    let currentContactTab = 'clients'; // 'clients' or 'labors'
+    let currentContactTab = 'clients';
 
     let currentGalleryB = [];
     let currentGalleryA = [];
@@ -1145,8 +1058,8 @@
             
             const badge = document.getElementById('cloudStatusBadge');
             if(badge) {
-                badge.innerHTML = '<i data-lucide="cloud-check" class="w-3 h-3"></i> 연동됨';
-                badge.className = 'text-[10px] bg-blue-500/20 text-blue-400 font-extrabold px-2 py-0.5 rounded uppercase tracking-widest border border-blue-500/30 flex items-center gap-1';
+                badge.innerHTML = '<i data-lucide="cloud-check" class="w-3.5 h-3.5"></i> 연동됨';
+                badge.className = 'text-[11px] bg-blue-500/20 text-blue-400 font-black px-2.5 py-0.5 rounded uppercase tracking-widest border border-blue-500/30 flex items-center gap-1';
             }
         } catch(e) {
             alert("클라우드 동기화 실패. 일부 기능이 제한될 수 있습니다.");
@@ -1174,12 +1087,12 @@
         const inputName = document.getElementById('newContactName');
 
         if(tab === 'clients') {
-            btnClient.className = "flex-1 py-2.5 rounded-[10px] bg-white shadow-sm text-[#12261E] font-bold text-[13px] transition-all border border-[#EAEBEA]";
-            btnLabor.className = "flex-1 py-2.5 rounded-[10px] text-[#7A827A] font-semibold text-[13px] hover:text-[#12261E] transition-all border border-transparent";
+            btnClient.className = "flex-1 py-3 rounded-[12px] bg-white shadow-sm text-[#12261E] font-black text-[14px] transition-all border border-[#EAEBEA]";
+            btnLabor.className = "flex-1 py-3 rounded-[12px] text-[#4E5968] font-black text-[14px] hover:text-[#12261E] transition-all border border-transparent bg-transparent";
             inputName.placeholder = "업체명 입력";
         } else {
-            btnClient.className = "flex-1 py-2.5 rounded-[10px] text-[#7A827A] font-semibold text-[13px] hover:text-[#12261E] transition-all border border-transparent";
-            btnLabor.className = "flex-1 py-2.5 rounded-[10px] bg-white shadow-sm text-[#12261E] font-bold text-[13px] transition-all border border-[#EAEBEA]";
+            btnClient.className = "flex-1 py-3 rounded-[12px] text-[#4E5968] font-black text-[14px] hover:text-[#12261E] transition-all border border-transparent bg-transparent";
+            btnLabor.className = "flex-1 py-3 rounded-[12px] bg-white shadow-sm text-[#12261E] font-black text-[14px] transition-all border border-[#EAEBEA]";
             inputName.placeholder = "성명 입력";
         }
         
@@ -1218,7 +1131,7 @@
     function formatPhoneToLink(text) {
         if(!text) return "";
         const phoneRegex = /(0\d{1,2}[-\s]?\d{3,4}[-\s]?\d{4})/g;
-        return text.replace(phoneRegex, '<a href="tel:$1" onclick="event.stopPropagation();" class="text-blue-600 font-extrabold underline hover:text-blue-800">$1</a>');
+        return text.replace(phoneRegex, '<a href="tel:$1" onclick="event.stopPropagation();" class="text-blue-600 font-black underline hover:text-blue-800">$1</a>');
     }
 
     function renderContactsList() {
@@ -1229,23 +1142,23 @@
         container.innerHTML = '';
 
         if(list.length === 0) {
-            container.innerHTML = `<div class="p-6 text-center text-[#8B95A1] text-xs bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA]">등록된 연락처가 없습니다.</div>`;
+            container.innerHTML = `<div class="p-6 text-center text-[#8B95A1] text-[13px] bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA] font-bold">등록된 연락처가 없습니다.</div>`;
             return;
         }
 
         list.forEach((item, idx) => {
             const div = document.createElement('div');
-            div.className = "bg-white p-4 rounded-[16px] border border-[#EAEBEA] shadow-sm flex justify-between items-center transition-all hover:border-[#84CC16]";
+            div.className = "bg-white p-5 rounded-[16px] border border-[#EAEBEA] shadow-sm flex justify-between items-center transition-all hover:border-[#84CC16]";
             
-            let memoHtml = item.memo ? `<div class="text-[11px] text-[#7A827A] mt-1.5 bg-[#F4F5F4] px-2 py-1 rounded inline-block font-medium">${item.memo}</div>` : '';
+            let memoHtml = item.memo ? `<div class="text-[12px] text-[#4E5968] mt-2 bg-[#F4F5F4] px-2.5 py-1.5 rounded-lg inline-block font-bold">${item.memo}</div>` : '';
             
             div.innerHTML = `
                 <div>
-                    <div class="font-bold text-[#1A1D1A] text-[14px] flex items-center gap-1.5"><i data-lucide="${currentContactTab === 'clients' ? 'building' : 'user'}" class="w-3.5 h-3.5 text-[#A3A8A3]"></i> ${item.name}</div>
-                    <div class="text-[14px] mt-1.5"><i data-lucide="phone" class="w-3 h-3 inline-block text-blue-500 mr-1"></i> ${formatPhoneToLink(item.phone)}</div>
+                    <div class="font-black text-[#1A1D1A] text-[15px] flex items-center gap-1.5"><i data-lucide="${currentContactTab === 'clients' ? 'building' : 'user'}" class="w-4 h-4 text-[#4E5968]"></i> ${item.name}</div>
+                    <div class="text-[15px] mt-1.5"><i data-lucide="phone" class="w-4 h-4 inline-block text-blue-500 mr-1"></i> ${formatPhoneToLink(item.phone)}</div>
                     ${memoHtml}
                 </div>
-                <button onclick="deleteContact('${currentContactTab}', ${idx})" class="p-2.5 text-[#A3A8A3] hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                <button onclick="deleteContact('${currentContactTab}', ${idx})" class="p-3 text-[#A3A8A3] hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
             `;
             container.appendChild(div);
         });
@@ -1296,13 +1209,13 @@
         tbody.innerHTML = '';
         
         if (isMaterialEditMode) {
-            btnToggle.innerHTML = '<i data-lucide="save" class="w-3.5 h-3.5"></i> 변경사항 저장';
-            btnToggle.className = "text-[12px] bg-[#84CC16] hover:bg-[#9BE32D] text-[#12261E] font-extrabold px-3 py-1.5 rounded-[8px] transition-colors shadow-md flex items-center gap-1.5";
+            btnToggle.innerHTML = '<i data-lucide="save" class="w-4 h-4"></i> 변경사항 저장';
+            btnToggle.className = "text-[13px] bg-[#84CC16] hover:bg-[#9BE32D] text-[#12261E] font-black px-3.5 py-2 rounded-[10px] transition-colors shadow-md flex items-center gap-1.5";
             addBtnBox.classList.remove('hidden');
             actionTh.classList.remove('hidden');
         } else {
-            btnToggle.innerHTML = '<i data-lucide="edit-3" class="w-3.5 h-3.5"></i> 수정 모드 켜기';
-            btnToggle.className = "text-[12px] bg-[#F4F5F4] hover:bg-[#EAEBEA] text-[#12261E] font-extrabold px-3 py-1.5 rounded-[8px] transition-colors border border-[#EAEBEA] shadow-sm flex items-center gap-1.5";
+            btnToggle.innerHTML = '<i data-lucide="edit-3" class="w-4 h-4"></i> 수정 모드 켜기';
+            btnToggle.className = "text-[13px] bg-[#F4F5F4] hover:bg-[#EAEBEA] text-[#12261E] font-black px-3.5 py-2 rounded-[10px] transition-colors border border-[#EAEBEA] shadow-sm flex items-center gap-1.5";
             addBtnBox.classList.add('hidden');
             actionTh.classList.add('hidden');
         }
@@ -1313,18 +1226,18 @@
             
             if (isMaterialEditMode) {
                 tr.innerHTML = `
-                    <td class="border border-[#EAEBEA] p-1"><textarea id="matItem_${idx}" rows="2" class="w-full bg-[#F4F5F4] border border-[#EAEBEA] rounded-md p-1.5 text-[11px] font-bold focus:border-[#84CC16] focus:outline-none resize-none leading-tight">${mat.item}</textarea></td>
-                    <td class="border border-[#EAEBEA] p-1"><textarea id="matSpec_${idx}" rows="2" class="w-full bg-[#F4F5F4] border border-[#EAEBEA] rounded-md p-1.5 text-[11px] font-medium focus:border-[#84CC16] focus:outline-none resize-none leading-tight">${mat.spec}</textarea></td>
-                    <td class="border border-[#EAEBEA] p-1"><textarea id="matPrice_${idx}" rows="2" class="w-full bg-[#F4F5F4] border border-[#EAEBEA] rounded-md p-1.5 text-[11px] font-bold text-[#1A1D1A] focus:border-[#84CC16] focus:outline-none resize-none leading-tight">${mat.price}</textarea></td>
-                    <td class="border border-[#EAEBEA] p-1"><textarea id="matContact_${idx}" rows="2" class="w-full bg-[#F4F5F4] border border-[#EAEBEA] rounded-md p-1.5 text-[11px] font-medium focus:border-[#84CC16] focus:outline-none resize-none leading-tight">${mat.contact}</textarea></td>
-                    <td class="border border-[#EAEBEA] p-1 text-center"><button onclick="deleteMaterialRow(${idx})" class="text-red-500 hover:text-red-700 p-1.5 bg-red-50 rounded-md"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>
+                    <td class="border border-[#EAEBEA] p-1.5"><textarea id="matItem_${idx}" rows="2" class="w-full bg-[#F4F5F4] border border-[#EAEBEA] rounded-md p-2 text-[12px] font-black focus:border-[#84CC16] focus:outline-none resize-none leading-tight">${mat.item}</textarea></td>
+                    <td class="border border-[#EAEBEA] p-1.5"><textarea id="matSpec_${idx}" rows="2" class="w-full bg-[#F4F5F4] border border-[#EAEBEA] rounded-md p-2 text-[12px] font-bold focus:border-[#84CC16] focus:outline-none resize-none leading-tight">${mat.spec}</textarea></td>
+                    <td class="border border-[#EAEBEA] p-1.5"><textarea id="matPrice_${idx}" rows="2" class="w-full bg-[#F4F5F4] border border-[#EAEBEA] rounded-md p-2 text-[12px] font-black text-[#1A1D1A] focus:border-[#84CC16] focus:outline-none resize-none leading-tight">${mat.price}</textarea></td>
+                    <td class="border border-[#EAEBEA] p-1.5"><textarea id="matContact_${idx}" rows="2" class="w-full bg-[#F4F5F4] border border-[#EAEBEA] rounded-md p-2 text-[12px] font-bold focus:border-[#84CC16] focus:outline-none resize-none leading-tight">${mat.contact}</textarea></td>
+                    <td class="border border-[#EAEBEA] p-1.5 text-center"><button onclick="deleteMaterialRow(${idx})" class="text-red-500 hover:text-red-700 p-2 bg-red-50 rounded-md"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>
                 `;
             } else {
                 tr.innerHTML = `
-                    <td class="border border-[#EAEBEA] p-2.5 font-bold text-[#12261E] whitespace-pre-wrap break-keep leading-snug">${mat.item}</td>
-                    <td class="border border-[#EAEBEA] p-2.5 text-[#4E5968] font-medium whitespace-pre-wrap break-keep leading-relaxed">${mat.spec}</td>
-                    <td class="border border-[#EAEBEA] p-2.5 font-black text-[#1A1D1A] whitespace-pre-wrap break-keep leading-relaxed">${mat.price}</td>
-                    <td class="border border-[#EAEBEA] p-2.5 text-[#4E5968] whitespace-pre-wrap break-keep leading-relaxed">${formatPhoneToLink(mat.contact)}</td>
+                    <td class="border border-[#EAEBEA] p-3 font-black text-[#12261E] whitespace-pre-wrap break-keep leading-snug">${mat.item}</td>
+                    <td class="border border-[#EAEBEA] p-3 text-[#4E5968] font-bold whitespace-pre-wrap break-keep leading-relaxed">${mat.spec}</td>
+                    <td class="border border-[#EAEBEA] p-3 font-black text-[#1A1D1A] whitespace-pre-wrap break-keep leading-relaxed">${mat.price}</td>
+                    <td class="border border-[#EAEBEA] p-3 text-[#4E5968] whitespace-pre-wrap break-keep leading-relaxed">${formatPhoneToLink(mat.contact)}</td>
                 `;
             }
             tbody.appendChild(tr);
@@ -1594,9 +1507,9 @@
         let inputEl = document.getElementById(`quoteDesc_${inputIdx}`);
         
         if(btn.classList.contains('bg-[#12261E]')) {
-            btn.className = "single-tag-btn px-2.5 py-1.5 text-[11px] rounded-[8px] font-medium bg-white border border-[#EAEBEA] text-[#7A827A] transition-colors";
+            btn.className = "single-tag-btn px-2.5 py-1.5 text-[11px] rounded-[8px] font-black bg-white border border-[#EAEBEA] text-[#4E5968] transition-colors";
         } else {
-            btn.className = "single-tag-btn px-2.5 py-1.5 text-[11px] rounded-[8px] font-bold bg-[#12261E] text-[#84CC16] transition-colors";
+            btn.className = "single-tag-btn px-2.5 py-1.5 text-[11px] rounded-[8px] font-black bg-[#12261E] text-[#84CC16] transition-colors";
         }
         
         let activeTags = [];
@@ -1618,8 +1531,8 @@
         const i = idx + 1;
         let isActive = row.d !== "관리없음" && row.d !== "";
         let btnClass = isActive 
-          ? "quote-month-btn w-12 flex-shrink-0 text-center font-bold text-[12px] bg-[#12261E] text-[#84CC16] py-3 rounded-[10px] shadow-sm transition-all"
-          : "quote-month-btn w-12 flex-shrink-0 text-center font-bold text-[12px] bg-white text-[#7A827A] border border-[#EAEBEA] py-3 rounded-[10px] shadow-sm transition-all";
+          ? "quote-month-btn w-12 flex-shrink-0 text-center font-black text-[13px] bg-[#12261E] text-[#84CC16] py-3 rounded-[10px] shadow-sm transition-all"
+          : "quote-month-btn w-12 flex-shrink-0 text-center font-black text-[13px] bg-white text-[#4E5968] border border-[#EAEBEA] py-3 rounded-[10px] shadow-sm transition-all";
         let descValue = isActive ? row.d : "";
         let priceValue = row.p ? row.p.toLocaleString('ko-KR') : "";
 
@@ -1627,21 +1540,21 @@
         if(type === 'single' && row.l === '01') {
             tagsHtml = `
             <div class="flex flex-wrap gap-1.5 pb-2.5 mb-1 border-b border-[#EAEBEA] w-full">
-                <button type="button" onclick="toggleSingleTag(this, ${i})" class="single-tag-btn px-2.5 py-1.5 text-[11px] rounded-[8px] font-bold bg-[#12261E] text-[#84CC16] transition-colors">소나무 전지</button>
-                <button type="button" onclick="toggleSingleTag(this, ${i})" class="single-tag-btn px-2.5 py-1.5 text-[11px] rounded-[8px] font-medium bg-white border border-[#EAEBEA] text-[#7A827A] transition-colors">수목가지치기</button>
-                <button type="button" onclick="toggleSingleTag(this, ${i})" class="single-tag-btn px-2.5 py-1.5 text-[11px] rounded-[8px] font-medium bg-white border border-[#EAEBEA] text-[#7A827A] transition-colors">관목(철쭉 등)전정작업</button>
-                <button type="button" onclick="toggleSingleTag(this, ${i})" class="single-tag-btn px-2.5 py-1.5 text-[11px] rounded-[8px] font-medium bg-white border border-[#EAEBEA] text-[#7A827A] transition-colors">기계예초작업(잔디,잡초)</button>
-                <button type="button" onclick="toggleSingleTag(this, ${i})" class="single-tag-btn px-2.5 py-1.5 text-[11px] rounded-[8px] font-medium bg-white border border-[#EAEBEA] text-[#7A827A] transition-colors">화단정돈(잡초,예초)</button>
+                <button type="button" onclick="toggleSingleTag(this, ${i})" class="single-tag-btn px-2.5 py-1.5 text-[11px] rounded-[8px] font-black bg-[#12261E] text-[#84CC16] transition-colors">소나무 전지</button>
+                <button type="button" onclick="toggleSingleTag(this, ${i})" class="single-tag-btn px-2.5 py-1.5 text-[11px] rounded-[8px] font-black bg-white border border-[#EAEBEA] text-[#4E5968] transition-colors">수목가지치기</button>
+                <button type="button" onclick="toggleSingleTag(this, ${i})" class="single-tag-btn px-2.5 py-1.5 text-[11px] rounded-[8px] font-black bg-white border border-[#EAEBEA] text-[#4E5968] transition-colors">관목(철쭉 등)전정작업</button>
+                <button type="button" onclick="toggleSingleTag(this, ${i})" class="single-tag-btn px-2.5 py-1.5 text-[11px] rounded-[8px] font-black bg-white border border-[#EAEBEA] text-[#4E5968] transition-colors">기계예초작업(잔디,잡초)</button>
+                <button type="button" onclick="toggleSingleTag(this, ${i})" class="single-tag-btn px-2.5 py-1.5 text-[11px] rounded-[8px] font-black bg-white border border-[#EAEBEA] text-[#4E5968] transition-colors">화단정돈(잡초,예초)</button>
             </div>`;
         }
 
         let itemHtml = `
           <div class="flex gap-2 items-center bg-[#F9F9F8] p-2 rounded-[14px] border border-[#EAEBEA]">
             <button type="button" onclick="toggleQuoteMonth(this)" class="${btnClass}" data-month="${row.l}">${row.l}</button>
-            <textarea id="quoteDesc_${i}" readonly onclick="openTextEditor('quoteDesc_${i}')" placeholder="터치하여 상세 내역 입력" rows="2" class="flex-1 min-w-0 bg-transparent border-none text-[12px] font-bold text-[#1A1D1A] focus:outline-none px-1 py-1 resize-none break-keep leading-snug cursor-pointer">${descValue}</textarea>
+            <textarea id="quoteDesc_${i}" readonly onclick="openTextEditor('quoteDesc_${i}')" placeholder="터치하여 상세 내역 입력" rows="2" class="flex-1 min-w-0 bg-transparent border-none text-[13px] font-black text-[#1A1D1A] focus:outline-none px-1 py-1 resize-none break-keep leading-snug cursor-pointer placeholder:text-[#4E5968] placeholder:font-bold">${descValue}</textarea>
             <div class="flex items-center gap-1 bg-white px-2 rounded-[10px] border border-[#EAEBEA] focus-within:border-[#84CC16] flex-shrink-0">
-              <input type="text" id="quotePrice_${i}" value="${priceValue}" placeholder="0" inputmode="numeric" oninput="formatNumberInput(this); calculateQuoteTotal()" class="w-24 text-right bg-transparent border-none text-[13px] font-bold text-[#1A1D1A] focus:outline-none py-2">
-              <span class="text-[11px] font-bold text-[#A3A8A3]">원</span>
+              <input type="text" id="quotePrice_${i}" value="${priceValue}" placeholder="0" inputmode="numeric" oninput="formatNumberInput(this); calculateQuoteTotal()" class="w-24 text-right bg-transparent border-none text-[14px] font-black text-[#1A1D1A] focus:outline-none py-2 placeholder:text-[#4E5968] placeholder:font-bold">
+              <span class="text-[12px] font-black text-[#4E5968]">원</span>
             </div>
           </div>
         `;
@@ -1652,10 +1565,10 @@
               ${tagsHtml}
               <div class="flex gap-2 items-center w-full pt-1">
                 <button type="button" onclick="toggleQuoteMonth(this)" class="${btnClass}" data-month="${row.l}">${row.l}</button>
-                <textarea id="quoteDesc_${i}" readonly onclick="openTextEditor('quoteDesc_${i}')" placeholder="터치하여 상세 내역 입력" rows="2" class="flex-1 min-w-0 bg-transparent border-none text-[12px] font-bold text-[#1A1D1A] focus:outline-none px-1 py-1 resize-none break-keep leading-snug cursor-pointer">${descValue}</textarea>
+                <textarea id="quoteDesc_${i}" readonly onclick="openTextEditor('quoteDesc_${i}')" placeholder="터치하여 상세 내역 입력" rows="2" class="flex-1 min-w-0 bg-transparent border-none text-[13px] font-black text-[#1A1D1A] focus:outline-none px-1 py-1 resize-none break-keep leading-snug cursor-pointer placeholder:text-[#4E5968] placeholder:font-bold">${descValue}</textarea>
                 <div class="flex items-center gap-1 bg-white px-2 rounded-[10px] border border-[#EAEBEA] focus-within:border-[#84CC16] flex-shrink-0">
-                  <input type="text" id="quotePrice_${i}" value="${priceValue}" placeholder="0" inputmode="numeric" oninput="formatNumberInput(this); calculateQuoteTotal()" class="w-24 text-right bg-transparent border-none text-[13px] font-bold text-[#1A1D1A] focus:outline-none py-2">
-                  <span class="text-[11px] font-bold text-[#A3A8A3]">원</span>
+                  <input type="text" id="quotePrice_${i}" value="${priceValue}" placeholder="0" inputmode="numeric" oninput="formatNumberInput(this); calculateQuoteTotal()" class="w-24 text-right bg-transparent border-none text-[14px] font-black text-[#1A1D1A] focus:outline-none py-2 placeholder:text-[#4E5968] placeholder:font-bold">
+                  <span class="text-[12px] font-black text-[#4E5968]">원</span>
                 </div>
               </div>
             </div>
@@ -1676,9 +1589,9 @@
 
     function toggleQuoteMonth(btn) {
       if (btn.classList.contains('bg-[#12261E]')) {
-        btn.className = "quote-month-btn w-12 flex-shrink-0 text-center font-bold text-[12px] bg-white text-[#7A827A] border border-[#EAEBEA] py-3 rounded-[10px] shadow-sm transition-all";
+        btn.className = "quote-month-btn w-12 flex-shrink-0 text-center font-black text-[13px] bg-white text-[#4E5968] border border-[#EAEBEA] py-3 rounded-[10px] shadow-sm transition-all";
       } else {
-        btn.className = "quote-month-btn w-12 flex-shrink-0 text-center font-bold text-[12px] bg-[#12261E] text-[#84CC16] py-3 rounded-[10px] shadow-sm transition-all";
+        btn.className = "quote-month-btn w-12 flex-shrink-0 text-center font-black text-[13px] bg-[#12261E] text-[#84CC16] py-3 rounded-[10px] shadow-sm transition-all";
       }
       calculateQuoteTotal(); 
     }
@@ -1875,13 +1788,13 @@
       mainTabs.forEach(t => {
         const el = document.getElementById(t);
         if(el) {
-          el.className = "w-full py-3.5 rounded-[12px] bg-transparent text-[#1E3A8A] font-black text-[13px] hover:bg-black/5 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent";
+          el.className = "w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent";
         }
       });
       
       const lensTab = document.getElementById('tabLens');
       if(lensTab) {
-          lensTab.className = "w-full py-3.5 rounded-[12px] bg-[#1E3A8A] text-white font-black text-[13px] shadow-md hover:bg-[#172554] transition-all text-center flex flex-col items-center justify-center gap-1 border border-[#172554]";
+          lensTab.className = "w-full py-3.5 rounded-[12px] bg-[#1E3A8A] text-white font-black text-[14px] shadow-md hover:bg-[#172554] transition-all text-center flex flex-col items-center justify-center gap-1 border border-[#172554]";
       }
       
       let activeTabId = '';
@@ -1901,9 +1814,9 @@
         const activeEl = document.getElementById(activeTabId);
         if(activeEl) {
           if (activeTabId === 'tabLens') {
-              activeEl.className = "w-full py-3.5 rounded-[12px] bg-[#84CC16] text-[#1E3A8A] font-black text-[13px] shadow-[0_4px_12px_rgba(132,204,22,0.3)] transition-all text-center flex flex-col items-center justify-center gap-1 border border-[#65A30D]";
+              activeEl.className = "w-full py-3.5 rounded-[12px] bg-[#84CC16] text-[#12261E] font-black text-[14px] shadow-[0_4px_12px_rgba(132,204,22,0.3)] transition-all text-center flex flex-col items-center justify-center gap-1 border border-[#65A30D]";
           } else {
-              activeEl.className = "w-full py-3.5 rounded-[12px] bg-white text-[#1E3A8A] font-black text-[13px] shadow-md transition-all text-center flex flex-col items-center justify-center gap-1 border border-white/50";
+              activeEl.className = "w-full py-3.5 rounded-[12px] bg-white text-[#12261E] font-black text-[14px] shadow-md transition-all text-center flex flex-col items-center justify-center gap-1 border border-white/50";
           }
         }
       }
@@ -2302,7 +2215,7 @@
         alert("✅ 서버 클라우드 저장 완료! 안전하게 링크가 생성되었습니다.");
         editingRecordId = null;
         let genBtn = document.getElementById('btnGenerateReport');
-        if(genBtn) genBtn.innerHTML = '<i data-lucide="send" class="w-5 h-5 stroke-[2.5]"></i> 리포트 발행 및 저장';
+        if(genBtn) genBtn.innerHTML = '<i data-lucide="send" class="w-6 h-6 stroke-[2.5]"></i> 리포트 발행 및 저장';
 
         renderClientView(payloadData, 'admin_preview');
         
@@ -2379,7 +2292,7 @@
         alert("✅ 서버 클라우드 저장 완료! 안전하게 링크가 생성되었습니다.");
         editingRecordId = null;
         let genBtn = document.getElementById('btnGenerateQuote');
-        if(genBtn) genBtn.innerHTML = '<i data-lucide="file-check-2" class="w-5 h-5 stroke-[2.5]"></i> 견적서 발행 및 보관함 저장';
+        if(genBtn) genBtn.innerHTML = '<i data-lucide="file-check-2" class="w-6 h-6 stroke-[2.5]"></i> 견적서 발행 및 보관함 저장';
         
         renderClientView(payloadData, 'admin_preview');
         
@@ -2440,7 +2353,7 @@
       const buttons = document.querySelectorAll('#categoryContainer .cat-btn');
       buttons.forEach(btn => {
           const val = btn.getAttribute('data-val');
-          btn.className = "cat-btn p-4 text-[12px] rounded-[16px] font-semibold text-left bg-white border border-[#EAEBEA] text-[#7A827A] transition-all";
+          btn.className = "cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968] transition-all";
           btn.innerText = "+ " + val;
       });
       
@@ -2454,7 +2367,7 @@
               if(standardVals.includes(cName)) {
                   let btn = Array.from(buttons).find(b => b.getAttribute('data-val') === cName);
                   if(btn) {
-                      btn.className = "cat-btn p-4 text-[12px] rounded-[16px] font-bold text-left bg-[#12261E] text-[#84CC16] shadow-md border border-transparent";
+                      btn.className = "cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-[#12261E] text-[#84CC16] shadow-md border border-transparent";
                       btn.innerText = "✓ " + cName;
                   }
               } else if (cName.startsWith("수목가지치기 (") && cName.endsWith(")")) {
@@ -2474,7 +2387,7 @@
 
       editingRecordId = currentLoadedRecordId;
       let genBtn = document.getElementById('btnGenerateReport');
-      if(genBtn) genBtn.innerHTML = '<i data-lucide="edit" class="w-5 h-5 stroke-[2.5]"></i> 리포트 수정 완료';
+      if(genBtn) genBtn.innerHTML = '<i data-lucide="edit" class="w-6 h-6 stroke-[2.5]"></i> 리포트 수정 완료';
 
       switchView('admin');
     }
@@ -2502,7 +2415,7 @@
          if(descInput) {
              let btn = descInput.parentElement.querySelector('.quote-month-btn');
              if(btn) {
-                 btn.className = "quote-month-btn w-12 flex-shrink-0 text-center font-bold text-[12px] bg-white text-[#7A827A] border border-[#EAEBEA] py-3 rounded-[10px] shadow-sm transition-all";
+                 btn.className = "quote-month-btn w-12 flex-shrink-0 text-center font-black text-[13px] bg-white text-[#4E5968] border border-[#EAEBEA] py-3 rounded-[10px] shadow-sm transition-all";
              }
              descInput.value = '';
              document.getElementById(`quotePrice_${i}`).value = '';
@@ -2515,7 +2428,7 @@
              if(!descInput) continue;
              let btn = descInput.parentElement.querySelector('.quote-month-btn');
              if(btn && btn.innerText === savedItem.m) {
-                 btn.className = "quote-month-btn w-12 flex-shrink-0 text-center font-bold text-[12px] bg-[#12261E] text-[#84CC16] py-3 rounded-[10px] shadow-sm transition-all";
+                 btn.className = "quote-month-btn w-12 flex-shrink-0 text-center font-black text-[13px] bg-[#12261E] text-[#84CC16] py-3 rounded-[10px] shadow-sm transition-all";
                  descInput.value = savedItem.d;
                  document.getElementById(`quotePrice_${i}`).value = savedItem.p > 0 ? savedItem.p.toLocaleString('ko-KR') : '';
 
@@ -2523,9 +2436,9 @@
                  if(tags) {
                      tags.forEach(t => {
                          if(savedItem.d.includes(t.innerText)) {
-                             t.className = "single-tag-btn px-2.5 py-1.5 text-[11px] rounded-[8px] font-bold bg-[#12261E] text-[#84CC16] transition-colors";
+                             t.className = "single-tag-btn px-2.5 py-1.5 text-[11px] rounded-[8px] font-black bg-[#12261E] text-[#84CC16] transition-colors";
                          } else {
-                             t.className = "single-tag-btn px-2.5 py-1.5 text-[11px] rounded-[8px] font-medium bg-white border border-[#EAEBEA] text-[#7A827A] transition-colors";
+                             t.className = "single-tag-btn px-2.5 py-1.5 text-[11px] rounded-[8px] font-black bg-white border border-[#EAEBEA] text-[#4E5968] transition-colors";
                          }
                      });
                  }
@@ -2543,7 +2456,7 @@
 
       editingRecordId = currentLoadedRecordId;
       let genBtn = document.getElementById('btnGenerateQuote');
-      if(genBtn) genBtn.innerHTML = '<i data-lucide="edit" class="w-5 h-5 stroke-[2.5]"></i> 견적서 수정 완료';
+      if(genBtn) genBtn.innerHTML = '<i data-lucide="edit" class="w-6 h-6 stroke-[2.5]"></i> 견적서 수정 완료';
 
       calculateQuoteTotal();
       switchView('quote');
@@ -2581,7 +2494,7 @@
       if(addrEl) addrEl.innerText = displayAddress;
       
       if(data.isQuote) {
-        document.getElementById('docTypeLabel').innerHTML = `<i data-lucide="calculator" class="w-4 h-4 text-[#84CC16]"></i> Prestige Quote`;
+        document.getElementById('docTypeLabel').innerHTML = `<i data-lucide="calculator" class="w-5 h-5 text-[#84CC16]"></i> Prestige Quote`;
         document.getElementById('docStatusLabel').innerText = "견적서";
         document.getElementById('reportContentBlock').classList.add('hidden');
         document.getElementById('quoteContentBlock').classList.remove('hidden');
@@ -2603,12 +2516,12 @@
 
         let mHtml = "";
         (data.m || []).forEach(item => {
-          let descHtml = `<div class="text-[12px] font-extrabold text-[#12261E] bg-[#F2FBEC] border border-[#84CC16]/30 px-3 py-2 rounded-[10px] break-keep whitespace-pre-wrap leading-snug w-full shadow-sm">${item.d}</div>`;
+          let descHtml = `<div class="text-[13px] font-black text-[#12261E] bg-[#F2FBEC] border border-[#84CC16]/30 px-3 py-2 rounded-[10px] break-keep whitespace-pre-wrap leading-snug w-full shadow-sm">${item.d}</div>`;
           
           if (item.m === '01' && data.r.includes('단건')) {
              let tags = item.d.split(', ').filter(t => t.trim() !== '');
              if (tags.length > 0) {
-                 descHtml = `<div class="flex flex-wrap gap-1.5 mt-0.5">` + tags.map(tag => `<span class="px-2.5 py-1.5 bg-[#F2FBEC] border border-[#84CC16]/40 text-[#65A30D] text-[11px] font-extrabold rounded-[8px] shadow-sm">${tag.trim()}</span>`).join('') + `</div>`;
+                 descHtml = `<div class="flex flex-wrap gap-1.5 mt-0.5">` + tags.map(tag => `<span class="px-2.5 py-1.5 bg-[#F2FBEC] border border-[#84CC16]/40 text-[#65A30D] text-[12px] font-black rounded-[8px] shadow-sm">${tag.trim()}</span>`).join('') + `</div>`;
              }
           } else {
              let isParsed = false;
@@ -2628,16 +2541,16 @@
                          
                          descHtml = `
                            <div class="flex flex-col gap-1.5 w-full pr-1">
-                             <div class="w-fit bg-[#E8F5E9] border border-[#84CC16]/40 text-[#2E7D32] text-[12px] font-black px-2 py-1 rounded-[6px] shadow-sm leading-tight break-keep">
+                             <div class="w-fit bg-[#E8F5E9] border border-[#84CC16]/40 text-[#2E7D32] text-[13px] font-black px-2.5 py-1 rounded-[6px] shadow-sm leading-tight break-keep">
                                ${tName}
                              </div>
                              <div class="flex flex-col gap-1 mt-0.5">
-                               <div class="flex items-start gap-1.5 text-[11px] font-extrabold text-[#4E5968]">
-                                 <span class="bg-[#F4F5F4] text-[#7A827A] px-1.5 py-0.5 rounded-[4px] border border-[#EAEBEA] text-[9px] flex-shrink-0 mt-px">규격/면적</span> 
+                               <div class="flex items-start gap-1.5 text-[12px] font-black text-[#4E5968]">
+                                 <span class="bg-[#F4F5F4] text-[#4E5968] px-1.5 py-0.5 rounded-[4px] border border-[#EAEBEA] text-[10px] flex-shrink-0 mt-px">규격/면적</span> 
                                  <span class="leading-snug break-keep">${tSpec}</span>
                                </div>
-                               <div class="flex items-start gap-1.5 text-[11px] font-medium text-[#8B95A1]">
-                                 <span class="bg-[#F4F5F4] text-[#7A827A] px-1.5 py-0.5 rounded-[4px] border border-[#EAEBEA] text-[9px] flex-shrink-0 mt-px">비고</span> 
+                               <div class="flex items-start gap-1.5 text-[12px] font-bold text-[#4E5968]">
+                                 <span class="bg-[#F4F5F4] text-[#4E5968] px-1.5 py-0.5 rounded-[4px] border border-[#EAEBEA] text-[10px] flex-shrink-0 mt-px">비고</span> 
                                  <span class="leading-snug break-keep">${tNote}</span>
                                </div>
                              </div>
@@ -2651,28 +2564,28 @@
 
           mHtml += `<div class="flex justify-between items-center bg-white p-3 rounded-[14px] border border-[#EAEBEA] shadow-sm mb-2">
             <div class="flex items-center gap-3 w-[72%]">
-              <span class="w-10 text-center font-bold text-[12px] bg-[#12261E] text-white py-1.5 rounded-[8px] flex-shrink-0">${item.m}</span>
+              <span class="w-10 text-center font-black text-[13px] bg-[#12261E] text-white py-1.5 rounded-[8px] flex-shrink-0">${item.m}</span>
               <div class="flex-1 w-full">
                 ${descHtml}
               </div>
             </div>
-            <span class="text-[14px] font-black text-[#1A1D1A] flex-shrink-0 whitespace-nowrap text-right">${item.p.toLocaleString('ko-KR')}원</span>
+            <span class="text-[15px] font-black text-[#1A1D1A] flex-shrink-0 whitespace-nowrap text-right">${item.p.toLocaleString('ko-KR')}원</span>
           </div>`;
         });
         document.getElementById('viewQuoteMonths').innerHTML = mHtml;
         
-        document.getElementById('viewQuoteSubtotal').className = "text-[14px] text-[#1A1D1A] font-extrabold";
+        document.getElementById('viewQuoteSubtotal').className = "text-[15px] text-[#1A1D1A] font-black";
         document.getElementById('viewQuoteSubtotal').innerText = (data.s || 0).toLocaleString('ko-KR') + "원";
         
         document.getElementById('viewQuoteVatLabel').innerText = "부가가치세";
-        document.getElementById('viewQuoteVat').innerHTML = '<span class="text-[#3B82F6] font-extrabold">부가세 별도(요청시)</span>';
+        document.getElementById('viewQuoteVat').innerHTML = '<span class="text-[#3B82F6] font-black">부가세 별도(요청시)</span>';
         document.getElementById('viewQuoteGrandTotal').innerText = (data.s || 0).toLocaleString('ko-KR') + "원";
 
         if(data.memo && data.memo.trim() !== '') {
             document.getElementById('viewQuoteMemoBlock').innerHTML = `
                <div class="mt-4 bg-[#FFFDF9] p-5 rounded-[20px] border border-[#C5A880]/30 shadow-sm text-left">
-                 <h2 class="text-[14px] font-extrabold text-[#12261E] flex items-center gap-1.5 mb-2"><i data-lucide="info" class="w-4 h-4 text-[#C5A880]"></i> 참고 및 특이사항</h2>
-                 <p class="text-[14px] leading-[1.8] text-[#12261E] font-bold whitespace-pre-wrap">${data.memo}</p>
+                 <h2 class="text-[15px] font-black text-[#12261E] flex items-center gap-1.5 mb-2"><i data-lucide="info" class="w-5 h-5 text-[#C5A880]"></i> 참고 및 특이사항</h2>
+                 <p class="text-[15px] leading-[1.8] text-[#12261E] font-black whitespace-pre-wrap">${data.memo}</p>
                </div>
             `;
         } else {
@@ -2680,7 +2593,7 @@
         }
 
       } else {
-        document.getElementById('docTypeLabel').innerHTML = `<i data-lucide="shield-check" class="w-4 h-4 text-[#84CC16]"></i> Prestige Care`;
+        document.getElementById('docTypeLabel').innerHTML = `<i data-lucide="shield-check" class="w-5 h-5 text-[#84CC16]"></i> Prestige Care`;
         document.getElementById('docStatusLabel').innerText = "완료";
         document.getElementById('quoteContentBlock').classList.add('hidden');
         document.getElementById('reportContentBlock').classList.remove('hidden');
@@ -2712,13 +2625,13 @@
 
         document.getElementById('viewDiagnosis').innerText = data.d || '-';
         document.getElementById('viewCategories').innerHTML = '';
-        if(data.cat) data.cat.split(',').forEach(cat => { document.getElementById('viewCategories').insertAdjacentHTML('beforeend', `<span class="text-[11px] bg-[#12261E] text-[#84CC16] px-3 py-1.5 rounded-[10px] font-bold">${cat}</span>`); });
+        if(data.cat) data.cat.split(',').forEach(cat => { document.getElementById('viewCategories').insertAdjacentHTML('beforeend', `<span class="text-[12px] bg-[#12261E] text-[#84CC16] px-3 py-1.5 rounded-[10px] font-black">${cat}</span>`); });
         
         const renderGallery = (containerId, urls, typeCode) => {
           const container = document.getElementById(containerId); container.innerHTML = '';
           const arr = Array.isArray(urls) ? urls : (typeof urls === 'string' && urls ? urls.split(',') : []);
           if(typeCode === 'b') currentGalleryB = arr; else currentGalleryA = arr;
-          if (arr.length === 0) { container.innerHTML = `<div class="col-span-2 text-[11px] text-[#A3A8A3] py-3 text-center bg-white/50 rounded-[16px] border border-dashed border-[#EAEBEA]">등록된 사진 없음</div>`; } 
+          if (arr.length === 0) { container.innerHTML = `<div class="col-span-2 text-[12px] text-[#4E5968] font-bold py-3 text-center bg-white/50 rounded-[16px] border border-dashed border-[#EAEBEA]">등록된 사진 없음</div>`; } 
           else {
             arr.forEach((src, idx) => {
               if(!src) return; const bd = typeCode==='b' ? 'border-[#EAEBEA]' : 'border-[#84CC16]/40';
@@ -2841,11 +2754,11 @@
     function setClientFilter(type) {
       currentClientFilter = type;
       if(type === '정기 관리') {
-        document.getElementById('btnFilterRegular').className = "flex-1 py-2 rounded-[10px] bg-white shadow-sm text-[#12261E] font-bold text-[12px] transition-all border border-[#EAEBEA]";
-        document.getElementById('btnFilterSingle').className = "flex-1 py-2 rounded-[10px] text-[#7A827A] font-semibold text-[12px] hover:text-[#12261E] transition-all border border-transparent";
+        document.getElementById('btnFilterRegular').className = "flex-1 py-3 rounded-[12px] bg-white shadow-sm text-[#12261E] font-black text-[14px] transition-all border border-[#EAEBEA]";
+        document.getElementById('btnFilterSingle').className = "flex-1 py-3 rounded-[12px] text-[#4E5968] font-black text-[14px] hover:text-[#12261E] transition-all border border-transparent";
       } else {
-        document.getElementById('btnFilterRegular').className = "flex-1 py-2 rounded-[10px] text-[#7A827A] font-semibold text-[12px] hover:text-[#12261E] transition-all border border-transparent";
-        document.getElementById('btnFilterSingle').className = "flex-1 py-2 rounded-[10px] bg-white shadow-sm text-[#12261E] font-black text-[13px] shadow-sm transition-all text-center border border-[#EAEBEA]";
+        document.getElementById('btnFilterRegular').className = "flex-1 py-3 rounded-[12px] text-[#4E5968] font-black text-[14px] hover:text-[#12261E] transition-all border border-transparent";
+        document.getElementById('btnFilterSingle').className = "flex-1 py-3 rounded-[12px] bg-white shadow-sm text-[#12261E] font-black text-[14px] shadow-sm transition-all text-center border border-[#EAEBEA]";
       }
       renderClientsList();
     }
@@ -2861,16 +2774,16 @@
       container.innerHTML = '';
       
       if(filteredClients.length === 0) {
-        container.innerHTML = `<div class="p-6 text-center text-[#8B95A1] text-xs bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA]">등록된 고객이 없습니다.</div>`;
+        container.innerHTML = `<div class="p-6 text-center text-[#4E5968] text-[13px] font-bold bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA]">등록된 고객이 없습니다.</div>`;
       } else {
         filteredClients.forEach(c => {
           const originalIdx = clients.indexOf(c); 
-          const div = document.createElement('div'); div.className = "bg-white p-4 rounded-[18px] border border-[#EAEBEA] flex flex-col gap-3 shadow-sm";
+          const div = document.createElement('div'); div.className = "bg-white p-5 rounded-[18px] border border-[#EAEBEA] flex flex-col gap-3 shadow-sm hover:border-[#84CC16] transition-all";
           
-          let addrHtml = c.address ? `<div class="text-[11px] text-[#A3A8A3] flex items-center gap-1 font-medium mt-0.5"><i data-lucide="map-pin" class="w-3 h-3"></i> ${c.address}</div>` : '';
+          let addrHtml = c.address ? `<div class="text-[12px] text-[#4E5968] flex items-center gap-1 font-bold mt-1"><i data-lucide="map-pin" class="w-3.5 h-3.5"></i> ${c.address}</div>` : '';
           
-          div.innerHTML = `<div class="flex items-center justify-between"><div><div class="flex items-center gap-1.5"><span class="text-[9px] bg-[#12261E] text-[#84CC16] px-2 py-0.5 rounded font-extrabold uppercase">${c.type}</span><strong class="text-[13px] font-bold text-[#1A1D1A]">${c.name}</strong></div><div class="text-[11px] text-[#8B95A1] mt-1.5 flex items-center gap-1 font-medium"><i data-lucide="phone" class="w-3 h-3"></i> ${c.phone}</div>${addrHtml}</div><div class="flex gap-1.5"><button onclick="editClient(${originalIdx})" class="p-2 text-[#A3A8A3] hover:text-[#84CC16]"><i data-lucide="edit-2" class="w-4 h-4"></i></button><button onclick="deleteClient(${originalIdx})" class="p-2 text-[#A3A8A3] hover:text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></div>
-          <div class="grid grid-cols-2 gap-2 border-t border-[#F4F5F4] pt-2 mt-1"><button onclick="selectAndGoAdmin('${c.name}', '${c.phone}')" class="py-2 bg-[#F9F9F8] hover:bg-[#EAEBEA] text-[#12261E] rounded-[10px] text-[11px] font-bold">새 일지/견적 쓰기</button><button onclick="showHistory('${c.name}')" class="py-2 bg-[#E8F5E9] text-[#12261E] rounded-[10px] text-[11px] font-bold flex items-center justify-center gap-1"><i data-lucide="history" class="w-3.5 h-3.5"></i> 현장 일지 보기</button></div>`;
+          div.innerHTML = `<div class="flex items-center justify-between"><div><div class="flex items-center gap-1.5"><span class="text-[10px] bg-[#12261E] text-[#84CC16] px-2 py-0.5 rounded font-black uppercase">${c.type}</span><strong class="text-[15px] font-black text-[#1A1D1A]">${c.name}</strong></div><div class="text-[13px] text-[#4E5968] mt-2 flex items-center gap-1 font-bold"><i data-lucide="phone" class="w-3.5 h-3.5 text-blue-500"></i> ${formatPhoneToLink(c.phone)}</div>${addrHtml}</div><div class="flex gap-1.5"><button onclick="editClient(${originalIdx})" class="p-2.5 text-[#A3A8A3] hover:text-[#84CC16] bg-gray-50 rounded-xl"><i data-lucide="edit-2" class="w-4 h-4"></i></button><button onclick="deleteClient(${originalIdx})" class="p-2.5 text-[#A3A8A3] hover:text-red-500 bg-gray-50 rounded-xl"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></div>
+          <div class="grid grid-cols-2 gap-2 border-t border-[#F4F5F4] pt-3 mt-1"><button onclick="selectAndGoAdmin('${c.name}', '${c.phone}')" class="py-2.5 bg-[#F9F9F8] hover:bg-[#EAEBEA] text-[#12261E] rounded-[10px] text-[12px] font-black">새 일지/견적 쓰기</button><button onclick="showHistory('${c.name}')" class="py-2.5 bg-[#E8F5E9] text-[#12261E] rounded-[10px] text-[12px] font-black flex items-center justify-center gap-1"><i data-lucide="history" class="w-4 h-4"></i> 현장 일지 보기</button></div>`;
           container.appendChild(div);
         });
       }
@@ -2884,26 +2797,26 @@
       container.innerHTML = '';
       
       if(quoteRecords.length === 0) {
-        container.innerHTML = `<div class="p-6 text-center text-[#8B95A1] text-xs bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA]">발행된 견적서가 없습니다.</div>`;
+        container.innerHTML = `<div class="p-6 text-center text-[#4E5968] text-[13px] font-bold bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA]">발행된 견적서가 없습니다.</div>`;
       } else {
         quoteRecords.forEach(r => {
           const div = document.createElement('div');
-          div.className = "bg-white p-4 rounded-[16px] border border-[#EAEBEA] shadow-sm flex flex-col gap-2 cursor-pointer hover:border-[#84CC16] transition-all";
+          div.className = "bg-white p-5 rounded-[16px] border border-[#EAEBEA] shadow-sm flex flex-col gap-2 cursor-pointer hover:border-[#84CC16] transition-all";
           div.onclick = () => loadHistoryRecord(r.id, true, r);
           div.innerHTML = `
             <div class="flex justify-between items-center">
               <div class="flex items-center gap-2">
-                <span class="bg-[#3B82F6] text-white text-[9px] font-black px-2 py-0.5 rounded uppercase">견적</span>
-                <span class="text-[13px] font-bold text-[#1A1D1A]">${r.clientName}</span>
+                <span class="bg-[#3B82F6] text-white text-[10px] font-black px-2 py-0.5 rounded uppercase">견적</span>
+                <span class="text-[15px] font-black text-[#1A1D1A]">${r.clientName}</span>
               </div>
               <div class="flex items-center gap-2">
-                <span class="text-[11px] font-bold text-[#A3A8A3]">${r.date}</span>
-                <button onclick="deleteRecord(event, '${r.id}', true)" class="p-1.5 text-[#A3A8A3] hover:text-red-500 bg-[#F4F5F4] hover:bg-red-50 rounded-lg transition-all"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                <span class="text-[12px] font-bold text-[#4E5968]">${r.date}</span>
+                <button onclick="deleteRecord(event, '${r.id}', true)" class="p-2 text-[#A3A8A3] hover:text-red-500 bg-[#F4F5F4] hover:bg-red-50 rounded-lg transition-all"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
               </div>
             </div>
             <div class="flex justify-between items-center mt-1">
-              <span class="text-[11px] font-medium text-[#7A827A] truncate">${r.round}</span>
-              <span class="text-[12px] font-black text-[#12261E]">${r.payload.t.toLocaleString('ko-KR')}원 <i data-lucide="chevron-right" class="w-3.5 h-3.5 inline-block text-[#A3A8A3] -mt-0.5"></i></span>
+              <span class="text-[12px] font-bold text-[#4E5968] truncate">${r.round}</span>
+              <span class="text-[14px] font-black text-[#12261E]">${r.payload.t.toLocaleString('ko-KR')}원 <i data-lucide="chevron-right" class="w-4 h-4 inline-block text-[#A3A8A3] -mt-0.5"></i></span>
             </div>
           `;
           container.appendChild(div);
@@ -2916,18 +2829,18 @@
       const clientRecords = records.filter(r => r.clientName === clientName && r.type !== 'quote').sort((a,b) => b.id - a.id);
       document.getElementById('historyClientName').innerText = clientName;
       const container = document.getElementById('historyListContainer'); container.innerHTML = '';
-      if(clientRecords.length === 0) container.innerHTML = `<div class="p-6 text-center text-[#8B95A1] text-xs bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA]">저장된 일지 기록이 없습니다.</div>`;
+      if(clientRecords.length === 0) container.innerHTML = `<div class="p-6 text-center text-[#4E5968] text-[13px] font-bold bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA]">저장된 일지 기록이 없습니다.</div>`;
       else clientRecords.forEach(r => {
-        const div = document.createElement('div'); div.className = "bg-[#F9F9F8] p-4 rounded-[16px] border border-[#EAEBEA] flex items-center justify-between cursor-pointer hover:border-[#84CC16] transition-all"; 
+        const div = document.createElement('div'); div.className = "bg-[#F9F9F8] p-5 rounded-[16px] border border-[#EAEBEA] flex items-center justify-between cursor-pointer hover:border-[#84CC16] transition-all"; 
         div.onclick = () => loadHistoryRecord(r.id, false, r);
         div.innerHTML = `
           <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-1.5 mb-1"><span class="text-[9px] px-1.5 py-0.5 rounded font-extrabold bg-[#12261E] text-[#84CC16]">일지</span><span class="text-[12px] font-black text-[#12261E]">${r.date}</span></div>
-            <div class="text-[11px] font-medium text-[#7A827A] truncate max-w-[200px]">${r.round}</div>
+            <div class="flex items-center gap-1.5 mb-1.5"><span class="text-[10px] px-2 py-0.5 rounded font-black bg-[#12261E] text-[#84CC16]">일지</span><span class="text-[13px] font-black text-[#12261E]">${r.date}</span></div>
+            <div class="text-[12px] font-bold text-[#4E5968] truncate max-w-[200px]">${r.round}</div>
           </div>
           <div class="flex items-center gap-2 flex-shrink-0">
-            <button onclick="deleteRecord(event, '${r.id}', false)" class="p-1.5 text-[#A3A8A3] hover:text-red-500 bg-white hover:bg-red-50 border border-[#EAEBEA] hover:border-red-200 rounded-lg transition-all"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
-            <i data-lucide="chevron-right" class="w-4 h-4 text-[#A3A8A3]"></i>
+            <button onclick="deleteRecord(event, '${r.id}', false)" class="p-2 text-[#A3A8A3] hover:text-red-500 bg-white hover:bg-red-50 border border-[#EAEBEA] hover:border-red-200 rounded-lg transition-all"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+            <i data-lucide="chevron-right" class="w-5 h-5 text-[#A3A8A3]"></i>
           </div>
         `;
         container.appendChild(div);
@@ -2956,7 +2869,7 @@
         document.getElementById('newClientPhone').value = c.phone || ''; 
         if(document.getElementById('newClientAddress')) document.getElementById('newClientAddress').value = c.address || '';
         document.getElementById('newClientType').value = c.type; 
-        document.getElementById('clientFormTitle').innerHTML = `<i data-lucide="edit-3" class="w-4 h-4 text-[#84CC16]"></i> <span class="text-[#12261E]">정보 수정</span>`; 
+        document.getElementById('clientFormTitle').innerHTML = `<i data-lucide="edit-3" class="w-5 h-5 text-[#84CC16]"></i> <span class="text-[#12261E]">정보 수정</span>`; 
         document.getElementById('saveClientBtn').innerText = "수정 완료"; 
         document.getElementById('cancelEditBtn').classList.remove('hidden'); 
         lucide.createIcons(); window.scrollTo({ top: 0, behavior: 'smooth' }); 
@@ -2968,7 +2881,7 @@
         document.getElementById('newClientPhone').value = ''; 
         if(document.getElementById('newClientAddress')) document.getElementById('newClientAddress').value = '';
         document.getElementById('newClientType').value = '정기 관리'; 
-        document.getElementById('clientFormTitle').innerHTML = `<i data-lucide="plus" class="w-4 h-4 text-[#84CC16]"></i> <span class="text-[#12261E]">신규 등록</span>`; 
+        document.getElementById('clientFormTitle').innerHTML = `<i data-lucide="plus" class="w-5 h-5 text-[#84CC16]"></i> <span class="text-[#12261E]">신규 등록</span>`; 
         document.getElementById('saveClientBtn').innerText = "데이터 저장"; 
         document.getElementById('cancelEditBtn').classList.add('hidden'); 
         lucide.createIcons(); 
@@ -3005,7 +2918,7 @@
         } 
     }
 
-    function toggleBadge(btn) { const val = btn.getAttribute('data-val'); if (btn.classList.contains('bg-[#12261E]')) { btn.className = "cat-btn p-4 text-[12px] rounded-[16px] font-semibold text-left bg-white border border-[#EAEBEA] text-[#7A827A] transition-all"; btn.innerText = "+ " + val; } else { btn.className = "cat-btn p-4 text-[12px] rounded-[16px] font-bold text-left bg-[#12261E] text-[#84CC16] shadow-md border border-transparent"; btn.innerText = "✓ " + val; } }
+    function toggleBadge(btn) { const val = btn.getAttribute('data-val'); if (btn.classList.contains('bg-[#12261E]')) { btn.className = "cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968] transition-all"; btn.innerText = "+ " + val; } else { btn.className = "cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-[#12261E] text-[#84CC16] shadow-md border border-transparent"; btn.innerText = "✓ " + val; } }
     
     function backupData() { const data = { clients: clients, records: records, materials: materialsData }; const blob = new Blob([JSON.stringify(data)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; const dateStr = new Date().toISOString().slice(0,10).replace(/-/g, ''); a.download = `조경노트_백업_${dateStr}.json`; a.click(); URL.revokeObjectURL(url); }
     
