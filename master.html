@@ -135,7 +135,7 @@
         </button>
       </div>
       
-      <!-- 🔥 신규 핀셋: 업체 통합 검색창 -->
+      <!-- 업체 통합 검색창 -->
       <div class="flex items-center gap-3">
           <div class="relative w-full max-w-md">
               <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none"><i data-lucide="search" class="w-5 h-5 text-[#94A3B8]"></i></div>
@@ -246,7 +246,7 @@
     <img id="licenseImg" src="" class="max-w-full max-h-[75vh] object-contain transition-transform duration-300" onclick="event.stopPropagation()">
   </div>
 
-  <!-- 업체 상세 데이터 조회 팝업 (🔥 핀셋 3: 거래처 DB 변경) -->
+  <!-- 업체 상세 데이터 조회 팝업 -->
   <div id="companyDataModal" class="hidden fixed inset-0 z-[6000] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200" onclick="closeCompanyDataModal()">
     <div class="bg-[#0F172A] w-full max-w-4xl rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-white/10 max-h-[90vh]" id="companyDataBox" onclick="event.stopPropagation()">
       <div class="p-5 border-b border-white/10 flex justify-between items-center bg-[#1E293B]">
@@ -263,11 +263,10 @@
             <h4 class="text-white font-bold text-[16px] mb-3 flex items-center gap-2"><i data-lucide="file-text" class="w-5 h-5 text-[#3B82F6]"></i> 최근 작성한 문서 내역</h4>
             <div class="bg-[#1E293B] border border-white/5 rounded-[16px] overflow-hidden"><div class="max-h-[250px] overflow-y-auto scrollbar-hide divide-y divide-white/5" id="modalDocList"><div class="p-5 text-center text-[#94A3B8] text-[13px] font-bold">데이터를 불러오는 중입니다...</div></div></div>
          </div>
-         <!-- 🔥 핀셋 3: 거래처 DB -->
+         
          <div>
             <h4 class="text-white font-bold text-[16px] mb-3 flex items-center gap-2"><i data-lucide="building-2" class="w-5 h-5 text-[#84CC16]"></i> 거래처 DB</h4>
             <div class="bg-[#1E293B] border border-white/5 rounded-[16px] overflow-hidden">
-                <!-- 스크롤 영역을 max-h-[350px]로 넉넉하게 확장하여 전체 보기 쉽게 함 -->
                 <div class="max-h-[350px] overflow-y-auto scrollbar-hide divide-y divide-white/5" id="modalClientList">
                     <div class="p-5 text-center text-[#94A3B8] text-[13px] font-bold">데이터를 불러오는 중입니다...</div>
                 </div>
@@ -275,6 +274,24 @@
          </div>
       </div>
       <div class="p-4 border-t border-white/10 bg-[#0F172A]"><button onclick="closeCompanyDataModal()" class="w-full py-4 bg-white/10 text-white rounded-[14px] font-black text-[15px] hover:bg-white/20 transition-colors">창 닫기</button></div>
+    </div>
+  </div>
+
+  <!-- 🔥 신규 추가: 업체별 현장 내역 상세 조회 팝업 (이중 팝업) 🔥 -->
+  <div id="clientHistoryModal" class="hidden fixed inset-0 z-[7000] bg-black/90 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200" onclick="closeClientHistoryModal()">
+    <div class="bg-[#0F172A] w-full max-w-2xl rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-white/10 max-h-[85vh]" id="clientHistoryBox" onclick="event.stopPropagation()">
+      <div class="p-5 border-b border-white/10 flex justify-between items-center bg-[#1E293B]">
+        <h3 class="text-[18px] font-black text-white flex items-center gap-2">
+          <i data-lucide="folder-clock" class="w-5 h-5 text-[#3B82F6]"></i> <span id="historyModalClientName" class="text-[#3B82F6]">고객명</span> <span class="text-white">현장 상세 내역</span>
+        </h3>
+        <button onclick="closeClientHistoryModal()" class="text-[#94A3B8] hover:text-white p-1 transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+      </div>
+      <div class="flex-1 overflow-y-auto p-5 space-y-3 scrollbar-hide" id="historyModalListContainer">
+          <!-- 상세 히스토리 동적 렌더링 -->
+      </div>
+      <div class="p-4 border-t border-white/10 bg-[#0F172A]">
+          <button onclick="closeClientHistoryModal()" class="w-full py-4 bg-white/10 text-white rounded-[14px] font-black text-[15px] hover:bg-white/20 transition-colors">닫기</button>
+      </div>
     </div>
   </div>
 
@@ -352,7 +369,6 @@
     const DB_BASE_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/accounts";
     const SETTINGS_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/settings";
     
-    // 🔥 신규 핀셋 2: 체크박스 글로벌 상태 저장소
     let globalCheckedCompanies = new Set();
     
     let currentActiveAccounts = [];
@@ -362,6 +378,9 @@
     let autoRefreshTimer = null;
     let masterRealId = "admin";
     let masterRealPw = "1234";
+
+    // 🔥 신규: 현재 보고 있는 업체의 데이터 저장소 (내역 열람 기능용)
+    let currentCompanyRecords = [];
 
     async function initMasterSettings() {
         try {
@@ -479,7 +498,6 @@
             const pendingAccounts = allAccounts.filter(acc => acc.status === 'pending');
             const activeAccounts = allAccounts.filter(acc => acc.status === 'active' || acc.status === 'suspended');
             
-            // 전역 변수 업데이트
             currentActiveAccounts = activeAccounts;
 
             let hasNew = false;
@@ -499,7 +517,6 @@
             updateDashboardStats(activeAccounts.length, pendingAccounts.length);
             renderPendingList(pendingAccounts);
             
-            // 🔥 핀셋 1: 검색어를 반영하여 액티브 리스트 새로고침
             renderActiveList();
 
         } catch (e) { console.error("서버 통신 실패:", e); }
@@ -605,7 +622,6 @@
         });
     }
 
-    // 🔥 개별 체크 제어용 함수
     function handleCompanyCheck(checkbox, accId) {
         if(checkbox.checked) {
             globalCheckedCompanies.add(accId);
@@ -614,14 +630,12 @@
         }
     }
 
-    // 🔥 핀셋 1: 통합 검색 + 글로벌 메모리 로직 연동
     function renderActiveList() {
         const tbody = document.getElementById('activeCompaniesTbody');
         tbody.innerHTML = '';
         
         const query = (document.getElementById('masterCompanySearch')?.value || '').toLowerCase().trim();
 
-        // 검색 필터링 (전화번호 하이픈 무시 로직 포함)
         const filteredAccounts = currentActiveAccounts.filter(acc => {
             if(!query) return true;
             
@@ -651,7 +665,6 @@
             const textStyle = isSuspended ? "text-white/40" : "text-white";
             const idStyle = isSuspended ? "text-[#94A3B8]/40" : "text-[#94A3B8]";
             
-            // 🔥 글로벌 메모리에서 체크 상태 확인 후 복원
             const isChecked = globalCheckedCompanies.has(acc.id) ? 'checked' : '';
 
             tr.innerHTML = `
@@ -681,12 +694,13 @@
             tbody.appendChild(tr);
         });
         
+        document.querySelectorAll('.company-check').forEach(cb => {
+            if(checkedIds && checkedIds.includes(cb.value)) cb.checked = true;
+        });
+        
         lucide.createIcons();
     }
 
-    // ==========================================
-    // 타겟팅 팝업 발송 로직 (글로벌 메모리 연동)
-    // ==========================================
     function toggleAllCompanies() {
         const isChecked = document.getElementById('selectAllCompanies').checked;
         const checkboxes = document.querySelectorAll('.company-check');
@@ -698,18 +712,17 @@
     }
 
     function getSelectedCompanies() {
-        // 🔥 화면에 있는 체크박스가 아니라 글로벌 메모리에서 추출 (검색으로 가려져도 발송됨)
         return Array.from(globalCheckedCompanies);
     }
 
     function openTargetNoticeModal() {
-        const selectedIds = getSelectedCompanies();
+        currentTargetNoticeIds = getSelectedCompanies();
         
-        if (selectedIds.length === 0) {
+        if (currentTargetNoticeIds.length === 0) {
             alert("공지/팝업을 전송할 업체를 목록에서 먼저 체크해 주세요.");
             return;
         }
-        document.getElementById('targetNoticeCount').innerText = selectedIds.length;
+        document.getElementById('targetNoticeCount').innerText = currentTargetNoticeIds.length;
         document.getElementById('targetNoticeText').value = '';
         
         const modal = document.getElementById('targetNoticeModal');
@@ -724,7 +737,7 @@
     }
 
     async function sendTargetNotice() {
-        const selectedIds = getSelectedCompanies();
+        const selectedIds = currentTargetNoticeIds; 
         const msg = document.getElementById('targetNoticeText').value.trim();
         
         if (!msg) return alert("전송할 메시지 내용을 입력해 주세요.");
@@ -744,10 +757,9 @@
             alert(`✅ ${selectedIds.length}개 업체로 팝업 전송이 완료되었습니다!\n(해당 업체가 다음에 앱을 켤 때 팝업이 노출됩니다)`);
             closeTargetNoticeModal();
             
-            // 🔥 발송 성공 후 글로벌 메모리 싹 비우고 화면 리셋
             globalCheckedCompanies.clear();
             document.getElementById('selectAllCompanies').checked = false;
-            renderActiveList(); // 체크 풀린 상태로 재렌더링
+            renderActiveList();
 
         } catch (e) {
             alert("전송 중 서버 오류가 발생했습니다.");
@@ -755,9 +767,6 @@
         }
     }
 
-    // ==========================================
-    // 업체 정보 강제 수정 로직
-    // ==========================================
     function openEditCompanyModal(id) {
         const acc = allAccounts.find(a => a.id === id);
         if(!acc) return;
@@ -845,9 +854,6 @@
     }
 
 
-    // ==========================================
-    // DB 기타 통제 API 액션
-    // ==========================================
     async function approveAccount(id) {
         if(!confirm(`해당 업체의 조경노트 PRO 플랫폼 이용을 최종 승인하시겠습니까?`)) return;
         try {
@@ -976,6 +982,9 @@
             const clients = data && data.clients ? data.clients : [];
             const records = data && data.records ? data.records : [];
             
+            // 🔥 신규 핀셋 1: 글로벌 메모리에 레코드 보관 (상세 열람용)
+            currentCompanyRecords = records;
+            
             const reports = records.filter(r => r.type === 'report');
             const quotes = records.filter(r => r.type === 'quote');
             
@@ -1012,7 +1021,7 @@
                 document.getElementById('modalDocList').innerHTML = docHtml;
             }
             
-            // 🔥 핀셋 3: 거래처 DB 상세 리스트 뷰어로 정돈
+            // 🔥 핀셋 2: 거래처 클릭 시 상세 내역 조회 (이중 팝업) 연동
             if(clients.length === 0) {
                 document.getElementById('modalClientList').innerHTML = '<div class="p-6 text-center text-[#94A3B8] text-[13px] font-bold border-t border-white/5">등록된 거래처가 없습니다.</div>';
             } else {
@@ -1020,15 +1029,18 @@
                 const sortedClients = [...clients].sort((a,b) => a.name.localeCompare(b.name));
                 sortedClients.forEach(c => {
                     clientHtml += `
-                        <div class="p-4 hover:bg-white/5 transition-colors flex flex-col gap-1.5">
-                            <div class="text-white text-[15px] font-black flex items-center gap-2">
-                                <span class="bg-[#F59E0B]/20 text-[#F59E0B] px-2 py-0.5 rounded-md text-[10px] font-black shrink-0">${c.type}</span>
-                                <span class="truncate">${c.name}</span>
+                        <div class="p-4 hover:bg-white/5 transition-colors flex flex-col gap-1.5 cursor-pointer border-b border-white/5 last:border-0" onclick="openClientHistory('${c.name}')">
+                            <div class="flex items-center justify-between">
+                                <div class="text-white text-[15px] font-black flex items-center gap-2">
+                                    <span class="bg-[#F59E0B]/20 text-[#F59E0B] px-2 py-0.5 rounded-md text-[10px] font-black shrink-0">${c.type}</span>
+                                    <span class="truncate">${c.name}</span>
+                                </div>
+                                <span class="text-[#3B82F6] text-[11px] font-bold bg-[#3B82F6]/10 px-2 py-1 rounded border border-[#3B82F6]/20 flex items-center gap-1">내역 열람 <i data-lucide="chevron-right" class="w-3 h-3"></i></span>
                             </div>
                             <div class="flex items-center gap-4 mt-1">
-                                <div class="text-[#3B82F6] text-[13px] flex items-center gap-1.5 font-bold"><i data-lucide="phone" class="w-3.5 h-3.5"></i> ${c.phone || '연락처 미등록'}</div>
+                                <div class="text-[#94A3B8] text-[13px] flex items-center gap-1.5 font-bold"><i data-lucide="phone" class="w-3.5 h-3.5 text-[#3B82F6]"></i> ${c.phone || '연락처 미등록'}</div>
                             </div>
-                            <div class="text-[#94A3B8] text-[12px] flex items-center gap-1.5 font-medium mt-1 break-keep">
+                            <div class="text-[#94A3B8] text-[12px] flex items-center gap-1.5 font-medium mt-0.5 break-keep">
                                 <i data-lucide="map-pin" class="w-3.5 h-3.5 shrink-0"></i> ${c.address || '주소 정보 없음'}
                             </div>
                         </div>
@@ -1049,6 +1061,62 @@
     function closeCompanyDataModal() {
         const modal = document.getElementById('companyDataModal');
         const box = document.getElementById('companyDataBox');
+        modal.classList.add('opacity-0');
+        box.classList.add('scale-95');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 200);
+    }
+
+    // 🔥 신규 핀셋 3: 거래처별 상세 내역 이중 팝업 컨트롤 로직
+    function openClientHistory(clientName) {
+        document.getElementById('historyModalClientName').innerText = clientName;
+        const container = document.getElementById('historyModalListContainer');
+        container.innerHTML = '';
+        
+        const filteredRecords = currentCompanyRecords.filter(r => r.clientName === clientName).sort((a,b) => b.id.localeCompare(a.id));
+        
+        if(filteredRecords.length === 0) {
+            container.innerHTML = `<div class="p-8 text-center text-[#94A3B8] text-[13px] font-bold bg-white/5 rounded-[16px] border border-dashed border-white/10">이 거래처에 발행된 일지나 견적서가 없습니다.</div>`;
+        } else {
+            let html = '';
+            filteredRecords.forEach(r => {
+                const isQuote = r.type === 'quote';
+                const badge = isQuote 
+                    ? `<span class="bg-[#3B82F6]/20 text-[#3B82F6] px-2.5 py-1 rounded-md text-[10px] font-black shrink-0">견적</span>`
+                    : `<span class="bg-[#84CC16]/20 text-[#84CC16] px-2.5 py-1 rounded-md text-[10px] font-black shrink-0">일지</span>`;
+                
+                const linkUrl = r.url ? r.url : `https://jogyeongnote.com/?id=${r.id}`;
+                
+                html += `
+                    <div class="flex items-center justify-between p-4 bg-[#1E293B] border border-white/5 rounded-[16px] hover:border-[#84CC16]/50 transition-colors">
+                        <div class="flex items-center gap-3 w-full pr-4">
+                            ${badge}
+                            <div class="min-w-0">
+                                <div class="text-white text-[14px] font-black truncate">${r.date}</div>
+                                <div class="text-[#94A3B8] text-[12px] font-medium truncate mt-0.5">${r.round}</div>
+                            </div>
+                        </div>
+                        <a href="${linkUrl}" target="_blank" class="shrink-0 px-4 py-2 bg-[#84CC16] text-[#12261E] rounded-[10px] text-[12px] font-black hover:bg-[#9BE32D] transition-all flex items-center gap-1.5 shadow-md"><i data-lucide="external-link" class="w-3.5 h-3.5"></i> 원본 보기</a>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+        
+        lucide.createIcons();
+        const modal = document.getElementById('clientHistoryModal');
+        const box = document.getElementById('clientHistoryBox');
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            box.classList.remove('scale-95');
+        }, 10);
+    }
+
+    function closeClientHistoryModal() {
+        const modal = document.getElementById('clientHistoryModal');
+        const box = document.getElementById('clientHistoryBox');
         modal.classList.add('opacity-0');
         box.classList.add('scale-95');
         setTimeout(() => {
