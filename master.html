@@ -76,7 +76,7 @@
       </button>
       <button onclick="switchTab('companies')" class="nav-btn w-full flex items-center gap-3 px-4 py-3.5 rounded-[12px] text-[#94A3B8] hover:bg-white/5 hover:text-white font-bold transition-all"><i data-lucide="building-2" class="w-5 h-5"></i> 사용 업체 관리</button>
       
-      <!-- 🔥 핀셋 개방: 플랫폼 설정 탭 -->
+      <!-- 플랫폼 설정 탭 -->
       <button onclick="switchTab('settings')" class="nav-btn w-full flex items-center gap-3 px-4 py-3.5 rounded-[12px] text-[#94A3B8] hover:bg-white/5 hover:text-white font-bold transition-all"><i data-lucide="settings" class="w-5 h-5"></i> 플랫폼 설정</button>
     </nav>
     <div class="mt-auto">
@@ -119,7 +119,6 @@
         <h1 class="text-[24px] font-black tracking-tight flex items-center gap-2"><i data-lucide="user-check" class="w-6 h-6 text-red-400"></i> 신규 가입 심사 대기 <span id="topApprovalCount" class="bg-red-500 text-white text-[13px] px-2.5 py-1 rounded-full align-middle ml-1 hidden">0건</span></h1>
       </div>
 
-      <!-- 대기 업체 리스트 동적 렌더링 영역 -->
       <div id="pendingListContainer" class="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div class="col-span-full py-16 text-center text-[#94A3B8] glass-panel rounded-[24px]">
             <i data-lucide="check-circle" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
@@ -132,7 +131,6 @@
     <div id="view-companies" class="hidden space-y-6">
       <div class="flex items-center justify-between border-b border-white/10 pb-4">
         <h1 class="text-[24px] font-black tracking-tight flex items-center gap-2"><i data-lucide="building-2" class="w-6 h-6 text-[#3B82F6]"></i> 등록된 사용 업체 관리</h1>
-        <!-- 🔥 핀셋 추가: 선택 업체 팝업 전송 버튼 -->
         <button onclick="openTargetNoticeModal()" class="px-5 py-3 bg-[#F59E0B] text-[#1E3A8A] font-black rounded-[14px] hover:bg-[#D97706] transition-all flex items-center gap-2 shadow-[0_4px_15px_rgba(245,158,11,0.3)]">
             <i data-lucide="bell-ring" class="w-5 h-5"></i> 선택 업체 개별 팝업 띄우기
         </button>
@@ -160,15 +158,13 @@
       </div>
     </div>
 
-    <!-- 🔥 4. 플랫폼 설정 화면 (신규 개방) 🔥 -->
+    <!-- 4. 플랫폼 설정 화면 -->
     <div id="view-settings" class="hidden space-y-6">
       <div class="flex items-center justify-between border-b border-white/10 pb-4">
         <h1 class="text-[24px] font-black tracking-tight flex items-center gap-2"><i data-lucide="settings" class="w-6 h-6 text-[#84CC16]"></i> 플랫폼 전체 설정</h1>
       </div>
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        
-        <!-- 마스터 계정 관리 -->
         <div class="glass-panel rounded-[24px] p-6 space-y-4">
             <h3 class="text-white font-black text-[16px] flex items-center gap-2 mb-2"><i data-lucide="shield" class="w-5 h-5 text-blue-400"></i> 마스터 관리자 계정 변경</h3>
             <div class="space-y-3">
@@ -179,7 +175,6 @@
             <p class="text-[#94A3B8] text-[11px] leading-relaxed mt-2">* 초기 아이디는 admin / 1234 입니다. 변경 시 즉시 반영되며 다음 로그인부터 적용됩니다.</p>
         </div>
 
-        <!-- 전체 공지사항 팝업 -->
         <div class="glass-panel rounded-[24px] p-6 space-y-4 border-[#84CC16]/30 shadow-[0_0_15px_rgba(132,204,22,0.05)]">
             <div class="flex items-center justify-between mb-2">
                 <h3 class="text-white font-black text-[16px] flex items-center gap-2"><i data-lucide="megaphone" class="w-5 h-5 text-[#84CC16]"></i> 전체 사용자 공지 팝업 (앱 진입 시)</h3>
@@ -192,7 +187,6 @@
             <button onclick="saveGlobalNotice()" class="w-full py-3.5 bg-[#84CC16] text-[#12261E] font-black rounded-[12px] hover:bg-[#9BE32D] shadow-[0_4px_15px_rgba(132,204,22,0.2)] transition-all">공지사항 저장 및 활성화</button>
         </div>
 
-        <!-- 이용약관 및 정책 관리 -->
         <div class="glass-panel rounded-[24px] p-6 space-y-4">
             <h3 class="text-white font-black text-[16px] flex items-center gap-2 mb-2"><i data-lucide="file-check-2" class="w-5 h-5 text-yellow-400"></i> 앱 이용약관 및 정책 텍스트 관리</h3>
             <div class="space-y-3">
@@ -202,10 +196,8 @@
             <p class="text-[#94A3B8] text-[11px] mt-2">* 수정한 텍스트는 신규 업체가 가입할 때 보는 '이용약관 동의' 화면에 즉시 반영됩니다.</p>
         </div>
 
-        <!-- 요금제 및 시스템 통제 -->
         <div class="glass-panel rounded-[24px] p-6 space-y-4 opacity-70">
             <h3 class="text-white font-black text-[16px] flex items-center gap-2 mb-2"><i data-lucide="credit-card" class="w-5 h-5 text-purple-400"></i> 요금제 및 구독 통제 (상용화 대비용)</h3>
-            
             <div class="bg-[#0F172A] p-4 rounded-[12px] border border-white/5 space-y-4">
                 <div class="flex items-center justify-between">
                     <span class="text-[13px] font-bold text-white">미납 업체 로그인 자동 차단 시스템</span>
@@ -224,7 +216,6 @@
             </div>
             <button class="w-full py-3.5 bg-purple-500/10 text-purple-400 font-bold rounded-[12px] border border-purple-500/20 cursor-not-allowed">PG사 결제 모듈 연동 후 개방 예정</button>
         </div>
-
       </div>
     </div>
   </main>
@@ -273,7 +264,7 @@
     </div>
   </div>
 
-  <!-- 🔥 신규: 개별 타겟팅 팝업 공지 모달 🔥 -->
+  <!-- 타겟팅 팝업 공지 모달 -->
   <div id="targetNoticeModal" class="hidden fixed inset-0 z-[6000] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200" onclick="closeTargetNoticeModal()">
     <div class="bg-[#0F172A] w-full max-w-md rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-white/10" onclick="event.stopPropagation()">
       <div class="p-5 border-b border-white/10 flex justify-between items-center bg-[#1E293B]">
@@ -297,12 +288,55 @@
     </div>
   </div>
 
+  <!-- 🔥 신규 핀셋: 업체 정보 강제 수정 모달 (테스트용) 🔥 -->
+  <div id="editCompanyModal" class="hidden fixed inset-0 z-[6000] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200" onclick="closeEditCompanyModal()">
+    <div class="bg-[#0F172A] w-full max-w-md rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-white/10" id="editCompanyBox" onclick="event.stopPropagation()">
+      <div class="p-5 border-b border-white/10 flex justify-between items-center bg-[#1E293B]">
+        <h3 class="text-[18px] font-black text-white flex items-center gap-2"><i data-lucide="edit-3" class="w-5 h-5 text-[#F59E0B]"></i> 업체 정보 강제 수정 <span class="text-[11px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full ml-1">테스트용</span></h3>
+        <button onclick="closeEditCompanyModal()" class="text-[#94A3B8] hover:text-white p-1 transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+      </div>
+      
+      <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto scrollbar-hide">
+        <input type="hidden" id="editCompOldId">
+        
+        <div class="bg-red-500/10 border border-red-500/30 p-3 rounded-[12px] text-[12px] text-red-400 font-bold break-keep leading-relaxed">
+            <i data-lucide="alert-triangle" class="w-4 h-4 inline-block -mt-0.5"></i> [주의] 아이디(ID)를 변경할 경우 데이터베이스 구조가 통째로 복사 및 이동됩니다.
+        </div>
+
+        <div class="space-y-3">
+            <div>
+                <label class="block text-[12px] font-bold text-[#94A3B8] ml-1 mb-1.5">접속 아이디 (영문/숫자)</label>
+                <input type="text" id="editCompId" class="w-full bg-[#1E293B] border border-white/10 rounded-[12px] px-4 py-3.5 text-white text-[14px] font-bold focus:outline-none focus:border-[#F59E0B]">
+            </div>
+            <div>
+                <label class="block text-[12px] font-bold text-[#94A3B8] ml-1 mb-1.5">상호명</label>
+                <input type="text" id="editCompName" class="w-full bg-[#1E293B] border border-white/10 rounded-[12px] px-4 py-3.5 text-white text-[14px] font-bold focus:outline-none focus:border-[#F59E0B]">
+            </div>
+            <div>
+                <label class="block text-[12px] font-bold text-[#94A3B8] ml-1 mb-1.5">대표자명</label>
+                <input type="text" id="editCompCeo" class="w-full bg-[#1E293B] border border-white/10 rounded-[12px] px-4 py-3.5 text-white text-[14px] font-bold focus:outline-none focus:border-[#F59E0B]">
+            </div>
+            <div>
+                <label class="block text-[12px] font-bold text-[#94A3B8] ml-1 mb-1.5">대표 연락처</label>
+                <input type="tel" id="editCompPhone" class="w-full bg-[#1E293B] border border-white/10 rounded-[12px] px-4 py-3.5 text-white text-[14px] font-bold focus:outline-none focus:border-[#F59E0B]">
+            </div>
+            <div>
+                <label class="block text-[12px] font-bold text-[#94A3B8] ml-1 mb-1.5">사업자등록번호</label>
+                <input type="text" id="editCompBizNum" class="w-full bg-[#1E293B] border border-white/10 rounded-[12px] px-4 py-3.5 text-white text-[14px] font-bold focus:outline-none focus:border-[#F59E0B]">
+            </div>
+        </div>
+      </div>
+
+      <div class="p-4 border-t border-white/10 bg-[#1E293B] flex gap-2">
+          <button onclick="closeEditCompanyModal()" class="flex-1 py-4 bg-white/5 text-white rounded-[14px] font-bold text-[15px] hover:bg-white/10 transition-colors">취소</button>
+          <button onclick="saveCompanyEdit()" class="flex-1 py-4 bg-[#F59E0B] text-[#1E3A8A] rounded-[14px] font-black text-[15px] hover:bg-[#D97706] transition-all flex items-center justify-center gap-1.5"><i data-lucide="save" class="w-4 h-4"></i> 정보 덮어쓰기</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // ==========================================
-    // 마스터 기본 세팅 및 서버 연동
-    // ==========================================
     const DB_BASE_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/accounts";
-    const SETTINGS_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/settings"; // 플랫폼 설정 DB
+    const SETTINGS_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/settings";
     
     let allAccounts = [];
     let knownPendingIds = new Set();
@@ -311,7 +345,6 @@
     let masterRealId = "admin";
     let masterRealPw = "1234";
 
-    // 로그인 전, 서버에 저장된 마스터 아이디/비번을 가져옵니다.
     async function initMasterSettings() {
         try {
             const res = await fetch(`${SETTINGS_URL}/master.json`);
@@ -323,7 +356,6 @@
                 document.getElementById('setMasterPw').value = masterRealPw;
             }
             
-            // 기타 설정값 불러오기
             const noticeRes = await fetch(`${SETTINGS_URL}/globalNotice.json`);
             const noticeData = await noticeRes.json();
             if(noticeData) {
@@ -341,7 +373,7 @@
     }
 
     async function loginMaster() {
-      await initMasterSettings(); // 최신 아이디/비번 확인
+      await initMasterSettings();
 
       const id = document.getElementById('masterId').value;
       const pw = document.getElementById('masterPw').value;
@@ -351,7 +383,6 @@
         document.getElementById('mainContent').classList.remove('hidden');
         document.getElementById('sidebar').classList.remove('hidden');
         lucide.createIcons();
-        
         startDashboard();
       } else {
         alert('마스터 접근 권한이 없거나 비밀번호가 틀렸습니다.');
@@ -364,9 +395,6 @@
       }
     }
 
-    // ==========================================
-    // 플랫폼 설정 저장 액션
-    // ==========================================
     async function saveMasterAccount() {
         const newId = document.getElementById('setMasterId').value.trim();
         const newPw = document.getElementById('setMasterPw').value.trim();
@@ -389,7 +417,6 @@
     async function saveGlobalNotice() {
         const text = document.getElementById('setGlobalNoticeText').value.trim();
         const isActive = document.getElementById('globalNoticeToggle').checked;
-        
         try {
             await fetch(`${SETTINGS_URL}/globalNotice.json`, {
                 method: 'PUT',
@@ -412,10 +439,6 @@
         } catch(e) { alert("저장 실패"); }
     }
 
-
-    // ==========================================
-    // 대시보드 및 리스트 엔진
-    // ==========================================
     function startDashboard() {
         fetchAccounts(); 
         autoRefreshTimer = setInterval(fetchAccounts, 10000); 
@@ -589,15 +612,22 @@
                 <td class="p-4 ${textStyle}">${acc.ceo}</td>
                 <td class="p-4 ${textStyle}">${acc.phone}</td>
                 <td class="p-4 pr-6 text-right space-x-1.5 flex justify-end items-center">
-                    <button onclick="openCompanyDataModal('${acc.id}', '${acc.name}')" class="px-3 py-2 bg-[#3B82F6]/20 text-blue-300 border border-blue-500/30 rounded-[8px] text-[11px] font-bold hover:bg-[#3B82F6]/30 transition-all flex items-center gap-1.5 mr-1">
+                    
+                    <button onclick="openCompanyDataModal('${acc.id}', '${acc.name}')" class="px-3 py-2 bg-[#3B82F6]/20 text-blue-300 border border-blue-500/30 rounded-[8px] text-[11px] font-bold hover:bg-[#3B82F6]/30 transition-all flex items-center gap-1.5 mr-1" title="데이터 열람">
                         <i data-lucide="database" class="w-3.5 h-3.5 inline"></i> 데이터 열람
                     </button>
+
+                    <!-- 🔥 신규: 업체 강제 수정 버튼 -->
+                    <button onclick="openEditCompanyModal('${acc.id}')" class="px-3 py-2 bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20 rounded-[8px] text-[11px] font-bold hover:bg-[#F59E0B]/20 transition-all mr-1" title="정보 강제 수정 (테스트용)">
+                        <i data-lucide="edit-3" class="w-3.5 h-3.5 inline"></i> 수정
+                    </button>
+
                     ${isSuspended 
                         ? `<button onclick="updateAccountStatus('${acc.id}', 'active')" class="px-3 py-2 bg-green-500/10 text-green-400 border border-green-500/20 rounded-[8px] text-[11px] font-bold hover:bg-green-500/20 transition-all">정지 해제</button>`
                         : `<button onclick="updateAccountStatus('${acc.id}', 'suspended')" class="px-3 py-2 bg-orange-500/10 text-orange-400 border border-orange-500/20 rounded-[8px] text-[11px] font-bold hover:bg-orange-500/20 transition-all">이용 정지</button>`
                     }
-                    <button onclick="resetPassword('${acc.id}')" class="px-3 py-2 bg-white/10 text-white border border-white/20 rounded-[8px] text-[11px] font-bold hover:bg-white/20 transition-all"><i data-lucide="key" class="w-3.5 h-3.5 inline"></i> 초기화</button>
-                    <button onclick="deleteAccount('${acc.id}', '영구 강제 탈퇴')" class="px-3 py-2 bg-red-500/10 text-red-500 border border-red-500/20 rounded-[8px] text-[11px] font-bold hover:bg-red-500/20 transition-all"><i data-lucide="trash-2" class="w-3.5 h-3.5 inline"></i></button>
+                    <button onclick="resetPassword('${acc.id}')" class="px-3 py-2 bg-white/10 text-white border border-white/20 rounded-[8px] text-[11px] font-bold hover:bg-white/20 transition-all" title="비번 1234로 초기화"><i data-lucide="key" class="w-3.5 h-3.5 inline"></i> 초기화</button>
+                    <button onclick="deleteAccount('${acc.id}', '영구 강제 탈퇴')" class="px-3 py-2 bg-red-500/10 text-red-500 border border-red-500/20 rounded-[8px] text-[11px] font-bold hover:bg-red-500/20 transition-all" title="영구 탈퇴"><i data-lucide="trash-2" class="w-3.5 h-3.5 inline"></i></button>
                 </td>
             `;
             tbody.appendChild(tr);
@@ -606,7 +636,104 @@
     }
 
     // ==========================================
-    // 🔥 타겟팅 공지 팝업 기능 로직
+    // 🔥 신규: 업체 정보 강제 수정 (테스트용)
+    // ==========================================
+    function openEditCompanyModal(id) {
+        const acc = allAccounts.find(a => a.id === id);
+        if(!acc) return;
+        
+        document.getElementById('editCompOldId').value = acc.id;
+        document.getElementById('editCompId').value = acc.id;
+        document.getElementById('editCompName').value = acc.name || '';
+        document.getElementById('editCompCeo').value = acc.ceo || '';
+        document.getElementById('editCompPhone').value = acc.phone || '';
+        document.getElementById('editCompBizNum').value = acc.bizNum || '';
+        
+        const modal = document.getElementById('editCompanyModal');
+        const box = document.getElementById('editCompanyBox');
+        modal.classList.remove('hidden');
+        setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10);
+    }
+
+    function closeEditCompanyModal() {
+        const modal = document.getElementById('editCompanyModal');
+        const box = document.getElementById('editCompanyBox');
+        modal.classList.add('opacity-0');
+        box.classList.add('scale-95');
+        setTimeout(() => { modal.classList.add('hidden'); }, 200);
+    }
+
+    async function saveCompanyEdit() {
+        const oldId = document.getElementById('editCompOldId').value;
+        const newId = document.getElementById('editCompId').value.trim();
+        const newName = document.getElementById('editCompName').value.trim();
+        const newCeo = document.getElementById('editCompCeo').value.trim();
+        const newPhone = document.getElementById('editCompPhone').value.trim();
+        const newBizNum = document.getElementById('editCompBizNum').value.trim();
+
+        if (!newId || !newName || !newPhone) return alert("필수 항목(아이디, 상호, 연락처)을 입력하세요.");
+        if (!confirm("해당 업체의 정보를 강제로 수정하시겠습니까? (테스트 점검용)")) return;
+
+        try {
+            if (oldId !== newId) {
+                // 아이디(DB Key)가 바뀐 경우: 데이터 복사 후 이전 폴더 삭제
+                const safeNewId = encodeURIComponent(newId);
+                const safeOldId = encodeURIComponent(oldId);
+
+                const checkRes = await fetch(`${DB_BASE_URL}/${safeNewId}/profile.json`);
+                const checkData = await checkRes.json();
+                if (checkData && !checkData.error) {
+                    return alert("이미 존재하는 아이디입니다. 다른 아이디를 입력해주세요.");
+                }
+
+                // 기존 데이터 통째로 가져오기
+                const oldRes = await fetch(`${DB_BASE_URL}/${safeOldId}.json`);
+                const oldData = await oldRes.json();
+
+                // 프로필 정보 덮어쓰기
+                oldData.profile.id = newId;
+                oldData.profile.name = newName;
+                oldData.profile.ceo = newCeo;
+                oldData.profile.phone = newPhone;
+                oldData.profile.bizNum = newBizNum;
+
+                // 새 폴더에 데이터 통째로 심기
+                await fetch(`${DB_BASE_URL}/${safeNewId}.json`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(oldData)
+                });
+
+                // 기존 폴더 완전 파괴
+                await fetch(`${DB_BASE_URL}/${safeOldId}.json`, {
+                    method: 'DELETE'
+                });
+
+            } else {
+                // 아이디는 같고 정보만 바뀐 경우 (PATCH)
+                await fetch(`${DB_BASE_URL}/${encodeURIComponent(oldId)}/profile.json`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: newName,
+                        ceo: newCeo,
+                        phone: newPhone,
+                        bizNum: newBizNum
+                    })
+                });
+            }
+
+            alert("✅ 업체 정보가 성공적으로 수정되었습니다.");
+            closeEditCompanyModal();
+            fetchAccounts(); // 목록 새로고침
+        } catch(e) {
+            console.error(e);
+            alert("정보 수정 중 오류가 발생했습니다.");
+        }
+    }
+
+    // ==========================================
+    // 타겟팅 공지 팝업 기능 로직
     // ==========================================
     function toggleAllCompanies() {
         const isChecked = document.getElementById('selectAllCompanies').checked;
@@ -647,7 +774,6 @@
         if (!confirm(`선택한 ${selectedIds.length}개 업체에게 이 팝업 메시지를 전송하시겠습니까?`)) return;
 
         try {
-            // 선택된 업체들의 profile에 targetNotice 필드를 추가 업데이트 (PATCH)
             const promises = selectedIds.map(id => {
                 const safeId = encodeURIComponent(id);
                 return fetch(`${DB_BASE_URL}/${safeId}/profile.json`, {
@@ -661,7 +787,6 @@
             alert(`✅ ${selectedIds.length}개 업체로 팝업 전송이 완료되었습니다!\n(해당 업체가 다음에 앱을 켤 때 팝업이 노출됩니다)`);
             closeTargetNoticeModal();
             
-            // 체크박스 초기화
             document.getElementById('selectAllCompanies').checked = false;
             document.querySelectorAll('.company-check').forEach(cb => cb.checked = false);
 
@@ -670,7 +795,6 @@
             console.error(e);
         }
     }
-
 
     // ==========================================
     // DB 제어 API 액션
