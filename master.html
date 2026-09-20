@@ -63,25 +63,40 @@
     </div>
   </section>
 
-  <!-- 좌측 사이드바 (PC) / 하단 네비게이션 (모바일) -->
-  <aside id="sidebar" class="hidden md:flex w-64 glass-panel flex-col h-screen sticky top-0 border-r border-white/10 p-5 z-40">
-    <div class="flex items-center gap-3 mb-10 pl-2 mt-4">
+  <!-- 좌측 사이드바 (PC) / 하단 네비게이션 (모바일) 완벽 반응형 통합 -->
+  <aside id="sidebar" class="hidden md:flex w-full fixed bottom-0 left-0 z-50 glass-panel border-t border-white/10 p-2 pb-6 md:p-5 md:relative md:w-64 md:h-screen md:border-t-0 md:border-r md:flex-col md:sticky md:top-0 shadow-[0_-15px_30px_rgba(0,0,0,0.4)] md:shadow-none">
+    <!-- 상단 로고 영역 (PC에서만 보임) -->
+    <div class="hidden md:flex items-center gap-3 mb-10 pl-2 mt-4">
       <div class="w-10 h-10 bg-[#3B82F6] rounded-[12px] flex items-center justify-center shadow-lg"><i data-lucide="shield-check" class="w-5 h-5 text-white"></i></div>
       <div>
         <div class="text-[16px] font-black tracking-tight text-white">Master Control</div>
         <div class="text-[11px] font-bold text-[#3B82F6]">조경노트 PRO 운영본부</div>
       </div>
     </div>
-    <nav class="flex flex-col gap-2">
-      <button onclick="switchTab('dashboard')" class="nav-btn w-full flex items-center gap-3 px-4 py-3.5 rounded-[12px] bg-[#3B82F6] text-white font-bold transition-all"><i data-lucide="layout-dashboard" class="w-5 h-5"></i> 대시보드</button>
-      <button onclick="switchTab('approval')" class="nav-btn w-full flex items-center justify-between px-4 py-3.5 rounded-[12px] text-[#94A3B8] hover:bg-white/5 hover:text-white font-bold transition-all">
-        <div class="flex items-center gap-3"><i data-lucide="user-check" class="w-5 h-5"></i> 가입 승인</div>
-        <span id="sideApprovalCount" class="bg-red-500 text-white text-[11px] px-2 py-0.5 rounded-full hidden">0</span>
+    
+    <!-- 네비게이션 버튼들 (모바일: 가로 배열, PC: 세로 배열) -->
+    <nav class="flex flex-row md:flex-col gap-1 md:gap-2 justify-around w-full">
+      <button onclick="switchTab('dashboard')" class="nav-btn w-full flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-3 p-2 md:px-4 md:py-3.5 rounded-[12px] bg-[#3B82F6] text-white font-bold transition-all text-[11px] md:text-[14px]">
+        <i data-lucide="layout-dashboard" class="w-5 h-5"></i> <span class="whitespace-nowrap">대시보드</span>
       </button>
-      <button onclick="switchTab('companies')" class="nav-btn w-full flex items-center gap-3 px-4 py-3.5 rounded-[12px] text-[#94A3B8] hover:bg-white/5 hover:text-white font-bold transition-all"><i data-lucide="building-2" class="w-5 h-5"></i> 사용 업체 관리</button>
-      <button onclick="switchTab('settings')" class="nav-btn w-full flex items-center gap-3 px-4 py-3.5 rounded-[12px] text-[#94A3B8] hover:bg-white/5 hover:text-white font-bold transition-all"><i data-lucide="settings" class="w-5 h-5"></i> 플랫폼 설정</button>
+      <button onclick="switchTab('approval')" class="nav-btn w-full flex flex-col md:flex-row items-center justify-center md:justify-between gap-1 p-2 md:px-4 md:py-3.5 rounded-[12px] text-[#94A3B8] hover:bg-white/5 hover:text-white font-bold transition-all text-[11px] md:text-[14px] relative">
+        <div class="flex flex-col md:flex-row items-center gap-1 md:gap-3"><i data-lucide="user-check" class="w-5 h-5"></i> <span class="whitespace-nowrap">가입 승인</span></div>
+        <span id="sideApprovalCount" class="absolute top-1 right-2 md:relative md:top-auto md:right-auto bg-red-500 text-white text-[10px] md:text-[11px] px-1.5 py-0.5 rounded-full hidden">0</span>
+      </button>
+      <button onclick="switchTab('companies')" class="nav-btn w-full flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-3 p-2 md:px-4 md:py-3.5 rounded-[12px] text-[#94A3B8] hover:bg-white/5 hover:text-white font-bold transition-all text-[11px] md:text-[14px]">
+        <i data-lucide="building-2" class="w-5 h-5"></i> <span class="whitespace-nowrap">업체 관리</span>
+      </button>
+      <button onclick="switchTab('settings')" class="nav-btn w-full flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-3 p-2 md:px-4 md:py-3.5 rounded-[12px] text-[#94A3B8] hover:bg-white/5 hover:text-white font-bold transition-all text-[11px] md:text-[14px]">
+        <i data-lucide="settings" class="w-5 h-5"></i> <span class="whitespace-nowrap">설정</span>
+      </button>
+      <!-- 모바일 전용 로그아웃 버튼 -->
+      <button onclick="logoutMaster()" class="md:hidden nav-btn w-full flex flex-col items-center justify-center gap-1 p-2 rounded-[12px] text-red-400 hover:bg-red-500/10 font-bold transition-all text-[11px]">
+        <i data-lucide="log-out" class="w-5 h-5"></i> <span class="whitespace-nowrap">로그아웃</span>
+      </button>
     </nav>
-    <div class="mt-auto">
+    
+    <!-- 하단 로그아웃 영역 (PC에서만 보임) -->
+    <div class="mt-auto hidden md:block">
       <div class="mb-4 px-2 text-center text-[#94A3B8] text-[10px] font-medium flex items-center justify-center gap-1.5"><div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div> 실시간 서버 연동 중</div>
       <button onclick="logoutMaster()" class="w-full flex items-center justify-center gap-3 px-4 py-3.5 rounded-[12px] bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 font-bold transition-all"><i data-lucide="log-out" class="w-4 h-4"></i> 안전하게 로그아웃</button>
     </div>
