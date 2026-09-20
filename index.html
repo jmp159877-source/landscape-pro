@@ -881,7 +881,7 @@
     }
 
     async function analyzeImageWithAI(base64Image, type) {
-        // 🔥 이제 대표님의 구글 보안 중계소로 연결됩니다! API 키 유출 걱정 0%
+        // 대표님의 구글 보안 중계소 주소
         const GOOGLE_PROXY_URL = "https://script.google.com/macros/s/AKfycbxTmXULOV1bmC_BAnF0SXzEPh-B8OPqdrU0npgKPJrr01NbeBgIDOjggjiCApDhZx10bA/exec";
 
         const promptText = type === 'plant' 
@@ -889,9 +889,13 @@
             : "사진 속 식물의 병해충이나 벌레를 분석해줘. 다음 형식으로 짧게 답변해줘. \n🚨 추정 병해충: [이름]\n🛡️ 방제 방법: [방법 설명]";
 
         try {
-            // OpenAI가 아닌 구글 방어막으로 요청을 보냅니다.
+            // 🔥 통신 방해(CORS)를 우회하기 위해 text/plain 타입으로 우회 전송
             const response = await fetch(GOOGLE_PROXY_URL, {
+                redirect: "follow",
                 method: "POST",
+                headers: {
+                    "Content-Type": "text/plain;charset=utf-8"
+                },
                 body: JSON.stringify({
                     model: "gpt-4o-mini",
                     messages: [{
@@ -905,9 +909,17 @@
                 })
             });
 
-            if (!response.ok) throw new Error("서버 응답 오류");
-            
             const data = await response.json();
+
+            // 🚨 OpenAI가 에러를 뱉어냈다면 진짜 이유를 화면에 출력!
+            if (data.error) {
+                throw new Error(data.error.message);
+            }
+
+            if (!data.choices || data.choices.length === 0) {
+                throw new Error("서버에서 결과 데이터를 받지 못했습니다.");
+            }
+
             const realText = data.choices[0].message.content; 
 
             document.getElementById('loadingOverlay')?.remove();
@@ -915,8 +927,10 @@
 
         } catch (error) {
             document.getElementById('loadingOverlay')?.remove();
-            alert("AI 분석 서버와 연결할 수 없습니다. 잠시 후 다시 시도해주세요.");
-            showLensResult(base64Image, type, "분석 실패: 네트워크 연결 문제");
+            
+            // 🔥 에러의 '진짜 원인'을 스마트폰 팝업창으로 띄워줍니다.
+            alert("상세 오류 원인: " + error.message);
+            showLensResult(base64Image, type, "분석 실패: " + error.message);
         }
     }
 
