@@ -881,15 +881,15 @@
     }
 
     async function analyzeImageWithAI(base64Image, type) {
-        // 대표님의 구글 보안 중계소 주소
+        // 대표님의 구글 보안 중계소 주소 (그대로 유지)
         const GOOGLE_PROXY_URL = "https://script.google.com/macros/s/AKfycbysZFaBJt9Iu964hP9rJVjmYHDMMo_TQAocjih4h8q0_im414WA6-23LS6Wm4xQvTJRQw/exec";
 
+        // 🔥 1. 한국 조경/수목/병해충 전문가 수준으로 프롬프트 강력하게 업그레이드
         const promptText = type === 'plant' 
-            ? "사진 속 식물의 품종과 현재 생육 상태를 분석해줘. 다음 형식으로 짧게 답변해줘. \n📌 추정 품종: [이름]\n💧 생육 상태: [상태 설명]" 
-            : "사진 속 식물의 병해충이나 벌레를 분석해줘. 다음 형식으로 짧게 답변해줘. \n🚨 추정 병해충: [이름]\n🛡️ 방제 방법: [방법 설명]";
+            ? "너는 한국의 30년 차 최고 조경 전문가이자 수목 식별가야. 주어진 사진 속 식물의 '한국 공식 명칭(수종, 초화류 등)'을 최대한 정확하게 판별해줘. 특히 수서해당화, 동백나무 등 잎과 꽃이 비슷한 수종을 주의 깊게 구분해. 다음 형식으로 짧고 전문적으로 답변해줘. \n📌 추정 품종: [정확한 한국 식물명]\n💧 생육 상태: [현재 잎, 꽃, 줄기 상태 분석]" 
+            : "너는 한국의 최고 수목병리학자이자 해충 방제 전문가야. 사진 속 조경수나 식물에 발생한 병해나 해충(깍지벌레, 진딧물, 응애 등 한국 현장에서 흔한 병해충 포함)을 정밀하게 진단해줘. 다음 형식으로 짧고 명확하게 답변해줘. \n🚨 추정 병해충: [정확한 병명 또는 해충명]\n🛡️ 방제 방법: [실제 조경 현장에서 쓰는 전문적인 약제 및 방제법]";
 
         try {
-            // 🔥 통신 방해(CORS)를 우회하기 위해 text/plain 타입으로 우회 전송
             const response = await fetch(GOOGLE_PROXY_URL, {
                 redirect: "follow",
                 method: "POST",
@@ -897,7 +897,8 @@
                     "Content-Type": "text/plain;charset=utf-8"
                 },
                 body: JSON.stringify({
-                    model: "gpt-4o-mini",
+                    // 🔥 2. gpt-4o-mini에서 현존 최고 성능인 gpt-4o로 엔진 업그레이드!
+                    model: "gpt-4o", 
                     messages: [{
                         role: "user",
                         content: [
@@ -905,13 +906,13 @@
                             { type: "image_url", image_url: { url: base64Image } }
                         ]
                     }],
-                    max_tokens: 300
+                    max_tokens: 400,
+                    temperature: 0.2 // 🔥 창의성보다는 팩트 기반의 정확도를 높이기 위한 세팅
                 })
             });
 
             const data = await response.json();
 
-            // 🚨 OpenAI가 에러를 뱉어냈다면 진짜 이유를 화면에 출력!
             if (data.error) {
                 throw new Error(data.error.message);
             }
@@ -927,13 +928,10 @@
 
         } catch (error) {
             document.getElementById('loadingOverlay')?.remove();
-            
-            // 🔥 에러의 '진짜 원인'을 스마트폰 팝업창으로 띄워줍니다.
             alert("상세 오류 원인: " + error.message);
             showLensResult(base64Image, type, "분석 실패: " + error.message);
         }
     }
-
     function showLensResult(imgSrc, type, realText = null) {
         currentLensImg = imgSrc; 
         document.getElementById('lensResultImg').src = imgSrc; 
