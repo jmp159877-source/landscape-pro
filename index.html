@@ -1268,14 +1268,27 @@
     }
     
     function sendSMS() { 
+        let phone = '';
+        // 🔥 사장님(관리자) 화면인지 고객 화면인지 스스로 판단하는 로직
+        const backBtn = document.getElementById('backToAdminBtnBox');
+        // '관리자로 돌아가기' 버튼이 화면에 표시되고 있다면 사장님으로 인식!
+        const isAdmin = backBtn && backBtn.offsetParent !== null;
+
+        if (isAdmin) {
+            // 사장님일 경우: 문서에 적힌 고객 연락처를 싹 긁어와서 자동 입력
+            let phoneText = document.getElementById('viewDocClientPhone').innerText;
+            if (phoneText && phoneText !== '연락처 정보 없음' && phoneText !== '연락처 미등록') {
+                phone = phoneText.replace(/[^0-9]/g, '');
+            }
+        }
+
         const msg = encodeURIComponent(getShareMessage()); 
         const userAgent = navigator.userAgent || navigator.vendor || window.opera;
         
-        // 수신자 번호를 강제로 비워서 문자 앱이 열리면 직접 연락처를 고르도록 유도
         if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) { 
-            window.location.href = `sms:&body=${msg}`; 
+            window.location.href = `sms:${phone}&body=${msg}`; 
         } else { 
-            window.location.href = `sms:?body=${msg}`; 
+            window.location.href = `sms:${phone}?body=${msg}`; 
         }
     }
     function copyReportText() { navigator.clipboard.writeText(getShareMessage()).then(() => alert("복사되었습니다.")); }
