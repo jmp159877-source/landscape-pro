@@ -599,10 +599,13 @@
       </div>
       <div class="p-4 bg-white border-t border-[#F4F5F4] flex flex-col gap-2">
         <div class="flex gap-2">
-            <button onclick="closeLensResult()" class="flex-1 py-3.5 bg-[#EAEBEA] text-[#4E5968] rounded-[12px] font-black text-[14px] hover:bg-[#D4D8D4] transition-colors">닫기</button>
-            <button onclick="copyLensResult()" class="flex-1 py-3.5 bg-[#F4F5F4] text-[#12261E] border border-[#EAEBEA] rounded-[12px] font-black text-[14px] transition-colors flex items-center justify-center gap-1.5"><i data-lucide="copy" class="w-4 h-4"></i> 텍스트 복사</button>
+            <button onclick="closeLensResult()" class="flex-1 py-3 bg-[#EAEBEA] text-[#4E5968] rounded-[12px] font-black text-[13px] hover:bg-[#D4D8D4] transition-colors">닫기</button>
+            <button onclick="copyLensResult()" class="flex-1 py-3 bg-[#F4F5F4] text-[#12261E] border border-[#EAEBEA] rounded-[12px] font-black text-[13px] transition-colors flex items-center justify-center gap-1.5"><i data-lucide="copy" class="w-4 h-4"></i> 진단 내용 복사</button>
         </div>
-        <button onclick="saveLensResultToGallery()" class="w-full py-4 bg-[#12261E] text-[#84CC16] rounded-[12px] font-black text-[15px] shadow-md hover:bg-black transition-colors flex items-center justify-center gap-1.5"><i data-lucide="download" class="w-5 h-5"></i> 이미지로 갤러리에 저장하기</button>
+        <div class="flex gap-2">
+            <button onclick="saveLensResultToGallery()" class="w-1/3 py-3.5 bg-[#F4F5F4] text-[#4E5968] border border-[#EAEBEA] rounded-[12px] font-black text-[12px] hover:bg-[#EAEBEA] transition-colors flex flex-col items-center justify-center gap-1"><i data-lucide="download" class="w-5 h-5"></i> 갤러리 저장</button>
+            <button onclick="sendLensToIssue()" class="w-2/3 py-3.5 bg-[#12261E] text-[#84CC16] rounded-[12px] font-black text-[14px] shadow-md hover:bg-black transition-colors flex flex-col items-center justify-center gap-1"><i data-lucide="image-plus" class="w-5 h-5"></i> 특이사항 사진으로 등록</button>
+        </div>
       </div>
     </div>
   </div>
