@@ -871,13 +871,77 @@
     function saveTextEditor() { if(activeTextEditorId) { const val = document.getElementById('modalTextInput').value; document.getElementById(activeTextEditorId).value = val; } closeTextEditor(); }
 
     let currentLensImg = "";
-    function handleLensUpload(event, type) { const file = event.target.files[0]; if (!file) return; showLoadingOverlay("AI가 분석 중입니다..."); compressImage(file, (base64) => { analyzeImageWithAI(base64, type); }); event.target.value = ''; }
-    async function analyzeImageWithAI(base64Image, type) { setTimeout(() => { document.getElementById('loadingOverlay')?.remove(); showLensResult(base64Image, type, null); }, 1500); }
+    
+    function handleLensUpload(event, type) { 
+        const file = event.target.files[0]; 
+        if (!file) return; 
+        showLoadingOverlay("실제 AI가 정밀 분석 중입니다..."); 
+        compressImage(file, (base64) => { analyzeImageWithAI(base64, type); }); 
+        event.target.value = ''; 
+    }
+
+    async function analyzeImageWithAI(base64Image, type) {
+        // 🔥 이제 대표님의 구글 보안 중계소로 연결됩니다! API 키 유출 걱정 0%
+        const GOOGLE_PROXY_URL = "https://script.google.com/macros/s/AKfycbxTmXULOV1bmC_BAnF0SXzEPh-B8OPqdrU0npgKPJrr01NbeBgIDOjggjiCApDhZx10bA/exec";
+
+        const promptText = type === 'plant' 
+            ? "사진 속 식물의 품종과 현재 생육 상태를 분석해줘. 다음 형식으로 짧게 답변해줘. \n📌 추정 품종: [이름]\n💧 생육 상태: [상태 설명]" 
+            : "사진 속 식물의 병해충이나 벌레를 분석해줘. 다음 형식으로 짧게 답변해줘. \n🚨 추정 병해충: [이름]\n🛡️ 방제 방법: [방법 설명]";
+
+        try {
+            // OpenAI가 아닌 구글 방어막으로 요청을 보냅니다.
+            const response = await fetch(GOOGLE_PROXY_URL, {
+                method: "POST",
+                body: JSON.stringify({
+                    model: "gpt-4o-mini",
+                    messages: [{
+                        role: "user",
+                        content: [
+                            { type: "text", text: promptText },
+                            { type: "image_url", image_url: { url: base64Image } }
+                        ]
+                    }],
+                    max_tokens: 300
+                })
+            });
+
+            if (!response.ok) throw new Error("서버 응답 오류");
+            
+            const data = await response.json();
+            const realText = data.choices[0].message.content; 
+
+            document.getElementById('loadingOverlay')?.remove();
+            showLensResult(base64Image, type, realText);
+
+        } catch (error) {
+            document.getElementById('loadingOverlay')?.remove();
+            alert("AI 분석 서버와 연결할 수 없습니다. 잠시 후 다시 시도해주세요.");
+            showLensResult(base64Image, type, "분석 실패: 네트워크 연결 문제");
+        }
+    }
+
     function showLensResult(imgSrc, type, realText = null) {
-        currentLensImg = imgSrc; document.getElementById('lensResultImg').src = imgSrc; const titleEl = document.getElementById('lensResultTitle'); const contentEl = document.getElementById('lensResultContent');
-        if (type === 'plant') { titleEl.innerHTML = `<i data-lucide="camera" class="w-5 h-5 text-[#84CC16]"></i> 수목·식물 식별 결과`; contentEl.innerHTML = `<span class="text-[#84CC16] font-black text-[14px]">[AI 식별 완료]</span>\n\n📌 <b>추정 품종:</b> 소나무 등\n💧 <b>생육 상태:</b> 양호함`; } 
-        else { titleEl.innerHTML = `<i data-lucide="bug" class="w-5 h-5 text-[#F59E0B]"></i> 병해충·벌레 식별 결과`; contentEl.innerHTML = `<span class="text-[#F59E0B] font-black text-[14px]">[AI 진단 완료]</span>\n\n🚨 <b>추정 병해충:</b> 의심\n🛡️ <b>방제 방법:</b> 예방 주사 권장`; }
-        lucide.createIcons(); const modal = document.getElementById('lensResultModal'); const box = document.getElementById('lensResultBox'); modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10); history.pushState({ modalOpen: true }, "", "");
+        currentLensImg = imgSrc; 
+        document.getElementById('lensResultImg').src = imgSrc; 
+        const titleEl = document.getElementById('lensResultTitle'); 
+        const contentEl = document.getElementById('lensResultContent');
+        
+        const formattedText = realText ? realText.replace(/\n/g, '<br>') : '결과 없음';
+
+        if (type === 'plant') { 
+            titleEl.innerHTML = `<i data-lucide="camera" class="w-5 h-5 text-[#84CC16]"></i> 수목·식물 식별 결과`; 
+            contentEl.innerHTML = `<span class="text-[#84CC16] font-black text-[14px]">[AI 정밀 진단 완료]</span><br><br>${formattedText}`; 
+        } else { 
+            titleEl.innerHTML = `<i data-lucide="bug" class="w-5 h-5 text-[#F59E0B]"></i> 병해충·벌레 식별 결과`; 
+            contentEl.innerHTML = `<span class="text-[#F59E0B] font-black text-[14px]">[AI 정밀 진단 완료]</span><br><br>${formattedText}`; 
+        }
+        
+        lucide.createIcons(); 
+        const modal = document.getElementById('lensResultModal'); 
+        const box = document.getElementById('lensResultBox'); 
+        modal.classList.remove('hidden'); 
+        setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10); 
+        history.pushState({ modalOpen: true }, "", "");
     }
     function closeLensResult(fromPopstate = false) { const modal = document.getElementById('lensResultModal'); const box = document.getElementById('lensResultBox'); if(modal) modal.classList.add('opacity-0'); if(box) box.classList.add('scale-95'); setTimeout(() => { if(modal) modal.classList.add('hidden'); }, 200); if(!fromPopstate && history.state && history.state.modalOpen) history.back(); }
     function copyLensResult() { const content = document.getElementById('lensResultContent').innerText; navigator.clipboard.writeText(content).then(() => alert("복사되었습니다.")); }
