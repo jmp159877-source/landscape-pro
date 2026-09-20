@@ -675,17 +675,23 @@
                 <label class="block text-[13px] font-black text-[#12261E] mb-2">현장명 및 작업 내용</label>
                 <input type="text" id="scheduleTitle" placeholder="예: 단독주택 소나무 전지" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-4 py-3 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
             </div>
-            <div>
-                <label class="block text-[13px] font-black text-[#12261E] mb-2">태그 색상 지정</label>
-                <select id="scheduleColor" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-4 py-3 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
-                    <option value="border-[#84CC16]">🟢 수목 관리 / 방제</option>
-                    <option value="border-blue-400">🔵 시공 / 포장공사</option>
-                    <option value="border-orange-400">🟠 견적 방문 / 미팅</option>
-                    <option value="border-red-400">🔴 긴급 / A/S</option>
-                </select>
+            <div class="flex gap-2">
+                <div class="flex-1">
+                    <label class="block text-[13px] font-black text-[#12261E] mb-2">작업 분류명 (직접 수정 가능)</label>
+                    <input type="text" id="scheduleTagText" value="조경 관리 작업" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-4 py-3 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
+                </div>
+                <div class="w-24 shrink-0">
+                    <label class="block text-[13px] font-black text-[#12261E] mb-2">테마 색상</label>
+                    <select id="scheduleColor" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-2 py-3 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
+                        <option value="border-[#84CC16]">🟢 녹색</option>
+                        <option value="border-blue-400">🔵 파랑</option>
+                        <option value="border-orange-400">🟠 주황</option>
+                        <option value="border-red-400">🔴 빨강</option>
+                    </select>
+                </div>
             </div>
             <div>
-                <label class="block text-[13px] font-black text-[#12261E] mb-2">상세 메모 (인력, 자재 등)</label>
+                <label class="block text-[13px] font-black text-[#12261E] mb-2">상세 메모 (작업 예약 시간, 인력, 자재 등)</label>
                 <textarea id="scheduleMemo" rows="3" placeholder="메모 입력" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] p-4 text-[14px] font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] resize-none"></textarea>
             </div>
         </div>
