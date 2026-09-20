@@ -2075,6 +2075,16 @@
         history.pushState({ modalOpen: true }, "", "");
     }
 
+    function deleteLedger(id) {
+        if(confirm("이 장부 내역을 삭제하시겠습니까?")) {
+            ledgers = ledgers.filter(L => L.id != id);
+            localStorage.setItem('shinhwa_pro_ledgers', JSON.stringify(ledgers));
+            updateData('ledgers', ledgers);
+            renderLedgerList();
+        }
+    }
+
+    // --- 수동 계산기 로직 ---
     let calcStr = "";
     function openCalculator() {
         calcStr = ""; document.getElementById('calcDisplay').innerText = "0";
@@ -2110,6 +2120,9 @@
         document.getElementById('calcDisplay').innerText = calcStr;
     }
 
+    // ==========================================
+    // 🔄 공통 화면 전환 및 초기화 (맨 마지막 필수 코드)
+    // ==========================================
     function switchView(mode, pushHistory = true) {
       const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView', 'calendarView', 'ledgerView'];
       views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
@@ -2207,3 +2220,5 @@
       else switchView('admin', false);
     });
   </script>
+</body>
+</html>
