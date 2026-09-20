@@ -1043,6 +1043,26 @@
             });
         }, 300);
     }
+
+    // 🔥 AI 식별 렌즈 원본 사진을 '일지 특이사항'으로 글씨 없이 바로 보내기
+    function sendLensToIssue() {
+        if (!currentLensImg) return;
+        
+        // 1. 특이사항 사진 배열에 원본 사진(순수 사진) 즉시 추가
+        issueImages.push(currentLensImg);
+        renderThumbList('issue');
+        
+        // 2. 모달창 닫고 일지 작성 화면으로 이동
+        closeLensResult();
+        switchView('admin');
+        
+        // 3. 살짝 스크롤을 내려서 특이사항 부분을 보여줌
+        setTimeout(() => {
+            const issueSection = document.getElementById('inputIssue');
+            if(issueSection) issueSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            alert("✅ 글씨 없는 깨끗한 원본 사진이 일지의 '특이사항'에 첨부되었습니다!\n\n필요한 내용은 작업자 코멘트로 직접 적어주세요.");
+        }, 300);
+    }
     lucide.createIcons();
     const today = new Date(); const formattedDate = `${today.getFullYear()}. ${String(today.getMonth()+1).padStart(2,'0')}. ${String(today.getDate()).padStart(2,'0')}`;
     document.getElementById('viewDate').innerText = formattedDate;
