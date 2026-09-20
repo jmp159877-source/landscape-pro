@@ -1938,7 +1938,184 @@
             renderCalendar(); renderScheduleList();
         }
     }
+    // ==========================================
+    // 📓 스마트 개인 장부 및 계산기 로직
+    // ==========================================
+    let ledgers = JSON.parse(localStorage.getItem('shinhwa_pro_ledgers')) || [];
 
+    function renderLedgerList() {
+        const list = document.getElementById('ledgerList');
+        list.innerHTML = '';
+        
+        if (ledgers.length === 0) {
+            list.innerHTML = `<div class="p-6 text-center text-[#8B95A1] text-[13px] bg-white border-b border-[#EAEBEA] font-bold">등록된 장부 내역이 없습니다.</div>`;
+            document.getElementById('ledgerTotalIncome').innerText = "0원";
+            document.getElementById('ledgerTotalExpense').innerText = "0원";
+            document.getElementById('ledgerNetProfit').innerText = "0원";
+            return;
+        }
+
+        // 날짜 기준 내림차순(최신순) 정렬
+        ledgers.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach((L) => {
+            const dateObj = new Date(L.date);
+            const days = ['일','월','화','수','목','금','토'];
+            const dayStr = days[dateObj.getDay()];
+            const inc = L.income || 0;
+            const exp = L.expense || 0;
+            
+            list.innerHTML += `
+            <div class="grid grid-cols-12 gap-2 py-3 border-b border-[#F4F5F4] text-center items-center bg-white hover:bg-[#F9F9F8] transition-colors">
+                <div class="col-span-1"><input type="checkbox" class="ledger-chk w-4 h-4 text-[#84CC16] bg-[#F4F5F4] border-[#EAEBEA] rounded focus:ring-[#84CC16] cursor-pointer" value="${L.id}" onchange="calcLedgerTotal()"></div>
+                <div class="col-span-3 text-[11px] font-bold text-[#4E5968]">${L.date.replace(/-/g, '.')}<br><span class="text-[#8B95A1]">(${dayStr})</span></div>
+                <div class="col-span-3 text-[12px] font-black text-[#1A1D1A] truncate cursor-pointer px-1" onclick="alert('📍 [${L.title}] 적요\\n\\n${L.memo ? L.memo : '적요 내용이 없습니다.'}')">${L.title}</div>
+                <div class="col-span-2 text-[12px] font-black text-blue-500">${inc.toLocaleString()}</div>
+                <div class="col-span-2 text-[12px] font-black text-red-500">${exp.toLocaleString()}</div>
+                <div class="col-span-1"><button onclick="editLedger(${L.id})" class="text-[#A3A8A3] hover:text-[#84CC16] bg-[#F4F5F4] p-1.5 rounded-lg"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i></button></div>
+            </div>`;
+        });
+        lucide.createIcons();
+        
+        // 새로 렌더링 시 전체 선택 해제 상태로 초기화
+        document.getElementById('selectAllLedger').checked = false;
+        calcLedgerTotal();
+    }
+
+    function toggleAllLedger(checkbox) {
+        const checkboxes = document.querySelectorAll('.ledger-chk');
+        checkboxes.forEach(chk => chk.checked = checkbox.checked);
+        calcLedgerTotal();
+    }
+
+    function calcLedgerTotal() {
+        let totalInc = 0;
+        let totalExp = 0;
+        const checkboxes = document.querySelectorAll('.ledger-chk:checked');
+        
+        checkboxes.forEach(chk => {
+            const id = chk.value;
+            const target = ledgers.find(L => L.id == id);
+            if (target) {
+                totalInc += (target.income || 0);
+                totalExp += (target.expense || 0);
+            }
+        });
+
+        const netProfit = totalInc - totalExp;
+        document.getElementById('ledgerTotalIncome').innerText = totalInc.toLocaleString('ko-KR') + "원";
+        document.getElementById('ledgerTotalExpense').innerText = totalExp.toLocaleString('ko-KR') + "원";
+        document.getElementById('ledgerNetProfit').innerText = netProfit.toLocaleString('ko-KR') + "원";
+        document.getElementById('ledgerNetProfit').className = netProfit >= 0 ? "text-[22px] font-black text-[#84CC16]" : "text-[22px] font-black text-red-400";
+    }
+
+    function openLedgerModal() {
+        document.getElementById('ledgerId').value = Date.now();
+        const today = new Date();
+        document.getElementById('ledgerDate').value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        document.getElementById('ledgerTitle').value = '';
+        document.getElementById('ledgerIncome').value = '';
+        document.getElementById('ledgerExpense').value = '';
+        document.getElementById('ledgerMemo').value = '';
+        
+        const modal = document.getElementById('ledgerModal');
+        const box = document.getElementById('ledgerBox');
+        modal.classList.remove('hidden');
+        setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10);
+        history.pushState({ modalOpen: true }, "", "");
+    }
+
+    function closeLedgerModal(fromPopstate = false) {
+        const modal = document.getElementById('ledgerModal');
+        const box = document.getElementById('ledgerBox');
+        if(modal) modal.classList.add('opacity-0');
+        if(box) box.classList.add('scale-95');
+        setTimeout(() => { if(modal) modal.classList.add('hidden'); }, 200);
+        if(!fromPopstate && history.state && history.state.modalOpen) history.back();
+    }
+
+    function saveLedger() {
+        const id = document.getElementById('ledgerId').value;
+        const date = document.getElementById('ledgerDate').value;
+        const title = document.getElementById('ledgerTitle').value;
+        const incStr = document.getElementById('ledgerIncome').value.replace(/[^0-9]/g, '');
+        const expStr = document.getElementById('ledgerExpense').value.replace(/[^0-9]/g, '');
+        
+        if (!title.trim() || !date) return alert("날짜와 현장명을 입력해주세요.");
+        
+        const newLedger = {
+            id: id,
+            date: date,
+            title: title,
+            income: incStr ? parseInt(incStr) : 0,
+            expense: expStr ? parseInt(expStr) : 0,
+            memo: document.getElementById('ledgerMemo').value
+        };
+        
+        // 기존 수정인지 신규 추가인지 판별
+        const existingIdx = ledgers.findIndex(L => L.id == id);
+        if (existingIdx > -1) { ledgers[existingIdx] = newLedger; } 
+        else { ledgers.push(newLedger); }
+        
+        localStorage.setItem('shinhwa_pro_ledgers', JSON.stringify(ledgers));
+        updateData('ledgers', ledgers); // 클라우드 동기화
+        
+        renderLedgerList();
+        closeLedgerModal();
+    }
+
+    function editLedger(id) {
+        const target = ledgers.find(L => L.id == id);
+        if(!target) return;
+        
+        document.getElementById('ledgerId').value = target.id;
+        document.getElementById('ledgerDate').value = target.date;
+        document.getElementById('ledgerTitle').value = target.title;
+        document.getElementById('ledgerIncome').value = target.income ? target.income.toLocaleString('ko-KR') : '';
+        document.getElementById('ledgerExpense').value = target.expense ? target.expense.toLocaleString('ko-KR') : '';
+        document.getElementById('ledgerMemo').value = target.memo || '';
+        
+        const modal = document.getElementById('ledgerModal');
+        const box = document.getElementById('ledgerBox');
+        modal.classList.remove('hidden');
+        setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10);
+        history.pushState({ modalOpen: true }, "", "");
+    }
+
+    // --- 수동 계산기 로직 ---
+    let calcStr = "";
+    function openCalculator() {
+        calcStr = ""; document.getElementById('calcDisplay').innerText = "0";
+        const modal = document.getElementById('calculatorModal');
+        const box = document.getElementById('calculatorBox');
+        modal.classList.remove('hidden');
+        setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10);
+        history.pushState({ modalOpen: true }, "", "");
+    }
+
+    function closeCalculator(fromPopstate = false) {
+        const modal = document.getElementById('calculatorModal');
+        const box = document.getElementById('calculatorBox');
+        if(modal) modal.classList.add('opacity-0');
+        if(box) box.classList.add('scale-95');
+        setTimeout(() => { if(modal) modal.classList.add('hidden'); }, 200);
+        if(!fromPopstate && history.state && history.state.modalOpen) history.back();
+    }
+
+    function calcInput(val) {
+        if(val === 'C') { calcStr = ""; document.getElementById('calcDisplay').innerText = "0"; return; }
+        if(val === '<') { calcStr = calcStr.slice(0, -1); document.getElementById('calcDisplay').innerText = calcStr || "0"; return; }
+        if(val === '=') {
+            try { 
+                // 안전한 수식 계산
+                calcStr = String(new Function('return ' + calcStr)()); 
+                let num = parseFloat(calcStr);
+                document.getElementById('calcDisplay').innerText = isNaN(num) ? "0" : num.toLocaleString('ko-KR'); 
+            }
+            catch(e) { document.getElementById('calcDisplay').innerText = "Error"; calcStr = ""; }
+            return;
+        }
+        calcStr += val;
+        document.getElementById('calcDisplay').innerText = calcStr;
+    }
     function switchView(mode, pushHistory = true) {
       const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView', 'calendarView', 'ledgerView'];
       views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
