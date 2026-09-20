@@ -472,7 +472,52 @@
         </div>
       </div>
     </section>
+    <!-- ================= [스마트 개인 장부 (가계부) 화면] ================= -->
+    <section id="ledgerView" class="hidden space-y-4">
+      <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
+        <div class="flex items-center justify-between pb-4 border-b border-[#F4F5F4]">
+            <h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="wallet" class="w-6 h-6 text-[#84CC16]"></i> 개인 장부 (회계)</h2>
+            <button onclick="openCalculator()" class="bg-[#12261E] text-[#84CC16] px-3 py-1.5 rounded-[10px] text-[12px] font-black shadow-sm hover:bg-black transition-colors flex items-center gap-1"><i data-lucide="calculator" class="w-4 h-4"></i> 계산기</button>
+        </div>
 
+        <div class="bg-gradient-to-r from-[#12261E] to-[#1A382B] rounded-[20px] p-5 text-white shadow-md relative overflow-hidden">
+            <div class="absolute -right-4 -top-4 w-24 h-24 bg-[#84CC16]/10 rounded-full blur-xl pointer-events-none"></div>
+            <div class="flex justify-between items-center mb-2 text-[12px] text-[#A3A8A3] font-bold relative z-10">
+                <span>선택된 항목 합산 결과</span>
+                <label class="flex items-center gap-1.5 cursor-pointer text-[#84CC16]"><input type="checkbox" id="selectAllLedger" onchange="toggleAllLedger(this)" class="w-4 h-4 rounded text-[#84CC16] bg-black/50 border-white/20 focus:ring-[#84CC16]"> 전체 선택</label>
+            </div>
+            <div class="flex justify-between items-center py-2.5 border-b border-white/10 relative z-10">
+                <span class="text-[14px] font-bold">총 수입 (매출)</span>
+                <span id="ledgerTotalIncome" class="text-[16px] font-black text-blue-400">0원</span>
+            </div>
+            <div class="flex justify-between items-center py-2.5 border-b border-white/10 relative z-10">
+                <span class="text-[14px] font-bold">총 지출 (비용)</span>
+                <span id="ledgerTotalExpense" class="text-[16px] font-black text-red-400">0원</span>
+            </div>
+            <div class="flex justify-between items-center pt-3 relative z-10">
+                <span class="text-[15px] font-black">순수익 (수입-지출)</span>
+                <span id="ledgerNetProfit" class="text-[22px] font-black text-[#84CC16]">0원</span>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto pb-2 nav-scroll border border-[#EAEBEA] rounded-[16px]">
+            <div class="min-w-[500px] bg-white">
+                <div class="grid grid-cols-12 gap-2 text-[12px] font-black text-[#8B95A1] bg-[#F9F9F8] p-3 border-b border-[#EAEBEA] text-center items-center">
+                    <div class="col-span-1">선택</div>
+                    <div class="col-span-3">날짜 (요일)</div>
+                    <div class="col-span-3">작업 현장명</div>
+                    <div class="col-span-2 text-blue-500">수입 (원)</div>
+                    <div class="col-span-2 text-red-500">지출 (원)</div>
+                    <div class="col-span-1">수정</div>
+                </div>
+                <div id="ledgerList" class="space-y-0 text-[13px] text-[#1A1D1A]"></div>
+            </div>
+        </div>
+        <p class="text-[11px] font-bold text-[#8B95A1] text-center mt-1">* 리스트 항목 터치 시 상세 적요(메모)를 확인할 수 있습니다.</p>
+
+        <button onclick="openLedgerModal()" class="w-full py-4.5 bg-[#F4F5F4] border border-[#EAEBEA] text-[#12261E] rounded-[16px] font-black text-[15px] shadow-sm hover:bg-[#EAEBEA] transition-colors flex items-center justify-center gap-1.5 mt-2"><i data-lucide="plus-circle" class="w-5 h-5 text-[#84CC16]"></i> 새 장부 내역 추가</button>
+      </div>
+    </section>
     <!-- 공통 뷰어 -->
     <section id="clientView" class="hidden space-y-5">
       <div id="adminControlsPanel" class="no-print bg-[#12261E] text-white rounded-[28px] p-6 shadow-xl space-y-4 border border-[#1c3829]">
