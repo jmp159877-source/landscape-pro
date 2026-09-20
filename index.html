@@ -1279,13 +1279,57 @@
     }
     function copyReportText() { navigator.clipboard.writeText(getShareMessage()).then(() => alert("복사되었습니다.")); }
 
-    function downloadFullReport() {
-        showLoadingOverlay("렌더링 중..."); const target = document.getElementById('printCardArea'); const printBtn = document.getElementById('printBtnBox'); const backBtn = document.getElementById('backToAdminBtnBox');
-        if(printBtn) printBtn.style.display = 'none'; if(backBtn) backBtn.style.display = 'none';
-        html2canvas(target, { scale: 2, useCORS: true, backgroundColor: "#FFFFFF" }).then(canvas => {
-            const link = document.createElement('a'); link.download = '조경노트_' + Date.now() + '.png'; link.href = canvas.toDataURL('image/png'); link.click();
-            if(printBtn) printBtn.style.display = 'block'; if(backBtn) backBtn.style.display = 'block'; document.getElementById('loadingOverlay')?.remove();
-        }).catch(e => { alert("저장 오류"); if(printBtn) printBtn.style.display = 'block'; if(backBtn) backBtn.style.display = 'block'; document.getElementById('loadingOverlay')?.remove(); });
+    async function downloadFullReport() {
+        showLoadingOverlay("고화질 렌더링 중입니다. (약 5초 소요)"); 
+        const target = document.getElementById('printCardArea'); 
+        const printBtn = document.getElementById('printBtnBox'); 
+        const backBtn = document.getElementById('backToAdminBtnBox');
+        if(printBtn) printBtn.style.display = 'none'; 
+        if(backBtn) backBtn.style.display = 'none';
+
+        // 🔥 엑스박스(액박) 방지용 핵심 코드: 파이어베이스 이미지를 캡처용 데이터로 임시 강제 변환
+        const imgs = target.querySelectorAll('img');
+        const originalSrcs = [];
+
+        try {
+            for (let i = 0; i < imgs.length; i++) {
+                let img = imgs[i];
+                originalSrcs.push(img.src); // 원래 주소 기억하기
+                
+                if (img.src && img.src.startsWith('http')) {
+                    // 보안 차단(CORS)을 우회하여 브라우저 내부용 데이터(Base64)로 변환
+                    const res = await fetch(img.src + (img.src.includes('?') ? '&' : '?') + 'v=' + new Date().getTime());
+                    const blob = await res.blob();
+                    await new Promise(resolve => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => { img.src = reader.result; resolve(); };
+                        reader.readAsDataURL(blob);
+                    });
+                }
+            }
+        } catch(e) { console.log("이미지 우회 변환 중 경고:", e); }
+
+        // 0.5초 대기 (변환된 이미지가 화면에 완전히 발라질 시간을 줍니다)
+        setTimeout(() => {
+            html2canvas(target, { scale: 2, useCORS: true, backgroundColor: "#FFFFFF" }).then(canvas => {
+                const link = document.createElement('a'); 
+                link.download = '조경노트_리포트_' + Date.now() + '.png'; 
+                link.href = canvas.toDataURL('image/png'); 
+                link.click();
+                
+                // 다운로드가 끝난 후 원래 이미지 주소로 원상복구
+                for (let i = 0; i < imgs.length; i++) { imgs[i].src = originalSrcs[i]; }
+                
+                if(printBtn) printBtn.style.display = 'block'; 
+                if(backBtn) backBtn.style.display = 'block'; 
+                document.getElementById('loadingOverlay')?.remove();
+            }).catch(e => { 
+                alert("저장 오류: 화면 캡처 중 문제가 발생했습니다."); 
+                if(printBtn) printBtn.style.display = 'block'; 
+                if(backBtn) backBtn.style.display = 'block'; 
+                document.getElementById('loadingOverlay')?.remove(); 
+            });
+        }, 500);
     }
 
     function renderClientSelect() {
