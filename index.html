@@ -1156,7 +1156,6 @@
     function copyLensResult() { const content = document.getElementById('lensResultContent').innerText; navigator.clipboard.writeText(content).then(() => alert("복사되었습니다.")); }
     function openModalForLens() { modalImages = [currentLensImg]; modalCurrentIdx = 0; updateModalImage(); document.getElementById('imageModal').style.zIndex = "3000"; document.getElementById('imageModal').classList.remove('hidden'); history.pushState({ modalOpen: true }, "", ""); }
 
-    // 🔥 AI 진단 결과 이미지 갤러리 저장 기능
     function saveLensResultToGallery() {
         showLoadingOverlay("사진으로 변환 중입니다...");
         const target = document.getElementById('lensCaptureArea');
@@ -1175,16 +1174,12 @@
         }, 300);
     }
 
-    // 🔥 AI 식별 렌즈 원본 사진을 '일지 특이사항'으로 글씨 없이 바로 보내기
     function sendLensToIssue() {
         if (!currentLensImg) return;
-        
         issueImages.push(currentLensImg);
         renderThumbList('issue');
-        
         closeLensResult();
         switchView('admin');
-        
         setTimeout(() => {
             const issueSection = document.getElementById('inputIssue');
             if(issueSection) issueSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -2087,7 +2082,6 @@
         }
     }
 
-    // --- 수동 계산기 로직 ---
     let calcStr = "";
     function openCalculator() {
         calcStr = ""; document.getElementById('calcDisplay').innerText = "0";
@@ -2123,9 +2117,6 @@
         document.getElementById('calcDisplay').innerText = calcStr;
     }
 
-    // ==========================================
-    // 🔄 공통 화면 전환 및 초기화 (맨 마지막 필수 코드)
-    // ==========================================
     function switchView(mode, pushHistory = true) {
       const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView', 'calendarView', 'ledgerView'];
       views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
