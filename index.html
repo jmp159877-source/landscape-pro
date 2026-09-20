@@ -1123,6 +1123,14 @@
       document.getElementById('clientSelect').value = payload.c || ''; document.getElementById('inputClientPhone').value = payload.p || '';
       if(document.getElementById('inputClientAddress')) document.getElementById('inputClientAddress').value = payload.addr || '';
       document.getElementById('inputRound').value = payload.r || ''; document.getElementById('inputDiagnosis').value = payload.d || ''; document.getElementById('inputIssue').value = payload.issue || '';
+      
+      // 👉 수정 화면 진입 시 거래처의 원래 소속을 찾아내 라디오 버튼에 자동 적용 (핵심 추가)
+      const foundClient = clients.find(c => c.name === payload.c);
+      let r1 = document.querySelector('input[name="newClientTypeReport"][value="정기 관리"]');
+      let r2 = document.querySelector('input[name="newClientTypeReport"][value="개별 고객"]');
+      if (foundClient && foundClient.type === '개별 고객') { if(r2) r2.checked = true; } 
+      else { if(r1) r1.checked = true; }
+
       const buttons = document.querySelectorAll('#categoryContainer .cat-btn');
       buttons.forEach(btn => { const val = btn.getAttribute('data-val'); btn.className = "cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968] transition-all"; btn.innerText = "+ " + val; });
       if(document.getElementById('inputTreePruning')) document.getElementById('inputTreePruning').value = ''; if(document.getElementById('inputExtraCategory')) document.getElementById('inputExtraCategory').value = '';
