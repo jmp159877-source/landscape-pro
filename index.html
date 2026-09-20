@@ -448,9 +448,7 @@
         <button onclick="copyReportText()" class="w-full py-3.5 bg-white/10 border border-white/20 text-white/90 rounded-[14px] font-bold text-[13px] flex items-center justify-center gap-1.5 hover:bg-white/20 transition-all"><i data-lucide="copy" class="w-4 h-4"></i> 문자 발송용 메시지 복사하기</button>
         <button onclick="editCurrentQuote()" class="w-full py-4 bg-[#F9F9F8] text-[#12261E] rounded-[16px] font-black text-[14px] items-center justify-center gap-2 shadow-lg hover:bg-[#EAEBEA] transition-all border border-[#EAEBEA] mt-3 hidden" id="editQuoteBtnBox"><i data-lucide="edit-3" class="w-5 h-5 inline-block -mt-0.5"></i> 현재 견적서 수정하기</button>
         <button onclick="editCurrentReport()" class="w-full py-4 bg-[#F9F9F8] text-[#12261E] rounded-[16px] font-black text-[14px] items-center justify-center gap-2 shadow-lg hover:bg-[#EAEBEA] transition-all border border-[#EAEBEA] mt-3 hidden" id="editReportBtnBox"><i data-lucide="edit-3" class="w-5 h-5 inline-block -mt-0.5"></i> 현재 일지 수정하기</button>
-        <div class="grid grid-cols-1 gap-2 pt-3 border-t border-white/10 mt-3">
-           <button onclick="downloadFullReport()" class="w-full py-4 bg-white/10 border border-white/20 text-[#84CC16] rounded-[16px] font-black text-[14px] flex items-center justify-center gap-2 shadow-lg hover:bg-white/20 transition-all"><i data-lucide="download" class="w-5 h-5"></i> 리포트 전체 이미지로 다운로드</button>
-        </div>
+        
       </div>
 
       <div class="rounded-[32px] p-8 luxury-shadow space-y-7 print-card relative overflow-hidden text-[#1A1D1A]" id="printCardArea">
@@ -527,10 +525,7 @@
             <button onclick="shareKakaoTalk()" class="py-4 bg-[#FEE500] text-[#3C1E1E] rounded-[14px] font-black text-[14px] flex items-center justify-center gap-1.5 shadow-sm hover:brightness-95 transition-all"><i data-lucide="message-circle" class="w-5 h-5 fill-current"></i> 카톡으로 전달</button>
             <button onclick="sendSMS()" class="py-4 bg-[#84CC16] text-[#12261E] rounded-[14px] font-black text-[14px] flex items-center justify-center gap-1.5 shadow-sm hover:bg-[#9BE32D] transition-all"><i data-lucide="smartphone" class="w-5 h-5"></i> 문자로 전달</button>
           </div>
-          <div class="grid grid-cols-2 gap-2">
-            <button onclick="downloadFullReport()" class="py-4 bg-[#3B82F6] text-white rounded-[14px] font-black text-[14px] flex items-center justify-center gap-1.5 shadow-sm hover:bg-[#2563EB] transition-all"><i data-lucide="image" class="w-5 h-5"></i> 갤러리에 저장</button>
-            <button onclick="window.print()" class="py-4 bg-white border border-[#EAEBEA] hover:bg-[#F9F9F8] text-[#12261E] rounded-[14px] font-black text-[14px] flex items-center justify-center gap-1.5 transition-colors shadow-sm"><i data-lucide="printer" class="w-5 h-5"></i> PDF 저장/인쇄</button>
-          </div>
+          <button onclick="window.print()" class="w-full py-4 bg-white border border-[#EAEBEA] hover:bg-[#F9F9F8] text-[#12261E] rounded-[14px] font-black text-[14px] flex items-center justify-center gap-1.5 transition-colors shadow-sm mt-2"><i data-lucide="printer" class="w-5 h-5"></i> PDF 문서로 저장 및 인쇄</button>
         </div>
         <div id="backToAdminBtnBox" class="no-print pt-3 relative z-10">
           <button id="btnBackFromReport" onclick="switchView('admin')" class="w-full py-4 text-[#4E5968] font-bold text-[14px] hover:text-[#12261E]">작업 화면으로 돌아가기</button>
