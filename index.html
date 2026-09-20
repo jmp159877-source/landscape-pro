@@ -136,7 +136,7 @@
 
   <datalist id="clientDatalist"></datalist>
 
-  <!-- 🔥 메인 헤더 레이아웃 (줄바꿈 수정 완료) 🔥 -->
+  <!-- 🔥 메인 헤더 레이아웃 🔥 -->
   <header id="mainHeader" class="no-print sticky top-0 z-40 glass-nav px-5 py-4 shadow-md" style="display: none;">
     <div class="max-w-md mx-auto flex items-start justify-between">
       <div class="flex items-start gap-3.5">
@@ -168,6 +168,8 @@
         <button id="tabClient" onclick="switchView('clients')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="building-2" class="w-5 h-5"></i>거래처 목록</button>
         <button id="tabContacts" onclick="switchView('contacts')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="users" class="w-5 h-5"></i>연락처</button>
         <button id="tabLens" onclick="switchView('lens')" class="w-full py-3.5 rounded-[12px] bg-[#1E3A8A] text-white font-black text-[14px] shadow-md hover:bg-[#172554] transition-all text-center flex flex-col items-center justify-center gap-1 border border-[#172554]"><i data-lucide="scan" class="w-5 h-5 text-[#84CC16]"></i>AI렌즈</button>
+        <!-- 🔥 캘린더 일정표 탭 버튼 추가 -->
+        <button id="tabCalendar" onclick="switchView('calendar')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="calendar-days" class="w-5 h-5"></i>일정표</button>
       </nav>
     </div>
   </header>
@@ -437,6 +439,30 @@
       </div>
     </section>
 
+    <!-- ================= [스마트 작업 일정표 화면] ================= -->
+    <section id="calendarView" class="hidden space-y-4">
+      <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
+        <div class="flex items-center justify-between pb-4 border-b border-[#F4F5F4]">
+            <button onclick="changeMonth(-1)" class="p-2 bg-[#F4F5F4] hover:bg-[#EAEBEA] rounded-[12px] transition-colors"><i data-lucide="chevron-left" class="w-5 h-5 text-[#4E5968]"></i></button>
+            <h2 id="calendarMonthText" class="text-[18px] font-black text-[#12261E]">2026년 9월</h2>
+            <button onclick="changeMonth(1)" class="p-2 bg-[#F4F5F4] hover:bg-[#EAEBEA] rounded-[12px] transition-colors"><i data-lucide="chevron-right" class="w-5 h-5 text-[#4E5968]"></i></button>
+        </div>
+        <div class="w-full">
+            <div class="grid grid-cols-7 gap-1 text-center text-[12px] font-black text-[#8B95A1] mb-2">
+                <div class="text-red-500">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div class="text-blue-500">토</div>
+            </div>
+            <div id="calendarGrid" class="grid grid-cols-7 gap-1 text-center mb-4"></div>
+        </div>
+        <div class="pt-4 border-t border-[#F4F5F4]">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="selectedDateText" class="font-black text-[#12261E] text-[15px] flex items-center gap-1.5"><i data-lucide="calendar-check" class="w-5 h-5 text-[#84CC16]"></i> 선택된 날짜</h3>
+                <button onclick="openScheduleModal()" class="bg-[#12261E] text-[#84CC16] px-4 py-2 rounded-[12px] text-[13px] font-black shadow-md hover:bg-black transition-colors flex items-center gap-1"><i data-lucide="plus" class="w-4 h-4"></i> 일정 추가</button>
+            </div>
+            <div id="scheduleList" class="space-y-3 max-h-[40vh] overflow-y-auto pr-1"></div>
+        </div>
+      </div>
+    </section>
+
     <!-- 공통 뷰어 -->
     <section id="clientView" class="hidden space-y-5">
       <div id="adminControlsPanel" class="no-print bg-[#12261E] text-white rounded-[28px] p-6 shadow-xl space-y-4 border border-[#1c3829]">
@@ -629,6 +655,44 @@
       <div class="p-4 bg-[#F9F9F8] border-t border-[#F4F5F4] flex gap-2">
         <button id="btnAgreeTerms" class="w-full py-4 bg-[#12261E] text-[#84CC16] rounded-[14px] font-black text-[16px] shadow-md hover:bg-black transition-colors">동의합니다</button>
       </div>
+    </div>
+  </div>
+  
+  <!-- 📝 일정 추가/수정 모달 -->
+  <div id="scheduleModal" class="hidden fixed inset-0 z-[6500] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200">
+    <div id="scheduleBox" class="bg-white w-full max-w-sm rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-[#EAEBEA]" onclick="event.stopPropagation()">
+        <div class="p-5 border-b border-[#F4F5F4] flex justify-between items-center bg-[#F9F9F8]">
+            <h3 class="text-[16px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="calendar-plus" class="w-5 h-5 text-[#84CC16]"></i> 작업 일정 등록</h3>
+            <button onclick="closeScheduleModal()" class="text-[#A3A8A3] hover:text-[#12261E] p-1"><i data-lucide="x" class="w-6 h-6"></i></button>
+        </div>
+        <div class="p-5 space-y-4 max-h-[70vh] overflow-y-auto bg-white">
+            <input type="hidden" id="scheduleId">
+            <div>
+                <label class="block text-[13px] font-black text-[#12261E] mb-2">작업 날짜</label>
+                <input type="date" id="scheduleDate" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-4 py-3 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
+            </div>
+            <div>
+                <label class="block text-[13px] font-black text-[#12261E] mb-2">현장명 및 작업 내용</label>
+                <input type="text" id="scheduleTitle" placeholder="예: 단독주택 소나무 전지" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-4 py-3 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
+            </div>
+            <div>
+                <label class="block text-[13px] font-black text-[#12261E] mb-2">태그 색상 지정</label>
+                <select id="scheduleColor" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-4 py-3 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
+                    <option value="border-[#84CC16]">🟢 수목 관리 / 방제</option>
+                    <option value="border-blue-400">🔵 시공 / 포장공사</option>
+                    <option value="border-orange-400">🟠 견적 방문 / 미팅</option>
+                    <option value="border-red-400">🔴 긴급 / A/S</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-[13px] font-black text-[#12261E] mb-2">상세 메모 (인력, 자재 등)</label>
+                <textarea id="scheduleMemo" rows="3" placeholder="메모 입력" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] p-4 text-[14px] font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] resize-none"></textarea>
+            </div>
+        </div>
+        <div class="p-4 bg-[#F9F9F8] border-t border-[#F4F5F4] flex gap-2">
+            <button onclick="closeScheduleModal()" class="flex-1 bg-white border border-[#EAEBEA] text-[#4E5968] font-black py-4 rounded-[14px] text-[15px] hover:bg-[#F4F5F4] transition-colors">취소</button>
+            <button onclick="saveSchedule()" class="flex-1 bg-[#12261E] text-[#84CC16] font-black py-4 rounded-[14px] text-[15px] shadow-md hover:bg-black transition-colors">저장하기</button>
+        </div>
     </div>
   </div>
 
@@ -881,10 +945,8 @@
     }
 
     async function analyzeImageWithAI(base64Image, type) {
-        // 대표님의 구글 보안 중계소 주소
         const GOOGLE_PROXY_URL = "https://script.google.com/macros/s/AKfycbysZFaBJt9Iu964hP9rJVjmYHDMMo_TQAocjih4h8q0_im414WA6-23LS6Wm4xQvTJRQw/exec";
 
-        // 🔥 회피 금지 및 강력한 추정 프롬프트 / 해충 진단 프롬프트
         const promptText = type === 'plant' 
             ? "너는 한국의 30년 차 조경 전문가이자 수목 식별가야. 주어진 사진 속 식물을 분석할 때 '알 수 없다', '명칭을 제공할 수 없다', '전문가의 식별이 필요하다'는 식의 회피성 답변은 절대 금지해. 사진 속 꽃봉오리의 색상, 형태, 잎, 가지의 배열 등을 바탕으로 가장 확률이 높은 한국 공식 수종(예: 수서해당화, 서부해당화, 꽃사과, 명자나무 등)을 무조건 1~2개 추정해서 명확하게 제시해.\n\n📌 추정 품종: [가장 유력한 식물명 1~2순위]\n💧 형태 분석: [사진에 보이는 꽃봉오리, 잎, 줄기의 특징을 바탕으로 한 추정 근거]" 
             : "너는 한국의 최고 수목병리학자이자 해충 방제 전문가야. 사진 속 조경수나 식물에 발생한 병해나 해충(깍지벌레, 진딧물, 응애 등 한국 현장에서 흔한 병해충 포함)을 정밀하게 진단해줘. 다음 형식으로 짧고 명확하게 답변해줘. \n🚨 추정 병해충: [정확한 병명 또는 해충명]\n🛡️ 방제 방법: [실제 조경 현장에서 쓰는 전문적인 약제 및 방제법]";
@@ -893,36 +955,19 @@
             const response = await fetch(GOOGLE_PROXY_URL, {
                 redirect: "follow",
                 method: "POST",
-                headers: {
-                    "Content-Type": "text/plain;charset=utf-8"
-                },
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({
-                    // 🔥 현존 최고 성능인 gpt-4o 엔진
                     model: "gpt-4o", 
-                    messages: [{
-                        role: "user",
-                        content: [
-                            { type: "text", text: promptText },
-                            { type: "image_url", image_url: { url: base64Image } }
-                        ]
-                    }],
-                    max_tokens: 400,
-                    temperature: 0.2 // 정확도 향상
+                    messages: [{ role: "user", content: [ { type: "text", text: promptText }, { type: "image_url", image_url: { url: base64Image } } ] }],
+                    max_tokens: 400, temperature: 0.2
                 })
             });
 
             const data = await response.json();
-
-            if (data.error) {
-                throw new Error(data.error.message);
-            }
-
-            if (!data.choices || data.choices.length === 0) {
-                throw new Error("서버에서 결과 데이터를 받지 못했습니다.");
-            }
+            if (data.error) throw new Error(data.error.message);
+            if (!data.choices || data.choices.length === 0) throw new Error("서버에서 결과 데이터를 받지 못했습니다.");
 
             const realText = data.choices[0].message.content; 
-
             document.getElementById('loadingOverlay')?.remove();
             showLensResult(base64Image, type, realText);
 
@@ -932,6 +977,7 @@
             showLensResult(base64Image, type, "분석 실패: " + error.message);
         }
     }
+    
     function showLensResult(imgSrc, type, realText = null) {
         currentLensImg = imgSrc; 
         document.getElementById('lensResultImg').src = imgSrc; 
@@ -1018,7 +1064,6 @@
             if (!uploadRes.ok) return null;
         } catch(e) { return null; }
 
-        // 데이터를 안전한 배열로 변환하고 널(null) 값 1차 제거
         let savedRecords = [];
         if (Array.isArray(records)) {
             savedRecords = [...records];
@@ -1038,12 +1083,11 @@
 
         if (existingIdx !== -1) { 
             if(savedRecords[existingIdx].url) recordObj.url = savedRecords[existingIdx].url; 
-            savedRecords[existingIdx] = recordObj; // 기존 자리에 완벽하게 덮어쓰기
+            savedRecords[existingIdx] = recordObj;
         } else {
             savedRecords.push(recordObj);
         }
         
-        // 🔥 핵심: 중복 데이터 및 내용 없는 빈 껍데기 완벽 삭제
         let uniqueRecords = [];
         let seen = new Set();
         for (let i = savedRecords.length - 1; i >= 0; i--) { 
@@ -1222,7 +1266,6 @@
       if(document.getElementById('inputClientAddress')) document.getElementById('inputClientAddress').value = payload.addr || '';
       document.getElementById('inputRound').value = payload.r || ''; document.getElementById('inputDiagnosis').value = payload.d || ''; document.getElementById('inputIssue').value = payload.issue || '';
       
-      // 👉 수정 화면 진입 시 거래처의 원래 소속을 찾아내 라디오 버튼에 자동 적용 (핵심 추가)
       const foundClient = clients.find(c => c.name === payload.c);
       let r1 = document.querySelector('input[name="newClientTypeReport"][value="정기 관리"]');
       let r2 = document.querySelector('input[name="newClientTypeReport"][value="개별 고객"]');
@@ -1367,13 +1410,10 @@
     
     function sendSMS() { 
         let phone = '';
-        // 🔥 사장님(관리자) 화면인지 고객 화면인지 스스로 판단하는 로직
         const backBtn = document.getElementById('backToAdminBtnBox');
-        // '관리자로 돌아가기' 버튼이 화면에 표시되고 있다면 사장님으로 인식!
         const isAdmin = backBtn && backBtn.offsetParent !== null;
 
         if (isAdmin) {
-            // 사장님일 경우: 문서에 적힌 고객 연락처를 싹 긁어와서 자동 입력
             let phoneText = document.getElementById('viewDocClientPhone').innerText;
             if (phoneText && phoneText !== '연락처 정보 없음' && phoneText !== '연락처 미등록') {
                 phone = phoneText.replace(/[^0-9]/g, '');
@@ -1399,17 +1439,15 @@
         if(printBtn) printBtn.style.display = 'none'; 
         if(backBtn) backBtn.style.display = 'none';
 
-        // 🔥 엑스박스(액박) 방지용 핵심 코드: 파이어베이스 이미지를 캡처용 데이터로 임시 강제 변환
         const imgs = target.querySelectorAll('img');
         const originalSrcs = [];
 
         try {
             for (let i = 0; i < imgs.length; i++) {
                 let img = imgs[i];
-                originalSrcs.push(img.src); // 원래 주소 기억하기
+                originalSrcs.push(img.src);
                 
                 if (img.src && img.src.startsWith('http')) {
-                    // 보안 차단(CORS)을 우회하여 브라우저 내부용 데이터(Base64)로 변환
                     const res = await fetch(img.src + (img.src.includes('?') ? '&' : '?') + 'v=' + new Date().getTime());
                     const blob = await res.blob();
                     await new Promise(resolve => {
@@ -1421,7 +1459,6 @@
             }
         } catch(e) { console.log("이미지 우회 변환 중 경고:", e); }
 
-        // 0.5초 대기 (변환된 이미지가 화면에 완전히 발라질 시간을 줍니다)
         setTimeout(() => {
             html2canvas(target, { scale: 2, useCORS: true, backgroundColor: "#FFFFFF" }).then(canvas => {
                 const link = document.createElement('a'); 
@@ -1429,7 +1466,6 @@
                 link.href = canvas.toDataURL('image/png'); 
                 link.click();
                 
-                // 다운로드가 끝난 후 원래 이미지 주소로 원상복구
                 for (let i = 0; i < imgs.length; i++) { imgs[i].src = originalSrcs[i]; }
                 
                 if(printBtn) printBtn.style.display = 'block'; 
@@ -1456,7 +1492,6 @@
             if(document.getElementById('quoteInputClientPhone')) document.getElementById('quoteInputClientPhone').value = found.phone || ''; 
             if(document.getElementById('quoteInputClientAddress')) document.getElementById('quoteInputClientAddress').value = found.address || ''; 
             
-            // 👉 기존 거래처의 소속(정기/개별)을 찾아내 라디오 버튼에 자동 적용 (핵심 추가)
             let r1 = document.querySelector('input[name="newClientTypeReport"][value="정기 관리"]');
             let r2 = document.querySelector('input[name="newClientTypeReport"][value="개별 고객"]');
             if (found.type === '개별 고객') { if(r2) r2.checked = true; } 
@@ -1486,10 +1521,7 @@
       if (filtered.length === 0) { container.innerHTML = `<div class="p-6 text-center text-[#8B95A1] text-[13px] bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA] font-bold">일치하는 거래처가 없습니다.</div>`; return; }
       filtered.forEach((c) => {
         const div = document.createElement('div'); div.className = "bg-white p-5 rounded-[16px] border border-[#EAEBEA] shadow-sm cursor-pointer hover:border-[#84CC16] hover:shadow-md transition-all flex justify-between items-center";
-        
-        // 🔥 주소를 위로 올리고, 전화를 맨 아래로 내려 오터치를 방지하도록 HTML 순서 수정
         div.innerHTML = `<div class="w-full pr-2" onclick="showHistory('${c.name}')"><div class="font-black text-[#1A1D1A] text-[15px] flex items-center gap-1.5"><i data-lucide="building" class="w-4 h-4 text-[#4E5968]"></i> ${c.name}</div><div class="text-[12px] font-medium text-[#8B95A1] mt-1.5 break-keep"><i data-lucide="map-pin" class="w-3.5 h-3.5 inline-block mr-1"></i> ${c.address || '주소 미등록'}</div><div class="text-[14px] font-bold text-[#4E5968] mt-1"><i data-lucide="phone" class="w-3.5 h-3.5 inline-block text-blue-500 mr-1"></i> ${formatPhoneToLink(c.phone)}</div></div><div class="flex gap-1.5 flex-shrink-0"><button onclick="editClient('${c.id}'); event.stopPropagation();" class="p-3 text-[#A3A8A3] hover:text-[#84CC16] bg-gray-50 rounded-xl transition-all"><i data-lucide="edit-2" class="w-5 h-5"></i></button><button onclick="deleteClient('${c.id}'); event.stopPropagation();" class="p-3 text-[#A3A8A3] hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div>`;
-        
         container.appendChild(div);
       }); lucide.createIcons();
     }
@@ -1501,25 +1533,23 @@
         if (editingClientIndex !== null) { 
             const idx = clients.findIndex(c => c.id === editingClientIndex); 
             if(idx !== -1) { 
-                const oldName = clients[idx].name; // 🔥 과거 이름 기억하기
+                const oldName = clients[idx].name; 
                 
                 clients[idx].name = name; clients[idx].phone = phone; clients[idx].address = address; clients[idx].type = type; 
                 
-                // 🔥 핵심: 기존에 작성된 일지/견적서들의 이름표를 새 정보로 싹 갈아끼우기 (강제 동기화)
                 if (oldName !== name) {
                     let isChanged = false;
                     records.forEach(r => {
                         if (r && r.clientName === oldName) {
-                            r.clientName = name; // 리포트 목록용 이름 업데이트
+                            r.clientName = name; 
                             if (r.payload) { 
-                                r.payload.c = name; // 실제 문서 안의 이름 업데이트
-                                r.payload.p = phone; // 내친김에 바뀐 전화번호도 업데이트
-                                r.payload.addr = address; // 바뀐 주소도 업데이트
+                                r.payload.c = name; 
+                                r.payload.p = phone; 
+                                r.payload.addr = address; 
                             }
                             isChanged = true;
                         }
                     });
-                    // 일지가 수정되었다면 클라우드/로컬 저장소에 즉시 반영
                     if (isChanged) { 
                         updateData('records', records); 
                         localStorage.setItem('shinhwa_pro_records', JSON.stringify(records)); 
@@ -1573,13 +1603,151 @@
       lucide.createIcons(); switchView('history');
     }
 
+    // ==========================================
+    // 📅 스마트 작업 일정표 로직
+    // ==========================================
+    let currentCalDate = new Date();
+    let selectedDate = new Date();
+    let schedules = JSON.parse(localStorage.getItem('shinhwa_pro_schedules')) || [];
+
+    function renderCalendar() {
+        const year = currentCalDate.getFullYear();
+        const month = currentCalDate.getMonth();
+        document.getElementById('calendarMonthText').innerText = `${year}년 ${month + 1}월`;
+        
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const grid = document.getElementById('calendarGrid');
+        grid.innerHTML = '';
+        
+        for (let i = 0; i < firstDay; i++) { grid.innerHTML += `<div class="p-2"></div>`; }
+        
+        for (let i = 1; i <= daysInMonth; i++) {
+            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+            const daySchedules = schedules.filter(s => s.date === dateStr);
+            
+            let dotHtml = '';
+            if (daySchedules.length > 0) {
+                const color = daySchedules[0].color.replace('border-', 'bg-');
+                dotHtml = `<div class="w-1.5 h-1.5 ${color} rounded-full mx-auto mt-1"></div>`;
+            } else {
+                dotHtml = `<div class="w-1.5 h-1.5 mt-1 opacity-0"></div>`;
+            }
+            
+            const isToday = new Date().toDateString() === new Date(year, month, i).toDateString();
+            const todayClass = isToday ? 'bg-[#12261E] text-[#84CC16] rounded-full' : 'text-[#1A1D1A]';
+            const isSelected = selectedDate.toDateString() === new Date(year, month, i).toDateString();
+            const selectedClass = isSelected && !isToday ? 'border-2 border-[#12261E] rounded-full' : '';
+
+            grid.innerHTML += `
+                <div onclick="selectDate(${year}, ${month}, ${i})" class="flex flex-col items-center justify-center p-1 cursor-pointer">
+                    <div class="w-9 h-9 flex items-center justify-center text-[14px] font-black ${todayClass} ${selectedClass}">${i}</div>
+                    ${dotHtml}
+                </div>
+            `;
+        }
+    }
+
+    function changeMonth(delta) {
+        currentCalDate.setMonth(currentCalDate.getMonth() + delta);
+        renderCalendar();
+    }
+
+    function selectDate(year, month, day) {
+        selectedDate = new Date(year, month, day);
+        renderCalendar();
+        const days = ['일', '월', '화', '수', '목', '금', '토'];
+        document.getElementById('selectedDateText').innerHTML = `<i data-lucide="calendar-check" class="w-5 h-5 text-[#84CC16]"></i> ${month + 1}월 ${day}일 (${days[selectedDate.getDay()]})`;
+        renderScheduleList();
+    }
+
+    function renderScheduleList() {
+        const list = document.getElementById('scheduleList');
+        list.innerHTML = '';
+        const dateStr = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
+        const daySchedules = schedules.filter(s => s.date === dateStr);
+        
+        if (daySchedules.length === 0) {
+            list.innerHTML = `<div class="p-6 text-center text-[#8B95A1] text-[13px] bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA] font-bold">등록된 일정이 없습니다.</div>`;
+            return;
+        }
+        
+        daySchedules.forEach(s => {
+            list.innerHTML += `
+                <div class="border-l-4 rounded-r-[16px] p-4 shadow-sm bg-white border-y border-r border-[#EAEBEA] ${s.color} hover:shadow-md transition-all">
+                    <div class="flex justify-between items-start mb-1.5">
+                        <h4 class="font-black text-[15px] text-[#1A1D1A] truncate pr-2">${s.title}</h4>
+                        <button onclick="deleteSchedule(${s.id})" class="text-[#A3A8A3] hover:text-red-500 bg-[#F4F5F4] p-1.5 rounded-lg"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div>
+                    ${s.memo ? `<div class="text-[13px] text-[#4E5968] font-bold bg-[#F9F9F8] px-3 py-2 rounded-lg mt-2">${s.memo.replace(/\n/g, '<br>')}</div>` : ''}
+                </div>
+            `;
+        });
+        lucide.createIcons();
+    }
+
+    function openScheduleModal() {
+        document.getElementById('scheduleId').value = Date.now();
+        const dateStr = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
+        document.getElementById('scheduleDate').value = dateStr;
+        document.getElementById('scheduleTitle').value = '';
+        document.getElementById('scheduleMemo').value = '';
+        
+        const modal = document.getElementById('scheduleModal');
+        const box = document.getElementById('scheduleBox');
+        modal.classList.remove('hidden');
+        setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10);
+        history.pushState({ modalOpen: true }, "", "");
+    }
+
+    function closeScheduleModal(fromPopstate = false) {
+        const modal = document.getElementById('scheduleModal');
+        const box = document.getElementById('scheduleBox');
+        if(modal) modal.classList.add('opacity-0');
+        if(box) box.classList.add('scale-95');
+        setTimeout(() => { if(modal) modal.classList.add('hidden'); }, 200);
+        if(!fromPopstate && history.state && history.state.modalOpen) history.back();
+    }
+
+    function saveSchedule() {
+        const id = document.getElementById('scheduleId').value;
+        const date = document.getElementById('scheduleDate').value;
+        const title = document.getElementById('scheduleTitle').value;
+        if (!title.trim()) return alert("현장명이나 작업 내용을 입력해주세요.");
+        
+        const newSchedule = {
+            id: id, date: date, title: title,
+            color: document.getElementById('scheduleColor').value,
+            memo: document.getElementById('scheduleMemo').value
+        };
+        
+        schedules.push(newSchedule);
+        localStorage.setItem('shinhwa_pro_schedules', JSON.stringify(schedules));
+        
+        const parts = date.split('-');
+        if(date !== `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`) {
+            selectDate(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+        } else {
+            renderCalendar(); renderScheduleList();
+        }
+        closeScheduleModal();
+    }
+
+    function deleteSchedule(id) {
+        if(confirm("이 일정을 삭제하시겠습니까?")) {
+            schedules = schedules.filter(s => s.id != id);
+            localStorage.setItem('shinhwa_pro_schedules', JSON.stringify(schedules));
+            renderCalendar(); renderScheduleList();
+        }
+    }
+
     function switchView(mode, pushHistory = true) {
-      const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView'];
+      const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView', 'calendarView'];
       views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
-      const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient', 'tabContacts'];
+      const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient', 'tabContacts', 'tabCalendar'];
       mainTabs.forEach(t => { const el = document.getElementById(t); if(el) el.className = "w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"; });
       const lensTab = document.getElementById('tabLens'); if(lensTab) lensTab.className = "w-full py-3.5 rounded-[12px] bg-[#1E3A8A] text-white font-black text-[14px] shadow-md hover:bg-[#172554] transition-all text-center flex flex-col items-center justify-center gap-1 border border-[#172554]";
-      
+
       let activeTabId = '';
       if (mode === 'admin') { document.getElementById('adminView').classList.remove('hidden'); activeTabId = 'tabAdmin'; }
       else if (mode === 'quote') { document.getElementById('quoteAdminView').classList.remove('hidden'); activeTabId = 'tabQuote'; }
@@ -1588,8 +1756,9 @@
       else if (mode === 'contacts') { document.getElementById('contactsView').classList.remove('hidden'); activeTabId = 'tabContacts'; renderContactsList(); }
       else if (mode === 'history') { document.getElementById('historyView').classList.remove('hidden'); activeTabId = 'tabClient'; }
       else if (mode === 'lens') { document.getElementById('lensView').classList.remove('hidden'); activeTabId = 'tabLens'; }
+      else if (mode === 'calendar') { document.getElementById('calendarView').classList.remove('hidden'); activeTabId = 'tabCalendar'; renderCalendar(); renderScheduleList(); }
       else { document.getElementById('clientView').classList.remove('hidden'); activeTabId = currentIsQuote ? 'tabQuoteList' : 'tabClient'; }
-      
+
       if(activeTabId) {
         const activeEl = document.getElementById(activeTabId);
         if(activeEl) {
@@ -1600,7 +1769,7 @@
       lucide.createIcons(); window.scrollTo(0, 0); if (pushHistory && mode !== 'client_shared') history.pushState({ view: mode }, "", "");
     }
 
-    const mainTabsOrder = ['admin', 'quote', 'quoteList', 'clients', 'contacts', 'lens'];
+    const mainTabsOrder = ['admin', 'quote', 'quoteList', 'clients', 'contacts', 'lens', 'calendar'];
     const swipeContainerEl = document.getElementById('swipeContainer');
     let viewTouchStartX = 0; let viewTouchStartY = 0;
     swipeContainerEl.addEventListener('touchstart', e => { viewTouchStartX = e.changedTouches[0].screenX; viewTouchStartY = e.changedTouches[0].screenY; }, {passive: true});
@@ -1614,6 +1783,7 @@
         else if (!document.getElementById('clientsView').classList.contains('hidden')) currentActiveMode = 'clients';
         else if (!document.getElementById('contactsView').classList.contains('hidden')) currentActiveMode = 'contacts';
         else if (!document.getElementById('lensView').classList.contains('hidden')) currentActiveMode = 'lens';
+        else if (!document.getElementById('calendarView').classList.contains('hidden')) currentActiveMode = 'calendar';
         else if (!document.getElementById('clientView').classList.contains('hidden')) return; 
         let currentIndex = mainTabsOrder.indexOf(currentActiveMode);
         if (currentIndex !== -1) { if (diffX < 0 && currentIndex < mainTabsOrder.length - 1) switchView(mainTabsOrder[currentIndex + 1]); else if (diffX > 0 && currentIndex > 0) switchView(mainTabsOrder[currentIndex - 1]); }
@@ -1667,7 +1837,7 @@
     });
 
     window.addEventListener('popstate', (e) => {
-      const modal = document.getElementById('imageModal'); const textEditorModal = document.getElementById('textEditorModal'); const lensResultModal = document.getElementById('lensResultModal'); const materialModal = document.getElementById('materialModal'); const settingsModal = document.getElementById('settingsModal'); const noticeModal = document.getElementById('appNoticeModal'); const termsModal = document.getElementById('termsModal');
+      const modal = document.getElementById('imageModal'); const textEditorModal = document.getElementById('textEditorModal'); const lensResultModal = document.getElementById('lensResultModal'); const materialModal = document.getElementById('materialModal'); const settingsModal = document.getElementById('settingsModal'); const noticeModal = document.getElementById('appNoticeModal'); const termsModal = document.getElementById('termsModal'); const scheduleModal = document.getElementById('scheduleModal');
       if (modal && !modal.classList.contains('hidden')) { modal.classList.add('hidden'); document.getElementById('modalImg').src = ''; return; }
       if (textEditorModal && !textEditorModal.classList.contains('hidden')) { closeTextEditor(true); return; }
       if (lensResultModal && !lensResultModal.classList.contains('hidden')) { closeLensResult(true); return; }
@@ -1675,6 +1845,7 @@
       if (settingsModal && !settingsModal.classList.contains('hidden')) { closeSettings(true); return; }
       if (noticeModal && !noticeModal.classList.contains('hidden')) { closeAppNotice(); return; }
       if (termsModal && !termsModal.classList.contains('hidden')) { closeTermsModal(); return; }
+      if (scheduleModal && !scheduleModal.classList.contains('hidden')) { closeScheduleModal(true); return; }
       if (e.state && e.state.view) { if(e.state.view !== 'client_shared') switchView(e.state.view, false); } 
       else switchView('admin', false);
     });
