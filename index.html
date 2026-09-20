@@ -1620,7 +1620,7 @@
     // ==========================================
     let currentCalDate = new Date();
     let selectedDate = new Date();
-    let schedules = JSON.parse(localStorage.getItem('shinhwa_pro_schedules')) || [];
+    let schedules = []; // 🔥 로컬스토리지를 지우고, 클라우드에서 가져오도록 빈 배열로 시작
 
     function renderCalendar() {
         const year = currentCalDate.getFullYear();
@@ -1685,8 +1685,11 @@
         }
         
         daySchedules.forEach(s => {
+            const tagName = s.tag || '조경 관리 작업'; // 🔥 직접 작성한 태그명 반영
+            const textColor = s.color.replace('border-', 'text-');
             list.innerHTML += `
                 <div class="border-l-4 rounded-r-[16px] p-4 shadow-sm bg-white border-y border-r border-[#EAEBEA] ${s.color} hover:shadow-md transition-all">
+                    <div class="text-[12px] font-black ${textColor} mb-1.5">${tagName}</div>
                     <div class="flex justify-between items-start mb-1.5">
                         <h4 class="font-black text-[15px] text-[#1A1D1A] truncate pr-2">${s.title}</h4>
                         <button onclick="deleteSchedule(${s.id})" class="text-[#A3A8A3] hover:text-red-500 bg-[#F4F5F4] p-1.5 rounded-lg"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
@@ -1703,6 +1706,7 @@
         const dateStr = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
         document.getElementById('scheduleDate').value = dateStr;
         document.getElementById('scheduleTitle').value = '';
+        document.getElementById('scheduleTagText').value = '조경 관리 작업'; // 🔥 태그명 기본값 세팅
         document.getElementById('scheduleMemo').value = '';
         
         const modal = document.getElementById('scheduleModal');
@@ -1730,11 +1734,14 @@
         const newSchedule = {
             id: id, date: date, title: title,
             color: document.getElementById('scheduleColor').value,
+            tag: document.getElementById('scheduleTagText').value, // 🔥 직접 작성한 태그명 저장
             memo: document.getElementById('scheduleMemo').value
         };
         
         schedules.push(newSchedule);
-        localStorage.setItem('shinhwa_pro_schedules', JSON.stringify(schedules));
+        
+        // 🔥 로컬 저장소 대신 파이어베이스 클라우드로 쏘기!
+        updateData('schedules', schedules);
         
         const parts = date.split('-');
         if(date !== `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`) {
@@ -1748,7 +1755,10 @@
     function deleteSchedule(id) {
         if(confirm("이 일정을 삭제하시겠습니까?")) {
             schedules = schedules.filter(s => s.id != id);
-            localStorage.setItem('shinhwa_pro_schedules', JSON.stringify(schedules));
+            
+            // 🔥 삭제한 것도 클라우드에 즉시 반영!
+            updateData('schedules', schedules);
+            
             renderCalendar(); renderScheduleList();
         }
     }
