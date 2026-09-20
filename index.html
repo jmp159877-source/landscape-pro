@@ -1967,7 +1967,10 @@
                 <div class="col-span-3 text-[12px] font-black text-[#1A1D1A] truncate cursor-pointer px-1" onclick="alert('📍 [${L.title}] 적요\\n\\n${L.memo ? L.memo : '적요 내용이 없습니다.'}')">${L.title}</div>
                 <div class="col-span-2 text-[12px] font-black text-blue-500">${inc.toLocaleString()}</div>
                 <div class="col-span-2 text-[12px] font-black text-red-500">${exp.toLocaleString()}</div>
-                <div class="col-span-1"><button onclick="editLedger(${L.id})" class="text-[#A3A8A3] hover:text-[#84CC16] bg-[#F4F5F4] p-1.5 rounded-lg"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i></button></div>
+                <div class="col-span-1 flex items-center justify-center gap-1">
+                    <button onclick="editLedger(${L.id})" class="text-[#A3A8A3] hover:text-[#84CC16] bg-[#F4F5F4] p-1.5 rounded-lg"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i></button>
+                    <button onclick="deleteLedger(${L.id})" class="text-[#A3A8A3] hover:text-red-500 bg-[#F4F5F4] p-1.5 rounded-lg"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                </div>
             </div>`;
         });
         lucide.createIcons();
