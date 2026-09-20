@@ -656,9 +656,9 @@
     const SETTINGS_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/settings"; 
     
     let currentUserId = "";
-    let currentIdToken = ""; // 보안 열쇠 보관함
+    let currentIdToken = "";
+    let myCompanyProfile = null;
 
-    // 약관 팝업 제어 로직
     let currentTermType = '';
     function openTermsModal(type) {
         currentTermType = type;
@@ -666,10 +666,10 @@
         const content = document.getElementById('termsContent');
         if (type === 'privacy') {
             title.innerText = '개인정보 수집 및 이용 동의';
-            content.innerText = '1. 수집 항목: 아이디, 비밀번호, 업체명, 연락처\n2. 수집 목적: 조경노트 PRO 서비스 제공, 사용자 식별, 견적서/일지 발송 등 맞춤형 기능 제공\n3. 보유 기간: 회원 탈퇴 또는 서비스 종료 시까지 (관련 법령에 의거 보존할 필요가 있는 경우 해당 기간까지 보존)\n\n※ 내용을 꼼꼼히 확인하신 후 [동의합니다] 버튼을 눌러주세요.';
+            content.innerText = '1. 수집 항목: 아이디, 비밀번호, 업체명, 연락처\n2. 수집 목적: 조경노트 PRO 서비스 제공, 사용자 식별, 견적서/일지 발송 등 맞춤형 기능 제공\n3. 보유 기간: 회원 탈퇴 또는 서비스 종료 시까지';
         } else {
             title.innerText = '서비스 이용 약관 동의';
-            content.innerText = '제 1조 (목적)\n본 약관은 조경노트 PRO가 제공하는 스마트 조경 일지 및 견적 관리 서비스의 이용 조건 및 절차, 권리 및 의무를 규정함을 목적으로 합니다.\n\n제 2조 (서비스의 제공)\n1. AI 수목 식별 및 병해충 진단 보조\n2. 스마트 작업 일지 작성 및 클라우드 저장\n3. 거래처 및 견적서 관리 기능 등\n\n※ 내용을 꼼꼼히 확인하신 후 [동의합니다] 버튼을 눌러주세요.';
+            content.innerText = '제 1조 (목적)\n본 약관은 조경노트 PRO가 제공하는 스마트 조경 일지 및 견적 관리 서비스의 이용 조건 및 절차, 권리 및 의무를 규정함을 목적으로 합니다.\n\n제 2조 (서비스의 제공)\n1. AI 수목 식별 및 병해충 진단 보조\n2. 스마트 작업 일지 작성 및 클라우드 저장';
         }
         const modal = document.getElementById('termsModal');
         const box = document.getElementById('termsBox');
@@ -687,15 +687,11 @@
     }
 
     document.getElementById('btnAgreeTerms').addEventListener('click', () => {
-        if (currentTermType === 'privacy') {
-            document.getElementById('obPrivacyCheck').checked = true;
-        } else if (currentTermType === 'terms') {
-            document.getElementById('obTermsCheck').checked = true;
-        }
+        if (currentTermType === 'privacy') document.getElementById('obPrivacyCheck').checked = true;
+        else if (currentTermType === 'terms') document.getElementById('obTermsCheck').checked = true;
         closeTermsModal();
     });
 
-    // URL에 보안 열쇠를 달아주는 헬퍼 함수
     function getAuthUrl(url) {
         if (!currentIdToken) return url;
         const sep = url.includes('?') ? '&' : '?';
@@ -706,16 +702,9 @@
         let str = target.value.replace(/[^0-9]/g, '');
         let tmp = '';
         if (str.length < 4) { target.value = str; return; }
-        else if (str.length < 7) {
-            if (str.startsWith('02')) { tmp += str.substr(0, 2) + '-' + str.substr(2); }
-            else { tmp += str.substr(0, 3) + '-' + str.substr(3); }
-        } else if (str.length < 11) {
-            if (str.startsWith('02')) { tmp += str.substr(0, 2) + '-' + str.substr(2, 3) + '-' + str.substr(5); }
-            else { tmp += str.substr(0, 3) + '-' + str.substr(3, 3) + '-' + str.substr(6); }
-        } else {
-            if (str.startsWith('02')) { tmp += str.substr(0, 2) + '-' + str.substr(2, 4) + '-' + str.substr(6); }
-            else { tmp += str.substr(0, 3) + '-' + str.substr(3, 4) + '-' + str.substr(7); }
-        }
+        else if (str.length < 7) { tmp += str.substr(0, 3) + '-' + str.substr(3); }
+        else if (str.length < 11) { tmp += str.substr(0, 3) + '-' + str.substr(3, 3) + '-' + str.substr(6); }
+        else { tmp += str.substr(0, 3) + '-' + str.substr(3, 4) + '-' + str.substr(7); }
         target.value = tmp;
     }
 
@@ -726,7 +715,6 @@
         const res = await fetch(base64Data);
         const blob = await res.blob();
         
-        // Storage 보안 규칙 통과를 위해 헤더에 열쇠 삽입
         const headers = { 'Content-Type': blob.type };
         if(currentIdToken) headers['Authorization'] = `Bearer ${currentIdToken}`;
         
@@ -745,17 +733,24 @@
     let currentClientFilter = '정기 관리'; let currentContactTab = 'clients';
     let currentGalleryB = []; let currentGalleryA = []; let currentGalleryI = []; let currentGalleryQ = []; 
     let modalImages = []; let modalCurrentIdx = 0; let currentLoadedRecordId = null; let editingRecordId = null;
-    let activeTextEditorId = null; let myCompanyProfile = null;
+    let activeTextEditorId = null;
 
+    // 🔥 핵심 핀셋 1: "마카롱조경"을 "마카롱" + "조경" 두 줄로 예쁘게 잘라서 보여줍니다 🔥
     function applyCompanyProfile() {
         if (!myCompanyProfile) return;
-        const textTargets = [
-            { id: 'company-name-splash', key: 'name' }, { id: 'company-name-header', key: 'name' },
-            { id: 'doc-company-name', key: 'name' }, { id: 'doc-company-ceo', key: 'ceo' },
-            { id: 'doc-company-biz-num', key: 'bizNum' }, { id: 'doc-company-phone', key: 'phone' },
-            { id: 'doc-company-name-sign', key: 'name' }
-        ];
+        const textTargets = [ { id: 'company-name-splash', key: 'name' } ];
         textTargets.forEach(target => { const el = document.getElementById(target.id); if (el) el.innerText = myCompanyProfile[target.key] || ''; });
+
+        const headerEl = document.getElementById('company-name-header');
+        if (headerEl) {
+            let cName = myCompanyProfile.name || '';
+            if (cName.endsWith('조경') && cName.length > 2) {
+                let mainName = cName.slice(0, -2);
+                headerEl.innerHTML = `<span class="block text-[22px] font-black leading-none text-white">${mainName}</span><span class="block text-[15px] font-black text-[#84CC16] mt-1 tracking-widest">조경</span>`;
+            } else {
+                headerEl.innerHTML = `<span class="block text-[20px] font-black leading-tight text-white">${cName}</span>`;
+            }
+        }
     }
 
     function showSignUp() { document.getElementById('authView').classList.add('hidden'); document.getElementById('onboardingView').classList.remove('hidden'); }
@@ -775,44 +770,32 @@
         const phone = document.getElementById('obCompanyPhone').value.trim(); const bizNum = document.getElementById('obCompanyBizNum').value.trim();
         
         if (!id || !pw || !name || !ceo || !phone || !bizNum) return alert("모든 항목을 입력해 주세요.");
-        // 한글 입력 차단 및 영문 숫자만 허용하는 로직
-        if (/[^a-zA-Z0-9]/.test(id)) return alert("아이디는 영문과 숫자만 사용해 주세요. (한글, 특수문자, 공백 불가)");
+        if (/[^a-zA-Z0-9]/.test(id)) return alert("아이디는 영문과 숫자만 사용해 주세요.");
         if (id.length < 2) return alert("아이디는 2글자 이상 입력해 주세요.");
-        if (pw.length < 6) return alert("보안을 위해 비밀번호는 6자리 이상 입력해 주세요.");
+        if (pw.length < 6) return alert("비밀번호는 6자리 이상 입력해 주세요.");
         if (!obBizLicenseBase64) return alert("사업자등록증 사진을 첨부해 주세요.");
-        if (!document.getElementById('obPrivacyCheck').checked || !document.getElementById('obTermsCheck').checked) return alert("약관 내용을 클릭하여 확인하신 후 필수 약관 두 가지에 모두 동의해 주세요.");
+        if (!document.getElementById('obPrivacyCheck').checked || !document.getElementById('obTermsCheck').checked) return alert("필수 약관에 모두 동의해 주세요.");
         
         showLoadingOverlay("가입 서류 업로드 및 보안 인증 중...");
         try {
-            // 1. Firebase Auth 공식 회원가입 통신 (이메일 형식이 필수이므로 보이지 않게 도메인만 붙여줍니다)
             const authRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${API_KEY}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: id + '@jogyeongnote.com', password: pw, returnSecureToken: true })
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: id + '@jogyeongnote.com', password: pw, returnSecureToken: true })
             });
             const authData = await authRes.json();
             
             let tempToken = authData.idToken;
             
-            // 만약 이미 가입된 계정이라면 로그인 시도해서 토큰 받아옴
             if (authData.error && authData.error.message === 'EMAIL_EXISTS') {
                  const loginRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: id + '@jogyeongnote.com', password: pw, returnSecureToken: true })
                  });
                  const loginData = await loginRes.json();
-                 if(loginData.error) {
-                     document.getElementById('loadingOverlay')?.remove();
-                     return alert("이미 존재하는 아이디입니다.");
-                 }
+                 if(loginData.error) { document.getElementById('loadingOverlay')?.remove(); return alert("이미 존재하는 아이디입니다."); }
                  tempToken = loginData.idToken;
-            } else if (authData.error) {
-                 document.getElementById('loadingOverlay')?.remove();
-                 return alert("인증 서버 오류: " + authData.error.message);
-            }
+            } else if (authData.error) { document.getElementById('loadingOverlay')?.remove(); return alert("인증 서버 오류: " + authData.error.message); }
             
             currentIdToken = tempToken; 
 
-            // 2. 파이어베이스 DB 조회 및 저장
             const safeKey = getSafeKey(id);
             const res = await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`));
             
@@ -823,9 +806,7 @@
             const profileData = { id, pw, name, ceo, phone, bizNum, license: licenseUrl, status: 'pending' };
             await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(profileData) });
             
-            alert("가입 완료. 승인을 기다려주세요."); 
-            currentIdToken = ""; // 토큰 회수
-            showLogin();
+            alert("가입 완료. 승인을 기다려주세요."); currentIdToken = ""; showLogin();
             
         } catch(e) { alert("서버 오류: " + e.message); } finally { document.getElementById('loadingOverlay')?.remove(); }
     }
@@ -833,25 +814,17 @@
     async function doLogin() {
         const id = document.getElementById('loginId').value.trim(); const pw = document.getElementById('loginPw').value.trim();
         if(!id || !pw) return alert("입력 요망");
-        
         showLoadingOverlay("보안 접속 중...");
         try {
-            // 1. Firebase Auth 로그인 통신
             const authRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: id + '@jogyeongnote.com', password: pw, returnSecureToken: true })
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: id + '@jogyeongnote.com', password: pw, returnSecureToken: true })
             });
             const authData = await authRes.json();
-            if(authData.error) {
-                 document.getElementById('loadingOverlay')?.remove();
-                 return alert("아이디가 없거나 비밀번호가 틀렸습니다.");
-            }
+            if(authData.error) { document.getElementById('loadingOverlay')?.remove(); return alert("아이디가 없거나 비밀번호가 틀렸습니다."); }
             
-            currentIdToken = authData.idToken; // ✅ 열쇠 획득 완료
+            currentIdToken = authData.idToken; 
             
             const safeKey = getSafeKey(id);
-            // 2. 획득한 열쇠로 암호화된 DB 정보 요청
             const res = await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`));
             if(!res.ok) throw new Error("응답 오류");
             
@@ -865,8 +838,7 @@
                 
                 localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile));
                 localStorage.setItem('shinhwa_pro_logged_in_id', id);
-                localStorage.setItem('shinhwa_pro_logged_in_pw', pw); // 자동 로그인을 위한 비번 저장
-                
+                localStorage.setItem('shinhwa_pro_logged_in_pw', pw); 
                 if(document.getElementById('autoLoginCheck').checked) localStorage.setItem('shinhwa_pro_auto_login', 'true'); else localStorage.removeItem('shinhwa_pro_auto_login');
                 
                 applyCompanyProfile(); document.getElementById('authView').classList.add('hidden'); document.getElementById('mainHeader').style.display = 'block';
@@ -902,16 +874,14 @@
         if (currentShowingNotice && currentShowingNotice.type === 'global') localStorage.setItem('shinhwa_pro_read_global_notice', currentShowingNotice.text);
         setTimeout(() => { modal.classList.add('hidden'); currentShowingNotice = null; if(noticeQueue.length > 0) setTimeout(showNextNotice, 300); }, 200);
     }
-    async function clearTargetNotice() {
-        try { const safeKey = getSafeKey(currentUserId); await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ targetNotice: "" }) }); myCompanyProfile.targetNotice = ""; localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile)); } catch(e) {}
-    }
+    async function clearTargetNotice() { try { const safeKey = getSafeKey(currentUserId); await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ targetNotice: "" }) }); myCompanyProfile.targetNotice = ""; localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile)); } catch(e) {} }
 
     function logoutAdmin() { if(confirm('로그아웃 하시겠습니까?')) { localStorage.removeItem('shinhwa_pro_auto_login'); localStorage.removeItem('shinhwa_pro_logged_in_id'); localStorage.removeItem('shinhwa_pro_logged_in_pw'); location.reload(); } }
+    
     function openSettings() {
         if(!myCompanyProfile) return;
         document.getElementById('setCompanyName').value = myCompanyProfile.name || ''; document.getElementById('setCompanyCeo').value = myCompanyProfile.ceo || '';
-        document.getElementById('setCompanyPhone').value = myCompanyProfile.phone || ''; document.getElementById('setCompanyBizNum').value = myCompanyProfile.bizNum || '';
-        document.getElementById('setCompanyPw').value = ''; 
+        document.getElementById('setCompanyPhone').value = myCompanyProfile.phone || ''; document.getElementById('setCompanyBizNum').value = myCompanyProfile.bizNum || ''; document.getElementById('setCompanyPw').value = ''; 
         const modal = document.getElementById('settingsModal'); const box = document.getElementById('settingsBox');
         modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10); history.pushState({ modalOpen: true }, "", "");
     }
@@ -922,15 +892,10 @@
     }
     async function saveSettings() {
         const pw = document.getElementById('setCompanyPw').value.trim();
-        if (!pw) return alert("새로운 비밀번호를 입력해 주세요."); if (pw.length < 6) return alert("보안을 위해 비밀번호는 6자리 이상 숫자로 설정해 주세요.");
+        if (!pw) return alert("새로운 비밀번호를 입력해 주세요."); if (pw.length < 6) return alert("비밀번호는 6자리 이상 숫자로 설정해 주세요.");
         showLoadingOverlay("업데이트 중...");
         try { 
-            // 1. Firebase Auth 서버 비번 변경
-            await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:update?key=${API_KEY}`, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken: currentIdToken, password: pw, returnSecureToken: true })
-            });
-
-            // 2. DB 업데이트
+            await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:update?key=${API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken: currentIdToken, password: pw, returnSecureToken: true }) });
             myCompanyProfile.pw = pw; localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile)); localStorage.setItem('shinhwa_pro_logged_in_pw', pw);
             const safeKey = getSafeKey(currentUserId); await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pw: pw }) }); 
             alert("변경 완료"); closeSettings(); 
@@ -942,17 +907,14 @@
         try {
             const res = await fetch(getAuthUrl(DATA_URL)); let cloudData = await res.json();
             if (!cloudData) { cloudData = { clients: defaultClients, records: [], materials: defaultMaterials, contacts: { clients: [], labors: [] } }; await fetch(getAuthUrl(DATA_URL), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(cloudData) }); }
-            
             clients = cloudData.clients ? (Array.isArray(cloudData.clients) ? cloudData.clients : Object.values(cloudData.clients)).filter(Boolean) : [];
             records = cloudData.records ? (Array.isArray(cloudData.records) ? cloudData.records : Object.values(cloudData.records)).filter(Boolean) : [];
             materialsData = cloudData.materials ? (Array.isArray(cloudData.materials) ? cloudData.materials : Object.values(cloudData.materials)).filter(Boolean) : [];
-            if(!cloudData.contacts) { cloudData.contacts = { clients: [], labors: [] }; } 
-            else { cloudData.contacts.clients = cloudData.contacts.clients ? (Array.isArray(cloudData.contacts.clients) ? cloudData.contacts.clients : Object.values(cloudData.contacts.clients)).filter(Boolean) : []; cloudData.contacts.labors = cloudData.contacts.labors ? (Array.isArray(cloudData.contacts.labors) ? cloudData.contacts.labors : Object.values(cloudData.contacts.labors)).filter(Boolean) : []; }
+            if(!cloudData.contacts) { cloudData.contacts = { clients: [], labors: [] }; } else { cloudData.contacts.clients = cloudData.contacts.clients ? (Array.isArray(cloudData.contacts.clients) ? cloudData.contacts.clients : Object.values(cloudData.contacts.clients)).filter(Boolean) : []; cloudData.contacts.labors = cloudData.contacts.labors ? (Array.isArray(cloudData.contacts.labors) ? cloudData.contacts.labors : Object.values(cloudData.contacts.labors)).filter(Boolean) : []; }
             contactsData = cloudData.contacts;
-            
             renderClientSelect(); renderClientsList(); renderQuoteList(); renderContactsList();
-            const badge = document.getElementById('cloudStatusBadge'); if(badge) { badge.innerHTML = '<i data-lucide="cloud-check" class="w-3.5 h-3.5"></i> 보안 연동됨'; badge.className = 'text-[11px] bg-blue-500/20 text-blue-400 font-black px-2.5 py-0.5 rounded uppercase tracking-widest border border-blue-500/30 flex items-center gap-1'; }
-        } catch(e) { alert("클라우드 동기화 실패"); } finally { lucide.createIcons(); }
+            const badge = document.getElementById('cloudStatusBadge'); if(badge) { badge.innerHTML = '<i data-lucide="cloud-check" class="w-3 h-3"></i> 보안 연동됨'; }
+        } catch(e) { alert("동기화 실패"); } finally { lucide.createIcons(); }
     }
 
     function updateData(key, dataObj) { const safeKey = getSafeKey(currentUserId); const DATA_URL = `${DB_BASE_URL}/${safeKey}/data/${key}.json`; fetch(getAuthUrl(DATA_URL), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dataObj) }).catch(e => console.error("저장 실패")); }
@@ -966,18 +928,16 @@
 
     function saveContact() {
         const name = document.getElementById('newContactName').value.trim(); const phone = document.getElementById('newContactPhone').value.trim(); const memo = document.getElementById('newContactMemo').value.trim();
-        if(!name || !phone) return alert("업체명(성명)과 연락처를 입력해 주세요.");
+        if(!name || !phone) return alert("입력해 주세요.");
         if(!contactsData[currentContactTab]) contactsData[currentContactTab] = [];
-        if(editingContactIndex !== null) { contactsData[currentContactTab][editingContactIndex] = { name, phone, memo }; alert("연락처가 수정되었습니다."); } 
-        else { contactsData[currentContactTab].push({ name, phone, memo }); alert("연락처가 추가되었습니다."); }
+        if(editingContactIndex !== null) { contactsData[currentContactTab][editingContactIndex] = { name, phone, memo }; } else { contactsData[currentContactTab].push({ name, phone, memo }); }
         updateData('contacts', contactsData); cancelContactEdit(); renderContactsList();
     }
 
     function editContact(tab, index) {
         editingContactIndex = index; if (currentContactTab !== tab) switchContactTab(tab); const c = contactsData[tab][index];
         document.getElementById('newContactName').value = c.name; document.getElementById('newContactPhone').value = c.phone; document.getElementById('newContactMemo').value = c.memo || '';
-        document.getElementById('contactFormTitle').innerHTML = `<i data-lucide="edit-3" class="w-5 h-5 text-[#84CC16]"></i> <span>연락처 수정</span>`; document.getElementById('saveContactBtn').innerHTML = `<i data-lucide="save" class="w-5 h-5"></i> 수정 완료`; document.getElementById('cancelContactEditBtn').classList.remove('hidden');
-        lucide.createIcons(); window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.getElementById('contactFormTitle').innerHTML = `<i data-lucide="edit-3" class="w-5 h-5 text-[#84CC16]"></i> <span>연락처 수정</span>`; document.getElementById('saveContactBtn').innerHTML = `<i data-lucide="save" class="w-5 h-5"></i> 수정 완료`; document.getElementById('cancelContactEditBtn').classList.remove('hidden'); lucide.createIcons(); window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function cancelContactEdit() {
@@ -985,7 +945,7 @@
         document.getElementById('contactFormTitle').innerHTML = `<i data-lucide="user-plus" class="w-5 h-5 text-[#84CC16]"></i> <span>새 연락처 추가</span>`; document.getElementById('saveContactBtn').innerHTML = `<i data-lucide="save" class="w-5 h-5"></i> 연락처 저장하기`; document.getElementById('cancelContactEditBtn').classList.add('hidden'); lucide.createIcons();
     }
 
-    function deleteContact(tab, index) { if(confirm("이 연락처를 삭제하시겠습니까?")) { contactsData[tab].splice(index, 1); updateData('contacts', contactsData); if(editingContactIndex === index) cancelContactEdit(); renderContactsList(); } }
+    function deleteContact(tab, index) { if(confirm("삭제하시겠습니까?")) { contactsData[tab].splice(index, 1); updateData('contacts', contactsData); if(editingContactIndex === index) cancelContactEdit(); renderContactsList(); } }
     function formatPhoneToLink(text) { if(!text) return ""; const phoneRegex = /(0\d{1,2}[-\s]?\d{3,4}[-\s]?\d{4})/g; return text.replace(phoneRegex, '<a href="tel:$1" onclick="event.stopPropagation();" class="text-blue-600 font-black underline hover:text-blue-800">$1</a>'); }
 
     function renderContactsList() {
@@ -1026,12 +986,12 @@
     async function analyzeImageWithAI(base64Image, type) { setTimeout(() => { document.getElementById('loadingOverlay')?.remove(); showLensResult(base64Image, type, null); }, 1500); }
     function showLensResult(imgSrc, type, realText = null) {
         currentLensImg = imgSrc; document.getElementById('lensResultImg').src = imgSrc; const titleEl = document.getElementById('lensResultTitle'); const contentEl = document.getElementById('lensResultContent');
-        if (type === 'plant') { titleEl.innerHTML = `<i data-lucide="camera" class="w-5 h-5 text-[#84CC16]"></i> 수목·식물 식별 결과`; contentEl.innerHTML = `<span class="text-[#84CC16] font-black text-[14px]">[AI 식별 완료]</span>\n\n📌 <b>추정 품종:</b> 소나무 (Pinus densiflora) 등\n💧 <b>생육 상태:</b> 양호함\n\n* 본 결과는 데모 버전용 가상 분석 데이터입니다. 정식 상용화 시 외부 식물 도감 AI API와 연동되어 정확한 학명과 상세 정보가 표출됩니다.`; } 
-        else { titleEl.innerHTML = `<i data-lucide="bug" class="w-5 h-5 text-[#F59E0B]"></i> 병해충·벌레 식별 결과`; contentEl.innerHTML = `<span class="text-[#F59E0B] font-black text-[14px]">[AI 진단 완료]</span>\n\n🚨 <b>추정 병해충:</b> 소나무재선충 의심\n🛡️ <b>방제 방법:</b> 감염목 즉시 파쇄 및 예방 나무주사(아바멕틴 유제 등) 권장\n\n* 본 결과는 데모 버전용 가상 진단 데이터입니다. 정식 상용화 시 정확한 방제 및 약제 처방 정보가 상세히 표출됩니다.`; }
+        if (type === 'plant') { titleEl.innerHTML = `<i data-lucide="camera" class="w-5 h-5 text-[#84CC16]"></i> 수목·식물 식별 결과`; contentEl.innerHTML = `<span class="text-[#84CC16] font-black text-[14px]">[AI 식별 완료]</span>\n\n📌 <b>추정 품종:</b> 소나무 (Pinus densiflora) 등\n💧 <b>생육 상태:</b> 양호함`; } 
+        else { titleEl.innerHTML = `<i data-lucide="bug" class="w-5 h-5 text-[#F59E0B]"></i> 병해충·벌레 식별 결과`; contentEl.innerHTML = `<span class="text-[#F59E0B] font-black text-[14px]">[AI 진단 완료]</span>\n\n🚨 <b>추정 병해충:</b> 소나무재선충 의심\n🛡️ <b>방제 방법:</b> 예방 나무주사 권장`; }
         lucide.createIcons(); const modal = document.getElementById('lensResultModal'); const box = document.getElementById('lensResultBox'); modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10); history.pushState({ modalOpen: true }, "", "");
     }
     function closeLensResult(fromPopstate = false) { const modal = document.getElementById('lensResultModal'); const box = document.getElementById('lensResultBox'); if(modal) modal.classList.add('opacity-0'); if(box) box.classList.add('scale-95'); setTimeout(() => { if(modal) modal.classList.add('hidden'); }, 200); if(!fromPopstate && history.state && history.state.modalOpen) history.back(); }
-    function copyLensResult() { const content = document.getElementById('lensResultContent').innerText; navigator.clipboard.writeText(content).then(() => alert("분석 결과가 복사되었습니다. 일지 작성 시 붙여넣기 하세요.")); }
+    function copyLensResult() { const content = document.getElementById('lensResultContent').innerText; navigator.clipboard.writeText(content).then(() => alert("복사되었습니다.")); }
     function openModalForLens() { modalImages = [currentLensImg]; modalCurrentIdx = 0; updateModalImage(); document.getElementById('imageModal').style.zIndex = "3000"; document.getElementById('imageModal').classList.remove('hidden'); history.pushState({ modalOpen: true }, "", ""); }
 
     lucide.createIcons();
@@ -1124,6 +1084,345 @@
         }
     }
 
+    // 🔥 핵심 핀셋 2: 일지 저장 시 대표님의 공급자 정보를 박제합니다 🔥
+    async function generateReport() {
+      const clientName = document.getElementById('clientSelect').value; if(!clientName) return alert("고객명을 선택하세요.");
+      const clientPhone = document.getElementById('inputClientPhone').value; const clientAddress = document.getElementById('inputClientAddress') ? document.getElementById('inputClientAddress').value : '';
+      showLoadingOverlay("리포트 발행 중...");
+      try {
+        const round = document.getElementById('inputRound').value; const diagnosis = document.getElementById('inputDiagnosis').value; const issueText = document.getElementById('inputIssue').value; 
+        const activeBadges = Array.from(document.querySelectorAll('#categoryContainer .cat-btn')).filter(b => b.classList.contains('bg-[#12261E]')).map(b => b.getAttribute('data-val'));
+        const treePruning = document.getElementById('inputTreePruning') ? document.getElementById('inputTreePruning').value.trim() : ''; if(treePruning) activeBadges.push("수목가지치기 (" + treePruning + ")");
+        const extraCat = document.getElementById('inputExtraCategory').value.trim(); if(extraCat) activeBadges.push(extraCat);
+
+        const bUrls = await uploadImagesToCloud(beforeImages); const aUrls = await uploadImagesToCloud(afterImages); const iUrls = await uploadImagesToCloud(issueImages); 
+        
+        const payloadData = { 
+            isQuote: false, c: clientName, p: clientPhone, addr: clientAddress, r: round, d: diagnosis, issue: issueText, cat: activeBadges.join(','), b: bUrls.join(','), a: aUrls.join(','), imgsIssue: iUrls.join(','),
+            supName: myCompanyProfile.name, supCeo: myCompanyProfile.ceo, supBiz: myCompanyProfile.bizNum, supPhone: myCompanyProfile.phone 
+        };
+        
+        generatedShareUrl = await createShortCloudLink(payloadData, editingRecordId);
+        if (!generatedShareUrl) { document.getElementById('loadingOverlay')?.remove(); return; }
+
+        let existingClient = clients.find(c => c.name === clientName);
+        if (!existingClient) {
+            let selectedTypeEl = document.querySelector('input[name="newClientTypeReport"]:checked'); let selectedType = selectedTypeEl ? selectedTypeEl.value : '정기 관리';
+            clients.push({ id: Date.now().toString(), name: clientName, phone: clientPhone, address: clientAddress, type: selectedType });
+        } else { if(clientAddress) existingClient.address = clientAddress; }
+        updateData('clients', clients); renderClientSelect(); renderClientsList();
+        
+        alert("✅ 클라우드 저장 완료!");
+        editingRecordId = null; let genBtn = document.getElementById('btnGenerateReport'); if(genBtn) genBtn.innerHTML = '<i data-lucide="send" class="w-6 h-6 stroke-[2.5]"></i> 리포트 발행 및 저장';
+        renderClientView(payloadData, 'admin_preview');
+        
+        document.getElementById('clientSelect').value = ''; document.getElementById('inputClientPhone').value = '';
+        if(document.getElementById('inputClientAddress')) document.getElementById('inputClientAddress').value = '';
+        document.getElementById('inputRound').value = ''; document.getElementById('inputDiagnosis').value = ''; document.getElementById('inputIssue').value = '';
+        document.getElementById('inputExtraCategory').value = ''; if(document.getElementById('inputTreePruning')) document.getElementById('inputTreePruning').value = ''; 
+        
+        document.querySelectorAll('#categoryContainer .cat-btn').forEach(btn => {
+            const val = btn.getAttribute('data-val'); btn.className = "cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968] transition-all"; btn.innerText = "+ " + val;
+        });
+
+        beforeImages = []; afterImages = []; issueImages = []; renderThumbList('before'); renderThumbList('after'); renderThumbList('issue');
+      } catch (e) { alert("오류가 발생했습니다."); } finally { document.getElementById('loadingOverlay')?.remove(); lucide.createIcons(); }
+    }
+
+    // 🔥 핵심 핀셋 3: 견적서 저장 시 대표님의 공급자 정보를 박제합니다 🔥
+    async function generateQuote() {
+      const clientName = document.getElementById('quoteClientSelect').value; if(!clientName) return alert("고객명을 선택하세요.");
+      const clientPhone = document.getElementById('quoteInputClientPhone').value; const clientAddress = document.getElementById('quoteInputClientAddress') ? document.getElementById('quoteInputClientAddress').value : '';
+      const roundTitle = document.getElementById('quoteInputRound').value;
+      
+      let monthsData = []; let sum = 0;
+      for(let i=1; i<=currentQuoteRowCount; i++) {
+        let elPrice = document.getElementById(`quotePrice_${i}`); let elDesc = document.getElementById(`quoteDesc_${i}`); if(!elPrice || !elDesc) continue;
+        let btn = elPrice.closest('.flex').parentElement.querySelector('.quote-month-btn');
+        if(btn.classList.contains('bg-[#12261E]')) { let desc = elDesc.value; let priceStr = elPrice.value.replace(/[^0-9]/g, ''); if(desc || priceStr) { let label = btn.innerText; monthsData.push({ m: label, d: desc, p: priceStr ? parseInt(priceStr) : 0 }); if(priceStr) sum += parseInt(priceStr); } }
+      }
+      if(monthsData.length === 0) return alert("활성화된 견적 내용이 없습니다.");
+
+      showLoadingOverlay("견적서 발행 중...");
+      try {
+        const qUrls = await uploadImagesToCloud(quoteImages); const quoteMemo = document.getElementById('quoteInputMemo') ? document.getElementById('quoteInputMemo').value : '';
+        
+        const payloadData = { 
+            isQuote: true, c: clientName, p: clientPhone, addr: clientAddress, r: roundTitle, m: monthsData, s: sum, v: 0, t: sum, imgs: qUrls.join(','), memo: quoteMemo,
+            supName: myCompanyProfile.name, supCeo: myCompanyProfile.ceo, supBiz: myCompanyProfile.bizNum, supPhone: myCompanyProfile.phone
+        };
+        
+        generatedShareUrl = await createShortCloudLink(payloadData, editingRecordId);
+        if (!generatedShareUrl) { document.getElementById('loadingOverlay')?.remove(); return; }
+        
+        alert("✅ 견적서 저장 완료!");
+        editingRecordId = null; let genBtn = document.getElementById('btnGenerateQuote'); if(genBtn) genBtn.innerHTML = '<i data-lucide="file-check-2" class="w-6 h-6 stroke-[2.5]"></i> 견적서 발행 및 보관함 저장';
+        renderClientView(payloadData, 'admin_preview');
+        
+        document.getElementById('quoteClientSelect').value = ''; document.getElementById('quoteInputClientPhone').value = '';
+        if(document.getElementById('quoteInputClientAddress')) document.getElementById('quoteInputClientAddress').value = '';
+        document.getElementById('quoteInputRound').value = '연간 정기 조경 관리 견적서';
+        if(document.getElementById('quoteInputMemo')) document.getElementById('quoteInputMemo').value = '';
+        loadQuoteTemplate('residential'); quoteImages = []; renderQuoteThumbList(); 
+      } catch (e) { alert("오류가 발생했습니다."); } finally { document.getElementById('loadingOverlay')?.remove(); lucide.createIcons(); }
+    }
+
+    async function loadHistoryRecord(recordId, isQuote, r) {
+      showLoadingOverlay("보안 문서 로딩 중...");
+      try {
+        let payloadData = r.payload;
+        if (!payloadData) {
+            if (isQuote) payloadData = { isQuote: true, c: r.clientName, p: r.clientPhone || '', addr: '', r: r.round, m: [], s: 0, v: 0, t: 0, imgs: r.imgs || '' };
+            else payloadData = { isQuote: false, c: r.clientName, p: r.clientPhone || '', addr: '', r: r.round, d: r.diagnosis, issue: r.issue || '', cat: r.cat, b: r.b || '', a: r.a || '', imgsIssue: r.imgsIssue || '' };
+        }
+        currentLoadedRecordId = r.id; 
+        if (r.url) generatedShareUrl = r.url;
+        else {
+            generatedShareUrl = await createShortCloudLink(payloadData, r.id); r.url = generatedShareUrl;
+            let idx = records.findIndex(rec => rec && rec.id === r.id);
+            if (idx !== -1) { records[idx].url = generatedShareUrl; updateData('records', records); }
+        }
+        renderClientView(payloadData, 'admin_history');
+      } catch (e) { alert("문서를 불러오는 중 오류가 발생했습니다."); } finally { document.getElementById('loadingOverlay')?.remove(); }
+    }
+
+    function editCurrentReport() {
+      if(!currentLoadedRecordId) return; let rec = records.find(r => r && r.id === currentLoadedRecordId); if(!rec) return; let payload = rec.payload;
+      document.getElementById('clientSelect').value = payload.c || ''; document.getElementById('inputClientPhone').value = payload.p || '';
+      if(document.getElementById('inputClientAddress')) document.getElementById('inputClientAddress').value = payload.addr || '';
+      document.getElementById('inputRound').value = payload.r || ''; document.getElementById('inputDiagnosis').value = payload.d || ''; document.getElementById('inputIssue').value = payload.issue || '';
+      const buttons = document.querySelectorAll('#categoryContainer .cat-btn');
+      buttons.forEach(btn => { const val = btn.getAttribute('data-val'); btn.className = "cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968] transition-all"; btn.innerText = "+ " + val; });
+      if(document.getElementById('inputTreePruning')) document.getElementById('inputTreePruning').value = ''; if(document.getElementById('inputExtraCategory')) document.getElementById('inputExtraCategory').value = '';
+      if(payload.cat) {
+          let standardVals = Array.from(buttons).map(b => b.getAttribute('data-val'));
+          payload.cat.split(',').forEach(cItem => {
+              let cName = cItem.trim();
+              if(standardVals.includes(cName)) { let btn = Array.from(buttons).find(b => b.getAttribute('data-val') === cName); if(btn) { btn.className = "cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-[#12261E] text-[#84CC16] shadow-md border border-transparent"; btn.innerText = "✓ " + cName; } } 
+              else if (cName.startsWith("수목가지치기 (") && cName.endsWith(")")) { if(document.getElementById('inputTreePruning')) document.getElementById('inputTreePruning').value = cName.slice(8, -1); } 
+              else { if(document.getElementById('inputExtraCategory')) document.getElementById('inputExtraCategory').value = cName; }
+          });
+      }
+      beforeImages = payload.b ? payload.b.split(',').filter(Boolean) : []; afterImages = payload.a ? payload.a.split(',').filter(Boolean) : []; issueImages = payload.imgsIssue ? payload.imgsIssue.split(',').filter(Boolean) : [];
+      renderThumbList('before'); renderThumbList('after'); renderThumbList('issue');
+      editingRecordId = currentLoadedRecordId; let genBtn = document.getElementById('btnGenerateReport'); if(genBtn) genBtn.innerHTML = '<i data-lucide="edit" class="w-6 h-6 stroke-[2.5]"></i> 리포트 수정 완료';
+      switchView('admin');
+    }
+
+    function editCurrentQuote() {
+      if(!currentLoadedRecordId) return; let rec = records.find(r => r && r.id === currentLoadedRecordId); if(!rec) return; let payload = rec.payload;
+      let tType = 'residential'; if(payload.r.includes('조경작업') || payload.r.includes('조경공사')) tType = 'construction'; else if(payload.r.includes('단건') || payload.r.includes('조경관리견적서')) tType = 'single'; else if(payload.r.includes('상업') || payload.r.includes('빌딩') || payload.v > 0) tType = 'commercial';
+      loadQuoteTemplate(tType);
+      document.getElementById('quoteClientSelect').value = payload.c; document.getElementById('quoteInputClientPhone').value = payload.p;
+      if(document.getElementById('quoteInputClientAddress')) document.getElementById('quoteInputClientAddress').value = payload.addr || '';
+      document.getElementById('quoteInputRound').value = payload.r;
+      for(let i=1; i<=currentQuoteRowCount; i++) {
+         let descInput = document.getElementById(`quoteDesc_${i}`);
+         if(descInput) { let btn = descInput.parentElement.querySelector('.quote-month-btn'); if(btn) { btn.className = "quote-month-btn w-12 flex-shrink-0 text-center font-black text-[13px] bg-white text-[#4E5968] border border-[#EAEBEA] py-3 rounded-[10px] shadow-sm transition-all"; } descInput.value = ''; document.getElementById(`quotePrice_${i}`).value = ''; }
+      }
+      payload.m.forEach((savedItem) => {
+         for(let i=1; i<=currentQuoteRowCount; i++) {
+             let descInput = document.getElementById(`quoteDesc_${i}`); if(!descInput) continue;
+             let btn = descInput.parentElement.querySelector('.quote-month-btn');
+             if(btn && btn.innerText === savedItem.m) {
+                 btn.className = "quote-month-btn w-12 flex-shrink-0 text-center font-black text-[13px] bg-[#12261E] text-[#84CC16] py-3 rounded-[10px] shadow-sm transition-all"; descInput.value = savedItem.d; document.getElementById(`quotePrice_${i}`).value = savedItem.p > 0 ? savedItem.p.toLocaleString('ko-KR') : '';
+                 let tags = descInput.closest('.flex-col')?.querySelectorAll('.single-tag-btn');
+                 if(tags) { tags.forEach(t => { if(savedItem.d.includes(t.innerText)) { t.className = "single-tag-btn px-2.5 py-1.5 text-[11px] rounded-[8px] font-black bg-[#12261E] text-[#84CC16] transition-colors"; } else { t.className = "single-tag-btn px-2.5 py-1.5 text-[11px] rounded-[8px] font-black bg-white border border-[#EAEBEA] text-[#4E5968] transition-colors"; } }); } break;
+             }
+         }
+      });
+      if(document.getElementById('quoteInputMemo')) { document.getElementById('quoteInputMemo').value = payload.memo || ''; }
+      quoteImages = payload.imgs ? payload.imgs.split(',').filter(Boolean) : []; renderQuoteThumbList();
+      editingRecordId = currentLoadedRecordId; let genBtn = document.getElementById('btnGenerateQuote'); if(genBtn) genBtn.innerHTML = '<i data-lucide="edit" class="w-6 h-6 stroke-[2.5]"></i> 견적서 수정 완료';
+      calculateQuoteTotal(); switchView('quote');
+    }
+
+    // 🔥 핵심 핀셋 4: 박제된 공급자 정보를 열람 화면에 확실하게 표출합니다 🔥
+    function renderClientView(data, viewMode) {
+      currentIsQuote = data.isQuote; const promoBtn = document.getElementById('promoCardBtn');
+      if (promoBtn) { if(currentIsQuote) promoBtn.parentElement.style.display = 'none'; else promoBtn.parentElement.style.display = 'grid'; }
+      document.getElementById('viewDocClientName').innerText = data.c || '-'; 
+      let displayPhone = data.p; let displayAddress = data.addr; 
+      if (!displayPhone || displayPhone === '연락처 정보 없음' || !displayAddress) { const foundClient = clients.find(cl => cl.name === data.c); if (foundClient) { if(!displayPhone) displayPhone = foundClient.phone; if(!displayAddress) displayAddress = foundClient.address; } }
+      if(!displayPhone) displayPhone = '연락처 미등록'; if(!displayAddress) displayAddress = '주소 미등록';
+      document.getElementById('viewDocClientPhone').innerText = displayPhone; document.getElementById('viewRound').innerText = data.r || '-'; 
+      const addrEl = document.getElementById('viewDocClientAddress'); if(addrEl) addrEl.innerText = displayAddress;
+      
+      // ✅ 구워진 공급자 데이터가 있으면 최우선 반영!
+      let sName = data.supName || (myCompanyProfile ? myCompanyProfile.name : '업체명');
+      let sCeo = data.supCeo || (myCompanyProfile ? myCompanyProfile.ceo : '대표자명');
+      let sBiz = data.supBiz || (myCompanyProfile ? myCompanyProfile.bizNum : '000-00-00000');
+      let sPhone = data.supPhone || (myCompanyProfile ? myCompanyProfile.phone : '0000-0000');
+
+      document.getElementById('doc-company-name').innerText = sName;
+      document.getElementById('doc-company-ceo').innerText = sCeo;
+      document.getElementById('doc-company-biz-num').innerText = sBiz;
+      document.getElementById('doc-company-phone').innerText = sPhone;
+      document.getElementById('doc-company-name-sign').innerText = sName;
+
+      if(data.isQuote) {
+        document.getElementById('docTypeLabel').innerHTML = `<i data-lucide="calculator" class="w-5 h-5 text-[#84CC16]"></i> Prestige Quote`; document.getElementById('docStatusLabel').innerText = "견적서"; document.getElementById('reportContentBlock').classList.add('hidden'); document.getElementById('quoteContentBlock').classList.remove('hidden');
+        const quotePhotoContainer = document.getElementById('viewQuotePhotosBlock'); const photoGrid = document.getElementById('viewQuotePhotoGrid');
+        if (data.imgs && viewMode !== 'client_shared') {
+          quotePhotoContainer.classList.remove('hidden'); const imgUrls = data.imgs.split(','); currentGalleryQ = imgUrls; photoGrid.innerHTML = '';
+          imgUrls.forEach((src, idx) => { if(!src) return; photoGrid.innerHTML += `<div class="h-40 rounded-[20px] overflow-hidden bg-white/80 border border-[#EAEBEA] cursor-pointer shadow-sm relative group"><img src="${src}" onerror="this.parentElement.style.display='none'" onclick="openModal('q', ${idx})" class="w-full h-full object-cover transition-transform hover:scale-105 duration-700"><div class="absolute bottom-2 right-2 bg-black/60 text-white p-1.5 rounded-full pointer-events-none"><i data-lucide="zoom-in" class="w-3 h-3"></i></div></div>`; });
+        } else { quotePhotoContainer.classList.add('hidden'); }
+
+        let mHtml = "";
+        (data.m || []).forEach(item => {
+          let descHtml = `<div class="text-[13px] font-black text-[#12261E] bg-[#F2FBEC] border border-[#84CC16]/30 px-3 py-2 rounded-[10px] break-keep whitespace-pre-wrap leading-snug w-full shadow-sm">${item.d}</div>`;
+          if (item.m === '01' && data.r.includes('단건')) {
+             let tags = item.d.split(', ').filter(t => t.trim() !== ''); if (tags.length > 0) { descHtml = `<div class="flex flex-wrap gap-1.5 mt-0.5">` + tags.map(tag => `<span class="px-2.5 py-1.5 bg-[#F2FBEC] border border-[#84CC16]/40 text-[#65A30D] text-[12px] font-black rounded-[8px] shadow-sm">${tag.trim()}</span>`).join('') + `</div>`; }
+          } else {
+             let isParsed = false;
+             if (item.d.startsWith('[')) {
+                 let closeIdx = item.d.indexOf(']');
+                 if (closeIdx > 0) {
+                     let tName = item.d.substring(1, closeIdx).trim(); let rest = item.d.substring(closeIdx + 1).trim(); let dashIdx = rest.indexOf(' - ');
+                     if (dashIdx !== -1) {
+                         let tSpec = rest.substring(0, dashIdx).trim(); let tNote = rest.substring(dashIdx + 3).trim();
+                         if (tSpec.startsWith('규격:')) tSpec = tSpec.substring(3).trim(); else if (tSpec.startsWith('규격 :')) tSpec = tSpec.substring(4).trim();
+                         descHtml = `<div class="flex flex-col gap-1.5 w-full pr-1"><div class="w-fit bg-[#E8F5E9] border border-[#84CC16]/40 text-[#2E7D32] text-[13px] font-black px-2.5 py-1 rounded-[6px] shadow-sm leading-tight break-keep">${tName}</div><div class="flex flex-col gap-1 mt-0.5"><div class="flex items-start gap-1.5 text-[12px] font-black text-[#4E5968]"><span class="bg-[#F4F5F4] text-[#4E5968] px-1.5 py-0.5 rounded-[4px] border border-[#EAEBEA] text-[10px] flex-shrink-0 mt-px">규격/면적</span><span class="leading-snug break-keep">${tSpec}</span></div><div class="flex items-start gap-1.5 text-[12px] font-bold text-[#4E5968]"><span class="bg-[#F4F5F4] text-[#4E5968] px-1.5 py-0.5 rounded-[4px] border border-[#EAEBEA] text-[10px] flex-shrink-0 mt-px">비고</span><span class="leading-snug break-keep">${tNote}</span></div></div></div>`;
+                     }
+                 }
+             }
+          }
+          mHtml += `<div class="flex justify-between items-center bg-white p-3 rounded-[14px] border border-[#EAEBEA] shadow-sm mb-2"><div class="flex items-center gap-3 w-[72%]"><span class="w-10 text-center font-black text-[13px] bg-[#12261E] text-white py-1.5 rounded-[8px] flex-shrink-0">${item.m}</span><div class="flex-1 w-full">${descHtml}</div></div><span class="text-[15px] font-black text-[#1A1D1A] flex-shrink-0 whitespace-nowrap text-right">${item.p.toLocaleString('ko-KR')}원</span></div>`;
+        });
+        document.getElementById('viewQuoteMonths').innerHTML = mHtml; document.getElementById('viewQuoteSubtotal').className = "text-[15px] text-[#1A1D1A] font-black"; document.getElementById('viewQuoteSubtotal').innerText = (data.s || 0).toLocaleString('ko-KR') + "원"; document.getElementById('viewQuoteVatLabel').innerText = "부가가치세"; document.getElementById('viewQuoteVat').innerHTML = '<span class="text-[#3B82F6] font-black">부가세 별도(요청시)</span>'; document.getElementById('viewQuoteGrandTotal').innerText = (data.s || 0).toLocaleString('ko-KR') + "원";
+        if(data.memo && data.memo.trim() !== '') { document.getElementById('viewQuoteMemoBlock').innerHTML = `<div class="mt-4 bg-[#FFFDF9] p-5 rounded-[20px] border border-[#C5A880]/30 shadow-sm text-left"><h2 class="text-[15px] font-black text-[#12261E] flex items-center gap-1.5 mb-2"><i data-lucide="info" class="w-5 h-5 text-[#C5A880]"></i> 참고 및 특이사항</h2><p class="text-[15px] leading-[1.8] text-[#12261E] font-black whitespace-pre-wrap">${data.memo}</p></div>`; } else { document.getElementById('viewQuoteMemoBlock').innerHTML = ''; }
+      } else {
+        document.getElementById('docTypeLabel').innerHTML = `<i data-lucide="shield-check" class="w-5 h-5 text-[#84CC16]"></i> Prestige Care`; document.getElementById('docStatusLabel').innerText = "완료"; document.getElementById('quoteContentBlock').classList.add('hidden'); document.getElementById('reportContentBlock').classList.remove('hidden');
+        const issueBlock = document.getElementById('viewIssueBlock'); const issueTextEl = document.getElementById('viewIssue'); const issueGallery = document.getElementById('viewIssueGallery');
+        if (data.issue && typeof data.issue === 'string' && data.issue.trim() !== '') {
+          issueBlock.classList.remove('hidden'); issueTextEl.innerText = data.issue; issueGallery.innerHTML = ''; const iArr = data.imgsIssue ? data.imgsIssue.split(',') : []; currentGalleryI = iArr;
+          if (iArr.length > 0 && iArr[0] !== '') { issueGallery.classList.remove('hidden'); iArr.forEach((src, idx) => { if(!src) return; issueGallery.innerHTML += `<div class="h-40 rounded-[20px] overflow-hidden bg-white/80 border border-[#C5A880]/40 cursor-pointer shadow-sm relative group"><img src="${src}" onerror="this.parentElement.style.display='none'" onclick="openModal('i', ${idx})" class="w-full h-full object-cover transition-transform hover:scale-105 duration-700"><div class="absolute bottom-2 right-2 bg-black/60 text-white p-1.5 rounded-full pointer-events-none"><i data-lucide="zoom-in" class="w-3 h-3"></i></div></div>`; }); } else { issueGallery.classList.add('hidden'); }
+        } else { issueBlock.classList.add('hidden'); }
+        document.getElementById('viewDiagnosis').innerText = data.d || '-'; document.getElementById('viewCategories').innerHTML = '';
+        if(data.cat) data.cat.split(',').forEach(cat => { document.getElementById('viewCategories').insertAdjacentHTML('beforeend', `<span class="text-[12px] bg-[#12261E] text-[#84CC16] px-3 py-1.5 rounded-[10px] font-black">${cat}</span>`); });
+        const renderGallery = (containerId, urls, typeCode) => {
+          const container = document.getElementById(containerId); container.innerHTML = ''; 
+          const arr = Array.isArray(urls) ? urls : (typeof urls === 'string' && urls ? urls.split(',') : []);
+          const cleanArr = arr.filter(src => src && src.trim() !== '');
+          if(typeCode === 'b') currentGalleryB = cleanArr; else currentGalleryA = cleanArr;
+          if (cleanArr.length === 0) { container.innerHTML = `<div class="col-span-2 text-[12px] text-[#4E5968] font-bold py-3 text-center bg-white/50 rounded-[16px] border border-dashed border-[#EAEBEA]">등록된 사진 없음</div>`; } 
+          else { cleanArr.forEach((src, idx) => { const bd = typeCode==='b' ? 'border-[#EAEBEA]' : 'border-[#84CC16]/40'; const imgDiv = document.createElement('div'); imgDiv.className = `h-40 rounded-[20px] overflow-hidden bg-white/80 border ${bd} cursor-pointer shadow-sm relative group`; imgDiv.innerHTML = `<img src="${src}" onerror="this.parentElement.style.display='none'" onclick="openModal('${typeCode}', ${idx})" class="w-full h-full object-cover transition-transform hover:scale-105 duration-700"><div class="absolute bottom-2 right-2 bg-black/60 text-white p-1.5 rounded-full pointer-events-none"><i data-lucide="zoom-in" class="w-3 h-3"></i></div>`; container.appendChild(imgDiv); }); }
+        };
+        renderGallery('viewBeforeGallery', data.b, 'b'); renderGallery('viewAfterGallery', data.a, 'a');
+      }
+
+      document.getElementById('mainHeader').style.display = 'block'; document.getElementById('adminControlsPanel').style.display = 'block'; document.getElementById('printBtnBox').style.display = 'block'; document.getElementById('backToAdminBtnBox').style.display = 'block'; 
+      const editQBtn = document.getElementById('editQuoteBtnBox'); const editRBtn = document.getElementById('editReportBtnBox'); const backBtn = document.getElementById('btnBackFromReport');
+      if (viewMode === 'client_shared') { document.getElementById('mainHeader').style.display = 'none'; document.getElementById('adminControlsPanel').style.display = 'none'; document.getElementById('backToAdminBtnBox').style.display = 'none'; if(editQBtn) editQBtn.style.display = 'none'; if(editRBtn) editRBtn.style.display = 'none'; } 
+      else if (viewMode === 'admin_history') { backBtn.innerText = '목록으로 돌아가기'; backBtn.onclick = () => switchView(data.isQuote ? 'quoteList' : 'history'); if(editQBtn) editQBtn.style.display = data.isQuote ? 'flex' : 'none'; if(editRBtn) editRBtn.style.display = !data.isQuote ? 'flex' : 'none'; } 
+      else { backBtn.innerText = '작업 화면으로 돌아가기'; backBtn.onclick = () => switchView(data.isQuote ? 'quote' : 'admin'); if(editQBtn) editQBtn.style.display = 'none'; if(editRBtn) editRBtn.style.display = 'none'; }
+      switchView('client');
+    }
+
+    function getShareMessage() {
+      const clientName = document.getElementById('viewDocClientName').innerText; const title = currentIsQuote ? document.getElementById('viewRound').innerText : "조경 관리 리포트"; const shareLink = generatedShareUrl || window.location.href;
+      let companyName = myCompanyProfile ? myCompanyProfile.name : "업체명";
+      return `[${companyName}] ${title}\n\n■ 현장명: ${clientName}\n\n▶ 아래 링크를 눌러 상세 ${currentIsQuote ? "견적 내역" : "작업 내역"}을 확인해 주십시오.\n\n${shareLink}`;
+    }
+    
+    function shareKakaoTalk() {
+      const msg = getShareMessage();
+      if (navigator.share) { navigator.share({ title: '조경노트 문서', text: msg }).catch(() => { navigator.clipboard.writeText(msg).then(() => alert("복사 완료")); }); } 
+      else { navigator.clipboard.writeText(msg).then(() => alert("클립보드에 복사되었습니다.")); }
+    }
+    
+    function sendSMS() { 
+        let phoneText = document.getElementById('viewDocClientPhone').innerText; if (!phoneText || phoneText === '연락처 정보 없음' || phoneText === '연락처 미등록') { phoneText = ''; }
+        let phone = phoneText.replace(/[^0-9]/g, ''); const msg = encodeURIComponent(getShareMessage()); const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) { window.location.href = `sms:${phone}&body=${msg}`; } else { window.location.href = `sms:${phone}?body=${msg}`; }
+    }
+    
+    function copyReportText() { navigator.clipboard.writeText(getShareMessage()).then(() => alert("복사되었습니다.")); }
+
+    function renderClientSelect() {
+      const datalist = document.getElementById('clientDatalist'); if(!datalist) return; datalist.innerHTML = '';
+      clients.forEach((c) => { const opt = document.createElement('option'); opt.value = c.name; datalist.appendChild(opt); });
+    }
+    
+    function onSelectClient(name) { 
+        const found = clients.find(c => c.name === name); 
+        if (found) { document.getElementById('inputClientPhone').value = found.phone || ''; if(document.getElementById('inputClientAddress')) document.getElementById('inputClientAddress').value = found.address || ''; if(document.getElementById('quoteInputClientPhone')) document.getElementById('quoteInputClientPhone').value = found.phone || ''; if(document.getElementById('quoteInputClientAddress')) document.getElementById('quoteInputClientAddress').value = found.address || ''; }
+        document.getElementById('quoteClientSelect').value = name; 
+    }
+    
+    function onSelectQuoteClient(name) { 
+        const found = clients.find(c => c.name === name); 
+        if (found) { document.getElementById('quoteInputClientPhone').value = found.phone || ''; if(document.getElementById('quoteInputClientAddress')) document.getElementById('quoteInputClientAddress').value = found.address || ''; document.getElementById('inputClientPhone').value = found.phone || ''; if(document.getElementById('inputClientAddress')) document.getElementById('inputClientAddress').value = found.address || ''; }
+        document.getElementById('clientSelect').value = name; 
+    }
+
+    function setClientFilter(type) {
+      currentClientFilter = type;
+      if(type === '정기 관리') { document.getElementById('btnFilterRegular').className = "flex-1 py-3 rounded-[12px] bg-white shadow-sm text-[#12261E] font-black text-[14px] transition-all border border-[#EAEBEA]"; document.getElementById('btnFilterSingle').className = "flex-1 py-3 rounded-[12px] text-[#4E5968] font-black text-[14px] hover:text-[#12261E] transition-all border border-transparent"; } 
+      else { document.getElementById('btnFilterRegular').className = "flex-1 py-3 rounded-[12px] text-[#4E5968] font-black text-[14px] hover:text-[#12261E] transition-all border border-transparent"; document.getElementById('btnFilterSingle').className = "flex-1 py-3 rounded-[12px] bg-white shadow-sm text-[#12261E] font-black text-[14px] shadow-sm transition-all text-center border border-[#EAEBEA]"; }
+      renderClientsList();
+    }
+
+    function renderClientsList() {
+      const container = document.getElementById('clientsListContainer'); container.innerHTML = '';
+      const query = (document.getElementById('clientSearchInput')?.value || '').toLowerCase().trim();
+      let filtered = clients.filter(c => c.type === currentClientFilter);
+      if(query) { filtered = filtered.filter(c => (c.name&&c.name.toLowerCase().includes(query)) || (c.phone&&c.phone.replace(/-/g, '').includes(query.replace(/-/g, ''))) || (c.address&&c.address.toLowerCase().includes(query))); }
+      document.getElementById('clientCountBadge').innerText = `${filtered.length}건`;
+      if (filtered.length === 0) { container.innerHTML = `<div class="p-6 text-center text-[#8B95A1] text-[13px] bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA] font-bold">일치하는 거래처가 없습니다.</div>`; return; }
+      filtered.forEach((c) => {
+        const div = document.createElement('div'); div.className = "bg-white p-5 rounded-[16px] border border-[#EAEBEA] shadow-sm cursor-pointer hover:border-[#84CC16] hover:shadow-md transition-all flex justify-between items-center";
+        div.innerHTML = `<div class="w-full pr-2" onclick="showHistory('${c.name}')"><div class="font-black text-[#1A1D1A] text-[15px] flex items-center gap-1.5"><i data-lucide="building" class="w-4 h-4 text-[#4E5968]"></i> ${c.name}</div><div class="text-[14px] font-bold text-[#4E5968] mt-1.5"><i data-lucide="phone" class="w-3.5 h-3.5 inline-block text-blue-500 mr-1"></i> ${formatPhoneToLink(c.phone)}</div><div class="text-[12px] font-medium text-[#8B95A1] mt-1 break-keep"><i data-lucide="map-pin" class="w-3.5 h-3.5 inline-block mr-1"></i> ${c.address || '주소 미등록'}</div></div><div class="flex gap-1.5 flex-shrink-0"><button onclick="editClient('${c.id}'); event.stopPropagation();" class="p-3 text-[#A3A8A3] hover:text-[#84CC16] bg-gray-50 rounded-xl transition-all"><i data-lucide="edit-2" class="w-5 h-5"></i></button><button onclick="deleteClient('${c.id}'); event.stopPropagation();" class="p-3 text-[#A3A8A3] hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div>`;
+        container.appendChild(div);
+      }); lucide.createIcons();
+    }
+    
+    function saveClient() {
+        const name = document.getElementById('newClientName').value.trim(); const phone = document.getElementById('newClientPhone').value.trim(); const address = document.getElementById('newClientAddress').value.trim(); const type = document.getElementById('newClientType').value;
+        if(!name || !phone) return alert("고객명과 연락처를 입력하세요.");
+        if (editingClientIndex !== null) { const idx = clients.findIndex(c => c.id === editingClientIndex); if(idx !== -1) { clients[idx].name = name; clients[idx].phone = phone; clients[idx].address = address; clients[idx].type = type; } alert("수정 완료"); } 
+        else { clients.push({ id: Date.now().toString(), name, phone, address, type }); alert("저장 완료"); }
+        updateData('clients', clients); cancelEdit(); renderClientSelect(); renderClientsList();
+    }
+    function editClient(id) {
+        editingClientIndex = id; const client = clients.find(c => c.id === id); if(!client) return;
+        document.getElementById('newClientName').value = client.name; document.getElementById('newClientPhone').value = client.phone; document.getElementById('newClientAddress').value = client.address || ''; document.getElementById('newClientType').value = client.type || '정기 관리';
+        document.getElementById('clientFormTitle').innerHTML = `<i data-lucide="edit-3" class="w-5 h-5 text-[#84CC16]"></i> <span>거래처 정보 수정</span>`; document.getElementById('saveClientBtn').innerText = "수정 완료"; document.getElementById('cancelEditBtn').classList.remove('hidden'); lucide.createIcons(); window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function cancelEdit() {
+        editingClientIndex = null; document.getElementById('newClientName').value = ''; document.getElementById('newClientPhone').value = ''; document.getElementById('newClientAddress').value = ''; document.getElementById('newClientType').value = '정기 관리';
+        document.getElementById('clientFormTitle').innerHTML = `<i data-lucide="plus" class="w-5 h-5 text-[#84CC16]"></i> <span>신규 등록</span>`; document.getElementById('saveClientBtn').innerText = "데이터 저장"; document.getElementById('cancelEditBtn').classList.add('hidden'); lucide.createIcons();
+    }
+    function deleteClient(id) { if(confirm("이 거래처 정보를 삭제하시겠습니까?")) { clients = clients.filter(c => c.id !== id); updateData('clients', clients); if(editingClientIndex === id) cancelEdit(); renderClientSelect(); renderClientsList(); } }
+
+    function renderQuoteList() {
+      const container = document.getElementById('quoteListContainer'); const qList = records.filter(r => r && r.type === 'quote').sort((a,b) => b.id.localeCompare(a.id)); container.innerHTML = '';
+      document.getElementById('quoteCountBadge').innerText = `${qList.length}건`;
+      if(qList.length === 0) { container.innerHTML = `<div class="p-8 text-center text-[#8B95A1] text-[13px] bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA] font-bold">발행된 견적서가 없습니다.</div>`; return; }
+      qList.forEach(r => {
+        const div = document.createElement('div'); div.className = "bg-white p-5 rounded-[16px] border border-[#EAEBEA] shadow-sm cursor-pointer hover:border-[#84CC16] hover:shadow-md transition-all flex flex-col gap-2 relative";
+        div.onclick = () => loadHistoryRecord(r.id, true, r);
+        let sumValue = r.payload ? (r.payload.s || 0).toLocaleString('ko-KR') : "0";
+        div.innerHTML = `<button onclick="deleteRecord(event, '${r.id}', true)" class="absolute top-4 right-4 text-[#A3A8A3] hover:text-red-500 p-1 bg-[#F4F5F4] rounded-md transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button><div class="flex items-center gap-2 mb-1"><span class="text-[10px] font-black bg-[#1E3A8A]/10 text-[#1E3A8A] px-2 py-0.5 rounded border border-[#1E3A8A]/20">견적서</span><span class="text-[12px] font-bold text-[#8B95A1]">${r.date}</span></div><div class="font-black text-[#1A1D1A] text-[15px] truncate pr-8">${r.round}</div><div class="flex justify-between items-end mt-1"><div class="text-[13px] font-bold text-[#4E5968] flex items-center gap-1.5"><i data-lucide="building" class="w-3.5 h-3.5"></i> ${r.clientName}</div><div class="text-[16px] font-black text-[#84CC16]">${sumValue}원</div></div>`;
+        container.appendChild(div);
+      }); lucide.createIcons();
+    }
+
+    function showHistory(clientName) {
+      document.getElementById('historyClientName').innerText = clientName; const container = document.getElementById('historyListContainer'); container.innerHTML = '';
+      const list = records.filter(r => r && r.clientName === clientName && r.type !== 'quote').sort((a, b) => b.id.localeCompare(a.id));
+      if (list.length === 0) { container.innerHTML = `<div class="p-8 text-center text-[#8B95A1] text-[13px] bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA] font-bold">이 거래처에 작성된 일지가 없습니다.</div>`; } 
+      else {
+        list.forEach((r) => {
+          const div = document.createElement('div'); div.className = "bg-white p-5 rounded-[16px] border border-[#EAEBEA] shadow-sm cursor-pointer hover:border-[#84CC16] hover:shadow-md transition-all flex flex-col gap-1.5 relative";
+          div.onclick = () => loadHistoryRecord(r.id, false, r);
+          div.innerHTML = `<button onclick="deleteRecord(event, '${r.id}', false)" class="absolute top-4 right-4 text-[#A3A8A3] hover:text-red-500 p-1 bg-[#F4F5F4] rounded-md transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button><div class="flex items-center gap-2 mb-1"><span class="text-[10px] font-black bg-[#84CC16]/20 text-[#65A30D] px-2 py-0.5 rounded border border-[#84CC16]/30">작업 일지</span><span class="text-[12px] font-bold text-[#8B95A1]">${r.date}</span></div><div class="font-black text-[#1A1D1A] text-[15px] pr-8">${r.round}</div><div class="text-[13px] font-bold text-[#4E5968] truncate flex items-center gap-1.5 mt-0.5"><i data-lucide="check-square" class="w-3.5 h-3.5"></i> ${r.cat || '상세 내역 없음'}</div>`;
+          container.appendChild(div);
+        });
+      }
+      lucide.createIcons(); switchView('history');
+    }
+
     window.addEventListener('DOMContentLoaded', async () => {
       loadQuoteTemplate('residential'); 
       setTimeout(() => { const splash = document.getElementById('splashScreen'); if(splash) { splash.style.opacity = '0'; setTimeout(() => splash.remove(), 600); } }, 2000);
@@ -1138,10 +1437,7 @@
         try {
           if (encodedData) loadedData = JSON.parse(decodeURIComponent(escape(atob(encodedData))));
           else if (reportId) {
-              try {
-                  const res = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_shared_docs/${reportId}.json`);
-                  if (res.ok) { const json = await res.json(); if (json && Object.keys(json).length > 0) loadedData = json; }
-              } catch(err) {}
+              try { const res = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_shared_docs/${reportId}.json`); if (res.ok) { const json = await res.json(); if (json && Object.keys(json).length > 0) loadedData = json; } } catch(err) {}
               if (!loadedData) { const savedRecords = JSON.parse(localStorage.getItem('shinhwa_pro_records')) || []; const foundRec = savedRecords.find(rec => rec.id === reportId); if (foundRec && foundRec.payload) loadedData = foundRec.payload; }
           }
           document.getElementById('loadingOverlay')?.remove();
@@ -1151,23 +1447,15 @@
         const savedId = localStorage.getItem('shinhwa_pro_logged_in_id'); 
         const savedPw = localStorage.getItem('shinhwa_pro_logged_in_pw');
         const autoLogin = localStorage.getItem('shinhwa_pro_auto_login');
-        
-        if (savedId && savedPw && autoLogin === 'true') {
-            document.getElementById('loginId').value = savedId;
-            document.getElementById('loginPw').value = savedPw;
-            doLogin(); 
-        } else {
-            document.getElementById('authView').classList.remove('hidden');
-        }
+        if (savedId && savedPw && autoLogin === 'true') { document.getElementById('loginId').value = savedId; document.getElementById('loginPw').value = savedPw; doLogin(); } 
+        else { document.getElementById('authView').classList.remove('hidden'); }
         lucide.createIcons();
       }
     });
 
     window.addEventListener('popstate', (e) => {
-      const modal = document.getElementById('imageModal'); const promoModal = document.getElementById('promoCardModal'); const msgMockupModal = document.getElementById('msgMockupModal'); const textEditorModal = document.getElementById('textEditorModal'); const lensResultModal = document.getElementById('lensResultModal'); const materialModal = document.getElementById('materialModal'); const settingsModal = document.getElementById('settingsModal'); const noticeModal = document.getElementById('appNoticeModal'); const termsModal = document.getElementById('termsModal');
+      const modal = document.getElementById('imageModal'); const textEditorModal = document.getElementById('textEditorModal'); const lensResultModal = document.getElementById('lensResultModal'); const materialModal = document.getElementById('materialModal'); const settingsModal = document.getElementById('settingsModal'); const noticeModal = document.getElementById('appNoticeModal'); const termsModal = document.getElementById('termsModal');
       if (modal && !modal.classList.contains('hidden')) { modal.classList.add('hidden'); document.getElementById('modalImg').src = ''; return; }
-      if (promoModal && !promoModal.classList.contains('hidden')) { promoModal.classList.add('hidden'); return; }
-      if (msgMockupModal && !msgMockupModal.classList.contains('hidden')) { msgMockupModal.classList.add('hidden'); return; }
       if (textEditorModal && !textEditorModal.classList.contains('hidden')) { closeTextEditor(true); return; }
       if (lensResultModal && !lensResultModal.classList.contains('hidden')) { closeLensResult(true); return; }
       if (materialModal && !materialModal.classList.contains('hidden')) { closeMaterialModal(true); return; }
@@ -1177,6 +1465,8 @@
       if (e.state && e.state.view) { if(e.state.view !== 'client_shared') switchView(e.state.view, false); } 
       else switchView('admin', false);
     });
+
+  </script>
 
     function switchView(mode, pushHistory = true) {
       const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView'];
