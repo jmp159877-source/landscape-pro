@@ -1273,9 +1273,15 @@
     }
     
     function sendSMS() { 
-        let phoneText = document.getElementById('viewDocClientPhone').innerText; if (!phoneText || phoneText === '연락처 정보 없음' || phoneText === '연락처 미등록') { phoneText = ''; }
-        let phone = phoneText.replace(/[^0-9]/g, ''); const msg = encodeURIComponent(getShareMessage()); const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) { window.location.href = `sms:${phone}&body=${msg}`; } else { window.location.href = `sms:${phone}?body=${msg}`; }
+        const msg = encodeURIComponent(getShareMessage()); 
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        
+        // 수신자 번호를 강제로 비워서 문자 앱이 열리면 직접 연락처를 고르도록 유도
+        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) { 
+            window.location.href = `sms:&body=${msg}`; 
+        } else { 
+            window.location.href = `sms:?body=${msg}`; 
+        }
     }
     function copyReportText() { navigator.clipboard.writeText(getShareMessage()).then(() => alert("복사되었습니다.")); }
 
