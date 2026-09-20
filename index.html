@@ -1027,7 +1027,7 @@
     async function generateReport() {
       const clientName = document.getElementById('clientSelect').value; if(!clientName) return alert("고객명을 입력하거나 선택하세요.");
       const clientPhone = document.getElementById('inputClientPhone').value; const clientAddress = document.getElementById('inputClientAddress') ? document.getElementById('inputClientAddress').value : '';
-      showLoadingOverlay("발행 중...");
+      showLoadingOverlay("리포트 발행 중...");
       try {
         const round = document.getElementById('inputRound').value; const diagnosis = document.getElementById('inputDiagnosis').value; const issueText = document.getElementById('inputIssue').value; 
         const activeBadges = Array.from(document.querySelectorAll('#categoryContainer .cat-btn')).filter(b => b.classList.contains('bg-[#12261E]')).map(b => b.getAttribute('data-val'));
@@ -1045,13 +1045,19 @@
         if (!generatedShareUrl) { document.getElementById('loadingOverlay')?.remove(); return; }
 
         let existingClient = clients.find(c => c.name === clientName);
+        let selectedTypeEl = document.querySelector('input[name="newClientTypeReport"]:checked'); 
+        let selectedType = selectedTypeEl ? selectedTypeEl.value : '정기 관리'; 
+
         if (!existingClient) {
-            let selectedTypeEl = document.querySelector('input[name="newClientTypeReport"]:checked'); let selectedType = selectedTypeEl ? selectedTypeEl.value : '정기 관리';
             clients.push({ id: Date.now().toString(), name: clientName, phone: clientPhone, address: clientAddress, type: selectedType });
-        } else { if(clientAddress) existingClient.address = clientAddress; }
+        } else { 
+            if(clientAddress) existingClient.address = clientAddress; 
+            existingClient.type = selectedType; 
+        }
         updateData('clients', clients); renderClientSelect(); renderClientsList();
         
-        alert("저장 완료!"); editingRecordId = null; let genBtn = document.getElementById('btnGenerateReport'); if(genBtn) genBtn.innerHTML = '<i data-lucide="send" class="w-6 h-6 stroke-[2.5]"></i> 리포트 발행 및 저장';
+        alert("✅ 클라우드 저장 완료!");
+        editingRecordId = null; let genBtn = document.getElementById('btnGenerateReport'); if(genBtn) genBtn.innerHTML = '<i data-lucide="send" class="w-6 h-6 stroke-[2.5]"></i> 리포트 발행 및 저장';
         renderClientView(payloadData, 'admin_preview');
         
         document.getElementById('clientSelect').value = ''; document.getElementById('inputClientPhone').value = '';
@@ -1066,7 +1072,6 @@
         beforeImages = []; afterImages = []; issueImages = []; renderThumbList('before'); renderThumbList('after'); renderThumbList('issue');
       } catch (e) { alert("오류가 발생했습니다."); } finally { document.getElementById('loadingOverlay')?.remove(); lucide.createIcons(); }
     }
-
     async function generateQuote() {
       const clientName = document.getElementById('quoteClientSelect').value; if(!clientName) return alert("고객명을 선택하세요.");
       const clientPhone = document.getElementById('quoteInputClientPhone').value; const clientAddress = document.getElementById('quoteInputClientAddress') ? document.getElementById('quoteInputClientAddress').value : '';
