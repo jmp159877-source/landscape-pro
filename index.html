@@ -942,8 +942,16 @@
             if (!uploadRes.ok) return null;
         } catch(e) { return null; }
 
-        let savedRecords = Array.isArray(records) ? [...records] : Object.values(records);
-        let existingIdx = savedRecords.findIndex(r => r && r.id === shortCloudId);
+        // 데이터를 안전한 배열로 변환하고 널(null) 값 1차 제거
+        let savedRecords = [];
+        if (Array.isArray(records)) {
+            savedRecords = [...records];
+        } else if (records && typeof records === 'object') {
+            savedRecords = Object.values(records);
+        }
+        savedRecords = savedRecords.filter(r => r && r.id);
+
+        let existingIdx = savedRecords.findIndex(r => r.id === shortCloudId);
         
         let recordObj = {
             id: shortCloudId, type: clean.isQuote ? 'quote' : 'report',
@@ -952,11 +960,25 @@
             cat: clean.cat || '', b: clean.b || '', a: clean.a || '', imgsIssue: clean.imgsIssue || '', payload: clean
         };
 
-        if (existingIdx !== -1) { if(savedRecords[existingIdx].url) recordObj.url = savedRecords[existingIdx].url; savedRecords[existingIdx] = recordObj; } 
-        else savedRecords.push(recordObj);
+        if (existingIdx !== -1) { 
+            if(savedRecords[existingIdx].url) recordObj.url = savedRecords[existingIdx].url; 
+            savedRecords[existingIdx] = recordObj; // 기존 자리에 완벽하게 덮어쓰기
+        } else {
+            savedRecords.push(recordObj);
+        }
         
-        savedRecords = savedRecords.filter(r => r !== null && r !== undefined);
-        updateData('records', savedRecords); records = savedRecords;
+        // 🔥 핵심: 중복 데이터 및 내용 없는 빈 껍데기 완벽 삭제
+        let uniqueRecords = [];
+        let seen = new Set();
+        for (let i = savedRecords.length - 1; i >= 0; i--) { 
+            let r = savedRecords[i];
+            if (r && r.id && !seen.has(r.id) && r.clientName) { 
+                uniqueRecords.unshift(r);
+                seen.add(r.id);
+            }
+        }
+
+        updateData('records', uniqueRecords); records = uniqueRecords;
         localStorage.setItem('shinhwa_pro_records', JSON.stringify(records));
 
         let validBaseUrl = window.location.origin !== 'null' && !window.location.origin.startsWith('file') ? window.location.origin + window.location.pathname : 'https://jogyeongnote.com/';
