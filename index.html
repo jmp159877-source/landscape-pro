@@ -871,7 +871,13 @@
             materialsData = cloudData.materials ? (Array.isArray(cloudData.materials) ? cloudData.materials : Object.values(cloudData.materials)).filter(Boolean) : [];
             if(!cloudData.contacts) { cloudData.contacts = { clients: [], labors: [] }; } else { cloudData.contacts.clients = cloudData.contacts.clients ? (Array.isArray(cloudData.contacts.clients) ? cloudData.contacts.clients : Object.values(cloudData.contacts.clients)).filter(Boolean) : []; cloudData.contacts.labors = cloudData.contacts.labors ? (Array.isArray(cloudData.contacts.labors) ? cloudData.contacts.labors : Object.values(cloudData.contacts.labors)).filter(Boolean) : []; }
             contactsData = cloudData.contacts;
+            
+            // 🔥 클라우드에서 일정(캘린더) 데이터 가져오기
+            schedules = cloudData.schedules ? (Array.isArray(cloudData.schedules) ? cloudData.schedules : Object.values(cloudData.schedules)).filter(Boolean) : [];
+
             renderClientSelect(); renderClientsList(); renderQuoteList(); renderContactsList();
+            renderCalendar(); renderScheduleList(); // 🔥 일정 목록도 앱 켤 때 자동 갱신
+
             const badge = document.getElementById('cloudStatusBadge'); if(badge) { badge.innerHTML = '<i data-lucide="cloud-check" class="w-3 h-3"></i> 보안 연동됨'; }
         } catch(e) { alert("동기화 실패"); } finally { lucide.createIcons(); }
     }
