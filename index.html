@@ -1421,8 +1421,41 @@
     function saveClient() {
         const name = document.getElementById('newClientName').value.trim(); const phone = document.getElementById('newClientPhone').value.trim(); const address = document.getElementById('newClientAddress').value.trim(); const type = document.getElementById('newClientType').value;
         if(!name || !phone) return alert("고객명과 연락처를 입력하세요.");
-        if (editingClientIndex !== null) { const idx = clients.findIndex(c => c.id === editingClientIndex); if(idx !== -1) { clients[idx].name = name; clients[idx].phone = phone; clients[idx].address = address; clients[idx].type = type; } alert("수정 완료"); } 
-        else { clients.push({ id: Date.now().toString(), name, phone, address, type }); alert("저장 완료"); }
+        
+        if (editingClientIndex !== null) { 
+            const idx = clients.findIndex(c => c.id === editingClientIndex); 
+            if(idx !== -1) { 
+                const oldName = clients[idx].name; // 🔥 과거 이름 기억하기
+                
+                clients[idx].name = name; clients[idx].phone = phone; clients[idx].address = address; clients[idx].type = type; 
+                
+                // 🔥 핵심: 기존에 작성된 일지/견적서들의 이름표를 새 정보로 싹 갈아끼우기 (강제 동기화)
+                if (oldName !== name) {
+                    let isChanged = false;
+                    records.forEach(r => {
+                        if (r && r.clientName === oldName) {
+                            r.clientName = name; // 리포트 목록용 이름 업데이트
+                            if (r.payload) { 
+                                r.payload.c = name; // 실제 문서 안의 이름 업데이트
+                                r.payload.p = phone; // 내친김에 바뀐 전화번호도 업데이트
+                                r.payload.addr = address; // 바뀐 주소도 업데이트
+                            }
+                            isChanged = true;
+                        }
+                    });
+                    // 일지가 수정되었다면 클라우드/로컬 저장소에 즉시 반영
+                    if (isChanged) { 
+                        updateData('records', records); 
+                        localStorage.setItem('shinhwa_pro_records', JSON.stringify(records)); 
+                    }
+                }
+            } 
+            alert("수정 완료"); 
+        } 
+        else { 
+            clients.push({ id: Date.now().toString(), name, phone, address, type }); 
+            alert("저장 완료"); 
+        }
         updateData('clients', clients); cancelEdit(); renderClientSelect(); renderClientsList();
     }
     function editClient(id) {
