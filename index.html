@@ -1281,7 +1281,18 @@
     }
     function onSelectClient(name) { 
         const found = clients.find(c => c.name === name); 
-        if (found) { document.getElementById('inputClientPhone').value = found.phone || ''; if(document.getElementById('inputClientAddress')) document.getElementById('inputClientAddress').value = found.address || ''; if(document.getElementById('quoteInputClientPhone')) document.getElementById('quoteInputClientPhone').value = found.phone || ''; if(document.getElementById('quoteInputClientAddress')) document.getElementById('quoteInputClientAddress').value = found.address || ''; }
+        if (found) { 
+            document.getElementById('inputClientPhone').value = found.phone || ''; 
+            if(document.getElementById('inputClientAddress')) document.getElementById('inputClientAddress').value = found.address || ''; 
+            if(document.getElementById('quoteInputClientPhone')) document.getElementById('quoteInputClientPhone').value = found.phone || ''; 
+            if(document.getElementById('quoteInputClientAddress')) document.getElementById('quoteInputClientAddress').value = found.address || ''; 
+            
+            // 👉 기존 거래처의 소속(정기/개별)을 찾아내 라디오 버튼에 자동 적용 (핵심 추가)
+            let r1 = document.querySelector('input[name="newClientTypeReport"][value="정기 관리"]');
+            let r2 = document.querySelector('input[name="newClientTypeReport"][value="개별 고객"]');
+            if (found.type === '개별 고객') { if(r2) r2.checked = true; } 
+            else { if(r1) r1.checked = true; }
+        }
         document.getElementById('quoteClientSelect').value = name; 
     }
     function onSelectQuoteClient(name) { 
