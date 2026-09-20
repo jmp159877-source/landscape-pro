@@ -764,7 +764,82 @@
         </div>
     </div>
   </div>
+  <!-- 📝 장부 입력 팝업창 -->
+  <div id="ledgerModal" class="hidden fixed inset-0 z-[6500] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200">
+      <div id="ledgerBox" class="bg-white w-full max-w-sm rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-[#EAEBEA]" onclick="event.stopPropagation()">
+          <div class="p-5 border-b border-[#F4F5F4] flex justify-between items-center bg-[#F9F9F8]">
+              <h3 class="text-[16px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="wallet" class="w-5 h-5 text-[#84CC16]"></i> 장부 내역 입력</h3>
+              <button onclick="closeLedgerModal()" class="text-[#A3A8A3] hover:text-[#12261E] p-1"><i data-lucide="x" class="w-6 h-6"></i></button>
+          </div>
+          <div class="p-5 space-y-4 max-h-[70vh] overflow-y-auto bg-white">
+              <input type="hidden" id="ledgerId">
+              <div>
+                  <label class="block text-[13px] font-black text-[#12261E] mb-2">작업 날짜</label>
+                  <input type="date" id="ledgerDate" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-4 py-3 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
+              </div>
+              <div>
+                  <label class="block text-[13px] font-black text-[#12261E] mb-2">어디에서 뭘 했는지 (현장명)</label>
+                  <input type="text" id="ledgerTitle" placeholder="예: 구리시 주택 전지작업" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-4 py-3 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                  <div>
+                      <label class="block text-[13px] font-black text-blue-600 mb-2">수입 (매출)</label>
+                      <input type="text" id="ledgerIncome" placeholder="0" inputmode="numeric" oninput="formatNumberInput(this)" class="w-full bg-[#F0F9FF] border border-[#BAE6FD] rounded-[14px] px-4 py-3 text-[15px] font-black text-blue-700 focus:outline-none focus:border-blue-500 text-right">
+                  </div>
+                  <div>
+                      <label class="block text-[13px] font-black text-red-600 mb-2">지출 (비용)</label>
+                      <input type="text" id="ledgerExpense" placeholder="0" inputmode="numeric" oninput="formatNumberInput(this)" class="w-full bg-[#FEF2F2] border border-[#FECACA] rounded-[14px] px-4 py-3 text-[15px] font-black text-red-700 focus:outline-none focus:border-red-500 text-right">
+                  </div>
+              </div>
+              <div>
+                  <label class="block text-[13px] font-black text-[#12261E] mb-2">적요 (비용은 어디에 뭐 뭐 썼는지)</label>
+                  <textarea id="ledgerMemo" rows="2" placeholder="예: 인건비 2명 40만, 식대 3만, 자재비 10만" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] p-4 text-[13px] font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] resize-none"></textarea>
+              </div>
+          </div>
+          <div class="p-4 bg-[#F9F9F8] border-t border-[#F4F5F4] flex gap-2">
+              <button onclick="closeLedgerModal()" class="flex-1 bg-white border border-[#EAEBEA] text-[#4E5968] font-black py-4 rounded-[14px] text-[15px] hover:bg-[#F4F5F4] transition-colors">취소</button>
+              <button onclick="saveLedger()" class="flex-1 bg-[#12261E] text-[#84CC16] font-black py-4 rounded-[14px] text-[15px] shadow-md hover:bg-black transition-colors">기록 저장</button>
+          </div>
+      </div>
+  </div>
 
+  <!-- 🧮 수동 계산기 팝업창 -->
+  <div id="calculatorModal" class="hidden fixed inset-0 z-[7000] bg-black/60 flex items-center justify-center p-4 opacity-0 transition-opacity duration-200" onclick="closeCalculator()">
+      <div id="calculatorBox" class="bg-[#151E2D] w-full max-w-[280px] rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-white/10" onclick="event.stopPropagation()">
+          <div class="p-4 border-b border-white/10 flex justify-between items-center bg-[#0F1722]">
+              <h3 class="text-[14px] font-black text-white flex items-center gap-1.5"><i data-lucide="calculator" class="w-4 h-4 text-[#84CC16]"></i> 장부 계산기</h3>
+              <button onclick="closeCalculator()" class="text-[#A3A8A3] hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+          </div>
+          <div class="p-5 bg-[#151E2D]">
+              <div id="calcDisplay" class="w-full bg-white text-[#12261E] font-black text-[26px] text-right p-4 rounded-[16px] mb-5 overflow-hidden shadow-inner tracking-tight">0</div>
+              <div class="grid grid-cols-4 gap-2.5">
+                  <button onclick="calcInput('C')" class="col-span-2 py-3.5 bg-red-500 text-white font-black rounded-[12px] shadow-sm active:scale-95 transition-all text-[16px]">C (초기화)</button>
+                  <button onclick="calcInput('<')" class="py-3.5 bg-white/10 text-white font-black rounded-[12px] shadow-sm active:scale-95 transition-all text-[18px]">←</button>
+                  <button onclick="calcInput('/')" class="py-3.5 bg-[#84CC16] text-[#12261E] font-black rounded-[12px] shadow-sm active:scale-95 transition-all text-[20px]">÷</button>
+                  
+                  <button onclick="calcInput('7')" class="py-3.5 bg-white/5 text-white font-black rounded-[12px] shadow-sm active:scale-95 transition-all text-[18px]">7</button>
+                  <button onclick="calcInput('8')" class="py-3.5 bg-white/5 text-white font-black rounded-[12px] shadow-sm active:scale-95 transition-all text-[18px]">8</button>
+                  <button onclick="calcInput('9')" class="py-3.5 bg-white/5 text-white font-black rounded-[12px] shadow-sm active:scale-95 transition-all text-[18px]">9</button>
+                  <button onclick="calcInput('*')" class="py-3.5 bg-[#84CC16] text-[#12261E] font-black rounded-[12px] shadow-sm active:scale-95 transition-all text-[20px]">×</button>
+                  
+                  <button onclick="calcInput('4')" class="py-3.5 bg-white/5 text-white font-black rounded-[12px] shadow-sm active:scale-95 transition-all text-[18px]">4</button>
+                  <button onclick="calcInput('5')" class="py-3.5 bg-white/5 text-white font-black rounded-[12px] shadow-sm active:scale-95 transition-all text-[18px]">5</button>
+                  <button onclick="calcInput('6')" class="py-3.5 bg-white/5 text-white font-black rounded-[12px] shadow-sm active:scale-95 transition-all text-[18px]">6</button>
+                  <button onclick="calcInput('-')" class="py-3.5 bg-[#84CC16] text-[#12261E] font-black rounded-[12px] shadow-sm active:scale-95 transition-all text-[24px]">-</button>
+                  
+                  <button onclick="calcInput('1')" class="py-3.5 bg-white/5 text-white font-black rounded-[12px] shadow-sm active:scale-95 transition-all text-[18px]">1</button>
+                  <button onclick="calcInput('2')" class="py-3.5 bg-white/5 text-white font-black rounded-[12px] shadow-sm active:scale-95 transition-all text-[18px]">2</button>
+                  <button onclick="calcInput('3')" class="py-3.5 bg-white/5 text-white font-black rounded-[12px] shadow-sm active:scale-95 transition-all text-[18px]">3</button>
+                  <button onclick="calcInput('+')" class="py-3.5 bg-[#84CC16] text-[#12261E] font-black rounded-[12px] shadow-sm active:scale-95 transition-all text-[22px]">+</button>
+                  
+                  <button onclick="calcInput('00')" class="py-3.5 bg-white/5 text-white font-black rounded-[12px] shadow-sm active:scale-95 transition-all text-[18px]">00</button>
+                  <button onclick="calcInput('0')" class="py-3.5 bg-white/5 text-white font-black rounded-[12px] shadow-sm active:scale-95 transition-all text-[18px]">0</button>
+                  <button onclick="calcInput('.')" class="py-3.5 bg-white/5 text-white font-black rounded-[12px] shadow-sm active:scale-95 transition-all text-[22px]">.</button>
+                  <button onclick="calcInput('=')" class="py-3.5 bg-[#FEE500] text-[#12261E] font-black rounded-[12px] shadow-sm active:scale-95 transition-all text-[22px]">=</button>
+              </div>
+          </div>
+      </div>
+  </div>
   <script>
     const API_KEY = "AIzaSyC_1KaOSychXSNF-Z-vnVONLB_-aAGghhk";
     const DB_BASE_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/accounts";
