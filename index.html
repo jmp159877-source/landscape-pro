@@ -1001,10 +1001,20 @@
     function closeMaterialModal() { document.getElementById('materialModal').classList.add('hidden'); }
     function closeModal() { document.getElementById('imageModal').classList.add('hidden'); }
 
-    window.addEventListener('DOMContentLoaded', () => {
+   window.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => document.getElementById('splashScreen').classList.add('hidden'), 1500);
-        if (localStorage.getItem('shinhwa_pro_auto_login') === 'true') doLogin();
-        else document.getElementById('authView').classList.remove('hidden');
+        const savedId = localStorage.getItem('shinhwa_pro_logged_in_id'); 
+        const savedPw = localStorage.getItem('shinhwa_pro_logged_in_pw');
+        const autoLogin = localStorage.getItem('shinhwa_pro_auto_login');
+        
+        if (savedId && savedPw && autoLogin === 'true') { 
+            document.getElementById('loginId').value = savedId; 
+            document.getElementById('loginPw').value = savedPw; 
+            doLogin(); 
+        } else { 
+            document.getElementById('authView').classList.remove('hidden'); 
+        }
+        lucide.createIcons();
     });
   </script>
 </body>
