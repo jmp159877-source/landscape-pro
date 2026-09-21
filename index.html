@@ -2064,7 +2064,7 @@
           if (e.target.closest('input') || e.target.closest('textarea') || e.target.closest('table')) return;
           const diffX = e.changedTouches[0].screenX - viewTouchStartX; const diffY = e.changedTouches[0].screenY - viewTouchStartY;
           if (Math.abs(diffX) > Math.abs(diffY) * 1.5 && Math.abs(diffX) > 60) {
-            let currentActiveMode = 'admin';
+            let currentActiveMode = 'calendar';
             if (!document.getElementById('quoteAdminView').classList.contains('hidden')) currentActiveMode = 'quote';
             else if (!document.getElementById('quoteListView').classList.contains('hidden')) currentActiveMode = 'quoteList';
             else if (!document.getElementById('clientsView').classList.contains('hidden')) currentActiveMode = 'clients';
@@ -2485,7 +2485,7 @@
       if (termsModal && !termsModal.classList.contains('hidden')) { closeTermsModal(); return; }
       if (scheduleModal && !scheduleModal.classList.contains('hidden')) { closeScheduleModal(true); return; }
       if (e.state && e.state.view) { if(e.state.view !== 'client_shared') switchView(e.state.view, false); } 
-      else switchView('admin', false);
+      else switchView('calendar', false);
     });
    function createNewReportFromClient(clientId) {
       const client = clients.find(c => c.id === clientId);
