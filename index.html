@@ -1317,12 +1317,34 @@
       document.getElementById('loadingOverlay')?.remove(); event.target.value = ''; 
     }
     
-    function removeThumb(type, idx) { if (type === 'before') { beforeImages.splice(idx, 1); renderThumbList('before'); } else if (type === 'after') { afterImages.splice(idx, 1); renderThumbList('after'); } else if (type === 'issue') { issueImages.splice(idx, 1); renderThumbList('issue'); } }
+    function removeThumb(type, idx) {
+      if (type === 'before') { beforeImages.splice(idx, 1); renderThumbList('before'); }
+      else if (type === 'during') { duringImages.splice(idx, 1); renderThumbList('during'); }
+      else if (type === 'after') { afterImages.splice(idx, 1); renderThumbList('after'); }
+      else if (type === 'issue') { issueImages.splice(idx, 1); renderThumbList('issue'); }
+    }
 
     function renderThumbList(type) {
-      const listContainer = document.getElementById(type + 'ThumbList'); const countLabel = document.getElementById(type + 'Count'); const list = type === 'before' ? beforeImages : (type === 'after' ? afterImages : issueImages);
-      if (!listContainer || !countLabel) return; listContainer.innerHTML = ''; countLabel.innerText = `${list.length}장`;
-      list.forEach((src, idx) => { const div = document.createElement('div'); div.className = "relative flex-shrink-0 w-24 h-24 rounded-[18px] overflow-hidden border border-[#EAEBEA] shadow-sm group"; div.innerHTML = `<img src="${src}" class="w-full h-full object-cover"><button type="button" onclick="removeThumb('${type}', ${idx})" class="absolute top-1.5 right-1.5 bg-[#1A1D1A]/70 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px] backdrop-blur-sm">✕</button>`; listContainer.appendChild(div); }); lucide.createIcons();
+      const listContainer = document.getElementById(type + 'ThumbList'); 
+      const countLabel = document.getElementById(type + 'Count'); 
+      
+      let list;
+      if (type === 'before') list = beforeImages;
+      else if (type === 'during') list = duringImages;
+      else if (type === 'after') list = afterImages;
+      else list = issueImages;
+
+      if (!listContainer || !countLabel) return; 
+      listContainer.innerHTML = ''; 
+      countLabel.innerText = `${list.length}장`;
+      
+      list.forEach((src, idx) => { 
+        const div = document.createElement('div'); 
+        div.className = "relative flex-shrink-0 w-24 h-24 rounded-[18px] overflow-hidden border border-[#EAEBEA] shadow-sm group"; 
+        div.innerHTML = `<img src="${src}" class="w-full h-full object-cover"><button type="button" onclick="removeThumb('${type}', ${idx})" class="absolute top-1.5 right-1.5 bg-[#1A1D1A]/70 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px] backdrop-blur-sm">✕</button>`; 
+        listContainer.appendChild(div); 
+      }); 
+      lucide.createIcons();
     }
 
     async function handleQuoteImageUpload(event) {
@@ -1353,7 +1375,13 @@
         const treePruning = document.getElementById('inputTreePruning') ? document.getElementById('inputTreePruning').value.trim() : ''; if(treePruning) activeBadges.push("수목가지치기 (" + treePruning + ")");
         const extraCat = document.getElementById('inputExtraCategory').value.trim(); if(extraCat) activeBadges.push(extraCat);
 
-        const bUrls = await uploadImagesToCloud(beforeImages); const aUrls = await uploadImagesToCloud(afterImages); const iUrls = await uploadImagesToCloud(issueImages); 
+        const bUrls = await uploadImagesToCloud(beforeImages); 
+        const durUrls = await uploadImagesToCloud(duringImages); // 🔥 작업 중 사진 업로드 추가
+        const aUrls = await uploadImagesToCloud(afterImages); 
+        const iUrls = await uploadImagesToCloud(issueImages); 
+        
+        const payloadData = { 
+            isQuote: false, c: clientName, p: clientPhone, addr: clientAddress, r: round, d: diagnosis, issue: issueText, cat: activeBadges.join(','), b: bUrls.join(','), dur: durUrls.join(','), a: aUrls.join(','), imgsIssue: iUrls.join(','),
         
         const payloadData = { 
             isQuote: false, c: clientName, p: clientPhone, addr: clientAddress, r: round, d: diagnosis, issue: issueText, cat: activeBadges.join(','), b: bUrls.join(','), a: aUrls.join(','), imgsIssue: iUrls.join(','),
