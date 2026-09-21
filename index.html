@@ -1662,7 +1662,7 @@
     function getShareMessage() {
       const clientName = document.getElementById('viewDocClientName').innerText; const title = currentIsQuote ? document.getElementById('viewRound').innerText : "조경 관리 리포트"; const shareLink = generatedShareUrl || window.location.href;
       let companyName = myCompanyProfile ? myCompanyProfile.name : "업체명";
-      return `[${companyName}] ${title}\n\n■ 현장명: ${clientName}\n\n▶ 아래 링크를 눌러 상세 ${currentIsQuote ? "견적 내역" : "작업 내역"}을 확인해 주십시오.\n\n${shareLink}`;
+      return `[${companyName}] ${title}\n\n■ 현장명: ${clientName}\n\n[🔒 안심 보안 링크]\n아래 주소를 누르시면 상세 ${currentIsQuote ? "견적 내역" : "작업 리포트"}를 안전하게 확인하실 수 있습니다.\n\n${shareLink}`;
     }
     
     function shareKakaoTalk() {
