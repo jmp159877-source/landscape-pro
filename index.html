@@ -44,9 +44,27 @@
   <div id="splashScreen" class="fixed inset-0 z-[1000] bg-[#12261E] flex flex-col items-center justify-center p-6">
     <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(132,204,22,0.12)_0%,transparent_70%)] pointer-events-none"></div>
     <div class="relative z-10 flex flex-col items-center text-center">
-      <div class="w-24 h-24 rounded-[28px] bg-[#1A382B] border-2 border-[#84CC16]/40 flex items-center justify-center shadow-[0_0_50px_rgba(132,204,22,0.3)] mb-6 animate-bounce"><i data-lucide="leaf" class="w-12 h-12 text-[#84CC16]"></i></div>
+      <!-- 배경을 흰색으로 변경하여 로고의 검은 선이 선명하게 보이도록 최적화 -->
+      <div class="w-24 h-24 rounded-[28px] bg-white flex items-center justify-center shadow-[0_0_50px_rgba(132,204,22,0.3)] mb-6 animate-bounce overflow-hidden relative">
+        <svg width="60" height="60" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="relative z-10 mt-1">
+          <rect x="10" y="20" width="50" height="70" rx="4" fill="none" stroke="#12261E" stroke-width="2.5"/>
+          <rect x="16" y="26" width="38" height="58" rx="2" fill="none" stroke="#12261E" stroke-width="1"/>
+          <line x1="21" y1="40" x2="49" y2="40" stroke="#A3A8A3" stroke-width="1.5" stroke-dasharray="2,3" />
+          <line x1="21" y1="53" x2="49" y2="53" stroke="#A3A8A3" stroke-width="1.5" stroke-dasharray="2,3" />
+          <line x1="21" y1="66" x2="49" y2="66" stroke="#A3A8A3" stroke-width="1.5" stroke-dasharray="2,3" />
+          <g transform="translate(10, 11) scale(0.8)">
+            <path d="M 40 53 C 32 35, 60 10, 96 6 C 90 35, 60 57, 40 53 Z" fill="#84CC16" opacity="0.95"/>
+            <path d="M 40 53 L 89 12" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.9"/>
+            <g transform="translate(40, 53) rotate(225)">
+               <path d="M -7,8 L 0,-15 L 7,8 C 5,12 -5,12 -7,8 Z" fill="#12261E"/>
+               <line x1="0" y1="-14" x2="0" y2="1" stroke="#ffffff" stroke-width="1.5"/>
+               <circle cx="0" cy="2.5" r="1.5" fill="#ffffff"/>
+            </g>
+          </g>
+        </svg>
+      </div>
       <span class="text-[13px] bg-[#84CC16]/20 text-[#84CC16] font-black px-4 py-2 rounded-full uppercase tracking-[0.2em] border border-[#84CC16]/30 mb-3">Landscape Solution</span>
-      <h1 class="text-white font-black text-[42px] tracking-tight mb-2">조경노트 PRO</h1>
+      <h1 class="text-white font-black text-[42px] tracking-tight mb-2">신화 조경노트</h1>
       <p class="text-[#A3A8A3] text-[16px] font-bold tracking-wide" id="splash-loading-text">보안 연결 중...</p>
     </div>
   </div>
@@ -651,7 +669,26 @@
         </div>
 
         <div class="pt-5 flex justify-between items-end opacity-90 relative z-10 border-t border-[#EAEBEA] mt-5">
-          <div class="flex flex-col"><span class="text-[10px] font-black text-[#A3A8A3] tracking-wider uppercase mb-0.5">Powered by</span><span class="text-[14px] font-black text-[#84CC16] tracking-tight">조경노트</span></div>
+          <div class="flex items-center gap-2">
+            <!-- 문서용 미니 로고 -->
+            <svg width="24" height="24" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="opacity-80">
+              <rect x="10" y="20" width="50" height="70" rx="4" fill="none" stroke="#12261E" stroke-width="2.5"/>
+              <rect x="16" y="26" width="38" height="58" rx="2" fill="none" stroke="#12261E" stroke-width="1"/>
+              <line x1="21" y1="40" x2="49" y2="40" stroke="#A3A8A3" stroke-width="1.5" stroke-dasharray="2,3" />
+              <line x1="21" y1="53" x2="49" y2="53" stroke="#A3A8A3" stroke-width="1.5" stroke-dasharray="2,3" />
+              <line x1="21" y1="66" x2="49" y2="66" stroke="#A3A8A3" stroke-width="1.5" stroke-dasharray="2,3" />
+              <g transform="translate(10, 11) scale(0.8)">
+                <path d="M 40 53 C 32 35, 60 10, 96 6 C 90 35, 60 57, 40 53 Z" fill="#84CC16" opacity="0.95"/>
+                <path d="M 40 53 L 89 12" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.9"/>
+                <g transform="translate(40, 53) rotate(225)">
+                   <path d="M -7,8 L 0,-15 L 7,8 C 5,12 -5,12 -7,8 Z" fill="#12261E"/>
+                   <line x1="0" y1="-14" x2="0" y2="1" stroke="#ffffff" stroke-width="1.5"/>
+                   <circle cx="0" cy="2.5" r="1.5" fill="#ffffff"/>
+                </g>
+              </g>
+            </svg>
+            <div class="flex flex-col"><span class="text-[10px] font-black text-[#A3A8A3] tracking-wider uppercase mb-0">Powered by</span><span class="text-[14px] font-black text-[#84CC16] tracking-tight">신화 조경노트</span></div>
+          </div>
           <div class="flex items-center gap-2"><span class="text-[18px] font-black text-[#12261E] tracking-tight"><span id="doc-company-name-sign">업체명</span> 드림</span></div>
         </div>
 
