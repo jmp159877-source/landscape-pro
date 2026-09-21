@@ -1756,7 +1756,7 @@
       if (filtered.length === 0) { container.innerHTML = `<div class="p-6 text-center text-[#8B95A1] text-[13px] bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA] font-bold">일치하는 거래처가 없습니다.</div>`; return; }
       filtered.forEach((c) => {
         const div = document.createElement('div'); div.className = "bg-white p-5 rounded-[16px] border border-[#EAEBEA] shadow-sm cursor-pointer hover:border-[#84CC16] hover:shadow-md transition-all flex justify-between items-center";
-        div.innerHTML = `<div class="w-full pr-2" onclick="showHistory('${c.name}')"><div class="font-black text-[#1A1D1A] text-[15px] flex items-center gap-1.5"><i data-lucide="building" class="w-4 h-4 text-[#4E5968]"></i> ${c.name}</div><div class="text-[12px] font-medium text-[#8B95A1] mt-1.5 break-keep"><i data-lucide="map-pin" class="w-3.5 h-3.5 inline-block mr-1"></i> ${c.address || '주소 미등록'}</div><div class="text-[14px] font-bold text-[#4E5968] mt-1"><i data-lucide="phone" class="w-3.5 h-3.5 inline-block text-blue-500 mr-1"></i> ${formatPhoneToLink(c.phone)}</div></div><div class="flex gap-1.5 flex-shrink-0"><button onclick="editClient('${c.id}'); event.stopPropagation();" class="p-3 text-[#A3A8A3] hover:text-[#84CC16] bg-gray-50 rounded-xl transition-all"><i data-lucide="edit-2" class="w-5 h-5"></i></button><button onclick="deleteClient('${c.id}'); event.stopPropagation();" class="p-3 text-[#A3A8A3] hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div>`;
+        div.innerHTML = `<div class="w-full pr-2" onclick="showHistory('${c.name}')"><div class="font-black text-[#1A1D1A] text-[15px] flex items-center gap-1.5"><i data-lucide="building" class="w-4 h-4 text-[#4E5968]"></i> ${c.name}</div><div class="text-[12px] font-medium text-[#8B95A1] mt-1.5 break-keep"><i data-lucide="map-pin" class="w-3.5 h-3.5 inline-block mr-1"></i> ${c.address || '주소 미등록'}</div><div class="text-[14px] font-bold text-[#4E5968] mt-1"><i data-lucide="phone" class="w-3.5 h-3.5 inline-block text-blue-500 mr-1"></i> ${formatPhoneToLink(c.phone)}</div></div><div class="flex gap-1.5 flex-shrink-0"><button onclick="createNewReportFromClient('${c.id}'); event.stopPropagation();" class="p-3 text-[#84CC16] hover:text-white bg-[#12261E] hover:bg-black rounded-xl transition-all"><i data-lucide="pen-tool" class="w-5 h-5"></i></button><button onclick="editClient('${c.id}'); event.stopPropagation();" class="p-3 text-[#A3A8A3] hover:text-[#84CC16] bg-gray-50 rounded-xl transition-all"><i data-lucide="edit-2" class="w-5 h-5"></i></button><button onclick="deleteClient('${c.id}'); event.stopPropagation();" class="p-3 text-[#A3A8A3] hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div>`;
         container.appendChild(div);
       }); lucide.createIcons();
     }
@@ -2447,6 +2447,46 @@
       if (e.state && e.state.view) { if(e.state.view !== 'client_shared') switchView(e.state.view, false); } 
       else switchView('admin', false);
     });
+   function createNewReportFromClient(clientId) {
+      const client = clients.find(c => c.id === clientId);
+      if (!client) return;
+
+      // 1. 고객 정보 자동 채우기
+      document.getElementById('clientSelect').value = client.name || '';
+      document.getElementById('inputClientPhone').value = client.phone || '';
+      if (document.getElementById('inputClientAddress')) document.getElementById('inputClientAddress').value = client.address || '';
+
+      // 2. 고객 유형 라디오 버튼 맞추기
+      let r1 = document.querySelector('input[name="newClientTypeReport"][value="정기 관리"]');
+      let r2 = document.querySelector('input[name="newClientTypeReport"][value="개별 고객"]');
+      if (client.type === '개별 고객') { if(r2) r2.checked = true; } 
+      else { if(r1) r1.checked = true; }
+
+      // 3. 텍스트 입력칸 싹 비우기
+      document.getElementById('inputRound').value = '';
+      document.getElementById('inputDiagnosis').value = '';
+      document.getElementById('inputIssue').value = '';
+
+      // 4. 뱃지 및 수기 입력칸 싹 비우기
+      document.querySelectorAll('#categoryContainer .cat-btn').forEach(btn => {
+          const val = btn.getAttribute('data-val');
+          btn.className = "cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968] transition-all";
+          btn.innerText = "+ " + val;
+      });
+      if(document.getElementById('inputTreePruning')) document.getElementById('inputTreePruning').value = ''; 
+      if(document.getElementById('inputExtraCategory')) document.getElementById('inputExtraCategory').value = '';
+
+      // 5. 사진 방 4개 완벽 비우기
+      beforeImages = []; duringImages = []; afterImages = []; issueImages = [];
+      renderThumbList('before'); renderThumbList('during'); renderThumbList('after'); renderThumbList('issue');
+
+      // 6. 상태 초기화 및 화면 전환
+      editingRecordId = null;
+      let genBtn = document.getElementById('btnGenerateReport');
+      if(genBtn) genBtn.innerHTML = '<i data-lucide="send" class="w-6 h-6 stroke-[2.5]"></i> 리포트 발행 및 저장';
+      
+      switchView('admin');
+    } 
   </script>
   <!-- 🌟 장부 팝업창 -->
   <div id="ledgerModal" class="hidden fixed inset-0 z-[6500] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200">
