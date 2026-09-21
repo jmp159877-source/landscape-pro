@@ -2149,11 +2149,10 @@
         const titleEl = document.getElementById('ledgerListModalTitle');
         if(titleEl) titleEl.innerText = `${year}년 ${month + 1}월 전체 내역`;
         
-        // 현재 선택된 '연-월'에 해당하는 데이터만 추출 (예: "2026-09")
         const monthPrefix = `${year}-${String(month + 1).padStart(2, '0')}`;
         let monthLedgers = ledgers.filter(l => l.date && l.date.startsWith(monthPrefix));
         
-        // 날짜 오름차순(1일 -> 31일)으로 정렬
+        // 날짜 오름차순 정렬
         monthLedgers.sort((a, b) => a.date.localeCompare(b.date));
         
         const container = document.getElementById('ledgerMonthListContainer');
@@ -2162,10 +2161,22 @@
         if(monthLedgers.length === 0) {
             container.innerHTML = `<div class="p-8 text-center text-[#8B95A1] text-[13px] bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA] font-bold">이번 달에 기록된 내역이 없습니다.</div>`;
         } else {
+            const days = ['일', '월', '화', '수', '목', '금', '토'];
+            let lastDate = ''; // 이전 날짜 기억용 변수
+            
             container.innerHTML = monthLedgers.map(L => {
-                const dateOnly = L.date.substring(5).replace('-', '/'); // "09/01" 형태로 변환
+                const currentDate = L.date;
+                let dateDisplay = '';
                 
-                // 수입, 지출, 부가세가 0원 이상일 때만 표시되도록 조립
+                // 이전 날짜와 다를 때만 날짜+요일을 그려줌
+                if (currentDate !== lastDate) {
+                    const dateObj = new Date(currentDate);
+                    const dayOfWeek = days[dateObj.getDay()];
+                    const dateOnly = currentDate.substring(5).replace('-', '/'); // "09/20"
+                    dateDisplay = `<div class="text-[#4E5968] font-bold text-center bg-[#F4F5F4] py-1 rounded-lg text-[11px]">${dateOnly} (${dayOfWeek})</div>`;
+                    lastDate = currentDate; 
+                }
+                
                 const inc = L.income ? `<div class="text-blue-500 font-black tracking-tight">+${L.income.toLocaleString()}</div>` : '';
                 const exp = L.expense ? `<div class="text-red-500 font-black tracking-tight">-${L.expense.toLocaleString()}</div>` : '';
                 const vat = L.vat ? `<div class="text-gray-500 font-bold text-[10px] tracking-tight">(부) ${L.vat.toLocaleString()}</div>` : '';
@@ -2173,7 +2184,7 @@
                 
                 return `
                 <div class="grid grid-cols-12 gap-1 py-3 border-b border-[#F4F5F4] items-center text-[12px] hover:bg-[#F9F9F8] transition-colors cursor-pointer px-1" onclick="alert('📍 [${L.title}] 적요\\n\\n${L.memo ? L.memo : '작성된 적요 내용이 없습니다.'}')">
-                    <div class="col-span-3 text-[#4E5968] font-bold text-center bg-[#F4F5F4] py-1 rounded-lg">${dateOnly}</div>
+                    <div class="col-span-3">${dateDisplay}</div>
                     <div class="col-span-5 text-[#1A1D1A] font-black truncate pl-2">${L.title}</div>
                     <div class="col-span-4 text-right pr-2 flex flex-col gap-0.5">${amounts || '-'}</div>
                 </div>`;
