@@ -325,6 +325,7 @@
           <label class="block text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="list" class="w-5 h-5 text-[#84CC16]"></i> 세부 견적 내역</label>
         </div>
         <div id="quoteItemsContainer" class="space-y-3"></div>
+        <button id="btnAddQuoteRow" onclick="addQuoteRow()" class="w-full py-4 mt-2 border-2 border-dashed border-[#84CC16]/60 bg-[#F2FBEC] text-[#65A30D] rounded-[16px] font-black text-[14px] hover:bg-[#E8F5E9] transition-all flex items-center justify-center gap-1.5"><i data-lucide="plus-circle" class="w-5 h-5"></i> 견적 항목 추가하기</button>
       </div>
 
       <div class="bg-[#12261E] rounded-[28px] p-6 luxury-shadow space-y-3 text-white border border-[#1c3829]">
@@ -1192,7 +1193,7 @@
       residential: { title: "연간 정기 조경 관리 견적서", vat: 0, rows: [ {l: "1월", d: "관리없음"}, {l: "2월", d: "관리없음"}, {l: "3월", d: "해동기점검 및 소나무 수목 가지치기"}, {l: "4월", d: "수목 및 화단 영양시비(비료)작업"}, {l: "5월", d: "잔디예초, 병해충소독"}, {l: "6월", d: "잔디예초, 잡초제초, 관목전정"}, {l: "7월", d: "잔디예초, 제초관리"}, {l: "8월", d: "혹서기점검 및 예초제초 병해충방제"}, {l: "9월", d: "예초제초관리"}, {l: "10월", d: "교목가지치기 제초작업"}, {l: "11월", d: "월동관리 및 낙엽부산물정리 등"}, {l: "12월", d: "관리없음"} ] },
       commercial: { title: "연간 정기 조경 관리 견적서", vat: 0.1, rows: [ {l: "1월", d: "혹한기 피해점검"}, {l: "2월", d: "해빙기 피해점검 및 보수"}, {l: "3월", d: "월동해제 및 낙엽등 부산물정리"}, {l: "4월", d: "수목화단 영양시비공급"}, {l: "5월", d: "예초제초 및 병해충방제"}, {l: "6월", d: "예초제초 및 관목류전정작업"}, {l: "7월", d: "예초제초 및 기본관리"}, {l: "8월", d: "예초제초 및 혹서기점검 보수"}, {l: "9월", d: "예초제초 및 교목가지치기"}, {l: "10월", d: "교목가지치기 집중"}, {l: "11월", d: "월동관리"}, {l: "12월", d: "겨울철피해 점검 및 보수"} ] },
       single: { title: "조경관리견적서", vat: 0.1, rows: [ {l: "01", d: "소나무 전지"}, {l: "02", d: "병해충 소독"}, {l: "03", d: "작업물 수거폐기처리비"}, {l: "04", d: "기타작업"}, {l: "05", d: "기타작업2"} ] },
-      construction: { title: "마당조경작업 견적서", vat: 0, rows: [ {l: "01", d: "[잔디철거 폐기 및 기초] 규격:일괄 - 중장비/폐기처리비 등", p: 2000000}, {l: "02", d: "[우수관 및 집수정] 규격:2본 - 자재기초", p: 500000}, {l: "03", d: "[바닥 석재판석시공] 규격:90m2 - 현무암 정형 50T", p: 8500000}, {l: "04", d: "[경계석 시공(펜스라인)] 규격:20m - 현무암경계석", p: 1250000}, {l: "05", d: "[화단조적 시공] 규격:6m*h:30cm - 조경블럭/플래그스톤", p: 850000}, {l: "06", d: "[인건비] 규격:6일 - 인건비", p: 5600000}, {l: "07", d: "[부자재 및 공과잡] 규격:일괄 - 공과잡", p: 500000} ], memo: "* 작업예정일 : 협의 / 작업소요예정: 6일\n* 작업예약시 50%선납입니다 (자재발주 등)" }
+      construction: { title: "조경공사 견적서", vat: 0, rows: [ {l: "01", d: ""}, {l: "02", d: ""}, {l: "03", d: ""}, {l: "04", d: ""}, {l: "05", d: ""}, {l: "06", d: ""}, {l: "07", d: ""}, {l: "08", d: ""}, {l: "09", d: ""}, {l: "10", d: ""} ], memo: "" }
     };
 
     function toggleSingleTag(btn, inputIdx) {
@@ -1222,6 +1223,14 @@
       if (btn.classList.contains('bg-[#12261E]')) btn.className = "quote-month-btn w-12 flex-shrink-0 text-center font-black text-[13px] bg-white text-[#4E5968] border border-[#EAEBEA] py-3 rounded-[10px] shadow-sm transition-all";
       else btn.className = "quote-month-btn w-12 flex-shrink-0 text-center font-black text-[13px] bg-[#12261E] text-[#84CC16] py-3 rounded-[10px] shadow-sm transition-all";
       calculateQuoteTotal(); 
+    }
+    function addQuoteRow() {
+      currentQuoteRowCount++;
+      const i = currentQuoteRowCount;
+      const l = String(i).padStart(2, '0');
+      const container = document.getElementById('quoteItemsContainer');
+      const itemHtml = `<div class="flex gap-2 items-center bg-[#F9F9F8] p-2 rounded-[14px] border border-[#EAEBEA]"><div class="flex gap-2 items-center w-full"><button type="button" onclick="toggleQuoteMonth(this)" class="quote-month-btn w-12 flex-shrink-0 text-center font-black text-[13px] bg-[#12261E] text-[#84CC16] py-3 rounded-[10px] shadow-sm transition-all" data-month="${l}">${l}</button><textarea id="quoteDesc_${i}" readonly onclick="openTextEditor('quoteDesc_${i}')" placeholder="터치하여 상세 내역 입력" rows="2" class="flex-1 min-w-0 bg-transparent border-none text-[13px] font-black text-[#1A1D1A] focus:outline-none px-1 py-1 resize-none break-keep leading-snug cursor-pointer placeholder:text-[#4E5968] placeholder:font-bold"></textarea><div class="flex items-center gap-1 bg-white px-2 rounded-[10px] border border-[#EAEBEA] focus-within:border-[#84CC16] flex-shrink-0"><input type="text" id="quotePrice_${i}" value="" placeholder="0" inputmode="numeric" oninput="formatNumberInput(this); calculateQuoteTotal()" class="w-24 text-right bg-transparent border-none text-[14px] font-black text-[#1A1D1A] focus:outline-none py-2 placeholder:text-[#4E5968] placeholder:font-bold"><span class="text-[12px] font-black text-[#4E5968]">원</span></div></div></div>`;
+      container.insertAdjacentHTML('beforeend', itemHtml);
     }
 
     function calculateQuoteTotal() {
@@ -1410,8 +1419,12 @@
         document.getElementById('inputExtraCategory').value = ''; if(document.getElementById('inputTreePruning')) document.getElementById('inputTreePruning').value = ''; 
         
         document.querySelectorAll('#categoryContainer .cat-btn').forEach(btn => {
-            const val = btn.getAttribute('data-val'); btn.className = "cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968] transition-all"; btn.innerText = "+ " + val;
+            const val = btn.getAttribute('data-val'); 
+            btn.className = "cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968] transition-all"; 
+            btn.innerText = "+ " + val;
         });
+        if(document.getElementById('inputTreePruning')) document.getElementById('inputTreePruning').value = ''; 
+        if(document.getElementById('inputExtraCategory')) document.getElementById('inputExtraCategory').value = '';
 
         beforeImages = []; afterImages = []; issueImages = []; renderThumbList('before'); renderThumbList('after'); renderThumbList('issue');
       } catch (e) { alert("오류가 발생했습니다."); } finally { document.getElementById('loadingOverlay')?.remove(); lucide.createIcons(); }
@@ -1509,14 +1522,25 @@
          if(descInput) { let btn = descInput.parentElement.querySelector('.quote-month-btn'); if(btn) { btn.className = "quote-month-btn w-12 flex-shrink-0 text-center font-black text-[13px] bg-white text-[#4E5968] border border-[#EAEBEA] py-3 rounded-[10px] shadow-sm transition-all"; } descInput.value = ''; document.getElementById(`quotePrice_${i}`).value = ''; }
       }
       payload.m.forEach((savedItem) => {
+         let found = false;
          for(let i=1; i<=currentQuoteRowCount; i++) {
              let descInput = document.getElementById(`quoteDesc_${i}`); if(!descInput) continue;
              let btn = descInput.parentElement.querySelector('.quote-month-btn');
              if(btn && btn.innerText === savedItem.m) {
+                 found = true;
                  btn.className = "quote-month-btn w-12 flex-shrink-0 text-center font-black text-[13px] bg-[#12261E] text-[#84CC16] py-3 rounded-[10px] shadow-sm transition-all"; descInput.value = savedItem.d; document.getElementById(`quotePrice_${i}`).value = savedItem.p > 0 ? savedItem.p.toLocaleString('ko-KR') : '';
                  let tags = descInput.closest('.flex-col')?.querySelectorAll('.single-tag-btn');
                  if(tags) { tags.forEach(t => { if(savedItem.d.includes(t.innerText)) { t.className = "single-tag-btn px-2.5 py-1.5 text-[11px] rounded-[8px] font-black bg-[#12261E] text-[#84CC16] transition-colors"; } else { t.className = "single-tag-btn px-2.5 py-1.5 text-[11px] rounded-[8px] font-black bg-white border border-[#EAEBEA] text-[#4E5968] transition-colors"; } }); } break;
              }
+         }
+         if(!found) {
+             addQuoteRow();
+             let newIdx = currentQuoteRowCount;
+             let descInput = document.getElementById(`quoteDesc_${newIdx}`);
+             let btn = descInput.parentElement.querySelector('.quote-month-btn');
+             btn.innerText = savedItem.m; btn.setAttribute('data-month', savedItem.m);
+             btn.className = "quote-month-btn w-12 flex-shrink-0 text-center font-black text-[13px] bg-[#12261E] text-[#84CC16] py-3 rounded-[10px] shadow-sm transition-all"; 
+             descInput.value = savedItem.d; document.getElementById(`quotePrice_${newIdx}`).value = savedItem.p > 0 ? savedItem.p.toLocaleString('ko-KR') : '';
          }
       });
       if(document.getElementById('quoteInputMemo')) { document.getElementById('quoteInputMemo').value = payload.memo || ''; }
