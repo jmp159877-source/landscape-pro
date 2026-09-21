@@ -1948,15 +1948,15 @@
         
         for (let i = 0; i < firstDay; i++) { grid.innerHTML += `<div></div>`; }
         
-        let monthInc = 0; let monthExp = 0;
+        let monthInc = 0; let monthExp = 0; let monthVat = 0; // ✨ 부가세 합산 변수
 
         for (let i = 1; i <= daysInMonth; i++) {
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
             const dayLedgers = ledgers.filter(l => l.date === dateStr);
             
-            let dayInc = 0; let dayExp = 0;
-            dayLedgers.forEach(l => { dayInc += (l.income || 0); dayExp += (l.expense || 0); });
-            monthInc += dayInc; monthExp += dayExp;
+            let dayInc = 0; let dayExp = 0; let dayVat = 0;
+            dayLedgers.forEach(l => { dayInc += (l.income || 0); dayExp += (l.expense || 0); dayVat += (l.vat || 0); });
+            monthInc += dayInc; monthExp += dayExp; monthVat += dayVat;
             
             let dotHtml = '';
             if (dayInc > 0 && dayExp > 0) dotHtml = `<div class="flex gap-0.5 justify-center mt-1"><div class="w-1.5 h-1.5 bg-blue-500 rounded-full"></div><div class="w-1.5 h-1.5 bg-red-500 rounded-full"></div></div>`;
@@ -1979,9 +1979,13 @@
 
         const mIncEl = document.getElementById('ledgerMonthIncome');
         const mExpEl = document.getElementById('ledgerMonthExpense');
+        const mVatEl = document.getElementById('ledgerMonthVat'); // ✨ 부가세 화면 요소
         const mNetEl = document.getElementById('ledgerMonthNet');
+        
         if(mIncEl) mIncEl.innerText = monthInc.toLocaleString('ko-KR') + "원";
         if(mExpEl) mExpEl.innerText = monthExp.toLocaleString('ko-KR') + "원";
+        if(mVatEl) mVatEl.innerText = monthVat.toLocaleString('ko-KR') + "원"; // ✨ 부가세 적용
+        
         const net = monthInc - monthExp;
         if(mNetEl) {
             mNetEl.innerText = net.toLocaleString('ko-KR') + "원";
@@ -2017,9 +2021,12 @@
         list.innerHTML = dayLedgers.map(L => {
             const inc = L.income || 0;
             const exp = L.expense || 0;
+            const vatText = L.vat ? `<br><span class="text-[11px] text-[#A3A8A3] font-bold">부가세: ${L.vat.toLocaleString()}원</span>` : ''; // ✨ 부가세 텍스트 표시
             return `
             <div class="grid grid-cols-10 gap-2 py-3 border-b border-[#F4F5F4] text-center items-center bg-white hover:bg-[#F9F9F8] transition-colors">
-                <div class="col-span-4 text-[12px] font-black text-[#1A1D1A] truncate cursor-pointer px-2 text-left" onclick="alert('📍 [${L.title}] 적요\\n\\n${L.memo ? L.memo : '적요 내용이 없습니다.'}')">${L.title}</div>
+                <div class="col-span-4 text-[12px] font-black text-[#1A1D1A] truncate cursor-pointer px-2 text-left" onclick="alert('📍 [${L.title}] 적요\\n\\n${L.memo ? L.memo : '적요 내용이 없습니다.'}')">
+                    ${L.title}${vatText}
+                </div>
                 <div class="col-span-2 text-[12px] font-black text-blue-500">${inc.toLocaleString()}</div>
                 <div class="col-span-2 text-[12px] font-black text-red-500">${exp.toLocaleString()}</div>
                 <div class="col-span-2 flex items-center justify-center gap-1">
@@ -2038,6 +2045,7 @@
         document.getElementById('ledgerTitle').value = '';
         document.getElementById('ledgerIncome').value = '';
         document.getElementById('ledgerExpense').value = '';
+        document.getElementById('ledgerVat').value = ''; // ✨ 부가세 초기화
         document.getElementById('ledgerMemo').value = '';
         
         const modal = document.getElementById('ledgerModal');
@@ -2069,6 +2077,7 @@
         const title = document.getElementById('ledgerTitle').value;
         const incStr = document.getElementById('ledgerIncome').value.replace(/[^0-9]/g, '');
         const expStr = document.getElementById('ledgerExpense').value.replace(/[^0-9]/g, '');
+        const vatStr = document.getElementById('ledgerVat').value.replace(/[^0-9]/g, ''); // ✨ 부가세 저장
         
         if (!title.trim() || !date) return alert("날짜와 현장명을 입력해주세요.");
         
@@ -2076,6 +2085,7 @@
             id: id, date: date, title: title,
             income: incStr ? parseInt(incStr) : 0,
             expense: expStr ? parseInt(expStr) : 0,
+            vat: vatStr ? parseInt(vatStr) : 0, // ✨ 부가세 저장
             memo: document.getElementById('ledgerMemo').value
         };
         
@@ -2085,7 +2095,6 @@
         
         localStorage.setItem('shinhwa_pro_ledgers', JSON.stringify(ledgers));
         
-        // 파이어베이스에 여유 공간이 있으면 동기화 (기존 함수 재활용)
         if (typeof updateData === 'function') {
             updateData('ledgers', ledgers); 
         }
@@ -2108,10 +2117,19 @@
         document.getElementById('ledgerTitle').value = target.title;
         document.getElementById('ledgerIncome').value = target.income ? target.income.toLocaleString('ko-KR') : '';
         document.getElementById('ledgerExpense').value = target.expense ? target.expense.toLocaleString('ko-KR') : '';
+        document.getElementById('ledgerVat').value = target.vat ? target.vat.toLocaleString('ko-KR') : ''; // ✨ 부가세 불러오기
         document.getElementById('ledgerMemo').value = target.memo || '';
         
         const modal = document.getElementById('ledgerModal');
-        if(modal) modal.classList.remove('hidden');
+        const box = document.getElementById('ledgerBox');
+        if(modal) {
+            modal.classList.remove('hidden');
+            setTimeout(() => { 
+                modal.classList.remove('opacity-0'); 
+                if(box) box.classList.remove('scale-95'); 
+            }, 10);
+            history.pushState({ modalOpen: true }, "", "");
+        }
     }
 
     function deleteLedger(id) {
