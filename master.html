@@ -461,6 +461,17 @@
             // 정식 구글 인증 열쇠 획득
             currentIdToken = authData.idToken;
             
+            // 🔥 자동 로그인 설정 저장
+            if(document.getElementById('masterAutoLoginCheck').checked) {
+                localStorage.setItem('shinhwa_master_id', id);
+                localStorage.setItem('shinhwa_master_pw', pw);
+                localStorage.setItem('shinhwa_master_auto', 'true');
+            } else {
+                localStorage.removeItem('shinhwa_master_id');
+                localStorage.removeItem('shinhwa_master_pw');
+                localStorage.removeItem('shinhwa_master_auto');
+            }
+
             document.getElementById('masterLoginView').classList.add('hidden');
             document.getElementById('mainContent').classList.remove('hidden');
             document.getElementById('sidebar').classList.remove('hidden');
@@ -473,6 +484,21 @@
             alert("로그인 통신 중 오류가 발생했습니다.");
         }
     }
+
+    // 🔥 앱 시작 시 자동 로그인 확인 로직 추가
+    window.addEventListener('DOMContentLoaded', () => {
+        const savedId = localStorage.getItem('shinhwa_master_id');
+        const savedPw = localStorage.getItem('shinhwa_master_pw');
+        const isAuto = localStorage.getItem('shinhwa_master_auto');
+        
+        if (savedId && savedPw && isAuto === 'true') {
+            document.getElementById('masterId').value = savedId;
+            document.getElementById('masterPw').value = savedPw;
+            document.getElementById('masterAutoLoginCheck').checked = true;
+            loginMaster(); // 저장된 정보로 즉시 접속 시도
+        }
+        lucide.createIcons();
+    });
 
     async function initMasterSettings() {
         try {
@@ -493,6 +519,10 @@
 
     function logoutMaster() {
       if(confirm('통제실에서 로그아웃 하시겠습니까? 실시간 알림이 중단됩니다.')) {
+        // 🔥 로그아웃 시 저장된 정보 삭제
+        localStorage.removeItem('shinhwa_master_id');
+        localStorage.removeItem('shinhwa_master_pw');
+        localStorage.removeItem('shinhwa_master_auto');
         location.reload();
       }
     }
