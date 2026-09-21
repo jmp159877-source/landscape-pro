@@ -170,6 +170,7 @@
         <button id="tabLens" onclick="switchView('lens')" class="w-full py-3.5 rounded-[12px] bg-[#1E3A8A] text-white font-black text-[14px] shadow-md hover:bg-[#172554] transition-all text-center flex flex-col items-center justify-center gap-1 border border-[#172554]"><i data-lucide="scan" class="w-5 h-5 text-[#84CC16]"></i>AI렌즈</button>
         <!-- 🔥 캘린더 일정표 탭 버튼 추가 -->
         <button id="tabCalendar" onclick="switchView('calendar')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="calendar-days" class="w-5 h-5"></i>일정표</button>
+        <button id="tabLedger" onclick="switchView('ledger')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="wallet" class="w-5 h-5 text-yellow-300"></i>개인장부</button>
       </nav>
     </div>
   </header>
@@ -462,7 +463,63 @@
         </div>
       </div>
     </section>
+    <!-- ================= [스마트 개인 장부 (달력형) 화면] ================= -->
+    <section id="ledgerView" class="hidden space-y-4">
+      <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
+        <div class="flex items-center justify-between pb-4 border-b border-[#F4F5F4]">
+            <button onclick="changeLedgerMonth(-1)" class="p-2 bg-[#F4F5F4] hover:bg-[#EAEBEA] rounded-[12px] transition-colors"><i data-lucide="chevron-left" class="w-5 h-5 text-[#4E5968]"></i></button>
+            <h2 id="ledgerMonthText" class="text-[18px] font-black text-[#12261E]"></h2>
+            <button onclick="changeLedgerMonth(1)" class="p-2 bg-[#F4F5F4] hover:bg-[#EAEBEA] rounded-[12px] transition-colors"><i data-lucide="chevron-right" class="w-5 h-5 text-[#4E5968]"></i></button>
+        </div>
 
+        <div class="bg-gradient-to-r from-[#12261E] to-[#1A382B] rounded-[20px] p-5 text-white shadow-md relative overflow-hidden">
+            <div class="absolute -right-4 -top-4 w-24 h-24 bg-[#84CC16]/10 rounded-full blur-xl pointer-events-none"></div>
+            <div class="flex justify-between items-center mb-2 text-[12px] text-[#A3A8A3] font-bold relative z-10 border-b border-white/10 pb-2">
+                <span>해당 월 총 합산 결과</span>
+            </div>
+            <div class="flex justify-between items-center py-1.5 relative z-10">
+                <span class="text-[14px] font-bold">월 총 수입</span>
+                <span id="ledgerMonthIncome" class="text-[16px] font-black text-blue-400">0원</span>
+            </div>
+            <div class="flex justify-between items-center py-1.5 relative z-10">
+                <span class="text-[14px] font-bold">월 총 지출</span>
+                <span id="ledgerMonthExpense" class="text-[16px] font-black text-red-400">0원</span>
+            </div>
+            <div class="flex justify-between items-center pt-3 border-t border-white/10 relative z-10 mt-1">
+                <span class="text-[15px] font-black">월 순수익</span>
+                <span id="ledgerMonthNet" class="text-[22px] font-black text-[#84CC16]">0원</span>
+            </div>
+        </div>
+
+        <div class="w-full">
+            <div class="grid grid-cols-7 gap-1 text-center text-[12px] font-black text-[#8B95A1] mb-2">
+                <div class="text-red-500">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div class="text-blue-500">토</div>
+            </div>
+            <div id="ledgerGrid" class="grid grid-cols-7 gap-1 text-center mb-4"></div>
+        </div>
+
+        <div class="pt-4 border-t border-[#F4F5F4]">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="selectedLedgerDateText" class="font-black text-[#12261E] text-[15px] flex items-center gap-1.5"><i data-lucide="calendar-check" class="w-5 h-5 text-[#84CC16]"></i> 선택된 날짜</h3>
+                <div class="flex gap-2">
+                    <button onclick="openCalculator()" class="bg-[#F4F5F4] text-[#12261E] px-3 py-2 rounded-[10px] shadow-sm hover:bg-[#EAEBEA] transition-colors"><i data-lucide="calculator" class="w-4 h-4"></i></button>
+                    <button onclick="openLedgerModal()" class="bg-[#12261E] text-[#84CC16] px-3 py-2 rounded-[10px] text-[13px] font-black shadow-md hover:bg-black transition-colors flex items-center gap-1"><i data-lucide="plus" class="w-4 h-4"></i> 내역 추가</button>
+                </div>
+            </div>
+            <div class="overflow-x-auto pb-2 nav-scroll border border-[#EAEBEA] rounded-[16px]">
+                <div class="min-w-[450px] bg-white">
+                    <div class="grid grid-cols-10 gap-2 text-[12px] font-black text-[#8B95A1] bg-[#F9F9F8] p-3 border-b border-[#EAEBEA] text-center items-center">
+                        <div class="col-span-4">작업 현장명</div>
+                        <div class="col-span-2 text-blue-500">수입 (원)</div>
+                        <div class="col-span-2 text-red-500">지출 (원)</div>
+                        <div class="col-span-2">관리</div>
+                    </div>
+                    <div id="ledgerList" class="space-y-0 text-[13px] text-[#1A1D1A]"></div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </section>
     <!-- 공통 뷰어 -->
     <section id="clientView" class="hidden space-y-5">
       <div id="adminControlsPanel" class="no-print bg-[#12261E] text-white rounded-[28px] p-6 shadow-xl space-y-4 border border-[#1c3829]">
@@ -1862,7 +1919,229 @@
         lucide.createIcons();
       }
     });
+    // ==========================================
+    // 📓 스마트 개인 장부 (달력형) 및 계산기 로직
+    // ==========================================
+    let ledgers = JSON.parse(localStorage.getItem('shinhwa_pro_ledgers')) || [];
+    let currentLedgerCalDate = new Date();
+    let selectedLedgerDate = new Date();
 
+    function renderLedgerCalendar() {
+        const year = currentLedgerCalDate.getFullYear();
+        const month = currentLedgerCalDate.getMonth();
+        const monthTextEl = document.getElementById('ledgerMonthText');
+        if(monthTextEl) monthTextEl.innerText = `${year}년 ${month + 1}월`;
+        
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const grid = document.getElementById('ledgerGrid');
+        if(!grid) return;
+        grid.innerHTML = '';
+        
+        for (let i = 0; i < firstDay; i++) { grid.innerHTML += `<div></div>`; }
+        
+        let monthInc = 0; let monthExp = 0;
+
+        for (let i = 1; i <= daysInMonth; i++) {
+            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+            const dayLedgers = ledgers.filter(l => l.date === dateStr);
+            
+            let dayInc = 0; let dayExp = 0;
+            dayLedgers.forEach(l => { dayInc += (l.income || 0); dayExp += (l.expense || 0); });
+            monthInc += dayInc; monthExp += dayExp;
+            
+            let dotHtml = '';
+            if (dayInc > 0 && dayExp > 0) dotHtml = `<div class="flex gap-0.5 justify-center mt-1"><div class="w-1.5 h-1.5 bg-blue-500 rounded-full"></div><div class="w-1.5 h-1.5 bg-red-500 rounded-full"></div></div>`;
+            else if (dayInc > 0) dotHtml = `<div class="w-1.5 h-1.5 bg-blue-500 rounded-full mx-auto mt-1"></div>`;
+            else if (dayExp > 0) dotHtml = `<div class="w-1.5 h-1.5 bg-red-500 rounded-full mx-auto mt-1"></div>`;
+            else dotHtml = `<div class="w-1.5 h-1.5 mt-1 opacity-0"></div>`;
+            
+            const isToday = new Date().toDateString() === new Date(year, month, i).toDateString();
+            const isSelected = selectedLedgerDate.toDateString() === new Date(year, month, i).toDateString();
+            const todayClass = isToday ? 'bg-[#12261E] text-[#84CC16] rounded-full' : 'text-[#1A1D1A]';
+            const selectedClass = isSelected && !isToday ? 'border-2 border-[#12261E] rounded-full' : '';
+
+            grid.innerHTML += `
+                <div onclick="selectLedgerDate(${year}, ${month}, ${i})" class="flex flex-col items-center justify-center p-1 cursor-pointer">
+                    <div class="w-9 h-9 flex items-center justify-center text-[14px] font-black ${todayClass} ${selectedClass}">${i}</div>
+                    ${dotHtml}
+                </div>
+            `;
+        }
+
+        const mIncEl = document.getElementById('ledgerMonthIncome');
+        const mExpEl = document.getElementById('ledgerMonthExpense');
+        const mNetEl = document.getElementById('ledgerMonthNet');
+        if(mIncEl) mIncEl.innerText = monthInc.toLocaleString('ko-KR') + "원";
+        if(mExpEl) mExpEl.innerText = monthExp.toLocaleString('ko-KR') + "원";
+        const net = monthInc - monthExp;
+        if(mNetEl) {
+            mNetEl.innerText = net.toLocaleString('ko-KR') + "원";
+            mNetEl.className = net >= 0 ? "text-[22px] font-black text-[#84CC16]" : "text-[22px] font-black text-red-400";
+        }
+    }
+
+    function changeLedgerMonth(delta) {
+        currentLedgerCalDate.setMonth(currentLedgerCalDate.getMonth() + delta);
+        renderLedgerCalendar();
+    }
+
+    function selectLedgerDate(year, month, day) {
+        selectedLedgerDate = new Date(year, month, day);
+        renderLedgerCalendar();
+        const selTextEl = document.getElementById('selectedLedgerDateText');
+        if(selTextEl) selTextEl.innerHTML = `<i data-lucide="calendar-check" class="w-5 h-5 text-[#84CC16]"></i> ${month + 1}월 ${day}일 내역`;
+        renderLedgerList();
+        if(typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    function renderLedgerList() {
+        const list = document.getElementById('ledgerList');
+        if(!list) return;
+        const dateStr = `${selectedLedgerDate.getFullYear()}-${String(selectedLedgerDate.getMonth() + 1).padStart(2, '0')}-${String(selectedLedgerDate.getDate()).padStart(2, '0')}`;
+        const dayLedgers = ledgers.filter(l => l.date === dateStr);
+        
+        if (dayLedgers.length === 0) {
+            list.innerHTML = `<div class="p-6 text-center text-[#8B95A1] text-[12px] bg-white border-b border-[#EAEBEA] font-bold">선택하신 날짜에 등록된 내역이 없습니다.</div>`;
+            return;
+        }
+
+        list.innerHTML = dayLedgers.map(L => {
+            const inc = L.income || 0;
+            const exp = L.expense || 0;
+            return `
+            <div class="grid grid-cols-10 gap-2 py-3 border-b border-[#F4F5F4] text-center items-center bg-white hover:bg-[#F9F9F8] transition-colors">
+                <div class="col-span-4 text-[12px] font-black text-[#1A1D1A] truncate cursor-pointer px-2 text-left" onclick="alert('📍 [${L.title}] 적요\\n\\n${L.memo ? L.memo : '적요 내용이 없습니다.'}')">${L.title}</div>
+                <div class="col-span-2 text-[12px] font-black text-blue-500">${inc.toLocaleString()}</div>
+                <div class="col-span-2 text-[12px] font-black text-red-500">${exp.toLocaleString()}</div>
+                <div class="col-span-2 flex items-center justify-center gap-1">
+                    <button onclick="editLedger(${L.id})" class="text-[#A3A8A3] hover:text-[#84CC16] bg-[#F4F5F4] p-1.5 rounded-lg"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i></button>
+                    <button onclick="deleteLedger(${L.id})" class="text-[#A3A8A3] hover:text-red-500 bg-[#F4F5F4] p-1.5 rounded-lg"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                </div>
+            </div>`;
+        }).join('');
+        if(typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    function openLedgerModal() {
+        document.getElementById('ledgerId').value = Date.now();
+        const dateStr = `${selectedLedgerDate.getFullYear()}-${String(selectedLedgerDate.getMonth() + 1).padStart(2, '0')}-${String(selectedLedgerDate.getDate()).padStart(2, '0')}`;
+        document.getElementById('ledgerDate').value = dateStr;
+        document.getElementById('ledgerTitle').value = '';
+        document.getElementById('ledgerIncome').value = '';
+        document.getElementById('ledgerExpense').value = '';
+        document.getElementById('ledgerMemo').value = '';
+        
+        const modal = document.getElementById('ledgerModal');
+        if(modal) modal.classList.remove('hidden');
+    }
+
+    function closeLedgerModal() {
+        const modal = document.getElementById('ledgerModal');
+        if(modal) modal.classList.add('hidden');
+    }
+
+    function saveLedger() {
+        const id = document.getElementById('ledgerId').value;
+        const date = document.getElementById('ledgerDate').value;
+        const title = document.getElementById('ledgerTitle').value;
+        const incStr = document.getElementById('ledgerIncome').value.replace(/[^0-9]/g, '');
+        const expStr = document.getElementById('ledgerExpense').value.replace(/[^0-9]/g, '');
+        
+        if (!title.trim() || !date) return alert("날짜와 현장명을 입력해주세요.");
+        
+        const newLedger = {
+            id: id, date: date, title: title,
+            income: incStr ? parseInt(incStr) : 0,
+            expense: expStr ? parseInt(expStr) : 0,
+            memo: document.getElementById('ledgerMemo').value
+        };
+        
+        const existingIdx = ledgers.findIndex(L => L.id == id);
+        if (existingIdx > -1) { ledgers[existingIdx] = newLedger; } 
+        else { ledgers.push(newLedger); }
+        
+        localStorage.setItem('shinhwa_pro_ledgers', JSON.stringify(ledgers));
+        
+        // 파이어베이스에 여유 공간이 있으면 동기화 (기존 함수 재활용)
+        if (typeof updateData === 'function') {
+            updateData('ledgers', ledgers); 
+        }
+        
+        const parts = date.split('-');
+        if(date !== `${selectedLedgerDate.getFullYear()}-${String(selectedLedgerDate.getMonth() + 1).padStart(2, '0')}-${String(selectedLedgerDate.getDate()).padStart(2, '0')}`) {
+            selectLedgerDate(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+        } else {
+            renderLedgerCalendar(); renderLedgerList();
+        }
+        closeLedgerModal();
+    }
+
+    function editLedger(id) {
+        const target = ledgers.find(L => L.id == id);
+        if(!target) return;
+        
+        document.getElementById('ledgerId').value = target.id;
+        document.getElementById('ledgerDate').value = target.date;
+        document.getElementById('ledgerTitle').value = target.title;
+        document.getElementById('ledgerIncome').value = target.income ? target.income.toLocaleString('ko-KR') : '';
+        document.getElementById('ledgerExpense').value = target.expense ? target.expense.toLocaleString('ko-KR') : '';
+        document.getElementById('ledgerMemo').value = target.memo || '';
+        
+        const modal = document.getElementById('ledgerModal');
+        if(modal) modal.classList.remove('hidden');
+    }
+
+    function deleteLedger(id) {
+        if(confirm("이 내역을 삭제하시겠습니까?")) {
+            ledgers = ledgers.filter(L => L.id != id);
+            localStorage.setItem('shinhwa_pro_ledgers', JSON.stringify(ledgers));
+            if (typeof updateData === 'function') updateData('ledgers', ledgers);
+            renderLedgerCalendar();
+            renderLedgerList();
+        }
+    }
+
+    // --- 수동 계산기 로직 ---
+    let calcStr = "";
+    function openCalculator() {
+        calcStr = ""; 
+        const calcDisplay = document.getElementById('calcDisplay');
+        if(calcDisplay) calcDisplay.innerText = "0";
+        const modal = document.getElementById('calculatorModal');
+        if(modal) modal.classList.remove('hidden');
+    }
+
+    function closeCalculator() {
+        const modal = document.getElementById('calculatorModal');
+        if(modal) modal.classList.add('hidden');
+    }
+
+    function calcInput(val) {
+        const calcDisplay = document.getElementById('calcDisplay');
+        if(!calcDisplay) return;
+        
+        if(val === 'C') { calcStr = ""; calcDisplay.innerText = "0"; return; }
+        if(val === '<') { calcStr = calcStr.slice(0, -1); calcDisplay.innerText = calcStr || "0"; return; }
+        if(val === '=') {
+            try { 
+                calcStr = String(new Function('return ' + calcStr)()); 
+                let num = parseFloat(calcStr);
+                calcDisplay.innerText = isNaN(num) ? "0" : num.toLocaleString('ko-KR'); 
+            }
+            catch(e) { calcDisplay.innerText = "Error"; calcStr = ""; }
+            return;
+        }
+        calcStr += val;
+        calcDisplay.innerText = calcStr;
+    }
+
+    // 처음 앱 켤 때 장부 달력 초기 세팅
+    window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            selectLedgerDate(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+        }, 1000);
+    });
     window.addEventListener('popstate', (e) => {
       const modal = document.getElementById('imageModal'); const textEditorModal = document.getElementById('textEditorModal'); const lensResultModal = document.getElementById('lensResultModal'); const materialModal = document.getElementById('materialModal'); const settingsModal = document.getElementById('settingsModal'); const noticeModal = document.getElementById('appNoticeModal'); const termsModal = document.getElementById('termsModal'); const scheduleModal = document.getElementById('scheduleModal');
       if (modal && !modal.classList.contains('hidden')) { modal.classList.add('hidden'); document.getElementById('modalImg').src = ''; return; }
@@ -1877,5 +2156,51 @@
       else switchView('admin', false);
     });
   </script>
+  <!-- 🌟 장부 팝업창 -->
+  <div id="ledgerModal" class="hidden fixed inset-0 z-[6500] bg-black/80 flex items-center justify-center p-4">
+      <div class="bg-white w-full max-w-sm rounded-[24px] p-5" onclick="event.stopPropagation()">
+          <h3 class="font-black mb-4">장부 내역</h3>
+          <input type="hidden" id="ledgerId">
+          <input type="date" id="ledgerDate" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-4 py-3 mb-3">
+          <input type="text" id="ledgerTitle" placeholder="현장명" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-4 py-3 mb-3">
+          <div class="grid grid-cols-2 gap-3 mb-3">
+              <input type="text" id="ledgerIncome" placeholder="수입" inputmode="numeric" oninput="formatNumberInput(this)" class="w-full bg-[#F0F9FF] border border-[#BAE6FD] text-blue-700 rounded-[14px] px-4 py-3 text-right font-black">
+              <input type="text" id="ledgerExpense" placeholder="지출" inputmode="numeric" oninput="formatNumberInput(this)" class="w-full bg-[#FEF2F2] border border-[#FECACA] text-red-700 rounded-[14px] px-4 py-3 text-right font-black">
+          </div>
+          <textarea id="ledgerMemo" rows="2" placeholder="적요" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] p-4 mb-4"></textarea>
+          <div class="flex gap-2">
+              <button onclick="closeLedgerModal()" class="flex-1 py-4 bg-[#F4F5F4] rounded-[14px] font-black">취소</button>
+              <button onclick="saveLedger()" class="flex-1 py-4 bg-[#12261E] text-[#84CC16] rounded-[14px] font-black">저장</button>
+          </div>
+      </div>
+  </div>
+
+  <!-- 🧮 수동 계산기 팝업창 -->
+  <div id="calculatorModal" class="hidden fixed inset-0 z-[7000] bg-black/60 flex items-center justify-center p-4" onclick="closeCalculator()">
+      <div class="bg-[#151E2D] w-full max-w-[280px] rounded-[24px] p-5" onclick="event.stopPropagation()">
+          <div id="calcDisplay" class="w-full bg-white text-[#12261E] font-black text-[26px] text-right p-4 rounded-[16px] mb-5">0</div>
+          <div class="grid grid-cols-4 gap-2.5">
+              <button onclick="calcInput('C')" class="col-span-2 py-3 bg-red-500 text-white font-black rounded-[12px]">C</button>
+              <button onclick="calcInput('<')" class="py-3 bg-white/10 text-white font-black rounded-[12px]">←</button>
+              <button onclick="calcInput('/')" class="py-3 bg-[#84CC16] text-[#12261E] font-black rounded-[12px]">÷</button>
+              <button onclick="calcInput('7')" class="py-3 bg-white/5 text-white font-black rounded-[12px]">7</button>
+              <button onclick="calcInput('8')" class="py-3 bg-white/5 text-white font-black rounded-[12px]">8</button>
+              <button onclick="calcInput('9')" class="py-3 bg-white/5 text-white font-black rounded-[12px]">9</button>
+              <button onclick="calcInput('*')" class="py-3 bg-[#84CC16] text-[#12261E] font-black rounded-[12px]">×</button>
+              <button onclick="calcInput('4')" class="py-3 bg-white/5 text-white font-black rounded-[12px]">4</button>
+              <button onclick="calcInput('5')" class="py-3 bg-white/5 text-white font-black rounded-[12px]">5</button>
+              <button onclick="calcInput('6')" class="py-3 bg-white/5 text-white font-black rounded-[12px]">6</button>
+              <button onclick="calcInput('-')" class="py-3 bg-[#84CC16] text-[#12261E] font-black rounded-[12px]">-</button>
+              <button onclick="calcInput('1')" class="py-3 bg-white/5 text-white font-black rounded-[12px]">1</button>
+              <button onclick="calcInput('2')" class="py-3 bg-white/5 text-white font-black rounded-[12px]">2</button>
+              <button onclick="calcInput('3')" class="py-3 bg-white/5 text-white font-black rounded-[12px]">3</button>
+              <button onclick="calcInput('+')" class="py-3 bg-[#84CC16] text-[#12261E] font-black rounded-[12px]">+</button>
+              <button onclick="calcInput('00')" class="py-3 bg-white/5 text-white font-black rounded-[12px]">00</button>
+              <button onclick="calcInput('0')" class="py-3 bg-white/5 text-white font-black rounded-[12px]">0</button>
+              <button onclick="calcInput('.')" class="py-3 bg-white/5 text-white font-black rounded-[12px]">.</button>
+              <button onclick="calcInput('=')" class="py-3 bg-[#FEE500] text-[#12261E] font-black rounded-[12px]">=</button>
+          </div>
+      </div>
+  </div>
 </body>
 </html>
