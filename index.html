@@ -168,7 +168,7 @@
         <button id="tabQuote" onclick="switchView('quote')" class="w-full py-3.5 rounded-[12px] bg-[#E0F2FE] text-[#12261E] shadow-sm font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="calculator" class="w-5 h-5"></i>견적작성</button>
         <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-3.5 rounded-[12px] bg-[#E0F2FE] text-[#12261E] shadow-sm font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="folder-open" class="w-5 h-5"></i>견적보관함</button>
         <button id="tabContacts" onclick="switchView('contacts')" class="w-full py-3.5 rounded-[12px] bg-[#E0F2FE] text-[#12261E] shadow-sm font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="users" class="w-5 h-5"></i>연락처</button>
-        <button id="tabLedger" onclick="switchView('ledger')" class="w-full py-3.5 rounded-[12px] bg-[#E0F2FE] text-[#12261E] shadow-sm font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="wallet" class="w-5 h-5 text-yellow-300"></i>개인장부</button>
+        <button id="tabLedger" onclick="checkLedgerPin()" class="w-full py-3.5 rounded-[12px] bg-[#E0F2FE] text-[#12261E] shadow-sm font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="wallet" class="w-5 h-5 text-yellow-300"></i>개인장부</button>
         <button id="tabEncyclopedia" onclick="switchView('encyclopedia')" class="w-full py-3.5 rounded-[12px] bg-[#E0F2FE] text-[#12261E] shadow-sm font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="book-open" class="w-5 h-5 text-[#84CC16]"></i>스마트 식물검색</button>
         <button id="tabLens" onclick="switchView('lens')" class="w-full py-3.5 rounded-[12px] bg-[#1E3A8A] text-white font-black text-[14px] hover:bg-[#EA580C] transition-all text-center flex flex-col items-center justify-center gap-1 shadow-md"><i data-lucide="scan-line" class="w-5 h-5 text-orange-200"></i>AI 검색렌즈</button>
       </nav>  
@@ -772,7 +772,24 @@
       </div>
     </div>
   </div>
-  
+  <!-- 🔒 장부 비밀번호 잠금 모달 -->
+  <div id="ledgerPinModal" class="hidden fixed inset-0 z-[7000] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200">
+    <div id="ledgerPinBox" class="bg-[#151E2D] w-full max-w-sm rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-white/10" onclick="event.stopPropagation()">
+      <div class="p-5 border-b border-white/10 flex justify-between items-center bg-[#0F1722]">
+        <h3 id="ledgerPinTitle" class="text-[16px] font-black text-white flex items-center gap-2"><i data-lucide="lock" class="w-5 h-5 text-[#84CC16]"></i> 장부 보안 잠금</h3>
+        <button onclick="closeLedgerPinModal()" class="text-[#A3A8A3] hover:text-white p-1"><i data-lucide="x" class="w-6 h-6"></i></button>
+      </div>
+      <div class="p-6 bg-[#151E2D] flex flex-col items-center gap-4">
+        <p id="ledgerPinDesc" class="text-[13px] text-[#A3A8A3] font-bold text-center">개인장부 열람을 위한 4자리 비밀번호를 입력해주세요.</p>
+        <input type="password" id="ledgerPinInput" maxlength="4" inputmode="numeric" pattern="[0-9]*" class="w-32 bg-black/40 border border-[#84CC16]/50 rounded-[14px] px-4 py-4 text-white text-[24px] tracking-widest text-center font-black focus:outline-none focus:border-[#84CC16]" autocomplete="off" onkeypress="if(event.key === 'Enter') submitLedgerPin()">
+        <button onclick="forgotLedgerPin()" class="text-[12px] text-blue-400 font-bold underline underline-offset-2 mt-2">비밀번호를 잊으셨나요?</button>
+      </div>
+      <div class="p-4 bg-[#0F1722] border-t border-white/10 flex gap-2">
+        <button onclick="closeLedgerPinModal()" class="flex-1 py-4 bg-white/5 text-white border border-white/10 rounded-[16px] font-bold text-[15px] hover:bg-white/10 transition-colors">취소</button>
+        <button onclick="submitLedgerPin()" class="flex-1 py-4 bg-[#84CC16] text-[#12261E] rounded-[16px] font-black text-[15px] shadow-[0_4px_12px_rgba(132,204,22,0.2)] hover:bg-[#9BE32D] transition-colors">확인</button>
+      </div>
+    </div>
+  </div>
   <!-- 📝 일정 추가/수정 모달 -->
   <div id="scheduleModal" class="hidden fixed inset-0 z-[6500] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200">
     <div id="scheduleBox" class="bg-white w-full max-w-sm rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-[#EAEBEA]" onclick="event.stopPropagation()">
@@ -2058,7 +2075,64 @@
             renderCalendar(); renderScheduleList();
         }
     }
+// ==========================================
+    // 🔒 스마트 개인장부 비밀번호 로직
+    // ==========================================
+    let isLedgerUnlocked = false; // 로그인 세션 동안 한 번 풀면 유지
+    let ledgerPinMode = 'unlock'; 
 
+    function checkLedgerPin() {
+        if (isLedgerUnlocked) { switchView('ledger'); return; }
+        const modal = document.getElementById('ledgerPinModal'); const box = document.getElementById('ledgerPinBox');
+        const input = document.getElementById('ledgerPinInput'); const title = document.getElementById('ledgerPinTitle'); const desc = document.getElementById('ledgerPinDesc');
+        input.value = '';
+        if (!myCompanyProfile || !myCompanyProfile.ledgerPin) {
+            ledgerPinMode = 'setup';
+            title.innerHTML = '<i data-lucide="lock" class="w-5 h-5 text-[#84CC16]"></i> 장부 비밀번호 설정';
+            desc.innerText = '장부를 보호할 4자리 비밀번호를 처음으로 1회 설정해주세요.';
+        } else {
+            ledgerPinMode = 'unlock';
+            title.innerHTML = '<i data-lucide="lock" class="w-5 h-5 text-[#84CC16]"></i> 장부 보안 잠금';
+            desc.innerText = '개인장부 열람을 위한 4자리 비밀번호를 입력해주세요.';
+        }
+        modal.classList.remove('hidden');
+        setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); input.focus(); }, 10);
+        if(typeof lucide !== 'undefined') lucide.createIcons();
+        history.pushState({ modalOpen: true }, "", "");
+    }
+
+    function closeLedgerPinModal(fromPopstate = false) {
+        const modal = document.getElementById('ledgerPinModal'); const box = document.getElementById('ledgerPinBox');
+        if(modal) modal.classList.add('opacity-0'); if(box) box.classList.add('scale-95');
+        setTimeout(() => { if(modal) modal.classList.add('hidden'); }, 200);
+        if(!fromPopstate && history.state && history.state.modalOpen) history.back();
+    }
+
+    async function submitLedgerPin() {
+        const input = document.getElementById('ledgerPinInput').value;
+        if (input.length !== 4 || isNaN(input)) return alert("4자리 숫자를 정확히 입력해주세요.");
+        if (ledgerPinMode === 'setup') {
+            showLoadingOverlay("보안 설정 중...");
+            try {
+                myCompanyProfile.ledgerPin = input;
+                localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile));
+                const safeKey = getSafeKey(currentUserId);
+                await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ledgerPin: input }) });
+                isLedgerUnlocked = true; closeLedgerPinModal(); switchView('ledger');
+            } catch(e) { alert("통신 오류가 발생했습니다."); } finally { document.getElementById('loadingOverlay')?.remove(); }
+        } else {
+            if (input === myCompanyProfile.ledgerPin) {
+                isLedgerUnlocked = true; closeLedgerPinModal(); switchView('ledger');
+            } else {
+                alert("비밀번호가 일치하지 않습니다.");
+                document.getElementById('ledgerPinInput').value = ''; document.getElementById('ledgerPinInput').focus();
+            }
+        }
+    }
+
+    function forgotLedgerPin() {
+        alert("🔒 보안을 위해 앱 내에서는 비밀번호를 알 수 없습니다.\n\n운영본부 관리자(010-4712-8523)에게 전화하여 본인 확인 후 비밀번호를 초기화 받으시기 바랍니다.");
+    }
     function switchView(mode, pushHistory = true) {
       const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView', 'calendarView', 'ledgerView', 'encyclopediaView'];
       views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
@@ -2528,9 +2602,11 @@
       if (settingsModal && !settingsModal.classList.contains('hidden')) { closeSettings(true); return; }
       if (noticeModal && !noticeModal.classList.contains('hidden')) { closeAppNotice(); return; }
       if (termsModal && !termsModal.classList.contains('hidden')) { closeTermsModal(); return; }
+      const ledgerPinModal = document.getElementById('ledgerPinModal');
+      if (termsModal && !termsModal.classList.contains('hidden')) { closeTermsModal(); return; }
       if (scheduleModal && !scheduleModal.classList.contains('hidden')) { closeScheduleModal(true); return; }
-      if (e.state && e.state.view) { if(e.state.view !== 'client_shared') switchView(e.state.view, false); } 
-      else switchView('calendar', false);
+      if (ledgerPinModal && !ledgerPinModal.classList.contains('hidden')) { closeLedgerPinModal(true); return; }
+      if (e.state && e.state.view) { if(e.state.view !== 'client_shared') switchView(e.state.view, false); }
     });
    function createNewReportFromClient(clientId) {
       const client = clients.find(c => c.id === clientId);
