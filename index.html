@@ -1425,6 +1425,8 @@
         });
         if(document.getElementById('inputTreePruning')) document.getElementById('inputTreePruning').value = ''; 
         if(document.getElementById('inputExtraCategory')) document.getElementById('inputExtraCategory').value = '';
+        if(document.getElementById('inputTreePruning')) document.getElementById('inputTreePruning').value = ''; 
+        if(document.getElementById('inputExtraCategory')) document.getElementById('inputExtraCategory').value = '';
 
         beforeImages = []; afterImages = []; issueImages = []; renderThumbList('before'); renderThumbList('after'); renderThumbList('issue');
       } catch (e) { alert("오류가 발생했습니다."); } finally { document.getElementById('loadingOverlay')?.remove(); lucide.createIcons(); }
