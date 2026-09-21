@@ -871,42 +871,114 @@
     }
 
     async function doLogin() {
-        const id = document.getElementById('loginId').value.trim(); const pw = document.getElementById('loginPw').value.trim(); if(!id || !pw) return alert("입력 요망");
+        const id = document.getElementById('loginId').value.trim(); 
+        const pw = document.getElementById('loginPw').value.trim(); 
+        
+        if(!id || !pw) {
+            document.getElementById('authView').classList.remove('hidden');
+            return alert("아이디와 비밀번호를 입력해주세요.");
+        }
+        
         showLoadingOverlay("접속 중...");
         try {
-            const authRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: id + '@jogyeongnote.com', password: pw, returnSecureToken: true }) });
-            const authData = await authRes.json(); if(authData.error) { document.getElementById('loadingOverlay')?.remove(); return alert("아이디가 없거나 비밀번호가 틀렸습니다."); }
-            currentIdToken = authData.idToken; const safeKey = getSafeKey(id); const res = await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`));
-            if(!res.ok) throw new Error("오류"); const profile = await res.json();
-            if(!profile || profile.error) alert("존재하지 않는 계정"); else if(profile.status === 'pending') alert("승인 대기 중"); else if(profile.status === 'suspended') alert("이용 정지된 계정");
-            else {
-                currentUserId = id; myCompanyProfile = profile; if (myCompanyProfile.license && myCompanyProfile.license.startsWith('data:image')) delete myCompanyProfile.license;
-                localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile)); localStorage.setItem('shinhwa_pro_logged_in_id', id); localStorage.setItem('shinhwa_pro_logged_in_pw', pw); 
-                if(document.getElementById('autoLoginCheck').checked) localStorage.setItem('shinhwa_pro_auto_login', 'true'); else localStorage.removeItem('shinhwa_pro_auto_login');
-                applyCompanyProfile(); document.getElementById('authView').classList.add('hidden'); document.getElementById('mainHeader').style.display = 'block';
-                await syncWithCloud(); history.replaceState({ view: 'admin' }, "", ""); switchView('admin', false); setTimeout(checkAppNotices, 800);
+            const authRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`, { 
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ email: id + '@jogyeongnote.com', password: pw, returnSecureToken: true }) 
+            });
+            const authData = await authRes.json(); 
+            
+            // 로그인 실패 시 튕김 방지 및 로그인창 복구
+            if(authData.error) { 
+                document.getElementById('loadingOverlay')?.remove(); 
+                document.getElementById('authView').classList.remove('hidden');
+                return alert("아이디가 없거나 비밀번호가 틀렸습니다."); 
             }
-        } catch(e) { alert("통신 오류"); } finally { document.getElementById('loadingOverlay')?.remove(); }
+            
+            currentIdToken = authData.idToken; 
+            const safeKey = getSafeKey(id); 
+            const res = await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`));
+            if(!res.ok) throw new Error("오류"); 
+            const profile = await res.json();
+            
+            // 계정 상태에 따른 튕김 방지 및 정확한 메시지 출력
+            if(!profile || profile.error) {
+                document.getElementById('authView').classList.remove('hidden');
+                alert("삭제되었거나 존재하지 않는 계정입니다."); 
+            } else if(profile.status === 'pending') {
+                document.getElementById('authView').classList.remove('hidden');
+                alert("관리자 승인 대기 중입니다."); 
+            } else if(profile.status === 'suspended') {
+                document.getElementById('authView').classList.remove('hidden');
+                alert("이용 정지된 계정입니다. 운영본부에 문의하세요.");
+            } else {
+                currentUserId = id; 
+                myCompanyProfile = profile; 
+                if (myCompanyProfile.license && myCompanyProfile.license.startsWith('data:image')) delete myCompanyProfile.license;
+                
+                localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile)); 
+                localStorage.setItem('shinhwa_pro_logged_in_id', id); 
+                localStorage.setItem('shinhwa_pro_logged_in_pw', pw); 
+                if(document.getElementById('autoLoginCheck').checked) localStorage.setItem('shinhwa_pro_auto_login', 'true'); 
+                else localStorage.removeItem('shinhwa_pro_auto_login');
+                
+                applyCompanyProfile(); 
+                document.getElementById('authView').classList.add('hidden'); 
+                document.getElementById('mainHeader').style.display = 'block';
+                await syncWithCloud(); 
+                history.replaceState({ view: 'admin' }, "", ""); 
+                switchView('admin', false); 
+                setTimeout(checkAppNotices, 1000); // 팝업 타이밍 안정화 (1초 딜레이)
+            }
+        } catch(e) { 
+            document.getElementById('authView').classList.remove('hidden');
+            alert("통신 오류가 발생했습니다."); 
+        } finally { 
+            document.getElementById('loadingOverlay')?.remove(); 
+        }
     }
 
     let noticeQueue = []; let currentShowingNotice = null;
     async function checkAppNotices() {
         noticeQueue = [];
+        // 1. 전체 공지 확인
         try {
-            const res = await fetch(getAuthUrl(`${SETTINGS_URL}/globalNotice.json`)); const globalNotice = await res.json();
+            const res = await fetch(getAuthUrl(`${SETTINGS_URL}/globalNotice.json`)); 
+            const globalNotice = await res.json();
             if(globalNotice && globalNotice.active && globalNotice.text && globalNotice.text.trim() !== '') {
                 const readNotice = localStorage.getItem('shinhwa_pro_read_global_notice');
-                if (globalNotice.text !== readNotice) noticeQueue.push({ type: 'global', title: '운영본부 전체 공지', text: globalNotice.text });
+                if (globalNotice.text !== readNotice) {
+                    noticeQueue.push({ type: 'global', title: '운영본부 전체 공지', text: globalNotice.text });
+                }
             }
-        } catch(e) {}
-        if(myCompanyProfile && myCompanyProfile.targetNotice && myCompanyProfile.targetNotice.trim() !== '') { noticeQueue.push({ type: 'target', title: '운영본부 개별 안내', text: myCompanyProfile.targetNotice }); }
-        showNextNotice();
+        } catch(e) { console.warn("전체 공지 로드 실패"); }
+        
+        // 2. 개별 공지 확인 (마스터가 보낸 팝업)
+        if(myCompanyProfile && myCompanyProfile.targetNotice && myCompanyProfile.targetNotice.trim() !== '') { 
+            noticeQueue.push({ type: 'target', title: '운영본부 개별 안내', text: myCompanyProfile.targetNotice }); 
+        }
+        
+        // 큐에 담긴 알림 순차적 실행
+        if (noticeQueue.length > 0) {
+            showNextNotice();
+        }
     }
+
     function showNextNotice() {
-        if(noticeQueue.length === 0) return; currentShowingNotice = noticeQueue.shift(); 
-        document.getElementById('appNoticeTitle').innerText = currentShowingNotice.title; document.getElementById('appNoticeContent').innerText = currentShowingNotice.text;
-        const modal = document.getElementById('appNoticeModal'); const box = document.getElementById('appNoticeBox');
-        modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10); lucide.createIcons();
+        if(noticeQueue.length === 0) return; 
+        currentShowingNotice = noticeQueue.shift(); 
+        
+        document.getElementById('appNoticeTitle').innerText = currentShowingNotice.title; 
+        document.getElementById('appNoticeContent').innerText = currentShowingNotice.text;
+        
+        const modal = document.getElementById('appNoticeModal'); 
+        const box = document.getElementById('appNoticeBox');
+        modal.classList.remove('hidden'); 
+        setTimeout(() => { 
+            modal.classList.remove('opacity-0'); 
+            box.classList.remove('scale-95'); 
+        }, 50); 
+        
+        lucide.createIcons();
         if(currentShowingNotice.type === 'target') clearTargetNotice();
     }
     function closeAppNotice() {
