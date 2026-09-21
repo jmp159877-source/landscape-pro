@@ -169,7 +169,7 @@
         <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="folder-open" class="w-5 h-5"></i>견적보관함</button>
         <button id="tabContacts" onclick="switchView('contacts')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="users" class="w-5 h-5"></i>연락처</button>
         <button id="tabLedger" onclick="switchView('ledger')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="wallet" class="w-5 h-5 text-yellow-300"></i>개인장부</button>
-        <div></div>
+        <button id="tabEncyclopedia" onclick="switchView('encyclopedia')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="book-open" class="w-5 h-5 text-[#84CC16]"></i>스마트 식물검색</button>
         <button id="tabLens" onclick="switchView('lens')" class="w-full py-3.5 rounded-[12px] bg-[#1E3A8A] text-white font-black text-[14px] shadow-md hover:bg-[#172554] transition-all text-center flex flex-col items-center justify-center gap-1 border border-[#172554]"><i data-lucide="scan" class="w-5 h-5 text-[#84CC16]"></i>AI렌즈</button>
       </nav>  
     </div>
@@ -474,6 +474,24 @@
                 <button onclick="openScheduleModal()" class="bg-[#12261E] text-[#84CC16] px-4 py-2 rounded-[12px] text-[13px] font-black shadow-md hover:bg-black transition-colors flex items-center gap-1"><i data-lucide="plus" class="w-4 h-4"></i> 일정 추가</button>
             </div>
             <div id="scheduleList" class="space-y-3 max-h-[40vh] overflow-y-auto pr-1"></div>
+        </div>
+      </div>
+    </section>
+    <!-- ================= [스마트 식물검색 화면] ================= -->
+    <section id="encyclopediaView" class="hidden space-y-4">
+      <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
+        <div class="flex items-center justify-between pb-4 border-b border-[#F4F5F4]">
+          <h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="search" class="w-6 h-6 text-[#84CC16]"></i> 스마트 식물검색</h2>
+        </div>
+        <div class="bg-[#F2FBEC] rounded-[16px] p-4 border border-[#84CC16]/40 mb-2">
+            <p class="text-[13px] text-[#2E7D32] font-black leading-relaxed break-keep">💡 식물명을 검색하면 AI가 조경 전문가의 시각(월동, 전지방법, 특성)에 맞춰 맞춤형 데이터를 요약해 줍니다.</p>
+        </div>
+        <div class="relative">
+            <input type="text" id="plantSearchInput" placeholder="식물명 검색 (예: 소나무, 명자나무)" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 pr-14 text-[15px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
+            <button onclick="searchPlant()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-[#12261E] text-[#84CC16] p-2.5 rounded-[12px] shadow-sm hover:bg-black transition-colors"><i data-lucide="search" class="w-5 h-5"></i></button>
+        </div>
+        <div id="encyclopediaResult" class="hidden bg-[#F9F9F8] rounded-[20px] p-5 border border-[#EAEBEA] space-y-4 mt-2">
+            <!-- 검색 결과가 여기에 뜹니다 -->
         </div>
       </div>
     </section>
@@ -1984,9 +2002,9 @@
     }
 
     function switchView(mode, pushHistory = true) {
-      const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView', 'calendarView', 'ledgerView'];
+      const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView', 'calendarView', 'ledgerView', 'encyclopediaView'];
       views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
-      const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient', 'tabContacts', 'tabCalendar', 'tabLedger'];
+      const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient', 'tabContacts', 'tabCalendar', 'tabLedger', 'tabEncyclopedia'];
       mainTabs.forEach(t => { const el = document.getElementById(t); if(el) el.className = "w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"; });
       const lensTab = document.getElementById('tabLens'); if(lensTab) lensTab.className = "w-full py-3.5 rounded-[12px] bg-[#1E3A8A] text-white font-black text-[14px] shadow-md hover:bg-[#172554] transition-all text-center flex flex-col items-center justify-center gap-1 border border-[#172554]";
 
@@ -1999,7 +2017,8 @@
       else if (mode === 'history') { document.getElementById('historyView').classList.remove('hidden'); activeTabId = 'tabClient'; }
       else if (mode === 'lens') { document.getElementById('lensView').classList.remove('hidden'); activeTabId = 'tabLens'; }
       else if (mode === 'calendar') { document.getElementById('calendarView').classList.remove('hidden'); activeTabId = 'tabCalendar'; renderCalendar(); renderScheduleList(); }
-      else if (mode === 'ledger') { document.getElementById('ledgerView').classList.remove('hidden'); activeTabId = 'tabLedger'; renderLedgerList(); }
+      else if (mode === 'ledger') { document.getElementById('ledgerView').classList.remove('hidden'); activeTabId = 'tabLedger'; renderLedgerCalendar(); }
+      else if (mode === 'encyclopedia') { document.getElementById('encyclopediaView').classList.remove('hidden'); activeTabId = 'tabEncyclopedia'; }
       else { document.getElementById('clientView').classList.remove('hidden'); activeTabId = currentIsQuote ? 'tabQuoteList' : 'tabClient'; }
 
       if(activeTabId) {
@@ -2576,5 +2595,63 @@
           </div>
       </div>
   </div>
+<script>
+    async function searchPlant() {
+        const query = document.getElementById('plantSearchInput').value.trim();
+        if(!query) return alert("검색할 수목/식물명을 입력해주세요.");
+
+        showLoadingOverlay("백과사전 데이터 추출 중...");
+        const resultBox = document.getElementById('encyclopediaResult');
+        resultBox.classList.add('hidden');
+        resultBox.innerHTML = '';
+
+        const GOOGLE_PROXY_URL = "https://script.google.com/macros/s/AKfycbysZFaBJt9Iu964hP9rJVjmYHDMMo_TQAocjih4h8q0_im414WA6-23LS6Wm4xQvTJRQw/exec";
+
+        // 조경업자에게 꼭 필요한 정보만 뽑아내는 강력한 프롬프트
+        const promptText = `너는 한국의 30년 차 조경 전문가이자 식물 백과사전이야. 사용자가 '${query}'에 대해 검색했어. 조경 현장에서 실무자가 참고하기 좋도록 아래 4가지 항목으로 나누어서 전문적이고 명확하게 설명해줘.
+        1. 🌿 기본 정보 (학명, 과명, 개화 시기 등)
+        2. 🌳 형태 및 특징 (수형, 잎, 꽃의 특징)
+        3. ❄️ 생육 환경 및 월동 (내한성, 양수/음수 여부, 적합한 토양)
+        4. ✂️ 조경 관리 및 전지(가지치기) 방법 및 적기`;
+
+        try {
+            const response = await fetch(GOOGLE_PROXY_URL, {
+                redirect: "follow",
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    model: "gpt-4o",
+                    messages: [{ role: "user", content: [{ type: "text", text: promptText }] }],
+                    max_tokens: 800, temperature: 0.3
+                })
+            });
+
+            const data = await response.json();
+            if (data.error) throw new Error(data.error.message);
+
+            let text = data.choices[0].message.content;
+            text = text.replace(/\n/g, '<br>');
+
+            // 구글 이미지 검색 연동 (사진 제공용)
+            const imageSearchLink = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(query + ' 식물 조경 나무')}`;
+
+            resultBox.innerHTML = `
+                <div class="flex justify-between items-center mb-3 pb-3 border-b border-[#EAEBEA]">
+                    <h3 class="text-[16px] font-black text-[#12261E] flex items-center gap-1.5"><i data-lucide="leaf" class="w-4 h-4 text-[#84CC16]"></i> 검색 완료</h3>
+                    <a href="${imageSearchLink}" target="_blank" class="bg-[#12261E] text-[#84CC16] px-3.5 py-2 rounded-[10px] text-[12px] font-black flex items-center gap-1.5 hover:bg-black transition-colors shadow-sm"><i data-lucide="image" class="w-4 h-4"></i> 고화질 사진 보기</a>
+                </div>
+                <div class="text-[14px] leading-[1.8] text-[#1A1D1A] font-bold break-keep whitespace-pre-wrap">
+                    ${text}
+                </div>
+            `;
+            resultBox.classList.remove('hidden');
+            lucide.createIcons();
+        } catch(e) {
+            alert("검색 실패: " + e.message);
+        } finally {
+            document.getElementById('loadingOverlay')?.remove();
+        }
+    }
+    </script>  
 </body>
 </html>
