@@ -45,9 +45,12 @@
       <h2 class="text-white font-black text-[28px] mb-2 tracking-tight relative z-10">마스터 관리자</h2>
       <p class="text-[#94A3B8] text-[13px] font-medium mb-8 text-center leading-relaxed relative z-10">조경노트 PRO 중앙 통제 시스템입니다.<br>최고 관리자 계정으로 접속해 주십시오.</p>
       
-      <div class="w-full space-y-3 mb-6 relative z-10">
+      <div class="w-full space-y-3 mb-4 relative z-10">
         <input type="text" id="masterId" placeholder="관리자 아이디 (예: admin)" autocomplete="off" class="w-full bg-[#0F172A] border border-white/10 rounded-[14px] px-5 py-4 text-white text-[15px] font-bold focus:outline-none focus:border-[#3B82F6]">
         <input type="password" id="masterPw" placeholder="비밀번호 (6자리 이상 숫자/영문)" autocomplete="off" class="w-full bg-[#0F172A] border border-white/10 rounded-[14px] px-5 py-4 text-white text-[15px] font-bold focus:outline-none focus:border-[#3B82F6]" onkeypress="if(event.key === 'Enter') loginMaster()">
+      </div>
+      <div class="w-full flex items-center mb-6 px-1 relative z-10">
+        <label class="flex items-center gap-2 cursor-pointer text-[#94A3B8] text-[13px] font-bold hover:text-white transition-colors"><input type="checkbox" id="masterAutoLoginCheck" class="w-5 h-5 rounded border-white/10 bg-transparent text-[#3B82F6] focus:ring-[#3B82F6]" checked>자동 로그인</label>
       </div>
       
       <button onclick="loginMaster()" class="w-full py-4.5 bg-[#3B82F6] text-white rounded-[16px] font-black text-[16px] hover:bg-[#2563EB] shadow-[0_8px_20px_rgba(59,130,246,0.3)] transition-all relative z-10 flex items-center justify-center gap-2 mb-4">
