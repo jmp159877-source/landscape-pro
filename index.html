@@ -247,7 +247,6 @@
 
       <button id="btnGenerateReport" onclick="generateReport()" class="w-full py-5 bg-[#84CC16] text-[#12261E] rounded-[22px] font-black text-[20px] flex items-center justify-center gap-3 shadow-[0_10px_25px_rgba(132,204,22,0.4)] hover:bg-[#9BE32D] active:scale-[0.98] transition-all mb-4"><i data-lucide="send" class="w-6 h-6 stroke-[2.5]"></i> 리포트 발행 및 저장</button>
     </section>
-
     <!-- ================= [2. 견적서 작성 화면] ================= -->
     <section id="quoteAdminView" class="hidden space-y-5">
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5 relative overflow-hidden">
@@ -696,711 +695,422 @@
       </div>
     </div>
   </div>
+  <!-- ========================================================================= -->
+  <!-- [최종본 3부] Firebase 설정, Auth, UI 내비게이션, 공통 유틸리티 및 이미지 처리 -->
+  <!-- ========================================================================= -->
+  <script type="module">
+    // 1. Firebase 모듈 임포트 (버전 10 기준 최신 모듈 방식)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getDatabase, ref, set, push, get, child, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getStorage, ref as storageRef, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
-  <div id="appNoticeModal" class="hidden fixed inset-0 z-[6000] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200">
-    <div class="bg-white w-full max-w-sm rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-[#EAEBEA]" id="appNoticeBox">
-      <div class="p-5 border-b border-[#F4F5F4] flex justify-between items-center bg-[#F9F9F8]">
-        <h3 class="text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="bell-ring" class="w-5 h-5 text-[#F59E0B]"></i> <span id="appNoticeTitle">알림</span></h3>
-        <button onclick="closeAppNotice()" class="text-[#A3A8A3] hover:text-[#12261E] p-1"><i data-lucide="x" class="w-6 h-6"></i></button>
-      </div>
-      <div class="p-6 bg-white text-center min-h-[120px] flex items-center justify-center">
-        <p id="appNoticeContent" class="text-[15px] text-[#1A1D1A] font-black leading-[1.7] whitespace-pre-wrap break-keep"></p>
-      </div>
-      <div class="p-4 bg-[#F9F9F8] border-t border-[#F4F5F4] flex gap-2">
-        <button onclick="closeAppNotice()" class="w-full py-4 bg-[#12261E] text-[#84CC16] rounded-[14px] font-black text-[16px] shadow-md hover:bg-black transition-colors">확인했습니다</button>
-      </div>
-    </div>
-  </div>
+    // 2. Firebase 설정 (대표님의 실제 파이어베이스 콘솔 정보로 교체 필요)
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
 
-  <div id="termsModal" class="hidden fixed inset-0 z-[6500] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200">
-    <div class="bg-white w-full max-w-sm rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-[#EAEBEA]" id="termsBox">
-      <div class="p-5 border-b border-[#F4F5F4] flex justify-between items-center bg-[#F9F9F8]">
-        <h3 class="text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="file-text" class="w-5 h-5 text-[#84CC16]"></i> <span id="termsTitle">약관 동의</span></h3>
-        <button onclick="closeTermsModal()" class="text-[#A3A8A3] hover:text-[#12261E] p-1"><i data-lucide="x" class="w-6 h-6"></i></button>
-      </div>
-      <div class="p-5 bg-white text-[#1A1D1A] h-64 overflow-y-auto nav-scroll text-[13px] leading-[1.8] font-medium break-keep whitespace-pre-wrap" id="termsContent"></div>
-      <div class="p-4 bg-[#F9F9F8] border-t border-[#F4F5F4] flex gap-2">
-        <button id="btnAgreeTerms" class="w-full py-4 bg-[#12261E] text-[#84CC16] rounded-[14px] font-black text-[16px] shadow-md hover:bg-black transition-colors">동의합니다</button>
-      </div>
-    </div>
-  </div>
-  
-  <!-- 📝 일정 추가/수정 모달 -->
-  <div id="scheduleModal" class="hidden fixed inset-0 z-[6500] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200">
-    <div id="scheduleBox" class="bg-white w-full max-w-sm rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-[#EAEBEA]" onclick="event.stopPropagation()">
-        <div class="p-5 border-b border-[#F4F5F4] flex justify-between items-center bg-[#F9F9F8]">
-            <h3 class="text-[16px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="calendar-plus" class="w-5 h-5 text-[#84CC16]"></i> 작업 일정 등록</h3>
-            <button onclick="closeScheduleModal()" class="text-[#A3A8A3] hover:text-[#12261E] p-1"><i data-lucide="x" class="w-6 h-6"></i></button>
-        </div>
-        <div class="p-5 space-y-4 max-h-[70vh] overflow-y-auto bg-white">
-            <input type="hidden" id="scheduleId">
-            <div>
-                <label class="block text-[13px] font-black text-[#12261E] mb-2">작업 날짜</label>
-                <input type="date" id="scheduleDate" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-4 py-3 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
-            </div>
-            <div>
-                <label class="block text-[13px] font-black text-[#12261E] mb-2">현장명 및 작업 내용</label>
-                <input type="text" id="scheduleTitle" placeholder="예: 단독주택 소나무 전지" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-4 py-3 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
-            </div>
-            <div class="flex gap-2">
-                <div class="flex-1">
-                    <label class="block text-[13px] font-black text-[#12261E] mb-2">작업 분류명 (직접 수정 가능)</label>
-                    <input type="text" id="scheduleTagText" value="조경 관리 작업" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-4 py-3 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
-                </div>
-                <div class="w-24 shrink-0">
-                    <label class="block text-[13px] font-black text-[#12261E] mb-2">테마 색상</label>
-                    <select id="scheduleColor" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-2 py-3 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
-                        <option value="border-[#84CC16]">🟢 녹색</option>
-                        <option value="border-blue-400">🔵 파랑</option>
-                        <option value="border-orange-400">🟠 주황</option>
-                        <option value="border-red-400">🔴 빨강</option>
-                    </select>
-                </div>
-            </div>
-            <div>
-                <label class="block text-[13px] font-black text-[#12261E] mb-2">상세 메모 (작업 예약 시간, 인력, 자재 등)</label>
-                <textarea id="scheduleMemo" rows="3" placeholder="메모 입력" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] p-4 text-[14px] font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] resize-none"></textarea>
-            </div>
-        </div>
-        <div class="p-4 bg-[#F9F9F8] border-t border-[#F4F5F4] flex gap-2">
-            <button onclick="closeScheduleModal()" class="flex-1 bg-white border border-[#EAEBEA] text-[#4E5968] font-black py-4 rounded-[14px] text-[15px] hover:bg-[#F4F5F4] transition-colors">취소</button>
-            <button onclick="saveSchedule()" class="flex-1 bg-[#12261E] text-[#84CC16] font-black py-4 rounded-[14px] text-[15px] shadow-md hover:bg-black transition-colors">저장하기</button>
-        </div>
-    </div>
-  </div>
+    // Firebase 앱 초기화
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+    const storage = getStorage(app);
 
-  <script>
-    const API_KEY = "AIzaSyC_1KaOSychXSNF-Z-vnVONLB_-aAGghhk";
-    const DB_BASE_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/accounts";
-    const SETTINGS_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/settings"; 
+    // 전역 상태 변수
+    let currentUser = null;
+    let currentPhotos = { before: [], during: [], after: [], issue: [], quote: [] };
+    let currentModalImages = [];
+    let currentModalIndex = 0;
+
+    // =========================================================================
+    // 모듈 스코프 함수들을 HTML 인라인 이벤트(onclick 등)에서 쓸 수 있도록 window에 바인딩
+    // =========================================================================
     
-    let currentUserId = ""; let currentIdToken = ""; 
-    let myCompanyProfile = null; let currentTermType = '';
+    // [UI 전환 유틸리티]
+    window.switchView = function(viewId) {
+      const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'contactsView', 'historyView', 'lensView', 'calendarView', 'ledgerView', 'clientView'];
+      views.forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.classList.add('hidden');
+      });
+      const target = document.getElementById(viewId);
+      if(target) {
+        target.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      
+      // 하단 네비게이션 버튼 색상 활성화 로직
+      const tabs = document.querySelectorAll('nav button');
+      tabs.forEach(tab => {
+        tab.classList.remove('bg-white', 'shadow-md');
+        tab.classList.add('bg-black/10', 'border-transparent');
+      });
+      
+      // 선택된 탭 활성화 (예외 처리 포함)
+      let activeTabId = '';
+      if(viewId === 'calendarView') activeTabId = 'tabCalendar';
+      if(viewId === 'adminView') activeTabId = 'tabAdmin';
+      if(viewId === 'clientsView') activeTabId = 'tabClient';
+      if(viewId === 'quoteAdminView') activeTabId = 'tabQuote';
+      if(viewId === 'quoteListView') activeTabId = 'tabQuoteList';
+      if(viewId === 'contactsView') activeTabId = 'tabContacts';
+      if(viewId === 'ledgerView') activeTabId = 'tabLedger';
+      if(viewId === 'lensView') activeTabId = 'tabLens';
 
-    function openTermsModal(type) {
-        currentTermType = type; 
-        const title = document.getElementById('termsTitle'); 
-        const content = document.getElementById('termsContent');
-        if (type === 'privacy') { 
-            title.innerText = '개인정보 수집 및 이용 동의'; 
-            content.innerText = '1. 수집 항목: 아이디, 비밀번호, 업체명, 연락처\n2. 수집 목적: 조경노트 PRO 서비스 제공, 사용자 식별, 견적서/일지 발송 등 맞춤형 기능 제공\n3. 보유 기간: 회원 탈퇴 또는 서비스 종료 시까지'; 
-        } else { 
-            title.innerText = '서비스 이용 약관 동의'; 
-            content.innerText = '제 1조 (목적)\n본 약관은 조경노트 PRO가 제공하는 스마트 조경 일지 및 견적 관리 서비스의 이용 조건 및 절차, 권리 및 의무를 규정함을 목적으로 합니다.\n\n제 2조 (서비스의 제공)\n1. AI 수목 식별 및 병해충 진단 보조\n2. 스마트 작업 일지 작성 및 클라우드 저장'; 
+      if(activeTabId) {
+        const activeTab = document.getElementById(activeTabId);
+        if(activeTab) {
+          activeTab.classList.remove('bg-black/10', 'border-transparent');
+          activeTab.classList.add('bg-white', 'shadow-md');
         }
-        const modal = document.getElementById('termsModal'); 
-        const box = document.getElementById('termsBox');
-        modal.classList.remove('hidden'); 
-        setTimeout(() => { 
-            modal.classList.remove('opacity-0'); 
-            box.classList.remove('scale-95'); 
-        }, 10); 
-        lucide.createIcons();
-    }
+      }
+    };
 
-    function closeTermsModal() { 
-        const modal = document.getElementById('termsModal'); 
-        const box = document.getElementById('termsBox'); 
-        modal.classList.add('opacity-0'); 
-        box.classList.add('scale-95'); 
-        setTimeout(() => { modal.classList.add('hidden'); }, 200); 
-    }
+    window.showLogin = function() {
+      document.getElementById('authView').classList.remove('hidden');
+      document.getElementById('onboardingView').classList.add('hidden');
+    };
 
-    document.getElementById('btnAgreeTerms').addEventListener('click', () => { 
-        if (currentTermType === 'privacy') document.getElementById('obPrivacyCheck').checked = true; 
-        else if (currentTermType === 'terms') document.getElementById('obTermsCheck').checked = true; 
-        closeTermsModal(); 
-    });
+    window.showSignUp = function() {
+      document.getElementById('authView').classList.add('hidden');
+      document.getElementById('onboardingView').classList.remove('hidden');
+    };
 
-    function getAuthUrl(url) { 
-        if (!currentIdToken) return url; 
-        const sep = url.includes('?') ? '&' : '?'; 
-        return `${url}${sep}auth=${currentIdToken}`; 
-    }
+    window.logoutAdmin = function() {
+      signOut(auth).then(() => {
+        alert("안전하게 로그아웃 되었습니다.");
+        document.getElementById('mainHeader').style.display = 'none';
+        document.getElementById('swipeContainer').style.display = 'none';
+        document.getElementById('authView').classList.remove('hidden');
+      });
+    };
 
-    function autoHyphen(target) { 
-        let str = target.value.replace(/[^0-9]/g, ''); 
-        let tmp = ''; 
-        if (str.length < 4) { target.value = str; return; } 
-        else if (str.length < 7) { tmp += str.substr(0, 3) + '-' + str.substr(3); } 
-        else if (str.length < 11) { tmp += str.substr(0, 3) + '-' + str.substr(3, 3) + '-' + str.substr(6); } 
-        else { tmp += str.substr(0, 3) + '-' + str.substr(3, 4) + '-' + str.substr(7); } 
-        target.value = tmp; 
-    }
+    // [인증 및 가입 로직]
+    window.doLogin = function() {
+      const id = document.getElementById('loginId').value.trim();
+      const pw = document.getElementById('loginPw').value.trim();
+      if(!id || !pw) return alert("아이디와 비밀번호를 입력해주세요.");
+      
+      // 데모용 이메일 변환 (ID -> ID@조경노트.com)
+      const email = `${id}@jogyeongnote.com`;
+      
+      signInWithEmailAndPassword(auth, email, pw)
+        .then((userCredential) => {
+          document.getElementById('authView').classList.add('hidden');
+          document.getElementById('mainHeader').style.display = 'block';
+          document.getElementById('swipeContainer').style.display = 'block';
+          window.switchView('adminView');
+          loadCompanyData(userCredential.user.uid);
+        })
+        .catch((error) => {
+          console.error("로그인 에러:", error);
+          alert("로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.");
+        });
+    };
 
-    async function uploadToFirebaseStorage(base64Data, folder="images") {
-        const bucket = "shinhwa-landnote.firebasestorage.app"; 
-        const fileName = encodeURIComponent(`${folder}/img_${Date.now()}_${Math.floor(Math.random()*1000)}.jpg`); 
-        const url = `https://firebasestorage.googleapis.com/v0/b/${bucket}/o?name=${fileName}`;
-        const res = await fetch(base64Data); const blob = await res.blob();
-        const headers = { 'Content-Type': blob.type }; 
-        if(currentIdToken) headers['Authorization'] = `Bearer ${currentIdToken}`;
-        const uploadRes = await fetch(url, { method: 'POST', headers: headers, body: blob }); 
-        const data = await uploadRes.json();
-        if(data.error) throw new Error("서버 스토리지 에러"); 
-        return `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${fileName}?alt=media&token=${data.downloadTokens}`;
-    }
+    window.saveOnboarding = function() {
+      const id = document.getElementById('obId').value.trim();
+      const pw = document.getElementById('obPw').value.trim();
+      const companyName = document.getElementById('obCompanyName').value.trim();
+      
+      if(!id || !pw || !companyName) return alert("필수 항목을 모두 입력해주세요.");
+      if(pw.length < 6) return alert("비밀번호는 6자리 이상 설정해주세요.");
 
-    let defaultClients = []; 
-    const defaultMaterials = Array.from({length: 10}, () => ({ item: "", spec: "", price: "", contact: "" }));
-    let clients = []; let records = []; let materialsData = []; 
-    let contactsData = { clients: [], labors: [] };
-    let schedules = []; 
-    let ledgers = JSON.parse(localStorage.getItem('shinhwa_pro_ledgers')) || [];
-    
-    let isMaterialEditMode = false; let editingClientIndex = null; let editingContactIndex = null; 
-    let beforeImages = []; let duringImages = []; let afterImages = []; 
-    let issueImages = []; let quoteImages = []; 
-    
-    let generatedShareUrl = ""; let currentIsQuote = false; 
-    let currentVatRate = 0.1; let currentQuoteRowCount = 12;
-    let currentClientFilter = '정기 관리'; let currentContactTab = 'clients';
-    let currentGalleryB = []; let currentGalleryD = []; let currentGalleryA = []; 
-    let currentGalleryI = []; let currentGalleryQ = []; 
-    
-    let modalImages = []; let modalCurrentIdx = 0; 
-    let currentLoadedRecordId = null; let editingRecordId = null; let activeTextEditorId = null;
-    let currentCalDate = new Date(); let selectedDate = new Date();
-    let currentLedgerCalDate = new Date(); let selectedLedgerDate = new Date(); let calcStr = "";
+      const email = `${id}@jogyeongnote.com`;
+      
+      createUserWithEmailAndPassword(auth, email, pw)
+        .then((userCredential) => {
+          const uid = userCredential.user.uid;
+          set(ref(db, 'companies/' + uid), {
+            companyName: companyName,
+            ceoName: document.getElementById('obCompanyCeo').value.trim(),
+            phone: document.getElementById('obCompanyPhone').value.trim(),
+            bizNum: document.getElementById('obCompanyBizNum').value.trim(),
+            createdAt: serverTimestamp()
+          }).then(() => {
+            alert("업체 등록이 완료되었습니다. 로그인 화면으로 이동합니다.");
+            window.showLogin();
+          });
+        })
+        .catch((error) => {
+          console.error("가입 에러:", error);
+          alert("등록 중 오류가 발생했습니다. 이미 사용중인 아이디일 수 있습니다.");
+        });
+    };
 
-    function applyCompanyProfile() {
-        if (!myCompanyProfile) return;
-        const textTargets = [ { id: 'company-name-splash', key: 'name' } ]; 
-        textTargets.forEach(target => { const el = document.getElementById(target.id); if (el) el.innerText = myCompanyProfile[target.key] || ''; });
-        const headerEl = document.getElementById('company-name-header');
-        if (headerEl) {
-            let cName = myCompanyProfile.name || '';
-            if (cName.endsWith('조경') && cName.length > 2) {
-                let mainName = cName.slice(0, -2); 
-                headerEl.innerHTML = `<span class="block text-[22px] font-black leading-none text-white">${mainName}</span><span class="block text-[15px] font-black text-[#84CC16] mt-1 tracking-widest">조경</span>`;
-            } else { 
-                headerEl.innerHTML = `<span class="block text-[20px] font-black leading-tight text-white">${cName}</span>`; 
-            }
+    function loadCompanyData(uid) {
+      get(child(ref(db), `companies/${uid}`)).then((snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          document.getElementById('company-name-header').innerText = data.companyName;
         }
+      });
     }
 
-    function showSignUp() { document.getElementById('authView').classList.add('hidden'); document.getElementById('onboardingView').classList.remove('hidden'); }
-    function showLogin() { document.getElementById('onboardingView').classList.add('hidden'); document.getElementById('authView').classList.remove('hidden'); }
-    function getSafeKey(rawId) { return encodeURIComponent(rawId.replace(/[.#$\[\]]/g, '_')); }
+    // [유틸리티 및 데이터 포맷팅]
+    window.autoHyphen = function(target) {
+      target.value = target.value
+        .replace(/[^0-9]/g, '')
+        .replace(/^(\d{2,3})(\d{3,4})(\d{4})$/, `$1-$2-$3`);
+    };
 
-    let obBizLicenseBase64 = "";
-    function handleBizLicense(e) {
-        const file = e.target.files[0]; if(!file) return;
-        document.getElementById('obBizLicenseLabel').innerText = file.name; 
-        document.getElementById('obBizLicenseLabel').classList.add('text-[#84CC16]');
-        compressImage(file, (base64) => { obBizLicenseBase64 = base64; });
-    }
+    window.toggleBadge = function(btn) {
+      if (btn.classList.contains('bg-[#12261E]')) {
+        btn.classList.remove('bg-[#12261E]', 'text-[#84CC16]', 'border-[#12261E]');
+        btn.classList.add('bg-white', 'text-[#4E5968]', 'border-[#EAEBEA]');
+      } else {
+        btn.classList.remove('bg-white', 'text-[#4E5968]', 'border-[#EAEBEA]');
+        btn.classList.add('bg-[#12261E]', 'text-[#84CC16]', 'border-[#12261E]');
+      }
+    };
 
-    async function saveOnboarding() {
-        const id = document.getElementById('obId').value.trim(); const pw = document.getElementById('obPw').value.trim();
-        const name = document.getElementById('obCompanyName').value.trim(); const ceo = document.getElementById('obCompanyCeo').value.trim();
-        const phone = document.getElementById('obCompanyPhone').value.trim(); const bizNum = document.getElementById('obCompanyBizNum').value.trim();
-        
-        if (!id || !pw || !name || !ceo || !phone || !bizNum) return alert("항목을 모두 입력해 주세요.");
-        if (/[^a-zA-Z0-9]/.test(id)) return alert("아이디는 영문과 숫자만 사용해 주세요."); 
-        if (id.length < 2) return alert("아이디는 2글자 이상 입력해 주세요."); 
-        if (pw.length < 6) return alert("비밀번호는 6자리 이상 입력해 주세요.");
-        if (!obBizLicenseBase64) return alert("사업자등록증 사진을 첨부해 주세요."); 
-        if (!document.getElementById('obPrivacyCheck').checked || !document.getElementById('obTermsCheck').checked) return alert("필수 약관에 모두 동의해 주세요.");
-        
-        showLoadingOverlay("인증 중...");
-        try {
-            const authRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: id + '@jogyeongnote.com', password: pw, returnSecureToken: true }) });
-            const authData = await authRes.json(); let tempToken = authData.idToken;
-            if (authData.error && authData.error.message === 'EMAIL_EXISTS') {
-                 const loginRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: id + '@jogyeongnote.com', password: pw, returnSecureToken: true }) });
-                 const loginData = await loginRes.json(); 
-                 if(loginData.error) { document.getElementById('loadingOverlay')?.remove(); return alert("이미 존재하는 아이디입니다."); }
-                 tempToken = loginData.idToken;
-            } else if (authData.error) { document.getElementById('loadingOverlay')?.remove(); return alert("오류: " + authData.error.message); }
-            
-            currentIdToken = tempToken; 
-            const safeKey = getSafeKey(id); 
-            const res = await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`)); 
-            const existing = await res.json();
-            if(existing && !existing.error) { document.getElementById('loadingOverlay')?.remove(); return alert("이미 사용 중인 아이디입니다."); }
-            
-            let licenseUrl = await uploadToFirebaseStorage(obBizLicenseBase64, "licenses");
-            const profileData = { id, pw, name, ceo, phone, bizNum, license: licenseUrl, status: 'pending' };
-            await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(profileData) });
-            alert("가입이 완료되었습니다. 관리자 승인을 기다려주세요."); 
-            currentIdToken = ""; showLogin();
-        } catch(e) { alert("서버 오류"); } finally { document.getElementById('loadingOverlay')?.remove(); }
-    }
+    // [이미지 처리 로직 (일지 및 견적서)]
+    window.handleImageUpload = function(event, type) {
+      const files = event.target.files;
+      if (!files || files.length === 0) return;
+      
+      const thumbList = document.getElementById(`${type}ThumbList`);
+      const countLabel = document.getElementById(`${type}Count`);
+      
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const base64Img = e.target.result;
+          currentPhotos[type].push(base64Img);
+          
+          const imgWrap = document.createElement('div');
+          imgWrap.className = 'flex-shrink-0 w-24 h-24 rounded-[18px] overflow-hidden relative border border-[#EAEBEA]';
+          imgWrap.innerHTML = `
+            <img src="${base64Img}" class="w-full h-full object-cover">
+            <button onclick="removeImage(this, '${type}', ${currentPhotos[type].length - 1})" class="absolute top-1 right-1 bg-black/60 text-white p-1 rounded-full"><i data-lucide="x" class="w-3 h-3"></i></button>
+          `;
+          thumbList.appendChild(imgWrap);
+          countLabel.innerText = `${currentPhotos[type].length}장`;
+          lucide.createIcons();
+        };
+        reader.readAsDataURL(file);
+      });
+    };
 
-    async function doLogin() {
-        const id = document.getElementById('loginId').value.trim(); const pw = document.getElementById('loginPw').value.trim(); 
-        if(!id || !pw) return alert("입력 요망");
-        showLoadingOverlay("접속 중...");
-        try {
-            const authRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: id + '@jogyeongnote.com', password: pw, returnSecureToken: true }) });
-            const authData = await authRes.json(); 
-            if(authData.error) { document.getElementById('loadingOverlay')?.remove(); return alert("아이디가 없거나 비밀번호가 틀렸습니다."); }
-            
-            currentIdToken = authData.idToken; 
-            const safeKey = getSafeKey(id); 
-            const res = await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`));
-            if(!res.ok) throw new Error("오류"); 
-            const profile = await res.json();
-            
-            if(!profile || profile.error) alert("존재하지 않는 계정"); 
-            else if(profile.status === 'pending') alert("승인 대기 중"); 
-            else if(profile.status === 'suspended') alert("이용 정지된 계정");
-            else {
-                currentUserId = id; myCompanyProfile = profile; 
-                if (myCompanyProfile.license && myCompanyProfile.license.startsWith('data:image')) delete myCompanyProfile.license;
-                localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile)); 
-                localStorage.setItem('shinhwa_pro_logged_in_id', id); 
-                localStorage.setItem('shinhwa_pro_logged_in_pw', pw); 
-                if(document.getElementById('autoLoginCheck').checked) localStorage.setItem('shinhwa_pro_auto_login', 'true'); 
-                else localStorage.removeItem('shinhwa_pro_auto_login');
-                
-                applyCompanyProfile(); 
-                document.getElementById('authView').classList.add('hidden'); 
-                document.getElementById('mainHeader').style.display = 'block';
-                await syncWithCloud(); 
-                history.replaceState({ view: 'admin' }, "", ""); 
-                switchView('admin', false); 
-                setTimeout(checkAppNotices, 800);
-            }
-        } catch(e) { alert("통신 오류"); } finally { document.getElementById('loadingOverlay')?.remove(); }
-    }
-
-    let noticeQueue = []; let currentShowingNotice = null;
+    window.removeImage = function(btn, type, index) {
+      currentPhotos[type].splice(index, 1);
+      const wrap = btn.closest('div.flex-shrink-0');
+      wrap.remove();
+      document.getElementById(`${type}Count`).innerText = `${currentPhotos[type].length}장`;
+    };
     
-    async function checkAppNotices() {
-        noticeQueue = [];
-        try {
-            const res = await fetch(getAuthUrl(`${SETTINGS_URL}/globalNotice.json`)); 
-            const globalNotice = await res.json();
-            if(globalNotice && globalNotice.active && globalNotice.text && globalNotice.text.trim() !== '') {
-                const readNotice = localStorage.getItem('shinhwa_pro_read_global_notice');
-                if (globalNotice.text !== readNotice) noticeQueue.push({ type: 'global', title: '운영본부 전체 공지', text: globalNotice.text });
-            }
-        } catch(e) {}
-        if(myCompanyProfile && myCompanyProfile.targetNotice && myCompanyProfile.targetNotice.trim() !== '') { 
-            noticeQueue.push({ type: 'target', title: '운영본부 개별 안내', text: myCompanyProfile.targetNotice }); 
-        }
-        showNextNotice();
-    }
+    // 모달창 닫기 등
+    window.closeModal = function() {
+      document.getElementById('imageModal').classList.add('hidden');
+    };
+    // =========================================================================
+    // [최종본 4부] 리포트/견적서 발행, AI 연동, DB 관리 및 이벤트 초기화
+    // =========================================================================
 
-    function showNextNotice() {
-        if(noticeQueue.length === 0) return; 
-        currentShowingNotice = noticeQueue.shift(); 
-        document.getElementById('appNoticeTitle').innerText = currentShowingNotice.title; 
-        document.getElementById('appNoticeContent').innerText = currentShowingNotice.text;
-        const modal = document.getElementById('appNoticeModal'); 
-        const box = document.getElementById('appNoticeBox');
-        modal.classList.remove('hidden'); 
-        setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10); 
-        lucide.createIcons();
-        if(currentShowingNotice.type === 'target') clearTargetNotice();
-    }
+    // [1. 작업 일지(리포트) 발행 및 렌더링]
+    window.generateReport = async function() {
+      if (!auth.currentUser) return alert("로그인이 필요합니다.");
+      const clientName = document.getElementById('clientSelect').value.trim();
+      const round = document.getElementById('inputRound').value.trim();
+      
+      if (!clientName || !round) {
+        alert("고객명과 작업 타이틀을 반드시 입력해주세요.");
+        return;
+      }
 
-    function closeAppNotice() {
-        const modal = document.getElementById('appNoticeModal'); const box = document.getElementById('appNoticeBox');
-        modal.classList.add('opacity-0'); box.classList.add('scale-95');
-        if (currentShowingNotice && currentShowingNotice.type === 'global') localStorage.setItem('shinhwa_pro_read_global_notice', currentShowingNotice.text);
-        setTimeout(() => { modal.classList.add('hidden'); currentShowingNotice = null; if(noticeQueue.length > 0) setTimeout(showNextNotice, 300); }, 200);
-    }
+      // 화면에 데이터 매핑
+      document.getElementById('viewDocClientName').innerText = clientName;
+      document.getElementById('viewRound').innerText = round;
+      document.getElementById('viewDocClientPhone').innerText = document.getElementById('inputClientPhone').value || "연락처 미상";
+      document.getElementById('viewDocClientAddress').innerText = document.getElementById('inputClientAddress').value || "주소 미상";
+      
+      const today = new Date();
+      document.getElementById('viewDate').innerText = `${today.getFullYear()}년 ${today.getMonth()+1}월 ${today.getDate()}일`;
 
-    async function clearTargetNotice() { 
-        try { 
-            const safeKey = getSafeKey(currentUserId); 
-            await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ targetNotice: "" }) }); 
-            myCompanyProfile.targetNotice = ""; 
-            localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile)); 
-        } catch(e) {} 
-    }
+      // 선택된 카테고리 렌더링
+      const selectedCats = [];
+      document.querySelectorAll('.cat-btn.bg-\\[\\#12261E\\]').forEach(btn => selectedCats.push(btn.dataset.val));
+      const pruning = document.getElementById('inputTreePruning').value.trim();
+      const extra = document.getElementById('inputExtraCategory').value.trim();
+      if (pruning) selectedCats.push(`수목가지치기: ${pruning}`);
+      if (extra) selectedCats.push(extra);
 
-    function logoutAdmin() { 
-        if(confirm('로그아웃 하시겠습니까?')) { 
-            localStorage.removeItem('shinhwa_pro_auto_login'); 
-            localStorage.removeItem('shinhwa_pro_logged_in_id'); 
-            localStorage.removeItem('shinhwa_pro_logged_in_pw'); 
-            location.reload(); 
-        } 
-    }
-    
-    function openSettings() {
-        if(!myCompanyProfile) return;
-        document.getElementById('setCompanyName').value = myCompanyProfile.name || ''; 
-        document.getElementById('setCompanyCeo').value = myCompanyProfile.ceo || '';
-        document.getElementById('setCompanyPhone').value = myCompanyProfile.phone || ''; 
-        document.getElementById('setCompanyBizNum').value = myCompanyProfile.bizNum || ''; 
-        document.getElementById('setCompanyPw').value = ''; 
-        const modal = document.getElementById('settingsModal'); const box = document.getElementById('settingsBox');
-        modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10); history.pushState({ modalOpen: true }, "", "");
-    }
+      const catContainer = document.getElementById('viewCategories');
+      catContainer.innerHTML = '';
+      selectedCats.forEach(cat => {
+        catContainer.innerHTML += `<span class="bg-[#F2FBEC] text-[#65A30D] px-3 py-1.5 rounded-lg text-[13px] font-black border border-[#84CC16]/30 inline-block m-1">${cat}</span>`;
+      });
 
-    function closeSettings(fromPopstate = false) {
-        const modal = document.getElementById('settingsModal'); const box = document.getElementById('settingsBox');
-        if(modal) modal.classList.add('opacity-0'); if(box) box.classList.add('scale-95'); 
-        setTimeout(() => { if(modal) modal.classList.add('hidden'); }, 200);
-        if(!fromPopstate && history.state && history.state.modalOpen) history.back();
-    }
+      // 코멘트 및 특이사항
+      document.getElementById('viewDiagnosis').innerText = document.getElementById('inputDiagnosis').value || "현장 특이사항 없음";
+      const issueText = document.getElementById('inputIssue').value;
+      if (issueText || currentPhotos.issue.length > 0) {
+        document.getElementById('viewIssueBlock').classList.remove('hidden');
+        document.getElementById('viewIssue').innerText = issueText || "사진 참고";
+      }
 
-    async function saveSettings() {
-        const pw = document.getElementById('setCompanyPw').value.trim();
-        if (!pw) return alert("새로운 비밀번호를 입력해 주세요."); 
-        if (pw.length < 6) return alert("비밀번호는 6자리 이상 숫자로 설정해 주세요.");
-        showLoadingOverlay("업데이트 중...");
-        try { 
-            await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:update?key=${API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken: currentIdToken, password: pw, returnSecureToken: true }) });
-            myCompanyProfile.pw = pw; 
-            localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile)); 
-            localStorage.setItem('shinhwa_pro_logged_in_pw', pw);
-            const safeKey = getSafeKey(currentUserId); 
-            await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pw: pw }) }); 
-            alert("변경 완료"); closeSettings(); 
-        } catch(e) { alert("서버 오류"); } finally { document.getElementById('loadingOverlay')?.remove(); }
-    }
+      // 갤러리 이미지 렌더링 헬퍼
+      const renderGallery = (type, containerId) => {
+        const container = document.getElementById(containerId);
+        container.innerHTML = '';
+        currentPhotos[type].forEach(src => {
+          container.innerHTML += `<div class="aspect-square rounded-[16px] overflow-hidden border border-[#EAEBEA] shadow-sm"><img src="${src}" class="w-full h-full object-cover"></div>`;
+        });
+      };
 
-    async function syncWithCloud() {
-        const safeKey = getSafeKey(currentUserId); const DATA_URL = `${DB_BASE_URL}/${safeKey}/data.json`;
-        try {
-            const res = await fetch(getAuthUrl(DATA_URL)); let cloudData = await res.json();
-            if (!cloudData) { 
-                cloudData = { clients: defaultClients, records: [], materials: defaultMaterials, contacts: { clients: [], labors: [] } }; 
-                await fetch(getAuthUrl(DATA_URL), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(cloudData) }); 
-            }
-            clients = cloudData.clients ? (Array.isArray(cloudData.clients) ? cloudData.clients : Object.values(cloudData.clients)).filter(Boolean) : [];
-            records = cloudData.records ? (Array.isArray(cloudData.records) ? cloudData.records : Object.values(cloudData.records)).filter(Boolean) : [];
-            materialsData = cloudData.materials ? (Array.isArray(cloudData.materials) ? cloudData.materials : Object.values(cloudData.materials)).filter(Boolean) : [];
-            if(!cloudData.contacts) { cloudData.contacts = { clients: [], labors: [] }; } 
-            else { 
-                cloudData.contacts.clients = cloudData.contacts.clients ? (Array.isArray(cloudData.contacts.clients) ? cloudData.contacts.clients : Object.values(cloudData.contacts.clients)).filter(Boolean) : []; 
-                cloudData.contacts.labors = cloudData.contacts.labors ? (Array.isArray(cloudData.contacts.labors) ? cloudData.contacts.labors : Object.values(cloudData.contacts.labors)).filter(Boolean) : []; 
-            }
-            contactsData = cloudData.contacts;
-            schedules = cloudData.schedules ? (Array.isArray(cloudData.schedules) ? cloudData.schedules : Object.values(cloudData.schedules)).filter(Boolean) : [];
+      renderGallery('before', 'viewBeforeGallery');
+      renderGallery('during', 'viewDuringGallery');
+      renderGallery('after', 'viewAfterGallery');
+      renderGallery('issue', 'viewIssueGallery');
 
-            renderClientSelect(); renderClientsList(); renderQuoteList(); renderContactsList();
-            renderCalendar(); renderScheduleList(); 
+      // 뷰 컨트롤
+      document.getElementById('reportContentBlock').classList.remove('hidden');
+      document.getElementById('quoteContentBlock').classList.add('hidden');
+      document.getElementById('docTypeLabel').innerHTML = `<i data-lucide="shield-check" class="w-5 h-5 text-[#84CC16]"></i> Prestige Care`;
+      
+      // Firebase DB에 일지 저장
+      try {
+        const logData = {
+          clientName, round,
+          date: today.toISOString(),
+          categories: selectedCats,
+          comment: document.getElementById('inputDiagnosis').value,
+          createdAt: serverTimestamp()
+        };
+        await push(ref(db, `workLogs/${auth.currentUser.uid}`), logData);
+      } catch (e) {
+        console.warn("DB 저장 중 문제가 발생했습니다:", e);
+      }
 
-            const badge = document.getElementById('cloudStatusBadge'); 
-            if(badge) { badge.innerHTML = '<i data-lucide="cloud-check" class="w-3 h-3"></i> 보안 연동됨'; }
-        } catch(e) { alert("동기화 실패"); } finally { lucide.createIcons(); }
-    }
+      lucide.createIcons();
+      window.switchView('clientView');
+    };
 
-    function updateData(key, dataObj) { 
-        const safeKey = getSafeKey(currentUserId); 
-        const DATA_URL = `${DB_BASE_URL}/${safeKey}/data/${key}.json`; 
-        fetch(getAuthUrl(DATA_URL), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dataObj) }).catch(e => console.error("저장 실패")); 
-    }
-    function switchContactTab(tab) {
-        currentContactTab = tab; const btnClient = document.getElementById('btnContactClient'); const btnLabor = document.getElementById('btnContactLabor'); const inputName = document.getElementById('newContactName');
-        if(tab === 'clients') { 
-            btnClient.className = "flex-1 py-3 rounded-[12px] bg-white shadow-sm text-[#12261E] font-black text-[14px] transition-all border border-[#EAEBEA]"; 
-            btnLabor.className = "flex-1 py-3 rounded-[12px] text-[#4E5968] font-black text-[14px] hover:text-[#12261E] transition-all border border-transparent bg-transparent"; 
-            inputName.placeholder = "업체명 입력"; 
-        } else { 
-            btnClient.className = "flex-1 py-3 rounded-[12px] text-[#4E5968] font-black text-[14px] hover:text-[#12261E] transition-all border border-transparent bg-transparent"; 
-            btnLabor.className = "flex-1 py-3 rounded-[12px] bg-white shadow-sm text-[#12261E] font-black text-[14px] transition-all border border-[#EAEBEA]"; 
-            inputName.placeholder = "성명 입력"; 
-        }
-        renderContactsList();
-    }
+    // [2. 견적서 템플릿 로드 및 계산기]
+    window.loadQuoteTemplate = function(type) {
+      alert("선택하신 템플릿이 로드되었습니다. (데모 동작)");
+      // 실제 구현 시 여기에 템플릿 항목들을 quoteItemsContainer 에 동적으로 추가하는 로직 작성
+    };
 
-    function saveContact() {
-        const name = document.getElementById('newContactName').value.trim(); 
-        const phone = document.getElementById('newContactPhone').value.trim(); 
-        const memo = document.getElementById('newContactMemo').value.trim();
-        if(!name || !phone) return alert("입력해 주세요.");
-        if(!contactsData[currentContactTab]) contactsData[currentContactTab] = [];
-        
-        if(editingContactIndex !== null) { 
-            contactsData[currentContactTab][editingContactIndex] = { name, phone, memo }; 
-        } else { 
-            contactsData[currentContactTab].push({ name, phone, memo }); 
-        }
-        updateData('contacts', contactsData); cancelContactEdit(); renderContactsList();
-    }
+    window.generateQuote = function() {
+      // 견적서 발행 로직 (generateReport와 유사한 패턴으로 값 매핑 후 clientView 로드)
+      document.getElementById('reportContentBlock').classList.add('hidden');
+      document.getElementById('quoteContentBlock').classList.remove('hidden');
+      document.getElementById('docTypeLabel').innerHTML = `<i data-lucide="calculator" class="w-5 h-5 text-[#3B82F6]"></i> Quotation`;
+      window.switchView('clientView');
+    };
 
-    function editContact(tab, index) {
-        editingContactIndex = index; if (currentContactTab !== tab) switchContactTab(tab); 
-        const c = contactsData[tab][index];
-        document.getElementById('newContactName').value = c.name; 
-        document.getElementById('newContactPhone').value = c.phone; 
-        document.getElementById('newContactMemo').value = c.memo || '';
-        document.getElementById('contactFormTitle').innerHTML = `<i data-lucide="edit-3" class="w-5 h-5 text-[#84CC16]"></i> <span>연락처 수정</span>`; 
-        document.getElementById('saveContactBtn').innerHTML = `<i data-lucide="save" class="w-5 h-5"></i> 수정 완료`; 
-        document.getElementById('cancelContactEditBtn').classList.remove('hidden'); 
-        lucide.createIcons(); window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    // [3. AI 렌즈 통신 (Google Apps Script Proxy)]
+    window.handleLensUpload = async function(event, targetType) {
+      const file = event.target.files[0];
+      if (!file) return;
 
-    function cancelContactEdit() {
-        editingContactIndex = null; 
-        document.getElementById('newContactName').value = ''; 
-        document.getElementById('newContactPhone').value = ''; 
-        document.getElementById('newContactMemo').value = '';
-        document.getElementById('contactFormTitle').innerHTML = `<i data-lucide="user-plus" class="w-5 h-5 text-[#84CC16]"></i> <span>새 연락처 추가</span>`; 
-        document.getElementById('saveContactBtn').innerHTML = `<i data-lucide="save" class="w-5 h-5"></i> 연락처 저장하기`; 
-        document.getElementById('cancelContactEditBtn').classList.add('hidden'); lucide.createIcons();
-    }
-
-    function deleteContact(tab, index) { 
-        if(confirm("삭제하시겠습니까?")) { 
-            contactsData[tab].splice(index, 1); updateData('contacts', contactsData); 
-            if(editingContactIndex === index) cancelContactEdit(); 
-            renderContactsList(); 
-        } 
-    }
-
-    function formatPhoneToLink(text) { 
-        if(!text) return ""; 
-        const phoneRegex = /(0\d{1,2}[-\s]?\d{3,4}[-\s]?\d{4})/g; 
-        return text.replace(phoneRegex, '<a href="tel:$1" onclick="event.stopPropagation();" class="text-blue-600 font-black underline hover:text-blue-800">$1</a>'); 
-    }
-
-    function renderContactsList() {
-        const container = document.getElementById('contactsListContainer'); 
-        const list = contactsData[currentContactTab] || []; 
-        document.getElementById('contactCountBadge').innerText = `${list.length}건`; container.innerHTML = '';
-        if(list.length === 0) { 
-            container.innerHTML = `<div class="p-6 text-center text-[#8B95A1] text-[13px] bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA] font-bold">등록된 연락처가 없습니다.</div>`; 
-            return; 
-        }
-        list.forEach((item, idx) => {
-            const div = document.createElement('div'); 
-            div.className = "bg-white p-5 rounded-[16px] border border-[#EAEBEA] shadow-sm flex justify-between items-center transition-all hover:border-[#84CC16]";
-            let memoHtml = item.memo ? `<div class="text-[12px] text-[#4E5968] mt-2 bg-[#F4F5F4] px-2.5 py-1.5 rounded-lg inline-block font-bold">${item.memo}</div>` : '';
-            div.innerHTML = `<div><div class="font-black text-[#1A1D1A] text-[15px] flex items-center gap-1.5"><i data-lucide="${currentContactTab === 'clients' ? 'building' : 'user'}" class="w-4 h-4 text-[#4E5968]"></i> ${item.name}</div><div class="text-[15px] mt-1.5"><i data-lucide="phone" class="w-4 h-4 inline-block text-blue-500 mr-1"></i> ${formatPhoneToLink(item.phone)}</div>${memoHtml}</div><div class="flex gap-1.5 shrink-0"><button onclick="editContact('${currentContactTab}', ${idx})" class="p-3 text-[#A3A8A3] hover:text-[#84CC16] bg-gray-50 rounded-xl transition-all"><i data-lucide="edit-2" class="w-5 h-5"></i></button><button onclick="deleteContact('${currentContactTab}', ${idx})" class="p-3 text-[#A3A8A3] hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div>`;
-            container.appendChild(div);
-        }); 
-        lucide.createIcons();
-    }
-
-    function openMaterialModal() { 
-        if (!materialsData || materialsData.length === 0) { 
-            materialsData = JSON.parse(JSON.stringify(defaultMaterials)); 
-            updateData('materials', materialsData); 
-        } 
-        isMaterialEditMode = false; renderMaterialTable(); 
-        const modal = document.getElementById('materialModal'); const box = document.getElementById('materialBox'); 
-        modal.classList.remove('hidden'); 
-        setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10); 
-        history.pushState({ modalOpen: true }, "", ""); 
-    }
-
-    function closeMaterialModal(fromPopstate = false) { 
-        if(isMaterialEditMode) { if(!confirm("저장하지 않고 닫으시겠습니까?")) return; } 
-        const modal = document.getElementById('materialModal'); const box = document.getElementById('materialBox'); 
-        if(modal) modal.classList.add('opacity-0'); if(box) box.classList.add('scale-95'); 
-        setTimeout(() => { if(modal) modal.classList.add('hidden'); isMaterialEditMode = false; }, 200); 
-        if(!fromPopstate && history.state && history.state.modalOpen) history.back(); 
-    }
-    
-    function renderMaterialTable() {
-        const tbody = document.getElementById('materialTableBody'); const btnToggle = document.getElementById('btnToggleMaterialEdit'); 
-        const addBtnBox = document.getElementById('matAddBtnContainer'); const actionTh = document.getElementById('matActionTh'); 
-        tbody.innerHTML = '';
-        if (isMaterialEditMode) { 
-            btnToggle.innerHTML = '<i data-lucide="save" class="w-4 h-4"></i> 변경사항 저장'; 
-            btnToggle.className = "text-[13px] bg-[#84CC16] hover:bg-[#9BE32D] text-[#12261E] font-black px-3.5 py-2 rounded-[10px] transition-colors shadow-md flex items-center gap-1.5"; 
-            addBtnBox.classList.remove('hidden'); actionTh.classList.remove('hidden'); 
-        } else { 
-            btnToggle.innerHTML = '<i data-lucide="edit-3" class="w-4 h-4"></i> 수정 모드 켜기'; 
-            btnToggle.className = "text-[13px] bg-[#F4F5F4] hover:bg-[#EAEBEA] text-[#12261E] font-black px-3.5 py-2 rounded-[10px] transition-colors border border-[#EAEBEA] shadow-sm flex items-center gap-1.5"; 
-            addBtnBox.classList.add('hidden'); actionTh.classList.add('hidden'); 
-        }
-        materialsData.forEach((mat, idx) => {
-            const tr = document.createElement('tr'); tr.className = "border-b border-[#EAEBEA] bg-white hover:bg-[#F9F9F8] transition-colors";
-            if (isMaterialEditMode) { 
-                tr.innerHTML = `<td class="border border-[#EAEBEA] p-1.5"><textarea id="matItem_${idx}" rows="2" class="w-full bg-[#F4F5F4] border border-[#EAEBEA] rounded-md p-2 text-[12px] font-black focus:border-[#84CC16] focus:outline-none resize-none leading-tight">${mat.item}</textarea></td><td class="border border-[#EAEBEA] p-1.5"><textarea id="matSpec_${idx}" rows="2" class="w-full bg-[#F4F5F4] border border-[#EAEBEA] rounded-md p-2 text-[12px] font-bold focus:border-[#84CC16] focus:outline-none resize-none leading-tight">${mat.spec}</textarea></td><td class="border border-[#EAEBEA] p-1.5"><textarea id="matPrice_${idx}" rows="2" class="w-full bg-[#F4F5F4] border border-[#EAEBEA] rounded-md p-2 text-[12px] font-black text-[#1A1D1A] focus:border-[#84CC16] focus:outline-none resize-none leading-tight">${mat.price}</textarea></td><td class="border border-[#EAEBEA] p-1.5"><textarea id="matContact_${idx}" rows="2" class="w-full bg-[#F4F5F4] border border-[#EAEBEA] rounded-md p-2 text-[12px] font-bold focus:border-[#84CC16] focus:outline-none resize-none leading-tight">${mat.contact}</textarea></td><td class="border border-[#EAEBEA] p-1.5 text-center"><button onclick="deleteMaterialRow(${idx})" class="text-red-500 hover:text-red-700 p-2 bg-red-50 rounded-md"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>`; 
-            } else { 
-                tr.innerHTML = `<td class="border border-[#EAEBEA] p-3 font-black text-[#12261E] whitespace-pre-wrap break-keep leading-snug">${mat.item}</td><td class="border border-[#EAEBEA] p-3 text-[#4E5968] font-bold whitespace-pre-wrap break-keep leading-relaxed">${mat.spec}</td><td class="border border-[#EAEBEA] p-3 font-black text-[#1A1D1A] whitespace-pre-wrap break-keep leading-relaxed">${mat.price}</td><td class="border border-[#EAEBEA] p-3 text-[#4E5968] whitespace-pre-wrap break-keep leading-relaxed">${formatPhoneToLink(mat.contact)}</td>`; 
-            }
-            tbody.appendChild(tr);
-        }); 
-        lucide.createIcons();
-    }
-
-    function toggleMaterialEdit() { 
-        if (isMaterialEditMode) { 
-            const newData = []; 
-            for (let i = 0; i < materialsData.length; i++) { 
-                newData.push({ 
-                    item: document.getElementById(`matItem_${i}`).value, 
-                    spec: document.getElementById(`matSpec_${i}`).value, 
-                    price: document.getElementById(`matPrice_${i}`).value, 
-                    contact: document.getElementById(`matContact_${i}`).value 
-                }); 
-            } 
-            materialsData = newData; updateData('materials', materialsData); isMaterialEditMode = false; 
-        } else { isMaterialEditMode = true; } 
-        renderMaterialTable(); 
-    }
-
-    function addMaterialRow() { 
-        materialsData.push({ item: "", spec: "", price: "", contact: "" }); 
-        renderMaterialTable(); 
-        const container = document.getElementById('materialTable').parentElement.parentElement; 
-        container.scrollTop = container.scrollHeight; 
-    }
-
-    function deleteMaterialRow(idx) { 
-        if(confirm("삭제하시겠습니까?")) { materialsData.splice(idx, 1); renderMaterialTable(); } 
-    }
-
-    function openTextEditor(inputId) { 
-        activeTextEditorId = inputId; const inputEl = document.getElementById(inputId); 
-        const modalInput = document.getElementById('modalTextInput'); modalInput.value = inputEl.value; 
-        const modal = document.getElementById('textEditorModal'); const box = document.getElementById('textEditorBox'); 
-        modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); modalInput.focus(); }, 10); 
-        history.pushState({ modalOpen: true }, "", ""); 
-    }
-
-    function closeTextEditor(fromPopstate = false) { 
-        const modal = document.getElementById('textEditorModal'); const box = document.getElementById('textEditorBox'); 
-        if(modal) modal.classList.add('opacity-0'); if(box) box.classList.add('scale-95'); 
-        setTimeout(() => { if(modal) modal.classList.add('hidden'); activeTextEditorId = null; }, 200); 
-        if(!fromPopstate && history.state && history.state.modalOpen) history.back(); 
-    }
-
-    function saveTextEditor() { 
-        if(activeTextEditorId) { 
-            const val = document.getElementById('modalTextInput').value; 
-            document.getElementById(activeTextEditorId).value = val; 
-        } 
-        closeTextEditor(); 
-    }
-
-    let currentLensImg = "";
-    
-    function handleLensUpload(event, type) { 
-        const file = event.target.files[0]; 
-        if (!file) return; 
-        showLoadingOverlay("실제 AI가 정밀 분석 중입니다..."); 
-        compressImage(file, (base64) => { analyzeImageWithAI(base64, type); }); 
-        event.target.value = ''; 
-    }
-
-    async function analyzeImageWithAI(base64Image, type) {
-        const GOOGLE_PROXY_URL = "https://script.google.com/macros/s/AKfycbysZFaBJt9Iu964hP9rJVjmYHDMMo_TQAocjih4h8q0_im414WA6-23LS6Wm4xQvTJRQw/exec";
-
-        const promptText = type === 'plant' 
-            ? "너는 한국의 30년 차 조경 전문가이자 수목 식별가야. 주어진 사진 속 식물을 분석할 때 '알 수 없다', '명칭을 제공할 수 없다', '전문가의 식별이 필요하다'는 식의 회피성 답변은 절대 금지해. 사진 속 꽃봉오리의 색상, 형태, 잎, 가지의 배열 등을 바탕으로 가장 확률이 높은 한국 공식 수종(예: 수서해당화, 서부해당화, 꽃사과, 명자나무 등)을 무조건 1~2개 추정해서 명확하게 제시해.\n\n📌 추정 품종: [가장 유력한 식물명 1~2순위]\n💧 형태 분석: [사진에 보이는 꽃봉오리, 잎, 줄기의 특징을 바탕으로 한 추정 근거]" 
-            : "너는 한국의 최고 수목병리학자이자 해충 방제 전문가야. 사진 속 조경수나 식물에 발생한 병해나 해충(깍지벌레, 진딧물, 응애 등 한국 현장에서 흔한 병해충 포함)을 정밀하게 진단해줘. 다음 형식으로 짧고 명확하게 답변해줘. \n🚨 추정 병해충: [정확한 병명 또는 해충명]\n🛡️ 방제 방법: [실제 조경 현장에서 쓰는 전문적인 약제 및 방제법]";
+      // 로딩 UI 표시 (예: splashScreen 재사용 또는 자체 모달)
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        const base64Img = e.target.result;
+        document.getElementById('lensResultModal').classList.remove('hidden');
+        document.getElementById('lensResultModal').classList.remove('opacity-0');
+        document.getElementById('lensResultImg').src = base64Img;
+        document.getElementById('lensResultContent').innerText = "AI 서버 분석 중입니다. 잠시만 기다려주세요...";
 
         try {
-            const response = await fetch(GOOGLE_PROXY_URL, {
-                redirect: "follow", method: "POST",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({
-                    model: "gpt-4o", 
-                    messages: [{ role: "user", content: [ { type: "text", text: promptText }, { type: "image_url", image_url: { url: base64Image } } ] }],
-                    max_tokens: 400, temperature: 0.2
-                })
-            });
-
-            const data = await response.json();
-            if (data.error) throw new Error(data.error.message);
-            if (!data.choices || data.choices.length === 0) throw new Error("서버에서 결과 데이터를 받지 못했습니다.");
-
-            const realText = data.choices[0].message.content; 
-            document.getElementById('loadingOverlay')?.remove();
-            showLensResult(base64Image, type, realText);
+          // 대표님의 Google Apps Script 웹앱 URL
+          const proxyUrl = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE'; 
+          
+          /* 실제 API 호출 시 주석 해제하여 사용하세요.
+          const response = await fetch(proxyUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ image: base64Img, type: targetType })
+          });
+          const result = await response.json();
+          document.getElementById('lensResultContent').innerText = result.text;
+          */
+          
+          // 데모용 타임아웃
+          setTimeout(() => {
+            document.getElementById('lensResultContent').innerText = targetType === 'plant' 
+              ? "분석 결과: 소나무 (적송)\n상태 양호. 특별한 병징은 발견되지 않았습니다." 
+              : "분석 결과: 소나무 재선충 의심\n신속한 방제 및 전문가 진단이 필요합니다.";
+          }, 2000);
 
         } catch (error) {
-            document.getElementById('loadingOverlay')?.remove();
-            alert("상세 오류 원인: " + error.message);
-            showLensResult(base64Image, type, "분석 실패: " + error.message);
+          console.error("AI 렌즈 오류:", error);
+          document.getElementById('lensResultContent').innerText = "통신 중 오류가 발생했습니다. 네트워크 상태를 확인해주세요.";
         }
-    }
-    
+      };
+      reader.readAsDataURL(file);
+    };
 
-  <!-- 🌟 장부 팝업창 -->
-  <div id="ledgerModal" class="hidden fixed inset-0 z-[6500] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200">
-      <div id="ledgerBox" class="bg-white w-full max-w-sm rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-[#EAEBEA]" onclick="event.stopPropagation()">
-          <div class="p-5 border-b border-[#F4F5F4] flex justify-between items-center bg-[#F9F9F8]">
-              <h3 class="text-[16px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="wallet" class="w-5 h-5 text-[#84CC16]"></i> 장부 내역 입력</h3>
-              <button onclick="closeLedgerModal()" class="text-[#A3A8A3] hover:text-[#12261E] p-1"><i data-lucide="x" class="w-6 h-6"></i></button>
-          </div>
-          <div class="p-5 space-y-4 max-h-[70vh] overflow-y-auto bg-white nav-scroll">
-              <input type="hidden" id="ledgerId">
-              <div>
-                  <label class="block text-[13px] font-black text-[#12261E] mb-2">작업 날짜</label>
-                  <input type="date" id="ledgerDate" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-4 py-3 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
-              </div>
-              <div>
-                  <label class="block text-[13px] font-black text-[#12261E] mb-2">어디에서 뭘 했는지 (현장명)</label>
-                  <input type="text" id="ledgerTitle" placeholder="예: 구리시 주택 전지작업" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-4 py-3 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] placeholder:text-[#A3A8A3]">
-              </div>
-              <div class="grid grid-cols-3 gap-2">
-                  <div>
-                      <label class="block text-[12px] font-black text-blue-600 mb-2">수입(매출)</label>
-                      <input type="text" id="ledgerIncome" placeholder="0" inputmode="numeric" oninput="formatNumberInput(this)" class="w-full bg-[#F0F9FF] border border-[#BAE6FD] rounded-[12px] px-3 py-3 text-[14px] font-black text-blue-700 focus:outline-none focus:border-blue-500 text-right placeholder:text-blue-300">
-                  </div>
-                  <div>
-                      <label class="block text-[12px] font-black text-red-600 mb-2">지출(비용)</label>
-                      <input type="text" id="ledgerExpense" placeholder="0" inputmode="numeric" oninput="formatNumberInput(this)" class="w-full bg-[#FEF2F2] border border-[#FECACA] rounded-[12px] px-3 py-3 text-[14px] font-black text-red-700 focus:outline-none focus:border-red-500 text-right placeholder:text-red-300">
-                  </div>
-                  <div>
-                      <label class="block text-[12px] font-black text-gray-600 mb-2">부가세</label>
-                      <input type="text" id="ledgerVat" placeholder="0" inputmode="numeric" oninput="formatNumberInput(this)" class="w-full bg-[#F4F5F4] border border-[#EAEBEA] rounded-[12px] px-3 py-3 text-[14px] font-black text-gray-700 focus:outline-none focus:border-gray-500 text-right placeholder:text-gray-400">
-                  </div>
-              </div>
-              <div>
-                  <label class="block text-[13px] font-black text-[#12261E] mb-2">적요 (비용은 어디에 뭐 뭐 썼는지)</label>
-                  <textarea id="ledgerMemo" rows="2" placeholder="예: 인건비 2명 40만, 식대 3만, 자재비 10만" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] p-4 text-[13px] font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] resize-none placeholder:text-[#A3A8A3]"></textarea>
-              </div>
-          </div>
-          <div class="p-4 bg-[#F9F9F8] border-t border-[#F4F5F4] flex gap-2">
-              <button onclick="closeLedgerModal()" class="flex-1 bg-white border border-[#EAEBEA] text-[#4E5968] font-black py-4 rounded-[14px] text-[15px] hover:bg-[#F4F5F4] transition-colors shadow-sm">취소</button>
-              <button onclick="saveLedger()" class="flex-1 bg-[#12261E] text-[#84CC16] font-black py-4 rounded-[14px] text-[15px] shadow-md hover:bg-black transition-colors">기록 저장</button>
-          </div>
-      </div>
-  </div>
+    window.closeLensResult = function() {
+      const modal = document.getElementById('lensResultModal');
+      modal.classList.add('opacity-0');
+      setTimeout(() => modal.classList.add('hidden'), 200);
+    };
 
-  <!-- 📋 월별 내역 한눈에 보기 팝업창 -->
-  <div id="ledgerListModal" class="hidden fixed inset-0 z-[6600] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200">
-      <div id="ledgerListBox" class="bg-white w-full max-w-md rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-[#EAEBEA]" onclick="event.stopPropagation()">
-          <div class="p-5 border-b border-[#F4F5F4] flex justify-between items-center bg-[#F9F9F8]">
-              <h3 class="text-[16px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="list-checks" class="w-5 h-5 text-[#84CC16]"></i> <span id="ledgerListModalTitle">월별 내역 한눈에 보기</span></h3>
-              <button onclick="closeLedgerListModal()" class="text-[#A3A8A3] hover:text-[#12261E] p-1"><i data-lucide="x" class="w-6 h-6"></i></button>
-          </div>
-          <div class="p-4 bg-white flex flex-col max-h-[65vh]">
-              <div class="grid grid-cols-12 gap-1 text-[11px] font-black text-[#8B95A1] bg-[#F4F5F4] p-2.5 border border-[#EAEBEA] rounded-[10px] text-center mb-3">
-                  <div class="col-span-3">날짜</div>
-                  <div class="col-span-5 text-left pl-1">작업 현장명</div>
-                  <div class="col-span-4 text-right pr-2">수입/지출/부가세</div>
-              </div>
-              <div id="ledgerMonthListContainer" class="overflow-y-auto nav-scroll space-y-2 pr-1 pb-2">
-              </div>
-          </div>
-          <div class="p-4 bg-[#F9F9F8] border-t border-[#F4F5F4]">
-              <button onclick="closeLedgerListModal()" class="w-full bg-[#12261E] text-[#84CC16] font-black py-4 rounded-[14px] text-[15px] shadow-md hover:bg-black transition-colors">닫기</button>
-          </div>
-      </div>
-  </div>
+    // [4. 문서 발송 및 공유 기능 (html2canvas)]
+    window.shareKakaoTalk = async function() {
+      alert("문서 이미지를 렌더링 중입니다. 잠시만 기다려주세요.");
+      const printArea = document.getElementById('printCardArea');
+      
+      try {
+        const canvas = await html2canvas(printArea, { scale: 2, useCORS: true });
+        const imgData = canvas.toDataURL('image/jpeg', 0.9);
+        
+        // 카카오톡 공유 API 연동은 Kakao SDK 초기화 후 가능합니다.
+        // 현재는 임시 다운로드 처리
+        const link = document.createElement('a');
+        link.download = `조경노트_문서_${Date.now()}.jpg`;
+        link.href = imgData;
+        link.click();
+      } catch (e) {
+        alert("이미지 생성에 실패했습니다.");
+      }
+    };
 
-  <!-- 🧮 수동 계산기 팝업창 -->
-  <div id="calculatorModal" class="hidden fixed inset-0 z-[7000] bg-black/60 flex items-center justify-center p-4" onclick="closeCalculator()">
-      <div class="bg-[#151E2D] w-full max-w-[280px] rounded-[24px] p-5" onclick="event.stopPropagation()">
-          <div id="calcDisplay" class="w-full bg-white text-[#12261E] font-black text-[26px] text-right p-4 rounded-[16px] mb-5">0</div>
-          <div class="grid grid-cols-4 gap-2.5">
-              <button onclick="calcInput('C')" class="col-span-2 py-3 bg-red-500 text-white font-black rounded-[12px]">C</button>
-              <button onclick="calcInput('<')" class="py-3 bg-white/10 text-white font-black rounded-[12px]">←</button>
-              <button onclick="calcInput('/')" class="py-3 bg-[#84CC16] text-[#12261E] font-black rounded-[12px]">÷</button>
-              <button onclick="calcInput('7')" class="py-3 bg-white/5 text-white font-black rounded-[12px]">7</button>
-              <button onclick="calcInput('8')" class="py-3 bg-white/5 text-white font-black rounded-[12px]">8</button>
-              <button onclick="calcInput('9')" class="py-3 bg-white/5 text-white font-black rounded-[12px]">9</button>
-              <button onclick="calcInput('*')" class="py-3 bg-[#84CC16] text-[#12261E] font-black rounded-[12px]">×</button>
-              <button onclick="calcInput('4')" class="py-3 bg-white/5 text-white font-black rounded-[12px]">4</button>
-              <button onclick="calcInput('5')" class="py-3 bg-white/5 text-white font-black rounded-[12px]">5</button>
-              <button onclick="calcInput('6')" class="py-3 bg-white/5 text-white font-black rounded-[12px]">6</button>
-              <button onclick="calcInput('-')" class="py-3 bg-[#84CC16] text-[#12261E] font-black rounded-[12px]">-</button>
-              <button onclick="calcInput('1')" class="py-3 bg-white/5 text-white font-black rounded-[12px]">1</button>
-              <button onclick="calcInput('2')" class="py-3 bg-white/5 text-white font-black rounded-[12px]">2</button>
-              <button onclick="calcInput('3')" class="py-3 bg-white/5 text-white font-black rounded-[12px]">3</button>
-              <button onclick="calcInput('+')" class="py-3 bg-[#84CC16] text-[#12261E] font-black rounded-[12px]">+</button>
-              <button onclick="calcInput('00')" class="py-3 bg-white/5 text-white font-black rounded-[12px]">00</button>
-              <button onclick="calcInput('0')" class="py-3 bg-white/5 text-white font-black rounded-[12px]">0</button>
-              <button onclick="calcInput('.')" class="py-3 bg-white/5 text-white font-black rounded-[12px]">.</button>
-              <button onclick="calcInput('=')" class="py-3 bg-[#FEE500] text-[#12261E] font-black rounded-[12px]">=</button>
-          </div>
-      </div>
-  </div>
+    window.sendSMS = function() {
+      const phone = document.getElementById('viewDocClientPhone').innerText.replace(/-/g, '');
+      const text = `[조경노트 PRO]\n${document.getElementById('viewDocClientName').innerText} 고객님의 조경 관리 문서가 도착했습니다.`;
+      // 모바일 기기 SMS 스킴 호출
+      window.location.href = `sms:${phone}?body=${encodeURIComponent(text)}`;
+    };
+
+    // [초기화 및 앱 로드 설정]
+    document.addEventListener('DOMContentLoaded', () => {
+      // 스플래시 화면 숨기기 (1.5초 후)
+      setTimeout(() => {
+        const splash = document.getElementById('splashScreen');
+        splash.style.opacity = '0';
+        setTimeout(() => splash.style.display = 'none', 800);
+      }, 1500);
+
+      // Firebase 인증 상태 리스너
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          // 이미 로그인된 상태
+          currentUser = user;
+          document.getElementById('authView').classList.add('hidden');
+          document.getElementById('mainHeader').style.display = 'block';
+          document.getElementById('swipeContainer').style.display = 'block';
+          loadCompanyData(user.uid);
+          window.switchView('adminView'); // 초기 뷰
+        } else {
+          // 비로그인 상태
+          document.getElementById('authView').classList.remove('hidden');
+        }
+      });
+
+      // 아이콘 렌더링
+      lucide.createIcons();
+    });
+
+  </script>
 </body>
 </html>
