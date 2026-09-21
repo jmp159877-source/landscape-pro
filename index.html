@@ -365,10 +365,14 @@
             <input type="text" id="newClientName" placeholder="고객명 또는 현장명" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16]">
             <input type="tel" id="newClientPhone" oninput="autoHyphen(this)" placeholder="연락처" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16]">
             <input type="text" id="newClientAddress" placeholder="주소 입력" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16]">
-            <select id="newClientType" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16]">
-              <option value="정기 관리">정기 관리 (계약처)</option>
-              <option value="개별 고객">개별 고객 (단건/일반)</option>
-            </select>
+            <div class="flex gap-2 w-full">
+                <label class="flex-1 flex items-center justify-center py-3.5 rounded-[12px] bg-[#F4F5F4] border border-[#EAEBEA] text-[#4E5968] cursor-pointer has-[:checked]:bg-[#12261E] has-[:checked]:text-[#84CC16] has-[:checked]:border-[#12261E] transition-all shadow-sm">
+                    <input type="radio" name="newClientType" value="정기 관리" checked class="hidden"><span class="text-[13px] font-black">정기 관리처</span>
+                </label>
+                <label class="flex-1 flex items-center justify-center py-3.5 rounded-[12px] bg-[#F4F5F4] border border-[#EAEBEA] text-[#4E5968] cursor-pointer has-[:checked]:bg-[#12261E] has-[:checked]:text-[#84CC16] has-[:checked]:border-[#12261E] transition-all shadow-sm">
+                    <input type="radio" name="newClientType" value="개별 고객" class="hidden"><span class="text-[13px] font-black">개별 고객처</span>
+                </label>
+            </div>
           </div>
           <div class="flex gap-2">
             <button id="saveClientBtn" onclick="saveClient()" class="flex-1 py-4 bg-[#12261E] text-[#84CC16] rounded-[12px] text-[15px] font-black shadow-md hover:bg-black transition-colors">데이터 저장</button>
@@ -1789,7 +1793,9 @@
     }
     
     function saveClient() {
-        const name = document.getElementById('newClientName').value.trim(); const phone = document.getElementById('newClientPhone').value.trim(); const address = document.getElementById('newClientAddress').value.trim(); const type = document.getElementById('newClientType').value;
+        const name = document.getElementById('newClientName').value.trim(); const phone = document.getElementById('newClientPhone').value.trim(); const address = document.getElementById('newClientAddress').value.trim(); 
+        const typeEl = document.querySelector('input[name="newClientType"]:checked'); 
+        const type = typeEl ? typeEl.value : '정기 관리';
         if(!name || !phone) return alert("고객명과 연락처를 입력하세요.");
         
         if (editingClientIndex !== null) { 
@@ -1828,11 +1834,14 @@
     }
     function editClient(id) {
         editingClientIndex = id; const client = clients.find(c => c.id === id); if(!client) return;
-        document.getElementById('newClientName').value = client.name; document.getElementById('newClientPhone').value = client.phone; document.getElementById('newClientAddress').value = client.address || ''; document.getElementById('newClientType').value = client.type || '정기 관리';
+        document.getElementById('newClientName').value = client.name; document.getElementById('newClientPhone').value = client.phone; document.getElementById('newClientAddress').value = client.address || ''; 
+        let r1 = document.querySelector('input[name="newClientType"][value="정기 관리"]'); let r2 = document.querySelector('input[name="newClientType"][value="개별 고객"]');
+        if (client.type === '개별 고객') { if(r2) r2.checked = true; } else { if(r1) r1.checked = true; }
         document.getElementById('clientFormTitle').innerHTML = `<i data-lucide="edit-3" class="w-5 h-5 text-[#84CC16]"></i> <span>거래처 정보 수정</span>`; document.getElementById('saveClientBtn').innerText = "수정 완료"; document.getElementById('cancelEditBtn').classList.remove('hidden'); lucide.createIcons(); window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     function cancelEdit() {
-        editingClientIndex = null; document.getElementById('newClientName').value = ''; document.getElementById('newClientPhone').value = ''; document.getElementById('newClientAddress').value = ''; document.getElementById('newClientType').value = '정기 관리';
+        editingClientIndex = null; document.getElementById('newClientName').value = ''; document.getElementById('newClientPhone').value = ''; document.getElementById('newClientAddress').value = ''; 
+        let r1_cancel = document.querySelector('input[name="newClientType"][value="정기 관리"]'); if(r1_cancel) r1_cancel.checked = true;
         document.getElementById('clientFormTitle').innerHTML = `<i data-lucide="plus" class="w-5 h-5 text-[#84CC16]"></i> <span>신규 등록</span>`; document.getElementById('saveClientBtn').innerText = "데이터 저장"; document.getElementById('cancelEditBtn').classList.add('hidden'); lucide.createIcons();
     }
     function deleteClient(id) { if(confirm("삭제하시겠습니까?")) { clients = clients.filter(c => c.id !== id); updateData('clients', clients); if(editingClientIndex === id) cancelEdit(); renderClientSelect(); renderClientsList(); } }
