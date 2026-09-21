@@ -181,7 +181,7 @@
         <div class="flex items-center justify-between pb-4 border-b border-[#F4F5F4] relative z-10"><h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="map-pin" class="w-5 h-5 text-[#84CC16]"></i> 현장 기본 정보</h2></div>
         <div class="relative z-10">
           <label class="block text-[13px] font-black text-[#12261E] mb-2">고객명 / 현장명</label>
-          <input type="text" id="clientSelect" list="clientDatalist" oninput="onSelectClient(this.value)" placeholder="기존 거래처 선택 또는 새 고객명 직접 입력" autocomplete="new-password" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] placeholder:text-[#4E5968] placeholder:font-bold">
+          <input type="text" id="clientSelect" list="clientDatalist" oninput="onSelectClient(this.value)" placeholder="기존 거래처 선택 또는 새 고객명 직접 입력" autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] placeholder:text-[#4E5968] placeholder:font-bold">
         </div>
         <div class="grid grid-cols-2 gap-3 relative z-10">
           <div><label class="block text-[13px] font-black text-[#12261E] mb-2">연락처</label><input type="tel" id="inputClientPhone" oninput="autoHyphen(this)" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] placeholder:text-[#4E5968] placeholder:font-bold"></div>
@@ -271,7 +271,7 @@
         </div>
         <div class="relative z-10">
           <label class="block text-[13px] font-black text-[#12261E] mb-2">고객명 / 현장명</label>
-          <input type="text" id="quoteClientSelect" autocomplete="new-password" placeholder="고객명 직접 입력" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16]">
+          <input type="text" id="quoteClientSelect" autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" placeholder="고객명 직접 입력" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16]">
         </div>
         <div class="grid grid-cols-2 gap-3 relative z-10 mt-3">
           <div><label class="block text-[13px] font-black text-[#12261E] mb-2">연락처</label><input type="tel" id="quoteInputClientPhone" oninput="autoHyphen(this)" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16]"></div>
