@@ -2078,11 +2078,9 @@
 // ==========================================
     // 🔒 스마트 개인장부 비밀번호 로직
     // ==========================================
-    let isLedgerUnlocked = false; // 로그인 세션 동안 한 번 풀면 유지
     let ledgerPinMode = 'unlock'; 
 
     function checkLedgerPin() {
-        if (isLedgerUnlocked) { switchView('ledger'); return; }
         const modal = document.getElementById('ledgerPinModal'); const box = document.getElementById('ledgerPinBox');
         const input = document.getElementById('ledgerPinInput'); const title = document.getElementById('ledgerPinTitle'); const desc = document.getElementById('ledgerPinDesc');
         input.value = '';
@@ -2118,11 +2116,11 @@
                 localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile));
                 const safeKey = getSafeKey(currentUserId);
                 await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ledgerPin: input }) });
-                isLedgerUnlocked = true; closeLedgerPinModal(); switchView('ledger');
+                closeLedgerPinModal(true); history.replaceState({ view: 'ledger' }, "", ""); switchView('ledger', false);
             } catch(e) { alert("통신 오류가 발생했습니다."); } finally { document.getElementById('loadingOverlay')?.remove(); }
         } else {
             if (input === myCompanyProfile.ledgerPin) {
-                isLedgerUnlocked = true; closeLedgerPinModal(); switchView('ledger');
+                closeLedgerPinModal(true); history.replaceState({ view: 'ledger' }, "", ""); switchView('ledger', false);
             } else {
                 alert("비밀번호가 일치하지 않습니다.");
                 document.getElementById('ledgerPinInput').value = ''; document.getElementById('ledgerPinInput').focus();
