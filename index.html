@@ -227,17 +227,30 @@
 
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
         <label class="block text-[18px] font-black text-[#12261E] flex items-center justify-between"><span class="flex items-center gap-2"><i data-lucide="image" class="w-5 h-5 text-[#84CC16]"></i> 현장 비교 사진</span></label>
+        
+        <!-- 1. 작업 전 -->
         <div class="space-y-3">
-          <div class="flex items-center justify-between"><span class="text-[13px] font-black text-[#12261E] flex items-center gap-1.5 uppercase"><span class="w-2 h-2 rounded-full bg-[#4E5968]"></span> 작업 전 & 과정</span><span id="beforeCount" class="text-[13px] font-black text-[#4E5968]">0장</span></div>
+          <div class="flex items-center justify-between"><span class="text-[13px] font-black text-[#12261E] flex items-center gap-1.5 uppercase"><span class="w-2 h-2 rounded-full bg-[#4E5968]"></span> 작업 전</span><span id="beforeCount" class="text-[13px] font-black text-[#4E5968]">0장</span></div>
           <div class="flex gap-2.5 overflow-x-auto pb-2" id="beforeThumbRow">
             <label class="flex-shrink-0 w-24 h-24 rounded-[18px] border-[1.5px] border-dashed border-[#D4D8D4] bg-[#FAFAFA] flex flex-col items-center justify-center cursor-pointer hover:border-[#84CC16] hover:bg-[#F2FBEC] transition-all"><i data-lucide="plus" class="w-6 h-6 text-[#4E5968] mb-1.5"></i><span class="text-[12px] font-black text-[#12261E]">추가하기</span><input type="file" accept="image/*" multiple onchange="handleImageUpload(event, 'before')" class="hidden"></label>
             <div id="beforeThumbList" class="flex gap-2.5"></div>
           </div>
         </div>
+
+        <!-- 2. 작업 중 (신규 분리) -->
         <div class="space-y-3 pt-4 border-t border-[#F4F5F4]">
-          <div class="flex items-center justify-between"><span class="text-[13px] font-black text-[#12261E] flex items-center gap-1.5 uppercase"><span class="w-2 h-2 rounded-full bg-[#12261E]"></span> 작업 후</span><span id="afterCount" class="text-[13px] font-black text-[#12261E]">0장</span></div>
+          <div class="flex items-center justify-between"><span class="text-[13px] font-black text-[#12261E] flex items-center gap-1.5 uppercase"><span class="w-2 h-2 rounded-full bg-[#3B82F6]"></span> 작업 중</span><span id="duringCount" class="text-[13px] font-black text-[#4E5968]">0장</span></div>
+          <div class="flex gap-2.5 overflow-x-auto pb-2" id="duringThumbRow">
+            <label class="flex-shrink-0 w-24 h-24 rounded-[18px] border-[1.5px] border-dashed border-[#D4D8D4] bg-[#FAFAFA] flex flex-col items-center justify-center cursor-pointer hover:border-[#84CC16] hover:bg-[#F2FBEC] transition-all"><i data-lucide="plus" class="w-6 h-6 text-[#4E5968] mb-1.5"></i><span class="text-[12px] font-black text-[#12261E]">추가하기</span><input type="file" accept="image/*" multiple onchange="handleImageUpload(event, 'during')" class="hidden"></label>
+            <div id="duringThumbList" class="flex gap-2.5"></div>
+          </div>
+        </div>
+
+        <!-- 3. 작업 후 -->
+        <div class="space-y-3 pt-4 border-t border-[#F4F5F4]">
+          <div class="flex items-center justify-between"><span class="text-[13px] font-black text-[#12261E] flex items-center gap-1.5 uppercase"><span class="w-2 h-2 rounded-full bg-[#84CC16]"></span> 작업 후</span><span id="afterCount" class="text-[13px] font-black text-[#12261E]">0장</span></div>
           <div class="flex gap-2.5 overflow-x-auto pb-2" id="afterThumbRow">
-            <label class="flex-shrink-0 w-24 h-24 rounded-[18px] border-[1.5px] border-dashed border-[#84CC16]/60 bg-[#F6FDF3] flex flex-col items-center justify-center cursor-pointer hover:border-[#84CC16] transition-all"><i data-lucide="camera" class="w-6 h-6 text-[#84CC16] mb-1.5"></i><span class="text-[12px] font-black text-[#12261E]">추가하기</span><input type="file" accept="image/*" multiple onchange="handleImageUpload(event, 'after')" class="hidden"></label>
+            <label class="flex-shrink-0 w-24 h-24 rounded-[18px] border-[1.5px] border-dashed border-[#D4D8D4] bg-[#FAFAFA] flex flex-col items-center justify-center cursor-pointer hover:border-[#84CC16] hover:bg-[#F2FBEC] transition-all"><i data-lucide="plus" class="w-6 h-6 text-[#4E5968] mb-1.5"></i><span class="text-[12px] font-black text-[#12261E]">추가하기</span><input type="file" accept="image/*" multiple onchange="handleImageUpload(event, 'after')" class="hidden"></label>
             <div id="afterThumbList" class="flex gap-2.5"></div>
           </div>
         </div>
@@ -815,7 +828,7 @@
     let defaultClients = []; const defaultMaterials = Array.from({length: 10}, () => ({ item: "", spec: "", price: "", contact: "" }));
     let clients = []; let records = []; let materialsData = []; let contactsData = { clients: [], labors: [] };
     let isMaterialEditMode = false; let editingClientIndex = null; let editingContactIndex = null; 
-    let beforeImages = []; let afterImages = []; let issueImages = []; let quoteImages = []; 
+    let beforeImages = []; let duringImages = []; let afterImages = []; let issueImages = []; let quoteImages = []; 
     let generatedShareUrl = ""; let currentIsQuote = false; let currentVatRate = 0.1; let currentQuoteRowCount = 12;
     let currentClientFilter = '정기 관리'; let currentContactTab = 'clients';
     let currentGalleryB = []; let currentGalleryA = []; let currentGalleryI = []; let currentGalleryQ = []; 
@@ -1295,9 +1308,12 @@
     async function handleImageUpload(event, type) { 
       const files = Array.from(event.target.files); if (!files.length) return; showLoadingOverlay("업로드 중...");
       const compressedImages = await Promise.all(files.map(file => new Promise(resolve => compressImage(file, resolve))));
+      
       if (type === 'before') { beforeImages = beforeImages.concat(compressedImages); renderThumbList('before'); } 
+      else if (type === 'during') { duringImages = duringImages.concat(compressedImages); renderThumbList('during'); } 
       else if (type === 'after') { afterImages = afterImages.concat(compressedImages); renderThumbList('after'); } 
       else if (type === 'issue') { issueImages = issueImages.concat(compressedImages); renderThumbList('issue'); } 
+      
       document.getElementById('loadingOverlay')?.remove(); event.target.value = ''; 
     }
     
