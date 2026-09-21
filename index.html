@@ -1598,6 +1598,137 @@
         }, 500);
     }
 
+    function renderCalendar() {
+        const year = currentCalDate.getFullYear(); const month = currentCalDate.getMonth();
+        document.getElementById('calendarMonthText').innerText = `${year}년 ${month + 1}월`;
+        const firstDay = new Date(year, month, 1).getDay(); const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const grid = document.getElementById('calendarGrid'); grid.innerHTML = '';
+        for (let i = 0; i < firstDay; i++) { grid.innerHTML += `<div class="p-2"></div>`; }
+        for (let i = 1; i <= daysInMonth; i++) {
+            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+            const daySchedules = schedules.filter(s => s.date === dateStr);
+            let dotHtml = '';
+            if (daySchedules.length > 0) { const color = daySchedules[0].color.replace('border-', 'bg-'); dotHtml = `<div class="w-1.5 h-1.5 ${color} rounded-full mx-auto mt-1"></div>`; } else { dotHtml = `<div class="w-1.5 h-1.5 mt-1 opacity-0"></div>`; }
+            const isToday = new Date().toDateString() === new Date(year, month, i).toDateString();
+            const todayClass = isToday ? 'bg-[#12261E] text-[#84CC16] rounded-full' : 'text-[#1A1D1A]';
+            const isSelected = selectedDate.toDateString() === new Date(year, month, i).toDateString();
+            const selectedClass = isSelected && !isToday ? 'border-2 border-[#12261E] rounded-full' : '';
+            grid.innerHTML += `<div onclick="selectDate(${year}, ${month}, ${i})" class="flex flex-col items-center justify-center p-1 cursor-pointer"><div class="w-9 h-9 flex items-center justify-center text-[14px] font-black ${todayClass} ${selectedClass}">${i}</div>${dotHtml}</div>`;
+        }
+    }
+
+    function changeMonth(delta) { currentCalDate.setMonth(currentCalDate.getMonth() + delta); renderCalendar(); }
+
+    function selectDate(year, month, day) {
+        selectedDate = new Date(year, month, day); renderCalendar();
+        const days = ['일', '월', '화', '수', '목', '금', '토'];
+        document.getElementById('selectedDateText').innerHTML = `<i data-lucide="calendar-check" class="w-5 h-5 text-[#84CC16]"></i> ${month + 1}월 ${day}일 (${days[selectedDate.getDay()]})`;
+        renderScheduleList();
+    }
+
+    function renderScheduleList() {
+        const list = document.getElementById('scheduleList'); list.innerHTML = '';
+        const dateStr = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
+        const daySchedules = schedules.filter(s => s.date === dateStr);
+        if (daySchedules.length === 0) { list.innerHTML = `<div class="p-6 text-center text-[#8B95A1] text-[13px] bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA] font-bold">등록된 일정이 없습니다.</div>`; return; }
+        daySchedules.forEach(s => {
+            const tagName = s.tag || '조경 관리 작업'; const textColor = s.color.replace('border-', 'text-');
+            list.innerHTML += `<div class="border-l-4 rounded-r-[16px] p-4 shadow-sm bg-white border-y border-r border-[#EAEBEA] ${s.color} hover:shadow-md transition-all"><div class="text-[12px] font-black ${textColor} mb-1.5">${tagName}</div><div class="flex justify-between items-start mb-1.5"><h4 class="font-black text-[15px] text-[#1A1D1A] truncate pr-2">${s.title}</h4><button onclick="deleteSchedule(${s.id})" class="text-[#A3A8A3] hover:text-red-500 bg-[#F4F5F4] p-1.5 rounded-lg"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>${s.memo ? `<div class="text-[13px] text-[#4E5968] font-bold bg-[#F9F9F8] px-3 py-2 rounded-lg mt-2">${s.memo.replace(/\n/g, '<br>')}</div>` : ''}</div>`;
+        });
+        lucide.createIcons();
+    }
+
+    function openScheduleModal() {
+        document.getElementById('scheduleId').value = Date.now();
+        const dateStr = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
+        document.getElementById('scheduleDate').value = dateStr; document.getElementById('scheduleTitle').value = ''; document.getElementById('scheduleTagText').value = '조경 관리 작업'; document.getElementById('scheduleMemo').value = '';
+        const modal = document.getElementById('scheduleModal'); const box = document.getElementById('scheduleBox');
+        modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10); history.pushState({ modalOpen: true }, "", "");
+    }
+
+    function closeScheduleModal(fromPopstate = false) { const modal = document.getElementById('scheduleModal'); const box = document.getElementById('scheduleBox'); if(modal) modal.classList.add('opacity-0'); if(box) box.classList.add('scale-95'); setTimeout(() => { if(modal) modal.classList.add('hidden'); }, 200); if(!fromPopstate && history.state && history.state.modalOpen) history.back(); }
+
+    function saveSchedule() {
+        const id = document.getElementById('scheduleId').value; const date = document.getElementById('scheduleDate').value; const title = document.getElementById('scheduleTitle').value;
+        if (!title.trim()) return alert("현장명이나 작업 내용을 입력해주세요.");
+        const newSchedule = { id: id, date: date, title: title, color: document.getElementById('scheduleColor').value, tag: document.getElementById('scheduleTagText').value, memo: document.getElementById('scheduleMemo').value };
+        schedules.push(newSchedule); updateData('schedules', schedules);
+        const parts = date.split('-');
+        if(date !== `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`) { selectDate(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2])); } else { renderCalendar(); renderScheduleList(); }
+        closeScheduleModal();
+    }
+
+    function deleteSchedule(id) { if(confirm("이 일정을 삭제하시겠습니까?")) { schedules = schedules.filter(s => s.id != id); updateData('schedules', schedules); renderCalendar(); renderScheduleList(); } }
+
+    function switchView(mode, pushHistory = true) {
+      const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView', 'calendarView', 'ledgerView'];
+      views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
+      const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient', 'tabContacts', 'tabCalendar', 'tabLedger'];
+      mainTabs.forEach(t => { const el = document.getElementById(t); if(el) el.className = "w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"; });
+      const lensTab = document.getElementById('tabLens'); if(lensTab) lensTab.className = "w-full py-3.5 rounded-[12px] bg-[#1E3A8A] text-white font-black text-[14px] shadow-md hover:bg-[#172554] transition-all text-center flex flex-col items-center justify-center gap-1 border border-[#172554]";
+
+      let activeTabId = '';
+      if (mode === 'admin') { document.getElementById('adminView').classList.remove('hidden'); activeTabId = 'tabAdmin'; }
+      else if (mode === 'quote') { document.getElementById('quoteAdminView').classList.remove('hidden'); activeTabId = 'tabQuote'; }
+      else if (mode === 'quoteList') { document.getElementById('quoteListView').classList.remove('hidden'); activeTabId = 'tabQuoteList'; renderQuoteList(); }
+      else if (mode === 'clients') { document.getElementById('clientsView').classList.remove('hidden'); activeTabId = 'tabClient'; }
+      else if (mode === 'contacts') { document.getElementById('contactsView').classList.remove('hidden'); activeTabId = 'tabContacts'; renderContactsList(); }
+      else if (mode === 'history') { document.getElementById('historyView').classList.remove('hidden'); activeTabId = 'tabClient'; }
+      else if (mode === 'lens') { document.getElementById('lensView').classList.remove('hidden'); activeTabId = 'tabLens'; }
+      else if (mode === 'calendar') { document.getElementById('calendarView').classList.remove('hidden'); activeTabId = 'tabCalendar'; renderCalendar(); renderScheduleList(); }
+      else if (mode === 'ledger') { document.getElementById('ledgerView').classList.remove('hidden'); activeTabId = 'tabLedger'; renderLedgerList(); }
+      else { document.getElementById('clientView').classList.remove('hidden'); activeTabId = currentIsQuote ? 'tabQuoteList' : 'tabClient'; }
+
+      if(activeTabId) {
+        const activeEl = document.getElementById(activeTabId);
+        if(activeEl) {
+          if (activeTabId === 'tabLens') activeEl.className = "w-full py-3.5 rounded-[12px] bg-[#84CC16] text-[#12261E] font-black text-[13px] shadow-[0_4px_12px_rgba(132,204,22,0.3)] transition-all text-center flex flex-col items-center justify-center gap-1 border border-[#65A30D]";
+          else activeEl.className = "w-full py-3.5 rounded-[12px] bg-white text-[#12261E] font-black text-[13px] shadow-md transition-all text-center flex flex-col items-center justify-center gap-1 border border-white/50";
+        }
+      }
+      if(typeof lucide !== 'undefined') lucide.createIcons(); window.scrollTo(0, 0); if (pushHistory && mode !== 'client_shared') history.pushState({ view: mode }, "", "");
+    }
+
+    const mainTabsOrder = ['admin', 'quote', 'quoteList', 'clients', 'contacts', 'lens', 'calendar', 'ledger'];
+    const swipeContainerEl = document.getElementById('swipeContainer');
+    let viewTouchStartX = 0; let viewTouchStartY = 0;
+    if(swipeContainerEl) {
+        swipeContainerEl.addEventListener('touchstart', e => { viewTouchStartX = e.changedTouches[0].screenX; viewTouchStartY = e.changedTouches[0].screenY; }, {passive: true});
+        swipeContainerEl.addEventListener('touchend', e => {
+          if (e.target.closest('input') || e.target.closest('textarea') || e.target.closest('table')) return;
+          const diffX = e.changedTouches[0].screenX - viewTouchStartX; const diffY = e.changedTouches[0].screenY - viewTouchStartY;
+          if (Math.abs(diffX) > Math.abs(diffY) * 1.5 && Math.abs(diffX) > 60) {
+            let currentActiveMode = 'admin';
+            if (!document.getElementById('quoteAdminView').classList.contains('hidden')) currentActiveMode = 'quote';
+            else if (!document.getElementById('quoteListView').classList.contains('hidden')) currentActiveMode = 'quoteList';
+            else if (!document.getElementById('clientsView').classList.contains('hidden')) currentActiveMode = 'clients';
+            else if (!document.getElementById('contactsView').classList.contains('hidden')) currentActiveMode = 'contacts';
+            else if (!document.getElementById('lensView').classList.contains('hidden')) currentActiveMode = 'lens';
+            else if (!document.getElementById('calendarView').classList.contains('hidden')) currentActiveMode = 'calendar';
+            else if (!document.getElementById('ledgerView').classList.contains('hidden')) currentActiveMode = 'ledger';
+            else if (!document.getElementById('clientView').classList.contains('hidden')) return; 
+            let currentIndex = mainTabsOrder.indexOf(currentActiveMode);
+            if (currentIndex !== -1) { if (diffX < 0 && currentIndex < mainTabsOrder.length - 1) switchView(mainTabsOrder[currentIndex + 1]); else if (diffX > 0 && currentIndex > 0) switchView(mainTabsOrder[currentIndex - 1]); }
+          }
+        }, {passive: true});
+    }
+
+    function openModal(type, idx) { 
+        if (type === 'b') modalImages = currentGalleryB; else if (type === 'dur') modalImages = currentGalleryD; else if (type === 'a') modalImages = currentGalleryA; else if (type === 'i') modalImages = currentGalleryI; else modalImages = currentGalleryQ; 
+        if (!modalImages || modalImages.length === 0) return; 
+        modalCurrentIdx = idx; updateModalImage(); document.getElementById('imageModal').style.zIndex = "4000"; document.getElementById('imageModal').classList.remove('hidden'); history.pushState({ modalOpen: true }, "", ""); 
+    }
+    function updateModalImage() { document.getElementById('modalImg').src = modalImages[modalCurrentIdx]; document.getElementById('modalIndicator').innerText = `${modalCurrentIdx + 1} / ${modalImages.length}`; document.getElementById('prevBtn').style.display = (modalCurrentIdx === 0) ? 'none' : 'block'; document.getElementById('nextBtn').style.display = (modalCurrentIdx === modalImages.length - 1) ? 'none' : 'block'; }
+    function prevImage(e) { if(e) e.stopPropagation(); if(modalCurrentIdx > 0) { modalCurrentIdx--; updateModalImage(); } }
+    function nextImage(e) { if(e) e.stopPropagation(); if(modalCurrentIdx < modalImages.length - 1) { modalCurrentIdx++; updateModalImage(); } }
+    function closeModal(fromPopstate = false) { const modal = document.getElementById('imageModal'); if (modal && !modal.classList.contains('hidden')) { modal.classList.add('hidden'); document.getElementById('modalImg').src = ''; if (!fromPopstate) history.back(); } }
+    
+    let modalTouchStartX = 0; let modalTouchStartY = 0; const imageModalEl = document.getElementById('imageModal');
+    imageModalEl.addEventListener('touchstart', e => { modalTouchStartX = e.changedTouches[0].screenX; modalTouchStartY = e.changedTouches[0].screenY; }, {passive: true});
+    imageModalEl.addEventListener('touchend', e => { if (imageModalEl.classList.contains('hidden')) return; const diffX = e.changedTouches[0].screenX - modalTouchStartX; const diffY = e.changedTouches[0].screenY - modalTouchStartY; if (Math.abs(diffX) > Math.abs(diffY) * 1.5 && Math.abs(diffX) > 40) { if (diffX < 0) nextImage(); else prevImage(); } }, {passive: true});
+    
+    function toggleBadge(btn) { if(btn.classList.contains('bg-[#12261E]')) { btn.className = "cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968] transition-all"; btn.innerText = "+ " + btn.getAttribute('data-val'); } else { btn.className = "cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-[#12261E] text-[#84CC16] shadow-md border border-transparent"; btn.innerText = "✓ " + btn.getAttribute('data-val'); } }
+
     function renderLedgerCalendar() {
         const year = currentLedgerCalDate.getFullYear();
         const month = currentLedgerCalDate.getMonth();
@@ -1929,7 +2060,7 @@
         calcDisplay.innerText = calcStr;
     }
 
-    // 처음 앱 켤 때 장부 달력 초기 세팅 및 URL 처리
+    // 처음 앱 켤 때 초기 세팅 및 URL 처리
     window.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { const splash = document.getElementById('splashScreen'); if(splash) { splash.style.opacity = '0'; setTimeout(() => splash.remove(), 600); } }, 2000);
         setTimeout(() => { selectLedgerDate(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()); }, 1000);
