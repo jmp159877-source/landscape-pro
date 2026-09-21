@@ -1334,9 +1334,12 @@
     };
 }
     async function uploadImagesToCloud(base64Array) {
-      const urls = [];
-      for(let b64 of base64Array) { if (b64.startsWith('http')) { urls.push(b64); continue; } try { const url = await uploadToFirebaseStorage(b64, "reports"); urls.push(url); } catch (e) {} }
-      return urls;
+        const promises = base64Array.map(async (b64) => {
+            if (b64.startsWith('http')) return b64;
+            try { return await uploadToFirebaseStorage(b64, "reports"); } catch (e) { return null; }
+        });
+        const urls = await Promise.all(promises);
+        return urls.filter(url => url); // 에러난 것 제외하고 성공한 URL만 반환
     }
 
     async function handleImageUpload(event, type) { 
