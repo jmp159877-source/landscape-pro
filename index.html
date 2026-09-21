@@ -954,8 +954,8 @@
                 document.getElementById('authView').classList.add('hidden'); 
                 document.getElementById('mainHeader').style.display = 'block';
                 await syncWithCloud(); 
-                history.replaceState({ view: 'admin' }, "", ""); 
-                switchView('admin', false); 
+                history.replaceState({ view: 'calendar' }, "", ""); 
+      switchView('calendar', false); 
                 setTimeout(checkAppNotices, 1000); // 팝업 타이밍 안정화 (1초 딜레이)
             }
         } catch(e) { 
