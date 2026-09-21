@@ -1826,9 +1826,9 @@
     }
 
     function switchView(mode, pushHistory = true) {
-      const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView', 'calendarView'];
+      const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView', 'calendarView', 'ledgerView'];
       views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
-      const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient', 'tabContacts', 'tabCalendar'];
+      const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient', 'tabContacts', 'tabCalendar', 'tabLedger'];
       mainTabs.forEach(t => { const el = document.getElementById(t); if(el) el.className = "w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"; });
       const lensTab = document.getElementById('tabLens'); if(lensTab) lensTab.className = "w-full py-3.5 rounded-[12px] bg-[#1E3A8A] text-white font-black text-[14px] shadow-md hover:bg-[#172554] transition-all text-center flex flex-col items-center justify-center gap-1 border border-[#172554]";
 
@@ -1841,38 +1841,42 @@
       else if (mode === 'history') { document.getElementById('historyView').classList.remove('hidden'); activeTabId = 'tabClient'; }
       else if (mode === 'lens') { document.getElementById('lensView').classList.remove('hidden'); activeTabId = 'tabLens'; }
       else if (mode === 'calendar') { document.getElementById('calendarView').classList.remove('hidden'); activeTabId = 'tabCalendar'; renderCalendar(); renderScheduleList(); }
+      else if (mode === 'ledger') { document.getElementById('ledgerView').classList.remove('hidden'); activeTabId = 'tabLedger'; renderLedgerList(); }
       else { document.getElementById('clientView').classList.remove('hidden'); activeTabId = currentIsQuote ? 'tabQuoteList' : 'tabClient'; }
 
       if(activeTabId) {
         const activeEl = document.getElementById(activeTabId);
         if(activeEl) {
-          if (activeTabId === 'tabLens') activeEl.className = "w-full py-3.5 rounded-[12px] bg-[#84CC16] text-[#12261E] font-black text-[14px] shadow-[0_4px_12px_rgba(132,204,22,0.3)] transition-all text-center flex flex-col items-center justify-center gap-1 border border-[#65A30D]";
-          else activeEl.className = "w-full py-3.5 rounded-[12px] bg-white text-[#12261E] font-black text-[14px] shadow-md transition-all text-center flex flex-col items-center justify-center gap-1 border border-white/50";
+          if (activeTabId === 'tabLens') activeEl.className = "w-full py-3.5 rounded-[12px] bg-[#84CC16] text-[#12261E] font-black text-[13px] shadow-[0_4px_12px_rgba(132,204,22,0.3)] transition-all text-center flex flex-col items-center justify-center gap-1 border border-[#65A30D]";
+          else activeEl.className = "w-full py-3.5 rounded-[12px] bg-white text-[#12261E] font-black text-[13px] shadow-md transition-all text-center flex flex-col items-center justify-center gap-1 border border-white/50";
         }
       }
-      lucide.createIcons(); window.scrollTo(0, 0); if (pushHistory && mode !== 'client_shared') history.pushState({ view: mode }, "", "");
+      if(typeof lucide !== 'undefined') lucide.createIcons(); window.scrollTo(0, 0); if (pushHistory && mode !== 'client_shared') history.pushState({ view: mode }, "", "");
     }
 
-    const mainTabsOrder = ['admin', 'quote', 'quoteList', 'clients', 'contacts', 'lens', 'calendar'];
+    const mainTabsOrder = ['admin', 'quote', 'quoteList', 'clients', 'contacts', 'lens', 'calendar', 'ledger'];
     const swipeContainerEl = document.getElementById('swipeContainer');
     let viewTouchStartX = 0; let viewTouchStartY = 0;
-    swipeContainerEl.addEventListener('touchstart', e => { viewTouchStartX = e.changedTouches[0].screenX; viewTouchStartY = e.changedTouches[0].screenY; }, {passive: true});
-    swipeContainerEl.addEventListener('touchend', e => {
-      if (e.target.closest('input') || e.target.closest('textarea') || e.target.closest('table')) return;
-      const diffX = e.changedTouches[0].screenX - viewTouchStartX; const diffY = e.changedTouches[0].screenY - viewTouchStartY;
-      if (Math.abs(diffX) > Math.abs(diffY) * 1.5 && Math.abs(diffX) > 60) {
-        let currentActiveMode = 'admin';
-        if (!document.getElementById('quoteAdminView').classList.contains('hidden')) currentActiveMode = 'quote';
-        else if (!document.getElementById('quoteListView').classList.contains('hidden')) currentActiveMode = 'quoteList';
-        else if (!document.getElementById('clientsView').classList.contains('hidden')) currentActiveMode = 'clients';
-        else if (!document.getElementById('contactsView').classList.contains('hidden')) currentActiveMode = 'contacts';
-        else if (!document.getElementById('lensView').classList.contains('hidden')) currentActiveMode = 'lens';
-        else if (!document.getElementById('calendarView').classList.contains('hidden')) currentActiveMode = 'calendar';
-        else if (!document.getElementById('clientView').classList.contains('hidden')) return; 
-        let currentIndex = mainTabsOrder.indexOf(currentActiveMode);
-        if (currentIndex !== -1) { if (diffX < 0 && currentIndex < mainTabsOrder.length - 1) switchView(mainTabsOrder[currentIndex + 1]); else if (diffX > 0 && currentIndex > 0) switchView(mainTabsOrder[currentIndex - 1]); }
-      }
-    }, {passive: true});
+    if(swipeContainerEl) {
+        swipeContainerEl.addEventListener('touchstart', e => { viewTouchStartX = e.changedTouches[0].screenX; viewTouchStartY = e.changedTouches[0].screenY; }, {passive: true});
+        swipeContainerEl.addEventListener('touchend', e => {
+          if (e.target.closest('input') || e.target.closest('textarea') || e.target.closest('table')) return;
+          const diffX = e.changedTouches[0].screenX - viewTouchStartX; const diffY = e.changedTouches[0].screenY - viewTouchStartY;
+          if (Math.abs(diffX) > Math.abs(diffY) * 1.5 && Math.abs(diffX) > 60) {
+            let currentActiveMode = 'admin';
+            if (!document.getElementById('quoteAdminView').classList.contains('hidden')) currentActiveMode = 'quote';
+            else if (!document.getElementById('quoteListView').classList.contains('hidden')) currentActiveMode = 'quoteList';
+            else if (!document.getElementById('clientsView').classList.contains('hidden')) currentActiveMode = 'clients';
+            else if (!document.getElementById('contactsView').classList.contains('hidden')) currentActiveMode = 'contacts';
+            else if (!document.getElementById('lensView').classList.contains('hidden')) currentActiveMode = 'lens';
+            else if (!document.getElementById('calendarView').classList.contains('hidden')) currentActiveMode = 'calendar';
+            else if (!document.getElementById('ledgerView').classList.contains('hidden')) currentActiveMode = 'ledger';
+            else if (!document.getElementById('clientView').classList.contains('hidden')) return; 
+            let currentIndex = mainTabsOrder.indexOf(currentActiveMode);
+            if (currentIndex !== -1) { if (diffX < 0 && currentIndex < mainTabsOrder.length - 1) switchView(mainTabsOrder[currentIndex + 1]); else if (diffX > 0 && currentIndex > 0) switchView(mainTabsOrder[currentIndex - 1]); }
+          }
+        }, {passive: true});
+    }
 
     function openModal(type, idx) { 
         if (type === 'b') modalImages = currentGalleryB; else if (type === 'a') modalImages = currentGalleryA; else if (type === 'i') modalImages = currentGalleryI; else modalImages = currentGalleryQ; 
