@@ -2037,12 +2037,26 @@
         document.getElementById('ledgerMemo').value = '';
         
         const modal = document.getElementById('ledgerModal');
-        if(modal) modal.classList.remove('hidden');
+        const box = document.getElementById('ledgerBox');
+        if(modal) {
+            modal.classList.remove('hidden');
+            setTimeout(() => { 
+                modal.classList.remove('opacity-0'); 
+                if(box) box.classList.remove('scale-95'); 
+            }, 10);
+            history.pushState({ modalOpen: true }, "", "");
+        }
     }
 
-    function closeLedgerModal() {
+    function closeLedgerModal(fromPopstate = false) {
         const modal = document.getElementById('ledgerModal');
-        if(modal) modal.classList.add('hidden');
+        const box = document.getElementById('ledgerBox');
+        if(modal) modal.classList.add('opacity-0');
+        if(box) box.classList.add('scale-95');
+        setTimeout(() => { 
+            if(modal) modal.classList.add('hidden'); 
+        }, 200);
+        if(!fromPopstate && history.state && history.state.modalOpen) history.back();
     }
 
     function saveLedger() {
