@@ -791,11 +791,6 @@
                     <label class="block text-[13px] font-black text-[#12261E] mb-2">작업 분류명 (직접 입력)</label>
                     <input type="text" id="scheduleTagText" value="" placeholder="" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-4 py-3 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
                 </div>
-            <div class="flex gap-2">
-                <div class="flex-1">
-                    <label class="block text-[13px] font-black text-[#12261E] mb-2">작업 분류명 (직접 수정 가능)</label>
-                    <input type="text" id="scheduleTagText" value="조경 관리 작업" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-4 py-3 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
-                </div>
                 <div class="w-24 shrink-0">
                     <label class="block text-[13px] font-black text-[#12261E] mb-2">테마 색상</label>
                     <select id="scheduleColor" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-2 py-3 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
@@ -806,6 +801,11 @@
                     </select>
                 </div>
             </div>
+            <div>
+                <label class="block text-[13px] font-black text-[#12261E] mb-2">상세 메모 (작업 예약 시간, 인력, 자재 등)</label>
+                <textarea id="scheduleMemo" rows="3" placeholder="메모 입력" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] p-4 text-[14px] font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] resize-none"></textarea>
+            </div>
+        </div>
             <div>
                 <label class="block text-[13px] font-black text-[#12261E] mb-2">상세 메모 (작업 예약 시간, 인력, 자재 등)</label>
                 <textarea id="scheduleMemo" rows="3" placeholder="메모 입력" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] p-4 text-[14px] font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] resize-none"></textarea>
