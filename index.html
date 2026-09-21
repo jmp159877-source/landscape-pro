@@ -2195,14 +2195,18 @@
                   <label class="block text-[13px] font-black text-[#12261E] mb-2">어디에서 뭘 했는지 (현장명)</label>
                   <input type="text" id="ledgerTitle" placeholder="예: 구리시 주택 전지작업" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-4 py-3 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] placeholder:text-[#A3A8A3]">
               </div>
-              <div class="grid grid-cols-2 gap-3">
+              <div class="grid grid-cols-3 gap-2">
                   <div>
-                      <label class="block text-[13px] font-black text-blue-600 mb-2">수입 (매출)</label>
-                      <input type="text" id="ledgerIncome" placeholder="0" inputmode="numeric" oninput="formatNumberInput(this)" class="w-full bg-[#F0F9FF] border border-[#BAE6FD] rounded-[14px] px-4 py-3 text-[15px] font-black text-blue-700 focus:outline-none focus:border-blue-500 text-right placeholder:text-blue-300">
+                      <label class="block text-[12px] font-black text-blue-600 mb-2">수입(매출)</label>
+                      <input type="text" id="ledgerIncome" placeholder="0" inputmode="numeric" oninput="formatNumberInput(this)" class="w-full bg-[#F0F9FF] border border-[#BAE6FD] rounded-[12px] px-3 py-3 text-[14px] font-black text-blue-700 focus:outline-none focus:border-blue-500 text-right placeholder:text-blue-300">
                   </div>
                   <div>
-                      <label class="block text-[13px] font-black text-red-600 mb-2">지출 (비용)</label>
-                      <input type="text" id="ledgerExpense" placeholder="0" inputmode="numeric" oninput="formatNumberInput(this)" class="w-full bg-[#FEF2F2] border border-[#FECACA] rounded-[14px] px-4 py-3 text-[15px] font-black text-red-700 focus:outline-none focus:border-red-500 text-right placeholder:text-red-300">
+                      <label class="block text-[12px] font-black text-red-600 mb-2">지출(비용)</label>
+                      <input type="text" id="ledgerExpense" placeholder="0" inputmode="numeric" oninput="formatNumberInput(this)" class="w-full bg-[#FEF2F2] border border-[#FECACA] rounded-[12px] px-3 py-3 text-[14px] font-black text-red-700 focus:outline-none focus:border-red-500 text-right placeholder:text-red-300">
+                  </div>
+                  <div>
+                      <label class="block text-[12px] font-black text-gray-600 mb-2">부가세</label>
+                      <input type="text" id="ledgerVat" placeholder="0" inputmode="numeric" oninput="formatNumberInput(this)" class="w-full bg-[#F4F5F4] border border-[#EAEBEA] rounded-[12px] px-3 py-3 text-[14px] font-black text-gray-700 focus:outline-none focus:border-gray-500 text-right placeholder:text-gray-400">
                   </div>
               </div>
               <div>
