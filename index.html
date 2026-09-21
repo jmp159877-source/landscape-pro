@@ -107,33 +107,6 @@
     </div>
   </section>
 
-  <!-- 설정 모달 -->
-  <div id="settingsModal" class="hidden fixed inset-0 z-[3500] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200">
-    <div class="bg-[#151E2D] w-full max-w-sm rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-white/10" id="settingsBox" onclick="event.stopPropagation()">
-      <div class="p-5 border-b border-white/10 flex justify-between items-center bg-[#0F1722]">
-        <h3 class="text-[18px] font-black text-white flex items-center gap-2"><i data-lucide="settings" class="w-5 h-5 text-[#84CC16]"></i> 내 정보 확인 및 설정</h3>
-        <button onclick="closeSettings()" class="text-[#A3A8A3] hover:text-white p-1"><i data-lucide="x" class="w-6 h-6"></i></button>
-      </div>
-      <div class="p-5 bg-[#151E2D] space-y-4 max-h-[70vh] overflow-y-auto nav-scroll">
-        <p class="text-[12px] text-[#A3A8A3] leading-relaxed break-keep font-bold mb-2">* 상호 변경 등은 관리자(010-4712-8523) 문의</p>
-        <div class="space-y-3">
-          <div><label class="block text-[12px] font-black text-[#A3A8A3] ml-1 mb-1">상호명</label><input type="text" id="setCompanyName" readonly class="w-full bg-white/5 border border-white/10 rounded-[12px] px-4 py-3 text-white/50 text-[15px] font-black outline-none cursor-not-allowed"></div>
-          <div><label class="block text-[12px] font-black text-[#A3A8A3] ml-1 mb-1">대표자명</label><input type="text" id="setCompanyCeo" readonly class="w-full bg-white/5 border border-white/10 rounded-[12px] px-4 py-3 text-white/50 text-[15px] font-black outline-none cursor-not-allowed"></div>
-          <div><label class="block text-[12px] font-black text-[#A3A8A3] ml-1 mb-1">연락처</label><input type="tel" id="setCompanyPhone" oninput="autoHyphen(this)" readonly class="w-full bg-white/5 border border-white/10 rounded-[12px] px-4 py-3 text-white/50 text-[15px] font-black outline-none cursor-not-allowed"></div>
-          <div><label class="block text-[12px] font-black text-[#A3A8A3] ml-1 mb-1">사업자등록번호</label><input type="text" id="setCompanyBizNum" readonly class="w-full bg-white/5 border border-white/10 rounded-[12px] px-4 py-3 text-white/50 text-[15px] font-black outline-none cursor-not-allowed"></div>
-        </div>
-        <div class="pt-4 border-t border-white/10 space-y-3">
-          <label class="block text-[13px] font-black text-[#84CC16] ml-1"><i data-lucide="key" class="w-4 h-4 inline-block -mt-0.5"></i> 새로운 비밀번호 설정</label>
-          <input type="password" id="setCompanyPw" placeholder="새 비밀번호 (6자리 이상 숫자)" inputmode="numeric" pattern="[0-9]*" class="w-full bg-black/40 border border-[#84CC16]/50 rounded-[14px] px-4 py-4 text-white text-[18px] font-black focus:outline-none focus:border-[#84CC16]">
-        </div>
-      </div>
-      <div class="p-4 bg-[#0F1722] border-t border-white/10 flex gap-2">
-        <button onclick="closeSettings()" class="flex-1 py-4 bg-white/5 text-white border border-white/10 rounded-[16px] font-bold text-[15px] hover:bg-white/10 transition-colors">닫기</button>
-        <button onclick="saveSettings()" class="flex-1 py-4 bg-[#84CC16] text-[#12261E] rounded-[16px] font-black text-[15px] shadow-[0_4px_12px_rgba(132,204,22,0.2)] hover:bg-[#9BE32D] transition-colors">비밀번호 변경</button>
-      </div>
-    </div>
-  </div>
-
   <datalist id="clientDatalist"></datalist>
 
   <!-- 🔥 메인 헤더 레이아웃 🔥 -->
@@ -162,15 +135,17 @@
     
     <div class="max-w-md mx-auto mt-4">
       <nav class="grid grid-cols-3 gap-2 bg-[#84CC16] p-2.5 rounded-2xl shadow-[0_4px_15px_rgba(132,204,22,0.3)] border border-[#65A30D]">
-        <button id="tabAdmin" onclick="switchView('admin')" class="w-full py-3.5 rounded-[12px] bg-white text-[#12261E] font-black text-[14px] shadow-md transition-all text-center flex flex-col items-center justify-center gap-1"><i data-lucide="pen-tool" class="w-5 h-5"></i>일지작성</button>
+        <button id="tabCalendar" onclick="switchView('calendar')" class="w-full py-3.5 rounded-[12px] bg-white text-[#12261E] font-black text-[14px] shadow-md transition-all text-center flex flex-col items-center justify-center gap-1"><i data-lucide="calendar-days" class="w-5 h-5"></i>일정표</button>
+        <button id="tabAdmin" onclick="switchView('admin')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="pen-tool" class="w-5 h-5"></i>일지작성</button>
+        <button id="tabClient" onclick="switchView('clients')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="building-2" class="w-5 h-5"></i>거래처 목록</button>
+        
         <button id="tabQuote" onclick="switchView('quote')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="calculator" class="w-5 h-5"></i>견적작성</button>
         <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="folder-open" class="w-5 h-5"></i>견적보관함</button>
-        <button id="tabClient" onclick="switchView('clients')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="building-2" class="w-5 h-5"></i>거래처 목록</button>
         <button id="tabContacts" onclick="switchView('contacts')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="users" class="w-5 h-5"></i>연락처</button>
-        <button id="tabLens" onclick="switchView('lens')" class="w-full py-3.5 rounded-[12px] bg-[#1E3A8A] text-white font-black text-[14px] shadow-md hover:bg-[#172554] transition-all text-center flex flex-col items-center justify-center gap-1 border border-[#172554]"><i data-lucide="scan" class="w-5 h-5 text-[#84CC16]"></i>AI렌즈</button>
-        <!-- 🔥 캘린더 일정표 탭 버튼 추가 -->
-        <button id="tabCalendar" onclick="switchView('calendar')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="calendar-days" class="w-5 h-5"></i>일정표</button>
+        
         <button id="tabLedger" onclick="switchView('ledger')" class="w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="wallet" class="w-5 h-5 text-yellow-300"></i>개인장부</button>
+        <div></div> <!-- 8번째 칸 비우기 -->
+        <button id="tabLens" onclick="switchView('lens')" class="w-full py-3.5 rounded-[12px] bg-[#1E3A8A] text-white font-black text-[14px] shadow-md hover:bg-[#172554] transition-all text-center flex flex-col items-center justify-center gap-1 border border-[#172554]"><i data-lucide="scan" class="w-5 h-5 text-[#84CC16]"></i>AI수목감별렌즈</button>
       </nav>
     </div>
   </header>
@@ -181,7 +156,7 @@
         <div class="flex items-center justify-between pb-4 border-b border-[#F4F5F4] relative z-10"><h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="map-pin" class="w-5 h-5 text-[#84CC16]"></i> 현장 기본 정보</h2></div>
         <div class="relative z-10">
           <label class="block text-[13px] font-black text-[#12261E] mb-2">고객명 / 현장명</label>
-          <input type="text" id="clientSelect" list="clientDatalist" oninput="onSelectClient(this.value)" placeholder="기존 거래처 선택 또는 새 고객명 직접 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] placeholder:text-[#4E5968] placeholder:font-bold">
+          <input type="text" id="clientSelect" oninput="onSelectClient(this.value)" placeholder="기존 거래처 선택 또는 새 고객명 직접 입력" autocomplete="new-password" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] placeholder:text-[#4E5968] placeholder:font-bold">
         </div>
         <div class="grid grid-cols-2 gap-3 relative z-10">
           <div><label class="block text-[13px] font-black text-[#12261E] mb-2">연락처</label><input type="tel" id="inputClientPhone" oninput="autoHyphen(this)" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#12261E] focus:outline-none focus:border-[#84CC16] placeholder:text-[#4E5968] placeholder:font-bold"></div>
@@ -205,16 +180,16 @@
       </div>
 
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-4">
-        <label class="block text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="check-square" class="w-5 h-5 text-[#84CC16]"></i> 당일 작업 내역</label>
+        <label class="block text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="check-square" class="w-5 h-5 text-[#84CC16]"></i> 당일 작업 내역 <span class="text-[13px] text-[#A3A8A3] font-bold ml-1">(작업 목록을 선택하세요)</span></label>
         <div class="grid grid-cols-2 gap-2.5" id="categoryContainer">
-          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-[#12261E] text-[#84CC16]" data-val="소나무 전지작업">✓ 소나무 전지작업</button>
-          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-[#12261E] text-[#84CC16]" data-val="병해충 방제 및 약제">✓ 병해충 방제 및 약제</button>
-          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-[#12261E] text-[#84CC16]" data-val="잔디깍기, 잡초예초작업">✓ 잔디깍기, 잡초예초작업</button>
-          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968]" data-val="화단관리 (잡초·예초)">+ 화단관리 (잡초·예초)</button>
-          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968]" data-val="관목전정작업">+ 관목전정작업</button>
-          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968]" data-val="수목 시비 및 영양">+ 수목 시비 및 영양</button>
-          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968]" data-val="수목 월동 조치">+ 수목 월동 조치</button>
-          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968]" data-val="작업부산물 수거처리">+ 작업부산물 수거처리</button>
+          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968] transition-all" data-val="소나무 전지작업">+ 소나무 전지작업</button>
+          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968] transition-all" data-val="병해충 방제 및 약제">+ 병해충 방제 및 약제</button>
+          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968] transition-all" data-val="잔디깍기, 잡초예초작업">+ 잔디깍기, 잡초예초작업</button>
+          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968] transition-all" data-val="화단관리 (잡초·예초)">+ 화단관리 (잡초·예초)</button>
+          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968] transition-all" data-val="관목전정작업">+ 관목전정작업</button>
+          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968] transition-all" data-val="수목 시비 및 영양">+ 수목 시비 및 영양</button>
+          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968] transition-all" data-val="수목 월동 조치">+ 수목 월동 조치</button>
+          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968] transition-all" data-val="작업부산물 수거처리">+ 작업부산물 수거처리</button>
           <div class="col-span-2 pt-1 flex flex-col gap-2.5">
             <div class="relative w-full">
               <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none"><i data-lucide="edit-3" class="w-5 h-5 text-[#65A30D]"></i></div>
@@ -227,13 +202,23 @@
 
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
         <label class="block text-[18px] font-black text-[#12261E] flex items-center justify-between"><span class="flex items-center gap-2"><i data-lucide="image" class="w-5 h-5 text-[#84CC16]"></i> 현장 비교 사진</span></label>
+        
         <div class="space-y-3">
-          <div class="flex items-center justify-between"><span class="text-[13px] font-black text-[#12261E] flex items-center gap-1.5 uppercase"><span class="w-2 h-2 rounded-full bg-[#4E5968]"></span> 작업 전 & 과정</span><span id="beforeCount" class="text-[13px] font-black text-[#4E5968]">0장</span></div>
+          <div class="flex items-center justify-between"><span class="text-[13px] font-black text-[#12261E] flex items-center gap-1.5 uppercase"><span class="w-2 h-2 rounded-full bg-[#4E5968]"></span> 작업 전</span><span id="beforeCount" class="text-[13px] font-black text-[#4E5968]">0장</span></div>
           <div class="flex gap-2.5 overflow-x-auto pb-2" id="beforeThumbRow">
-            <label class="flex-shrink-0 w-24 h-24 rounded-[18px] border-[1.5px] border-dashed border-[#D4D8D4] bg-[#FAFAFA] flex flex-col items-center justify-center cursor-pointer hover:border-[#84CC16] hover:bg-[#F2FBEC] transition-all"><i data-lucide="plus" class="w-6 h-6 text-[#4E5968] mb-1.5"></i><span class="text-[12px] font-black text-[#12261E]">추가하기</span><input type="file" accept="image/*" multiple onchange="handleImageUpload(event, 'before')" class="hidden"></label>
+            <label class="flex-shrink-0 w-24 h-24 rounded-[18px] border-[1.5px] border-dashed border-[#D4D8D4] bg-[#FAFAFA] flex flex-col items-center justify-center cursor-pointer hover:border-[#84CC16] hover:bg-[#F2FBEC] transition-all"><i data-lucide="camera" class="w-6 h-6 text-[#4E5968] mb-1.5"></i><span class="text-[12px] font-black text-[#12261E]">추가하기</span><input type="file" accept="image/*" multiple onchange="handleImageUpload(event, 'before')" class="hidden"></label>
             <div id="beforeThumbList" class="flex gap-2.5"></div>
           </div>
         </div>
+        
+        <div class="space-y-3 pt-4 border-t border-[#F4F5F4]">
+          <div class="flex items-center justify-between"><span class="text-[13px] font-black text-[#12261E] flex items-center gap-1.5 uppercase"><span class="w-2 h-2 rounded-full bg-[#84CC16]"></span> 작업 중</span><span id="duringCount" class="text-[13px] font-black text-[#84CC16]">0장</span></div>
+          <div class="flex gap-2.5 overflow-x-auto pb-2" id="duringThumbRow">
+            <label class="flex-shrink-0 w-24 h-24 rounded-[18px] border-[1.5px] border-dashed border-[#84CC16]/60 bg-[#F6FDF3] flex flex-col items-center justify-center cursor-pointer hover:border-[#84CC16] transition-all"><i data-lucide="camera" class="w-6 h-6 text-[#84CC16] mb-1.5"></i><span class="text-[12px] font-black text-[#12261E]">추가하기</span><input type="file" accept="image/*" multiple onchange="handleImageUpload(event, 'during')" class="hidden"></label>
+            <div id="duringThumbList" class="flex gap-2.5"></div>
+          </div>
+        </div>
+
         <div class="space-y-3 pt-4 border-t border-[#F4F5F4]">
           <div class="flex items-center justify-between"><span class="text-[13px] font-black text-[#12261E] flex items-center gap-1.5 uppercase"><span class="w-2 h-2 rounded-full bg-[#12261E]"></span> 작업 후</span><span id="afterCount" class="text-[13px] font-black text-[#12261E]">0장</span></div>
           <div class="flex gap-2.5 overflow-x-auto pb-2" id="afterThumbRow">
@@ -337,7 +322,6 @@
         <div id="quoteListContainer" class="space-y-3 max-h-[65vh] overflow-y-auto pr-1"></div>
       </div>
     </section>
-
     <!-- ================= [4. 거래처 관리 화면] ================= -->
     <section id="clientsView" class="hidden space-y-4">
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-6">
@@ -417,7 +401,7 @@
     <section id="lensView" class="hidden space-y-4">
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
         <div class="flex items-center justify-between pb-4 border-b border-[#F4F5F4]">
-          <h2 class="text-[20px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="scan" class="w-6 h-6 text-[#84CC16]"></i> AI 식별 렌즈</h2>
+          <h2 class="text-[20px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="scan" class="w-6 h-6 text-[#84CC16]"></i> AI 수목 감별 렌즈</h2>
         </div>
         <div class="grid grid-cols-1 gap-4">
           <label class="relative overflow-hidden bg-[#F2FBEC] border border-[#84CC16]/40 rounded-[20px] p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-[#E8F5E9] transition-all shadow-sm">
@@ -588,7 +572,8 @@
         </div>
 
         <div id="reportContentBlock" class="space-y-7 hidden">
-          <div class="space-y-3 relative z-10"><h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#84CC16]"></span> 작업 전 & 과정 <span class="text-[12px] font-bold ml-1 text-[#4E5968]">(사진 터치시 확대)</span></h2><div id="viewBeforeGallery" class="grid grid-cols-2 gap-3"></div></div>
+          <div class="space-y-3 relative z-10"><h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#84CC16]"></span> 작업 전 <span class="text-[12px] font-bold ml-1 text-[#4E5968]">(사진 터치시 확대)</span></h2><div id="viewBeforeGallery" class="grid grid-cols-2 gap-3"></div></div>
+          <div id="viewDuringBlock" class="space-y-3 relative z-10 hidden"><h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#84CC16]"></span> 작업 중 <span class="text-[12px] font-bold ml-1 text-[#4E5968]">(사진 터치시 확대)</span></h2><div id="viewDuringGallery" class="grid grid-cols-2 gap-3"></div></div>
           <div class="space-y-3 relative z-10"><h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#84CC16]"></span> 작업 후 <span class="text-[12px] font-bold ml-1 text-[#4E5968]">(사진 터치시 확대)</span></h2><div id="viewAfterGallery" class="grid grid-cols-2 gap-3"></div></div>
           <div id="viewIssueBlock" class="space-y-3 relative z-10 hidden bg-[#FFFDF9] p-5 rounded-[20px] border border-[#C5A880]/30 shadow-sm">
             <h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-1.5"><i data-lucide="alert-circle" class="w-5 h-5 text-[#C5A880]"></i> 특이사항</h2>
@@ -814,12 +799,15 @@
 
     let defaultClients = []; const defaultMaterials = Array.from({length: 10}, () => ({ item: "", spec: "", price: "", contact: "" }));
     let clients = []; let records = []; let materialsData = []; let contactsData = { clients: [], labors: [] };
+    let schedules = []; let ledgers = JSON.parse(localStorage.getItem('shinhwa_pro_ledgers')) || [];
     let isMaterialEditMode = false; let editingClientIndex = null; let editingContactIndex = null; 
-    let beforeImages = []; let afterImages = []; let issueImages = []; let quoteImages = []; 
+    let beforeImages = []; let duringImages = []; let afterImages = []; let issueImages = []; let quoteImages = []; 
     let generatedShareUrl = ""; let currentIsQuote = false; let currentVatRate = 0.1; let currentQuoteRowCount = 12;
     let currentClientFilter = '정기 관리'; let currentContactTab = 'clients';
-    let currentGalleryB = []; let currentGalleryA = []; let currentGalleryI = []; let currentGalleryQ = []; 
+    let currentGalleryB = []; let currentGalleryD = []; let currentGalleryA = []; let currentGalleryI = []; let currentGalleryQ = []; 
     let modalImages = []; let modalCurrentIdx = 0; let currentLoadedRecordId = null; let editingRecordId = null; let activeTextEditorId = null;
+    let currentCalDate = new Date(); let selectedDate = new Date();
+    let currentLedgerCalDate = new Date(); let selectedLedgerDate = new Date(); let calcStr = "";
 
     function applyCompanyProfile() {
         if (!myCompanyProfile) return;
@@ -954,11 +942,10 @@
             if(!cloudData.contacts) { cloudData.contacts = { clients: [], labors: [] }; } else { cloudData.contacts.clients = cloudData.contacts.clients ? (Array.isArray(cloudData.contacts.clients) ? cloudData.contacts.clients : Object.values(cloudData.contacts.clients)).filter(Boolean) : []; cloudData.contacts.labors = cloudData.contacts.labors ? (Array.isArray(cloudData.contacts.labors) ? cloudData.contacts.labors : Object.values(cloudData.contacts.labors)).filter(Boolean) : []; }
             contactsData = cloudData.contacts;
             
-            // 🔥 클라우드에서 일정(캘린더) 데이터 가져오기
             schedules = cloudData.schedules ? (Array.isArray(cloudData.schedules) ? cloudData.schedules : Object.values(cloudData.schedules)).filter(Boolean) : [];
 
             renderClientSelect(); renderClientsList(); renderQuoteList(); renderContactsList();
-            renderCalendar(); renderScheduleList(); // 🔥 일정 목록도 앱 켤 때 자동 갱신
+            renderCalendar(); renderScheduleList(); 
 
             const badge = document.getElementById('cloudStatusBadge'); if(badge) { badge.innerHTML = '<i data-lucide="cloud-check" class="w-3 h-3"></i> 보안 연동됨'; }
         } catch(e) { alert("동기화 실패"); } finally { lucide.createIcons(); }
@@ -1099,15 +1086,11 @@
     function copyLensResult() { const content = document.getElementById('lensResultContent').innerText; navigator.clipboard.writeText(content).then(() => alert("복사되었습니다.")); }
     function openModalForLens() { modalImages = [currentLensImg]; modalCurrentIdx = 0; updateModalImage(); document.getElementById('imageModal').style.zIndex = "3000"; document.getElementById('imageModal').classList.remove('hidden'); history.pushState({ modalOpen: true }, "", ""); }
 
-    lucide.createIcons();
-    const today = new Date(); const formattedDate = `${today.getFullYear()}. ${String(today.getMonth()+1).padStart(2,'0')}. ${String(today.getDate()).padStart(2,'0')}`;
-    document.getElementById('viewDate').innerText = formattedDate;
-
     const quoteTemplates = {
       residential: { title: "연간 정기 조경 관리 견적서", vat: 0, rows: [ {l: "1월", d: "관리없음"}, {l: "2월", d: "관리없음"}, {l: "3월", d: "해동기점검 및 소나무 수목 가지치기"}, {l: "4월", d: "수목 및 화단 영양시비(비료)작업"}, {l: "5월", d: "잔디예초, 병해충소독"}, {l: "6월", d: "잔디예초, 잡초제초, 관목전정"}, {l: "7월", d: "잔디예초, 제초관리"}, {l: "8월", d: "혹서기점검 및 예초제초 병해충방제"}, {l: "9월", d: "예초제초관리"}, {l: "10월", d: "교목가지치기 제초작업"}, {l: "11월", d: "월동관리 및 낙엽부산물정리 등"}, {l: "12월", d: "관리없음"} ] },
       commercial: { title: "연간 정기 조경 관리 견적서", vat: 0.1, rows: [ {l: "1월", d: "혹한기 피해점검"}, {l: "2월", d: "해빙기 피해점검 및 보수"}, {l: "3월", d: "월동해제 및 낙엽등 부산물정리"}, {l: "4월", d: "수목화단 영양시비공급"}, {l: "5월", d: "예초제초 및 병해충방제"}, {l: "6월", d: "예초제초 및 관목류전정작업"}, {l: "7월", d: "예초제초 및 기본관리"}, {l: "8월", d: "예초제초 및 혹서기점검 보수"}, {l: "9월", d: "예초제초 및 교목가지치기"}, {l: "10월", d: "교목가지치기 집중"}, {l: "11월", d: "월동관리"}, {l: "12월", d: "겨울철피해 점검 및 보수"} ] },
       single: { title: "조경관리견적서", vat: 0.1, rows: [ {l: "01", d: "소나무 전지"}, {l: "02", d: "병해충 소독"}, {l: "03", d: "작업물 수거폐기처리비"}, {l: "04", d: "기타작업"}, {l: "05", d: "기타작업2"} ] },
-      construction: { title: "마당조경작업 견적서", vat: 0, rows: [ {l: "01", d: "[잔디철거 폐기 및 기초] 규격:일괄 - 중장비/폐기처리비 등", p: 2000000}, {l: "02", d: "[우수관 및 집수정] 규격:2본 - 자재기초", p: 500000}, {l: "03", d: "[바닥 석재판석시공] 규격:90m2 - 현무암 정형 50T", p: 8500000}, {l: "04", d: "[경계석 시공(펜스라인)] 규격:20m - 현무암경계석", p: 1250000}, {l: "05", d: "[화단조적 시공] 규격:6m*h:30cm - 조경블럭/플래그스톤", p: 850000}, {l: "06", d: "[인건비] 규격:6일 - 인건비", p: 5600000}, {l: "07", d: "[부자재 및 공과잡] 규격:일괄 - 공과잡", p: 500000} ], memo: "* 작업예정일 : 협의 / 작업소요예정: 6일\n* 작업예약시 50%선납입니다 (자재발주 등)" }
+      construction: { title: "마당조경작업 견적서", vat: 0, rows: [ {l: "01", d: "", p: ""}, {l: "02", d: "", p: ""}, {l: "03", d: "", p: ""}, {l: "04", d: "", p: ""}, {l: "05", d: "", p: ""}, {l: "06", d: "", p: ""}, {l: "07", d: "", p: ""} ], memo: "* 작업예정일 : 협의 / 작업소요예정: 6일\n* 작업예약시 50%선납입니다 (자재발주 등)" }
     };
 
     function toggleSingleTag(btn, inputIdx) {
@@ -1172,7 +1155,7 @@
             id: shortCloudId, type: clean.isQuote ? 'quote' : 'report',
             date: existingIdx !== -1 ? savedRecords[existingIdx].date : `${new Date().getFullYear()}. ${String(new Date().getMonth()+1).padStart(2,'0')}. ${String(new Date().getDate()).padStart(2,'0')}`,
             clientName: clean.c, clientPhone: clean.p, round: clean.r, diagnosis: clean.d || '', issue: clean.issue || '',
-            cat: clean.cat || '', b: clean.b || '', a: clean.a || '', imgsIssue: clean.imgsIssue || '', payload: clean
+            cat: clean.cat || '', b: clean.b || '', dur: clean.dur || '', a: clean.a || '', imgsIssue: clean.imgsIssue || '', payload: clean
         };
 
         if (existingIdx !== -1) { 
@@ -1224,15 +1207,22 @@
       const files = Array.from(event.target.files); if (!files.length) return; showLoadingOverlay("업로드 중...");
       const compressedImages = await Promise.all(files.map(file => new Promise(resolve => compressImage(file, resolve))));
       if (type === 'before') { beforeImages = beforeImages.concat(compressedImages); renderThumbList('before'); } 
+      else if (type === 'during') { duringImages = duringImages.concat(compressedImages); renderThumbList('during'); } 
       else if (type === 'after') { afterImages = afterImages.concat(compressedImages); renderThumbList('after'); } 
       else if (type === 'issue') { issueImages = issueImages.concat(compressedImages); renderThumbList('issue'); } 
       document.getElementById('loadingOverlay')?.remove(); event.target.value = ''; 
     }
     
-    function removeThumb(type, idx) { if (type === 'before') { beforeImages.splice(idx, 1); renderThumbList('before'); } else if (type === 'after') { afterImages.splice(idx, 1); renderThumbList('after'); } else if (type === 'issue') { issueImages.splice(idx, 1); renderThumbList('issue'); } }
+    function removeThumb(type, idx) { 
+      if (type === 'before') { beforeImages.splice(idx, 1); renderThumbList('before'); } 
+      else if (type === 'during') { duringImages.splice(idx, 1); renderThumbList('during'); } 
+      else if (type === 'after') { afterImages.splice(idx, 1); renderThumbList('after'); } 
+      else if (type === 'issue') { issueImages.splice(idx, 1); renderThumbList('issue'); } 
+    }
 
     function renderThumbList(type) {
-      const listContainer = document.getElementById(type + 'ThumbList'); const countLabel = document.getElementById(type + 'Count'); const list = type === 'before' ? beforeImages : (type === 'after' ? afterImages : issueImages);
+      const listContainer = document.getElementById(type + 'ThumbList'); const countLabel = document.getElementById(type + 'Count'); 
+      const list = type === 'before' ? beforeImages : (type === 'during' ? duringImages : (type === 'after' ? afterImages : issueImages));
       if (!listContainer || !countLabel) return; listContainer.innerHTML = ''; countLabel.innerText = `${list.length}장`;
       list.forEach((src, idx) => { const div = document.createElement('div'); div.className = "relative flex-shrink-0 w-24 h-24 rounded-[18px] overflow-hidden border border-[#EAEBEA] shadow-sm group"; div.innerHTML = `<img src="${src}" class="w-full h-full object-cover"><button type="button" onclick="removeThumb('${type}', ${idx})" class="absolute top-1.5 right-1.5 bg-[#1A1D1A]/70 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px] backdrop-blur-sm">✕</button>`; listContainer.appendChild(div); }); lucide.createIcons();
     }
@@ -1265,10 +1255,10 @@
         const treePruning = document.getElementById('inputTreePruning') ? document.getElementById('inputTreePruning').value.trim() : ''; if(treePruning) activeBadges.push("수목가지치기 (" + treePruning + ")");
         const extraCat = document.getElementById('inputExtraCategory').value.trim(); if(extraCat) activeBadges.push(extraCat);
 
-        const bUrls = await uploadImagesToCloud(beforeImages); const aUrls = await uploadImagesToCloud(afterImages); const iUrls = await uploadImagesToCloud(issueImages); 
+        const bUrls = await uploadImagesToCloud(beforeImages); const dUrls = await uploadImagesToCloud(duringImages); const aUrls = await uploadImagesToCloud(afterImages); const iUrls = await uploadImagesToCloud(issueImages); 
         
         const payloadData = { 
-            isQuote: false, c: clientName, p: clientPhone, addr: clientAddress, r: round, d: diagnosis, issue: issueText, cat: activeBadges.join(','), b: bUrls.join(','), a: aUrls.join(','), imgsIssue: iUrls.join(','),
+            isQuote: false, c: clientName, p: clientPhone, addr: clientAddress, r: round, d: diagnosis, issue: issueText, cat: activeBadges.join(','), b: bUrls.join(','), dur: dUrls.join(','), a: aUrls.join(','), imgsIssue: iUrls.join(','),
             supName: myCompanyProfile.name, supCeo: myCompanyProfile.ceo, supBiz: myCompanyProfile.bizNum, supPhone: myCompanyProfile.phone 
         };
         
@@ -1300,9 +1290,11 @@
             const val = btn.getAttribute('data-val'); btn.className = "cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968] transition-all"; btn.innerText = "+ " + val;
         });
 
-        beforeImages = []; afterImages = []; issueImages = []; renderThumbList('before'); renderThumbList('after'); renderThumbList('issue');
+        beforeImages = []; duringImages = []; afterImages = []; issueImages = []; 
+        renderThumbList('before'); renderThumbList('during'); renderThumbList('after'); renderThumbList('issue');
       } catch (e) { alert("오류가 발생했습니다."); } finally { document.getElementById('loadingOverlay')?.remove(); lucide.createIcons(); }
     }
+    
     async function generateQuote() {
       const clientName = document.getElementById('quoteClientSelect').value; if(!clientName) return alert("고객명을 선택하세요.");
       const clientPhone = document.getElementById('quoteInputClientPhone').value; const clientAddress = document.getElementById('quoteInputClientAddress') ? document.getElementById('quoteInputClientAddress').value : '';
@@ -1345,7 +1337,7 @@
         let payloadData = r.payload;
         if (!payloadData) {
             if (isQuote) payloadData = { isQuote: true, c: r.clientName, p: r.clientPhone || '', addr: '', r: r.round, m: [], s: 0, v: 0, t: 0, imgs: r.imgs || '' };
-            else payloadData = { isQuote: false, c: r.clientName, p: r.clientPhone || '', addr: '', r: r.round, d: r.diagnosis, issue: r.issue || '', cat: r.cat, b: r.b || '', a: r.a || '', imgsIssue: r.imgsIssue || '' };
+            else payloadData = { isQuote: false, c: r.clientName, p: r.clientPhone || '', addr: '', r: r.round, d: r.diagnosis, issue: r.issue || '', cat: r.cat, b: r.b || '', dur: r.dur || '', a: r.a || '', imgsIssue: r.imgsIssue || '' };
         }
         currentLoadedRecordId = r.id; 
         if (r.url) generatedShareUrl = r.url;
@@ -1378,8 +1370,11 @@
               else { if(document.getElementById('inputExtraCategory')) document.getElementById('inputExtraCategory').value = cName; }
           });
       }
-      beforeImages = payload.b ? payload.b.split(',').filter(Boolean) : []; afterImages = payload.a ? payload.a.split(',').filter(Boolean) : []; issueImages = payload.imgsIssue ? payload.imgsIssue.split(',').filter(Boolean) : [];
-      renderThumbList('before'); renderThumbList('after'); renderThumbList('issue');
+      beforeImages = payload.b ? payload.b.split(',').filter(Boolean) : []; 
+      duringImages = payload.dur ? payload.dur.split(',').filter(Boolean) : []; 
+      afterImages = payload.a ? payload.a.split(',').filter(Boolean) : []; 
+      issueImages = payload.imgsIssue ? payload.imgsIssue.split(',').filter(Boolean) : [];
+      renderThumbList('before'); renderThumbList('during'); renderThumbList('after'); renderThumbList('issue');
       editingRecordId = currentLoadedRecordId; let genBtn = document.getElementById('btnGenerateReport'); if(genBtn) genBtn.innerHTML = '<i data-lucide="edit" class="w-6 h-6 stroke-[2.5]"></i> 리포트 수정 완료';
       switchView('admin');
     }
@@ -1410,6 +1405,25 @@
       quoteImages = payload.imgs ? payload.imgs.split(',').filter(Boolean) : []; renderQuoteThumbList();
       editingRecordId = currentLoadedRecordId; let genBtn = document.getElementById('btnGenerateQuote'); if(genBtn) genBtn.innerHTML = '<i data-lucide="edit" class="w-6 h-6 stroke-[2.5]"></i> 견적서 수정 완료';
       calculateQuoteTotal(); switchView('quote');
+    }
+
+    // 🔥 새 일지 작성 기능 (거래처 목록에서 연동)
+    function createNewReportFromClient(name, phone, address) {
+        document.getElementById('clientSelect').value = name;
+        document.getElementById('inputClientPhone').value = phone || '';
+        if(document.getElementById('inputClientAddress')) document.getElementById('inputClientAddress').value = address && address !== 'undefined' ? address : '';
+        document.getElementById('inputRound').value = '';
+        document.getElementById('inputDiagnosis').value = '';
+        document.getElementById('inputIssue').value = '';
+        if(document.getElementById('inputTreePruning')) document.getElementById('inputTreePruning').value = '';
+        if(document.getElementById('inputExtraCategory')) document.getElementById('inputExtraCategory').value = '';
+        document.querySelectorAll('#categoryContainer .cat-btn').forEach(btn => {
+            const val = btn.getAttribute('data-val'); btn.className = "cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968] transition-all"; btn.innerText = "+ " + val;
+        });
+        beforeImages = []; duringImages = []; afterImages = []; issueImages = [];
+        renderThumbList('before'); renderThumbList('during'); renderThumbList('after'); renderThumbList('issue');
+        switchView('admin');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function renderClientView(data, viewMode) {
@@ -1471,15 +1485,25 @@
         } else { issueBlock.classList.add('hidden'); }
         document.getElementById('viewDiagnosis').innerText = data.d || '-'; document.getElementById('viewCategories').innerHTML = '';
         if(data.cat) data.cat.split(',').forEach(cat => { document.getElementById('viewCategories').insertAdjacentHTML('beforeend', `<span class="text-[12px] bg-[#12261E] text-[#84CC16] px-3 py-1.5 rounded-[10px] font-black">${cat}</span>`); });
+        
         const renderGallery = (containerId, urls, typeCode) => {
           const container = document.getElementById(containerId); container.innerHTML = ''; 
           const arr = Array.isArray(urls) ? urls : (typeof urls === 'string' && urls ? urls.split(',') : []);
           const cleanArr = arr.filter(src => src && src.trim() !== '');
-          if(typeCode === 'b') currentGalleryB = cleanArr; else currentGalleryA = cleanArr;
+          if(typeCode === 'b') currentGalleryB = cleanArr; else if(typeCode === 'dur') currentGalleryD = cleanArr; else currentGalleryA = cleanArr;
           if (cleanArr.length === 0) { container.innerHTML = `<div class="col-span-2 text-[12px] text-[#4E5968] font-bold py-3 text-center bg-white/50 rounded-[16px] border border-dashed border-[#EAEBEA]">등록된 사진 없음</div>`; } 
           else { cleanArr.forEach((src, idx) => { const bd = typeCode==='b' ? 'border-[#EAEBEA]' : 'border-[#84CC16]/40'; const imgDiv = document.createElement('div'); imgDiv.className = `h-40 rounded-[20px] overflow-hidden bg-white/80 border ${bd} cursor-pointer shadow-sm relative group`; imgDiv.innerHTML = `<img src="${src}" onerror="this.parentElement.style.display='none'" onclick="openModal('${typeCode}', ${idx})" class="w-full h-full object-cover transition-transform hover:scale-105 duration-700"><div class="absolute bottom-2 right-2 bg-black/60 text-white p-1.5 rounded-full pointer-events-none"><i data-lucide="zoom-in" class="w-3 h-3"></i></div>`; container.appendChild(imgDiv); }); }
         };
-        renderGallery('viewBeforeGallery', data.b, 'b'); renderGallery('viewAfterGallery', data.a, 'a');
+        
+        renderGallery('viewBeforeGallery', data.b, 'b'); 
+        const duringBlock = document.getElementById('viewDuringBlock');
+        if (data.dur && data.dur.trim() !== '') {
+            duringBlock.classList.remove('hidden');
+            renderGallery('viewDuringGallery', data.dur, 'dur');
+        } else {
+            duringBlock.classList.add('hidden');
+        }
+        renderGallery('viewAfterGallery', data.a, 'a');
       }
 
       document.getElementById('mainHeader').style.display = 'block'; document.getElementById('adminControlsPanel').style.display = 'block'; document.getElementById('printBtnBox').style.display = 'block'; document.getElementById('backToAdminBtnBox').style.display = 'block'; 
@@ -1574,382 +1598,6 @@
         }, 500);
     }
 
-    function renderClientSelect() {
-      const datalist = document.getElementById('clientDatalist'); if(!datalist) return; datalist.innerHTML = '';
-      clients.forEach((c) => { const opt = document.createElement('option'); opt.value = c.name; datalist.appendChild(opt); });
-    }
-    function onSelectClient(name) { 
-        const found = clients.find(c => c.name === name); 
-        if (found) { 
-            document.getElementById('inputClientPhone').value = found.phone || ''; 
-            if(document.getElementById('inputClientAddress')) document.getElementById('inputClientAddress').value = found.address || ''; 
-            if(document.getElementById('quoteInputClientPhone')) document.getElementById('quoteInputClientPhone').value = found.phone || ''; 
-            if(document.getElementById('quoteInputClientAddress')) document.getElementById('quoteInputClientAddress').value = found.address || ''; 
-            
-            let r1 = document.querySelector('input[name="newClientTypeReport"][value="정기 관리"]');
-            let r2 = document.querySelector('input[name="newClientTypeReport"][value="개별 고객"]');
-            if (found.type === '개별 고객') { if(r2) r2.checked = true; } 
-            else { if(r1) r1.checked = true; }
-        }
-        document.getElementById('quoteClientSelect').value = name; 
-    }
-    function onSelectQuoteClient(name) { 
-        const found = clients.find(c => c.name === name); 
-        if (found) { document.getElementById('quoteInputClientPhone').value = found.phone || ''; if(document.getElementById('quoteInputClientAddress')) document.getElementById('quoteInputClientAddress').value = found.address || ''; document.getElementById('inputClientPhone').value = found.phone || ''; if(document.getElementById('inputClientAddress')) document.getElementById('inputClientAddress').value = found.address || ''; }
-        document.getElementById('clientSelect').value = name; 
-    }
-
-    function setClientFilter(type) {
-      currentClientFilter = type;
-      if(type === '정기 관리') { document.getElementById('btnFilterRegular').className = "flex-1 py-3 rounded-[12px] bg-white shadow-sm text-[#12261E] font-black text-[14px] transition-all border border-[#EAEBEA]"; document.getElementById('btnFilterSingle').className = "flex-1 py-3 rounded-[12px] text-[#4E5968] font-black text-[14px] hover:text-[#12261E] transition-all border border-transparent"; } 
-      else { document.getElementById('btnFilterRegular').className = "flex-1 py-3 rounded-[12px] text-[#4E5968] font-black text-[14px] hover:text-[#12261E] transition-all border border-transparent"; document.getElementById('btnFilterSingle').className = "flex-1 py-3 rounded-[12px] bg-white shadow-sm text-[#12261E] font-black text-[14px] shadow-sm transition-all text-center border border-[#EAEBEA]"; }
-      renderClientsList();
-    }
-
-    function renderClientsList() {
-      const container = document.getElementById('clientsListContainer'); container.innerHTML = '';
-      const query = (document.getElementById('clientSearchInput')?.value || '').toLowerCase().trim();
-      let filtered = clients.filter(c => c.type === currentClientFilter);
-      if(query) { filtered = filtered.filter(c => (c.name&&c.name.toLowerCase().includes(query)) || (c.phone&&c.phone.replace(/-/g, '').includes(query.replace(/-/g, ''))) || (c.address&&c.address.toLowerCase().includes(query))); }
-      document.getElementById('clientCountBadge').innerText = `${filtered.length}건`;
-      if (filtered.length === 0) { container.innerHTML = `<div class="p-6 text-center text-[#8B95A1] text-[13px] bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA] font-bold">일치하는 거래처가 없습니다.</div>`; return; }
-      filtered.forEach((c) => {
-        const div = document.createElement('div'); div.className = "bg-white p-5 rounded-[16px] border border-[#EAEBEA] shadow-sm cursor-pointer hover:border-[#84CC16] hover:shadow-md transition-all flex justify-between items-center";
-        div.innerHTML = `<div class="w-full pr-2" onclick="showHistory('${c.name}')"><div class="font-black text-[#1A1D1A] text-[15px] flex items-center gap-1.5"><i data-lucide="building" class="w-4 h-4 text-[#4E5968]"></i> ${c.name}</div><div class="text-[12px] font-medium text-[#8B95A1] mt-1.5 break-keep"><i data-lucide="map-pin" class="w-3.5 h-3.5 inline-block mr-1"></i> ${c.address || '주소 미등록'}</div><div class="text-[14px] font-bold text-[#4E5968] mt-1"><i data-lucide="phone" class="w-3.5 h-3.5 inline-block text-blue-500 mr-1"></i> ${formatPhoneToLink(c.phone)}</div></div><div class="flex gap-1.5 flex-shrink-0"><button onclick="editClient('${c.id}'); event.stopPropagation();" class="p-3 text-[#A3A8A3] hover:text-[#84CC16] bg-gray-50 rounded-xl transition-all"><i data-lucide="edit-2" class="w-5 h-5"></i></button><button onclick="deleteClient('${c.id}'); event.stopPropagation();" class="p-3 text-[#A3A8A3] hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div>`;
-        container.appendChild(div);
-      }); lucide.createIcons();
-    }
-    
-    function saveClient() {
-        const name = document.getElementById('newClientName').value.trim(); const phone = document.getElementById('newClientPhone').value.trim(); const address = document.getElementById('newClientAddress').value.trim(); const type = document.getElementById('newClientType').value;
-        if(!name || !phone) return alert("고객명과 연락처를 입력하세요.");
-        
-        if (editingClientIndex !== null) { 
-            const idx = clients.findIndex(c => c.id === editingClientIndex); 
-            if(idx !== -1) { 
-                const oldName = clients[idx].name; 
-                
-                clients[idx].name = name; clients[idx].phone = phone; clients[idx].address = address; clients[idx].type = type; 
-                
-                if (oldName !== name) {
-                    let isChanged = false;
-                    records.forEach(r => {
-                        if (r && r.clientName === oldName) {
-                            r.clientName = name; 
-                            if (r.payload) { 
-                                r.payload.c = name; 
-                                r.payload.p = phone; 
-                                r.payload.addr = address; 
-                            }
-                            isChanged = true;
-                        }
-                    });
-                    if (isChanged) { 
-                        updateData('records', records); 
-                        localStorage.setItem('shinhwa_pro_records', JSON.stringify(records)); 
-                    }
-                }
-            } 
-            alert("수정 완료"); 
-        } 
-        else { 
-            clients.push({ id: Date.now().toString(), name, phone, address, type }); 
-            alert("저장 완료"); 
-        }
-        updateData('clients', clients); cancelEdit(); renderClientSelect(); renderClientsList();
-    }
-    function editClient(id) {
-        editingClientIndex = id; const client = clients.find(c => c.id === id); if(!client) return;
-        document.getElementById('newClientName').value = client.name; document.getElementById('newClientPhone').value = client.phone; document.getElementById('newClientAddress').value = client.address || ''; document.getElementById('newClientType').value = client.type || '정기 관리';
-        document.getElementById('clientFormTitle').innerHTML = `<i data-lucide="edit-3" class="w-5 h-5 text-[#84CC16]"></i> <span>거래처 정보 수정</span>`; document.getElementById('saveClientBtn').innerText = "수정 완료"; document.getElementById('cancelEditBtn').classList.remove('hidden'); lucide.createIcons(); window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    function cancelEdit() {
-        editingClientIndex = null; document.getElementById('newClientName').value = ''; document.getElementById('newClientPhone').value = ''; document.getElementById('newClientAddress').value = ''; document.getElementById('newClientType').value = '정기 관리';
-        document.getElementById('clientFormTitle').innerHTML = `<i data-lucide="plus" class="w-5 h-5 text-[#84CC16]"></i> <span>신규 등록</span>`; document.getElementById('saveClientBtn').innerText = "데이터 저장"; document.getElementById('cancelEditBtn').classList.add('hidden'); lucide.createIcons();
-    }
-    function deleteClient(id) { if(confirm("삭제하시겠습니까?")) { clients = clients.filter(c => c.id !== id); updateData('clients', clients); if(editingClientIndex === id) cancelEdit(); renderClientSelect(); renderClientsList(); } }
-
-    function renderQuoteList() {
-      const container = document.getElementById('quoteListContainer'); const qList = records.filter(r => r && r.type === 'quote').sort((a,b) => b.id.localeCompare(a.id)); container.innerHTML = '';
-      document.getElementById('quoteCountBadge').innerText = `${qList.length}건`;
-      if(qList.length === 0) { container.innerHTML = `<div class="p-8 text-center text-[#8B95A1] text-[13px] bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA] font-bold">발행된 견적서가 없습니다.</div>`; return; }
-      qList.forEach(r => {
-        const div = document.createElement('div'); div.className = "bg-white p-5 rounded-[16px] border border-[#EAEBEA] shadow-sm cursor-pointer hover:border-[#84CC16] hover:shadow-md transition-all flex flex-col gap-2 relative";
-        div.onclick = () => loadHistoryRecord(r.id, true, r);
-        let sumValue = r.payload ? (r.payload.s || 0).toLocaleString('ko-KR') : "0";
-        div.innerHTML = `<button onclick="deleteRecord(event, '${r.id}', true)" class="absolute top-4 right-4 text-[#A3A8A3] hover:text-red-500 p-1 bg-[#F4F5F4] rounded-md transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button><div class="flex items-center gap-2 mb-1"><span class="text-[10px] font-black bg-[#1E3A8A]/10 text-[#1E3A8A] px-2 py-0.5 rounded border border-[#1E3A8A]/20">견적서</span><span class="text-[12px] font-bold text-[#8B95A1]">${r.date}</span></div><div class="font-black text-[#1A1D1A] text-[15px] truncate pr-8">${r.round}</div><div class="flex justify-between items-end mt-1"><div class="text-[13px] font-bold text-[#4E5968] flex items-center gap-1.5"><i data-lucide="building" class="w-3.5 h-3.5"></i> ${r.clientName}</div><div class="text-[16px] font-black text-[#84CC16]">${sumValue}원</div></div>`;
-        container.appendChild(div);
-      }); lucide.createIcons();
-    }
-
-    function showHistory(clientName) {
-      document.getElementById('historyClientName').innerText = clientName; const container = document.getElementById('historyListContainer'); container.innerHTML = '';
-      const list = records.filter(r => r && r.clientName === clientName && r.type !== 'quote').sort((a, b) => b.id.localeCompare(a.id));
-      if (list.length === 0) { container.innerHTML = `<div class="p-8 text-center text-[#8B95A1] text-[13px] bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA] font-bold">작성된 일지가 없습니다.</div>`; } 
-      else {
-        list.forEach((r) => {
-          const div = document.createElement('div'); div.className = "bg-white p-5 rounded-[16px] border border-[#EAEBEA] shadow-sm cursor-pointer hover:border-[#84CC16] hover:shadow-md transition-all flex flex-col gap-1.5 relative";
-          div.onclick = () => loadHistoryRecord(r.id, false, r);
-          div.innerHTML = `<button onclick="deleteRecord(event, '${r.id}', false)" class="absolute top-4 right-4 text-[#A3A8A3] hover:text-red-500 p-1 bg-[#F4F5F4] rounded-md transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button><div class="flex items-center gap-2 mb-1"><span class="text-[10px] font-black bg-[#84CC16]/20 text-[#65A30D] px-2 py-0.5 rounded border border-[#84CC16]/30">작업 일지</span><span class="text-[12px] font-bold text-[#8B95A1]">${r.date}</span></div><div class="font-black text-[#1A1D1A] text-[15px] pr-8">${r.round}</div><div class="text-[13px] font-bold text-[#4E5968] truncate flex items-center gap-1.5 mt-0.5"><i data-lucide="check-square" class="w-3.5 h-3.5"></i> ${r.cat || '상세 내역 없음'}</div>`;
-          container.appendChild(div);
-        });
-      }
-      lucide.createIcons(); switchView('history');
-    }
-
-    // ==========================================
-    // 📅 스마트 작업 일정표 로직
-    // ==========================================
-    let currentCalDate = new Date();
-    let selectedDate = new Date();
-    let schedules = []; // 🔥 로컬스토리지를 지우고, 클라우드에서 가져오도록 빈 배열로 시작
-
-    function renderCalendar() {
-        const year = currentCalDate.getFullYear();
-        const month = currentCalDate.getMonth();
-        document.getElementById('calendarMonthText').innerText = `${year}년 ${month + 1}월`;
-        
-        const firstDay = new Date(year, month, 1).getDay();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
-        const grid = document.getElementById('calendarGrid');
-        grid.innerHTML = '';
-        
-        for (let i = 0; i < firstDay; i++) { grid.innerHTML += `<div class="p-2"></div>`; }
-        
-        for (let i = 1; i <= daysInMonth; i++) {
-            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-            const daySchedules = schedules.filter(s => s.date === dateStr);
-            
-            let dotHtml = '';
-            if (daySchedules.length > 0) {
-                const color = daySchedules[0].color.replace('border-', 'bg-');
-                dotHtml = `<div class="w-1.5 h-1.5 ${color} rounded-full mx-auto mt-1"></div>`;
-            } else {
-                dotHtml = `<div class="w-1.5 h-1.5 mt-1 opacity-0"></div>`;
-            }
-            
-            const isToday = new Date().toDateString() === new Date(year, month, i).toDateString();
-            const todayClass = isToday ? 'bg-[#12261E] text-[#84CC16] rounded-full' : 'text-[#1A1D1A]';
-            const isSelected = selectedDate.toDateString() === new Date(year, month, i).toDateString();
-            const selectedClass = isSelected && !isToday ? 'border-2 border-[#12261E] rounded-full' : '';
-
-            grid.innerHTML += `
-                <div onclick="selectDate(${year}, ${month}, ${i})" class="flex flex-col items-center justify-center p-1 cursor-pointer">
-                    <div class="w-9 h-9 flex items-center justify-center text-[14px] font-black ${todayClass} ${selectedClass}">${i}</div>
-                    ${dotHtml}
-                </div>
-            `;
-        }
-    }
-
-    function changeMonth(delta) {
-        currentCalDate.setMonth(currentCalDate.getMonth() + delta);
-        renderCalendar();
-    }
-
-    function selectDate(year, month, day) {
-        selectedDate = new Date(year, month, day);
-        renderCalendar();
-        const days = ['일', '월', '화', '수', '목', '금', '토'];
-        document.getElementById('selectedDateText').innerHTML = `<i data-lucide="calendar-check" class="w-5 h-5 text-[#84CC16]"></i> ${month + 1}월 ${day}일 (${days[selectedDate.getDay()]})`;
-        renderScheduleList();
-    }
-
-    function renderScheduleList() {
-        const list = document.getElementById('scheduleList');
-        list.innerHTML = '';
-        const dateStr = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
-        const daySchedules = schedules.filter(s => s.date === dateStr);
-        
-        if (daySchedules.length === 0) {
-            list.innerHTML = `<div class="p-6 text-center text-[#8B95A1] text-[13px] bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA] font-bold">등록된 일정이 없습니다.</div>`;
-            return;
-        }
-        
-        daySchedules.forEach(s => {
-            const tagName = s.tag || '조경 관리 작업'; // 🔥 직접 작성한 태그명 반영
-            const textColor = s.color.replace('border-', 'text-');
-            list.innerHTML += `
-                <div class="border-l-4 rounded-r-[16px] p-4 shadow-sm bg-white border-y border-r border-[#EAEBEA] ${s.color} hover:shadow-md transition-all">
-                    <div class="text-[12px] font-black ${textColor} mb-1.5">${tagName}</div>
-                    <div class="flex justify-between items-start mb-1.5">
-                        <h4 class="font-black text-[15px] text-[#1A1D1A] truncate pr-2">${s.title}</h4>
-                        <button onclick="deleteSchedule(${s.id})" class="text-[#A3A8A3] hover:text-red-500 bg-[#F4F5F4] p-1.5 rounded-lg"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                    </div>
-                    ${s.memo ? `<div class="text-[13px] text-[#4E5968] font-bold bg-[#F9F9F8] px-3 py-2 rounded-lg mt-2">${s.memo.replace(/\n/g, '<br>')}</div>` : ''}
-                </div>
-            `;
-        });
-        lucide.createIcons();
-    }
-
-    function openScheduleModal() {
-        document.getElementById('scheduleId').value = Date.now();
-        const dateStr = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
-        document.getElementById('scheduleDate').value = dateStr;
-        document.getElementById('scheduleTitle').value = '';
-        document.getElementById('scheduleTagText').value = '조경 관리 작업'; // 🔥 태그명 기본값 세팅
-        document.getElementById('scheduleMemo').value = '';
-        
-        const modal = document.getElementById('scheduleModal');
-        const box = document.getElementById('scheduleBox');
-        modal.classList.remove('hidden');
-        setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10);
-        history.pushState({ modalOpen: true }, "", "");
-    }
-
-    function closeScheduleModal(fromPopstate = false) {
-        const modal = document.getElementById('scheduleModal');
-        const box = document.getElementById('scheduleBox');
-        if(modal) modal.classList.add('opacity-0');
-        if(box) box.classList.add('scale-95');
-        setTimeout(() => { if(modal) modal.classList.add('hidden'); }, 200);
-        if(!fromPopstate && history.state && history.state.modalOpen) history.back();
-    }
-
-    function saveSchedule() {
-        const id = document.getElementById('scheduleId').value;
-        const date = document.getElementById('scheduleDate').value;
-        const title = document.getElementById('scheduleTitle').value;
-        if (!title.trim()) return alert("현장명이나 작업 내용을 입력해주세요.");
-        
-        const newSchedule = {
-            id: id, date: date, title: title,
-            color: document.getElementById('scheduleColor').value,
-            tag: document.getElementById('scheduleTagText').value, // 🔥 직접 작성한 태그명 저장
-            memo: document.getElementById('scheduleMemo').value
-        };
-        
-        schedules.push(newSchedule);
-        
-        // 🔥 로컬 저장소 대신 파이어베이스 클라우드로 쏘기!
-        updateData('schedules', schedules);
-        
-        const parts = date.split('-');
-        if(date !== `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`) {
-            selectDate(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-        } else {
-            renderCalendar(); renderScheduleList();
-        }
-        closeScheduleModal();
-    }
-
-    function deleteSchedule(id) {
-        if(confirm("이 일정을 삭제하시겠습니까?")) {
-            schedules = schedules.filter(s => s.id != id);
-            
-            // 🔥 삭제한 것도 클라우드에 즉시 반영!
-            updateData('schedules', schedules);
-            
-            renderCalendar(); renderScheduleList();
-        }
-    }
-
-    function switchView(mode, pushHistory = true) {
-      const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView', 'calendarView', 'ledgerView'];
-      views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
-      const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient', 'tabContacts', 'tabCalendar', 'tabLedger'];
-      mainTabs.forEach(t => { const el = document.getElementById(t); if(el) el.className = "w-full py-3.5 rounded-[12px] bg-black/10 text-[#12261E] font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"; });
-      const lensTab = document.getElementById('tabLens'); if(lensTab) lensTab.className = "w-full py-3.5 rounded-[12px] bg-[#1E3A8A] text-white font-black text-[14px] shadow-md hover:bg-[#172554] transition-all text-center flex flex-col items-center justify-center gap-1 border border-[#172554]";
-
-      let activeTabId = '';
-      if (mode === 'admin') { document.getElementById('adminView').classList.remove('hidden'); activeTabId = 'tabAdmin'; }
-      else if (mode === 'quote') { document.getElementById('quoteAdminView').classList.remove('hidden'); activeTabId = 'tabQuote'; }
-      else if (mode === 'quoteList') { document.getElementById('quoteListView').classList.remove('hidden'); activeTabId = 'tabQuoteList'; renderQuoteList(); }
-      else if (mode === 'clients') { document.getElementById('clientsView').classList.remove('hidden'); activeTabId = 'tabClient'; }
-      else if (mode === 'contacts') { document.getElementById('contactsView').classList.remove('hidden'); activeTabId = 'tabContacts'; renderContactsList(); }
-      else if (mode === 'history') { document.getElementById('historyView').classList.remove('hidden'); activeTabId = 'tabClient'; }
-      else if (mode === 'lens') { document.getElementById('lensView').classList.remove('hidden'); activeTabId = 'tabLens'; }
-      else if (mode === 'calendar') { document.getElementById('calendarView').classList.remove('hidden'); activeTabId = 'tabCalendar'; renderCalendar(); renderScheduleList(); }
-      else if (mode === 'ledger') { document.getElementById('ledgerView').classList.remove('hidden'); activeTabId = 'tabLedger'; renderLedgerList(); }
-      else { document.getElementById('clientView').classList.remove('hidden'); activeTabId = currentIsQuote ? 'tabQuoteList' : 'tabClient'; }
-
-      if(activeTabId) {
-        const activeEl = document.getElementById(activeTabId);
-        if(activeEl) {
-          if (activeTabId === 'tabLens') activeEl.className = "w-full py-3.5 rounded-[12px] bg-[#84CC16] text-[#12261E] font-black text-[13px] shadow-[0_4px_12px_rgba(132,204,22,0.3)] transition-all text-center flex flex-col items-center justify-center gap-1 border border-[#65A30D]";
-          else activeEl.className = "w-full py-3.5 rounded-[12px] bg-white text-[#12261E] font-black text-[13px] shadow-md transition-all text-center flex flex-col items-center justify-center gap-1 border border-white/50";
-        }
-      }
-      if(typeof lucide !== 'undefined') lucide.createIcons(); window.scrollTo(0, 0); if (pushHistory && mode !== 'client_shared') history.pushState({ view: mode }, "", "");
-    }
-
-    const mainTabsOrder = ['admin', 'quote', 'quoteList', 'clients', 'contacts', 'lens', 'calendar', 'ledger'];
-    const swipeContainerEl = document.getElementById('swipeContainer');
-    let viewTouchStartX = 0; let viewTouchStartY = 0;
-    if(swipeContainerEl) {
-        swipeContainerEl.addEventListener('touchstart', e => { viewTouchStartX = e.changedTouches[0].screenX; viewTouchStartY = e.changedTouches[0].screenY; }, {passive: true});
-        swipeContainerEl.addEventListener('touchend', e => {
-          if (e.target.closest('input') || e.target.closest('textarea') || e.target.closest('table')) return;
-          const diffX = e.changedTouches[0].screenX - viewTouchStartX; const diffY = e.changedTouches[0].screenY - viewTouchStartY;
-          if (Math.abs(diffX) > Math.abs(diffY) * 1.5 && Math.abs(diffX) > 60) {
-            let currentActiveMode = 'admin';
-            if (!document.getElementById('quoteAdminView').classList.contains('hidden')) currentActiveMode = 'quote';
-            else if (!document.getElementById('quoteListView').classList.contains('hidden')) currentActiveMode = 'quoteList';
-            else if (!document.getElementById('clientsView').classList.contains('hidden')) currentActiveMode = 'clients';
-            else if (!document.getElementById('contactsView').classList.contains('hidden')) currentActiveMode = 'contacts';
-            else if (!document.getElementById('lensView').classList.contains('hidden')) currentActiveMode = 'lens';
-            else if (!document.getElementById('calendarView').classList.contains('hidden')) currentActiveMode = 'calendar';
-            else if (!document.getElementById('ledgerView').classList.contains('hidden')) currentActiveMode = 'ledger';
-            else if (!document.getElementById('clientView').classList.contains('hidden')) return; 
-            let currentIndex = mainTabsOrder.indexOf(currentActiveMode);
-            if (currentIndex !== -1) { if (diffX < 0 && currentIndex < mainTabsOrder.length - 1) switchView(mainTabsOrder[currentIndex + 1]); else if (diffX > 0 && currentIndex > 0) switchView(mainTabsOrder[currentIndex - 1]); }
-          }
-        }, {passive: true});
-    }
-
-    function openModal(type, idx) { 
-        if (type === 'b') modalImages = currentGalleryB; else if (type === 'a') modalImages = currentGalleryA; else if (type === 'i') modalImages = currentGalleryI; else modalImages = currentGalleryQ; 
-        if (!modalImages || modalImages.length === 0) return; 
-        modalCurrentIdx = idx; updateModalImage(); document.getElementById('imageModal').style.zIndex = "4000"; document.getElementById('imageModal').classList.remove('hidden'); history.pushState({ modalOpen: true }, "", ""); 
-    }
-    function updateModalImage() { document.getElementById('modalImg').src = modalImages[modalCurrentIdx]; document.getElementById('modalIndicator').innerText = `${modalCurrentIdx + 1} / ${modalImages.length}`; document.getElementById('prevBtn').style.display = (modalCurrentIdx === 0) ? 'none' : 'block'; document.getElementById('nextBtn').style.display = (modalCurrentIdx === modalImages.length - 1) ? 'none' : 'block'; }
-    function prevImage(e) { if(e) e.stopPropagation(); if(modalCurrentIdx > 0) { modalCurrentIdx--; updateModalImage(); } }
-    function nextImage(e) { if(e) e.stopPropagation(); if(modalCurrentIdx < modalImages.length - 1) { modalCurrentIdx++; updateModalImage(); } }
-    function closeModal(fromPopstate = false) { const modal = document.getElementById('imageModal'); if (modal && !modal.classList.contains('hidden')) { modal.classList.add('hidden'); document.getElementById('modalImg').src = ''; if (!fromPopstate) history.back(); } }
-    
-    let modalTouchStartX = 0; let modalTouchStartY = 0; const imageModalEl = document.getElementById('imageModal');
-    imageModalEl.addEventListener('touchstart', e => { modalTouchStartX = e.changedTouches[0].screenX; modalTouchStartY = e.changedTouches[0].screenY; }, {passive: true});
-    imageModalEl.addEventListener('touchend', e => { if (imageModalEl.classList.contains('hidden')) return; const diffX = e.changedTouches[0].screenX - modalTouchStartX; const diffY = e.changedTouches[0].screenY - modalTouchStartY; if (Math.abs(diffX) > Math.abs(diffY) * 1.5 && Math.abs(diffX) > 40) { if (diffX < 0) nextImage(); else prevImage(); } }, {passive: true});
-    
-    function toggleBadge(btn) { if(btn.classList.contains('bg-[#12261E]')) { btn.className = "cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968] transition-all"; btn.innerText = "+ " + btn.getAttribute('data-val'); } else { btn.className = "cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-[#12261E] text-[#84CC16] shadow-md border border-transparent"; btn.innerText = "✓ " + btn.getAttribute('data-val'); } }
-
-    window.addEventListener('DOMContentLoaded', async () => {
-      loadQuoteTemplate('residential'); 
-      setTimeout(() => { const splash = document.getElementById('splashScreen'); if(splash) { splash.style.opacity = '0'; setTimeout(() => splash.remove(), 600); } }, 2000);
-      
-      const params = new URLSearchParams(window.location.search);
-      if (params.has('id') || params.has('blob') || params.has('data')) {
-        const reportId = params.get('id') || params.get('blob'); const encodedData = params.get('data');
-        history.replaceState({ view: 'client_shared' }, "", "");
-        const overlay = document.createElement('div'); overlay.id = 'loadingOverlay'; overlay.className = 'fixed inset-0 z-[200] bg-[#151E2D] flex flex-col items-center justify-center'; overlay.innerHTML = `<div class="w-12 h-12 border-4 border-[#84CC16]/30 border-t-[#84CC16] rounded-full animate-spin mb-4"></div><div class="text-white font-bold text-[15px]">프리미엄 문서를 불러오는 중...</div>`; document.body.appendChild(overlay);
-        
-        let loadedData = null;
-        try {
-          if (encodedData) loadedData = JSON.parse(decodeURIComponent(escape(atob(encodedData))));
-          else if (reportId) {
-              try { const res = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_shared_docs/${reportId}.json`); if (res.ok) { const json = await res.json(); if (json && Object.keys(json).length > 0) loadedData = json; } } catch(err) {}
-              if (!loadedData) { const savedRecords = JSON.parse(localStorage.getItem('shinhwa_pro_records')) || []; const foundRec = savedRecords.find(rec => rec.id === reportId); if (foundRec && foundRec.payload) loadedData = foundRec.payload; }
-          }
-          document.getElementById('loadingOverlay')?.remove();
-          if(loadedData) renderClientView(loadedData, 'client_shared'); else throw new Error("No data");
-        } catch(e) { document.getElementById('loadingOverlay')?.remove(); document.body.innerHTML = `<div class="p-10 text-center font-bold text-lg mt-20 text-white">존재하지 않거나 보안상 만료된 문서입니다.</div>`; }
-      } else {
-        const savedId = localStorage.getItem('shinhwa_pro_logged_in_id'); 
-        const savedPw = localStorage.getItem('shinhwa_pro_logged_in_pw');
-        const autoLogin = localStorage.getItem('shinhwa_pro_auto_login');
-        if (savedId && savedPw && autoLogin === 'true') { document.getElementById('loginId').value = savedId; document.getElementById('loginPw').value = savedPw; doLogin(); } 
-        else { document.getElementById('authView').classList.remove('hidden'); }
-        lucide.createIcons();
-      }
-    });
-    // ==========================================
-    // 📓 스마트 개인 장부 (달력형) 및 계산기 로직
-    // ==========================================
-    let ledgers = JSON.parse(localStorage.getItem('shinhwa_pro_ledgers')) || [];
-    let currentLedgerCalDate = new Date();
-    let selectedLedgerDate = new Date();
-
     function renderLedgerCalendar() {
         const year = currentLedgerCalDate.getFullYear();
         const month = currentLedgerCalDate.getMonth();
@@ -1966,7 +1614,6 @@
         
         let monthInc = 0; let monthExp = 0; let monthVat = 0; 
         
-        // --- 연간 데이터 합산 로직 추가 ---
         let yearInc = 0; let yearExp = 0; let yearVat = 0;
         const yearPrefix = `${year}-`;
         const yearLedgers = ledgers.filter(l => l.date && l.date.startsWith(yearPrefix));
@@ -1975,7 +1622,6 @@
             yearExp += (l.expense || 0);
             yearVat += (l.vat || 0);
         });
-        // ------------------------------
 
         for (let i = 1; i <= daysInMonth; i++) {
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
@@ -2004,7 +1650,6 @@
             `;
         }
 
-    // 월간 UI 업데이트
         const mIncEl = document.getElementById('ledgerMonthIncome');
         const mExpEl = document.getElementById('ledgerMonthExpense');
         const mVatEl = document.getElementById('ledgerMonthVat');
@@ -2015,11 +1660,9 @@
         const mNet = monthInc - monthExp;
         if(mNetEl) {
             mNetEl.innerText = mNet.toLocaleString('ko-KR') + "원";
-            // 적자일 경우 파란색 텍스트로 표시되도록 수정 및 폰트 크기 14px로 축소
             mNetEl.className = mNet >= 0 ? "text-[14px] font-black text-[#84CC16] tracking-tight" : "text-[14px] font-black text-blue-400 tracking-tight";
         }
 
-        // 연간 UI 업데이트
         const yIncEl = document.getElementById('ledgerYearIncome');
         const yExpEl = document.getElementById('ledgerYearExpense');
         const yVatEl = document.getElementById('ledgerYearVat');
@@ -2030,10 +1673,9 @@
         const yNet = yearInc - yearExp;
         if(yNetEl) {
             yNetEl.innerText = yNet.toLocaleString('ko-KR') + "원";
-            // 적자일 경우 파란색 텍스트로 표시되도록 수정 및 폰트 크기 14px로 축소
             yNetEl.className = yNet >= 0 ? "text-[14px] font-black text-[#84CC16] tracking-tight" : "text-[14px] font-black text-blue-400 tracking-tight";
         }
-    }    
+    }   
 
     function changeLedgerMonth(delta) {
         currentLedgerCalDate.setMonth(currentLedgerCalDate.getMonth() + delta);
@@ -2063,7 +1705,7 @@
         list.innerHTML = dayLedgers.map(L => {
             const inc = L.income || 0;
             const exp = L.expense || 0;
-            const vatText = L.vat ? `<br><span class="text-[11px] text-[#A3A8A3] font-bold">부가세: ${L.vat.toLocaleString()}원</span>` : ''; // ✨ 부가세 텍스트 표시
+            const vatText = L.vat ? `<br><span class="text-[11px] text-[#A3A8A3] font-bold">부가세: ${L.vat.toLocaleString()}원</span>` : ''; 
             return `
             <div class="grid grid-cols-10 gap-2 py-3 border-b border-[#F4F5F4] text-center items-center bg-white hover:bg-[#F9F9F8] transition-colors">
                 <div class="col-span-4 text-[12px] font-black text-[#1A1D1A] truncate cursor-pointer px-2 text-left" onclick="alert('📍 [${L.title}] 적요\\n\\n${L.memo ? L.memo : '적요 내용이 없습니다.'}')">
@@ -2087,7 +1729,7 @@
         document.getElementById('ledgerTitle').value = '';
         document.getElementById('ledgerIncome').value = '';
         document.getElementById('ledgerExpense').value = '';
-        document.getElementById('ledgerVat').value = ''; // ✨ 부가세 초기화
+        document.getElementById('ledgerVat').value = '';
         document.getElementById('ledgerMemo').value = '';
         
         const modal = document.getElementById('ledgerModal');
@@ -2119,7 +1761,7 @@
         const title = document.getElementById('ledgerTitle').value;
         const incStr = document.getElementById('ledgerIncome').value.replace(/[^0-9]/g, '');
         const expStr = document.getElementById('ledgerExpense').value.replace(/[^0-9]/g, '');
-        const vatStr = document.getElementById('ledgerVat').value.replace(/[^0-9]/g, ''); // ✨ 부가세 저장
+        const vatStr = document.getElementById('ledgerVat').value.replace(/[^0-9]/g, ''); 
         
         if (!title.trim() || !date) return alert("날짜와 현장명을 입력해주세요.");
         
@@ -2127,7 +1769,7 @@
             id: id, date: date, title: title,
             income: incStr ? parseInt(incStr) : 0,
             expense: expStr ? parseInt(expStr) : 0,
-            vat: vatStr ? parseInt(vatStr) : 0, // ✨ 부가세 저장
+            vat: vatStr ? parseInt(vatStr) : 0,
             memo: document.getElementById('ledgerMemo').value
         };
         
@@ -2159,7 +1801,7 @@
         document.getElementById('ledgerTitle').value = target.title;
         document.getElementById('ledgerIncome').value = target.income ? target.income.toLocaleString('ko-KR') : '';
         document.getElementById('ledgerExpense').value = target.expense ? target.expense.toLocaleString('ko-KR') : '';
-        document.getElementById('ledgerVat').value = target.vat ? target.vat.toLocaleString('ko-KR') : ''; // ✨ 부가세 불러오기
+        document.getElementById('ledgerVat').value = target.vat ? target.vat.toLocaleString('ko-KR') : '';
         document.getElementById('ledgerMemo').value = target.memo || '';
         
         const modal = document.getElementById('ledgerModal');
@@ -2183,6 +1825,7 @@
             renderLedgerList();
         }
     }
+
     function openLedgerListModal() {
         const year = currentLedgerCalDate.getFullYear();
         const month = currentLedgerCalDate.getMonth();
@@ -2193,7 +1836,6 @@
         const monthPrefix = `${year}-${String(month + 1).padStart(2, '0')}`;
         let monthLedgers = ledgers.filter(l => l.date && l.date.startsWith(monthPrefix));
         
-        // 날짜 오름차순 정렬
         monthLedgers.sort((a, b) => a.date.localeCompare(b.date));
         
         const container = document.getElementById('ledgerMonthListContainer');
@@ -2203,17 +1845,16 @@
             container.innerHTML = `<div class="p-8 text-center text-[#8B95A1] text-[13px] bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA] font-bold">이번 달에 기록된 내역이 없습니다.</div>`;
         } else {
             const days = ['일', '월', '화', '수', '목', '금', '토'];
-            let lastDate = ''; // 이전 날짜 기억용 변수
+            let lastDate = '';
             
             container.innerHTML = monthLedgers.map(L => {
                 const currentDate = L.date;
                 let dateDisplay = '';
                 
-                // 이전 날짜와 다를 때만 날짜+요일을 그려줌
                 if (currentDate !== lastDate) {
                     const dateObj = new Date(currentDate);
                     const dayOfWeek = days[dateObj.getDay()];
-                    const dateOnly = currentDate.substring(5).replace('-', '/'); // "09/20"
+                    const dateOnly = currentDate.substring(5).replace('-', '/');
                     dateDisplay = `<div class="text-[#4E5968] font-bold text-center bg-[#F4F5F4] py-1 rounded-lg text-[11px]">${dateOnly} (${dayOfWeek})</div>`;
                     lastDate = currentDate; 
                 }
@@ -2255,8 +1896,7 @@
         }, 200);
         if(!fromPopstate && history.state && history.state.modalOpen) history.back();
     }
-    // --- 수동 계산기 로직 ---
-    let calcStr = "";
+
     function openCalculator() {
         calcStr = ""; 
         const calcDisplay = document.getElementById('calcDisplay');
@@ -2289,14 +1929,40 @@
         calcDisplay.innerText = calcStr;
     }
 
-    // 처음 앱 켤 때 장부 달력 초기 세팅
+    // 처음 앱 켤 때 장부 달력 초기 세팅 및 URL 처리
     window.addEventListener('DOMContentLoaded', () => {
-        setTimeout(() => {
-            selectLedgerDate(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
-        }, 1000);
+        setTimeout(() => { const splash = document.getElementById('splashScreen'); if(splash) { splash.style.opacity = '0'; setTimeout(() => splash.remove(), 600); } }, 2000);
+        setTimeout(() => { selectLedgerDate(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()); }, 1000);
+        loadQuoteTemplate('residential'); 
+        
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('id') || params.has('blob') || params.has('data')) {
+            const reportId = params.get('id') || params.get('blob'); const encodedData = params.get('data');
+            history.replaceState({ view: 'client_shared' }, "", "");
+            const overlay = document.createElement('div'); overlay.id = 'loadingOverlay'; overlay.className = 'fixed inset-0 z-[200] bg-[#151E2D] flex flex-col items-center justify-center'; overlay.innerHTML = `<div class="w-12 h-12 border-4 border-[#84CC16]/30 border-t-[#84CC16] rounded-full animate-spin mb-4"></div><div class="text-white font-bold text-[15px]">프리미엄 문서를 불러오는 중...</div>`; document.body.appendChild(overlay);
+            
+            let loadedData = null;
+            try {
+                if (encodedData) loadedData = JSON.parse(decodeURIComponent(escape(atob(encodedData))));
+                else if (reportId) {
+                    try { const res = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_shared_docs/${reportId}.json`); if (res.ok) { const json = await res.json(); if (json && Object.keys(json).length > 0) loadedData = json; } } catch(err) {}
+                    if (!loadedData) { const savedRecords = JSON.parse(localStorage.getItem('shinhwa_pro_records')) || []; const foundRec = savedRecords.find(rec => rec.id === reportId); if (foundRec && foundRec.payload) loadedData = foundRec.payload; }
+                }
+                document.getElementById('loadingOverlay')?.remove();
+                if(loadedData) renderClientView(loadedData, 'client_shared'); else throw new Error("No data");
+            } catch(e) { document.getElementById('loadingOverlay')?.remove(); document.body.innerHTML = `<div class="p-10 text-center font-bold text-lg mt-20 text-white">존재하지 않거나 보안상 만료된 문서입니다.</div>`; }
+        } else {
+            const savedId = localStorage.getItem('shinhwa_pro_logged_in_id'); 
+            const savedPw = localStorage.getItem('shinhwa_pro_logged_in_pw');
+            const autoLogin = localStorage.getItem('shinhwa_pro_auto_login');
+            if (savedId && savedPw && autoLogin === 'true') { document.getElementById('loginId').value = savedId; document.getElementById('loginPw').value = savedPw; doLogin(); } 
+            else { document.getElementById('authView').classList.remove('hidden'); }
+            if(typeof lucide !== 'undefined') lucide.createIcons();
+        }
     });
+
     window.addEventListener('popstate', (e) => {
-      const modal = document.getElementById('imageModal'); const textEditorModal = document.getElementById('textEditorModal'); const lensResultModal = document.getElementById('lensResultModal'); const materialModal = document.getElementById('materialModal'); const settingsModal = document.getElementById('settingsModal'); const noticeModal = document.getElementById('appNoticeModal'); const termsModal = document.getElementById('termsModal'); const scheduleModal = document.getElementById('scheduleModal');
+      const modal = document.getElementById('imageModal'); const textEditorModal = document.getElementById('textEditorModal'); const lensResultModal = document.getElementById('lensResultModal'); const materialModal = document.getElementById('materialModal'); const settingsModal = document.getElementById('settingsModal'); const noticeModal = document.getElementById('appNoticeModal'); const termsModal = document.getElementById('termsModal'); const scheduleModal = document.getElementById('scheduleModal'); const ledgerModal = document.getElementById('ledgerModal'); const ledgerListModal = document.getElementById('ledgerListModal');
       if (modal && !modal.classList.contains('hidden')) { modal.classList.add('hidden'); document.getElementById('modalImg').src = ''; return; }
       if (textEditorModal && !textEditorModal.classList.contains('hidden')) { closeTextEditor(true); return; }
       if (lensResultModal && !lensResultModal.classList.contains('hidden')) { closeLensResult(true); return; }
@@ -2305,10 +1971,13 @@
       if (noticeModal && !noticeModal.classList.contains('hidden')) { closeAppNotice(); return; }
       if (termsModal && !termsModal.classList.contains('hidden')) { closeTermsModal(); return; }
       if (scheduleModal && !scheduleModal.classList.contains('hidden')) { closeScheduleModal(true); return; }
+      if (ledgerModal && !ledgerModal.classList.contains('hidden')) { closeLedgerModal(true); return; }
+      if (ledgerListModal && !ledgerListModal.classList.contains('hidden')) { closeLedgerListModal(true); return; }
       if (e.state && e.state.view) { if(e.state.view !== 'client_shared') switchView(e.state.view, false); } 
       else switchView('admin', false);
     });
   </script>
+
   <!-- 🌟 장부 팝업창 -->
   <div id="ledgerModal" class="hidden fixed inset-0 z-[6500] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200">
       <div id="ledgerBox" class="bg-white w-full max-w-sm rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-[#EAEBEA]" onclick="event.stopPropagation()">
@@ -2351,6 +2020,7 @@
           </div>
       </div>
   </div>
+
   <!-- 📋 월별 내역 한눈에 보기 팝업창 -->
   <div id="ledgerListModal" class="hidden fixed inset-0 z-[6600] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200">
       <div id="ledgerListBox" class="bg-white w-full max-w-md rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-[#EAEBEA]" onclick="event.stopPropagation()">
@@ -2365,7 +2035,6 @@
                   <div class="col-span-4 text-right pr-2">수입/지출/부가세</div>
               </div>
               <div id="ledgerMonthListContainer" class="overflow-y-auto nav-scroll space-y-2 pr-1 pb-2">
-                  <!-- 데이터가 자바스크립트를 통해 여기에 들어갑니다 -->
               </div>
           </div>
           <div class="p-4 bg-[#F9F9F8] border-t border-[#F4F5F4]">
@@ -2373,6 +2042,7 @@
           </div>
       </div>
   </div>
+
   <!-- 🧮 수동 계산기 팝업창 -->
   <div id="calculatorModal" class="hidden fixed inset-0 z-[7000] bg-black/60 flex items-center justify-center p-4" onclick="closeCalculator()">
       <div class="bg-[#151E2D] w-full max-w-[280px] rounded-[24px] p-5" onclick="event.stopPropagation()">
