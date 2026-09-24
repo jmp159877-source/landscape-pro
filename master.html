@@ -1057,8 +1057,6 @@
                         ? `<span class="bg-[#3B82F6]/20 text-[#3B82F6] px-2.5 py-1 rounded-md text-[10px] font-black shrink-0">견적</span>`
                         : `<span class="bg-[#84CC16]/20 text-[#84CC16] px-2.5 py-1 rounded-md text-[10px] font-black shrink-0">일지</span>`;
                     
-                    const linkUrl = r.url ? r.url : `https://jogyeongnote.com/?id=${r.id}`;
-                    
                     docHtml += `
                         <div class="flex items-center justify-between p-4 hover:bg-white/5 transition-colors">
                             <div class="flex items-center gap-3 w-full pr-4">
@@ -1068,7 +1066,8 @@
                                     <div class="text-[#94A3B8] text-[12px] font-medium truncate">${r.round}</div>
                                 </div>
                             </div>
-                            <a href="${linkUrl}" target="_blank" class="shrink-0 px-3.5 py-2 bg-white/10 text-white border border-white/10 rounded-[10px] text-[12px] font-bold hover:bg-white/20 transition-all flex items-center gap-1.5"><i data-lucide="external-link" class="w-3.5 h-3.5"></i> 원본</a>
+                            <!-- 💡 외부 링크 새 창 띄우기 대신 인앱 열람 팝업 함수로 변경 -->
+                            <button onclick="openDocumentPreview('${r.id}')" class="shrink-0 px-3.5 py-2 bg-white/10 text-white border border-white/10 rounded-[10px] text-[12px] font-bold hover:bg-white/20 transition-all flex items-center gap-1.5"><i data-lucide="file-search" class="w-3.5 h-3.5"></i> 내역 열람</button>
                         </div>
                     `;
                 });
@@ -1135,8 +1134,6 @@
                     ? `<span class="bg-[#3B82F6]/20 text-[#3B82F6] px-2.5 py-1 rounded-md text-[10px] font-black shrink-0">견적</span>`
                     : `<span class="bg-[#84CC16]/20 text-[#84CC16] px-2.5 py-1 rounded-md text-[10px] font-black shrink-0">일지</span>`;
                 
-                const linkUrl = r.url ? r.url : `https://jogyeongnote.com/?id=${r.id}`;
-                
                 html += `
                     <div class="flex items-center justify-between p-4 bg-[#1E293B] border border-white/5 rounded-[16px] hover:border-[#84CC16]/50 transition-colors">
                         <div class="flex items-center gap-3 w-full pr-4">
@@ -1146,7 +1143,8 @@
                                 <div class="text-[#94A3B8] text-[12px] font-medium truncate mt-0.5">${r.round}</div>
                             </div>
                         </div>
-                        <a href="${linkUrl}" target="_blank" class="shrink-0 px-4 py-2 bg-[#84CC16] text-[#12261E] rounded-[10px] text-[12px] font-black hover:bg-[#9BE32D] transition-all flex items-center gap-1.5 shadow-md"><i data-lucide="external-link" class="w-3.5 h-3.5"></i> 원본 보기</a>
+                        <!-- 💡 외부 링크 새 창 띄우기 대신 인앱 열람 팝업 함수로 변경 -->
+                        <button onclick="openDocumentPreview('${r.id}')" class="shrink-0 px-4 py-2 bg-[#84CC16] text-[#12261E] rounded-[10px] text-[12px] font-black hover:bg-[#9BE32D] transition-all flex items-center gap-1.5 shadow-md"><i data-lucide="file-search" class="w-3.5 h-3.5"></i> 상세 열람</button>
                     </div>
                 `;
             });
@@ -1167,6 +1165,119 @@
         box.classList.add('scale-95');
         setTimeout(() => { modal.classList.add('hidden'); }, 200);
     }
+
+    // ==========================================
+    // 🗂️ 마스터 전용 인앱 문서 상세 뷰어 (견적서/일지 알맹이 렌더링)
+    // ==========================================
+    function openDocumentPreview(docId) {
+        const doc = currentCompanyRecords.find(r => r.id === docId);
+        if(!doc) return alert('문서 데이터를 불러올 수 없습니다.');
+
+        const contentArea = document.getElementById('previewModalContent');
+        let html = '';
+
+        if(doc.type === 'quote') {
+            // [견적서 알맹이 렌더링]
+            let itemsHtml = '';
+            if(doc.items && doc.items.length > 0) {
+                doc.items.forEach(item => {
+                    itemsHtml += `<tr class="border-b border-white/5 last:border-0"><td class="py-3 text-white text-[13px] font-bold">${item.name}</td><td class="py-3 text-right text-[#94A3B8] text-[12px]">${item.spec||'-'}</td><td class="py-3 text-right text-white text-[13px]">${item.qty}</td><td class="py-3 text-right text-[#3B82F6] font-bold text-[13px]">${Number(item.price).toLocaleString()}원</td></tr>`;
+                });
+            } else {
+                itemsHtml = `<tr><td colspan="4" class="py-6 text-center text-[#94A3B8] text-[13px]">세부 품목 데이터가 없습니다.</td></tr>`;
+            }
+
+            html = `
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center bg-[#1E293B] p-4 rounded-[16px] border border-white/5">
+                        <div>
+                            <div class="text-[11px] font-bold text-[#94A3B8] mb-1">문서 종류</div>
+                            <div class="text-white font-black text-[15px] flex items-center gap-1.5"><span class="bg-[#3B82F6]/20 text-[#3B82F6] px-2 py-0.5 rounded text-[10px]">견적서</span> ${doc.clientName}</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-[11px] font-bold text-[#94A3B8] mb-1">작성일자</div>
+                            <div class="text-white font-bold text-[13px]">${doc.date}</div>
+                        </div>
+                    </div>
+                    <div class="bg-black/20 rounded-[16px] p-4 border border-white/5">
+                        <table class="w-full text-left">
+                            <thead class="text-[#94A3B8] text-[11px] border-b border-white/10">
+                                <tr><th class="pb-2 font-medium">품명/공종</th><th class="pb-2 font-medium text-right">규격</th><th class="pb-2 font-medium text-right">수량</th><th class="pb-2 font-medium text-right">단가</th></tr>
+                            </thead>
+                            <tbody>${itemsHtml}</tbody>
+                        </table>
+                        <div class="mt-4 pt-4 border-t border-white/10 flex justify-between items-center">
+                            <span class="text-[#94A3B8] font-bold text-[13px]">총 합계 금액</span>
+                            <span class="text-[#3B82F6] font-black text-[22px]">${doc.totalPrice ? Number(doc.totalPrice).toLocaleString() : '0'}원</span>
+                        </div>
+                    </div>
+                    ${doc.memo ? `<div class="bg-black/20 p-4 rounded-[16px] border border-white/5"><div class="text-[11px] font-bold text-[#94A3B8] mb-1.5">특이사항/메모</div><div class="text-white text-[13px] break-keep leading-relaxed">${doc.memo}</div></div>` : ''}
+                </div>
+            `;
+        } else {
+            // [현장 일지 알맹이 렌더링]
+            let tagsHtml = '';
+            if(doc.categories && doc.categories.length > 0) {
+                tagsHtml = doc.categories.map(c => `<span class="bg-[#84CC16]/10 text-[#84CC16] border border-[#84CC16]/20 px-2.5 py-1 rounded-md text-[11px] font-bold">${c}</span>`).join('');
+            }
+            let imgHtml = '';
+            if(doc.issue && typeof doc.issue === 'string' && doc.issue.startsWith('data:image')) {
+                imgHtml = `<div class="mt-4"><div class="text-[11px] font-bold text-[#94A3B8] mb-2">현장 첨부 사진</div><img src="${doc.issue}" class="w-full rounded-[16px] border border-white/10"></div>`;
+            }
+
+            html = `
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center bg-[#1E293B] p-4 rounded-[16px] border border-white/5">
+                        <div>
+                            <div class="text-[11px] font-bold text-[#94A3B8] mb-1">문서 종류</div>
+                            <div class="text-white font-black text-[15px] flex items-center gap-1.5"><span class="bg-[#84CC16]/20 text-[#84CC16] px-2 py-0.5 rounded text-[10px]">현장 일지</span> ${doc.clientName}</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-[11px] font-bold text-[#94A3B8] mb-1">작성일자</div>
+                            <div class="text-white font-bold text-[13px]">${doc.date}</div>
+                        </div>
+                    </div>
+                    <div class="bg-black/20 rounded-[16px] p-4 border border-white/5 space-y-4">
+                        ${tagsHtml ? `<div><div class="text-[11px] font-bold text-[#94A3B8] mb-2">작업 분류</div><div class="flex flex-wrap gap-1.5">${tagsHtml}</div></div>` : ''}
+                        <div><div class="text-[11px] font-bold text-[#94A3B8] mb-1.5">작업 상세 내용</div><div class="text-white text-[14px] leading-relaxed break-keep bg-white/5 p-3 rounded-[12px]">${doc.d || doc.memo || '입력된 상세 내용이 없습니다.'}</div></div>
+                        ${imgHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        contentArea.innerHTML = html;
+        const modal = document.getElementById('documentPreviewModal');
+        const box = document.getElementById('documentPreviewBox');
+        modal.classList.remove('hidden');
+        setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10);
+        lucide.createIcons();
+    }
+
+    function closeDocumentPreview() {
+        const modal = document.getElementById('documentPreviewModal');
+        const box = document.getElementById('documentPreviewBox');
+        modal.classList.add('opacity-0');
+        box.classList.add('scale-95');
+        setTimeout(() => { modal.classList.add('hidden'); }, 200);
+    }
+ <!-- 🗂️ 마스터 전용 문서 상세 열람 모달 (새 창 띄우지 않고 앱 내부에서 즉시 열람) -->
+  <div id="documentPreviewModal" class="hidden fixed inset-0 z-[8000] bg-black/90 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200" onclick="closeDocumentPreview()">
+      <div class="bg-[#0F172A] w-full max-w-xl rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-white/10 max-h-[85vh]" id="documentPreviewBox" onclick="event.stopPropagation()">
+          <div class="p-5 border-b border-white/10 flex justify-between items-center bg-[#1E293B]">
+              <h3 class="text-[18px] font-black text-white flex items-center gap-2">
+                  <i data-lucide="file-search" class="w-5 h-5 text-[#84CC16]"></i> 마스터 상세 내역 열람
+              </h3>
+              <button onclick="closeDocumentPreview()" class="text-[#94A3B8] hover:text-white p-1 transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+          </div>
+          <div class="flex-1 overflow-y-auto p-5 scrollbar-hide" id="previewModalContent">
+              <!-- 자바스크립트가 견적서/일지 알맹이를 이곳에 꽉꽉 채워줍니다 -->
+          </div>
+          <div class="p-4 border-t border-white/10 bg-[#0F172A]">
+              <button onclick="closeDocumentPreview()" class="w-full py-4 bg-white/10 text-white rounded-[14px] font-black text-[15px] hover:bg-white/20 transition-colors">닫기</button>
+          </div>
+      </div>
+  </div>   
   </script>
 </body>
 </html>
