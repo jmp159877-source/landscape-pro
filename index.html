@@ -243,46 +243,49 @@
           </div>
       </div>
 
-      <!-- 2. 라운지 게시판 4대장 (시인성 및 텍스트 크기 강화) -->
+      <!-- 2. 라운지 게시판 4대장 (프리미엄 다크/네온 테마 적용) -->
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
-          <div class="flex items-center justify-between pb-3 border-b border-[#F4F5F4]">
-              <!-- 💡 커뮤니티 메인 제목 크기 대폭 확대 (18px -> 20px) -->
-              <h2 class="text-[20px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="users" class="w-6 h-6 text-[#84CC16]"></i> 조경 사장님 커뮤니티</h2>
+          <!-- 💡 타이틀을 연두색 꽉 찬 배너 형태로 변경 (클릭 시 전체 게시판 열림) -->
+          <div onclick="openBoard('전체')" class="bg-[#84CC16] rounded-[20px] p-4 flex items-center justify-between shadow-sm cursor-pointer hover:bg-[#9BE32D] transition-colors">
+              <h2 class="text-[18px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="users" class="w-6 h-6 text-[#151E2D]"></i> 조경 사장님 커뮤니티</h2>
+              <div class="flex items-center gap-1 text-[13px] font-black text-[#151E2D] bg-white/50 px-3 py-1.5 rounded-full shadow-sm">입장하기 <i data-lucide="chevron-right" class="w-4 h-4 -ml-0.5"></i></div>
           </div>
+          
+          <!-- 💡 4개 버튼을 메인 남색(Navy)으로 변경하여 프리미엄 느낌 및 시인성 극대화 -->
           <div class="grid grid-cols-2 gap-3">
-              <!-- 버튼 1 -->
-              <button onclick="openBoard('불량 거래처 경보')" class="bg-[#FFFDF9] border border-[#C5A880]/30 rounded-[18px] p-4 text-left flex flex-col gap-2 hover:border-[#C5A880] transition-all shadow-sm group">
-                  <div class="w-9 h-9 rounded-full bg-[#C5A880]/20 flex items-center justify-center text-[#C5A880]"><i data-lucide="alert-triangle" class="w-5 h-5"></i></div>
+              <!-- 버튼 1: 불량 거래처 -->
+              <button onclick="openBoard('불량 거래처 경보')" class="bg-[#151E2D] border border-white/10 rounded-[20px] p-5 text-left flex flex-col gap-3 hover:border-red-500 transition-all shadow-md group">
+                  <div class="w-11 h-11 rounded-[14px] bg-red-500/20 flex items-center justify-center text-red-400 group-hover:scale-110 transition-transform"><i data-lucide="alert-triangle" class="w-6 h-6"></i></div>
                   <div>
-                      <h3 class="text-[15px] font-black text-[#151E2D] group-hover:text-[#C5A880] transition-colors">불량 거래처 경보</h3>
-                      <p class="text-[12px] text-[#1A1D1A] font-black mt-1.5 break-keep leading-snug">미수금 발생, 주의 요망 거래처 팩트 공유</p>
+                      <h3 class="text-[15px] font-black text-white group-hover:text-red-400 transition-colors">불량 거래처 경보</h3>
+                      <p class="text-[12px] text-[#A3A8A3] font-bold mt-1.5 break-keep leading-snug">미수금 발생, 주의 요망 거래처 팩트 공유</p>
                   </div>
               </button>
               
-              <!-- 버튼 2: 현장 협력 (💡 글씨 깨짐 방지: <br> 태그로 아주 깔끔하게 두 줄 분리) -->
-              <button onclick="openBoard('현장 협력·지원')" class="bg-[#F0F9FF] border border-[#BAE6FD] rounded-[18px] p-4 text-left flex flex-col gap-2 hover:border-[#3B82F6] transition-all shadow-sm group">
-                  <div class="w-9 h-9 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-600"><i data-lucide="handshake" class="w-5 h-5"></i></div>
+              <!-- 버튼 2: 현장 협력 -->
+              <button onclick="openBoard('현장 협력·지원')" class="bg-[#151E2D] border border-white/10 rounded-[20px] p-5 text-left flex flex-col gap-3 hover:border-blue-500 transition-all shadow-md group">
+                  <div class="w-11 h-11 rounded-[14px] bg-blue-500/20 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform"><i data-lucide="handshake" class="w-6 h-6"></i></div>
                   <div>
-                      <h3 class="text-[15px] font-black text-[#151E2D] group-hover:text-blue-600 transition-colors leading-tight">현장 협력·지원<br><span class="text-blue-500 text-[12px] font-bold">(협력해요)</span></h3>
-                      <p class="text-[12px] text-[#1A1D1A] font-black mt-1.5 break-keep leading-snug">사장님 모십니다 / 현장 지원합니다</p>
+                      <h3 class="text-[15px] font-black text-white group-hover:text-blue-400 transition-colors leading-tight">현장 협력·지원<br><span class="text-blue-400 text-[12px] font-bold">(협력해요)</span></h3>
+                      <p class="text-[12px] text-[#A3A8A3] font-bold mt-1.5 break-keep leading-snug">사장님 모십니다 / 현장 지원합니다</p>
                   </div>
               </button>
               
-              <!-- 버튼 3: 장비 자재 (💡 '무료 나눔' 텍스트 포인트 컬러로 추가) -->
-              <button onclick="openBoard('장비·자재 직거래')" class="bg-[#F2FBEC] border border-[#84CC16]/40 rounded-[18px] p-4 text-left flex flex-col gap-2 hover:border-[#84CC16] transition-all shadow-sm group">
-                  <div class="w-9 h-9 rounded-full bg-[#84CC16]/20 flex items-center justify-center text-[#65A30D]"><i data-lucide="shopping-cart" class="w-5 h-5"></i></div>
+              <!-- 버튼 3: 장비 자재 -->
+              <button onclick="openBoard('장비·자재 직거래')" class="bg-[#151E2D] border border-white/10 rounded-[20px] p-5 text-left flex flex-col gap-3 hover:border-[#84CC16] transition-all shadow-md group">
+                  <div class="w-11 h-11 rounded-[14px] bg-[#84CC16]/20 flex items-center justify-center text-[#84CC16] group-hover:scale-110 transition-transform"><i data-lucide="shopping-cart" class="w-6 h-6"></i></div>
                   <div>
-                      <h3 class="text-[15px] font-black text-[#151E2D] group-hover:text-[#65A30D] transition-colors">장비·자재 직거래</h3>
-                      <p class="text-[12px] text-[#1A1D1A] font-black mt-1.5 break-keep leading-snug">조경 장비 렌탈, 남은 수목/자재 안전 거래, <span class="text-[#65A30D]">무료 나눔</span></p>
+                      <h3 class="text-[15px] font-black text-white group-hover:text-[#84CC16] transition-colors">장비·자재 직거래</h3>
+                      <p class="text-[12px] text-[#A3A8A3] font-bold mt-1.5 break-keep leading-snug">장비 렌탈, 남은 수목/자재 안전 거래, <span class="text-[#84CC16]">무료 나눔</span></p>
                   </div>
               </button>
               
-              <!-- 버튼 4 -->
-              <button onclick="openBoard('실무 노하우 공유')" class="bg-[#F4F5F4] border border-[#EAEBEA] rounded-[18px] p-4 text-left flex flex-col gap-2 hover:border-[#4E5968] transition-all shadow-sm group">
-                  <div class="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-[#4E5968]"><i data-lucide="lightbulb" class="w-5 h-5"></i></div>
+              <!-- 버튼 4: 실무 노하우 -->
+              <button onclick="openBoard('실무 노하우 공유')" class="bg-[#151E2D] border border-white/10 rounded-[20px] p-5 text-left flex flex-col gap-3 hover:border-[#FEE500] transition-all shadow-md group">
+                  <div class="w-11 h-11 rounded-[14px] bg-[#FEE500]/20 flex items-center justify-center text-[#FEE500] group-hover:scale-110 transition-transform"><i data-lucide="lightbulb" class="w-6 h-6"></i></div>
                   <div>
-                      <h3 class="text-[15px] font-black text-[#151E2D] group-hover:text-[#151E2D] transition-colors">실무 노하우 공유</h3>
-                      <p class="text-[12px] text-[#1A1D1A] font-black mt-1.5 break-keep leading-snug">수목 관리, 전지 요령 등 현장 지식 나눔</p>
+                      <h3 class="text-[15px] font-black text-white group-hover:text-[#FEE500] transition-colors">실무 노하우 공유</h3>
+                      <p class="text-[12px] text-[#A3A8A3] font-bold mt-1.5 break-keep leading-snug">수목 관리, 전지 요령 등 현장 지식 나눔</p>
                   </div>
               </button>
           </div>
