@@ -261,9 +261,9 @@
       </div>
       <!-- 2. 라운지 게시판 4대장 (프리미엄 다크/네온 테마 적용) -->
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
-          <!-- 💡 타이틀을 연두색 꽉 찬 배너 형태로 변경 (클릭 시 전체 게시판 열림) -->
-          <div onclick="openBoard('전체')" class="bg-[#84CC16] rounded-[20px] p-4 flex items-center justify-between shadow-sm cursor-pointer hover:bg-[#9BE32D] transition-colors">
-              <h2 class="text-[18px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="users" class="w-6 h-6 text-[#151E2D]"></i> 조경 사장님 커뮤니티</h2>
+          <!-- 💡 타이틀을 쨍한 옐로우 배너로 변경하여 밖의 메뉴와 100% 일체감 형성 -->
+          <div onclick="openBoard('전체')" class="bg-[#FEE500] rounded-[20px] p-4 flex items-center justify-between shadow-sm cursor-pointer hover:brightness-95 transition-all">
+              <h2 class="text-[18px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="message-square" class="w-6 h-6 text-[#151E2D] fill-[#151E2D]/10"></i> 사장님 소통방</h2>
               <div class="flex items-center gap-1 text-[13px] font-black text-[#151E2D] bg-white/50 px-3 py-1.5 rounded-full shadow-sm">입장하기 <i data-lucide="chevron-right" class="w-4 h-4 -ml-0.5"></i></div>
           </div>
           
@@ -3700,7 +3700,7 @@
       <!-- 게시판 상단 헤더 & 뒤로가기 -->
       <div class="flex items-center justify-between bg-white p-4 rounded-[24px] luxury-shadow sticky top-0 z-40">
           <button onclick="closeBoard()" class="w-11 h-11 flex items-center justify-center bg-[#F4F5F4] rounded-full text-[#151E2D] hover:bg-[#EAEBEA] transition-colors"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
-          <h2 id="boardMainTitle" class="text-[18px] font-black text-[#151E2D]">사장님 커뮤니티</h2>
+          <h2 id="boardMainTitle" class="text-[18px] font-black text-[#151E2D]">사장님 소통방</h2>
           <button class="w-11 h-11 flex items-center justify-center bg-[#84CC16]/10 rounded-full text-[#65A30D] hover:bg-[#84CC16]/20 transition-colors"><i data-lucide="search" class="w-6 h-6"></i></button>
       </div>
 
@@ -3811,7 +3811,7 @@
           }
 
           const titleMap = {
-              '전체': '사장님 커뮤니티',
+              '전체': '사장님 소통방',
               '불량거래처': '불량 거래처 경보',
               '현장협력': '현장 협력·지원',
               '장비자재': '장비·자재 직거래',
