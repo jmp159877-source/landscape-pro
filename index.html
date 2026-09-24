@@ -569,20 +569,20 @@
                 <div class="space-y-2 mb-4">
                     <div class="flex justify-between items-center w-full">
                         <span class="text-[12px] font-bold text-[#64748B] shrink-0">수입</span>
-                        <span id="ledgerMonthIncome" class="text-[14px] font-black text-[#E11D48] tracking-tight whitespace-nowrap pl-1 truncate">0원</span>
+                        <span id="ledgerMonthIncome" class="text-[14px] font-black text-[#BE123C] tracking-tight whitespace-nowrap pl-1 truncate text-right">0원</span>
                     </div>
                     <div class="flex justify-between items-center w-full">
                         <span class="text-[12px] font-bold text-[#64748B] shrink-0">지출</span>
-                        <span id="ledgerMonthExpense" class="text-[14px] font-black text-[#2563EB] tracking-tight whitespace-nowrap pl-1 truncate">0원</span>
+                        <span id="ledgerMonthExpense" class="text-[14px] font-black text-[#1D4ED8] tracking-tight whitespace-nowrap pl-1 truncate text-right">0원</span>
                     </div>
                     <div class="flex justify-between items-center w-full">
                         <span class="text-[11px] font-bold text-[#94A3B8] shrink-0">부가세</span>
-                        <span id="ledgerMonthVat" class="text-[12px] font-bold text-[#94A3B8] tracking-tight whitespace-nowrap pl-1 truncate">0원</span>
+                        <span id="ledgerMonthVat" class="text-[12px] font-bold text-[#94A3B8] tracking-tight whitespace-nowrap pl-1 truncate text-right">0원</span>
                     </div>
                 </div>
-                <div class="mt-auto pt-3 border-t border-[#CBD5E1]/70">
-                    <div class="text-[11px] font-bold text-[#64748B] mb-0.5">최종 순수익</div>
-                    <div id="ledgerMonthNet" class="text-[18px] font-black text-[#1E3A8A] tracking-tight whitespace-nowrap truncate">0원</div>
+                <div class="mt-auto pt-3 border-t border-[#CBD5E1]/70 flex justify-between items-end w-full">
+                    <span class="text-[11px] font-bold text-[#64748B] mb-0.5 shrink-0">최종 순수익</span>
+                    <span id="ledgerMonthNet" class="text-[18px] font-black text-[#1E3A8A] tracking-tight whitespace-nowrap pl-1 truncate text-right">0원</span>
                 </div>
             </div>
 
@@ -592,24 +592,23 @@
                     <span class="bg-[#84CC16] text-[#12261E] text-[11px] px-2.5 py-1 rounded-[6px] font-black shadow-sm tracking-wide">올 한 해</span>
                     <span class="text-[13px] font-black text-[#3F6212]">누적</span>
                 </div>
-                <!-- '누적 수입'을 '수입'으로 줄여 글씨 깨짐 완벽 방지 -->
                 <div class="space-y-2 mb-4">
                     <div class="flex justify-between items-center w-full">
                         <span class="text-[12px] font-bold text-[#64748B] shrink-0">수입</span>
-                        <span id="ledgerYearIncome" class="text-[14px] font-black text-[#E11D48] tracking-tight whitespace-nowrap pl-1 truncate">0원</span>
+                        <span id="ledgerYearIncome" class="text-[14px] font-black text-[#BE123C] tracking-tight whitespace-nowrap pl-1 truncate text-right">0원</span>
                     </div>
                     <div class="flex justify-between items-center w-full">
                         <span class="text-[12px] font-bold text-[#64748B] shrink-0">지출</span>
-                        <span id="ledgerYearExpense" class="text-[14px] font-black text-[#2563EB] tracking-tight whitespace-nowrap pl-1 truncate">0원</span>
+                        <span id="ledgerYearExpense" class="text-[14px] font-black text-[#1D4ED8] tracking-tight whitespace-nowrap pl-1 truncate text-right">0원</span>
                     </div>
                     <div class="flex justify-between items-center w-full">
                         <span class="text-[11px] font-bold text-[#94A3B8] shrink-0">부가세</span>
-                        <span id="ledgerYearVat" class="text-[12px] font-bold text-[#94A3B8] tracking-tight whitespace-nowrap pl-1 truncate">0원</span>
+                        <span id="ledgerYearVat" class="text-[12px] font-bold text-[#94A3B8] tracking-tight whitespace-nowrap pl-1 truncate text-right">0원</span>
                     </div>
                 </div>
-                <div class="mt-auto pt-3 border-t border-[#D9EBB9]/70">
-                    <div class="text-[11px] font-bold text-[#64748B] mb-0.5">총 누적 순수익</div>
-                    <div id="ledgerYearNet" class="text-[18px] font-black text-[#3F6212] tracking-tight whitespace-nowrap truncate">0원</div>
+                <div class="mt-auto pt-3 border-t border-[#D9EBB9]/70 flex justify-between items-end w-full">
+                    <span class="text-[11px] font-bold text-[#64748B] mb-0.5 shrink-0">총 순수익</span>
+                    <span id="ledgerYearNet" class="text-[18px] font-black text-[#3F6212] tracking-tight whitespace-nowrap pl-1 truncate text-right">0원</span>
                 </div>
             </div>
         </div>
@@ -2462,8 +2461,8 @@
         const mNet = monthInc - monthExp;
         if(mNetEl) {
             mNetEl.innerText = mNet.toLocaleString('ko-KR') + "원";
-            // 적자일 경우 한국 금융권 표준에 맞춰 빨간색(#E11D48)으로 표시
-            mNetEl.className = mNet >= 0 ? "text-[18px] font-black text-[#1E3A8A] tracking-tight whitespace-nowrap truncate" : "text-[18px] font-black text-[#E11D48] tracking-tight whitespace-nowrap truncate";
+            // 적자일 경우 한국 금융권 표준에 맞춰 고급스러운 버건디 레드(#BE123C)로 표시
+            mNetEl.className = mNet >= 0 ? "text-[18px] font-black text-[#1E3A8A] tracking-tight whitespace-nowrap pl-1 truncate text-right" : "text-[18px] font-black text-[#BE123C] tracking-tight whitespace-nowrap pl-1 truncate text-right";
         }
 
         // 연간 UI 업데이트
@@ -2477,7 +2476,7 @@
         const yNet = yearInc - yearExp;
         if(yNetEl) {
             yNetEl.innerText = yNet.toLocaleString('ko-KR') + "원";
-            yNetEl.className = yNet >= 0 ? "text-[18px] font-black text-[#3F6212] tracking-tight whitespace-nowrap truncate" : "text-[18px] font-black text-[#E11D48] tracking-tight whitespace-nowrap truncate";
+            yNetEl.className = yNet >= 0 ? "text-[18px] font-black text-[#3F6212] tracking-tight whitespace-nowrap pl-1 truncate text-right" : "text-[18px] font-black text-[#BE123C] tracking-tight whitespace-nowrap pl-1 truncate text-right";
         }
     }
 
