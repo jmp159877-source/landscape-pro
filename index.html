@@ -178,17 +178,34 @@
     </div>
     
     <div class="max-w-md mx-auto mt-4">
-    <nav class="grid grid-cols-3 gap-3">
-            <button id="tabCalendar" onclick="switchView('calendar')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="calendar-days" class="w-6 h-6 text-white/80"></i><span class="text-[13px] font-bold text-white/90">일정표</span></button>
-            <button id="tabAdmin" onclick="switchView('admin')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="pen-tool" class="w-6 h-6 text-[#84CC16]"></i><span class="text-[13px] font-bold text-white/90">일지작성</span></button>
-            <button id="tabClient" onclick="switchView('clients')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="building-2" class="w-6 h-6 text-white/80"></i><span class="text-[13px] font-bold text-white/90">거래처 목록</span></button>
-            <button id="tabQuote" onclick="switchView('quote')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="calculator" class="w-6 h-6 text-white/80"></i><span class="text-[13px] font-bold text-white/90">견적작성</span></button>
-            <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="folder-open" class="w-6 h-6 text-[#84CC16]"></i><span class="text-[13px] font-bold text-white/90">견적보관함</span></button>
-            <button id="tabContacts" onclick="switchView('contacts')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="users" class="w-6 h-6 text-white/80"></i><span class="text-[13px] font-bold text-white/90">연락처</span></button>
-            <button id="tabLedger" onclick="checkLedgerPin()" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="wallet" class="w-6 h-6 text-yellow-400"></i><span class="text-[13px] font-bold text-white/90">개인장부</span></button>
-            <button id="tabEncyclopedia" onclick="switchView('encyclopedia')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="book-open" class="w-6 h-6 text-white/80"></i><span class="text-[13px] font-bold text-white/90">스마트 식물검색</span></button>
-            <button id="tabLens" onclick="switchView('lens')" class="w-full py-5 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="scan-line" class="w-6 h-6 text-[#151E2D]"></i><span class="text-[13px] font-black text-[#151E2D]">AI 검색렌즈</span></button>
-        </nav>  
+        <!-- 접기/펼치기 영역 시작 -->
+        <div id="mainCategoryWrapper" class="overflow-hidden transition-all duration-500 ease-in-out max-h-[800px] opacity-100">
+            <nav class="grid grid-cols-3 gap-3">
+                <button id="tabCalendar" onclick="switchView('calendar')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="calendar-days" class="w-6 h-6 text-white/80"></i><span class="text-[13px] font-bold text-white/90">일정표</span></button>
+                <button id="tabAdmin" onclick="switchView('admin')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="pen-tool" class="w-6 h-6 text-[#84CC16]"></i><span class="text-[13px] font-bold text-white/90">일지작성</span></button>
+                <button id="tabClient" onclick="switchView('clients')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="building-2" class="w-6 h-6 text-white/80"></i><span class="text-[13px] font-bold text-white/90">거래처 목록</span></button>
+                <button id="tabQuote" onclick="switchView('quote')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="calculator" class="w-6 h-6 text-white/80"></i><span class="text-[13px] font-bold text-white/90">견적작성</span></button>
+                <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="folder-open" class="w-6 h-6 text-[#84CC16]"></i><span class="text-[13px] font-bold text-white/90">견적보관함</span></button>
+                <button id="tabContacts" onclick="switchView('contacts')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="users" class="w-6 h-6 text-white/80"></i><span class="text-[13px] font-bold text-white/90">연락처</span></button>
+                <button id="tabLedger" onclick="checkLedgerPin()" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="wallet" class="w-6 h-6 text-yellow-400"></i><span class="text-[13px] font-bold text-white/90">개인장부</span></button>
+                <button id="tabEncyclopedia" onclick="switchView('encyclopedia')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="book-open" class="w-6 h-6 text-white/80"></i><span class="text-[13px] font-bold text-white/90">식물검색</span></button>
+                
+                <!-- 💡 신규 추가: 1:1 고객센터 -->
+                <button id="tabInquiry" onclick="openInquiryModal()" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="headphones" class="w-6 h-6 text-[#F59E0B]"></i><span class="text-[13px] font-bold text-white/90">고객센터</span></button>
+                
+                <!-- 💡 AI 검색렌즈 (가로로 길게 배치하여 전체 10개 버튼 레이아웃 균형 완성) -->
+                <button id="tabLens" onclick="switchView('lens')" class="col-span-3 w-full py-4 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex items-center justify-center gap-2.5 mt-0.5"><i data-lucide="scan-line" class="w-6 h-6 text-[#151E2D]"></i><span class="text-[14px] font-black text-[#151E2D]">AI 스마트 검색렌즈</span></button>
+            </nav>
+        </div>
+        
+        <!-- ✨ 시인성 극대화: 고급스러운 접기/펼치기 토글 버튼 -->
+        <div class="flex justify-center mt-3 relative">
+            <button onclick="toggleMainCategory()" class="flex items-center gap-1.5 text-[11px] font-black text-[#84CC16] hover:text-[#9BE32D] transition-colors px-5 py-2 bg-[#151E2D] rounded-full border border-[#84CC16]/40 shadow-lg z-50">
+                <span id="toggleCategoryText">메뉴 접기 (화면 넓게 쓰기)</span>
+                <i id="toggleCategoryIcon" data-lucide="chevron-up" class="w-4 h-4"></i>
+            </button>
+            <div class="absolute top-1/2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/15 to-transparent -z-10"></div>
+        </div>
     </div>
   </header>
 
@@ -2323,11 +2340,44 @@
         closeLedgerPinModal();
         openInquiryModal();
     }
+    // ==========================================
+    // 🗂️ 메인 카테고리 스크롤 접기/펼치기 로직
+    // ==========================================
+    let isCategoryCollapsed = false;
+    function toggleMainCategory(forceState = null) {
+        const wrapper = document.getElementById('mainCategoryWrapper');
+        const text = document.getElementById('toggleCategoryText');
+        const icon = document.getElementById('toggleCategoryIcon');
+        if(!wrapper) return;
+
+        // forceState가 'collapse'면 무조건 접기, 'expand'면 무조건 펼치기
+        const targetState = forceState !== null ? (forceState === 'collapse') : !isCategoryCollapsed;
+
+        if (targetState) {
+            // 접기 모드 (숨김)
+            wrapper.style.maxHeight = '0px';
+            wrapper.style.opacity = '0';
+            wrapper.style.marginTop = '-10px';
+            text.innerText = '메뉴 펼치기 (다른 탭 이동)';
+            icon.setAttribute('data-lucide', 'chevron-down');
+            isCategoryCollapsed = true;
+        } else {
+            // 펼치기 모드 (보임)
+            wrapper.style.maxHeight = '800px';
+            wrapper.style.opacity = '1';
+            wrapper.style.marginTop = '0px';
+            text.innerText = '메뉴 접기 (화면 넓게 쓰기)';
+            icon.setAttribute('data-lucide', 'chevron-up');
+            isCategoryCollapsed = false;
+        }
+        if(typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
     function switchView(mode, pushHistory = true) {
       const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView', 'calendarView', 'ledgerView', 'encyclopediaView'];
       views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
       
-      const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient', 'tabContacts', 'tabCalendar', 'tabLedger', 'tabEncyclopedia'];
+      const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient', 'tabContacts', 'tabCalendar', 'tabLedger', 'tabEncyclopedia', 'tabInquiry'];
       mainTabs.forEach(t => { 
           const el = document.getElementById(t); 
           if(el) {
@@ -2339,13 +2389,14 @@
                   icon.className = icon.className.replace(/text-\S+/g, '');
                   if(t === 'tabAdmin' || t === 'tabQuoteList') icon.classList.add('text-[#84CC16]');
                   else if(t === 'tabLedger') icon.classList.add('text-yellow-400');
+                  else if(t === 'tabInquiry') icon.classList.add('text-[#F59E0B]');
                   else icon.classList.add('text-white/80');
               }
           }
       });
       
       const lensTab = document.getElementById('tabLens');
-      if(lensTab) lensTab.className = "w-full py-5 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex flex-col items-center justify-center gap-2.5";
+      if(lensTab) lensTab.className = "col-span-3 w-full py-4 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex items-center justify-center gap-2.5 mt-0.5";
       
       let activeTabId = '';
       if (mode === 'admin') { document.getElementById('adminView').classList.remove('hidden'); activeTabId = 'tabAdmin'; }
@@ -2368,7 +2419,16 @@
             if(span) span.className = "text-[13px] font-black text-white";
         }
       }
-      if(typeof lucide !== 'undefined') lucide.createIcons(); window.scrollTo(0, 0); if (pushHistory && mode !== 'client_shared') history.pushState({ view: mode }, "", "");
+
+      // ✨ [스마트 UX] 일지/견적 등 메인 뷰 전환 시 알아서 공간 확보를 위해 메뉴를 접어줍니다.
+      if (mode !== 'calendar' && mode !== 'lens' && mode !== 'client_shared') {
+          setTimeout(() => toggleMainCategory('collapse'), 100);
+      } else {
+          setTimeout(() => toggleMainCategory('expand'), 100);
+      }
+
+      if(typeof lucide !== 'undefined') lucide.createIcons(); window.scrollTo(0, 0); 
+      if (pushHistory && mode !== 'client_shared') history.pushState({ view: mode }, "", "");
     }
     const mainTabsOrder = ['admin', 'quote', 'quoteList', 'clients', 'contacts', 'lens', 'calendar', 'ledger'];
     const swipeContainerEl = document.getElementById('swipeContainer');
