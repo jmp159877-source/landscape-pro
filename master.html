@@ -1014,6 +1014,8 @@
           mobBtns[mobActiveIndex].classList.add('text-[#3B82F6]');
       }
     }
+// 💡 핵심: 껍데기 말고 '진짜 알맹이 전체 데이터'를 잠시 담아둘 전용 바구니
+    let currentCompanyFullData = null; 
 
     async function openCompanyDataModal(id, name) {
         document.getElementById('modalCompanyName').innerText = name;
@@ -1033,6 +1035,9 @@
             const res = await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(id)}/data.json`));
             const data = await res.json();
             
+            // 💡 금고에서 꺼낸 진짜 전체 데이터를 바구니에 보관합니다.
+            currentCompanyFullData = data; 
+
             const clients = data && data.clients ? data.clients : [];
             const records = data && data.records ? data.records : [];
             
@@ -1065,7 +1070,6 @@
                                     <div class="text-[#94A3B8] text-[12px] font-medium truncate">${r.round}</div>
                                 </div>
                             </div>
-                            <!-- 💡 외부 링크 새 창 띄우기 대신 인앱 열람 팝업 함수로 변경 -->
                             <button onclick="openDocumentPreview('${r.id}')" class="shrink-0 px-3.5 py-2 bg-white/10 text-white border border-white/10 rounded-[10px] text-[12px] font-bold hover:bg-white/20 transition-all flex items-center gap-1.5"><i data-lucide="file-search" class="w-3.5 h-3.5"></i> 내역 열람</button>
                         </div>
                     `;
@@ -1142,7 +1146,6 @@
                                 <div class="text-[#94A3B8] text-[12px] font-medium truncate mt-0.5">${r.round}</div>
                             </div>
                         </div>
-                        <!-- 💡 외부 링크 새 창 띄우기 대신 인앱 열람 팝업 함수로 변경 -->
                         <button onclick="openDocumentPreview('${r.id}')" class="shrink-0 px-4 py-2 bg-[#84CC16] text-[#12261E] rounded-[10px] text-[12px] font-black hover:bg-[#9BE32D] transition-all flex items-center gap-1.5 shadow-md"><i data-lucide="file-search" class="w-3.5 h-3.5"></i> 상세 열람</button>
                     </div>
                 `;
@@ -1166,38 +1169,91 @@
     }
 
     // ==========================================
-    // 🗂️ 마스터 전용 인앱 문서 상세 뷰어 (견적서/일지 알맹이 렌더링)
+    // 🗂️ 마스터 전용 인앱 문서 상세 뷰어 (진짜 알맹이 추적기 탑재)
     // ==========================================
     function openDocumentPreview(docId) {
-        const doc = currentCompanyRecords.find(r => r.id === docId);
-        if(!doc) return alert('문서 데이터를 불러올 수 없습니다.');
+        // 1. 껍데기(단축 정보) 가져오기
+        const shortcut = currentCompanyRecords.find(r => r.id === docId);
+        if(!shortcut) return alert('문서 데이터를 불러올 수 없습니다.');
+
+        // 2. 금고 전체 데이터에서 진짜 알맹이 추적하기!
+        let realDoc = null;
+
+        // 추적 1단계: 거래처 히스토리(일지) 뒤지기
+        if (currentCompanyFullData && currentCompanyFullData.clients) {
+            for (const client of currentCompanyFullData.clients) {
+                if (client.history) {
+                    const found = client.history.find(h => h.id === docId || (h.date === shortcut.date && h.round === shortcut.round));
+                    if (found) { realDoc = found; break; }
+                }
+            }
+        }
+
+        // 추적 2단계: 견적 보관함(quoteList) 뒤지기
+        if (!realDoc && currentCompanyFullData && currentCompanyFullData.quoteList) {
+            const found = currentCompanyFullData.quoteList.find(q => q.id === docId || (q.date === shortcut.date && q.clientName === shortcut.clientName));
+            if (found) realDoc = found;
+        }
+
+        // 그래도 없으면 껍데기를 대신 사용 (오류 방지)
+        if (!realDoc) realDoc = shortcut;
+
+        // 변수명 변동 대응용 안전 추출 장치
+        const docDate = realDoc.date || shortcut.date || '날짜 미상';
+        const clientName = realDoc.clientName || shortcut.clientName || '고객명 미상';
 
         const contentArea = document.getElementById('previewModalContent');
         let html = '';
 
-        if(doc.type === 'quote') {
+        if(shortcut.type === 'quote') {
             // [견적서 알맹이 렌더링]
+            const receiver = realDoc.receiver || realDoc.receiverName || clientName || '수신자 정보 없음';
+            const supplier = realDoc.supplier || realDoc.supplierName || realDoc.provider || '공급자 정보 없음';
+            
+            // 견적 항목 배열 찾기 (변수명 보험 처리)
+            const items = realDoc.items || realDoc.rows || realDoc.quoteItems || realDoc.details || [];
+            
             let itemsHtml = '';
-            if(doc.items && doc.items.length > 0) {
-                doc.items.forEach(item => {
-                    itemsHtml += `<tr class="border-b border-white/5 last:border-0"><td class="py-3 text-white text-[13px] font-bold">${item.name}</td><td class="py-3 text-right text-[#94A3B8] text-[12px]">${item.spec||'-'}</td><td class="py-3 text-right text-white text-[13px]">${item.qty}</td><td class="py-3 text-right text-[#3B82F6] font-bold text-[13px]">${Number(item.price).toLocaleString()}원</td></tr>`;
+            if(items && items.length > 0) {
+                items.forEach(item => {
+                    const name = item.name || item.itemName || item.title || '-';
+                    const spec = item.spec || item.standard || item.size || '-';
+                    const qty = item.qty || item.quantity || item.amount || '1';
+                    const price = item.price || item.unitPrice || item.cost || 0;
+                    itemsHtml += `<tr class="border-b border-white/5 last:border-0"><td class="py-3 text-white text-[13px] font-bold">${name}</td><td class="py-3 text-right text-[#94A3B8] text-[12px]">${spec}</td><td class="py-3 text-right text-white text-[13px]">${qty}</td><td class="py-3 text-right text-[#3B82F6] font-bold text-[13px]">${Number(price).toLocaleString()}원</td></tr>`;
                 });
             } else {
-                itemsHtml = `<tr><td colspan="4" class="py-6 text-center text-[#94A3B8] text-[13px]">세부 품목 데이터가 없습니다.</td></tr>`;
+                itemsHtml = `<tr><td colspan="4" class="py-6 text-center text-[#94A3B8] text-[13px]">세부 품목 데이터가 없습니다. (혹은 데이터 구조 차이)</td></tr>`;
             }
+
+            const totalPrice = realDoc.totalPrice || realDoc.totalAmount || realDoc.sum || 0;
+            const memo = realDoc.memo || realDoc.note || realDoc.remark || '';
 
             html = `
                 <div class="space-y-4">
                     <div class="flex justify-between items-center bg-[#1E293B] p-4 rounded-[16px] border border-white/5">
                         <div>
                             <div class="text-[11px] font-bold text-[#94A3B8] mb-1">문서 종류</div>
-                            <div class="text-white font-black text-[15px] flex items-center gap-1.5"><span class="bg-[#3B82F6]/20 text-[#3B82F6] px-2 py-0.5 rounded text-[10px]">견적서</span> ${doc.clientName}</div>
+                            <div class="text-white font-black text-[15px] flex items-center gap-1.5"><span class="bg-[#3B82F6]/20 text-[#3B82F6] px-2 py-0.5 rounded text-[10px]">견적서</span> ${clientName}</div>
                         </div>
                         <div class="text-right">
                             <div class="text-[11px] font-bold text-[#94A3B8] mb-1">작성일자</div>
-                            <div class="text-white font-bold text-[13px]">${doc.date}</div>
+                            <div class="text-white font-bold text-[13px]">${docDate}</div>
                         </div>
                     </div>
+
+                    <!-- ✨ 수신자 / 공급자 영역 부활 ✨ -->
+                    <div class="grid grid-cols-2 gap-3 bg-black/20 p-4 rounded-[16px] border border-white/5">
+                        <div>
+                            <div class="text-[11px] font-bold text-[#94A3B8] mb-1">공급자 (보내는 분)</div>
+                            <div class="text-white font-bold text-[14px]">${supplier}</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-[11px] font-bold text-[#94A3B8] mb-1">수신자 (받는 분)</div>
+                            <div class="text-white font-black text-[14px]">${receiver}</div>
+                        </div>
+                    </div>
+
                     <div class="bg-black/20 rounded-[16px] p-4 border border-white/5">
                         <table class="w-full text-left">
                             <thead class="text-[#94A3B8] text-[11px] border-b border-white/10">
@@ -1207,43 +1263,61 @@
                         </table>
                         <div class="mt-4 pt-4 border-t border-white/10 flex justify-between items-center">
                             <span class="text-[#94A3B8] font-bold text-[13px]">총 합계 금액</span>
-                            <span class="text-[#3B82F6] font-black text-[22px]">${doc.totalPrice ? Number(doc.totalPrice).toLocaleString() : '0'}원</span>
+                            <span class="text-[#3B82F6] font-black text-[22px]">${Number(totalPrice).toLocaleString()}원</span>
                         </div>
                     </div>
-                    ${doc.memo ? `<div class="bg-black/20 p-4 rounded-[16px] border border-white/5"><div class="text-[11px] font-bold text-[#94A3B8] mb-1.5">특이사항/메모</div><div class="text-white text-[13px] break-keep leading-relaxed">${doc.memo}</div></div>` : ''}
+                    ${memo ? `<div class="bg-black/20 p-4 rounded-[16px] border border-white/5"><div class="text-[11px] font-bold text-[#94A3B8] mb-1.5">특이사항/메모</div><div class="text-white text-[13px] break-keep leading-relaxed">${memo}</div></div>` : ''}
                 </div>
             `;
         } else {
             // [현장 일지 알맹이 렌더링]
+            const tags = realDoc.categories || realDoc.tags || realDoc.workTypes || [];
             let tagsHtml = '';
-            if(doc.categories && doc.categories.length > 0) {
-                tagsHtml = doc.categories.map(c => `<span class="bg-[#84CC16]/10 text-[#84CC16] border border-[#84CC16]/20 px-2.5 py-1 rounded-md text-[11px] font-bold">${c}</span>`).join('');
+            if(tags && tags.length > 0) {
+                tagsHtml = tags.map(c => `<span class="bg-[#84CC16]/10 text-[#84CC16] border border-[#84CC16]/20 px-2.5 py-1 rounded-md text-[11px] font-bold">${c}</span>`).join('');
             }
+            
+            const img = realDoc.issue || realDoc.image || realDoc.photo || '';
             let imgHtml = '';
-            if(doc.issue && typeof doc.issue === 'string' && doc.issue.startsWith('data:image')) {
-                imgHtml = `<div class="mt-4"><div class="text-[11px] font-bold text-[#94A3B8] mb-2">현장 첨부 사진</div><img src="${doc.issue}" class="w-full rounded-[16px] border border-white/10"></div>`;
+            if(img && typeof img === 'string' && img.startsWith('data:image')) {
+                imgHtml = `<div class="mt-4"><div class="text-[11px] font-bold text-[#94A3B8] mb-2">현장 첨부 사진</div><img src="${img}" class="w-full rounded-[16px] border border-white/10"></div>`;
             }
+
+            const reportContent = realDoc.d || realDoc.memo || realDoc.content || realDoc.workDetails || '';
 
             html = `
                 <div class="space-y-4">
                     <div class="flex justify-between items-center bg-[#1E293B] p-4 rounded-[16px] border border-white/5">
                         <div>
                             <div class="text-[11px] font-bold text-[#94A3B8] mb-1">문서 종류</div>
-                            <div class="text-white font-black text-[15px] flex items-center gap-1.5"><span class="bg-[#84CC16]/20 text-[#84CC16] px-2 py-0.5 rounded text-[10px]">현장 일지</span> ${doc.clientName}</div>
+                            <div class="text-white font-black text-[15px] flex items-center gap-1.5"><span class="bg-[#84CC16]/20 text-[#84CC16] px-2 py-0.5 rounded text-[10px]">현장 일지</span> ${clientName}</div>
                         </div>
                         <div class="text-right">
                             <div class="text-[11px] font-bold text-[#94A3B8] mb-1">작성일자</div>
-                            <div class="text-white font-bold text-[13px]">${doc.date}</div>
+                            <div class="text-white font-bold text-[13px]">${docDate}</div>
                         </div>
                     </div>
                     <div class="bg-black/20 rounded-[16px] p-4 border border-white/5 space-y-4">
                         ${tagsHtml ? `<div><div class="text-[11px] font-bold text-[#94A3B8] mb-2">작업 분류</div><div class="flex flex-wrap gap-1.5">${tagsHtml}</div></div>` : ''}
-                        <div><div class="text-[11px] font-bold text-[#94A3B8] mb-1.5">작업 상세 내용</div><div class="text-white text-[14px] leading-relaxed break-keep bg-white/5 p-3 rounded-[12px]">${doc.d || doc.memo || '입력된 상세 내용이 없습니다.'}</div></div>
+                        <div>
+                            <div class="text-[11px] font-bold text-[#94A3B8] mb-1.5">작업 상세 내용</div>
+                            <div class="text-white text-[14px] leading-relaxed break-keep bg-white/5 p-3 rounded-[12px]">${reportContent ? reportContent : '<span class="text-white/40">수기 입력 내용이 없습니다.</span>'}</div>
+                        </div>
                         ${imgHtml}
                     </div>
                 </div>
             `;
         }
+
+        // 💡 100% 안전장치: 화면에 예쁘게 안 나올 경우를 대비해 원본 데이터를 확인하는 숨겨진 버튼 추가
+        html += `
+            <div class="mt-6 pt-4 border-t border-white/10">
+                <details class="text-[#94A3B8] text-[10px]">
+                    <summary class="cursor-pointer hover:text-white transition-colors">🛠 데이터 원본 추적 로그 (안 보일 때 클릭)</summary>
+                    <pre class="mt-2 bg-black p-3 rounded-lg overflow-x-auto text-[10px] text-green-400 font-mono">${JSON.stringify(realDoc, null, 2)}</pre>
+                </details>
+            </div>
+        `;
 
         contentArea.innerHTML = html;
         const modal = document.getElementById('documentPreviewModal');
@@ -1260,6 +1334,7 @@
         box.classList.add('scale-95');
         setTimeout(() => { modal.classList.add('hidden'); }, 200);
     }
+    
   </script>
 </body>
 </html>
