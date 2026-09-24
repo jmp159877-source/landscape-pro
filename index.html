@@ -121,7 +121,10 @@
         <button onclick="closeSettings()" class="text-[#A3A8A3] hover:text-white p-1"><i data-lucide="x" class="w-6 h-6"></i></button>
       </div>
       <div class="p-5 bg-[#151E2D] space-y-4 max-h-[70vh] overflow-y-auto nav-scroll">
-        <p class="text-[12px] text-[#A3A8A3] leading-relaxed break-keep font-bold mb-2">* 상호 변경 등은 관리자(010-4712-8523) 문의</p>
+        <div class="flex justify-between items-end mb-3">
+            <p class="text-[12px] text-[#A3A8A3] leading-relaxed break-keep font-bold">* 상호 변경 및 앱 관련 오류 신고</p>
+            <button onclick="openInquiryModal()" class="px-3 py-1.5 bg-[#84CC16]/20 text-[#84CC16] border border-[#84CC16]/40 rounded-[8px] text-[12px] font-black hover:bg-[#84CC16]/30 transition-colors shadow-sm">1:1 문의하기</button>
+        </div>
         <div class="space-y-3">
           <div><label class="block text-[12px] font-black text-[#A3A8A3] ml-1 mb-1">상호명</label><input type="text" id="setCompanyName" readonly class="w-full bg-white/5 border border-white/10 rounded-[12px] px-4 py-3 text-white/50 text-[15px] font-black outline-none cursor-not-allowed"></div>
           <div><label class="block text-[12px] font-black text-[#A3A8A3] ml-1 mb-1">대표자명</label><input type="text" id="setCompanyCeo" readonly class="w-full bg-white/5 border border-white/10 rounded-[12px] px-4 py-3 text-white/50 text-[15px] font-black outline-none cursor-not-allowed"></div>
@@ -2316,7 +2319,9 @@
     }
 
     function forgotLedgerPin() {
-        alert("🔒 보안을 위해 앱 내에서는 비밀번호를 알 수 없습니다.\n\n운영본부 관리자(010-4712-8523)에게 전화하여 본인 확인 후 비밀번호를 초기화 받으시기 바랍니다.");
+        alert("🔒 보안을 위해 비밀번호는 앱 내에서 알 수 없습니다.\n\n확인 버튼을 누르시면 [1:1 문의하기] 창으로 이동합니다. 관리자에게 장부 비밀번호 초기화를 요청해 주시면 신속히 처리해 드립니다.");
+        closeLedgerPinModal();
+        openInquiryModal();
     }
     function switchView(mode, pushHistory = true) {
       const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView', 'calendarView', 'ledgerView', 'encyclopediaView'];
@@ -2785,6 +2790,8 @@
         }, 1000);
     });
     window.addEventListener('popstate', (e) => {
+      const inquiryModal = document.getElementById('inquiryModal');
+      if (inquiryModal && !inquiryModal.classList.contains('hidden')) { closeInquiryModal(true); return; }
       const modal = document.getElementById('imageModal'); const textEditorModal = document.getElementById('textEditorModal'); const lensResultModal = document.getElementById('lensResultModal'); const materialModal = document.getElementById('materialModal'); const settingsModal = document.getElementById('settingsModal'); const noticeModal = document.getElementById('appNoticeModal'); const termsModal = document.getElementById('termsModal'); const scheduleModal = document.getElementById('scheduleModal');
       if (modal && !modal.classList.contains('hidden')) { modal.classList.add('hidden'); document.getElementById('modalImg').src = ''; return; }
       if (textEditorModal && !textEditorModal.classList.contains('hidden')) { closeTextEditor(true); return; }
@@ -3090,5 +3097,144 @@
         }
     });
     </script>  
+<!-- 💬 1:1 문의하기 모달 (카톡 형태) -->
+  <div id="inquiryModal" class="hidden fixed inset-0 z-[8000] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200" onclick="closeInquiryModal()">
+      <div id="inquiryBox" class="bg-[#151E2D] w-full max-w-md rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-white/10 h-[80vh]" onclick="event.stopPropagation()">
+          <div class="p-5 border-b border-white/10 flex justify-between items-center bg-[#0F1722] shrink-0">
+              <h3 class="text-[16px] font-black text-white flex items-center gap-2"><i data-lucide="message-square" class="w-5 h-5 text-[#84CC16]"></i> 1:1 고객센터</h3>
+              <button onclick="closeInquiryModal()" class="text-[#A3A8A3] hover:text-white p-1"><i data-lucide="x" class="w-6 h-6"></i></button>
+          </div>
+          
+          <div class="flex-1 overflow-y-auto p-5 space-y-4 nav-scroll bg-[#151E2D]" id="inquiryListContainer">
+              <!-- 채팅(문의) 내역이 그려지는 곳 -->
+          </div>
+          
+          <div class="p-4 bg-[#0F1722] border-t border-white/10 shrink-0">
+              <div class="flex gap-2">
+                  <textarea id="inquiryInput" rows="2" placeholder="문의 사항을 입력해 주세요. (예: 장부 비밀번호 초기화 요청)" class="flex-1 bg-black/40 border border-white/10 rounded-[12px] p-3 text-white text-[13px] font-bold focus:outline-none focus:border-[#84CC16] resize-none"></textarea>
+                  <button onclick="sendInquiry()" class="px-4 bg-[#84CC16] text-[#151E2D] rounded-[12px] font-black text-[14px] hover:bg-[#9BE32D] transition-colors shrink-0 shadow-md flex items-center justify-center">전송</button>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <script>
+    // ==========================================
+    // 💬 1:1 문의 (스마트 고객센터) 로직
+    // ==========================================
+    let userInquiries = [];
+
+    async function openInquiryModal() {
+        const modal = document.getElementById('inquiryModal');
+        const box = document.getElementById('inquiryBox');
+        document.getElementById('inquiryInput').value = '';
+        
+        modal.classList.remove('hidden');
+        setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10);
+        history.pushState({ modalOpen: true }, "", "");
+        
+        await loadInquiries();
+    }
+
+    function closeInquiryModal(fromPopstate = false) {
+        const modal = document.getElementById('inquiryModal');
+        const box = document.getElementById('inquiryBox');
+        if(modal) modal.classList.add('opacity-0');
+        if(box) box.classList.add('scale-95');
+        setTimeout(() => { if(modal) modal.classList.add('hidden'); }, 200);
+        if(!fromPopstate && history.state && history.state.modalOpen) history.back();
+    }
+
+    async function loadInquiries() {
+        const container = document.getElementById('inquiryListContainer');
+        container.innerHTML = '<div class="text-center text-[#A3A8A3] text-[12px] font-bold py-10 animate-pulse">상담 내역을 불러오는 중...</div>';
+        
+        try {
+            const safeKey = getSafeKey(currentUserId);
+            // 캐시 방지를 위해 시간값(t) 부여
+            const res = await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/inquiries.json?t=${new Date().getTime()}`));
+            const data = await res.json();
+            
+            userInquiries = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
+            userInquiries = userInquiries.filter(Boolean);
+            
+            if (userInquiries.length === 0) {
+                container.innerHTML = `<div class="bg-white/5 border border-white/10 rounded-[16px] p-5 text-center mt-10"><i data-lucide="headphones" class="w-8 h-8 text-[#4E5968] mx-auto mb-3"></i><p class="text-[13px] text-[#A3A8A3] font-bold leading-relaxed">궁금한 점이나 문제가 있으신가요?<br>이곳에 남겨주시면 운영본부에서<br>신속히 답변해 드립니다.</p></div>`;
+            } else {
+                let html = '';
+                userInquiries.forEach(inq => {
+                    const statusBadge = inq.status === 'answered' 
+                        ? `<span class="bg-[#84CC16]/20 text-[#84CC16] border border-[#84CC16]/30 px-2 py-0.5 rounded text-[10px] font-black">답변 완료</span>` 
+                        : `<span class="bg-yellow-500/20 text-yellow-500 border border-yellow-500/30 px-2 py-0.5 rounded text-[10px] font-black">확인 대기 중</span>`;
+                        
+                    html += `
+                        <div class="flex flex-col gap-2 mb-5">
+                            <!-- 내 질문 -->
+                            <div class="self-end max-w-[85%]">
+                                <div class="flex items-end gap-1.5 justify-end mb-1.5">
+                                    <span class="text-[10px] text-[#4E5968] font-bold">${inq.date}</span>
+                                    ${statusBadge}
+                                </div>
+                                <div class="bg-[#84CC16] text-[#12261E] text-[13px] font-bold p-3.5 rounded-[16px] rounded-tr-[4px] shadow-sm break-keep whitespace-pre-wrap">${inq.text}</div>
+                            </div>
+                            
+                            <!-- 관리자 답변 -->
+                            ${inq.reply ? `
+                            <div class="self-start max-w-[85%] mt-1">
+                                <div class="flex items-center gap-1.5 mb-1 text-[11px] font-black text-[#A3A8A3]">
+                                    <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#3B82F6]"></i> 운영본부 답변
+                                </div>
+                                <div class="bg-white/10 text-white text-[13px] font-bold p-3.5 rounded-[16px] rounded-tl-[4px] border border-white/10 shadow-sm break-keep whitespace-pre-wrap">${inq.reply}</div>
+                            </div>
+                            ` : ''}
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+                container.scrollTop = container.scrollHeight; // 스크롤 맨 아래로 이동
+            }
+            if(typeof lucide !== 'undefined') lucide.createIcons();
+        } catch(e) {
+            container.innerHTML = '<div class="text-center text-red-400 text-[12px] font-bold py-10">통신 오류가 발생했습니다.</div>';
+        }
+    }
+
+    async function sendInquiry() {
+        const inputEl = document.getElementById('inquiryInput');
+        const text = inputEl.value.trim();
+        if(!text) return;
+        
+        inputEl.value = '';
+        inputEl.disabled = true;
+        
+        const now = new Date();
+        const dateStr = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+        
+        const newInquiry = {
+            id: Date.now().toString(),
+            text: text,
+            date: dateStr,
+            status: 'waiting',
+            reply: ''
+        };
+        
+        userInquiries.push(newInquiry);
+        
+        try {
+            const safeKey = getSafeKey(currentUserId);
+            await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/inquiries.json`), {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userInquiries)
+            });
+            await loadInquiries(); // 보낸 후 화면 새로고침
+        } catch(e) {
+            alert("전송 중 오류가 발생했습니다.");
+        } finally {
+            inputEl.disabled = false;
+            inputEl.focus();
+        }
+    }
+  </script>
 </body>
 </html>
