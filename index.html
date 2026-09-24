@@ -2572,8 +2572,8 @@
       if(typeof lucide !== 'undefined') lucide.createIcons(); window.scrollTo(0, 0); 
       if (pushHistory && mode !== 'client_shared') history.pushState({ view: mode }, "", "");
     }
-    // 💡 [보안 패치] 'ledger(개인장부)'를 스와이프 명단에서 완전히 삭제하여 비밀번호 우회 접근 원천 차단!
-    const mainTabsOrder = ['lounge', 'calendar', 'admin', 'clients', 'quote', 'quoteList', 'contacts', 'encyclopedia', 'lens'];
+    // 💡 [UX 완벽 패치] 스와이프 명단에서 'lounge(라운지)'도 아예 삭제해버립니다.
+    const mainTabsOrder = ['calendar', 'admin', 'clients', 'quote', 'quoteList', 'contacts', 'encyclopedia', 'lens'];
     const swipeContainerEl = document.getElementById('swipeContainer');
     let viewTouchStartX = 0; let viewTouchStartY = 0;
     
@@ -2584,14 +2584,15 @@
         }, {passive: true});
         
         swipeContainerEl.addEventListener('touchend', e => {
-          if (e.target.closest('input') || e.target.closest('textarea') || e.target.closest('table')) return;
+          // 입력창이나 가로 스크롤(nav-scroll) 영역에서는 스와이프 무시
+          if (e.target.closest('input') || e.target.closest('textarea') || e.target.closest('table') || e.target.closest('.nav-scroll')) return;
+          
           const diffX = e.changedTouches[0].screenX - viewTouchStartX; 
           const diffY = e.changedTouches[0].screenY - viewTouchStartY;
           
           if (Math.abs(diffX) > Math.abs(diffY) * 1.5 && Math.abs(diffX) > 60) {
-            let currentActiveMode = 'lounge'; // 기본값을 라운지로 설정
+            let currentActiveMode = ''; 
             
-            // 현재 열려있는 화면 정확히 감지
             if (!document.getElementById('quoteAdminView').classList.contains('hidden')) currentActiveMode = 'quote';
             else if (!document.getElementById('quoteListView').classList.contains('hidden')) currentActiveMode = 'quoteList';
             else if (!document.getElementById('clientsView').classList.contains('hidden')) currentActiveMode = 'clients';
@@ -2600,11 +2601,11 @@
             else if (!document.getElementById('calendarView').classList.contains('hidden')) currentActiveMode = 'calendar';
             else if (!document.getElementById('encyclopediaView').classList.contains('hidden')) currentActiveMode = 'encyclopedia';
             else if (!document.getElementById('loungeView').classList.contains('hidden')) currentActiveMode = 'lounge';
-            else if (!document.getElementById('ledgerView').classList.contains('hidden')) currentActiveMode = 'ledger'; // 장부 안에 있을 때 스와이프 감지용
-            else if (!document.getElementById('clientView').classList.contains('hidden')) return; 
+            else if (!document.getElementById('ledgerView').classList.contains('hidden')) currentActiveMode = 'ledger';
+            else return;
             
-            // 장부 화면에 들어와 있을 때는 스와이프로 다른 화면 넘어가는 것도 막아버림 (보안 강화)
-            if(currentActiveMode === 'ledger') return;
+            // ✨ [핵심] 개인장부(ledger)와 사장님 라운지(lounge) 화면에서는 좌우 스와이프를 '완전 먹통'으로 만듭니다!
+            if(currentActiveMode === 'ledger' || currentActiveMode === 'lounge') return;
 
             let currentIndex = mainTabsOrder.indexOf(currentActiveMode);
             if (currentIndex !== -1) { 
