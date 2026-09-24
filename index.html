@@ -2572,53 +2572,10 @@
       if(typeof lucide !== 'undefined') lucide.createIcons(); window.scrollTo(0, 0); 
       if (pushHistory && mode !== 'client_shared') history.pushState({ view: mode }, "", "");
     }
-    // 💡 [UX 완벽 패치] 달력, 장부, 라운지를 스와이프 명단에서 제외합니다.
-    const mainTabsOrder = ['admin', 'clients', 'quote', 'quoteList', 'contacts', 'encyclopedia', 'lens'];
-    const swipeContainerEl = document.getElementById('swipeContainer');
-    let viewTouchStartX = 0; let viewTouchStartY = 0;
-    
-    if(swipeContainerEl) {
-        swipeContainerEl.addEventListener('touchstart', e => { 
-            viewTouchStartX = e.changedTouches[0].screenX; 
-            viewTouchStartY = e.changedTouches[0].screenY; 
-        }, {passive: true});
-        
-        swipeContainerEl.addEventListener('touchend', e => {
-          // 입력창이나 가로 스크롤(nav-scroll) 영역에서는 스와이프 무시
-          if (e.target.closest('input') || e.target.closest('textarea') || e.target.closest('table') || e.target.closest('.nav-scroll')) return;
-          
-          const diffX = e.changedTouches[0].screenX - viewTouchStartX; 
-          const diffY = e.changedTouches[0].screenY - viewTouchStartY;
-          
-          if (Math.abs(diffX) > Math.abs(diffY) * 1.5 && Math.abs(diffX) > 60) {
-            let currentActiveMode = ''; 
-            
-            if (!document.getElementById('quoteAdminView').classList.contains('hidden')) currentActiveMode = 'quote';
-            else if (!document.getElementById('quoteListView').classList.contains('hidden')) currentActiveMode = 'quoteList';
-            else if (!document.getElementById('clientsView').classList.contains('hidden')) currentActiveMode = 'clients';
-            else if (!document.getElementById('contactsView').classList.contains('hidden')) currentActiveMode = 'contacts';
-            else if (!document.getElementById('lensView').classList.contains('hidden')) currentActiveMode = 'lens';
-            else if (!document.getElementById('calendarView').classList.contains('hidden')) currentActiveMode = 'calendar';
-            else if (!document.getElementById('encyclopediaView').classList.contains('hidden')) currentActiveMode = 'encyclopedia';
-            else if (!document.getElementById('loungeView').classList.contains('hidden')) currentActiveMode = 'lounge';
-            else if (!document.getElementById('ledgerView').classList.contains('hidden')) currentActiveMode = 'ledger';
-            else return;
-            
-            // ✨ [핵심] 일정표(달력), 개인장부, 사장님 라운지 화면에서는 좌우 스와이프를 '완전 먹통'으로 만듭니다!
-            if(currentActiveMode === 'calendar' || currentActiveMode === 'ledger' || currentActiveMode === 'lounge') return;
-
-            let currentIndex = mainTabsOrder.indexOf(currentActiveMode);
-            if (currentIndex !== -1) { 
-                if (diffX < 0 && currentIndex < mainTabsOrder.length - 1) {
-                    switchView(mainTabsOrder[currentIndex + 1]); 
-                } 
-                else if (diffX > 0 && currentIndex > 0) {
-                    switchView(mainTabsOrder[currentIndex - 1]); 
-                }
-            }
-          }
-        }, {passive: true});
-    }
+    // ==========================================
+    // 🚫 전체 화면 스와이프(화면 넘기기) 기능 완전 삭제 (오터치 방지)
+    // ==========================================
+    // (대표님의 UX 결단에 따라, 오작동을 유발하던 스와이프 화면 이동 로직을 완전히 제거했습니다.)
      function openModal(type, idx) { 
         if (type === 'b') modalImages = currentGalleryB; else if (type === 'dur') modalImages = currentGalleryD; else if (type === 'a') modalImages = currentGalleryA; else if (type === 'i') modalImages = currentGalleryI; else modalImages = currentGalleryQ;
         if (!modalImages || modalImages.length === 0) return; 
