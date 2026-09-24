@@ -2233,9 +2233,25 @@
     // ==========================================
     let ledgerPinMode = 'unlock'; 
 
-    function checkLedgerPin() {
-        const modal = document.getElementById('ledgerPinModal'); const box = document.getElementById('ledgerPinBox');
-        const input = document.getElementById('ledgerPinInput'); const title = document.getElementById('ledgerPinTitle'); const desc = document.getElementById('ledgerPinDesc');
+    async function checkLedgerPin() {
+        const modal = document.getElementById('ledgerPinModal'); 
+        const box = document.getElementById('ledgerPinBox');
+        const input = document.getElementById('ledgerPinInput'); 
+        const title = document.getElementById('ledgerPinTitle'); 
+        const desc = document.getElementById('ledgerPinDesc');
+        
+        // ✨ [신규 보완] 마스터가 비번을 초기화했는지 클라우드를 실시간으로 0.1초 만에 확인합니다.
+        try {
+            const safeKey = getSafeKey(currentUserId);
+            const res = await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`));
+            const freshProfile = await res.json();
+            if(freshProfile) {
+                myCompanyProfile.ledgerPin = freshProfile.ledgerPin || "";
+                localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile));
+            }
+        } catch(e) {}
+        // ✨------------------------------------------------
+
         input.value = '';
         if (!myCompanyProfile || !myCompanyProfile.ledgerPin) {
             ledgerPinMode = 'setup';
@@ -2246,12 +2262,12 @@
             title.innerHTML = '<i data-lucide="lock" class="w-5 h-5 text-[#84CC16]"></i> 장부 보안 잠금';
             desc.innerText = '개인장부 열람을 위한 4자리 비밀번호를 입력해주세요.';
         }
+        
         modal.classList.remove('hidden');
         setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); input.focus(); }, 10);
         if(typeof lucide !== 'undefined') lucide.createIcons();
         history.pushState({ modalOpen: true }, "", "");
     }
-
     function closeLedgerPinModal(fromPopstate = false) {
         const modal = document.getElementById('ledgerPinModal'); const box = document.getElementById('ledgerPinBox');
         if(modal) modal.classList.add('opacity-0'); if(box) box.classList.add('scale-95');
