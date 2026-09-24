@@ -3538,6 +3538,7 @@
                 `;
             }
 
+            // --- 6. 주간 예보 (프리미엄 다크 네이비 박스 디자인) ---
             const dailyContainer = document.getElementById('dailyWeatherContainer');
             dailyContainer.innerHTML = '';
             const days = ['일', '월', '화', '수', '목', '금', '토'];
@@ -3547,18 +3548,28 @@
                 const dayName = i === 1 ? "내일" : days[dateObj.getDay()] + "요일";
                 const dateText = `${dateObj.getMonth()+1}/${dateObj.getDate()}`;
                 
-                const minT = Math.round(wData.daily.temperature_2m_min[i]); const maxT = Math.round(wData.daily.temperature_2m_max[i]);
-                const code = wData.daily.weathercode[i]; const dInfo = getWeatherInfo(code);
+                const minT = Math.round(wData.daily.temperature_2m_min[i]); 
+                const maxT = Math.round(wData.daily.temperature_2m_max[i]);
+                const code = wData.daily.weathercode[i]; 
+                const dInfo = getWeatherInfo(code);
 
+                // 💡 [디자인 변경] 하얀 바탕의 밋밋한 리스트를, 입체감 있는 남색(Navy) 카드로 개별 포장했습니다.
                 dailyContainer.innerHTML += `
-                    <div class="flex items-center justify-between py-4 px-2 bg-white border-b border-[#F4F5F4] last:border-0 hover:bg-[#F9F9F8] rounded-xl transition-all">
-                        <div class="w-16"><span class="text-[15px] font-black text-[#151E2D] block">${dayName}</span><span class="text-[11.5px] text-[#8B95A1] font-bold mt-0.5 block">${dateText}</span></div>
-                        <div class="flex items-center gap-3 w-28 justify-start">
-                            <div class="w-9 h-9 rounded-full bg-[#F4F5F4] flex items-center justify-center"><i data-lucide="${dInfo.icon}" class="w-5 h-5 ${dInfo.color}"></i></div>
-                            <span class="text-[14px] font-black text-[#4E5968]">${dInfo.text}</span>
+                    <div class="flex items-center justify-between py-4 px-5 bg-gradient-to-r from-[#151E2D] to-[#1E293B] border border-[#2A374D] rounded-[20px] shadow-md hover:shadow-lg hover:scale-[1.01] transition-all mb-3">
+                        <div class="w-16">
+                            <span class="text-[15px] font-black text-white block tracking-wide">${dayName}</span>
+                            <span class="text-[11.5px] text-[#94A3B8] font-bold mt-0.5 block">${dateText}</span>
                         </div>
-                        <div class="w-24 text-right text-[16px] font-black tracking-wide flex items-center justify-end gap-2">
-                            <span class="text-blue-500">${minT}°</span> <div class="w-4 h-[2px] bg-[#EAEBEA] rounded-full"></div> <span class="text-red-500">${maxT}°</span>
+                        <div class="flex items-center gap-3 w-28 justify-start">
+                            <div class="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shadow-inner">
+                                <i data-lucide="${dInfo.icon}" class="w-5 h-5 ${dInfo.color}"></i>
+                            </div>
+                            <span class="text-[14px] font-black text-white/90">${dInfo.text}</span>
+                        </div>
+                        <div class="w-24 text-right text-[16px] font-black tracking-wide flex items-center justify-end gap-2.5">
+                            <span class="text-blue-400 drop-shadow-sm">${minT}°</span> 
+                            <div class="w-3 h-[2px] bg-white/20 rounded-full"></div> 
+                            <span class="text-red-400 drop-shadow-sm">${maxT}°</span>
                         </div>
                     </div>
                 `;
