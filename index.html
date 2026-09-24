@@ -192,7 +192,7 @@
                 
                 <!-- 💡 고객센터 & 스마트렌즈 버튼 크기 규격 통일 -->
                 <button id="tabInquiry" onclick="openInquiryModal()" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="headphones" class="w-6 h-6 text-[#F59E0B]"></i><span class="text-[13px] font-bold text-white/90">고객센터</span></button>
-                <button id="tabLens" onclick="switchView('lens')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="scan-line" class="w-6 h-6 text-[#3B82F6]"></i><span class="text-[13px] font-bold text-white/90">검색렌즈</span></button>
+                <button id="tabLens" onclick="switchView('lens')" class="w-full py-5 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="scan-line" class="w-6 h-6 text-[#151E2D]"></i><span class="text-[13px] font-black text-[#151E2D]">AI 검색렌즈</span></button>
             </nav>
         </div>
         
@@ -2375,7 +2375,8 @@
       const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView', 'calendarView', 'ledgerView', 'encyclopediaView'];
       views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
       
-      const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient', 'tabContacts', 'tabCalendar', 'tabLedger', 'tabEncyclopedia', 'tabInquiry', 'tabLens'];
+      // 💡 tabLens를 배열에서 빼서 기존 버튼들 디자인에 동기화되지 않게 보호합니다.
+      const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient', 'tabContacts', 'tabCalendar', 'tabLedger', 'tabEncyclopedia', 'tabInquiry'];
       mainTabs.forEach(t => { 
           const el = document.getElementById(t); 
           if(el) {
@@ -2388,11 +2389,18 @@
                   if(t === 'tabAdmin' || t === 'tabQuoteList') icon.classList.add('text-[#84CC16]');
                   else if(t === 'tabLedger') icon.classList.add('text-yellow-400');
                   else if(t === 'tabInquiry') icon.classList.add('text-[#F59E0B]');
-                  else if(t === 'tabLens') icon.classList.add('text-[#3B82F6]');
                   else icon.classList.add('text-white/80');
               }
           }
       });
+      
+      // 💡 렌즈 버튼 전용 기존 스타일 강제 복구 (배경 연두색, 글씨 진하게)
+      const lensTab = document.getElementById('tabLens');
+      if(lensTab) {
+          lensTab.className = "w-full py-5 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md";
+          const span = lensTab.querySelector('span');
+          if(span) span.className = "text-[13px] font-black text-[#151E2D]";
+      }
       
       let activeTabId = '';
       if (mode === 'admin') { document.getElementById('adminView').classList.remove('hidden'); activeTabId = 'tabAdmin'; }
@@ -2409,7 +2417,8 @@
 
       if(activeTabId) {
         const activeEl = document.getElementById(activeTabId);
-        if(activeEl) { 
+        // 렌즈 탭은 클릭해도 원래 연두색 유지, 나머지 탭만 활성화 스타일 적용
+        if(activeEl && activeTabId !== 'tabLens') { 
             activeEl.className = "w-full py-5 rounded-[20px] bg-white/15 border border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md";
             const span = activeEl.querySelector('span');
             if(span) span.className = "text-[13px] font-black text-white";
