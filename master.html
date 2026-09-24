@@ -1117,49 +1117,69 @@
     }
 
     // ==========================================
-    // 🗂️ 3. 문서 상세 원본 추출 및 화면 렌더링 (정규화 로직 적용)
+    // 🗂️ [신규 추가] 파이어베이스 딥 서치 (재귀 탐색) 함수
+    // 전체 데이터 덩어리 안에서 ID를 추적해 실제 원본 뭉치를 찾아냅니다.
+    // ==========================================
+    function extractRealDoc(data, targetId) {
+        let result = null;
+        function search(node) {
+            if (result) return;
+            if (!node || typeof node !== 'object') return;
+
+            if (Array.isArray(node)) {
+                for (let i = 0; i < node.length; i++) {
+                    if (node[i] && typeof node[i] === 'object') {
+                        if (node[i].id === targetId) { result = node[i]; return; }
+                        search(node[i]);
+                    }
+                }
+            } else {
+                for (const key in node) {
+                    const val = node[key];
+                    if (val && typeof val === 'object') {
+                        if (val.id === targetId) { result = val; return; }
+                        if (key === targetId) {
+                            result = val.id ? val : { id: targetId, ...val };
+                            return;
+                        }
+                        search(val);
+                    }
+                }
+            }
+        }
+        search(data);
+        return result;
+    }
+
+    // ==========================================
+    // 🗂️ 3. 문서 상세 원본 추출 및 화면 렌더링 (로직 완전 개편)
     // ==========================================
     function openDocumentPreview(docId) {
         const shortcut = currentCompanyRecords.find(r => r.id === docId);
         if(!shortcut) return alert('문서 데이터를 불러올 수 없습니다.');
 
-        let realDoc = null;
+        let realDoc = extractRealDoc(currentCompanyFullData, docId) || {};
+        const docData = { ...shortcut, ...realDoc };
 
-        // 원본 데이터를 파이어베이스 컬렉션에서 순회하여 추출
-        if (currentCompanyFullData) {
-            // 1단계: 일지 원본 추출 (clients 컬렉션 내부 history)
-            if (currentCompanyFullData.clients) {
-                const clientsList = normalizeData(currentCompanyFullData.clients);
-                for (const client of clientsList) {
-                    if (client.history) {
-                        const historyList = normalizeData(client.history);
-                        const found = historyList.find(h => h.id === docId);
-                        if (found) { realDoc = found; break; }
-                    }
-                }
-            }
-            // 2단계: 견적서 원본 추출 (quoteList 컬렉션)
-            if (!realDoc && currentCompanyFullData.quoteList) {
-                const quoteList = normalizeData(currentCompanyFullData.quoteList);
-                const found = quoteList.find(q => q.id === docId);
-                if (found) realDoc = found;
-            }
-        }
-
-        // 데이터가 유실되었을 경우를 대비한 병합 처리
-        const docData = realDoc || shortcut;
-        const docDate = docData.date || '날짜 미상';
-        const clientName = docData.clientName || '고객명 미상';
+        const docDate = docData.date || docData.createdAt || '날짜 미상';
+        const clientName = docData.clientName || docData.customerName || '고객명 미상';
 
         const contentArea = document.getElementById('previewModalContent');
         let html = '';
 
-        if(shortcut.type === 'quote') {
-            // [견적서 상세 렌더링]
+        if(docData.type === 'quote') {
             const receiver = docData.receiver || docData.receiverName || clientName || '-';
-            const supplier = docData.supplier || docData.supplierName || docData.provider || '-';
             
-            const items = normalizeData(docData.items || docData.rows || docData.quoteItems || docData.details);
+            let supplier = '-';
+            if (typeof docData.supplier === 'string') {
+                supplier = docData.supplier;
+            } else if (docData.supplier && docData.supplier.name) {
+                supplier = docData.supplier.name;
+            } else {
+                supplier = docData.supplierName || docData.provider || '-';
+            }
+            
+            const items = normalizeData(docData.items || docData.rows || docData.quoteItems || docData.details || docData.productList);
             
             let itemsHtml = '';
             if(items.length > 0) {
@@ -1175,7 +1195,7 @@
             }
 
             const totalPrice = docData.totalPrice || docData.totalAmount || docData.sum || 0;
-            const memo = docData.memo || docData.note || docData.remark || '';
+            const memo = docData.memo || docData.note || docData.remark || docData.description || '';
 
             html = `
                 <div class="space-y-4">
@@ -1217,20 +1237,20 @@
                 </div>
             `;
         } else {
-            // [현장 일지 상세 렌더링]
-            const tags = normalizeData(docData.categories || docData.tags || docData.workTypes || docData.badge);
+            const tags = normalizeData(docData.categories || docData.tags || docData.workTypes || docData.badge || docData.category);
             let tagsHtml = '';
             if(tags.length > 0) {
                 tagsHtml = tags.map(c => `<span class="bg-[#84CC16]/10 text-[#84CC16] border border-[#84CC16]/20 px-2.5 py-1 rounded-md text-[11px] font-bold">${c}</span>`).join('');
             }
             
-            const img = docData.issue || docData.image || docData.photo || '';
+            const img = docData.issue || docData.image || docData.photo || docData.img || docData.photoUrl || '';
             let imgHtml = '';
-            if(img && typeof img === 'string' && img.startsWith('data:image')) {
-                imgHtml = `<div class="mt-4"><div class="text-[11px] font-bold text-[#94A3B8] mb-2">현장 첨부 사진</div><img src="${img}" class="w-full rounded-[16px] border border-white/10"></div>`;
+            if(img && typeof img === 'string' && (img.startsWith('data:image') || img.startsWith('http'))) {
+                imgHtml = `<div class="mt-4"><div class="text-[11px] font-bold text-[#94A3B8] mb-2">현장 첨부 사진</div><img src="${img}" class="w-full rounded-[16px] border border-white/10 object-contain"></div>`;
             }
 
-            const reportContent = docData.d || docData.memo || docData.content || docData.workDetails || '';
+            const rawContent = docData.d || docData.memo || docData.content || docData.workDetails || docData.details || docData.text || docData.description || '';
+            const reportContent = typeof rawContent === 'string' ? rawContent.replace(/\n/g, '<br>') : rawContent;
 
             html = `
                 <div class="space-y-4">
@@ -1263,7 +1283,6 @@
         setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10);
         lucide.createIcons();
     }
-
     function closeDocumentPreview() {
         const modal = document.getElementById('documentPreviewModal');
         const box = document.getElementById('documentPreviewBox');
