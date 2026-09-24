@@ -2461,8 +2461,7 @@
         const mNet = monthInc - monthExp;
         if(mNetEl) {
             mNetEl.innerText = mNet.toLocaleString('ko-KR') + "원";
-            // 적자일 경우 한국 금융권 표준에 맞춰 고급스러운 버건디 레드(#BE123C)로 표시
-            mNetEl.className = mNet >= 0 ? "text-[18px] font-black text-[#1E3A8A] tracking-tight whitespace-nowrap pl-1 truncate text-right" : "text-[18px] font-black text-[#BE123C] tracking-tight whitespace-nowrap pl-1 truncate text-right";
+            mNetEl.className = mNet >= 0 ? "text-[15px] font-black text-[#1E3A8A] tracking-tighter whitespace-nowrap pl-1 text-right" : "text-[15px] font-black text-[#BE123C] tracking-tighter whitespace-nowrap pl-1 text-right";
         }
 
         // 연간 UI 업데이트
@@ -2476,7 +2475,7 @@
         const yNet = yearInc - yearExp;
         if(yNetEl) {
             yNetEl.innerText = yNet.toLocaleString('ko-KR') + "원";
-            yNetEl.className = yNet >= 0 ? "text-[18px] font-black text-[#3F6212] tracking-tight whitespace-nowrap pl-1 truncate text-right" : "text-[18px] font-black text-[#BE123C] tracking-tight whitespace-nowrap pl-1 truncate text-right";
+            yNetEl.className = yNet >= 0 ? "text-[15px] font-black text-[#3F6212] tracking-tighter whitespace-nowrap pl-1 text-right" : "text-[15px] font-black text-[#BE123C] tracking-tighter whitespace-nowrap pl-1 text-right";
         }
     }
 
