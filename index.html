@@ -3446,28 +3446,29 @@
         }
     }
  // ==========================================
-    // ☀️ 실제 GPS 및 실시간 날씨 API 연동 엔진 (PRO 에디션)
+    // ☀️ 실제 GPS 및 실시간 날씨 API 연동 엔진 (PRO VIP 에디션)
     // ==========================================
     let weatherIsLoaded = false;
 
+    // 💡 [디자인 혁신] 촌스러운 원색 제거, 은은한 골드/스카이블루/슬레이트 톤으로 프리미엄 컬러 매핑
     const weatherCodes = {
-        0: { text: "맑음", icon: "sun", color: "text-red-500", tip: "자외선이 강하니 작업 시 충분한 휴식과 수분 섭취를 권장합니다." },
-        1: { text: "대체로 맑음", icon: "sun-dim", color: "text-orange-400", tip: "일조량이 적당하여 수목 식재 및 이식에 무난한 날씨입니다." },
-        2: { text: "구름조금", icon: "cloud-sun", color: "text-gray-500", tip: "야외 조경 작업하기 아주 쾌적하고 좋은 날씨입니다." },
-        3: { text: "흐림", icon: "cloud", color: "text-gray-500", tip: "직사광선이 없어 전지(가지치기) 작업 후 수분 증발 피해가 적습니다." },
-        45: { text: "안개", icon: "cloud-fog", color: "text-gray-400", tip: "시야 확보가 어려우니 중장비(굴삭기, 크레인) 작업 시 안전에 유의하세요." },
-        48: { text: "짙은 안개", icon: "cloud-fog", color: "text-gray-400", tip: "시야 확보가 어려우니 중장비 작업 시 안전에 유의하세요." },
-        51: { text: "약한 가랑비", icon: "cloud-drizzle", color: "text-blue-400", tip: "이슬비가 내립니다. 시멘트/몰탈 양생 및 제초제 살포는 미루는 것이 좋습니다." },
-        53: { text: "가랑비", icon: "cloud-drizzle", color: "text-blue-500", tip: "제초제나 병해충 약제 살포 시 약효가 씻겨 내려갈 수 있습니다." },
-        61: { text: "약한 비", icon: "cloud-rain", color: "text-blue-500", tip: "비가 내립니다. 토양 다짐 작업이나 콘크리트 타설을 중지하세요." },
-        63: { text: "보통 비", icon: "cloud-rain", color: "text-blue-600", tip: "비가 내립니다. 토양 다짐 작업이나 콘크리트 타설을 중지하세요." },
-        65: { text: "강한 비", icon: "cloud-lightning", color: "text-blue-700", tip: "강한 비가 내립니다. 현장 배수로를 긴급 점검하고 토사 유출을 방지하세요." },
-        71: { text: "약한 눈", icon: "snowflake", color: "text-sky-300", tip: "기온이 낮습니다. 수목 동해 방지(보온재 감싸기) 및 작업자 방한에 신경쓰세요." },
-        73: { text: "보통 눈", icon: "snowflake", color: "text-sky-400", tip: "현장 결빙 우려가 있으니 이동 시 미끄럼 안전 사고에 각별히 유의하세요." },
-        80: { text: "소나기", icon: "cloud-rain", color: "text-blue-600", tip: "갑작스러운 비 예보가 있습니다. 덮개(갑바)를 미리 준비해 자재를 보호하세요." }
+        0: { text: "맑음", icon: "sun", color: "text-[#F59E0B] drop-shadow-[0_2px_4px_rgba(245,158,11,0.4)]", tip: "자외선이 강하니 작업 시 충분한 휴식과 수분 섭취를 권장합니다." },
+        1: { text: "대체로 맑음", icon: "sun-dim", color: "text-[#F59E0B] drop-shadow-[0_2px_4px_rgba(245,158,11,0.3)]", tip: "일조량이 적당하여 수목 식재 및 이식에 무난한 날씨입니다." },
+        2: { text: "구름조금", icon: "cloud-sun", color: "text-[#94A3B8]", tip: "야외 조경 작업하기 아주 쾌적하고 좋은 날씨입니다." },
+        3: { text: "흐림", icon: "cloud", color: "text-[#64748B]", tip: "직사광선이 없어 전지(가지치기) 작업 후 수분 증발 피해가 적습니다." },
+        45: { text: "안개", icon: "cloud-fog", color: "text-[#94A3B8]", tip: "시야 확보가 어려우니 중장비(굴삭기, 크레인) 작업 시 안전에 유의하세요." },
+        48: { text: "짙은 안개", icon: "cloud-fog", color: "text-[#94A3B8]", tip: "시야 확보가 어려우니 중장비 작업 시 안전에 유의하세요." },
+        51: { text: "약한 가랑비", icon: "cloud-drizzle", color: "text-[#38BDF8]", tip: "이슬비가 내립니다. 시멘트/몰탈 양생 및 제초제 살포는 미루는 것이 좋습니다." },
+        53: { text: "가랑비", icon: "cloud-drizzle", color: "text-[#0EA5E9]", tip: "제초제나 병해충 약제 살포 시 약효가 씻겨 내려갈 수 있습니다." },
+        61: { text: "약한 비", icon: "cloud-rain", color: "text-[#0EA5E9]", tip: "비가 내립니다. 토양 다짐 작업이나 콘크리트 타설을 중지하세요." },
+        63: { text: "보통 비", icon: "cloud-rain", color: "text-[#0284C7]", tip: "비가 내립니다. 토양 다짐 작업이나 콘크리트 타설을 중지하세요." },
+        65: { text: "강한 비", icon: "cloud-lightning", color: "text-[#0369A1]", tip: "강한 비가 내립니다. 현장 배수로를 긴급 점검하고 토사 유출을 방지하세요." },
+        71: { text: "약한 눈", icon: "snowflake", color: "text-[#7DD3FC]", tip: "기온이 낮습니다. 수목 동해 방지(보온재 감싸기) 및 작업자 방한에 신경쓰세요." },
+        73: { text: "보통 눈", icon: "snowflake", color: "text-[#38BDF8]", tip: "현장 결빙 우려가 있으니 이동 시 미끄럼 안전 사고에 각별히 유의하세요." },
+        80: { text: "소나기", icon: "cloud-rain", color: "text-[#0284C7]", tip: "갑작스러운 비 예보가 있습니다. 덮개(갑바)를 미리 준비해 자재를 보호하세요." }
     };
 
-    function getWeatherInfo(code) { return weatherCodes[code] || { text: "비/눈", icon: "cloud-rain", color: "text-blue-500", tip: "기상 상황이 불안정합니다. 현장 안전에 유의하세요." }; }
+    function getWeatherInfo(code) { return weatherCodes[code] || { text: "비/눈", icon: "cloud-rain", color: "text-[#0EA5E9]", tip: "기상 상황이 불안정합니다. 현장 안전에 유의하세요." }; }
 
     async function loadRealWeather() {
         if (weatherIsLoaded) return;
@@ -3490,16 +3491,15 @@
                 else document.getElementById('weatherLocation').innerText = "현재 위치";
             } catch(e) {}
 
-            // 💡 [핵심] API 주소에 강수 확률과 예상 강수량(mm) 데이터를 추가로 요청합니다!
             const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=temperature_2m,weathercode,precipitation_probability,precipitation&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum&timezone=Asia%2FSeoul`;
             const wRes = await fetch(weatherUrl); const wData = await wRes.json();
 
             const current = wData.current_weather; const wInfo = getWeatherInfo(current.weathercode);
             
-            // 💡 스마트 비서 팁: 현재 강수 확률이 50% 이상이면 경고 멘트로 자동 변경!
             let customTip = wInfo.tip;
-            const currentProb = wData.hourly.precipitation_probability[new Date().getHours()];
-            if (currentProb >= 50) {
+            const currentProb = wData.hourly.precipitation_probability[new Date().getHours()] || 0;
+            const currentRain = wData.hourly.precipitation[new Date().getHours()] || 0;
+            if (currentProb >= 50 && currentRain > 0) {
                 customTip = `☔ 강수 확률이 ${currentProb}%로 매우 높습니다! 야외 작업(제초, 몰탈)을 주의하고 자재 덮개를 확인하세요.`;
             }
 
@@ -3509,13 +3509,12 @@
             document.getElementById('weatherBgIcon').setAttribute('data-lucide', wInfo.icon);
             
             const hourlyTitle = document.getElementById('hourlyWeatherContainer').previousElementSibling;
-            if(hourlyTitle) hourlyTitle.innerText = "시간별 예보 (강수 확률 포함)";
+            if(hourlyTitle) hourlyTitle.innerText = "시간별 예보";
 
             const hourlyContainer = document.getElementById('hourlyWeatherContainer');
             hourlyContainer.innerHTML = '';
             const currentHourIndex = new Date().getHours();
             
-            // --- 💧 시간별 예보 (강수 확률 추가) ---
             for(let i = currentHourIndex; i < currentHourIndex + 48; i++) {
                 const dateObj = new Date(wData.hourly.time[i]); const hour = dateObj.getHours();
                 let timeDisplay = i === currentHourIndex ? "지금" : `${hour}시`;
@@ -3523,31 +3522,35 @@
                 
                 if (hour === 0 && i !== currentHourIndex) {
                     const targetDay = dateObj.getDate();
-                    if (targetDay === new Date(Date.now() + 86400000).getDate()) badgeHtml = `<div class="bg-[#151E2D] text-[#84CC16] text-[9px] font-black px-2 py-0.5 rounded-full mb-1">내일</div>`;
-                    else if (targetDay === new Date(Date.now() + 86400000 * 2).getDate()) badgeHtml = `<div class="bg-[#151E2D] text-[#84CC16] text-[9px] font-black px-2 py-0.5 rounded-full mb-1">모레</div>`;
+                    if (targetDay === new Date(Date.now() + 86400000).getDate()) badgeHtml = `<div class="bg-[#1E293B] text-[#84CC16] text-[9px] font-black px-2 py-0.5 rounded-full mb-1 shadow-sm">내일</div>`;
+                    else if (targetDay === new Date(Date.now() + 86400000 * 2).getDate()) badgeHtml = `<div class="bg-[#1E293B] text-[#84CC16] text-[9px] font-black px-2 py-0.5 rounded-full mb-1 shadow-sm">모레</div>`;
                 }
                 
                 const temp = Math.round(wData.hourly.temperature_2m[i]);
                 const code = wData.hourly.weathercode[i]; const hInfo = getWeatherInfo(code);
                 
-                // 💧 비가 올 확률이 0보다 크면 파란색으로, 0이면 흐린 회색으로 표시
-                const precipProb = wData.hourly.precipitation_probability[i] || 0;
-                let hourlyRain = precipProb > 0
-                    ? `<div class="text-[12px] font-black text-blue-600 mt-1.5 flex items-center gap-0.5"><i data-lucide="umbrella" class="w-3 h-3"></i>${precipProb}%</div>`
-                    : `<div class="text-[11px] font-bold text-[#94A3B8]/60 mt-1.5 flex items-center gap-0.5"><i data-lucide="umbrella" class="w-3 h-3"></i>0%</div>`;
+                let precipProb = wData.hourly.precipitation_probability[i] || 0;
+                let precipAmt = wData.hourly.precipitation[i] || 0;
+                if(precipAmt === 0) precipProb = 0;
 
+                // 💧 촌스러운 원색을 뺀 세련된 드롭렛(물방울) 확률 표시
+                let hourlyRain = precipProb > 0
+                    ? `<div class="text-[12px] font-black text-[#0EA5E9] mt-1.5 flex items-center gap-0.5"><i data-lucide="droplet" class="w-3.5 h-3.5"></i>${precipProb}%</div>`
+                    : `<div class="text-[11px] font-bold text-[#CBD5E1] mt-1.5 flex items-center gap-0.5"><i data-lucide="droplet" class="w-3.5 h-3.5 opacity-50"></i>0%</div>`;
+
+                // 💡 '지금' 블록도 메인 위젯과 통일감 있는 세련된 딥 다크 네이비로 변경!
                 const isNow = i === currentHourIndex;
-                const bgClass = isNow ? "bg-[#84CC16] shadow-[0_6px_15px_rgba(132,204,22,0.4)] border-none" : "bg-white border-[#EAEBEA]";
-                const textClass = isNow ? "text-[#151E2D]" : "text-[#151E2D]";
-                const timeClass = isNow ? "text-[#151E2D]" : "text-[#8B95A1]";
-                const iconColor = isNow ? "text-[#151E2D]" : hInfo.color;
+                const bgClass = isNow ? "bg-gradient-to-b from-[#1E293B] to-[#0F172A] shadow-lg border-transparent" : "bg-white border-[#F1F5F9] shadow-sm";
+                const textClass = isNow ? "text-white" : "text-[#1E293B]";
+                const timeClass = isNow ? "text-[#94A3B8]" : "text-[#64748B]";
+                const iconColor = isNow && (code === 0 || code === 1) ? hInfo.color : (isNow ? "text-white" : hInfo.color); 
                 
                 hourlyContainer.innerHTML += `
-                    <div class="flex flex-col items-center justify-center border ${bgClass} rounded-[18px] min-w-[76px] py-3.5 shrink-0 transition-transform hover:scale-105 shadow-sm">
+                    <div class="flex flex-col items-center justify-center border ${bgClass} rounded-[22px] min-w-[76px] py-4 shrink-0 transition-transform hover:scale-105">
                         ${badgeHtml}
-                        <span class="text-[13px] font-black ${timeClass} mb-1">${timeDisplay}</span>
-                        <i data-lucide="${hInfo.icon}" class="w-7 h-7 ${iconColor} mb-1"></i>
-                        <span class="text-[17px] font-black ${textClass}">${temp}°</span>
+                        <span class="text-[13px] font-bold tracking-wide ${timeClass} mb-1">${timeDisplay}</span>
+                        <i data-lucide="${hInfo.icon}" class="w-7 h-7 ${iconColor} mb-1.5"></i>
+                        <span class="text-[18px] font-black ${textClass}">${temp}°</span>
                         ${hourlyRain}
                     </div>
                 `;
@@ -3557,42 +3560,45 @@
             dailyContainer.innerHTML = '';
             const days = ['일', '월', '화', '수', '목', '금', '토'];
             
-            // --- 💧 주간 예보 (옅은 하늘색 배경 + 강수량 mm 단위 표시) ---
             for(let i = 1; i < 7; i++) {
                 const dateObj = new Date(wData.daily.time[i]);
-                const dayName = i === 1 ? "내일" : days[dateObj.getDay()] + "요일";
+                const dayOfWeek = dateObj.getDay();
+                
+                // 💡 일요일은 눈 아픈 쨍한 빨간색이 아닌, 고급스러운 '로즈 코랄' 색상으로 세팅
+                const dayNameColor = (dayOfWeek === 0) ? "text-[#F43F5E]" : "text-[#1E293B]"; 
+                const dayName = i === 1 ? "내일" : days[dayOfWeek] + "요일";
                 const dateText = `${dateObj.getMonth()+1}/${dateObj.getDate()}`;
                 
                 const minT = Math.round(wData.daily.temperature_2m_min[i]); const maxT = Math.round(wData.daily.temperature_2m_max[i]);
                 const code = wData.daily.weathercode[i]; const dInfo = getWeatherInfo(code);
 
-                // 💧 주간 최대 강수 확률 및 예상 강수량(mm) 추출
-                const precipProbMax = wData.daily.precipitation_probability_max[i] || 0;
+                let precipProbMax = wData.daily.precipitation_probability_max[i] || 0;
                 const precipSum = wData.daily.precipitation_sum[i] || 0;
+                if (precipSum === 0) { precipProbMax = 0; } 
                 
                 let rainDisplay = precipProbMax > 0 
-                    ? `<span class="text-blue-600 flex items-center gap-1"><i data-lucide="umbrella" class="w-3.5 h-3.5"></i> ${precipProbMax}% <span class="text-[11px] font-bold opacity-75">(${precipSum}mm)</span></span>` 
-                    : `<span class="text-[#94A3B8] flex items-center gap-1"><i data-lucide="umbrella" class="w-3.5 h-3.5"></i> 0%</span>`;
+                    ? `<span class="text-[#0EA5E9] flex items-center gap-1"><i data-lucide="droplet" class="w-4 h-4"></i> ${precipProbMax}% <span class="text-[11px] font-bold opacity-70">(${precipSum}mm)</span></span>` 
+                    : `<span class="text-[#CBD5E1] flex items-center gap-1"><i data-lucide="droplet" class="w-4 h-4 opacity-50"></i> 0%</span>`;
 
+                // 💡 [초고급 카드 디자인 적용] 둥근 화이트 글래스 카드, 원색을 제거한 우아한 온도(슬레이트 & 골드)
                 dailyContainer.innerHTML += `
-                    <div class="flex items-center justify-between py-3.5 px-4 bg-[#F0F9FF] border border-[#BAE6FD] rounded-[18px] shadow-sm hover:shadow-md hover:border-[#7DD3FC] transition-all mb-3">
+                    <div class="flex items-center justify-between p-5 bg-white border border-[#F1F5F9] rounded-[24px] shadow-[0_4px_16px_rgba(0,0,0,0.03)] hover:shadow-md transition-all mb-3">
                         <div class="w-16">
-                            <span class="text-[15px] font-black text-[#151E2D] block tracking-wide">${dayName}</span>
-                            <span class="text-[11.5px] text-[#64748B] font-bold mt-0.5 block">${dateText}</span>
+                            <span class="text-[16px] font-black ${dayNameColor} block tracking-wide">${dayName}</span>
+                            <span class="text-[12px] text-[#94A3B8] font-bold mt-0.5 block">${dateText}</span>
                         </div>
-                        <div class="flex-1 flex flex-col justify-center pl-2 border-l border-[#BAE6FD]/50 ml-1">
-                            <div class="flex items-center gap-2">
-                                <i data-lucide="${dInfo.icon}" class="w-5 h-5 ${dInfo.color}"></i>
-                                <span class="text-[14px] font-black text-[#334155]">${dInfo.text}</span>
+                        <div class="flex-1 flex flex-col justify-center pl-4 border-l border-[#F1F5F9] ml-2">
+                            <div class="flex items-center gap-2.5">
+                                <i data-lucide="${dInfo.icon}" class="w-6 h-6 ${dInfo.color}"></i>
+                                <span class="text-[15px] font-black text-[#334155]">${dInfo.text}</span>
                             </div>
-                            <div class="text-[12.5px] font-black mt-1.5">
+                            <div class="text-[13px] font-black mt-1.5">
                                 ${rainDisplay}
                             </div>
                         </div>
-                        <div class="w-24 text-right text-[16px] font-black tracking-wide flex items-center justify-end gap-2">
-                            <span class="text-blue-500 drop-shadow-sm">${minT}°</span> 
-                            <div class="w-3 h-[2px] bg-[#CBD5E1] rounded-full"></div> 
-                            <span class="text-red-500 drop-shadow-sm">${maxT}°</span>
+                        <div class="w-20 flex flex-col items-end justify-center gap-1">
+                            <div class="flex items-center gap-2"><span class="text-[11px] text-[#94A3B8] font-bold">최저</span><span class="text-[16px] text-[#64748B] font-black">${minT}°</span></div>
+                            <div class="flex items-center gap-2"><span class="text-[11px] text-[#D97706] font-bold">최고</span><span class="text-[16px] text-[#D97706] font-black">${maxT}°</span></div>
                         </div>
                     </div>
                 `;
@@ -3604,13 +3610,11 @@
         }
     }
 
-    // --- 💡 [핵심] 안드로이드 뒤로가기 버튼 완벽 방어 로직 ---
+    // --- 안드로이드 뒤로가기 버튼 완벽 방어 ---
     function openWeatherModal() {
         if(!weatherIsLoaded) return alert("아직 실시간 날씨 데이터를 불러오고 있습니다. 잠시만 기다려주세요.");
         const modal = document.getElementById('weatherModal'); const box = document.getElementById('weatherBox');
         modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10);
-        
-        // 가짜 상태를 브라우저 기록에 꽂아 넣습니다.
         history.pushState({ isWeatherPopup: true }, "weather", "");
     }
 
@@ -3618,15 +3622,11 @@
         const modal = document.getElementById('weatherModal'); const box = document.getElementById('weatherBox');
         if(modal) modal.classList.add('opacity-0'); if(box) box.classList.add('scale-95');
         setTimeout(() => { if(modal) modal.classList.add('hidden'); }, 200);
-        
-        // 사용자가 X버튼을 눌러 닫은 경우, 강제로 뒤로가기를 실행해 브라우저 꼬임을 방지합니다.
         if(!isFromBackButton && history.state && history.state.isWeatherPopup) { history.back(); }
     }
 
-    // 스마트폰 하단 '뒤로가기' 버튼을 감지합니다.
     window.addEventListener('popstate', function(e) {
         const modal = document.getElementById('weatherModal');
-        // 날씨 모달이 열려있다면 앱 종료를 막고 팝업만 조용히 닫습니다.
         if(modal && !modal.classList.contains('hidden')) { closeWeatherModal(true); }
     });
 
