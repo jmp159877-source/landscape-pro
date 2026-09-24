@@ -288,7 +288,7 @@
       </div>
     </div>
   </div>
-  <!-- 문서 상세 열람 모달 (인앱 뷰어) -->
+
   <div id="documentPreviewModal" class="hidden fixed inset-0 z-[8000] bg-black/90 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200" onclick="closeDocumentPreview()">
       <div class="bg-[#0F172A] w-full max-w-xl rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-white/10 max-h-[85vh]" id="documentPreviewBox" onclick="event.stopPropagation()">
           <div class="p-5 border-b border-white/10 flex justify-between items-center bg-[#1E293B]">
@@ -304,6 +304,67 @@
               <button onclick="closeDocumentPreview()" class="w-full py-4 bg-white/10 text-white rounded-[14px] font-black text-[15px] hover:bg-white/20 transition-colors">닫기</button>
           </div>
       </div>
+  </div>
+
+  <div id="targetNoticeModal" class="hidden fixed inset-0 z-[6000] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200" onclick="closeTargetNoticeModal()">
+    <div class="bg-[#0F172A] w-full max-w-md rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-white/10" onclick="event.stopPropagation()">
+      <div class="p-5 border-b border-white/10 flex justify-between items-center bg-[#1E293B]">
+        <h3 class="text-[18px] font-black text-white flex items-center gap-2"><i data-lucide="bell-ring" class="w-5 h-5 text-[#F59E0B]"></i> 특정 업체 개별 팝업 전송</h3>
+        <button onclick="closeTargetNoticeModal()" class="text-[#94A3B8] hover:text-white p-1 transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+      </div>
+      <div class="p-6 space-y-4">
+        <div class="bg-[#F59E0B]/10 border border-[#F59E0B]/30 rounded-[12px] p-4 text-center">
+            <div class="text-[13px] text-[#F59E0B] font-bold mb-1">현재 발송 대기 중인 업체 수</div>
+            <div class="text-white text-[24px] font-black"><span id="targetNoticeCount">0</span>곳</div>
+        </div>
+        <div>
+            <label class="block text-[13px] font-bold text-[#94A3B8] mb-2">전송할 팝업 메시지 (다음 로그인 시 뜸)</label>
+            <textarea id="targetNoticeText" rows="4" placeholder="예: [안내] OOO 대표님, 11월 시스템 이용료가 미납 상태입니다. 확인 부탁드립니다." class="w-full bg-[#1E293B] border border-white/10 rounded-[12px] p-4 text-white text-[14px] font-medium focus:outline-none focus:border-[#F59E0B] leading-relaxed resize-none"></textarea>
+        </div>
+      </div>
+      <div class="p-4 border-t border-white/10 bg-[#1E293B] flex gap-2">
+          <button onclick="closeTargetNoticeModal()" class="flex-1 py-4 bg-white/5 text-white rounded-[14px] font-bold text-[15px] hover:bg-white/10 transition-colors">취소</button>
+          <button onclick="sendTargetNotice()" class="flex-1 py-4 bg-[#F59E0B] text-[#1E3A8A] rounded-[14px] font-black text-[15px] hover:bg-[#D97706] shadow-[0_4px_15px_rgba(245,158,11,0.3)] transition-all flex items-center justify-center gap-1.5"><i data-lucide="send" class="w-4 h-4"></i> 즉시 전송</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="editCompanyModal" class="hidden fixed inset-0 z-[6000] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200" onclick="closeEditCompanyModal()">
+    <div class="bg-[#0F172A] w-full max-w-md rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-white/10" id="editCompanyBox" onclick="event.stopPropagation()">
+      <div class="p-5 border-b border-white/10 flex justify-between items-center bg-[#1E293B]">
+        <h3 class="text-[18px] font-black text-white flex items-center gap-2"><i data-lucide="edit-3" class="w-5 h-5 text-[#F59E0B]"></i> 업체 정보 수정</h3>
+        <button onclick="closeEditCompanyModal()" class="text-[#94A3B8] hover:text-white p-1 transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+      </div>
+      <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto scrollbar-hide">
+        <input type="hidden" id="editCompOldId">
+        <div class="space-y-3">
+            <div>
+                <label class="block text-[12px] font-bold text-[#94A3B8] ml-1 mb-1.5">접속 아이디</label>
+                <input type="text" id="editCompId" class="w-full bg-[#1E293B] border border-white/10 rounded-[12px] px-4 py-3.5 text-white text-[14px] font-bold focus:outline-none focus:border-[#F59E0B]" readonly>
+            </div>
+            <div>
+                <label class="block text-[12px] font-bold text-[#94A3B8] ml-1 mb-1.5">상호명</label>
+                <input type="text" id="editCompName" class="w-full bg-[#1E293B] border border-white/10 rounded-[12px] px-4 py-3.5 text-white text-[14px] font-bold focus:outline-none focus:border-[#F59E0B]">
+            </div>
+            <div>
+                <label class="block text-[12px] font-bold text-[#94A3B8] ml-1 mb-1.5">대표자명</label>
+                <input type="text" id="editCompCeo" class="w-full bg-[#1E293B] border border-white/10 rounded-[12px] px-4 py-3.5 text-white text-[14px] font-bold focus:outline-none focus:border-[#F59E0B]">
+            </div>
+            <div>
+                <label class="block text-[12px] font-bold text-[#94A3B8] ml-1 mb-1.5">대표 연락처</label>
+                <input type="tel" id="editCompPhone" class="w-full bg-[#1E293B] border border-white/10 rounded-[12px] px-4 py-3.5 text-white text-[14px] font-bold focus:outline-none focus:border-[#F59E0B]">
+            </div>
+            <div>
+                <label class="block text-[12px] font-bold text-[#94A3B8] ml-1 mb-1.5">사업자등록번호</label>
+                <input type="text" id="editCompBizNum" class="w-full bg-[#1E293B] border border-white/10 rounded-[12px] px-4 py-3.5 text-white text-[14px] font-bold focus:outline-none focus:border-[#F59E0B]">
+            </div>
+        </div>
+      </div>
+      <div class="p-4 border-t border-white/10 bg-[#1E293B] flex gap-2">
+          <button onclick="closeEditCompanyModal()" class="flex-1 py-4 bg-white/5 text-white rounded-[14px] font-bold text-[15px] hover:bg-white/10 transition-colors">취소</button>
+          <button onclick="saveCompanyEdit()" class="flex-1 py-4 bg-[#F59E0B] text-[#1E3A8A] rounded-[14px] font-black text-[15px] hover:bg-[#D97706] transition-all flex items-center justify-center gap-1.5"><i data-lucide="save" class="w-4 h-4"></i> 정보 저장</button>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -330,7 +391,6 @@
         return `${url}${sep}auth=${currentIdToken}`;
     }
 
-    // 파이어베이스 데이터 정규화 함수 (배열/객체 혼용 문제 해결)
     function normalizeData(data) {
         if (!data) return [];
         if (Array.isArray(data)) return data.filter(item => item !== null && item !== undefined);
@@ -676,7 +736,8 @@
                         ? `<button onclick="updateAccountStatus('${acc.id}', 'active')" class="px-3 py-2 bg-green-500/10 text-green-400 border border-green-500/20 rounded-[8px] text-[11px] font-bold hover:bg-green-500/20 transition-all">정지 해제</button>`
                         : `<button onclick="updateAccountStatus('${acc.id}', 'suspended')" class="px-3 py-2 bg-orange-500/10 text-orange-400 border border-orange-500/20 rounded-[8px] text-[11px] font-bold hover:bg-orange-500/20 transition-all">이용 정지</button>`
                     }
-                    <button onclick="resetPassword('${acc.id}')" class="px-3 py-2 bg-white/10 text-white border border-white/20 rounded-[8px] text-[11px] font-bold hover:bg-white/20 transition-all" title="비번 1234로 초기화"><i data-lucide="key" class="w-3.5 h-3.5 inline"></i> 초기화</button>
+                    <button onclick="resetPassword('${acc.id}')" class="px-3 py-2 bg-white/10 text-white border border-white/20 rounded-[8px] text-[11px] font-bold hover:bg-white/20 transition-all" title="앱 접속 비번 1234로 초기화"><i data-lucide="key" class="w-3.5 h-3.5 inline"></i> 앱 비번</button>
+                    <button onclick="resetLedgerPin('${acc.id}')" class="px-3 py-2 bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 rounded-[8px] text-[11px] font-bold hover:bg-yellow-500/20 transition-all" title="장부 비밀번호 리셋"><i data-lucide="unlock" class="w-3.5 h-3.5 inline"></i> 장부 비번</button>
                     <button onclick="deleteAccount('${acc.id}', '영구 강제 탈퇴')" class="px-3 py-2 bg-red-500/10 text-red-500 border border-red-500/20 rounded-[8px] text-[11px] font-bold hover:bg-red-500/20 transition-all"><i data-lucide="trash-2" class="w-3.5 h-3.5 inline"></i></button>
                 </td>
             `;
@@ -810,7 +871,7 @@
     }
 
     async function resetPassword(id) {
-        if(!confirm(`해당 업체의 비밀번호를 '1234'로 초기화 하시겠습니까?`)) return;
+        if(!confirm(`해당 업체의 앱 접속 비밀번호를 '1234'로 초기화 하시겠습니까?`)) return;
         try {
             await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(id)}/profile.json`), {
                 method: 'PATCH',
@@ -819,6 +880,20 @@
             });
             alert("✅ 초기화 되었습니다.");
         } catch(e) {}
+    }
+
+    async function resetLedgerPin(id) {
+        if(!confirm(`해당 업체의 [개인장부 비밀번호]를 초기화하시겠습니까?\n(승인 시, 다음 번 장부 접속 때 새 비밀번호를 다시 설정하게 됩니다.)`)) return;
+        try {
+            await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(id)}/profile.json`), {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ledgerPin: "" }) 
+            });
+            alert("✅ 장부 비밀번호가 성공적으로 초기화되었습니다.");
+        } catch(e) {
+            alert("통신 오류가 발생했습니다.");
+        }
     }
 
     async function deleteAccount(id, actionName) {
@@ -888,15 +963,14 @@
     }
 
     // ==========================================
-    // 🗂️ 1. 업체 전체 데이터 호출 및 화면 구성
+    // 🗂️ 1. 업체 전체 데이터 호출 및 화면 구성 (6버튼 그리드 스위칭)
     // ==========================================
     async function openCompanyDataModal(id, name) {
         document.getElementById('modalCompanyName').innerText = name;
-        document.getElementById('modalClientCount').innerText = '-';
-        document.getElementById('modalReportCount').innerText = '-';
-        document.getElementById('modalQuoteCount').innerText = '-';
-        document.getElementById('modalDocList').innerHTML = '<div class="p-5 text-center text-[#94A3B8] text-[13px] font-bold animate-pulse">실시간 데이터를 불러오는 중입니다...</div>';
-        document.getElementById('modalClientList').innerHTML = '<div class="p-5 text-center text-[#94A3B8] text-[13px] font-bold animate-pulse">실시간 데이터를 불러오는 중입니다...</div>';
+        document.getElementById('dataLoading').classList.remove('hidden');
+        document.getElementById('dataMenuGrid').classList.add('hidden');
+        document.getElementById('dataListContainer').classList.add('hidden');
+        showDataMenuHeader();
         
         const modal = document.getElementById('companyDataModal');
         const box = document.getElementById('companyDataBox');
@@ -907,82 +981,28 @@
             const res = await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(id)}/data.json`));
             const data = await res.json();
             
-            // 전역 변수에 전체 데이터 저장 (상세 뷰어에서 원본 추출 시 사용)
             currentCompanyFullData = data; 
+            currentCompanyRecords = normalizeData(data?.records);
             
-            const clients = normalizeData(data?.clients);
-            const records = normalizeData(data?.records);
-            
-            currentCompanyRecords = records;
-            
-            const reports = records.filter(r => r.type === 'report');
-            const quotes = records.filter(r => r.type === 'quote');
-            
-            document.getElementById('modalClientCount').innerText = clients.length;
-            document.getElementById('modalReportCount').innerText = reports.length;
-            document.getElementById('modalQuoteCount').innerText = quotes.length;
-            
-            // 최근 작성 문서 렌더링
-            if(records.length === 0) {
-                document.getElementById('modalDocList').innerHTML = '<div class="p-6 text-center text-[#94A3B8] text-[13px] font-bold border-t border-white/5">발행된 문서가 없습니다.</div>';
-            } else {
-                let docHtml = '';
-                const sortedRecords = [...records].sort((a,b) => b.id.localeCompare(a.id));
-                sortedRecords.forEach(r => {
-                    const isQuote = r.type === 'quote';
-                    const badge = isQuote 
-                        ? `<span class="bg-[#3B82F6]/20 text-[#3B82F6] px-2.5 py-1 rounded-md text-[10px] font-black shrink-0">견적</span>`
-                        : `<span class="bg-[#84CC16]/20 text-[#84CC16] px-2.5 py-1 rounded-md text-[10px] font-black shrink-0">일지</span>`;
-                    
-                    docHtml += `
-                        <div class="flex items-center justify-between p-4 hover:bg-white/5 transition-colors">
-                            <div class="flex items-center gap-3 w-full pr-4">
-                                ${badge}
-                                <div class="min-w-0">
-                                    <div class="text-white text-[14px] font-black truncate">${r.clientName} <span class="text-[#94A3B8] text-[11px] ml-1 font-bold">${r.date}</span></div>
-                                    <div class="text-[#94A3B8] text-[12px] font-medium truncate">${r.round}</div>
-                                </div>
-                            </div>
-                            <button onclick="openDocumentPreview('${r.id}')" class="shrink-0 px-3.5 py-2 bg-white/10 text-white border border-white/10 rounded-[10px] text-[12px] font-bold hover:bg-white/20 transition-all flex items-center gap-1.5"><i data-lucide="file-search" class="w-3.5 h-3.5"></i> 내역 열람</button>
-                        </div>
-                    `;
-                });
-                document.getElementById('modalDocList').innerHTML = docHtml;
-            }
-            
-            // 거래처 목록 렌더링
-            if(clients.length === 0) {
-                document.getElementById('modalClientList').innerHTML = '<div class="p-6 text-center text-[#94A3B8] text-[13px] font-bold border-t border-white/5">등록된 거래처가 없습니다.</div>';
-            } else {
-                let clientHtml = '';
-                const sortedClients = [...clients].sort((a,b) => a.name.localeCompare(b.name));
-                sortedClients.forEach(c => {
-                    clientHtml += `
-                        <div class="p-4 hover:bg-white/5 transition-colors flex flex-col gap-1.5 cursor-pointer border-b border-white/5 last:border-0" onclick="openClientHistory('${c.name}')">
-                            <div class="flex items-center justify-between">
-                                <div class="text-white text-[15px] font-black flex items-center gap-2">
-                                    <span class="bg-[#F59E0B]/20 text-[#F59E0B] px-2 py-0.5 rounded-md text-[10px] font-black shrink-0">${c.type}</span>
-                                    <span class="truncate">${c.name}</span>
-                                </div>
-                                <span class="text-[#3B82F6] text-[11px] font-bold bg-[#3B82F6]/10 px-2 py-1 rounded border border-[#3B82F6]/20 flex items-center gap-1">내역 열람 <i data-lucide="chevron-right" class="w-3 h-3"></i></span>
-                            </div>
-                            <div class="flex items-center gap-4 mt-1">
-                                <div class="text-[#94A3B8] text-[13px] flex items-center gap-1.5 font-bold"><i data-lucide="phone" class="w-3.5 h-3.5 text-[#3B82F6]"></i> ${c.phone || '연락처 미등록'}</div>
-                            </div>
-                            <div class="text-[#94A3B8] text-[12px] flex items-center gap-1.5 font-medium mt-0.5 break-keep">
-                                <i data-lucide="map-pin" class="w-3.5 h-3.5 shrink-0"></i> ${c.address || '주소 정보 없음'}
-                            </div>
-                        </div>
-                    `;
-                });
-                document.getElementById('modalClientList').innerHTML = clientHtml;
-            }
-            lucide.createIcons();
-            
+            document.getElementById('dataLoading').classList.add('hidden');
+            document.getElementById('dataMenuGrid').classList.remove('hidden');
+            renderDataMenu();
         } catch (e) {
-            document.getElementById('modalDocList').innerHTML = '<div class="p-6 text-center text-red-400 text-[13px] font-bold">오류: 데이터를 가져오지 못했습니다.</div>';
-            document.getElementById('modalClientList').innerHTML = '<div class="p-6 text-center text-red-400 text-[13px] font-bold">오류: 데이터를 가져오지 못했습니다.</div>';
+            document.getElementById('dataLoading').innerHTML = '<div class="text-red-400 font-bold text-center py-10">오류: 데이터를 가져오지 못했습니다.</div>';
         }
+    }
+
+    function showDataMenuHeader() {
+        document.getElementById('btnBackToDataMenu').classList.add('hidden');
+        document.getElementById('modalTitleIcon').setAttribute('data-lucide', 'database');
+        document.getElementById('modalCurrentCategoryName').innerText = '운영 데이터';
+        lucide.createIcons();
+    }
+
+    function showDataMenu() {
+        document.getElementById('dataListContainer').classList.add('hidden');
+        document.getElementById('dataMenuGrid').classList.remove('hidden');
+        showDataMenuHeader();
     }
 
     function closeCompanyDataModal() {
@@ -993,60 +1013,132 @@
         setTimeout(() => { modal.classList.add('hidden'); }, 200);
     }
 
-    // ==========================================
-    // 🗂️ 2. 개별 거래처의 히스토리 열람
-    // ==========================================
-    function openClientHistory(clientName) {
-        document.getElementById('historyModalClientName').innerText = clientName;
-        const container = document.getElementById('historyModalListContainer');
-        container.innerHTML = '';
+    function renderDataMenu() {
+        const data = currentCompanyFullData || {};
+        const schedules = normalizeData(data.schedules);
+        const records = normalizeData(data.records);
+        const reports = records.filter(r => r.type !== 'quote');
+        const quotes = records.filter(r => r.type === 'quote');
+        const clients = normalizeData(data.clients);
         
-        const filteredRecords = currentCompanyRecords.filter(r => r.clientName === clientName).sort((a,b) => b.id.localeCompare(a.id));
-        
-        if(filteredRecords.length === 0) {
-            container.innerHTML = `<div class="p-8 text-center text-[#94A3B8] text-[13px] font-bold bg-white/5 rounded-[16px] border border-dashed border-white/10">이 거래처에 발행된 일지나 견적서가 없습니다.</div>`;
-        } else {
-            let html = '';
-            filteredRecords.forEach(r => {
-                const isQuote = r.type === 'quote';
-                const badge = isQuote 
-                    ? `<span class="bg-[#3B82F6]/20 text-[#3B82F6] px-2.5 py-1 rounded-md text-[10px] font-black shrink-0">견적</span>`
-                    : `<span class="bg-[#84CC16]/20 text-[#84CC16] px-2.5 py-1 rounded-md text-[10px] font-black shrink-0">일지</span>`;
-                
-                html += `
-                    <div class="flex items-center justify-between p-4 bg-[#1E293B] border border-white/5 rounded-[16px] hover:border-[#84CC16]/50 transition-colors">
-                        <div class="flex items-center gap-3 w-full pr-4">
-                            ${badge}
-                            <div class="min-w-0">
-                                <div class="text-white text-[14px] font-black truncate">${r.date}</div>
-                                <div class="text-[#94A3B8] text-[12px] font-medium truncate mt-0.5">${r.round}</div>
-                            </div>
-                        </div>
-                        <button onclick="openDocumentPreview('${r.id}')" class="shrink-0 px-4 py-2 bg-[#84CC16] text-[#12261E] rounded-[10px] text-[12px] font-black hover:bg-[#9BE32D] transition-all flex items-center gap-1.5 shadow-md"><i data-lucide="file-search" class="w-3.5 h-3.5"></i> 상세 열람</button>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
+        let contactsCount = 0;
+        if(data.contacts) {
+            contactsCount += normalizeData(data.contacts.clients).length;
+            contactsCount += normalizeData(data.contacts.labors).length;
         }
-        
+        const materials = normalizeData(data.materials);
+
+        const grid = document.getElementById('dataMenuGrid');
+        grid.innerHTML = `
+            <button onclick="viewCompanyDataList('schedules')" class="flex flex-col items-center justify-center p-6 bg-[#1E293B] border border-white/10 rounded-[24px] hover:border-white/30 hover:bg-white/5 transition-all shadow-md group">
+                <i data-lucide="calendar-days" class="w-8 h-8 text-white/80 mb-3 group-hover:text-white transition-colors"></i>
+                <span class="text-[15px] font-black text-white">일정표</span>
+                <span class="text-[12px] text-[#3B82F6] font-bold mt-1.5 bg-[#3B82F6]/10 px-2.5 py-0.5 rounded-md">${schedules.length}건</span>
+            </button>
+            <button onclick="viewCompanyDataList('reports')" class="flex flex-col items-center justify-center p-6 bg-[#1E293B] border border-white/10 rounded-[24px] hover:border-[#84CC16]/50 hover:bg-[#84CC16]/5 transition-all shadow-md group">
+                <i data-lucide="pen-tool" class="w-8 h-8 text-[#84CC16] mb-3 group-hover:text-[#9BE32D] transition-colors"></i>
+                <span class="text-[15px] font-black text-white">일지 보관함</span>
+                <span class="text-[12px] text-[#84CC16] font-bold mt-1.5 bg-[#84CC16]/10 px-2.5 py-0.5 rounded-md">${reports.length}건</span>
+            </button>
+            <button onclick="viewCompanyDataList('clients')" class="flex flex-col items-center justify-center p-6 bg-[#1E293B] border border-white/10 rounded-[24px] hover:border-white/30 hover:bg-white/5 transition-all shadow-md group">
+                <i data-lucide="building-2" class="w-8 h-8 text-white/80 mb-3 group-hover:text-white transition-colors"></i>
+                <span class="text-[15px] font-black text-white">거래처 목록</span>
+                <span class="text-[12px] text-[#94A3B8] font-bold mt-1.5 bg-white/5 px-2.5 py-0.5 rounded-md">${clients.length}건</span>
+            </button>
+            <button onclick="viewCompanyDataList('quotes')" class="flex flex-col items-center justify-center p-6 bg-[#1E293B] border border-white/10 rounded-[24px] hover:border-[#84CC16]/50 hover:bg-[#84CC16]/5 transition-all shadow-md group">
+                <i data-lucide="folder-open" class="w-8 h-8 text-[#84CC16] mb-3 group-hover:text-[#9BE32D] transition-colors"></i>
+                <span class="text-[15px] font-black text-white">견적 보관함</span>
+                <span class="text-[12px] text-[#84CC16] font-bold mt-1.5 bg-[#84CC16]/10 px-2.5 py-0.5 rounded-md">${quotes.length}건</span>
+            </button>
+            <button onclick="viewCompanyDataList('contacts')" class="flex flex-col items-center justify-center p-6 bg-[#1E293B] border border-white/10 rounded-[24px] hover:border-white/30 hover:bg-white/5 transition-all shadow-md group">
+                <i data-lucide="users" class="w-8 h-8 text-white/80 mb-3 group-hover:text-white transition-colors"></i>
+                <span class="text-[15px] font-black text-white">연락처 DB</span>
+                <span class="text-[12px] text-[#94A3B8] font-bold mt-1.5 bg-white/5 px-2.5 py-0.5 rounded-md">${contactsCount}건</span>
+            </button>
+            <button onclick="viewCompanyDataList('materials')" class="flex flex-col items-center justify-center p-6 bg-[#1E293B] border border-white/10 rounded-[24px] hover:border-white/30 hover:bg-white/5 transition-all shadow-md group">
+                <i data-lucide="package-search" class="w-8 h-8 text-white/80 mb-3 group-hover:text-white transition-colors"></i>
+                <span class="text-[15px] font-black text-white">자재 단가표</span>
+                <span class="text-[12px] text-[#94A3B8] font-bold mt-1.5 bg-white/5 px-2.5 py-0.5 rounded-md">${materials.length}건</span>
+            </button>
+        `;
         lucide.createIcons();
-        const modal = document.getElementById('clientHistoryModal');
-        const box = document.getElementById('clientHistoryBox');
-        modal.classList.remove('hidden');
-        setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10);
     }
 
-    function closeClientHistoryModal() {
-        const modal = document.getElementById('clientHistoryModal');
-        const box = document.getElementById('clientHistoryBox');
-        modal.classList.add('opacity-0');
-        box.classList.add('scale-95');
-        setTimeout(() => { modal.classList.add('hidden'); }, 200);
+    function viewCompanyDataList(type) {
+        document.getElementById('dataMenuGrid').classList.add('hidden');
+        const listContainer = document.getElementById('dataListContainer');
+        listContainer.classList.remove('hidden');
+        listContainer.innerHTML = '';
+        
+        document.getElementById('btnBackToDataMenu').classList.remove('hidden');
+
+        const data = currentCompanyFullData || {};
+        const records = normalizeData(data.records).sort((a,b) => b.id.localeCompare(a.id));
+        
+        let html = '';
+        let iconName = '';
+        let titleName = '';
+        
+        if (type === 'schedules') {
+            iconName = 'calendar-days'; titleName = '일정표 전체 내역';
+            const items = normalizeData(data.schedules).sort((a,b) => new Date(b.date) - new Date(a.date));
+            if(items.length===0) html = '<div class="p-8 text-center text-[#94A3B8] font-bold bg-white/5 rounded-[16px] border border-white/10">등록된 일정이 없습니다.</div>';
+            items.forEach(s => {
+                html += `<div class="bg-[#1E293B] p-5 rounded-[16px] border border-white/5 shadow-sm"><div class="text-[#3B82F6] text-[12px] font-black mb-1.5">${s.date}</div><div class="text-white text-[15px] font-black mb-1">${s.title}</div><div class="text-[#94A3B8] text-[13px] break-keep leading-relaxed">${s.memo || '상세 내용 없음'}</div></div>`;
+            });
+        }
+        else if (type === 'reports') {
+            iconName = 'pen-tool'; titleName = '일지 보관함 목록';
+            const items = records.filter(r => r.type !== 'quote');
+            if(items.length===0) html = '<div class="p-8 text-center text-[#94A3B8] font-bold bg-white/5 rounded-[16px] border border-white/10">작성된 일지가 없습니다.</div>';
+            items.forEach(r => {
+                html += `<div class="flex items-center justify-between p-4 bg-[#1E293B] border border-white/5 rounded-[16px] hover:border-[#84CC16]/50 transition-colors shadow-sm"><div class="flex items-center gap-3 w-full pr-4"><span class="bg-[#84CC16]/20 text-[#84CC16] px-2.5 py-1 rounded-md text-[10px] font-black shrink-0 border border-[#84CC16]/30">일지</span><div class="min-w-0"><div class="text-white text-[15px] font-black truncate">${r.clientName}</div><div class="text-[#94A3B8] text-[12px] font-bold truncate mt-1">${r.date} | ${r.round}</div></div></div><button onclick="openDocumentPreview('${r.id}')" class="shrink-0 px-4 py-2 bg-[#84CC16] text-[#12261E] rounded-[10px] text-[12px] font-black hover:bg-[#9BE32D] transition-all flex items-center gap-1.5 shadow-md"><i data-lucide="file-search" class="w-3.5 h-3.5"></i> 상세 열람</button></div>`;
+            });
+        }
+        else if (type === 'quotes') {
+            iconName = 'folder-open'; titleName = '견적서 보관함 목록';
+            const items = records.filter(r => r.type === 'quote');
+            if(items.length===0) html = '<div class="p-8 text-center text-[#94A3B8] font-bold bg-white/5 rounded-[16px] border border-white/10">발행된 견적서가 없습니다.</div>';
+            items.forEach(r => {
+                html += `<div class="flex items-center justify-between p-4 bg-[#1E293B] border border-white/5 rounded-[16px] hover:border-[#3B82F6]/50 transition-colors shadow-sm"><div class="flex items-center gap-3 w-full pr-4"><span class="bg-[#3B82F6]/20 text-[#3B82F6] px-2.5 py-1 rounded-md text-[10px] font-black shrink-0 border border-[#3B82F6]/30">견적</span><div class="min-w-0"><div class="text-white text-[15px] font-black truncate">${r.clientName}</div><div class="text-[#94A3B8] text-[12px] font-bold truncate mt-1">${r.date} | ${r.round}</div></div></div><button onclick="openDocumentPreview('${r.id}')" class="shrink-0 px-4 py-2 bg-[#3B82F6] text-white rounded-[10px] text-[12px] font-black hover:bg-blue-500 transition-all flex items-center gap-1.5 shadow-md"><i data-lucide="file-search" class="w-3.5 h-3.5"></i> 상세 열람</button></div>`;
+            });
+        }
+        else if (type === 'clients') {
+            iconName = 'building-2'; titleName = '거래처 목록 내역';
+            const items = normalizeData(data.clients).sort((a,b) => a.name.localeCompare(b.name));
+            if(items.length===0) html = '<div class="p-8 text-center text-[#94A3B8] font-bold bg-white/5 rounded-[16px] border border-white/10">등록된 거래처가 없습니다.</div>';
+            items.forEach(c => {
+                html += `<div class="p-5 bg-[#1E293B] border border-white/5 rounded-[16px] shadow-sm"><div class="text-white text-[15px] font-black mb-2 flex items-center gap-2">${c.name} <span class="text-[10px] bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30 px-1.5 py-0.5 rounded">${c.type||'정기 관리'}</span></div><div class="text-[#94A3B8] text-[13px] font-bold mb-1"><i data-lucide="phone" class="w-3.5 h-3.5 inline"></i> ${c.phone || '연락처 미등록'}</div><div class="text-[#94A3B8] text-[13px] font-medium"><i data-lucide="map-pin" class="w-3.5 h-3.5 inline"></i> ${c.address || '주소 미등록'}</div></div>`;
+            });
+        }
+        else if (type === 'contacts') {
+            iconName = 'users'; titleName = '연락처 통합 DB';
+            let cList = [];
+            if(data.contacts) { cList = [...normalizeData(data.contacts.clients), ...normalizeData(data.contacts.labors)]; }
+            if(cList.length===0) html = '<div class="p-8 text-center text-[#94A3B8] font-bold bg-white/5 rounded-[16px] border border-white/10">등록된 연락처가 없습니다.</div>';
+            cList.forEach(c => {
+                html += `<div class="p-5 bg-[#1E293B] border border-white/5 rounded-[16px] flex justify-between items-center shadow-sm"><div><div class="text-white text-[15px] font-black mb-1">${c.name}</div><div class="text-[#3B82F6] text-[14px] font-bold">${c.phone}</div></div><div class="text-[#94A3B8] text-[12px] font-medium bg-black/30 px-3 py-1.5 rounded-lg border border-white/5">${c.memo||'메모 없음'}</div></div>`;
+            });
+        }
+        else if (type === 'materials') {
+            iconName = 'package-search'; titleName = '자재 단가표 정보';
+            const items = normalizeData(data.materials);
+            if(items.length===0) html = '<div class="p-8 text-center text-[#94A3B8] font-bold bg-white/5 rounded-[16px] border border-white/10">등록된 자재가 없습니다.</div>';
+            items.forEach(m => {
+                let pText = m.price ? m.price.replace(/[^0-9]/g,'') : '';
+                let pFormat = pText ? Number(pText).toLocaleString() + '원' : '-';
+                html += `<div class="p-5 bg-[#1E293B] border border-white/5 rounded-[16px] shadow-sm"><div class="flex justify-between items-start mb-2"><div class="text-white text-[15px] font-black">${m.item || '-'}</div><div class="text-[#84CC16] text-[15px] font-black">${pFormat}</div></div><div class="text-[#94A3B8] text-[13px] font-bold mb-1">규격/단위: ${m.spec || '-'}</div><div class="text-[#94A3B8] text-[13px] font-bold">공급처: ${m.contact || '-'}</div></div>`;
+            });
+        }
+
+        document.getElementById('modalTitleIcon').setAttribute('data-lucide', iconName);
+        document.getElementById('modalCurrentCategoryName').innerText = titleName;
+        listContainer.innerHTML = html;
+        lucide.createIcons();
     }
 
     // ==========================================
     // 🗂️ [신규 추가] 파이어베이스 딥 서치 (재귀 탐색) 함수
-    // 전체 데이터 덩어리 안에서 ID를 추적해 실제 원본 뭉치를 찾아냅니다.
     // ==========================================
     function extractRealDoc(data, targetId) {
         let result = null;
