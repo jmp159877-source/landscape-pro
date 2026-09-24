@@ -87,6 +87,10 @@
       <button onclick="switchTab('companies')" class="nav-btn w-full flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-3 p-2 md:px-4 md:py-3.5 rounded-[12px] text-[#94A3B8] hover:bg-white/5 hover:text-white font-bold transition-all text-[11px] md:text-[14px]">
         <i data-lucide="building-2" class="w-5 h-5"></i> <span class="whitespace-nowrap">업체 관리</span>
       </button>
+      <button onclick="switchTab('inquiries')" class="nav-btn w-full flex flex-col md:flex-row items-center justify-center md:justify-between gap-1 p-2 md:px-4 md:py-3.5 rounded-[12px] text-[#94A3B8] hover:bg-white/5 hover:text-white font-bold transition-all text-[11px] md:text-[14px] relative">
+        <div class="flex flex-col md:flex-row items-center gap-1 md:gap-3"><i data-lucide="message-square" class="w-5 h-5"></i> <span class="whitespace-nowrap">1:1 문의 관리</span></div>
+        <span id="sideInquiryCount" class="absolute top-1 right-2 md:relative md:top-auto md:right-auto bg-red-500 text-white text-[10px] md:text-[11px] px-1.5 py-0.5 rounded-full hidden">0</span>
+      </button>
       <button onclick="switchTab('settings')" class="nav-btn w-full flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-3 p-2 md:px-4 md:py-3.5 rounded-[12px] text-[#94A3B8] hover:bg-white/5 hover:text-white font-bold transition-all text-[11px] md:text-[14px]">
         <i data-lucide="settings" class="w-5 h-5"></i> <span class="whitespace-nowrap">설정</span>
       </button>
@@ -177,7 +181,17 @@
         </div>
       </div>
     </div>
-
+    <!-- 1:1 문의 관리 화면 -->
+    <div id="view-inquiries" class="hidden space-y-6">
+      <div class="flex items-center justify-between border-b border-white/10 pb-4">
+        <h1 class="text-[24px] font-black tracking-tight flex items-center gap-2"><i data-lucide="message-square" class="w-6 h-6 text-[#84CC16]"></i> 1:1 고객센터 (문의 관리)</h1>
+      </div>
+      <div class="glass-panel rounded-[24px] overflow-hidden shadow-lg p-6 min-h-[400px]">
+        <div id="masterInquiryList" class="space-y-4">
+           <div class="text-center text-[#94A3B8] py-16 font-bold">수신된 문의가 없습니다.</div>
+        </div>
+      </div>
+    </div>
     <!-- 플랫폼 설정 화면 -->
     <div id="view-settings" class="hidden space-y-6">
       <div class="flex items-center justify-between border-b border-white/10 pb-4">
@@ -1311,6 +1325,159 @@
         box.classList.add('scale-95');
         setTimeout(() => { modal.classList.add('hidden'); }, 200);
     }
+  // ==========================================
+    // 💬 마스터 1:1 문의 관리 센터 로직
+    // ==========================================
+    let allInquiries = [];
+
+    // 기존 fetchAccounts 함수 내부에 몰래 숨어서 1:1 문의 데이터도 같이 긁어오는 트릭입니다.
+    const originalFetchAccounts = fetchAccounts;
+    fetchAccounts = async function() {
+        await originalFetchAccounts();
+        if (!currentIdToken) return;
+        try {
+            const res = await fetch(getAuthUrl(`${DB_BASE_URL}.json`));
+            const data = await res.json();
+            
+            allInquiries = [];
+            let unreadCount = 0;
+
+            if (data && !data.error) {
+                for (const accId in data) {
+                    if (data[accId].inquiries) {
+                        const inqs = normalizeData(data[accId].inquiries);
+                        const profile = data[accId].profile || { name: '알 수 없는 업체' };
+                        
+                        inqs.forEach((inq, idx) => {
+                            if (inq.status === 'waiting') unreadCount++;
+                            allInquiries.push({ accId, idx, companyName: profile.name, ...inq });
+                        });
+                    }
+                }
+            }
+
+            // 최신 문의가 위로 오도록 정렬 (답변 대기 중인 것이 최상단)
+            allInquiries.sort((a, b) => {
+                if (a.status === 'waiting' && b.status !== 'waiting') return -1;
+                if (a.status !== 'waiting' && b.status === 'waiting') return 1;
+                return b.id - a.id;
+            });
+
+            // 안 읽은 문의 뱃지 업데이트
+            const sideBadge = document.getElementById('sideInquiryCount');
+            if (unreadCount > 0) {
+                sideBadge.innerText = unreadCount; sideBadge.classList.remove('hidden');
+            } else {
+                sideBadge.classList.add('hidden');
+            }
+
+            renderInquiryList();
+        } catch (e) {}
+    }
+
+    function renderInquiryList() {
+        const container = document.getElementById('masterInquiryList');
+        if (allInquiries.length === 0) {
+            container.innerHTML = '<div class="text-center text-[#94A3B8] py-16 font-bold"><i data-lucide="check-circle" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>처리할 문의 내역이 없습니다.</div>';
+            return;
+        }
+
+        let html = '';
+        allInquiries.forEach(inq => {
+            const isWaiting = inq.status === 'waiting';
+            const statusBadge = isWaiting 
+                ? `<span class="bg-yellow-500/20 text-yellow-500 border border-yellow-500/30 px-2 py-0.5 rounded text-[10px] font-black">답변 대기</span>` 
+                : `<span class="bg-[#84CC16]/20 text-[#84CC16] border border-[#84CC16]/30 px-2 py-0.5 rounded text-[10px] font-black">답변 완료</span>`;
+
+            html += `
+                <div class="bg-[#1E293B] border border-white/5 rounded-[16px] p-5 shadow-sm">
+                    <div class="flex justify-between items-center mb-3">
+                        <div class="flex items-center gap-2">
+                            ${statusBadge}
+                            <span class="text-white text-[14px] font-black">${inq.companyName}</span>
+                            <span class="text-[#94A3B8] text-[11px] font-medium">${inq.date}</span>
+                        </div>
+                    </div>
+                    <div class="text-[#F8FAFC] text-[14px] font-bold bg-black/20 p-4 rounded-[12px] break-keep whitespace-pre-wrap mb-3 border border-white/5">${inq.text}</div>
+                    
+                    ${isWaiting ? `
+                        <div class="flex gap-2 mt-2">
+                            <textarea id="reply_${inq.accId}_${inq.idx}" rows="1" placeholder="답변을 입력해 주세요." class="flex-1 bg-[#0F172A] border border-white/10 rounded-[12px] p-3 text-white text-[13px] font-bold focus:outline-none focus:border-[#84CC16] resize-none"></textarea>
+                            <button onclick="sendReply('${inq.accId}',${inq.idx})" class="px-5 bg-[#84CC16] text-[#12261E] rounded-[12px] font-black text-[13px] hover:bg-[#9BE32D] transition-colors shrink-0 shadow-sm">답변 전송</button>
+                        </div>
+                    ` : `
+                        <div class="mt-2 text-[11px] font-black text-[#84CC16] mb-1 flex items-center gap-1"><i data-lucide="corner-down-right" class="w-3.5 h-3.5"></i> 운영본부 답변</div>
+                        <div class="text-[#94A3B8] text-[13px] font-bold bg-[#0F172A] p-4 rounded-[12px] break-keep whitespace-pre-wrap border border-white/5">${inq.reply}</div>
+                    `}
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+        if(typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    async function sendReply(accId, index) {
+        const replyText = document.getElementById(`reply_${accId}_${index}`).value.trim();
+        if (!replyText) return alert("답변 내용을 입력해주세요.");
+        if (!confirm("답변을 전송하시겠습니까?\n(전송 후에는 수정이 불가능하며, 해당 업체 앱에 즉시 알림이 뜹니다.)")) return;
+
+        try {
+            // 1. 해당 업체의 문의 내역 전체를 가져와서 답변을 업데이트합니다.
+            const res = await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(accId)}/inquiries.json`));
+            let userInquiries = await res.json();
+            userInquiries = normalizeData(userInquiries);
+            
+            userInquiries[index].reply = replyText;
+            userInquiries[index].status = 'answered';
+
+            // 2. 답변 업데이트
+            await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(accId)}/inquiries.json`), {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userInquiries)
+            });
+
+            // 3. 해당 업체에게 "답변이 도착했습니다" 라고 타겟 팝업 공지까지 자동으로 쏴줍니다!
+            await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(accId)}/profile.json`), {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ targetNotice: `[고객센터 답변 도착]\n요청하신 1:1 문의에 대한 답변이 등록되었습니다.\n설정의 '1:1 문의하기' 메뉴에서 확인해 주세요.` })
+            });
+
+            alert("✅ 답변이 전송되었습니다.");
+            fetchAccounts(); // 화면 새로고침
+        } catch (e) {
+            alert("전송 중 오류가 발생했습니다.");
+        }
+    }
+    
+    // 네비게이션 탭 스위칭 훅 추가 (inquiries 탭 지원)
+    const originalSwitchTab = switchTab;
+    switchTab = function(tabId) {
+        const views = ['view-dashboard', 'view-approval', 'view-companies', 'view-settings', 'view-inquiries'];
+        views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
+        
+        const activeView = document.getElementById('view-' + tabId);
+        if(activeView) activeView.classList.remove('hidden');
+
+        const navBtns = document.querySelectorAll('.nav-btn');
+        navBtns.forEach(btn => {
+            btn.className = "nav-btn w-full flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-3 p-2 md:px-4 md:py-3.5 rounded-[12px] text-[#94A3B8] hover:bg-white/5 hover:text-white font-bold transition-all text-[11px] md:text-[14px]";
+            if(btn.innerHTML.includes('가입 승인') || btn.innerHTML.includes('1:1 문의')) btn.className += " justify-between relative";
+        });
+        
+        let pcActiveIndex = 0;
+        if(tabId === 'approval') pcActiveIndex = 1;
+        if(tabId === 'companies') pcActiveIndex = 2;
+        if(tabId === 'settings') pcActiveIndex = 3;
+        if(tabId === 'inquiries') pcActiveIndex = 4; // 문의관리 인덱스 맵핑
+        
+        if(navBtns[pcActiveIndex]) {
+            navBtns[pcActiveIndex].className = "nav-btn w-full flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-3 p-2 md:px-4 md:py-3.5 rounded-[12px] bg-[#3B82F6] text-white font-bold transition-all shadow-[0_4px_12px_rgba(59,130,246,0.3)] text-[11px] md:text-[14px]";
+            if(tabId === 'approval' || tabId === 'inquiries') navBtns[pcActiveIndex].className += " justify-between relative";
+        }
+        lucide.createIcons();
+    }  
   </script>
 </body>
 </html>
