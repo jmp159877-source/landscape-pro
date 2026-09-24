@@ -196,12 +196,29 @@
                 <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="folder-open" class="w-6 h-6 text-[#84CC16]"></i><span class="text-[13px] font-bold text-white/90">견적보관함</span></button>
                 <button id="tabContacts" onclick="switchView('contacts')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="users" class="w-6 h-6 text-white/80"></i><span class="text-[13px] font-bold text-white/90">연락처</span></button>
                 <button id="tabLedger" onclick="checkLedgerPin()" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="wallet" class="w-6 h-6 text-yellow-400"></i><span class="text-[13px] font-bold text-white/90">개인장부</span></button>
-                <button id="tabEncyclopedia" onclick="switchView('encyclopedia')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="book-open" class="w-6 h-6 text-white/80"></i><span class="text-[13px] font-bold text-white/90">식물검색</span></button>
+                <!-- 8. 1:1 문의하기 (기존 식물검색 자리로 이동, 기본 다크 테마) -->
+                <button id="tabInquiry" onclick="openInquiryModal()" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md">
+                    <i data-lucide="headphones" class="w-6 h-6 text-[#F59E0B]"></i>
+                    <span class="text-[13px] font-bold text-white/90">1:1 문의하기</span>
+                </button>
                 
-                <!-- 💡 고객센터 & 스마트렌즈 버튼 크기 규격 통일 -->
-                <button id="tabInquiry" onclick="openInquiryModal()" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="headphones" class="w-6 h-6 text-[#F59E0B]"></i><span class="text-[13px] font-bold text-white/90">1:1 문의하기</span></button>
-                <button id="tabLounge" onclick="switchView('lounge')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="coffee" class="w-6 h-6 text-[#F59E0B]"></i><span class="text-[13px] font-bold text-white/90">사장님 라운지</span></button>
-                <button id="tabLens" onclick="switchView('lens')" class="w-full py-5 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="scan-line" class="w-6 h-6 text-[#151E2D]"></i><span class="text-[13px] font-black text-[#151E2D]">AI 검색렌즈</span></button>
+                <!-- 9. 사장님 라운지 (눈에 띄는 프리미엄 연노란색 적용) -->
+                <button id="tabLounge" onclick="switchView('lounge')" class="w-full py-5 rounded-[20px] bg-[#FEF08A] border border-[#FDE047] shadow-[0_4px_15px_rgba(254,240,138,0.2)] hover:bg-[#FDE047] transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md">
+                    <i data-lucide="coffee" class="w-6 h-6 text-[#151E2D]"></i>
+                    <span class="text-[14px] font-black text-[#151E2D] tracking-tight">사장님 라운지</span>
+                </button>
+                
+                <!-- 10. 식물검색 (AI 렌즈 옆으로 이동, 동일한 연두색 적용) -->
+                <button id="tabEncyclopedia" onclick="switchView('encyclopedia')" class="w-full py-5 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md">
+                    <i data-lucide="book-open" class="w-6 h-6 text-[#151E2D]"></i>
+                    <span class="text-[14px] font-black text-[#151E2D] tracking-tight">식물검색</span>
+                </button>
+
+                <!-- 11. AI 수목검색 렌즈 (텍스트 수정 및 폰트 크기 확대) -->
+                <button id="tabLens" onclick="switchView('lens')" class="w-full py-5 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md">
+                    <i data-lucide="scan-line" class="w-6 h-6 text-[#151E2D]"></i>
+                    <span class="text-[14px] font-black text-[#151E2D] tracking-tight">AI 수목검색 렌즈</span>
+                </button>
             </nav>
         </div>
         
@@ -2515,7 +2532,7 @@
       const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView', 'calendarView', 'ledgerView', 'encyclopediaView', 'loungeView'];
       views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
       
-      const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient', 'tabContacts', 'tabCalendar', 'tabLedger', 'tabEncyclopedia', 'tabInquiry', 'tabLounge'];
+      const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient', 'tabContacts', 'tabCalendar', 'tabLedger', 'tabInquiry'];
       mainTabs.forEach(t => { 
           const el = document.getElementById(t); 
           if(el) {
@@ -2527,17 +2544,37 @@
                   icon.className = icon.className.replace(/text-\S+/g, '');
                   if(t === 'tabAdmin' || t === 'tabQuoteList') icon.classList.add('text-[#84CC16]');
                   else if(t === 'tabLedger') icon.classList.add('text-yellow-400');
-                  else if(t === 'tabInquiry' || t === 'tabLounge') icon.classList.add('text-[#F59E0B]');
+                  else if(t === 'tabInquiry') icon.classList.add('text-[#F59E0B]');
                   else icon.classList.add('text-white/80');
               }
           }
       });
       
+      const loungeTab = document.getElementById('tabLounge');
+      if(loungeTab) {
+          loungeTab.className = "w-full py-5 rounded-[20px] bg-[#FEF08A] border border-[#FDE047] shadow-[0_4px_15px_rgba(254,240,138,0.2)] hover:bg-[#FDE047] transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md";
+          const span = loungeTab.querySelector('span');
+          if(span) span.className = "text-[14px] font-black text-[#151E2D] tracking-tight";
+          const icon = loungeTab.querySelector('i');
+          if(icon) { icon.className = icon.className.replace(/text-\S+/g, ''); icon.classList.add('text-[#151E2D]'); }
+      }
+
+      const encyTab = document.getElementById('tabEncyclopedia');
+      if(encyTab) {
+          encyTab.className = "w-full py-5 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md";
+          const span = encyTab.querySelector('span');
+          if(span) span.className = "text-[14px] font-black text-[#151E2D] tracking-tight";
+          const icon = encyTab.querySelector('i');
+          if(icon) { icon.className = icon.className.replace(/text-\S+/g, ''); icon.classList.add('text-[#151E2D]'); }
+      }
+
       const lensTab = document.getElementById('tabLens');
       if(lensTab) {
           lensTab.className = "w-full py-5 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md";
           const span = lensTab.querySelector('span');
-          if(span) span.className = "text-[13px] font-black text-[#151E2D]";
+          if(span) span.className = "text-[14px] font-black text-[#151E2D] tracking-tight";
+          const icon = lensTab.querySelector('i');
+          if(icon) { icon.className = icon.className.replace(/text-\S+/g, ''); icon.classList.add('text-[#151E2D]'); }
       }
       
       let activeTabId = '';
@@ -2556,7 +2593,7 @@
 
       if(activeTabId) {
         const activeEl = document.getElementById(activeTabId);
-        if(activeEl && activeTabId !== 'tabLens') { 
+        if(activeEl && activeTabId !== 'tabLens' && activeTabId !== 'tabEncyclopedia' && activeTabId !== 'tabLounge') {
             activeEl.className = "w-full py-5 rounded-[20px] bg-white/15 border border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md";
             const span = activeEl.querySelector('span');
             if(span) span.className = "text-[13px] font-black text-white";
