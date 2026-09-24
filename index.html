@@ -534,7 +534,9 @@
         <div class="pt-4 border-t border-[#F4F5F4]">
             <div class="flex justify-between items-center mb-4">
                 <h3 id="selectedDateText" class="font-black text-[#151E2D] text-[15px] flex items-center gap-1.5"><i data-lucide="calendar-check" class="w-5 h-5 text-[#84CC16]"></i> 선택된 날짜</h3>
-                <button onclick="openScheduleModal()" class="bg-[#151E2D] text-[#84CC16] px-4 py-2 rounded-[12px] text-[13px] font-black shadow-md hover:bg-black transition-colors flex items-center gap-1"><i data-lucide="plus" class="w-4 h-4"></i> 일정 추가</button>
+                <button onclick="openScheduleModal()" class="w-full mt-4 py-4.5 bg-[#84CC16] text-[#151E2D] text-[18px] font-black rounded-[16px] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex items-center justify-center gap-2 active:scale-95">
+    <i data-lucide="plus-circle" class="w-6 h-6 stroke-[2.5]"></i> 일정 추가
+</button>
             </div>
             <div id="scheduleList" class="space-y-3 max-h-[40vh] overflow-y-auto pr-1"></div>
         </div>
