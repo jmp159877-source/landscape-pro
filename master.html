@@ -1122,7 +1122,15 @@
             const items = normalizeData(data.clients).sort((a,b) => a.name.localeCompare(b.name));
             if(items.length===0) html = '<div class="p-8 text-center text-[#94A3B8] font-bold bg-white/5 rounded-[16px] border border-white/10">등록된 거래처가 없습니다.</div>';
             items.forEach(c => {
-                html += `<div class="p-5 bg-[#1E293B] border border-white/5 rounded-[16px] shadow-sm"><div class="text-white text-[15px] font-black mb-2 flex items-center gap-2">${c.name} <span class="text-[10px] bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30 px-1.5 py-0.5 rounded">${c.type||'정기 관리'}</span></div><div class="text-[#94A3B8] text-[13px] font-bold mb-1"><i data-lucide="phone" class="w-3.5 h-3.5 inline"></i> ${c.phone || '연락처 미등록'}</div><div class="text-[#94A3B8] text-[13px] font-medium"><i data-lucide="map-pin" class="w-3.5 h-3.5 inline"></i> ${c.address || '주소 미등록'}</div></div>`;
+                // 💡 [핵심 연동] 거래처 리스트 우측에 대표님이 원하신 '과거 기록 열람' 다이렉트 버튼 탑재!
+                html += `<div class="flex items-center justify-between p-5 bg-[#1E293B] border border-white/5 rounded-[16px] shadow-sm hover:border-white/20 transition-all group">
+                    <div class="flex-1 min-w-0 pr-4">
+                        <div class="text-white text-[15px] font-black mb-2 flex items-center gap-2">${c.name} <span class="text-[10px] bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30 px-1.5 py-0.5 rounded">${c.type||'정기 관리'}</span></div>
+                        <div class="text-[#94A3B8] text-[13px] font-bold mb-1 truncate"><i data-lucide="phone" class="w-3.5 h-3.5 inline text-blue-400"></i> ${c.phone || '연락처 미등록'}</div>
+                        <div class="text-[#94A3B8] text-[13px] font-medium truncate"><i data-lucide="map-pin" class="w-3.5 h-3.5 inline"></i> ${c.address || '주소 미등록'}</div>
+                    </div>
+                    <button onclick="viewClientLogs('${c.name}')" class="shrink-0 px-4 py-3 bg-white/5 text-[#94A3B8] border border-white/10 rounded-[12px] text-[12px] font-black hover:bg-[#84CC16] hover:text-[#12261E] hover:border-[#84CC16] transition-all flex items-center gap-1.5 shadow-sm group-hover:bg-[#84CC16]/10 group-hover:border-[#84CC16]/30 group-hover:text-[#84CC16]"><i data-lucide="folder-clock" class="w-4 h-4"></i> 과거 기록 열람</button>
+                </div>`;
             });
         }
         else if (type === 'contacts') {
@@ -1147,6 +1155,46 @@
 
         document.getElementById('modalTitleIcon').setAttribute('data-lucide', iconName);
         document.getElementById('modalCurrentCategoryName').innerText = titleName;
+        listContainer.innerHTML = html;
+        lucide.createIcons();
+    }
+
+    // ✨ 신규 함수: 특정 거래처의 일지만 쏙쏙 뽑아주는 스마트 필터 기능! (사용자 앱의 history 로직을 마스터 환경에 완벽 이식)
+    function viewClientLogs(clientName) {
+        const listContainer = document.getElementById('dataListContainer');
+        const data = currentCompanyFullData || {};
+        const records = normalizeData(data.records).sort((a,b) => b.id.localeCompare(a.id));
+        
+        // 해당 고객명과 일치하는 '일지(report)'만 핀셋 필터링!
+        const items = records.filter(r => r.type !== 'quote' && (r.clientName === clientName || (r.payload && r.payload.c === clientName)));
+        
+        let html = '';
+        if(items.length === 0) html = `<div class="p-8 text-center text-[#94A3B8] font-bold bg-white/5 rounded-[16px] border border-white/10">['${clientName}'] 등록된 과거 일지 기록이 없습니다.</div>`;
+        
+        items.forEach(r => {
+            const possibleTitles = [
+                r.payload?.title, r.title, 
+                r.payload?.t, r.t, 
+                r.payload?.subject, r.subject, 
+                r.payload?.name, r.name, 
+                r.payload?.workName, r.workName
+            ];
+            const docTitle = possibleTitles.find(val => val && String(val).trim() !== '') || '제목 없음';
+
+            html += `<div class="flex items-center justify-between p-4 bg-[#1E293B] border border-white/5 rounded-[16px] hover:border-[#84CC16]/50 transition-colors shadow-sm">
+                <div class="flex items-center gap-3 w-full pr-4">
+                    <span class="bg-[#84CC16]/20 text-[#84CC16] px-2.5 py-1 rounded-md text-[10px] font-black shrink-0 border border-[#84CC16]/30">일지</span>
+                    <div class="min-w-0">
+                        <div class="text-white text-[15px] font-black truncate">${docTitle}</div>
+                        <div class="text-[#94A3B8] text-[12px] font-bold truncate mt-1">${r.date} | ${r.clientName}</div>
+                    </div>
+                </div>
+                <button onclick="openDocumentPreview('${r.id}')" class="shrink-0 px-4 py-2 bg-[#84CC16] text-[#12261E] rounded-[10px] text-[12px] font-black hover:bg-[#9BE32D] transition-all flex items-center gap-1.5 shadow-md"><i data-lucide="file-search" class="w-3.5 h-3.5"></i> 상세 열람</button>
+            </div>`;
+        });
+        
+        document.getElementById('modalTitleIcon').setAttribute('data-lucide', 'folder-clock');
+        document.getElementById('modalCurrentCategoryName').innerText = `${clientName} 과거 기록 열람`;
         listContainer.innerHTML = html;
         lucide.createIcons();
     }
