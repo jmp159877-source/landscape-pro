@@ -390,10 +390,8 @@
     let isFirstLoad = true;
     let autoRefreshTimer = null;
     
-    // 현재 열람 중인 업체의 통합 데이터를 담는 핵심 변수
     let currentCompanyRecords = [];
     let currentCompanyFullData = null;
-
     let currentIdToken = "";
 
     function getAuthUrl(url) {
@@ -402,13 +400,10 @@
         return `${url}${sep}auth=${currentIdToken}`;
     }
 
-    // [수정됨] 파이어베이스 데이터 정규화 함수 (ID 유실 방지 및 강력한 방어 로직)
     function normalizeData(data) {
         if (!data) return [];
         if (typeof data !== 'object') return [data]; 
         if (Array.isArray(data)) return data.filter(item => item !== null && item !== undefined);
-        
-        // 객체인 경우: 파이어베이스의 폴더명(Key)을 id로 강제 주입하여 유실 방지
         return Object.keys(data).map(key => {
             const item = data[key];
             if (item && typeof item === 'object') {
@@ -421,9 +416,7 @@
     async function registerMaster() {
         const id = document.getElementById('masterId').value.trim();
         const pw = document.getElementById('masterPw').value.trim();
-        
         if (id.length < 2 || pw.length < 6) return alert("아이디 2자 이상, 비밀번호 6자리 이상이어야 합니다.");
-
         const masterEmail = `${id}_master@jogyeongnote.com`;
         if (!confirm(`'${id}' 계정을 최고 관리자로 등록하시겠습니까?`)) return;
 
@@ -434,24 +427,19 @@
                 body: JSON.stringify({ email: masterEmail, password: pw, returnSecureToken: true })
             });
             const data = await res.json();
-
             if (data.error) {
                 if (data.error.message === 'EMAIL_EXISTS') alert("이미 등록된 아이디입니다. 로그인해 주세요.");
                 else alert("등록 중 오류 발생: " + data.error.message);
                 return;
             }
             alert("관리자 등록이 완료되었습니다! 로그인해 주십시오.");
-        } catch (e) {
-            alert("통신 중 오류가 발생했습니다.");
-        }
+        } catch (e) { alert("통신 중 오류가 발생했습니다."); }
     }
 
     async function loginMaster() {
         const id = document.getElementById('masterId').value.trim();
         const pw = document.getElementById('masterPw').value.trim();
-        
         if (id.length < 2 || pw.length < 6) return alert("정보를 정확히 입력해 주십시오.");
-
         const masterEmail = `${id}_master@jogyeongnote.com`; 
 
         try {
@@ -461,7 +449,6 @@
                 body: JSON.stringify({ email: masterEmail, password: pw, returnSecureToken: true })
             });
             const authData = await authRes.json();
-
             if (authData.error) return alert("계정 정보가 일치하지 않습니다.");
 
             currentIdToken = authData.idToken;
@@ -483,17 +470,13 @@
             
             await initMasterSettings();
             startDashboard();
-
-        } catch(e) {
-            alert("로그인 통신 중 오류가 발생했습니다.");
-        }
+        } catch(e) { alert("로그인 통신 중 오류가 발생했습니다."); }
     }
 
     window.addEventListener('DOMContentLoaded', () => {
         const savedId = localStorage.getItem('shinhwa_master_id');
         const savedPw = localStorage.getItem('shinhwa_master_pw');
         const isAuto = localStorage.getItem('shinhwa_master_auto');
-        
         if (savedId && savedPw && isAuto === 'true') {
             document.getElementById('masterId').value = savedId;
             document.getElementById('masterPw').value = savedPw;
@@ -511,7 +494,6 @@
                 document.getElementById('setGlobalNoticeText').value = noticeData.text;
                 document.getElementById('globalNoticeToggle').checked = noticeData.active;
             }
-            
             const termsRes = await fetch(getAuthUrl(`${SETTINGS_URL}/terms.json`));
             const termsData = await termsRes.json();
             if(termsData && termsData.text) {
@@ -574,7 +556,6 @@
 
             const pendingAccounts = allAccounts.filter(acc => acc.status === 'pending');
             const activeAccounts = allAccounts.filter(acc => acc.status === 'active' || acc.status === 'suspended');
-            
             currentActiveAccounts = activeAccounts;
 
             let hasNew = false;
@@ -594,7 +575,6 @@
             updateDashboardStats(activeAccounts.length, pendingAccounts.length);
             renderPendingList(pendingAccounts);
             renderActiveList();
-
         } catch (e) {}
     }
 
@@ -706,7 +686,6 @@
     function renderActiveList() {
         const tbody = document.getElementById('activeCompaniesTbody');
         tbody.innerHTML = '';
-        
         const query = (document.getElementById('masterCompanySearch')?.value || '').toLowerCase().trim();
 
         const filteredAccounts = currentActiveAccounts.filter(acc => {
@@ -968,9 +947,6 @@
       }
     }
 
-    // ==========================================
-    // 🗂️ 1. 업체 전체 데이터 호출 및 화면 구성 (정렬 에러 방지 처리됨)
-    // ==========================================
     async function openCompanyDataModal(id, name) {
         document.getElementById('modalCompanyName').innerText = name;
         document.getElementById('modalClientCount').innerText = '-';
@@ -992,7 +968,6 @@
             
             const clients = normalizeData(data?.clients);
             const records = normalizeData(data?.records);
-            
             currentCompanyRecords = records;
             
             const reports = records.filter(r => r.type === 'report');
@@ -1006,12 +981,7 @@
                 document.getElementById('modalDocList').innerHTML = '<div class="p-6 text-center text-[#94A3B8] text-[13px] font-bold border-t border-white/5">발행된 문서가 없습니다.</div>';
             } else {
                 let docHtml = '';
-                // [안전장치 추가] 숫자 ID일 경우 발생하던 에러(localeCompare) 원천 차단
-                const sortedRecords = [...records].sort((a,b) => {
-                    const idA = String(a.id || '');
-                    const idB = String(b.id || '');
-                    return idB.localeCompare(idA);
-                });
+                const sortedRecords = [...records].sort((a,b) => String(b.id || '').localeCompare(String(a.id || '')));
 
                 sortedRecords.forEach(r => {
                     const isQuote = r.type === 'quote';
@@ -1062,7 +1032,6 @@
                 document.getElementById('modalClientList').innerHTML = clientHtml;
             }
             lucide.createIcons();
-            
         } catch (e) {
             document.getElementById('modalDocList').innerHTML = '<div class="p-6 text-center text-red-400 text-[13px] font-bold">오류: 데이터를 가져오지 못했습니다.</div>';
             document.getElementById('modalClientList').innerHTML = '<div class="p-6 text-center text-red-400 text-[13px] font-bold">오류: 데이터를 가져오지 못했습니다.</div>';
@@ -1077,9 +1046,6 @@
         setTimeout(() => { modal.classList.add('hidden'); }, 200);
     }
 
-    // ==========================================
-    // 🗂️ 2. 개별 거래처의 히스토리 열람 (에러 방지 적용)
-    // ==========================================
     function openClientHistory(clientName) {
         document.getElementById('historyModalClientName').innerText = clientName;
         const container = document.getElementById('historyModalListContainer');
@@ -1087,11 +1053,7 @@
         
         const filteredRecords = currentCompanyRecords
             .filter(r => r.clientName === clientName)
-            .sort((a,b) => {
-                const idA = String(a.id || '');
-                const idB = String(b.id || '');
-                return idB.localeCompare(idA);
-            });
+            .sort((a,b) => String(b.id || '').localeCompare(String(a.id || '')));
         
         if(filteredRecords.length === 0) {
             container.innerHTML = `<div class="p-8 text-center text-[#94A3B8] text-[13px] font-bold bg-white/5 rounded-[16px] border border-dashed border-white/10">이 거래처에 발행된 일지나 견적서가 없습니다.</div>`;
@@ -1112,7 +1074,7 @@
                                 <div class="text-[#94A3B8] text-[12px] font-medium truncate mt-0.5">${r.round}</div>
                             </div>
                         </div>
-                        <button onclick="openDocumentPreview('${r.id}')" class="shrink-0 px-4 py-2 bg-[#84CC16] text-[#12261E] rounded-[10px] text-[12px] font-black hover:bg-[#9BE32D] transition-all flex items-center gap-1.5 shadow-md"><i data-lucide="file-search" class="w-3.5 h-3.5"></i> 상세 열람</button>
+                        <button onclick="openDocumentPreview('${r.id}')" class="shrink-0 px-4 py-2 bg-[#84CC16] text-[#12261E] rounded-[10px] text-[12px] font-bold hover:bg-[#9BE32D] transition-all flex items-center gap-1.5 shadow-md"><i data-lucide="file-search" class="w-3.5 h-3.5"></i> 상세 열람</button>
                     </div>
                 `;
             });
@@ -1134,14 +1096,9 @@
         setTimeout(() => { modal.classList.add('hidden'); }, 200);
     }
 
-    // ==========================================
-    // 🗂️ [안전장치 추가] 파이어베이스 딥 서치 (재귀 탐색) 
-    // 문자(String)와 숫자(Number) ID가 섞여 있어도 찾을 수 있게 강화!
-    // ==========================================
     function extractRealDoc(data, targetId) {
         let result = null;
-        const targetStr = String(targetId); // 숫자 ID 에러 원천 차단
-
+        const targetStr = String(targetId); 
         function search(node) {
             if (result) return;
             if (!node || typeof node !== 'object') return;
@@ -1171,17 +1128,22 @@
         return result;
     }
 
-    // ==========================================
-    // 🗂️ 3. 문서 상세 원본 추출 및 화면 렌더링
-    // ==========================================
     function openDocumentPreview(docId) {
-        const targetStr = String(docId); // 모든 아이디를 텍스트로 통일
+        const targetStr = String(docId); 
         const shortcut = currentCompanyRecords.find(r => String(r.id) === targetStr);
         if(!shortcut) return alert('문서 데이터를 불러올 수 없습니다.');
 
         let realDoc = extractRealDoc(currentCompanyFullData, targetStr) || {};
-        const docData = { ...shortcut, ...realDoc };
+        
+        // 🚨 디버깅(원인 파악)용 팝업 추가
+        alert(
+            "==== 현재 DB 조회 상태 ====\n\n" +
+            "찾는 아이디: " + targetStr + "\n" +
+            "원본(알맹이) 데이터: " + (Object.keys(realDoc).length > 0 ? "정상 발견!" : "못 찾음!!") + "\n\n" +
+            "(*만약 '못 찾음'이라면 파이어베이스 경로 구조가 다른 것입니다.)"
+        );
 
+        const docData = { ...shortcut, ...realDoc };
         const docDate = docData.date || docData.createdAt || '날짜 미상';
         const clientName = docData.clientName || docData.customerName || '고객명 미상';
 
@@ -1190,7 +1152,6 @@
 
         if(docData.type === 'quote') {
             const receiver = docData.receiver || docData.receiverName || clientName || '-';
-            
             let supplier = '-';
             if (typeof docData.supplier === 'string') {
                 supplier = docData.supplier;
@@ -1201,7 +1162,6 @@
             }
             
             const items = normalizeData(docData.items || docData.rows || docData.quoteItems || docData.details || docData.productList);
-            
             let itemsHtml = '';
             if(items.length > 0) {
                 items.forEach(item => {
