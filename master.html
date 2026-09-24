@@ -1171,27 +1171,39 @@
     // ==========================================
     // 🗂️ 마스터 전용 인앱 문서 상세 뷰어 (진짜 알맹이 추적기 탑재)
     // ==========================================
+    // ==========================================
+    // 🗂️ 마스터 전용 인앱 문서 상세 뷰어 (파이어베이스 호환 강력 추적기 탑재)
+    // ==========================================
     function openDocumentPreview(docId) {
         // 1. 껍데기(단축 정보) 가져오기
         const shortcut = currentCompanyRecords.find(r => r.id === docId);
         if(!shortcut) return alert('문서 데이터를 불러올 수 없습니다.');
 
-        // 2. 금고 전체 데이터에서 진짜 알맹이 추적하기!
         let realDoc = null;
 
-        // 추적 1단계: 거래처 히스토리(일지) 뒤지기
+        // 💡 파이어베이스 특성상 배열이 객체로 변환된 경우를 완벽히 뚫고 들어가는 안전 함수
+        const getSafeArray = (obj) => {
+            if (!obj) return [];
+            if (Array.isArray(obj)) return obj;
+            return Object.values(obj).filter(item => item !== null && item !== undefined);
+        };
+
+        // 추적 1단계: 모든 거래처의 히스토리(일지) 금고를 샅샅이 뒤지기
         if (currentCompanyFullData && currentCompanyFullData.clients) {
-            for (const client of currentCompanyFullData.clients) {
+            const clientsList = getSafeArray(currentCompanyFullData.clients);
+            for (const client of clientsList) {
                 if (client.history) {
-                    const found = client.history.find(h => h.id === docId || (h.date === shortcut.date && h.round === shortcut.round));
+                    const historyList = getSafeArray(client.history);
+                    const found = historyList.find(h => h.id === docId || (h.date === shortcut.date && h.round === shortcut.round));
                     if (found) { realDoc = found; break; }
                 }
             }
         }
 
-        // 추적 2단계: 견적 보관함(quoteList) 뒤지기
+        // 추적 2단계: 견적 보관함(quoteList) 금고 샅샅이 뒤지기
         if (!realDoc && currentCompanyFullData && currentCompanyFullData.quoteList) {
-            const found = currentCompanyFullData.quoteList.find(q => q.id === docId || (q.date === shortcut.date && q.clientName === shortcut.clientName));
+            const quoteList = getSafeArray(currentCompanyFullData.quoteList);
+            const found = quoteList.find(q => q.id === docId || (q.date === shortcut.date && q.clientName === shortcut.clientName));
             if (found) realDoc = found;
         }
 
@@ -1210,11 +1222,10 @@
             const receiver = realDoc.receiver || realDoc.receiverName || clientName || '수신자 정보 없음';
             const supplier = realDoc.supplier || realDoc.supplierName || realDoc.provider || '공급자 정보 없음';
             
-            // 견적 항목 배열 찾기 (변수명 보험 처리)
-            const items = realDoc.items || realDoc.rows || realDoc.quoteItems || realDoc.details || [];
+            const items = getSafeArray(realDoc.items || realDoc.rows || realDoc.quoteItems || realDoc.details);
             
             let itemsHtml = '';
-            if(items && items.length > 0) {
+            if(items.length > 0) {
                 items.forEach(item => {
                     const name = item.name || item.itemName || item.title || '-';
                     const spec = item.spec || item.standard || item.size || '-';
@@ -1223,7 +1234,7 @@
                     itemsHtml += `<tr class="border-b border-white/5 last:border-0"><td class="py-3 text-white text-[13px] font-bold">${name}</td><td class="py-3 text-right text-[#94A3B8] text-[12px]">${spec}</td><td class="py-3 text-right text-white text-[13px]">${qty}</td><td class="py-3 text-right text-[#3B82F6] font-bold text-[13px]">${Number(price).toLocaleString()}원</td></tr>`;
                 });
             } else {
-                itemsHtml = `<tr><td colspan="4" class="py-6 text-center text-[#94A3B8] text-[13px]">세부 품목 데이터가 없습니다. (혹은 데이터 구조 차이)</td></tr>`;
+                itemsHtml = `<tr><td colspan="4" class="py-6 text-center text-[#94A3B8] text-[13px]">세부 품목 데이터가 없습니다.</td></tr>`;
             }
 
             const totalPrice = realDoc.totalPrice || realDoc.totalAmount || realDoc.sum || 0;
@@ -1271,9 +1282,9 @@
             `;
         } else {
             // [현장 일지 알맹이 렌더링]
-            const tags = realDoc.categories || realDoc.tags || realDoc.workTypes || [];
+            const tags = getSafeArray(realDoc.categories || realDoc.tags || realDoc.workTypes);
             let tagsHtml = '';
-            if(tags && tags.length > 0) {
+            if(tags.length > 0) {
                 tagsHtml = tags.map(c => `<span class="bg-[#84CC16]/10 text-[#84CC16] border border-[#84CC16]/20 px-2.5 py-1 rounded-md text-[11px] font-bold">${c}</span>`).join('');
             }
             
@@ -1301,7 +1312,7 @@
                         ${tagsHtml ? `<div><div class="text-[11px] font-bold text-[#94A3B8] mb-2">작업 분류</div><div class="flex flex-wrap gap-1.5">${tagsHtml}</div></div>` : ''}
                         <div>
                             <div class="text-[11px] font-bold text-[#94A3B8] mb-1.5">작업 상세 내용</div>
-                            <div class="text-white text-[14px] leading-relaxed break-keep bg-white/5 p-3 rounded-[12px]">${reportContent ? reportContent : '<span class="text-white/40">수기 입력 내용이 없습니다.</span>'}</div>
+                            <div class="text-white text-[14px] leading-relaxed break-keep bg-white/5 p-3 rounded-[12px]">${reportContent ? reportContent : '<span class="text-[#94A3B8]">수기 입력 내용이 없습니다.</span>'}</div>
                         </div>
                         ${imgHtml}
                     </div>
@@ -1309,12 +1320,12 @@
             `;
         }
 
-        // 💡 100% 안전장치: 화면에 예쁘게 안 나올 경우를 대비해 원본 데이터를 확인하는 숨겨진 버튼 추가
+        // 💡 100% 안전장치: 데이터가 안 보일 때 확인하는 추적 버튼
         html += `
             <div class="mt-6 pt-4 border-t border-white/10">
                 <details class="text-[#94A3B8] text-[10px]">
                     <summary class="cursor-pointer hover:text-white transition-colors">🛠 데이터 원본 추적 로그 (안 보일 때 클릭)</summary>
-                    <pre class="mt-2 bg-black p-3 rounded-lg overflow-x-auto text-[10px] text-green-400 font-mono">${JSON.stringify(realDoc, null, 2)}</pre>
+                    <pre class="mt-2 bg-black p-3 rounded-lg overflow-x-auto text-[10px] text-green-400 font-mono whitespace-pre-wrap">${JSON.stringify(realDoc, null, 2)}</pre>
                 </details>
             </div>
         `;
@@ -1326,7 +1337,6 @@
         setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10);
         lucide.createIcons();
     }
-
     function closeDocumentPreview() {
         const modal = document.getElementById('documentPreviewModal');
         const box = document.getElementById('documentPreviewBox');
