@@ -2561,8 +2561,7 @@
     }
 
     function switchView(mode, pushHistory = true) {
-      const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView', 'calendarView', 'ledgerView', 'encyclopediaView', 'loungeView'];
-      views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
+      const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView', 'calendarView', 'ledgerView', 'encyclopediaView', 'loungeView', 'boardView'];
       
       const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient', 'tabContacts', 'tabCalendar', 'tabLedger', 'tabEncyclopedia', 'tabInquiry', 'tabLounge'];
       mainTabs.forEach(t => { 
