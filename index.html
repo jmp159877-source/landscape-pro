@@ -1319,7 +1319,32 @@
     function closeLensResult(fromPopstate = false) { const modal = document.getElementById('lensResultModal'); const box = document.getElementById('lensResultBox'); if(modal) modal.classList.add('opacity-0'); if(box) box.classList.add('scale-95'); setTimeout(() => { if(modal) modal.classList.add('hidden'); }, 200); if(!fromPopstate && history.state && history.state.modalOpen) history.back(); }
     function copyLensResult() { const content = document.getElementById('lensResultContent').innerText; navigator.clipboard.writeText(content).then(() => alert("복사되었습니다.")); }
     function openModalForLens() { modalImages = [currentLensImg]; modalCurrentIdx = 0; updateModalImage(); document.getElementById('imageModal').style.zIndex = "3000"; document.getElementById('imageModal').classList.remove('hidden'); history.pushState({ modalOpen: true }, "", ""); }
+    function saveLensResultToGallery() {
+        const captureArea = document.getElementById('lensCaptureArea');
+        if (!captureArea) return;
 
+        showLoadingOverlay("진단 결과를 이미지로 변환 중입니다...");
+
+        setTimeout(() => {
+            html2canvas(captureArea, { 
+                scale: 2, 
+                useCORS: true, 
+                backgroundColor: "#FFFFFF" 
+            }).then(canvas => {
+                const link = document.createElement('a'); 
+                link.download = '조경노트_AI진단_' + Date.now() + '.png'; 
+                link.href = canvas.toDataURL('image/png'); 
+                link.click();
+                
+                document.getElementById('loadingOverlay')?.remove();
+                alert("✅ 사진과 진단 내역이 갤러리(다운로드 폴더)에 저장되었습니다.");
+            }).catch(e => { 
+                document.getElementById('loadingOverlay')?.remove();
+                alert("이미지 저장 중 오류가 발생했습니다: " + e.message); 
+            });
+        }, 300);
+    }
+    
     lucide.createIcons();
     const today = new Date(); const formattedDate = `${today.getFullYear()}. ${String(today.getMonth()+1).padStart(2,'0')}. ${String(today.getDate()).padStart(2,'0')}`;
     document.getElementById('viewDate').innerText = formattedDate;
