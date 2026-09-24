@@ -2551,10 +2551,10 @@
         }
       }
 
-      if (mode !== 'calendar' && mode !== 'lens' && mode !== 'client_shared' && mode !== 'lounge') {
-          setTimeout(() => toggleMainCategory('collapse'), 100);
-      } else {
+      if (mode === 'calendar' || mode === 'client_shared') {
           setTimeout(() => toggleMainCategory('expand'), 100);
+      } else {
+          setTimeout(() => toggleMainCategory('collapse'), 100);
       }
 
       if(typeof lucide !== 'undefined') lucide.createIcons(); window.scrollTo(0, 0); 
