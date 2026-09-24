@@ -402,11 +402,20 @@
         return `${url}${sep}auth=${currentIdToken}`;
     }
 
-    // 파이어베이스 데이터 정규화 함수 (배열/객체 혼용 문제 해결)
+    // [수정됨] 파이어베이스 데이터 정규화 함수 (ID 유실 방지 및 강력한 방어 로직)
     function normalizeData(data) {
         if (!data) return [];
+        if (typeof data !== 'object') return [data]; 
         if (Array.isArray(data)) return data.filter(item => item !== null && item !== undefined);
-        return Object.values(data).filter(item => item !== null && item !== undefined);
+        
+        // 객체인 경우: 파이어베이스의 폴더명(Key)을 id로 강제 주입하여 유실 방지
+        return Object.keys(data).map(key => {
+            const item = data[key];
+            if (item && typeof item === 'object') {
+                if (item.id === undefined) item.id = key;
+            }
+            return item;
+        }).filter(item => item !== null && item !== undefined);
     }
 
     async function registerMaster() {
@@ -960,7 +969,7 @@
     }
 
     // ==========================================
-    // 🗂️ 1. 업체 전체 데이터 호출 및 화면 구성
+    // 🗂️ 1. 업체 전체 데이터 호출 및 화면 구성 (정렬 에러 방지 처리됨)
     // ==========================================
     async function openCompanyDataModal(id, name) {
         document.getElementById('modalCompanyName').innerText = name;
@@ -979,7 +988,6 @@
             const res = await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(id)}/data.json`));
             const data = await res.json();
             
-            // 전역 변수에 전체 데이터 저장 (상세 뷰어에서 원본 추출 시 사용)
             currentCompanyFullData = data; 
             
             const clients = normalizeData(data?.clients);
@@ -994,12 +1002,17 @@
             document.getElementById('modalReportCount').innerText = reports.length;
             document.getElementById('modalQuoteCount').innerText = quotes.length;
             
-            // 최근 작성 문서 렌더링
             if(records.length === 0) {
                 document.getElementById('modalDocList').innerHTML = '<div class="p-6 text-center text-[#94A3B8] text-[13px] font-bold border-t border-white/5">발행된 문서가 없습니다.</div>';
             } else {
                 let docHtml = '';
-                const sortedRecords = [...records].sort((a,b) => b.id.localeCompare(a.id));
+                // [안전장치 추가] 숫자 ID일 경우 발생하던 에러(localeCompare) 원천 차단
+                const sortedRecords = [...records].sort((a,b) => {
+                    const idA = String(a.id || '');
+                    const idB = String(b.id || '');
+                    return idB.localeCompare(idA);
+                });
+
                 sortedRecords.forEach(r => {
                     const isQuote = r.type === 'quote';
                     const badge = isQuote 
@@ -1022,12 +1035,11 @@
                 document.getElementById('modalDocList').innerHTML = docHtml;
             }
             
-            // 거래처 목록 렌더링
             if(clients.length === 0) {
                 document.getElementById('modalClientList').innerHTML = '<div class="p-6 text-center text-[#94A3B8] text-[13px] font-bold border-t border-white/5">등록된 거래처가 없습니다.</div>';
             } else {
                 let clientHtml = '';
-                const sortedClients = [...clients].sort((a,b) => a.name.localeCompare(b.name));
+                const sortedClients = [...clients].sort((a,b) => String(a.name || '').localeCompare(String(b.name || '')));
                 sortedClients.forEach(c => {
                     clientHtml += `
                         <div class="p-4 hover:bg-white/5 transition-colors flex flex-col gap-1.5 cursor-pointer border-b border-white/5 last:border-0" onclick="openClientHistory('${c.name}')">
@@ -1066,14 +1078,20 @@
     }
 
     // ==========================================
-    // 🗂️ 2. 개별 거래처의 히스토리 열람
+    // 🗂️ 2. 개별 거래처의 히스토리 열람 (에러 방지 적용)
     // ==========================================
     function openClientHistory(clientName) {
         document.getElementById('historyModalClientName').innerText = clientName;
         const container = document.getElementById('historyModalListContainer');
         container.innerHTML = '';
         
-        const filteredRecords = currentCompanyRecords.filter(r => r.clientName === clientName).sort((a,b) => b.id.localeCompare(a.id));
+        const filteredRecords = currentCompanyRecords
+            .filter(r => r.clientName === clientName)
+            .sort((a,b) => {
+                const idA = String(a.id || '');
+                const idB = String(b.id || '');
+                return idB.localeCompare(idA);
+            });
         
         if(filteredRecords.length === 0) {
             container.innerHTML = `<div class="p-8 text-center text-[#94A3B8] text-[13px] font-bold bg-white/5 rounded-[16px] border border-dashed border-white/10">이 거래처에 발행된 일지나 견적서가 없습니다.</div>`;
@@ -1117,11 +1135,13 @@
     }
 
     // ==========================================
-    // 🗂️ [신규 추가] 파이어베이스 딥 서치 (재귀 탐색) 함수
-    // 전체 데이터 덩어리 안에서 ID를 추적해 실제 원본 뭉치를 찾아냅니다.
+    // 🗂️ [안전장치 추가] 파이어베이스 딥 서치 (재귀 탐색) 
+    // 문자(String)와 숫자(Number) ID가 섞여 있어도 찾을 수 있게 강화!
     // ==========================================
     function extractRealDoc(data, targetId) {
         let result = null;
+        const targetStr = String(targetId); // 숫자 ID 에러 원천 차단
+
         function search(node) {
             if (result) return;
             if (!node || typeof node !== 'object') return;
@@ -1129,7 +1149,7 @@
             if (Array.isArray(node)) {
                 for (let i = 0; i < node.length; i++) {
                     if (node[i] && typeof node[i] === 'object') {
-                        if (node[i].id === targetId) { result = node[i]; return; }
+                        if (String(node[i].id) === targetStr) { result = node[i]; return; }
                         search(node[i]);
                     }
                 }
@@ -1137,9 +1157,9 @@
                 for (const key in node) {
                     const val = node[key];
                     if (val && typeof val === 'object') {
-                        if (val.id === targetId) { result = val; return; }
-                        if (key === targetId) {
-                            result = val.id ? val : { id: targetId, ...val };
+                        if (String(val.id) === targetStr) { result = val; return; }
+                        if (String(key) === targetStr) {
+                            result = val.id ? val : { id: key, ...val };
                             return;
                         }
                         search(val);
@@ -1152,13 +1172,14 @@
     }
 
     // ==========================================
-    // 🗂️ 3. 문서 상세 원본 추출 및 화면 렌더링 (로직 완전 개편)
+    // 🗂️ 3. 문서 상세 원본 추출 및 화면 렌더링
     // ==========================================
     function openDocumentPreview(docId) {
-        const shortcut = currentCompanyRecords.find(r => r.id === docId);
+        const targetStr = String(docId); // 모든 아이디를 텍스트로 통일
+        const shortcut = currentCompanyRecords.find(r => String(r.id) === targetStr);
         if(!shortcut) return alert('문서 데이터를 불러올 수 없습니다.');
 
-        let realDoc = extractRealDoc(currentCompanyFullData, docId) || {};
+        let realDoc = extractRealDoc(currentCompanyFullData, targetStr) || {};
         const docData = { ...shortcut, ...realDoc };
 
         const docDate = docData.date || docData.createdAt || '날짜 미상';
@@ -1283,6 +1304,7 @@
         setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10);
         lucide.createIcons();
     }
+    
     function closeDocumentPreview() {
         const modal = document.getElementById('documentPreviewModal');
         const box = document.getElementById('documentPreviewBox');
