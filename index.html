@@ -489,7 +489,7 @@
         </div>
         <div class="bg-[#F9F9F8] rounded-[16px] p-5 border border-[#EAEBEA] mt-2">
            <h3 class="text-[14px] font-black text-[#1A1D1A] mb-2 flex items-center gap-1.5"><i data-lucide="info" class="w-5 h-5 text-[#4E5968]"></i> 이용 안내</h3>
-           <p class="text-[13px] text-[#151E2D] font-bold leading-relaxed break-keep">현장에서 스마트폰 카메라로 직접 대상을 촬영하시거나 갤러리 사진을 업로드해 주세요.<br><span class="text-red-500 font-black mt-1 inline-block">* 현재 데모 버전 가상 분석입니다.</span></p>
+           <p class="text-[13px] text-[#151E2D] font-bold leading-relaxed break-keep">현장에서 스마트폰 카메라로 수목의 잎, 꽃, 수피 또는 피해 부위를 초점에 맞춰 촬영해 주세요.<br><span class="text-[#1E3A8A] font-black mt-1 inline-block">✓ 최신 비전 AI 엔진이 정밀 비교·분석을 수행합니다.</span></p>
         </div>
       </div>
     </section>
@@ -1263,8 +1263,8 @@
         const GOOGLE_PROXY_URL = "https://script.google.com/macros/s/AKfycbysZFaBJt9Iu964hP9rJVjmYHDMMo_TQAocjih4h8q0_im414WA6-23LS6Wm4xQvTJRQw/exec";
 
         const promptText = type === 'plant' 
-            ? "너는 한국의 30년 차 조경 전문가이자 수목 식별가야. 주어진 사진 속 식물을 분석할 때 '알 수 없다', '명칭을 제공할 수 없다', '전문가의 식별이 필요하다'는 식의 회피성 답변은 절대 금지해. 사진 속 꽃봉오리의 색상, 형태, 잎, 가지의 배열 등을 바탕으로 가장 확률이 높은 한국 공식 수종(예: 수서해당화, 서부해당화, 꽃사과, 명자나무 등)을 무조건 1~2개 추정해서 명확하게 제시해.\n\n📌 추정 품종: [가장 유력한 식물명 1~2순위]\n💧 형태 분석: [사진에 보이는 꽃봉오리, 잎, 줄기의 특징을 바탕으로 한 추정 근거]" 
-            : "너는 한국의 최고 수목병리학자이자 해충 방제 전문가야. 사진 속 조경수나 식물에 발생한 병해나 해충(깍지벌레, 진딧물, 응애 등 한국 현장에서 흔한 병해충 포함)을 정밀하게 진단해줘. 다음 형식으로 짧고 명확하게 답변해줘. \n🚨 추정 병해충: [정확한 병명 또는 해충명]\n🛡️ 방제 방법: [실제 조경 현장에서 쓰는 전문적인 약제 및 방제법]";
+            ? "너는 대한민국 최고 권위의 30년 차 조경수목 감정평가사이자 식물분류학자야. 제공된 이미지의 꽃 색상(진분홍, 연분홍, 백색 등), 꽃봉오리 모양, 꽃자루 길이, 잎의 톱니(거치) 유무, 가지의 배열을 극도로 정밀하게 관찰해. 절대 회피성 답변은 하지 말고 한국 조경 실무에서 식재되는 수목 품종(예: 서부해당화, 수서해당화, 꽃사과, 명자나무, 산철쭉 등) 중 가장 일치율이 높은 1~2종을 확정적으로 판정해줘.\n\n📌 최종 판정 수종: [가장 유력한 공식 수목명]\n🌿 주요 식별 포인트: [꽃 색상, 꽃자루, 잎 모양 등 육안 확인된 결정적 특징]\n✂️ 관리 가이드: [해당 수종의 실무 전지 적기 및 관리 유의점 한 줄]"
+            : "너는 대한민국 국립산림과학원 출신의 수목병리학 및 해충방제 최고 전문가야. 사진 속 병반의 색상, 환부 형태, 해충의 외형적 특징을 정밀 진단해줘. \n🚨 진단 결과: [정확한 병명 또는 해충명]\n🛡️ 추천 약제 및 방제법: [농약안전정보시스템 기준 실무 방제 약제 성분 및 현장 조치법]";
 
         try {
             const response = await fetch(GOOGLE_PROXY_URL, {
@@ -1273,8 +1273,8 @@
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({
                     model: "gpt-4o", 
-                    messages: [{ role: "user", content: [ { type: "text", text: promptText }, { type: "image_url", image_url: { url: base64Image } } ] }],
-                    max_tokens: 400, temperature: 0.2
+                    messages: [{ role: "user", content: [ { type: "text", text: promptText }, { type: "image_url", image_url: { url: base64Image, detail: "high" } } ] }],
+                    max_tokens: 500, temperature: 0.2
                 })
             });
 
