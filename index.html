@@ -1077,7 +1077,12 @@
                 await syncWithCloud(); 
                 history.replaceState({ view: 'calendar' }, "", ""); 
       switchView('calendar', false); 
-                setTimeout(checkAppNotices, 1000); // 팝업 타이밍 안정화 (1초 딜레이)
+                // 앱 진입 1초 후 최초 팝업 확인
+                setTimeout(() => {
+                    checkAppNotices();
+                    // 💡 [실시간 연동] 앱이 켜져 있는 동안 1분(60초)마다 몰래 서버를 확인하여 새 팝업이 있으면 즉시 띄웁니다.
+                    setInterval(checkAppNotices, 60000); 
+                }, 1000);
             }
         } catch(e) { 
             document.getElementById('authView').classList.remove('hidden');
@@ -1089,6 +1094,10 @@
 
     let noticeQueue = []; let currentShowingNotice = null;
     async function checkAppNotices() {
+        // 💡 [안전 장치] 이미 화면에 팝업 창이 떠서 사용자가 읽고 있는 중이라면, 중복해서 체크하지 않고 대기합니다.
+        const modal = document.getElementById('appNoticeModal');
+        if (modal && !modal.classList.contains('hidden')) return;
+
         noticeQueue = [];
         // 1. 전체 공지 확인
         try {
