@@ -34,7 +34,7 @@
 
   <div id="toastContainer" class="fixed top-6 right-6 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
 
-  <!-- 정석적인 인증이 적용된 마스터 로그인 화면 -->
+  <!-- 마스터 로그인 화면 -->
   <section id="masterLoginView" class="fixed inset-0 z-[5000] bg-[#0B1120] flex flex-col items-center justify-center p-6">
     <div class="glass-panel p-10 rounded-[32px] w-full max-w-md shadow-2xl flex flex-col items-center relative overflow-hidden">
       <div class="absolute -top-20 -right-20 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
@@ -66,6 +66,7 @@
     </div>
   </section>
 
+  <!-- 좌측 사이드바 -->
   <aside id="sidebar" class="hidden md:flex w-full fixed bottom-0 left-0 z-50 glass-panel border-t border-white/10 p-2 pb-6 md:p-5 md:relative md:w-64 md:h-screen md:border-t-0 md:border-r md:flex-col md:sticky md:top-0 shadow-[0_-15px_30px_rgba(0,0,0,0.4)] md:shadow-none">
     <div class="hidden md:flex items-center gap-3 mb-10 pl-2 mt-4">
       <div class="w-10 h-10 bg-[#3B82F6] rounded-[12px] flex items-center justify-center shadow-lg"><i data-lucide="shield-check" class="w-5 h-5 text-white"></i></div>
@@ -102,6 +103,7 @@
 
   <main id="mainContent" class="hidden flex-1 p-5 md:p-10 overflow-y-auto w-full max-w-6xl mx-auto pb-24 md:pb-10">
     
+    <!-- 대시보드 화면 -->
     <div id="view-dashboard" class="space-y-6">
       <h1 class="text-[24px] font-black tracking-tight flex items-center gap-2"><i data-lucide="activity" class="w-6 h-6 text-[#3B82F6]"></i> 실시간 플랫폼 현황</h1>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -125,6 +127,7 @@
       </div>
     </div>
 
+    <!-- 가입 승인 대기 화면 -->
     <div id="view-approval" class="hidden space-y-6">
       <div class="flex items-center justify-between border-b border-white/10 pb-4">
         <h1 class="text-[24px] font-black tracking-tight flex items-center gap-2"><i data-lucide="user-check" class="w-6 h-6 text-red-400"></i> 신규 가입 심사 대기 <span id="topApprovalCount" class="bg-red-500 text-white text-[13px] px-2.5 py-1 rounded-full align-middle ml-1 hidden">0건</span></h1>
@@ -137,6 +140,7 @@
       </div>
     </div>
 
+    <!-- 사용 업체 관리 화면 -->
     <div id="view-companies" class="hidden space-y-6">
       <div class="flex items-center justify-between border-b border-white/10 pb-4">
         <h1 class="text-[24px] font-black tracking-tight flex items-center gap-2"><i data-lucide="building-2" class="w-6 h-6 text-[#3B82F6]"></i> 등록된 사용 업체 관리</h1>
@@ -174,13 +178,13 @@
       </div>
     </div>
 
+    <!-- 플랫폼 설정 화면 -->
     <div id="view-settings" class="hidden space-y-6">
       <div class="flex items-center justify-between border-b border-white/10 pb-4">
         <h1 class="text-[24px] font-black tracking-tight flex items-center gap-2"><i data-lucide="settings" class="w-6 h-6 text-[#84CC16]"></i> 플랫폼 전체 설정</h1>
       </div>
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        
         <div class="glass-panel rounded-[24px] p-6 space-y-4">
             <h3 class="text-white font-black text-[16px] flex items-center gap-2 mb-2"><i data-lucide="shield" class="w-5 h-5 text-blue-400"></i> 마스터 관리자 계정</h3>
             <p class="text-[#94A3B8] text-[12px] leading-relaxed">* 최고 관리자 아이디 및 비밀번호 변경은 보안 정책에 따라 구글 파이어베이스 콘솔(Authentication)에서 직접 관리해 주시기 바랍니다.</p>
@@ -232,6 +236,7 @@
     </div>
   </main>
 
+  <!-- 모바일 네비게이션 -->
   <nav class="md:hidden glass-panel fixed bottom-0 w-full flex justify-around p-3 pb-8 z-50 border-t border-white/10">
     <button onclick="switchTab('dashboard')" class="mob-nav-btn flex flex-col items-center gap-1.5 text-[#3B82F6] font-bold"><i data-lucide="layout-dashboard" class="w-6 h-6"></i><span class="text-[10px]">대시보드</span></button>
     <button onclick="switchTab('approval')" class="mob-nav-btn flex flex-col items-center gap-1.5 text-[#94A3B8] font-bold relative">
@@ -242,7 +247,7 @@
     <button onclick="switchTab('settings')" class="mob-nav-btn flex flex-col items-center gap-1.5 text-[#94A3B8] font-bold"><i data-lucide="settings" class="w-6 h-6"></i><span class="text-[10px]">설정</span></button>
   </nav>
 
-  <!-- 사업자등록증 이미지 팝업 -->
+  <!-- 모달 모음 -->
   <div id="licenseModal" class="hidden fixed inset-0 z-[6000] bg-black/95 flex flex-col items-center justify-center" onclick="closeLicenseModal()">
     <button class="absolute top-6 right-6 text-white p-2.5 bg-white/10 hover:bg-white/20 rounded-full transition-colors z-50"><i data-lucide="x" class="w-6 h-6"></i></button>
     <div class="text-white font-bold mb-4 z-50 px-4 py-1.5 bg-black/50 rounded-full text-[13px] border border-white/20">사업자등록증 원본 확인</div>
@@ -265,7 +270,6 @@
             <h4 class="text-white font-bold text-[16px] mb-3 flex items-center gap-2"><i data-lucide="file-text" class="w-5 h-5 text-[#3B82F6]"></i> 최근 작성한 문서 내역</h4>
             <div class="bg-[#1E293B] border border-white/5 rounded-[16px] overflow-hidden"><div class="max-h-[250px] overflow-y-auto scrollbar-hide divide-y divide-white/5" id="modalDocList"><div class="p-5 text-center text-[#94A3B8] text-[13px] font-bold">데이터를 불러오는 중입니다...</div></div></div>
          </div>
-         
          <div>
             <h4 class="text-white font-bold text-[16px] mb-3 flex items-center gap-2"><i data-lucide="building-2" class="w-5 h-5 text-[#84CC16]"></i> 거래처 DB</h4>
             <div class="bg-[#1E293B] border border-white/5 rounded-[16px] overflow-hidden">
@@ -321,19 +325,15 @@
   <div id="editCompanyModal" class="hidden fixed inset-0 z-[6000] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200" onclick="closeEditCompanyModal()">
     <div class="bg-[#0F172A] w-full max-w-md rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-white/10" id="editCompanyBox" onclick="event.stopPropagation()">
       <div class="p-5 border-b border-white/10 flex justify-between items-center bg-[#1E293B]">
-        <h3 class="text-[18px] font-black text-white flex items-center gap-2"><i data-lucide="edit-3" class="w-5 h-5 text-[#F59E0B]"></i> 업체 정보 강제 수정 <span class="text-[11px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full ml-1">테스트용</span></h3>
+        <h3 class="text-[18px] font-black text-white flex items-center gap-2"><i data-lucide="edit-3" class="w-5 h-5 text-[#F59E0B]"></i> 업체 정보 수정</h3>
         <button onclick="closeEditCompanyModal()" class="text-[#94A3B8] hover:text-white p-1 transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
       </div>
-      
       <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto scrollbar-hide">
         <input type="hidden" id="editCompOldId">
-        <div class="bg-red-500/10 border border-red-500/30 p-3 rounded-[12px] text-[12px] text-red-400 font-bold break-keep leading-relaxed">
-            <i data-lucide="alert-triangle" class="w-4 h-4 inline-block -mt-0.5"></i> [주의] 아이디(ID)를 변경할 경우 데이터베이스 구조가 통째로 복사 및 이동됩니다.
-        </div>
         <div class="space-y-3">
             <div>
-                <label class="block text-[12px] font-bold text-[#94A3B8] ml-1 mb-1.5">접속 아이디 (영문/숫자)</label>
-                <input type="text" id="editCompId" class="w-full bg-[#1E293B] border border-white/10 rounded-[12px] px-4 py-3.5 text-white text-[14px] font-bold focus:outline-none focus:border-[#F59E0B]">
+                <label class="block text-[12px] font-bold text-[#94A3B8] ml-1 mb-1.5">접속 아이디</label>
+                <input type="text" id="editCompId" class="w-full bg-[#1E293B] border border-white/10 rounded-[12px] px-4 py-3.5 text-white text-[14px] font-bold focus:outline-none focus:border-[#F59E0B]" readonly>
             </div>
             <div>
                 <label class="block text-[12px] font-bold text-[#94A3B8] ml-1 mb-1.5">상호명</label>
@@ -353,25 +353,24 @@
             </div>
         </div>
       </div>
-
       <div class="p-4 border-t border-white/10 bg-[#1E293B] flex gap-2">
           <button onclick="closeEditCompanyModal()" class="flex-1 py-4 bg-white/5 text-white rounded-[14px] font-bold text-[15px] hover:bg-white/10 transition-colors">취소</button>
-          <button onclick="saveCompanyEdit()" class="flex-1 py-4 bg-[#F59E0B] text-[#1E3A8A] rounded-[14px] font-black text-[15px] hover:bg-[#D97706] transition-all flex items-center justify-center gap-1.5"><i data-lucide="save" class="w-4 h-4"></i> 정보 덮어쓰기</button>
+          <button onclick="saveCompanyEdit()" class="flex-1 py-4 bg-[#F59E0B] text-[#1E3A8A] rounded-[14px] font-black text-[15px] hover:bg-[#D97706] transition-all flex items-center justify-center gap-1.5"><i data-lucide="save" class="w-4 h-4"></i> 정보 저장</button>
       </div>
     </div>
   </div>
 
-  <!-- 🗂️ [수정됨] 마스터 전용 문서 상세 열람 모달 (자바스크립트 바깥으로 안전하게 구출) -->
+  <!-- 문서 상세 열람 모달 (인앱 뷰어) -->
   <div id="documentPreviewModal" class="hidden fixed inset-0 z-[8000] bg-black/90 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200" onclick="closeDocumentPreview()">
       <div class="bg-[#0F172A] w-full max-w-xl rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-white/10 max-h-[85vh]" id="documentPreviewBox" onclick="event.stopPropagation()">
           <div class="p-5 border-b border-white/10 flex justify-between items-center bg-[#1E293B]">
               <h3 class="text-[18px] font-black text-white flex items-center gap-2">
-                  <i data-lucide="file-search" class="w-5 h-5 text-[#84CC16]"></i> 마스터 상세 내역 열람
+                  <i data-lucide="file-search" class="w-5 h-5 text-[#84CC16]"></i> 상세 내역 열람
               </h3>
               <button onclick="closeDocumentPreview()" class="text-[#94A3B8] hover:text-white p-1 transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
           </div>
           <div class="flex-1 overflow-y-auto p-5 scrollbar-hide" id="previewModalContent">
-              <!-- 자바스크립트가 견적서/일지 알맹이를 이곳에 꽉꽉 채워줍니다 -->
+              <!-- 데이터 렌더링 영역 -->
           </div>
           <div class="p-4 border-t border-white/10 bg-[#0F172A]">
               <button onclick="closeDocumentPreview()" class="w-full py-4 bg-white/10 text-white rounded-[14px] font-black text-[15px] hover:bg-white/20 transition-colors">닫기</button>
@@ -380,7 +379,6 @@
   </div>
 
   <script>
-    // 🔥 서버 연동 기본 설정
     const API_KEY = "AIzaSyC_1KaOSychXSNF-Z-vnVONLB_-aAGghhk";
     const DB_BASE_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/accounts";
     const SETTINGS_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/settings";
@@ -391,9 +389,11 @@
     let knownPendingIds = new Set();
     let isFirstLoad = true;
     let autoRefreshTimer = null;
+    
+    // 현재 열람 중인 업체의 통합 데이터를 담는 핵심 변수
     let currentCompanyRecords = [];
+    let currentCompanyFullData = null;
 
-    // 보안 통신을 위한 구글 인증 토큰 보관함
     let currentIdToken = "";
 
     function getAuthUrl(url) {
@@ -402,17 +402,21 @@
         return `${url}${sep}auth=${currentIdToken}`;
     }
 
+    // 파이어베이스 데이터 정규화 함수 (배열/객체 혼용 문제 해결)
+    function normalizeData(data) {
+        if (!data) return [];
+        if (Array.isArray(data)) return data.filter(item => item !== null && item !== undefined);
+        return Object.values(data).filter(item => item !== null && item !== undefined);
+    }
+
     async function registerMaster() {
         const id = document.getElementById('masterId').value.trim();
         const pw = document.getElementById('masterPw').value.trim();
         
-        if (id.length < 2 || pw.length < 6) {
-            return alert("마스터 계정 등록 시 아이디는 2자 이상, 비밀번호는 6자리 이상이어야 합니다.");
-        }
+        if (id.length < 2 || pw.length < 6) return alert("아이디 2자 이상, 비밀번호 6자리 이상이어야 합니다.");
 
         const masterEmail = `${id}_master@jogyeongnote.com`;
-
-        if (!confirm(`'${id}' 아이디를 조경노트 PRO 최고 관리자 계정으로 등록하시겠습니까?`)) return;
+        if (!confirm(`'${id}' 계정을 최고 관리자로 등록하시겠습니까?`)) return;
 
         try {
             const res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${API_KEY}`, {
@@ -423,15 +427,11 @@
             const data = await res.json();
 
             if (data.error) {
-                if (data.error.message === 'EMAIL_EXISTS') {
-                    alert("이미 등록된 관리자 아이디입니다. 바로 로그인을 진행해 주세요.");
-                } else {
-                    alert("계정 등록 중 오류가 발생했습니다: " + data.error.message);
-                }
+                if (data.error.message === 'EMAIL_EXISTS') alert("이미 등록된 아이디입니다. 로그인해 주세요.");
+                else alert("등록 중 오류 발생: " + data.error.message);
                 return;
             }
-
-            alert("✅ 마스터 계정 등록이 완료되었습니다! 이제 해당 정보로 로그인이 가능합니다.");
+            alert("관리자 등록이 완료되었습니다! 로그인해 주십시오.");
         } catch (e) {
             alert("통신 중 오류가 발생했습니다.");
         }
@@ -441,9 +441,7 @@
         const id = document.getElementById('masterId').value.trim();
         const pw = document.getElementById('masterPw').value.trim();
         
-        if (id.length < 2 || pw.length < 6) {
-            return alert("아이디는 2자 이상, 비밀번호는 6자리 이상 입력해 주십시오.");
-        }
+        if (id.length < 2 || pw.length < 6) return alert("정보를 정확히 입력해 주십시오.");
 
         const masterEmail = `${id}_master@jogyeongnote.com`; 
 
@@ -455,14 +453,10 @@
             });
             const authData = await authRes.json();
 
-            if (authData.error) {
-                 return alert("등록되지 않은 계정이거나 비밀번호가 틀렸습니다. 처음이시면 [최초 1회 마스터 계정 등록]을 먼저 진행해 주세요.");
-            }
+            if (authData.error) return alert("계정 정보가 일치하지 않습니다.");
 
-            // 정식 구글 인증 열쇠 획득
             currentIdToken = authData.idToken;
             
-            // 🔥 자동 로그인 설정 저장
             if(document.getElementById('masterAutoLoginCheck').checked) {
                 localStorage.setItem('shinhwa_master_id', id);
                 localStorage.setItem('shinhwa_master_pw', pw);
@@ -514,11 +508,11 @@
             if(termsData && termsData.text) {
                 document.getElementById('setTermsText').value = termsData.text;
             }
-        } catch(e) { console.log("기본 설정 불러오기 실패"); }
+        } catch(e) {}
     }
 
     function logoutMaster() {
-      if(confirm('통제실에서 로그아웃 하시겠습니까? 실시간 알림이 중단됩니다.')) {
+      if(confirm('통제실에서 로그아웃 하시겠습니까?')) {
         localStorage.removeItem('shinhwa_master_id');
         localStorage.removeItem('shinhwa_master_pw');
         localStorage.removeItem('shinhwa_master_auto');
@@ -535,7 +529,7 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ text: text, active: isActive })
             });
-            alert("✅ 전체 공지사항 설정이 서버에 반영되었습니다.");
+            alert("전체 공지사항이 반영되었습니다.");
         } catch(e) { alert("저장 실패"); }
     }
 
@@ -547,7 +541,7 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ text: text })
             });
-            alert("✅ 이용약관 및 정책 텍스트가 업데이트 되었습니다.");
+            alert("이용약관이 반영되었습니다.");
         } catch(e) { alert("저장 실패"); }
     }
 
@@ -565,9 +559,7 @@
             allAccounts = [];
             if (data && !data.error) {
                 for (const accId in data) {
-                    if (data[accId].profile) {
-                        allAccounts.push(data[accId].profile);
-                    }
+                    if (data[accId].profile) allAccounts.push(data[accId].profile);
                 }
             }
 
@@ -594,7 +586,7 @@
             renderPendingList(pendingAccounts);
             renderActiveList();
 
-        } catch (e) { console.error("서버 통신 실패:", e); }
+        } catch (e) {}
     }
 
     function playNotificationSound() {
@@ -698,11 +690,8 @@
     }
 
     function handleCompanyCheck(checkbox, accId) {
-        if(checkbox.checked) {
-            globalCheckedCompanies.add(accId);
-        } else {
-            globalCheckedCompanies.delete(accId);
-        }
+        if(checkbox.checked) globalCheckedCompanies.add(accId);
+        else globalCheckedCompanies.delete(accId);
     }
 
     function renderActiveList() {
@@ -749,10 +738,10 @@
                 <td class="p-4 ${textStyle}">${acc.ceo}</td>
                 <td class="p-4 ${textStyle}">${acc.phone}</td>
                 <td class="p-4 pr-6 text-right space-x-1.5 flex justify-end items-center">
-                    <button onclick="openCompanyDataModal('${acc.id}', '${acc.name}')" class="px-3 py-2 bg-[#3B82F6]/20 text-blue-300 border border-blue-500/30 rounded-[8px] text-[11px] font-bold hover:bg-[#3B82F6]/30 transition-all flex items-center gap-1.5 mr-1" title="데이터 열람">
+                    <button onclick="openCompanyDataModal('${acc.id}', '${acc.name}')" class="px-3 py-2 bg-[#3B82F6]/20 text-blue-300 border border-blue-500/30 rounded-[8px] text-[11px] font-bold hover:bg-[#3B82F6]/30 transition-all flex items-center gap-1.5 mr-1">
                         <i data-lucide="database" class="w-3.5 h-3.5 inline"></i> 데이터 열람
                     </button>
-                    <button onclick="openEditCompanyModal('${acc.id}')" class="px-3 py-2 bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20 rounded-[8px] text-[11px] font-bold hover:bg-[#F59E0B]/20 transition-all mr-1" title="정보 강제 수정 (테스트용)">
+                    <button onclick="openEditCompanyModal('${acc.id}')" class="px-3 py-2 bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20 rounded-[8px] text-[11px] font-bold hover:bg-[#F59E0B]/20 transition-all mr-1">
                         <i data-lucide="edit-3" class="w-3.5 h-3.5 inline"></i> 수정
                     </button>
                     ${isSuspended 
@@ -760,12 +749,11 @@
                         : `<button onclick="updateAccountStatus('${acc.id}', 'suspended')" class="px-3 py-2 bg-orange-500/10 text-orange-400 border border-orange-500/20 rounded-[8px] text-[11px] font-bold hover:bg-orange-500/20 transition-all">이용 정지</button>`
                     }
                     <button onclick="resetPassword('${acc.id}')" class="px-3 py-2 bg-white/10 text-white border border-white/20 rounded-[8px] text-[11px] font-bold hover:bg-white/20 transition-all" title="비번 1234로 초기화"><i data-lucide="key" class="w-3.5 h-3.5 inline"></i> 초기화</button>
-                    <button onclick="deleteAccount('${acc.id}', '영구 강제 탈퇴')" class="px-3 py-2 bg-red-500/10 text-red-500 border border-red-500/20 rounded-[8px] text-[11px] font-bold hover:bg-red-500/20 transition-all" title="영구 탈퇴"><i data-lucide="trash-2" class="w-3.5 h-3.5 inline"></i></button>
+                    <button onclick="deleteAccount('${acc.id}', '영구 강제 탈퇴')" class="px-3 py-2 bg-red-500/10 text-red-500 border border-red-500/20 rounded-[8px] text-[11px] font-bold hover:bg-red-500/20 transition-all"><i data-lucide="trash-2" class="w-3.5 h-3.5 inline"></i></button>
                 </td>
             `;
             tbody.appendChild(tr);
         });
-        
         lucide.createIcons();
     }
 
@@ -783,10 +771,7 @@
 
     function openTargetNoticeModal() {
         currentTargetNoticeIds = getSelectedCompanies();
-        if (currentTargetNoticeIds.length === 0) {
-            alert("공지/팝업을 전송할 업체를 목록에서 먼저 체크해 주세요.");
-            return;
-        }
+        if (currentTargetNoticeIds.length === 0) return alert("공지/팝업을 전송할 업체를 선택해 주세요.");
         document.getElementById('targetNoticeCount').innerText = currentTargetNoticeIds.length;
         document.getElementById('targetNoticeText').value = '';
         const modal = document.getElementById('targetNoticeModal');
@@ -803,31 +788,24 @@
     async function sendTargetNotice() {
         const selectedIds = currentTargetNoticeIds; 
         const msg = document.getElementById('targetNoticeText').value.trim();
-        
         if (!msg) return alert("전송할 메시지 내용을 입력해 주세요.");
-        if (!confirm(`선택한 ${selectedIds.length}개 업체에게 이 팝업 메시지를 전송하시겠습니까?`)) return;
+        if (!confirm(`선택한 업체에 팝업 메시지를 전송하시겠습니까?`)) return;
 
         try {
             const promises = selectedIds.map(id => {
-                const safeId = encodeURIComponent(id);
-                return fetch(getAuthUrl(`${DB_BASE_URL}/${safeId}/profile.json`), {
+                return fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(id)}/profile.json`), {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ targetNotice: msg })
                 });
             });
-
             await Promise.all(promises);
-            alert(`✅ ${selectedIds.length}개 업체로 팝업 전송이 완료되었습니다!`);
+            alert(`✅ 전송이 완료되었습니다.`);
             closeTargetNoticeModal();
-            
             globalCheckedCompanies.clear();
             document.getElementById('selectAllCompanies').checked = false;
             renderActiveList();
-
-        } catch (e) {
-            alert("전송 중 서버 오류가 발생했습니다.");
-        }
+        } catch (e) { alert("서버 오류가 발생했습니다."); }
     }
 
     function openEditCompanyModal(id) {
@@ -857,75 +835,41 @@
 
     async function saveCompanyEdit() {
         const oldId = document.getElementById('editCompOldId').value;
-        const newId = document.getElementById('editCompId').value.trim();
         const newName = document.getElementById('editCompName').value.trim();
         const newCeo = document.getElementById('editCompCeo').value.trim();
         const newPhone = document.getElementById('editCompPhone').value.trim();
         const newBizNum = document.getElementById('editCompBizNum').value.trim();
 
-        if (!newId || !newName || !newPhone) return alert("필수 항목을 입력하세요.");
-        if (!confirm("해당 업체의 정보를 강제로 수정하시겠습니까?")) return;
+        if (!newName || !newPhone) return alert("필수 항목을 입력하세요.");
+        if (!confirm("업체 정보를 수정하시겠습니까?")) return;
 
         try {
-            if (oldId !== newId) {
-                const safeNewId = encodeURIComponent(newId);
-                const safeOldId = encodeURIComponent(oldId);
-
-                const checkRes = await fetch(getAuthUrl(`${DB_BASE_URL}/${safeNewId}/profile.json`));
-                const checkData = await checkRes.json();
-                if (checkData && !checkData.error) {
-                    return alert("이미 존재하는 아이디입니다.");
-                }
-
-                const oldRes = await fetch(getAuthUrl(`${DB_BASE_URL}/${safeOldId}.json`));
-                const oldData = await oldRes.json();
-
-                oldData.profile.id = newId;
-                oldData.profile.name = newName;
-                oldData.profile.ceo = newCeo;
-                oldData.profile.phone = newPhone;
-                oldData.profile.bizNum = newBizNum;
-
-                await fetch(getAuthUrl(`${DB_BASE_URL}/${safeNewId}.json`), {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(oldData)
-                });
-
-                await fetch(getAuthUrl(`${DB_BASE_URL}/${safeOldId}.json`), { method: 'DELETE' });
-
-            } else {
-                await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(oldId)}/profile.json`), {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name: newName, ceo: newCeo, phone: newPhone, bizNum: newBizNum })
-                });
-            }
-
-            alert("✅ 업체 정보가 성공적으로 수정되었습니다.");
+            await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(oldId)}/profile.json`), {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: newName, ceo: newCeo, phone: newPhone, bizNum: newBizNum })
+            });
+            alert("✅ 정보가 수정되었습니다.");
             closeEditCompanyModal();
             fetchAccounts(); 
-        } catch(e) {
-            alert("정보 수정 중 오류가 발생했습니다.");
-        }
+        } catch(e) { alert("수정 중 오류가 발생했습니다."); }
     }
 
-
     async function approveAccount(id) {
-        if(!confirm(`해당 업체의 조경노트 PRO 플랫폼 이용을 최종 승인하시겠습니까?`)) return;
+        if(!confirm(`플랫폼 이용을 최종 승인하시겠습니까?`)) return;
         try {
             await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(id)}/profile.json`), {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status: 'active' })
             });
-            alert("✅ 정상적으로 사용 승인되었습니다.");
+            alert("✅ 승인되었습니다.");
             fetchAccounts();
-        } catch(e) { alert("처리 중 오류가 발생했습니다."); }
+        } catch(e) { alert("오류가 발생했습니다."); }
     }
 
     async function updateAccountStatus(id, newStatus) {
-        let msg = newStatus === 'suspended' ? "해당 업체의 앱 접속을 차단(정지) 하시겠습니까?" : "해당 업체의 정지를 해제하시겠습니까?";
+        let msg = newStatus === 'suspended' ? "앱 접속을 차단하시겠습니까?" : "정지를 해제하시겠습니까?";
         if(!confirm(msg)) return;
         try {
             await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(id)}/profile.json`), {
@@ -934,33 +878,33 @@
                 body: JSON.stringify({ status: newStatus })
             });
             fetchAccounts();
-        } catch(e) { alert("처리 중 오류가 발생했습니다."); }
+        } catch(e) {}
     }
 
     async function resetPassword(id) {
-        if(!confirm(`[보안 경고]\n정말로 해당 업체의 비밀번호를 '1234'로 강제 초기화 하시겠습니까?`)) return;
+        if(!confirm(`해당 업체의 비밀번호를 '1234'로 초기화 하시겠습니까?`)) return;
         try {
             await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(id)}/profile.json`), {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ pw: '1234' })
             });
-            alert("✅ 비밀번호가 '1234'로 강제 초기화 되었습니다.");
-        } catch(e) { alert("처리 중 오류가 발생했습니다."); }
+            alert("✅ 초기화 되었습니다.");
+        } catch(e) {}
     }
 
     async function deleteAccount(id, actionName) {
-        if(!confirm(`[위험]\n정말로 해당 업체를 데이터베이스에서 ${actionName} 하시겠습니까?\n기존에 저장된 데이터도 모두 연결이 끊어지며 복구할 수 없습니다.`)) return;
+        if(!confirm(`[위험] 업체를 데이터베이스에서 영구 삭제하시겠습니까?`)) return;
         try {
             await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(id)}.json`), { method: 'DELETE' });
-            alert("✅ 해당 계정이 시스템에서 영구적으로 삭제되었습니다.");
+            alert("✅ 영구적으로 삭제되었습니다.");
             knownPendingIds.delete(id); 
             fetchAccounts();
-        } catch(e) { alert("처리 중 오류가 발생했습니다."); }
+        } catch(e) {}
     }
 
     function openLicenseModal(base64Str) {
-        if(!base64Str) return alert("첨부된 이미지가 없습니다.");
+        if(!base64Str) return alert("첨부 이미지가 없습니다.");
         document.getElementById('licenseImg').src = base64Str;
         document.getElementById('licenseModal').classList.remove('hidden');
     }
@@ -1014,12 +958,12 @@
           mobBtns[mobActiveIndex].classList.add('text-[#3B82F6]');
       }
     }
-// 💡 핵심: 껍데기 말고 '진짜 알맹이 전체 데이터'를 잠시 담아둘 전용 바구니
-    let currentCompanyFullData = null; 
 
+    // ==========================================
+    // 🗂️ 1. 업체 전체 데이터 호출 및 화면 구성
+    // ==========================================
     async function openCompanyDataModal(id, name) {
         document.getElementById('modalCompanyName').innerText = name;
-        
         document.getElementById('modalClientCount').innerText = '-';
         document.getElementById('modalReportCount').innerText = '-';
         document.getElementById('modalQuoteCount').innerText = '-';
@@ -1035,11 +979,11 @@
             const res = await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(id)}/data.json`));
             const data = await res.json();
             
-            // 💡 금고에서 꺼낸 진짜 전체 데이터를 바구니에 보관합니다.
+            // 전역 변수에 전체 데이터 저장 (상세 뷰어에서 원본 추출 시 사용)
             currentCompanyFullData = data; 
-
-            const clients = data && data.clients ? data.clients : [];
-            const records = data && data.records ? data.records : [];
+            
+            const clients = normalizeData(data?.clients);
+            const records = normalizeData(data?.records);
             
             currentCompanyRecords = records;
             
@@ -1050,6 +994,7 @@
             document.getElementById('modalReportCount').innerText = reports.length;
             document.getElementById('modalQuoteCount').innerText = quotes.length;
             
+            // 최근 작성 문서 렌더링
             if(records.length === 0) {
                 document.getElementById('modalDocList').innerHTML = '<div class="p-6 text-center text-[#94A3B8] text-[13px] font-bold border-t border-white/5">발행된 문서가 없습니다.</div>';
             } else {
@@ -1077,6 +1022,7 @@
                 document.getElementById('modalDocList').innerHTML = docHtml;
             }
             
+            // 거래처 목록 렌더링
             if(clients.length === 0) {
                 document.getElementById('modalClientList').innerHTML = '<div class="p-6 text-center text-[#94A3B8] text-[13px] font-bold border-t border-white/5">등록된 거래처가 없습니다.</div>';
             } else {
@@ -1103,7 +1049,6 @@
                 });
                 document.getElementById('modalClientList').innerHTML = clientHtml;
             }
-            
             lucide.createIcons();
             
         } catch (e) {
@@ -1120,6 +1065,9 @@
         setTimeout(() => { modal.classList.add('hidden'); }, 200);
     }
 
+    // ==========================================
+    // 🗂️ 2. 개별 거래처의 히스토리 열람
+    // ==========================================
     function openClientHistory(clientName) {
         document.getElementById('historyModalClientName').innerText = clientName;
         const container = document.getElementById('historyModalListContainer');
@@ -1169,60 +1117,49 @@
     }
 
     // ==========================================
-    // 🗂️ 마스터 전용 인앱 문서 상세 뷰어 (진짜 알맹이 추적기 탑재)
-    // ==========================================
-    // ==========================================
-    // 🗂️ 마스터 전용 인앱 문서 상세 뷰어 (파이어베이스 호환 강력 추적기 탑재)
+    // 🗂️ 3. 문서 상세 원본 추출 및 화면 렌더링 (정규화 로직 적용)
     // ==========================================
     function openDocumentPreview(docId) {
-        // 1. 껍데기(단축 정보) 가져오기
         const shortcut = currentCompanyRecords.find(r => r.id === docId);
         if(!shortcut) return alert('문서 데이터를 불러올 수 없습니다.');
 
         let realDoc = null;
 
-        // 💡 파이어베이스 특성상 배열이 객체로 변환된 경우를 완벽히 뚫고 들어가는 안전 함수
-        const getSafeArray = (obj) => {
-            if (!obj) return [];
-            if (Array.isArray(obj)) return obj;
-            return Object.values(obj).filter(item => item !== null && item !== undefined);
-        };
-
-        // 추적 1단계: 모든 거래처의 히스토리(일지) 금고를 샅샅이 뒤지기
-        if (currentCompanyFullData && currentCompanyFullData.clients) {
-            const clientsList = getSafeArray(currentCompanyFullData.clients);
-            for (const client of clientsList) {
-                if (client.history) {
-                    const historyList = getSafeArray(client.history);
-                    const found = historyList.find(h => h.id === docId || (h.date === shortcut.date && h.round === shortcut.round));
-                    if (found) { realDoc = found; break; }
+        // 원본 데이터를 파이어베이스 컬렉션에서 순회하여 추출
+        if (currentCompanyFullData) {
+            // 1단계: 일지 원본 추출 (clients 컬렉션 내부 history)
+            if (currentCompanyFullData.clients) {
+                const clientsList = normalizeData(currentCompanyFullData.clients);
+                for (const client of clientsList) {
+                    if (client.history) {
+                        const historyList = normalizeData(client.history);
+                        const found = historyList.find(h => h.id === docId);
+                        if (found) { realDoc = found; break; }
+                    }
                 }
+            }
+            // 2단계: 견적서 원본 추출 (quoteList 컬렉션)
+            if (!realDoc && currentCompanyFullData.quoteList) {
+                const quoteList = normalizeData(currentCompanyFullData.quoteList);
+                const found = quoteList.find(q => q.id === docId);
+                if (found) realDoc = found;
             }
         }
 
-        // 추적 2단계: 견적 보관함(quoteList) 금고 샅샅이 뒤지기
-        if (!realDoc && currentCompanyFullData && currentCompanyFullData.quoteList) {
-            const quoteList = getSafeArray(currentCompanyFullData.quoteList);
-            const found = quoteList.find(q => q.id === docId || (q.date === shortcut.date && q.clientName === shortcut.clientName));
-            if (found) realDoc = found;
-        }
-
-        // 그래도 없으면 껍데기를 대신 사용 (오류 방지)
-        if (!realDoc) realDoc = shortcut;
-
-        // 변수명 변동 대응용 안전 추출 장치
-        const docDate = realDoc.date || shortcut.date || '날짜 미상';
-        const clientName = realDoc.clientName || shortcut.clientName || '고객명 미상';
+        // 데이터가 유실되었을 경우를 대비한 병합 처리
+        const docData = realDoc || shortcut;
+        const docDate = docData.date || '날짜 미상';
+        const clientName = docData.clientName || '고객명 미상';
 
         const contentArea = document.getElementById('previewModalContent');
         let html = '';
 
         if(shortcut.type === 'quote') {
-            // [견적서 알맹이 렌더링]
-            const receiver = realDoc.receiver || realDoc.receiverName || clientName || '수신자 정보 없음';
-            const supplier = realDoc.supplier || realDoc.supplierName || realDoc.provider || '공급자 정보 없음';
+            // [견적서 상세 렌더링]
+            const receiver = docData.receiver || docData.receiverName || clientName || '-';
+            const supplier = docData.supplier || docData.supplierName || docData.provider || '-';
             
-            const items = getSafeArray(realDoc.items || realDoc.rows || realDoc.quoteItems || realDoc.details);
+            const items = normalizeData(docData.items || docData.rows || docData.quoteItems || docData.details);
             
             let itemsHtml = '';
             if(items.length > 0) {
@@ -1234,11 +1171,11 @@
                     itemsHtml += `<tr class="border-b border-white/5 last:border-0"><td class="py-3 text-white text-[13px] font-bold">${name}</td><td class="py-3 text-right text-[#94A3B8] text-[12px]">${spec}</td><td class="py-3 text-right text-white text-[13px]">${qty}</td><td class="py-3 text-right text-[#3B82F6] font-bold text-[13px]">${Number(price).toLocaleString()}원</td></tr>`;
                 });
             } else {
-                itemsHtml = `<tr><td colspan="4" class="py-6 text-center text-[#94A3B8] text-[13px]">세부 품목 데이터가 없습니다.</td></tr>`;
+                itemsHtml = `<tr><td colspan="4" class="py-6 text-center text-[#94A3B8] text-[13px]">세부 품목 데이터가 등록되지 않았습니다.</td></tr>`;
             }
 
-            const totalPrice = realDoc.totalPrice || realDoc.totalAmount || realDoc.sum || 0;
-            const memo = realDoc.memo || realDoc.note || realDoc.remark || '';
+            const totalPrice = docData.totalPrice || docData.totalAmount || docData.sum || 0;
+            const memo = docData.memo || docData.note || docData.remark || '';
 
             html = `
                 <div class="space-y-4">
@@ -1253,7 +1190,6 @@
                         </div>
                     </div>
 
-                    <!-- ✨ 수신자 / 공급자 영역 부활 ✨ -->
                     <div class="grid grid-cols-2 gap-3 bg-black/20 p-4 rounded-[16px] border border-white/5">
                         <div>
                             <div class="text-[11px] font-bold text-[#94A3B8] mb-1">공급자 (보내는 분)</div>
@@ -1281,20 +1217,20 @@
                 </div>
             `;
         } else {
-            // [현장 일지 알맹이 렌더링]
-            const tags = getSafeArray(realDoc.categories || realDoc.tags || realDoc.workTypes);
+            // [현장 일지 상세 렌더링]
+            const tags = normalizeData(docData.categories || docData.tags || docData.workTypes || docData.badge);
             let tagsHtml = '';
             if(tags.length > 0) {
                 tagsHtml = tags.map(c => `<span class="bg-[#84CC16]/10 text-[#84CC16] border border-[#84CC16]/20 px-2.5 py-1 rounded-md text-[11px] font-bold">${c}</span>`).join('');
             }
             
-            const img = realDoc.issue || realDoc.image || realDoc.photo || '';
+            const img = docData.issue || docData.image || docData.photo || '';
             let imgHtml = '';
             if(img && typeof img === 'string' && img.startsWith('data:image')) {
                 imgHtml = `<div class="mt-4"><div class="text-[11px] font-bold text-[#94A3B8] mb-2">현장 첨부 사진</div><img src="${img}" class="w-full rounded-[16px] border border-white/10"></div>`;
             }
 
-            const reportContent = realDoc.d || realDoc.memo || realDoc.content || realDoc.workDetails || '';
+            const reportContent = docData.d || docData.memo || docData.content || docData.workDetails || '';
 
             html = `
                 <div class="space-y-4">
@@ -1320,16 +1256,6 @@
             `;
         }
 
-        // 💡 100% 안전장치: 데이터가 안 보일 때 확인하는 추적 버튼
-        html += `
-            <div class="mt-6 pt-4 border-t border-white/10">
-                <details class="text-[#94A3B8] text-[10px]">
-                    <summary class="cursor-pointer hover:text-white transition-colors">🛠 데이터 원본 추적 로그 (안 보일 때 클릭)</summary>
-                    <pre class="mt-2 bg-black p-3 rounded-lg overflow-x-auto text-[10px] text-green-400 font-mono whitespace-pre-wrap">${JSON.stringify(realDoc, null, 2)}</pre>
-                </details>
-            </div>
-        `;
-
         contentArea.innerHTML = html;
         const modal = document.getElementById('documentPreviewModal');
         const box = document.getElementById('documentPreviewBox');
@@ -1337,6 +1263,7 @@
         setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10);
         lucide.createIcons();
     }
+
     function closeDocumentPreview() {
         const modal = document.getElementById('documentPreviewModal');
         const box = document.getElementById('documentPreviewBox');
@@ -1344,7 +1271,6 @@
         box.classList.add('scale-95');
         setTimeout(() => { modal.classList.add('hidden'); }, 200);
     }
-    
   </script>
 </body>
 </html>
