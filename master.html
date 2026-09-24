@@ -66,9 +66,7 @@
     </div>
   </section>
 
-  <!-- 좌측 사이드바 (PC) / 하단 네비게이션 (모바일) 완벽 반응형 통합 -->
   <aside id="sidebar" class="hidden md:flex w-full fixed bottom-0 left-0 z-50 glass-panel border-t border-white/10 p-2 pb-6 md:p-5 md:relative md:w-64 md:h-screen md:border-t-0 md:border-r md:flex-col md:sticky md:top-0 shadow-[0_-15px_30px_rgba(0,0,0,0.4)] md:shadow-none">
-    <!-- 상단 로고 영역 (PC에서만 보임) -->
     <div class="hidden md:flex items-center gap-3 mb-10 pl-2 mt-4">
       <div class="w-10 h-10 bg-[#3B82F6] rounded-[12px] flex items-center justify-center shadow-lg"><i data-lucide="shield-check" class="w-5 h-5 text-white"></i></div>
       <div>
@@ -77,7 +75,6 @@
       </div>
     </div>
     
-    <!-- 네비게이션 버튼들 (모바일: 가로 배열, PC: 세로 배열) -->
     <nav class="flex flex-row md:flex-col gap-1 md:gap-2 justify-around w-full">
       <button onclick="switchTab('dashboard')" class="nav-btn w-full flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-3 p-2 md:px-4 md:py-3.5 rounded-[12px] bg-[#3B82F6] text-white font-bold transition-all text-[11px] md:text-[14px]">
         <i data-lucide="layout-dashboard" class="w-5 h-5"></i> <span class="whitespace-nowrap">대시보드</span>
@@ -92,23 +89,19 @@
       <button onclick="switchTab('settings')" class="nav-btn w-full flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-3 p-2 md:px-4 md:py-3.5 rounded-[12px] text-[#94A3B8] hover:bg-white/5 hover:text-white font-bold transition-all text-[11px] md:text-[14px]">
         <i data-lucide="settings" class="w-5 h-5"></i> <span class="whitespace-nowrap">설정</span>
       </button>
-      <!-- 모바일 전용 로그아웃 버튼 -->
       <button onclick="logoutMaster()" class="md:hidden nav-btn w-full flex flex-col items-center justify-center gap-1 p-2 rounded-[12px] text-red-400 hover:bg-red-500/10 font-bold transition-all text-[11px]">
         <i data-lucide="log-out" class="w-5 h-5"></i> <span class="whitespace-nowrap">로그아웃</span>
       </button>
     </nav>
     
-    <!-- 하단 로그아웃 영역 (PC에서만 보임) -->
     <div class="mt-auto hidden md:block">
       <div class="mb-4 px-2 text-center text-[#94A3B8] text-[10px] font-medium flex items-center justify-center gap-1.5"><div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div> 실시간 서버 연동 중</div>
       <button onclick="logoutMaster()" class="w-full flex items-center justify-center gap-3 px-4 py-3.5 rounded-[12px] bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 font-bold transition-all"><i data-lucide="log-out" class="w-4 h-4"></i> 안전하게 로그아웃</button>
     </div>
   </aside>
 
-  <!-- 메인 콘텐츠 영역 -->
   <main id="mainContent" class="hidden flex-1 p-5 md:p-10 overflow-y-auto w-full max-w-6xl mx-auto pb-24 md:pb-10">
     
-    <!-- 1. 대시보드 화면 -->
     <div id="view-dashboard" class="space-y-6">
       <h1 class="text-[24px] font-black tracking-tight flex items-center gap-2"><i data-lucide="activity" class="w-6 h-6 text-[#3B82F6]"></i> 실시간 플랫폼 현황</h1>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -132,7 +125,6 @@
       </div>
     </div>
 
-    <!-- 2. 가입 승인 대기 화면 -->
     <div id="view-approval" class="hidden space-y-6">
       <div class="flex items-center justify-between border-b border-white/10 pb-4">
         <h1 class="text-[24px] font-black tracking-tight flex items-center gap-2"><i data-lucide="user-check" class="w-6 h-6 text-red-400"></i> 신규 가입 심사 대기 <span id="topApprovalCount" class="bg-red-500 text-white text-[13px] px-2.5 py-1 rounded-full align-middle ml-1 hidden">0건</span></h1>
@@ -145,7 +137,6 @@
       </div>
     </div>
 
-    <!-- 3. 사용 업체 관리 화면 -->
     <div id="view-companies" class="hidden space-y-6">
       <div class="flex items-center justify-between border-b border-white/10 pb-4">
         <h1 class="text-[24px] font-black tracking-tight flex items-center gap-2"><i data-lucide="building-2" class="w-6 h-6 text-[#3B82F6]"></i> 등록된 사용 업체 관리</h1>
@@ -154,7 +145,6 @@
         </button>
       </div>
       
-      <!-- 업체 통합 검색창 -->
       <div class="flex items-center gap-3">
           <div class="relative w-full max-w-md">
               <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none"><i data-lucide="search" class="w-5 h-5 text-[#94A3B8]"></i></div>
@@ -184,7 +174,6 @@
       </div>
     </div>
 
-    <!-- 4. 플랫폼 설정 화면 -->
     <div id="view-settings" class="hidden space-y-6">
       <div class="flex items-center justify-between border-b border-white/10 pb-4">
         <h1 class="text-[24px] font-black tracking-tight flex items-center gap-2"><i data-lucide="settings" class="w-6 h-6 text-[#84CC16]"></i> 플랫폼 전체 설정</h1>
@@ -261,7 +250,6 @@
   </div>
 
   <div id="companyDataModal" class="hidden fixed inset-0 z-[6000] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200" onclick="closeCompanyDataModal()">
-    <!-- ... 기존 팝업 HTML 코드는 동일하게 유지 (스크립트로 제어) ... -->
     <div class="bg-[#0F172A] w-full max-w-4xl rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-white/10 max-h-[90vh]" id="companyDataBox" onclick="event.stopPropagation()">
       <div class="p-5 border-b border-white/10 flex justify-between items-center bg-[#1E293B]">
         <h3 class="text-[18px] font-black text-white flex items-center gap-2"><i data-lucide="database" class="w-5 h-5 text-[#3B82F6]"></i> <span id="modalCompanyName" class="text-[#84CC16]">업체명</span> 상세 운영 데이터</h3>
@@ -292,7 +280,6 @@
   </div>
 
   <div id="clientHistoryModal" class="hidden fixed inset-0 z-[7000] bg-black/90 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200" onclick="closeClientHistoryModal()">
-    <!-- ... 기존 팝업 HTML ... -->
     <div class="bg-[#0F172A] w-full max-w-2xl rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-white/10 max-h-[85vh]" id="clientHistoryBox" onclick="event.stopPropagation()">
       <div class="p-5 border-b border-white/10 flex justify-between items-center bg-[#1E293B]">
         <h3 class="text-[18px] font-black text-white flex items-center gap-2">
@@ -309,7 +296,6 @@
   </div>
 
   <div id="targetNoticeModal" class="hidden fixed inset-0 z-[6000] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200" onclick="closeTargetNoticeModal()">
-    <!-- ... 공지 팝업 ... -->
     <div class="bg-[#0F172A] w-full max-w-md rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-white/10" onclick="event.stopPropagation()">
       <div class="p-5 border-b border-white/10 flex justify-between items-center bg-[#1E293B]">
         <h3 class="text-[18px] font-black text-white flex items-center gap-2"><i data-lucide="bell-ring" class="w-5 h-5 text-[#F59E0B]"></i> 특정 업체 개별 팝업 전송</h3>
@@ -333,7 +319,6 @@
   </div>
 
   <div id="editCompanyModal" class="hidden fixed inset-0 z-[6000] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200" onclick="closeEditCompanyModal()">
-    <!-- ... 강제 수정 모달 ... -->
     <div class="bg-[#0F172A] w-full max-w-md rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-white/10" id="editCompanyBox" onclick="event.stopPropagation()">
       <div class="p-5 border-b border-white/10 flex justify-between items-center bg-[#1E293B]">
         <h3 class="text-[18px] font-black text-white flex items-center gap-2"><i data-lucide="edit-3" class="w-5 h-5 text-[#F59E0B]"></i> 업체 정보 강제 수정 <span class="text-[11px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full ml-1">테스트용</span></h3>
@@ -376,6 +361,24 @@
     </div>
   </div>
 
+  <!-- 🗂️ [수정됨] 마스터 전용 문서 상세 열람 모달 (자바스크립트 바깥으로 안전하게 구출) -->
+  <div id="documentPreviewModal" class="hidden fixed inset-0 z-[8000] bg-black/90 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200" onclick="closeDocumentPreview()">
+      <div class="bg-[#0F172A] w-full max-w-xl rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-white/10 max-h-[85vh]" id="documentPreviewBox" onclick="event.stopPropagation()">
+          <div class="p-5 border-b border-white/10 flex justify-between items-center bg-[#1E293B]">
+              <h3 class="text-[18px] font-black text-white flex items-center gap-2">
+                  <i data-lucide="file-search" class="w-5 h-5 text-[#84CC16]"></i> 마스터 상세 내역 열람
+              </h3>
+              <button onclick="closeDocumentPreview()" class="text-[#94A3B8] hover:text-white p-1 transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+          </div>
+          <div class="flex-1 overflow-y-auto p-5 scrollbar-hide" id="previewModalContent">
+              <!-- 자바스크립트가 견적서/일지 알맹이를 이곳에 꽉꽉 채워줍니다 -->
+          </div>
+          <div class="p-4 border-t border-white/10 bg-[#0F172A]">
+              <button onclick="closeDocumentPreview()" class="w-full py-4 bg-white/10 text-white rounded-[14px] font-black text-[15px] hover:bg-white/20 transition-colors">닫기</button>
+          </div>
+      </div>
+  </div>
+
   <script>
     // 🔥 서버 연동 기본 설정
     const API_KEY = "AIzaSyC_1KaOSychXSNF-Z-vnVONLB_-aAGghhk";
@@ -399,7 +402,6 @@
         return `${url}${sep}auth=${currentIdToken}`;
     }
 
-    // 🌟 정석 방식 1: 관리자 전용 최초 회원가입 함수 분리
     async function registerMaster() {
         const id = document.getElementById('masterId').value.trim();
         const pw = document.getElementById('masterPw').value.trim();
@@ -435,7 +437,6 @@
         }
     }
 
-    // 🌟 정석 방식 2: 관리자 전용 정식 로그인 함수
     async function loginMaster() {
         const id = document.getElementById('masterId').value.trim();
         const pw = document.getElementById('masterPw').value.trim();
@@ -485,7 +486,6 @@
         }
     }
 
-    // 🔥 앱 시작 시 자동 로그인 확인 로직 추가
     window.addEventListener('DOMContentLoaded', () => {
         const savedId = localStorage.getItem('shinhwa_master_id');
         const savedPw = localStorage.getItem('shinhwa_master_pw');
@@ -495,7 +495,7 @@
             document.getElementById('masterId').value = savedId;
             document.getElementById('masterPw').value = savedPw;
             document.getElementById('masterAutoLoginCheck').checked = true;
-            loginMaster(); // 저장된 정보로 즉시 접속 시도
+            loginMaster(); 
         }
         lucide.createIcons();
     });
@@ -519,7 +519,6 @@
 
     function logoutMaster() {
       if(confirm('통제실에서 로그아웃 하시겠습니까? 실시간 알림이 중단됩니다.')) {
-        // 🔥 로그아웃 시 저장된 정보 삭제
         localStorage.removeItem('shinhwa_master_id');
         localStorage.removeItem('shinhwa_master_pw');
         localStorage.removeItem('shinhwa_master_auto');
@@ -1261,23 +1260,6 @@
         box.classList.add('scale-95');
         setTimeout(() => { modal.classList.add('hidden'); }, 200);
     }
- <!-- 🗂️ 마스터 전용 문서 상세 열람 모달 (새 창 띄우지 않고 앱 내부에서 즉시 열람) -->
-  <div id="documentPreviewModal" class="hidden fixed inset-0 z-[8000] bg-black/90 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200" onclick="closeDocumentPreview()">
-      <div class="bg-[#0F172A] w-full max-w-xl rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-white/10 max-h-[85vh]" id="documentPreviewBox" onclick="event.stopPropagation()">
-          <div class="p-5 border-b border-white/10 flex justify-between items-center bg-[#1E293B]">
-              <h3 class="text-[18px] font-black text-white flex items-center gap-2">
-                  <i data-lucide="file-search" class="w-5 h-5 text-[#84CC16]"></i> 마스터 상세 내역 열람
-              </h3>
-              <button onclick="closeDocumentPreview()" class="text-[#94A3B8] hover:text-white p-1 transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
-          </div>
-          <div class="flex-1 overflow-y-auto p-5 scrollbar-hide" id="previewModalContent">
-              <!-- 자바스크립트가 견적서/일지 알맹이를 이곳에 꽉꽉 채워줍니다 -->
-          </div>
-          <div class="p-4 border-t border-white/10 bg-[#0F172A]">
-              <button onclick="closeDocumentPreview()" class="w-full py-4 bg-white/10 text-white rounded-[14px] font-black text-[15px] hover:bg-white/20 transition-colors">닫기</button>
-          </div>
-      </div>
-  </div>   
   </script>
 </body>
 </html>
