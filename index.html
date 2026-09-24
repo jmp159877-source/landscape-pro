@@ -522,7 +522,7 @@
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
         <div class="flex items-center justify-between pb-4 border-b border-[#F4F5F4]">
             <button onclick="changeMonth(-1)" class="p-2 bg-[#F4F5F4] hover:bg-[#EAEBEA] rounded-[12px] transition-colors"><i data-lucide="chevron-left" class="w-5 h-5 text-[#4E5968]"></i></button>
-            <h2 id="calendarMonthText" class="text-[18px] font-black text-[#151E2D]">2026년 9월</h2>
+            <h2 id="calendarMonthText" class="text-[20px] font-black text-[#151E2D]">2026년 9월</h2>
             <button onclick="changeMonth(1)" class="p-2 bg-[#F4F5F4] hover:bg-[#EAEBEA] rounded-[12px] transition-colors"><i data-lucide="chevron-right" class="w-5 h-5 text-[#4E5968]"></i></button>
         </div>
         <div class="w-full">
@@ -563,7 +563,7 @@
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
         <div class="flex items-center justify-between pb-4 border-b border-[#F4F5F4]">
             <button onclick="changeLedgerMonth(-1)" class="p-2 bg-[#F4F5F4] hover:bg-[#EAEBEA] rounded-[12px] transition-colors"><i data-lucide="chevron-left" class="w-5 h-5 text-[#4E5968]"></i></button>
-            <h2 id="ledgerMonthText" class="text-[18px] font-black text-[#151E2D]"></h2>
+            <h2 id="ledgerMonthText" class="text-[20px] font-black text-[#151E2D]"></h2>
             <button onclick="changeLedgerMonth(1)" class="p-2 bg-[#F4F5F4] hover:bg-[#EAEBEA] rounded-[12px] transition-colors"><i data-lucide="chevron-right" class="w-5 h-5 text-[#4E5968]"></i></button>
         </div>
 
@@ -2103,6 +2103,21 @@
     let selectedDate = new Date();
     let schedules = []; // 🔥 로컬스토리지를 지우고, 클라우드에서 가져오도록 빈 배열로 시작
 
+    // ✨ 한국 공휴일 스마트 판별 엔진 (고정 휴일 + 2025~2028년 음력/대체 공휴일)
+    function isKoreanHoliday(y, m, d) {
+        const fixed = ['01-01', '03-01', '05-05', '06-06', '08-15', '10-03', '10-09', '12-25'];
+        const md = String(m).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+        if (fixed.includes(md)) return true;
+        const ymd = y + '-' + md;
+        const lunarAndSub = [
+            '2025-01-28', '2025-01-29', '2025-01-30', '2025-03-03', '2025-05-05', '2025-05-06', '2025-10-05', '2025-10-06', '2025-10-07', '2025-10-08',
+            '2026-02-16', '2026-02-17', '2026-02-18', '2026-03-02', '2026-05-24', '2026-05-25', '2026-09-24', '2026-09-25', '2026-09-26',
+            '2027-02-06', '2027-02-07', '2027-02-08', '2027-02-09', '2027-05-13', '2027-08-16', '2027-09-14', '2027-09-15', '2027-09-16', '2027-10-11',
+            '2028-01-26', '2028-01-27', '2028-01-28', '2028-05-02', '2028-05-05', '2028-05-08', '2028-08-15', '2028-10-02', '2028-10-03', '2028-10-04'
+        ];
+        return lunarAndSub.includes(ymd);
+    }
+
     function renderCalendar() {
         const year = currentCalDate.getFullYear();
         const month = currentCalDate.getMonth();
@@ -2128,13 +2143,21 @@
             }
             
             const isToday = new Date().toDateString() === new Date(year, month, i).toDateString();
-            const todayClass = isToday ? 'bg-[#151E2D] text-[#84CC16] rounded-full' : 'text-[#1A1D1A]';
             const isSelected = selectedDate.toDateString() === new Date(year, month, i).toDateString();
             const selectedClass = isSelected && !isToday ? 'border-2 border-[#12261E] rounded-full' : '';
+            
+            // ✨ 일요일(0) 및 법정 공휴일 빨간색 처리!
+            const isSunday = new Date(year, month, i).getDay() === 0;
+            const isHoliday = isKoreanHoliday(year, month + 1, i);
+            const isRedDay = isSunday || isHoliday;
+            
+            let textClass = 'text-[#1A1D1A]';
+            if (isToday) textClass = 'bg-[#151E2D] text-[#84CC16] rounded-full';
+            else if (isRedDay) textClass = 'text-red-500'; // 빨간색 텍스트
 
             grid.innerHTML += `
                 <div onclick="selectDate(${year}, ${month}, ${i})" class="flex flex-col items-center justify-center p-1 cursor-pointer">
-                    <div class="w-9 h-9 flex items-center justify-center text-[14px] font-black ${todayClass} ${selectedClass}">${i}</div>
+                    <div class="w-9 h-9 flex items-center justify-center text-[14px] font-black ${textClass} ${selectedClass}">${i}</div>
                     ${dotHtml}
                 </div>
             `;
@@ -2531,7 +2554,7 @@
         
         let monthInc = 0; let monthExp = 0; let monthVat = 0; 
         
-        // --- 연간 데이터 합산 로직 추가 ---
+        // --- 연간 데이터 합산 로직 ---
         let yearInc = 0; let yearExp = 0; let yearVat = 0;
         const yearPrefix = `${year}-`;
         const yearLedgers = ledgers.filter(l => l.date && l.date.startsWith(yearPrefix));
@@ -2540,7 +2563,6 @@
             yearExp += (l.expense || 0);
             yearVat += (l.vat || 0);
         });
-        // ------------------------------
 
         for (let i = 1; i <= daysInMonth; i++) {
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
@@ -2558,12 +2580,20 @@
             
             const isToday = new Date().toDateString() === new Date(year, month, i).toDateString();
             const isSelected = selectedLedgerDate.toDateString() === new Date(year, month, i).toDateString();
-            const todayClass = isToday ? 'bg-[#151E2D] text-[#84CC16] rounded-full' : 'text-[#1A1D1A]';
             const selectedClass = isSelected && !isToday ? 'border-2 border-[#12261E] rounded-full' : '';
+
+            // ✨ 일요일(0) 및 법정 공휴일 빨간색 처리!
+            const isSunday = new Date(year, month, i).getDay() === 0;
+            const isHoliday = isKoreanHoliday(year, month + 1, i);
+            const isRedDay = isSunday || isHoliday;
+            
+            let textClass = 'text-[#1A1D1A]';
+            if (isToday) textClass = 'bg-[#151E2D] text-[#84CC16] rounded-full';
+            else if (isRedDay) textClass = 'text-red-500';
 
             grid.innerHTML += `
                 <div onclick="selectLedgerDate(${year}, ${month}, ${i})" class="flex flex-col items-center justify-center p-1 cursor-pointer">
-                    <div class="w-9 h-9 flex items-center justify-center text-[14px] font-black ${todayClass} ${selectedClass}">${i}</div>
+                    <div class="w-9 h-9 flex items-center justify-center text-[14px] font-black ${textClass} ${selectedClass}">${i}</div>
                     ${dotHtml}
                 </div>
             `;
