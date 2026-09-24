@@ -3533,12 +3533,11 @@
                 let precipAmt = wData.hourly.precipitation[i] || 0;
                 if(precipAmt === 0) precipProb = 0;
 
-                // 💧 촌스러운 원색을 뺀 세련된 드롭렛(물방울) 확률 표시
+                // 💡 [피드백 반영 1] 0%의 투명도를 없애고, 폰트를 두껍고 진하게 만들어 시인성을 극대화했습니다.
                 let hourlyRain = precipProb > 0
                     ? `<div class="text-[12px] font-black text-[#0EA5E9] mt-1.5 flex items-center gap-0.5"><i data-lucide="droplet" class="w-3.5 h-3.5"></i>${precipProb}%</div>`
-                    : `<div class="text-[11px] font-bold text-[#CBD5E1] mt-1.5 flex items-center gap-0.5"><i data-lucide="droplet" class="w-3.5 h-3.5 opacity-50"></i>0%</div>`;
+                    : `<div class="text-[11.5px] font-black text-[#94A3B8] mt-1.5 flex items-center gap-0.5"><i data-lucide="droplet" class="w-3.5 h-3.5"></i>0%</div>`;
 
-                // 💡 '지금' 블록도 메인 위젯과 통일감 있는 세련된 딥 다크 네이비로 변경!
                 const isNow = i === currentHourIndex;
                 const bgClass = isNow ? "bg-gradient-to-b from-[#1E293B] to-[#0F172A] shadow-lg border-transparent" : "bg-white border-[#F1F5F9] shadow-sm";
                 const textClass = isNow ? "text-white" : "text-[#1E293B]";
@@ -3564,7 +3563,6 @@
                 const dateObj = new Date(wData.daily.time[i]);
                 const dayOfWeek = dateObj.getDay();
                 
-                // 💡 일요일은 눈 아픈 쨍한 빨간색이 아닌, 고급스러운 '로즈 코랄' 색상으로 세팅
                 const dayNameColor = (dayOfWeek === 0) ? "text-[#F43F5E]" : "text-[#1E293B]"; 
                 const dayName = i === 1 ? "내일" : days[dayOfWeek] + "요일";
                 const dateText = `${dateObj.getMonth()+1}/${dateObj.getDate()}`;
@@ -3576,18 +3574,19 @@
                 const precipSum = wData.daily.precipitation_sum[i] || 0;
                 if (precipSum === 0) { precipProbMax = 0; } 
                 
+                // 💡 [피드백 반영 1-2] 주간 예보의 0%도 아주 진하고 또렷하게 보이도록 수정
                 let rainDisplay = precipProbMax > 0 
-                    ? `<span class="text-[#0EA5E9] flex items-center gap-1"><i data-lucide="droplet" class="w-4 h-4"></i> ${precipProbMax}% <span class="text-[11px] font-bold opacity-70">(${precipSum}mm)</span></span>` 
-                    : `<span class="text-[#CBD5E1] flex items-center gap-1"><i data-lucide="droplet" class="w-4 h-4 opacity-50"></i> 0%</span>`;
+                    ? `<span class="text-[#0EA5E9] flex items-center gap-1 font-black"><i data-lucide="droplet" class="w-4 h-4"></i> ${precipProbMax}% <span class="text-[11px] font-bold opacity-70">(${precipSum}mm)</span></span>` 
+                    : `<span class="text-[#94A3B8] flex items-center gap-1 font-black"><i data-lucide="droplet" class="w-4 h-4"></i> 0%</span>`;
 
-                // 💡 [초고급 카드 디자인 적용] 둥근 화이트 글래스 카드, 원색을 제거한 우아한 온도(슬레이트 & 골드)
+                // 💡 [피드백 반영 2] 박스 배경을 촌스럽지 않은 프리미엄 '쿨 그레이(bg-[#F8FAFC])'로 깔고 테두리를 더 선명하게 잡아주었습니다.
                 dailyContainer.innerHTML += `
-                    <div class="flex items-center justify-between p-5 bg-white border border-[#F1F5F9] rounded-[24px] shadow-[0_4px_16px_rgba(0,0,0,0.03)] hover:shadow-md transition-all mb-3">
+                    <div class="flex items-center justify-between p-5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[24px] shadow-sm hover:shadow-md transition-all mb-3">
                         <div class="w-16">
                             <span class="text-[16px] font-black ${dayNameColor} block tracking-wide">${dayName}</span>
                             <span class="text-[12px] text-[#94A3B8] font-bold mt-0.5 block">${dateText}</span>
                         </div>
-                        <div class="flex-1 flex flex-col justify-center pl-4 border-l border-[#F1F5F9] ml-2">
+                        <div class="flex-1 flex flex-col justify-center pl-4 border-l border-[#E2E8F0] ml-2">
                             <div class="flex items-center gap-2.5">
                                 <i data-lucide="${dInfo.icon}" class="w-6 h-6 ${dInfo.color}"></i>
                                 <span class="text-[15px] font-black text-[#334155]">${dInfo.text}</span>
