@@ -3525,27 +3525,52 @@
             document.getElementById('weatherSmartTip').innerText = wInfo.tip;
             document.getElementById('weatherBgIcon').setAttribute('data-lucide', wInfo.icon);
             
-            // --- 5. 시간별 예보(오늘) HTML 생성 ---
+            // 💡 [자동 수정] HTML의 "오늘 시간별 예보" 텍스트를 "시간별 예보 (48시간)"으로 스크립트 단에서 고급스럽게 변경
+            const hourlyTitle = document.getElementById('hourlyWeatherContainer').previousElementSibling;
+            if(hourlyTitle) hourlyTitle.innerText = "시간별 예보 (48시간)";
+
+            // --- 5. 시간별 예보(48시간 연속 스크롤 & 디자인 퀄리티 업그레이드) ---
             const hourlyContainer = document.getElementById('hourlyWeatherContainer');
             hourlyContainer.innerHTML = '';
             const currentHourIndex = new Date().getHours();
             
-            for(let i = currentHourIndex; i < currentHourIndex + 12; i++) {
-                const timeText = i === currentHourIndex ? "지금" : `${i % 24}시`;
+            for(let i = currentHourIndex; i < currentHourIndex + 48; i++) {
+                const dateObj = new Date(wData.hourly.time[i]);
+                const hour = dateObj.getHours();
+                
+                let timeDisplay = i === currentHourIndex ? "지금" : `${hour}시`;
+                let dayLabel = "";
+                
+                // 자정(0시)을 지날 때 '내일', '모레' 라벨 삽입
+                if (hour === 0 && i !== currentHourIndex) {
+                    const targetDay = dateObj.getDate();
+                    if (targetDay === new Date(Date.now() + 86400000).getDate()) dayLabel = "내일";
+                    else if (targetDay === new Date(Date.now() + 86400000 * 2).getDate()) dayLabel = "모레";
+                    
+                    timeDisplay = `<span class="text-[#0EA5E9] font-black text-[13px] tracking-wide">${dayLabel}</span>`;
+                }
+                
                 const temp = Math.round(wData.hourly.temperature_2m[i]);
                 const code = wData.hourly.weathercode[i];
                 const hInfo = getWeatherInfo(code);
                 
+                // '지금' 블록은 입체적인 파란색 그라데이션으로 강조
+                const isNow = i === currentHourIndex;
+                const bgClass = isNow ? "bg-gradient-to-b from-[#0EA5E9] to-[#0284C7] shadow-lg border-transparent" : "bg-[#F9F9F8] border-[#EAEBEA]";
+                const textClass = isNow ? "text-white drop-shadow-md" : "text-[#151E2D]";
+                const timeClass = isNow ? "text-white/90 drop-shadow-sm" : "text-[#8B95A1]";
+                const iconColor = isNow ? "text-white drop-shadow-md" : hInfo.color;
+                
                 hourlyContainer.innerHTML += `
-                    <div class="flex flex-col items-center justify-center bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] min-w-[65px] py-3 shrink-0">
-                        <span class="text-[12px] font-bold text-[#8B95A1] mb-2">${timeText}</span>
-                        <i data-lucide="${hInfo.icon}" class="w-6 h-6 ${hInfo.color} mb-2"></i>
-                        <span class="text-[14px] font-black text-[#151E2D]">${temp}°</span>
+                    <div class="flex flex-col items-center justify-center border ${bgClass} rounded-[18px] min-w-[72px] py-4 shrink-0 transition-transform hover:scale-105">
+                        <span class="text-[12px] font-bold ${timeClass} mb-2">${timeDisplay}</span>
+                        <i data-lucide="${hInfo.icon}" class="w-7 h-7 ${iconColor} mb-2 drop-shadow-sm"></i>
+                        <span class="text-[16px] font-black ${textClass}">${temp}°</span>
                     </div>
                 `;
             }
 
-            // --- 6. 주간 예보 HTML 생성 ---
+            // --- 6. 주간 예보 (간격 및 폰트 디테일 향상) ---
             const dailyContainer = document.getElementById('dailyWeatherContainer');
             dailyContainer.innerHTML = '';
             const days = ['일', '월', '화', '수', '목', '금', '토'];
@@ -3561,10 +3586,10 @@
                 const dInfo = getWeatherInfo(code);
 
                 dailyContainer.innerHTML += `
-                    <div class="flex items-center justify-between p-3 bg-white border-b border-[#F4F5F4] last:border-0">
-                        <div class="w-16"><span class="text-[14px] font-black text-[#151E2D] block">${dayName}</span><span class="text-[11px] text-[#8B95A1] font-bold">${dateText}</span></div>
-                        <div class="flex items-center gap-2 w-20 justify-start"><i data-lucide="${dInfo.icon}" class="w-5 h-5 ${dInfo.color}"></i><span class="text-[13px] font-bold text-[#4E5968]">${dInfo.text}</span></div>
-                        <div class="w-24 text-right text-[14px] font-black"><span class="text-blue-500">${minT}°</span> <span class="text-[#D4D8D4] mx-1">/</span> <span class="text-red-500">${maxT}°</span></div>
+                    <div class="flex items-center justify-between py-3.5 px-2 bg-white border-b border-[#F4F5F4] last:border-0 hover:bg-[#F9F9F8] rounded-lg transition-colors">
+                        <div class="w-16"><span class="text-[15px] font-black text-[#151E2D] block">${dayName}</span><span class="text-[11.5px] text-[#8B95A1] font-bold mt-0.5 block">${dateText}</span></div>
+                        <div class="flex items-center gap-3 w-24 justify-start"><i data-lucide="${dInfo.icon}" class="w-6 h-6 ${dInfo.color} drop-shadow-sm"></i><span class="text-[14px] font-bold text-[#4E5968]">${dInfo.text}</span></div>
+                        <div class="w-24 text-right text-[15px] font-black tracking-wide"><span class="text-blue-500">${minT}°</span> <span class="text-[#D4D8D4] mx-1.5">/</span> <span class="text-red-500">${maxT}°</span></div>
                     </div>
                 `;
             }
@@ -3576,7 +3601,6 @@
             document.getElementById('weatherSmartTip').innerText = "기상청 통신 지연으로 정보를 불러오지 못했습니다.";
         }
     }
-
     function openWeatherModal() {
         if(!weatherIsLoaded) {
             alert("아직 실시간 날씨 데이터를 불러오고 있습니다. 잠시만 기다려주세요.");
