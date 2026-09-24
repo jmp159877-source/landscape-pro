@@ -775,8 +775,9 @@
       </div>
       <div class="p-5 bg-white max-h-[60vh] overflow-y-auto nav-scroll">
         <div id="lensCaptureArea" class="space-y-4 bg-white pb-2">
-            <div class="w-full aspect-video bg-[#F4F5F4] rounded-[16px] overflow-hidden relative cursor-pointer group shadow-sm border border-[#EAEBEA]" onclick="openModalForLens()">
-              <img id="lensResultImg" src="" class="w-full h-full object-cover">
+            <!-- aspect-video를 삭제하고 사진 원본 비율이 유지되도록 수정 -->
+            <div class="w-full bg-[#151E2D] rounded-[16px] overflow-hidden relative cursor-pointer group shadow-sm border border-[#EAEBEA] flex justify-center items-center py-3" onclick="openModalForLens()">
+              <img id="lensResultImg" src="" class="max-w-full max-h-[300px] object-contain">
               <div class="absolute bottom-2 right-2 bg-black/60 text-white px-2 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1 backdrop-blur-sm"><i data-lucide="zoom-in" class="w-3 h-3"></i> 터치 확대</div>
             </div>
             <div id="lensResultContent" class="bg-[#F9F9F8] p-5 rounded-[16px] border border-[#EAEBEA] text-[14px] leading-relaxed text-[#1A1D1A] font-bold whitespace-pre-wrap break-keep"></div>
