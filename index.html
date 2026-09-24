@@ -560,37 +560,56 @@
         </div>
 
         <div class="grid grid-cols-2 gap-3 relative z-10">
-            <!-- 📊 좌측: 월간 재무 동향 -->
-            <div class="bg-white rounded-[20px] p-5 shadow-[0_8px_24px_rgba(0,0,0,0.04)] border border-[#EAEBEA] flex flex-col w-full relative group hover:border-[#1E3A8A]/30 transition-colors">
-                <div class="flex items-center justify-between pb-3 border-b border-[#F4F5F4] mb-3.5">
-                    <span class="text-[13px] font-black text-[#1E3A8A] flex items-center gap-1.5"><i data-lucide="calendar-check" class="w-4 h-4"></i> 이번 달</span>
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#1E3A8A] animate-pulse"></span>
+            <!-- 📊 좌측: 이번 달 요약 (스틸 블루 테마) -->
+            <div class="bg-[#F0F4F8] rounded-[22px] p-4 flex flex-col w-full relative shadow-sm border border-[#E2E8F0]">
+                <div class="flex items-center gap-1.5 mb-3.5">
+                    <span class="bg-[#1E3A8A] text-white text-[11px] px-2.5 py-1 rounded-[6px] font-black shadow-sm tracking-wide">이번 달</span>
+                    <span class="text-[13px] font-black text-[#1E3A8A]">요약</span>
                 </div>
-                <div class="space-y-2.5 mb-4">
-                    <div class="flex justify-between items-center"><span class="text-[12px] font-bold text-[#8B95A1]">수입</span><span id="ledgerMonthIncome" class="text-[14px] font-black text-red-500 tracking-tight">0원</span></div>
-                    <div class="flex justify-between items-center"><span class="text-[12px] font-bold text-[#8B95A1]">지출</span><span id="ledgerMonthExpense" class="text-[14px] font-black text-blue-500 tracking-tight">0원</span></div>
-                    <div class="flex justify-between items-center"><span class="text-[12px] font-bold text-[#A3A8A3]">부가세</span><span id="ledgerMonthVat" class="text-[13px] font-bold text-[#A3A8A3] tracking-tight">0원</span></div>
+                <div class="space-y-2 mb-4">
+                    <div class="flex justify-between items-center w-full">
+                        <span class="text-[12px] font-bold text-[#64748B] shrink-0">수입</span>
+                        <span id="ledgerMonthIncome" class="text-[14px] font-black text-[#E11D48] tracking-tight whitespace-nowrap pl-1 truncate">0원</span>
+                    </div>
+                    <div class="flex justify-between items-center w-full">
+                        <span class="text-[12px] font-bold text-[#64748B] shrink-0">지출</span>
+                        <span id="ledgerMonthExpense" class="text-[14px] font-black text-[#2563EB] tracking-tight whitespace-nowrap pl-1 truncate">0원</span>
+                    </div>
+                    <div class="flex justify-between items-center w-full">
+                        <span class="text-[11px] font-bold text-[#94A3B8] shrink-0">부가세</span>
+                        <span id="ledgerMonthVat" class="text-[12px] font-bold text-[#94A3B8] tracking-tight whitespace-nowrap pl-1 truncate">0원</span>
+                    </div>
                 </div>
-                <div class="mt-auto pt-3 border-t border-[#F4F5F4] flex flex-col">
-                    <span class="text-[11px] font-black text-[#8B95A1] mb-0.5">월 순수익</span>
-                    <span id="ledgerMonthNet" class="text-[20px] font-black text-[#1E3A8A] tracking-tight">0원</span>
+                <div class="mt-auto pt-3 border-t border-[#CBD5E1]/70">
+                    <div class="text-[11px] font-bold text-[#64748B] mb-0.5">최종 순수익</div>
+                    <div id="ledgerMonthNet" class="text-[18px] font-black text-[#1E3A8A] tracking-tight whitespace-nowrap truncate">0원</div>
                 </div>
             </div>
 
-            <!-- 📈 우측: 연간 누적 동향 -->
-            <div class="bg-white rounded-[20px] p-5 shadow-[0_8px_24px_rgba(0,0,0,0.04)] border border-[#EAEBEA] flex flex-col w-full relative group hover:border-[#84CC16]/50 transition-colors">
-                <div class="flex items-center justify-between pb-3 border-b border-[#F4F5F4] mb-3.5">
-                    <span class="text-[13px] font-black text-[#4E5968] flex items-center gap-1.5"><i data-lucide="trending-up" class="w-4 h-4 text-[#84CC16]"></i> 올 한 해</span>
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#84CC16]"></span>
+            <!-- 📈 우측: 올 한 해 누적 (소프트 그린 테마) -->
+            <div class="bg-[#F2FBEC] rounded-[22px] p-4 flex flex-col w-full relative shadow-sm border border-[#E5F3D7]">
+                <div class="flex items-center gap-1.5 mb-3.5">
+                    <span class="bg-[#84CC16] text-[#12261E] text-[11px] px-2.5 py-1 rounded-[6px] font-black shadow-sm tracking-wide">올 한 해</span>
+                    <span class="text-[13px] font-black text-[#3F6212]">누적</span>
                 </div>
-                <div class="space-y-2.5 mb-4">
-                    <div class="flex justify-between items-center"><span class="text-[12px] font-bold text-[#8B95A1]">누적 수입</span><span id="ledgerYearIncome" class="text-[14px] font-black text-red-500 tracking-tight">0원</span></div>
-                    <div class="flex justify-between items-center"><span class="text-[12px] font-bold text-[#8B95A1]">누적 지출</span><span id="ledgerYearExpense" class="text-[14px] font-black text-blue-500 tracking-tight">0원</span></div>
-                    <div class="flex justify-between items-center"><span class="text-[12px] font-bold text-[#A3A8A3]">부가세</span><span id="ledgerYearVat" class="text-[13px] font-bold text-[#A3A8A3] tracking-tight">0원</span></div>
+                <!-- '누적 수입'을 '수입'으로 줄여 글씨 깨짐 완벽 방지 -->
+                <div class="space-y-2 mb-4">
+                    <div class="flex justify-between items-center w-full">
+                        <span class="text-[12px] font-bold text-[#64748B] shrink-0">수입</span>
+                        <span id="ledgerYearIncome" class="text-[14px] font-black text-[#E11D48] tracking-tight whitespace-nowrap pl-1 truncate">0원</span>
+                    </div>
+                    <div class="flex justify-between items-center w-full">
+                        <span class="text-[12px] font-bold text-[#64748B] shrink-0">지출</span>
+                        <span id="ledgerYearExpense" class="text-[14px] font-black text-[#2563EB] tracking-tight whitespace-nowrap pl-1 truncate">0원</span>
+                    </div>
+                    <div class="flex justify-between items-center w-full">
+                        <span class="text-[11px] font-bold text-[#94A3B8] shrink-0">부가세</span>
+                        <span id="ledgerYearVat" class="text-[12px] font-bold text-[#94A3B8] tracking-tight whitespace-nowrap pl-1 truncate">0원</span>
+                    </div>
                 </div>
-                <div class="mt-auto pt-3 border-t border-[#F4F5F4] flex flex-col">
-                    <span class="text-[11px] font-black text-[#8B95A1] mb-0.5">총 순수익</span>
-                    <span id="ledgerYearNet" class="text-[20px] font-black text-[#1A1D1A] tracking-tight">0원</span>
+                <div class="mt-auto pt-3 border-t border-[#D9EBB9]/70">
+                    <div class="text-[11px] font-bold text-[#64748B] mb-0.5">총 누적 순수익</div>
+                    <div id="ledgerYearNet" class="text-[18px] font-black text-[#3F6212] tracking-tight whitespace-nowrap truncate">0원</div>
                 </div>
             </div>
         </div>
@@ -2443,7 +2462,8 @@
         const mNet = monthInc - monthExp;
         if(mNetEl) {
             mNetEl.innerText = mNet.toLocaleString('ko-KR') + "원";
-            mNetEl.className = mNet >= 0 ? "text-[16px] font-black text-[#151E2D] whitespace-nowrap tracking-tight pl-1 text-right" : "text-[16px] font-black text-blue-600 whitespace-nowrap tracking-tight pl-1 text-right";
+            // 적자일 경우 한국 금융권 표준에 맞춰 빨간색(#E11D48)으로 표시
+            mNetEl.className = mNet >= 0 ? "text-[18px] font-black text-[#1E3A8A] tracking-tight whitespace-nowrap truncate" : "text-[18px] font-black text-[#E11D48] tracking-tight whitespace-nowrap truncate";
         }
 
         // 연간 UI 업데이트
@@ -2457,7 +2477,7 @@
         const yNet = yearInc - yearExp;
         if(yNetEl) {
             yNetEl.innerText = yNet.toLocaleString('ko-KR') + "원";
-            yNetEl.className = yNet >= 0 ? "text-[16px] font-black text-[#151E2D] whitespace-nowrap tracking-tight pl-1 text-right" : "text-[16px] font-black text-blue-600 whitespace-nowrap tracking-tight pl-1 text-right";
+            yNetEl.className = yNet >= 0 ? "text-[18px] font-black text-[#3F6212] tracking-tight whitespace-nowrap truncate" : "text-[18px] font-black text-[#E11D48] tracking-tight whitespace-nowrap truncate";
         }
     }
 
