@@ -1905,11 +1905,41 @@
       if(query) { filtered = filtered.filter(c => (c.name&&c.name.toLowerCase().includes(query)) || (c.phone&&c.phone.replace(/-/g, '').includes(query.replace(/-/g, ''))) || (c.address&&c.address.toLowerCase().includes(query))); }
       document.getElementById('clientCountBadge').innerText = `${filtered.length}건`;
       if (filtered.length === 0) { container.innerHTML = `<div class="p-6 text-center text-[#8B95A1] text-[13px] bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA] font-bold">일치하는 거래처가 없습니다.</div>`; return; }
+      
       filtered.forEach((c) => {
-        const div = document.createElement('div'); div.className = "bg-white p-4 rounded-[16px] border border-[#EAEBEA] shadow-sm hover:border-[#84CC16] hover:shadow-md transition-all flex flex-col gap-3";
-        div.innerHTML = `<div class="cursor-pointer" onclick="showHistory('${c.name}')"><div class="font-black text-[#1A1D1A] text-[16px] flex items-center gap-1.5"><i data-lucide="building" class="w-4 h-4 text-[#4E5968]"></i> ${c.name}</div><div class="text-[13px] font-medium text-[#8B95A1] mt-1.5 break-keep"><i data-lucide="map-pin" class="w-3.5 h-3.5 inline-block mr-1"></i> ${c.address || '주소 미등록'}</div><div class="text-[14px] font-bold text-[#4E5968] mt-1"><i data-lucide="phone" class="w-3.5 h-3.5 inline-block text-blue-500 mr-1"></i> ${formatPhoneToLink(c.phone)}</div></div><div class="flex gap-2 items-center pt-2.5 border-t border-[#F4F5F4]"><button onclick="createNewReportFromClient('${c.id}'); event.stopPropagation();" class="flex-1 py-3 bg-[#84CC16] text-[#12261E] rounded-[12px] font-black text-[13px] shadow-sm hover:bg-[#9BE32D] transition-all text-center whitespace-nowrap">새 작업일지 쓰기</button><button onclick="editClient('${c.id}'); event.stopPropagation();" class="p-3 text-[#A3A8A3] hover:text-[#84CC16] bg-[#F4F5F4] rounded-[12px] transition-all shrink-0"><i data-lucide="edit-2" class="w-5 h-5"></i></button><button onclick="deleteClient('${c.id}'); event.stopPropagation();" class="p-3 text-[#A3A8A3] hover:text-red-500 bg-[#F4F5F4] rounded-[12px] transition-all shrink-0"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div>`;
+        const div = document.createElement('div'); 
+        div.className = "bg-white p-4 rounded-[16px] border border-[#EAEBEA] shadow-sm hover:border-[#84CC16] hover:shadow-md transition-all flex flex-col";
+        
+        div.innerHTML = `
+          <div class="flex justify-between items-start gap-2">
+            <div class="cursor-pointer flex-1 min-w-0" onclick="showHistory('${c.name}')">
+              <div class="font-black text-[#1A1D1A] text-[16px] flex items-center gap-1.5">
+                <i data-lucide="building" class="w-4 h-4 text-[#4E5968] shrink-0"></i> 
+                <span class="truncate">${c.name}</span>
+              </div>
+              <div class="text-[13px] font-medium text-[#8B95A1] mt-1.5 break-keep truncate">
+                <i data-lucide="map-pin" class="w-3.5 h-3.5 inline-block mr-1"></i> ${c.address || '주소 미등록'}
+              </div>
+              <div class="text-[14px] font-bold text-[#4E5968] mt-1">
+                <i data-lucide="phone" class="w-3.5 h-3.5 inline-block text-blue-500 mr-1"></i> ${formatPhoneToLink(c.phone)}
+              </div>
+            </div>
+            
+            <!-- ✨ 대표님이 원하신 바로 그 위치! 고객명 우측 '새 일지 작성' 다이렉트 버튼 ✨ -->
+            <button onclick="createNewReportFromClient('${c.id}'); event.stopPropagation();" class="shrink-0 text-[12px] font-black bg-[#12261E] text-white px-3 py-2.5 rounded-[10px] shadow-sm hover:bg-black active:scale-95 transition-all flex items-center gap-1.5 mt-0.5">
+              <i data-lucide="pen-tool" class="w-3.5 h-3.5 text-[#84CC16]"></i> 새 일지 작성
+            </button>
+          </div>
+          
+          <div class="flex gap-2 items-center justify-end pt-3 border-t border-[#F4F5F4] mt-3">
+            <button onclick="showHistory('${c.name}'); event.stopPropagation();" class="flex-1 py-2.5 bg-[#F4F5F4] text-[#4E5968] rounded-[10px] font-black text-[13px] hover:text-[#12261E] transition-all flex items-center justify-center gap-1.5"><i data-lucide="history" class="w-4 h-4"></i> 과거 기록 열람</button>
+            <button onclick="editClient('${c.id}'); event.stopPropagation();" class="p-2.5 text-[#A3A8A3] hover:text-[#84CC16] bg-[#F4F5F4] rounded-[10px] transition-all shrink-0"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+            <button onclick="deleteClient('${c.id}'); event.stopPropagation();" class="p-2.5 text-[#A3A8A3] hover:text-red-500 bg-[#F4F5F4] rounded-[10px] transition-all shrink-0"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+          </div>
+        `;
         container.appendChild(div);
-      }); lucide.createIcons();
+      }); 
+      lucide.createIcons();
     }
     
     function saveClient() {
