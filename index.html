@@ -164,10 +164,7 @@
                     </div>
                 </div>
                 <!-- 텍스트 크기를 13px -> 14px로 키우고 '신화 조경노트'로 변경 -->
-                <div class="mt-2.5 flex items-center gap-2 opacity-95">
-                    <div class="w-4 h-[1px] bg-[#C5A880]/70"></div>
-                    <span class="text-[12px] font-bold text-[#C5A880] tracking-[0.2em] font-serif">스마트 관리 솔루션 <strong class="text-white font-black tracking-normal ml-0.5 font-sans">신화 조경노트</strong></span>
-                </div>
+                <span class="text-[14px] font-bold text-[#A3A8A3] tracking-wide mt-1.5">스마트 관리 솔루션 <strong class="text-[#84CC16]">신화 조경노트</strong></span>
               </div>
       </div>
       <div class="flex items-start gap-3 shrink-0 mt-0.5">
@@ -998,10 +995,10 @@
             let cName = myCompanyProfile.name || '';
             if (cName.endsWith('조경') && cName.length > 2) {
                 let mainName = cName.slice(0, -2); 
-                // ✨ [고급화] 메인 이름은 더 굵고 타이트하게, '조경'은 명조체로 자간을 넓게 띄워 브랜드 로고처럼 연출
-                headerEl.innerHTML = `<span class="block text-[26px] font-black leading-none text-white break-keep tracking-tight">${mainName}</span><span class="block text-[15px] font-black text-[#84CC16] mt-2 tracking-[0.4em] font-serif">${mainName === '신화' ? 'TOTAL LANDSCAPE' : '조경'}</span>`;
+                // 💡 업체명(24px)과 조경(20px)의 크기 밸런스를 맞춰 시각적 안정감을 높임
+                headerEl.innerHTML = `<span class="block text-[24px] font-black leading-none text-white break-keep">${mainName}</span><span class="block text-[20px] font-black text-[#84CC16] mt-1 tracking-widest">조경</span>`;
             } else { 
-                headerEl.innerHTML = `<span class="block text-[26px] font-black leading-tight text-white break-keep tracking-tight">${cName}</span>`; 
+                headerEl.innerHTML = `<span class="block text-[24px] font-black leading-tight text-white break-keep">${cName}</span>`; 
             }
         }
     }
