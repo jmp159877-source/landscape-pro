@@ -1711,6 +1711,10 @@
       document.getElementById('doc-company-name-sign').innerText = sName;
 
       if(data.isQuote) {
+        // 💡 견적서일 경우: 견적 박스는 켜고, 일지 박스는 숨김
+        document.getElementById('quoteContentBlock').classList.remove('hidden');
+        document.getElementById('reportContentBlock').classList.add('hidden');
+
         document.getElementById('docTypeLabel').innerHTML = `<i data-lucide="calculator" class="w-5 h-5 text-[#84CC16]"></i> 스마트 조경 견적 솔루션`; document.getElementById('docStatusLabel').innerText = "견적서";
         const quotePhotoContainer = document.getElementById('viewQuotePhotosBlock'); const photoGrid = document.getElementById('viewQuotePhotoGrid');
         if (data.imgs && viewMode !== 'client_shared') {
@@ -1741,6 +1745,10 @@
         document.getElementById('viewQuoteMonths').innerHTML = mHtml; document.getElementById('viewQuoteSubtotal').className = "text-[15px] text-[#1A1D1A] font-black"; document.getElementById('viewQuoteSubtotal').innerText = (data.s || 0).toLocaleString('ko-KR') + "원"; document.getElementById('viewQuoteVatLabel').innerText = "부가가치세"; document.getElementById('viewQuoteVat').innerHTML = '<span class="text-[#3B82F6] font-black">부가세 별도(요청시)</span>'; document.getElementById('viewQuoteGrandTotal').innerText = (data.s || 0).toLocaleString('ko-KR') + "원";
         if(data.memo && data.memo.trim() !== '') { document.getElementById('viewQuoteMemoBlock').innerHTML = `<div class="mt-4 bg-[#FFFDF9] p-5 rounded-[20px] border border-[#C5A880]/30 shadow-sm text-left"><h2 class="text-[15px] font-black text-[#12261E] flex items-center gap-1.5 mb-2"><i data-lucide="info" class="w-5 h-5 text-[#C5A880]"></i> 참고 및 특이사항</h2><p class="text-[15px] leading-[1.8] text-[#12261E] font-black whitespace-pre-wrap">${data.memo}</p></div>`; } else { document.getElementById('viewQuoteMemoBlock').innerHTML = ''; }
       } else {
+        // 💡 일지일 경우: 일지 박스는 켜고, 견적 박스는 숨김
+        document.getElementById('quoteContentBlock').classList.add('hidden');
+        document.getElementById('reportContentBlock').classList.remove('hidden');
+
         document.getElementById('docTypeLabel').innerHTML = `<i data-lucide="shield-check" class="w-5 h-5 text-[#84CC16]"></i> 스마트 조경 관리 솔루션`; document.getElementById('docStatusLabel').innerText = "완료";
         const issueBlock = document.getElementById('viewIssueBlock'); const issueTextEl = document.getElementById('viewIssue'); const issueGallery = document.getElementById('viewIssueGallery');
         if (data.issue && typeof data.issue === 'string' && data.issue.trim() !== '') {
@@ -2724,7 +2732,7 @@
       let genBtn = document.getElementById('btnGenerateReport');
       if(genBtn) genBtn.innerHTML = '<i data-lucide="send" class="w-6 h-6 stroke-[2.5]"></i> 리포트 발행 및 저장';
       
-      switchView('calendar');
+      switchView('admin'); // 💡 calendar에서 admin(일지작성 화면)으로 정상 수정
     } 
   </script>
   <!-- 🌟 장부 팝업창 -->
@@ -2875,8 +2883,9 @@
             document.getElementById('loadingOverlay')?.remove();
         }
     }
-  // ==========================================
-    // 🗂️ 전체 일지 보관함 (모든 거래처 통합)
+  
+    // ==========================================
+    // 🗂️ 전체 일지 보관함 (정식 데이터 소스 연동)
     // ==========================================
     function openAllLogsModal() {
         const modal = document.getElementById('allLogsModal');
@@ -2884,29 +2893,19 @@
         if(!modal || !container) return;
         container.innerHTML = '';
 
-        // ✨ 백버튼(뒤로가기) 시 앱 종료 방지용 히스토리 추가
         history.pushState({ modal: 'allLogs' }, '', '');
 
-        let allLogs = [];
-        
-        // 1. 모든 거래처를 돌면서 일지 데이터 싹 다 수집
-        clients.forEach(client => {
-            if(client.history && client.history.length > 0) {
-                client.history.forEach(log => {
-                    allLogs.push({ ...log, clientName: client.name, clientId: client.id });
-                });
-            }
-        });
+        // 💡 핵심: 현장 앱의 진짜 통합 데이터베이스인 'records' 배열을 직접 가져옵니다.
+        let allLogs = records.filter(r => r && r.id);
 
-        // 2. 날짜 최신순으로 정렬 (내림차순)
+        // 날짜 최신순 정렬
         allLogs.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-        // 3. 화면에 그리기
         if (allLogs.length === 0) {
             container.innerHTML = `<div class="p-10 text-center text-[#8B95A1] font-bold bg-white rounded-[24px] border border-dashed border-[#EAEBEA] shadow-sm mt-4">아직 작성된 일지가 없습니다.</div>`;
         } else {
             allLogs.forEach(log => {
-                const isQuote = log.isQuote;
+                const isQuote = log.type === 'quote';
                 const typeIcon = isQuote ? 'calculator' : 'shield-check';
                 const typeColor = isQuote ? 'text-[#C5A880]' : 'text-[#84CC16]';
                 const typeText = isQuote ? '견적서' : '작업 일지';
@@ -2914,18 +2913,31 @@
                 const card = document.createElement('div');
                 card.className = `bg-white p-5 rounded-[20px] shadow-sm border border-[#EAEBEA] cursor-pointer hover:border-[#84CC16] hover:shadow-md transition-all flex flex-col gap-3`;
                 
-                // 💡 카드를 누르면 해당 거래처의 '상세 히스토리 창'으로 곧바로 이동
+                // 카드 터치 시 해당 문서 원본 열람으로 바로 이동
                 card.onclick = () => {
                     closeAllLogsModal();
-                    setTimeout(() => showHistory(log.clientName), 200); 
+                    setTimeout(() => loadHistoryRecord(log.id, isQuote, log), 200); 
                 };
 
+                // 사진 썸네일 추출 안전 장치
                 let imgThumb = '';
-                if(log.issue && typeof log.issue === 'string' && log.issue.startsWith('data:image')) {
-                    imgThumb = `<img src="${log.issue}" class="w-16 h-16 rounded-[14px] object-cover shrink-0 border border-[#EAEBEA]">`;
+                const payload = log.payload || {};
+                let firstImg = '';
+                
+                if (isQuote && payload.imgs) {
+                    firstImg = payload.imgs.split(',')[0];
+                } else if (!isQuote) {
+                    if (payload.dur) firstImg = payload.dur.split(',')[0];
+                    else if (payload.a) firstImg = payload.a.split(',')[0];
+                    else if (payload.b) firstImg = payload.b.split(',')[0];
+                    else if (payload.imgsIssue) firstImg = payload.imgsIssue.split(',')[0];
                 }
 
-                const snippet = log.d || log.memo || '상세 내용 없음';
+                if(firstImg && firstImg.startsWith('http')) {
+                    imgThumb = `<img src="${firstImg}" class="w-16 h-16 rounded-[14px] object-cover shrink-0 border border-[#EAEBEA]">`;
+                }
+
+                const snippet = payload.d || payload.memo || payload.r || '상세 내용 없음';
 
                 card.innerHTML = `
                     <div class="flex justify-between items-center">
@@ -2950,7 +2962,6 @@
         setTimeout(() => { modal.classList.remove('opacity-0'); }, 10);
         if(typeof lucide !== 'undefined') lucide.createIcons();
     }
-
     function closeAllLogsModal(isFromBackButton = false) {
         const modal = document.getElementById('allLogsModal');
         if(modal && !modal.classList.contains('hidden')) {
