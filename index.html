@@ -967,8 +967,14 @@
 
     function openTermsModal(type) {
         currentTermType = type; const title = document.getElementById('termsTitle'); const content = document.getElementById('termsContent');
-        if (type === 'privacy') { title.innerText = '개인정보 수집 및 이용 동의'; content.innerText = '1. 수집 항목: 아이디, 비밀번호, 업체명, 연락처\n2. 수집 목적: 조경노트 PRO 서비스 제공, 사용자 식별, 견적서/일지 발송 등 맞춤형 기능 제공\n3. 보유 기간: 회원 탈퇴 또는 서비스 종료 시까지'; } 
-        else { title.innerText = '서비스 이용 약관 동의'; content.innerText = '제 1조 (목적)\n본 약관은 조경노트 PRO가 제공하는 스마트 조경 일지 및 견적 관리 서비스의 이용 조건 및 절차, 권리 및 의무를 규정함을 목적으로 합니다.\n\n제 2조 (서비스의 제공)\n1. AI 수목 식별 및 병해충 진단 보조\n2. 스마트 작업 일지 작성 및 클라우드 저장'; }
+        if (type === 'privacy') { 
+            title.innerText = '개인정보 수집 및 이용 동의'; 
+            content.innerText = '1. 수집 항목: 아이디, 비밀번호, 업체명, 대표자명, 연락처, 앱 내 등록 및 저장된 운영 데이터(DB) 일체\n2. 수집 목적: 조경노트 PRO 서비스 제공, 데이터 클라우드 연동 및 백업, 견적서/일지 발송 등 맞춤형 기능 제공\n3. 보유 기간: 회원 탈퇴 또는 서비스 종료 시까지'; 
+        } 
+        else { 
+            title.innerText = '서비스 이용 약관 동의'; 
+            content.innerText = '제 1조 (목적)\n본 약관은 조경노트 PRO가 제공하는 스마트 조경 일지 및 견적 관리 서비스의 이용 조건 및 절차, 권리 및 의무를 규정함을 목적으로 합니다.\n\n제 2조 (서비스의 제공)\n1. AI 수목 식별 및 병해충 진단 보조\n2. 스마트 작업 일지 작성 및 클라우드 저장\n3. 조경 견적 자동화 및 고객 발송 시스템'; 
+        }
         const modal = document.getElementById('termsModal'); const box = document.getElementById('termsBox');
         modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10); lucide.createIcons();
     }
