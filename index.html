@@ -72,20 +72,21 @@
   </div>
 
   <section id="authView" class="hidden fixed inset-0 z-[2000] bg-[#151E2D] flex flex-col items-center justify-center px-6">
-    <div class="bg-white/5 backdrop-blur-md p-8 rounded-[32px] w-full max-w-sm border border-white/10 shadow-2xl flex flex-col items-center">
-      <div class="w-16 h-16 bg-[#84CC16] rounded-[18px] flex items-center justify-center mb-5 shadow-[0_0_20px_rgba(132,204,22,0.3)]"><i data-lucide="shield-check" class="w-7 h-7 text-[#12261E]"></i></div>
-      <h2 class="text-white font-black text-[24px] mb-2">조경노트 PRO 로그인</h2>
-      <p class="text-[#A3A8A3] text-[14px] font-bold mb-6 text-center leading-relaxed">강력한 보안 암호화가 적용되었습니다.<br>안심하고 접속하세요.</p>
-      <div class="w-full space-y-3 mb-4">
-        <input type="text" id="loginId" placeholder="아이디 (영문/숫자 조합)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[12px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16]">
-        <input type="password" id="loginPw" placeholder="비밀번호" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[12px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16]" onkeypress="if(event.key === 'Enter') doLogin()">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(132,204,22,0.1)_0%,transparent_50%)] pointer-events-none"></div>
+    <div class="bg-white/5 backdrop-blur-xl p-8 rounded-[32px] w-full max-w-sm border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col items-center relative z-10">
+      <div class="w-16 h-16 bg-[#84CC16] rounded-[20px] flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(132,204,22,0.3)]"><i data-lucide="shield-check" class="w-8 h-8 text-[#12261E]"></i></div>
+      <h2 class="text-white font-black text-[24px] mb-2 tracking-tight">조경노트 PRO 로그인</h2>
+      <p class="text-[#A3A8A3] text-[13.5px] font-bold mb-8 text-center leading-relaxed">강력한 보안 암호화가 적용되었습니다.<br>안심하고 접속하세요.</p>
+      <div class="w-full space-y-3 mb-5">
+        <input type="text" id="loginId" placeholder="아이디 (영문/숫자 조합)" autocomplete="off" class="w-full bg-black/40 border border-white/10 rounded-[16px] px-5 py-4 text-white text-[16px] font-bold focus:outline-none focus:border-[#84CC16] transition-colors placeholder:text-gray-500">
+        <input type="password" id="loginPw" placeholder="비밀번호" autocomplete="off" class="w-full bg-black/40 border border-white/10 rounded-[16px] px-5 py-4 text-white text-[16px] font-bold focus:outline-none focus:border-[#84CC16] transition-colors placeholder:text-gray-500" onkeypress="if(event.key === 'Enter') doLogin()">
       </div>
-      <div class="w-full flex items-center mb-6 px-1">
-        <label class="flex items-center gap-2 cursor-pointer text-[#A3A8A3] text-[14px] font-bold hover:text-white transition-colors"><input type="checkbox" id="autoLoginCheck" class="w-5 h-5 rounded border-white/20 bg-transparent text-[#84CC16] focus:ring-[#84CC16]" checked>자동 로그인</label>
+      <div class="w-full flex items-center mb-8 px-2">
+        <label class="flex items-center gap-2.5 cursor-pointer text-[#A3A8A3] text-[13px] font-bold hover:text-white transition-colors"><input type="checkbox" id="autoLoginCheck" class="w-5 h-5 rounded border-white/20 bg-transparent text-[#84CC16] focus:ring-[#84CC16]" checked>자동 로그인 유지</label>
       </div>
-      <button onclick="doLogin()" class="w-full py-4.5 bg-[#84CC16] text-[#12261E] rounded-[16px] font-black text-[18px] hover:bg-[#9BE32D] shadow-[0_8px_20px_rgba(132,204,22,0.2)] transition-all mb-4">로그인</button>
+      <button onclick="doLogin()" class="w-full py-4.5 bg-[#84CC16] text-[#12261E] rounded-[18px] font-black text-[16px] hover:bg-[#9BE32D] shadow-[0_4px_15px_rgba(132,204,22,0.3)] transition-all mb-4">로그인</button>
       <div class="w-full border-t border-white/10 pt-5 mt-2">
-        <button onclick="showSignUp()" class="w-full py-4.5 bg-[#FEE500] text-[#12261E] rounded-[16px] font-black text-[18px] shadow-[0_8px_20px_rgba(254,229,0,0.2)] hover:bg-[#FACC15] transition-all flex items-center justify-center gap-2">업체 등록하기 <i data-lucide="arrow-right" class="w-5 h-5"></i></button>
+        <button onclick="showSignUp()" class="w-full py-4.5 bg-white/5 border border-white/10 text-white rounded-[18px] font-bold text-[15px] hover:bg-white/10 transition-all flex items-center justify-center gap-2">업체 등록 신청하기 <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
       </div>
     </div>
   </section>
@@ -189,17 +190,17 @@
     </div>
     
     <div class="max-w-md mx-auto mt-4">
-    <nav class="grid grid-cols-3 gap-2 bg-[#84CC16] p-2.5 rounded-2xl shadow-[0_4px_15px_rgba(132,204,22,0.3)] border border-[#65A30D]">
-        <button id="tabCalendar" onclick="switchView('calendar')" class="w-full py-3.5 rounded-[12px] bg-[#E0F2FE] text-[#12261E] shadow-sm font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="calendar-days" class="w-5 h-5"></i>일정표</button>
-        <button id="tabAdmin" onclick="switchView('admin')" class="w-full py-3.5 rounded-[12px] bg-[#E0F2FE] text-[#12261E] shadow-sm font-black text-[14px] shadow-md transition-all text-center flex flex-col items-center justify-center gap-1"><i data-lucide="pen-tool" class="w-5 h-5"></i>일지작성</button>
-        <button id="tabClient" onclick="switchView('clients')" class="w-full py-3.5 rounded-[12px] bg-[#E0F2FE] text-[#12261E] shadow-sm font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="building-2" class="w-5 h-5"></i>거래처 목록</button>
-        <button id="tabQuote" onclick="switchView('quote')" class="w-full py-3.5 rounded-[12px] bg-[#E0F2FE] text-[#12261E] shadow-sm font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="calculator" class="w-5 h-5"></i>견적작성</button>
-        <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-3.5 rounded-[12px] bg-[#E0F2FE] text-[#12261E] shadow-sm font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="folder-open" class="w-5 h-5"></i>견적보관함</button>
-        <button id="tabContacts" onclick="switchView('contacts')" class="w-full py-3.5 rounded-[12px] bg-[#E0F2FE] text-[#12261E] shadow-sm font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="users" class="w-5 h-5"></i>연락처</button>
-        <button id="tabLedger" onclick="checkLedgerPin()" class="w-full py-3.5 rounded-[12px] bg-[#E0F2FE] text-[#12261E] shadow-sm font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="wallet" class="w-5 h-5 text-yellow-300"></i>개인장부</button>
-        <button id="tabEncyclopedia" onclick="switchView('encyclopedia')" class="w-full py-3.5 rounded-[12px] bg-[#E0F2FE] text-[#12261E] shadow-sm font-black text-[14px] hover:bg-white/80 transition-all text-center flex flex-col items-center justify-center gap-1 border border-transparent"><i data-lucide="book-open" class="w-5 h-5 text-[#84CC16]"></i>스마트 식물검색</button>
-        <button id="tabLens" onclick="switchView('lens')" class="w-full py-3.5 rounded-[12px] bg-[#1E3A8A] text-white font-black text-[14px] hover:bg-[#EA580C] transition-all text-center flex flex-col items-center justify-center gap-1 shadow-md"><i data-lucide="scan-line" class="w-5 h-5 text-orange-200"></i>AI 검색렌즈</button>
-      </nav>  
+    <nav class="grid grid-cols-3 gap-3">
+            <button id="tabCalendar" onclick="switchView('calendar')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="calendar-days" class="w-6 h-6 text-white/80"></i><span class="text-[13px] font-bold text-white/90">일정표</span></button>
+            <button id="tabAdmin" onclick="switchView('admin')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="pen-tool" class="w-6 h-6 text-[#84CC16]"></i><span class="text-[13px] font-bold text-white/90">일지작성</span></button>
+            <button id="tabClient" onclick="switchView('clients')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="building-2" class="w-6 h-6 text-white/80"></i><span class="text-[13px] font-bold text-white/90">거래처 목록</span></button>
+            <button id="tabQuote" onclick="switchView('quote')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="calculator" class="w-6 h-6 text-white/80"></i><span class="text-[13px] font-bold text-white/90">견적작성</span></button>
+            <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="folder-open" class="w-6 h-6 text-[#84CC16]"></i><span class="text-[13px] font-bold text-white/90">견적보관함</span></button>
+            <button id="tabContacts" onclick="switchView('contacts')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="users" class="w-6 h-6 text-white/80"></i><span class="text-[13px] font-bold text-white/90">연락처</span></button>
+            <button id="tabLedger" onclick="checkLedgerPin()" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="wallet" class="w-6 h-6 text-yellow-400"></i><span class="text-[13px] font-bold text-white/90">개인장부</span></button>
+            <button id="tabEncyclopedia" onclick="switchView('encyclopedia')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="book-open" class="w-6 h-6 text-white/80"></i><span class="text-[13px] font-bold text-white/90">스마트 식물검색</span></button>
+            <button id="tabLens" onclick="switchView('lens')" class="w-full py-5 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="scan-line" class="w-6 h-6 text-[#12261E]"></i><span class="text-[13px] font-black text-[#12261E]">AI 검색렌즈</span></button>
+        </nav>  
     </div>
   </header>
 
@@ -2256,14 +2257,27 @@
     function switchView(mode, pushHistory = true) {
       const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView', 'calendarView', 'ledgerView', 'encyclopediaView'];
       views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
+      
       const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient', 'tabContacts', 'tabCalendar', 'tabLedger', 'tabEncyclopedia'];
       mainTabs.forEach(t => { 
           const el = document.getElementById(t); 
-          if(el) el.className = "w-full py-3.5 rounded-[12px] bg-[#E0F2FE] text-[#12261E] font-black text-[14px] hover:bg-white transition-all text-center flex flex-col items-center justify-center gap-1 shadow-sm"; 
+          if(el) {
+              el.className = "w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md";
+              const icon = el.querySelector('i');
+              const span = el.querySelector('span');
+              if(span) span.className = "text-[13px] font-bold text-white/90";
+              if(icon) {
+                  icon.className = icon.className.replace(/text-\S+/g, '');
+                  if(t === 'tabAdmin' || t === 'tabQuoteList') icon.classList.add('text-[#84CC16]');
+                  else if(t === 'tabLedger') icon.classList.add('text-yellow-400');
+                  else icon.classList.add('text-white/80');
+              }
+          }
       });
       
       const lensTab = document.getElementById('tabLens');
-      if(lensTab) lensTab.className = "w-full py-3.5 rounded-[12px] bg-[#1E3A8A] text-white font-black text-[14px] hover:bg-[#1E40AF] transition-all text-center flex flex-col items-center justify-center gap-1 shadow-md";
+      if(lensTab) lensTab.className = "w-full py-5 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex flex-col items-center justify-center gap-2.5";
+      
       let activeTabId = '';
       if (mode === 'admin') { document.getElementById('adminView').classList.remove('hidden'); activeTabId = 'tabAdmin'; }
       else if (mode === 'quote') { document.getElementById('quoteAdminView').classList.remove('hidden'); activeTabId = 'tabQuote'; }
@@ -2279,21 +2293,14 @@
 
       if(activeTabId) {
         const activeEl = document.getElementById(activeTabId);
-        if(activeEl) {
-          if (activeTabId === 'tabLens') activeEl.className = "w-full py-3.5 rounded-[12px] bg-[#84CC16] text-[#12261E] font-black text-[13px] shadow-[0_4px_12px_rgba(132,204,22,0.3)] transition-all text-center flex flex-col items-center justify-center gap-1 border border-[#65A30D]";
-          else activeEl.className = "w-full py-3.5 rounded-[12px] bg-white text-[#12261E] font-black text-[13px] shadow-md transition-all text-center flex flex-col items-center justify-center gap-1 border border-white/50";
+        if(activeEl && activeTabId !== 'tabLens') { 
+            activeEl.className = "w-full py-5 rounded-[20px] bg-white/15 border border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md";
+            const span = activeEl.querySelector('span');
+            if(span) span.className = "text-[13px] font-black text-white";
         }
-      }
-      // 🎨 3. 내가 클릭한 탭만 '순백색' 바탕에 '남색' 글씨로 불 켜주기 (버그 해결!)
-      if(activeTabId) {
-          const activeEl = document.getElementById(activeTabId);
-          if(activeEl && activeTabId !== 'tabLens') { 
-              activeEl.className = "w-full py-3.5 rounded-[12px] bg-white text-[#1E3A8A] font-black text-[14px] shadow-md transition-all text-center flex flex-col items-center justify-center gap-1";
-          }
       }
       if(typeof lucide !== 'undefined') lucide.createIcons(); window.scrollTo(0, 0); if (pushHistory && mode !== 'client_shared') history.pushState({ view: mode }, "", "");
     }
-
     const mainTabsOrder = ['admin', 'quote', 'quoteList', 'clients', 'contacts', 'lens', 'calendar', 'ledger'];
     const swipeContainerEl = document.getElementById('swipeContainer');
     let viewTouchStartX = 0; let viewTouchStartY = 0;
