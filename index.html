@@ -202,8 +202,8 @@
                     <span class="text-[13px] font-bold text-white/90">1:1 문의하기</span>
                 </button>
                 
-                <!-- 9. 사장님 라운지 (눈에 띄는 프리미엄 연노란색 적용) -->
-                <button id="tabLounge" onclick="switchView('lounge')" class="w-full py-5 rounded-[20px] bg-[#FEF08A] border border-[#FDE047] shadow-[0_4px_15px_rgba(254,240,138,0.2)] hover:bg-[#FDE047] transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md">
+                <!-- 9. 사장님 라운지 (가장 눈에 띄는 쨍한 시그니처 옐로우 적용) -->
+                <button id="tabLounge" onclick="switchView('lounge')" class="w-full py-5 rounded-[20px] bg-[#FEE500] border border-[#FEE500] shadow-[0_4px_15px_rgba(254,229,0,0.3)] hover:brightness-95 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md">
                     <i data-lucide="coffee" class="w-6 h-6 text-[#151E2D]"></i>
                     <span class="text-[14px] font-black text-[#151E2D] tracking-tight">사장님 라운지</span>
                 </button>
@@ -222,9 +222,9 @@
             </nav>
         </div>
         
-        <!-- ✨ 시인성 최고조: 순수 노란색 유지 + 텍스트 크기 1단계 업 -->
+        <!-- ✨ 프리미엄 퀄리티: 깔끔하고 고급스러운 순백색(White) 버튼으로 변경 -->
         <div class="flex justify-center mt-5 relative">
-            <button onclick="toggleMainCategory()" class="flex items-center gap-2 text-[16px] font-black text-[#151E2D] hover:brightness-95 active:scale-95 transition-all px-8 py-3.5 bg-[#FEE500] rounded-full shadow-[0_8px_20px_rgba(254,229,0,0.25)] z-50 tracking-wide">
+            <button onclick="toggleMainCategory()" class="flex items-center gap-2 text-[16px] font-black text-[#151E2D] hover:bg-[#F4F5F4] active:scale-95 transition-all px-8 py-3.5 bg-white border border-[#EAEBEA] rounded-full shadow-[0_8px_20px_rgba(255,255,255,0.15)] z-50 tracking-wide">
                 <span id="toggleCategoryText">메뉴 접기 (화면 넓게 쓰기)</span>
                 <i id="toggleCategoryIcon" data-lucide="chevron-up" class="w-5 h-5 stroke-[2.5] text-[#151E2D]"></i>
             </button>
@@ -2552,7 +2552,12 @@
       
       const loungeTab = document.getElementById('tabLounge');
       if(loungeTab) {
-          loungeTab.className = "w-full py-5 rounded-[20px] bg-[#FEF08A] border border-[#FDE047] shadow-[0_4px_15px_rgba(254,240,138,0.2)] hover:bg-[#FDE047] transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md";
+          loungeTab.className = "w-full py-5 rounded-[20px] bg-[#FEE500] border border-[#FEE500] shadow-[0_4px_15px_rgba(254,229,0,0.3)] hover:brightness-95 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md";
+          const span = loungeTab.querySelector('span');
+          if(span) span.className = "text-[14px] font-black text-[#151E2D] tracking-tight";
+          const icon = loungeTab.querySelector('i');
+          if(icon) { icon.className = icon.className.replace(/text-\S+/g, ''); icon.classList.add('text-[#151E2D]'); }
+      }
           const span = loungeTab.querySelector('span');
           if(span) span.className = "text-[14px] font-black text-[#151E2D] tracking-tight";
           const icon = loungeTab.querySelector('i');
