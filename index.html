@@ -251,18 +251,9 @@
               <div class="flex items-center gap-1 text-[13px] font-black text-[#151E2D] bg-white/50 px-3 py-1.5 rounded-full shadow-sm">입장하기 <i data-lucide="chevron-right" class="w-4 h-4 -ml-0.5"></i></div>
           </div>
           
-          <!-- 💡 4개 버튼을 메인 남색(Navy)으로 변경하여 프리미엄 느낌 및 시인성 극대화 -->
+          <!-- 💡 4대장 버튼 순서 변경 및 다크 테마 적용 -->
           <div class="grid grid-cols-2 gap-3">
-              <!-- 버튼 1: 불량 거래처 -->
-              <button onclick="openBoard('불량 거래처 경보')" class="bg-[#151E2D] border border-white/10 rounded-[20px] p-5 text-left flex flex-col gap-3 hover:border-red-500 transition-all shadow-md group">
-                  <div class="w-11 h-11 rounded-[14px] bg-red-500/20 flex items-center justify-center text-red-400 group-hover:scale-110 transition-transform"><i data-lucide="alert-triangle" class="w-6 h-6"></i></div>
-                  <div>
-                      <h3 class="text-[15px] font-black text-white group-hover:text-red-400 transition-colors">불량 거래처 경보</h3>
-                      <p class="text-[12px] text-[#A3A8A3] font-bold mt-1.5 break-keep leading-snug">미수금 발생, 주의 요망 거래처 팩트 공유</p>
-                  </div>
-              </button>
-              
-              <!-- 버튼 2: 현장 협력 -->
+              <!-- 버튼 1: 현장 협력 -->
               <button onclick="openBoard('현장 협력·지원')" class="bg-[#151E2D] border border-white/10 rounded-[20px] p-5 text-left flex flex-col gap-3 hover:border-blue-500 transition-all shadow-md group">
                   <div class="w-11 h-11 rounded-[14px] bg-blue-500/20 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform"><i data-lucide="handshake" class="w-6 h-6"></i></div>
                   <div>
@@ -271,7 +262,7 @@
                   </div>
               </button>
               
-              <!-- 버튼 3: 장비 자재 -->
+              <!-- 버튼 2: 장비 자재 -->
               <button onclick="openBoard('장비·자재 직거래')" class="bg-[#151E2D] border border-white/10 rounded-[20px] p-5 text-left flex flex-col gap-3 hover:border-[#84CC16] transition-all shadow-md group">
                   <div class="w-11 h-11 rounded-[14px] bg-[#84CC16]/20 flex items-center justify-center text-[#84CC16] group-hover:scale-110 transition-transform"><i data-lucide="shopping-cart" class="w-6 h-6"></i></div>
                   <div>
@@ -280,12 +271,21 @@
                   </div>
               </button>
               
-              <!-- 버튼 4: 실무 노하우 -->
+              <!-- 버튼 3: 실무 노하우 -->
               <button onclick="openBoard('실무 노하우 공유')" class="bg-[#151E2D] border border-white/10 rounded-[20px] p-5 text-left flex flex-col gap-3 hover:border-[#FEE500] transition-all shadow-md group">
                   <div class="w-11 h-11 rounded-[14px] bg-[#FEE500]/20 flex items-center justify-center text-[#FEE500] group-hover:scale-110 transition-transform"><i data-lucide="lightbulb" class="w-6 h-6"></i></div>
                   <div>
                       <h3 class="text-[15px] font-black text-white group-hover:text-[#FEE500] transition-colors">실무 노하우 공유</h3>
                       <p class="text-[12px] text-[#A3A8A3] font-bold mt-1.5 break-keep leading-snug">수목 관리, 전지 요령 등 현장 지식 나눔</p>
+                  </div>
+              </button>
+
+              <!-- 버튼 4: 불량 거래처 -->
+              <button onclick="openBoard('불량 거래처 경보')" class="bg-[#151E2D] border border-white/10 rounded-[20px] p-5 text-left flex flex-col gap-3 hover:border-red-500 transition-all shadow-md group">
+                  <div class="w-11 h-11 rounded-[14px] bg-red-500/20 flex items-center justify-center text-red-400 group-hover:scale-110 transition-transform"><i data-lucide="alert-triangle" class="w-6 h-6"></i></div>
+                  <div>
+                      <h3 class="text-[15px] font-black text-white group-hover:text-red-400 transition-colors">불량 거래처 경보</h3>
+                      <p class="text-[12px] text-[#A3A8A3] font-bold mt-1.5 break-keep leading-snug">미수금 발생, 주의 요망 거래처 팩트 공유</p>
                   </div>
               </button>
           </div>
@@ -2572,30 +2572,52 @@
       if(typeof lucide !== 'undefined') lucide.createIcons(); window.scrollTo(0, 0); 
       if (pushHistory && mode !== 'client_shared') history.pushState({ view: mode }, "", "");
     }
-    const mainTabsOrder = ['admin', 'quote', 'quoteList', 'clients', 'contacts', 'lens', 'calendar', 'ledger'];
+    // 💡 [보안 패치] 'ledger(개인장부)'를 스와이프 명단에서 완전히 삭제하여 비밀번호 우회 접근 원천 차단!
+    const mainTabsOrder = ['lounge', 'calendar', 'admin', 'clients', 'quote', 'quoteList', 'contacts', 'encyclopedia', 'lens'];
     const swipeContainerEl = document.getElementById('swipeContainer');
     let viewTouchStartX = 0; let viewTouchStartY = 0;
+    
     if(swipeContainerEl) {
-        swipeContainerEl.addEventListener('touchstart', e => { viewTouchStartX = e.changedTouches[0].screenX; viewTouchStartY = e.changedTouches[0].screenY; }, {passive: true});
+        swipeContainerEl.addEventListener('touchstart', e => { 
+            viewTouchStartX = e.changedTouches[0].screenX; 
+            viewTouchStartY = e.changedTouches[0].screenY; 
+        }, {passive: true});
+        
         swipeContainerEl.addEventListener('touchend', e => {
           if (e.target.closest('input') || e.target.closest('textarea') || e.target.closest('table')) return;
-          const diffX = e.changedTouches[0].screenX - viewTouchStartX; const diffY = e.changedTouches[0].screenY - viewTouchStartY;
+          const diffX = e.changedTouches[0].screenX - viewTouchStartX; 
+          const diffY = e.changedTouches[0].screenY - viewTouchStartY;
+          
           if (Math.abs(diffX) > Math.abs(diffY) * 1.5 && Math.abs(diffX) > 60) {
-            let currentActiveMode = 'calendar';
+            let currentActiveMode = 'lounge'; // 기본값을 라운지로 설정
+            
+            // 현재 열려있는 화면 정확히 감지
             if (!document.getElementById('quoteAdminView').classList.contains('hidden')) currentActiveMode = 'quote';
             else if (!document.getElementById('quoteListView').classList.contains('hidden')) currentActiveMode = 'quoteList';
             else if (!document.getElementById('clientsView').classList.contains('hidden')) currentActiveMode = 'clients';
             else if (!document.getElementById('contactsView').classList.contains('hidden')) currentActiveMode = 'contacts';
             else if (!document.getElementById('lensView').classList.contains('hidden')) currentActiveMode = 'lens';
             else if (!document.getElementById('calendarView').classList.contains('hidden')) currentActiveMode = 'calendar';
-            else if (!document.getElementById('ledgerView').classList.contains('hidden')) currentActiveMode = 'ledger';
+            else if (!document.getElementById('encyclopediaView').classList.contains('hidden')) currentActiveMode = 'encyclopedia';
+            else if (!document.getElementById('loungeView').classList.contains('hidden')) currentActiveMode = 'lounge';
+            else if (!document.getElementById('ledgerView').classList.contains('hidden')) currentActiveMode = 'ledger'; // 장부 안에 있을 때 스와이프 감지용
             else if (!document.getElementById('clientView').classList.contains('hidden')) return; 
+            
+            // 장부 화면에 들어와 있을 때는 스와이프로 다른 화면 넘어가는 것도 막아버림 (보안 강화)
+            if(currentActiveMode === 'ledger') return;
+
             let currentIndex = mainTabsOrder.indexOf(currentActiveMode);
-            if (currentIndex !== -1) { if (diffX < 0 && currentIndex < mainTabsOrder.length - 1) switchView(mainTabsOrder[currentIndex + 1]); else if (diffX > 0 && currentIndex > 0) switchView(mainTabsOrder[currentIndex - 1]); }
+            if (currentIndex !== -1) { 
+                if (diffX < 0 && currentIndex < mainTabsOrder.length - 1) {
+                    switchView(mainTabsOrder[currentIndex + 1]); 
+                } 
+                else if (diffX > 0 && currentIndex > 0) {
+                    switchView(mainTabsOrder[currentIndex - 1]); 
+                }
+            }
           }
         }, {passive: true});
     }
-
      function openModal(type, idx) { 
         if (type === 'b') modalImages = currentGalleryB; else if (type === 'dur') modalImages = currentGalleryD; else if (type === 'a') modalImages = currentGalleryA; else if (type === 'i') modalImages = currentGalleryI; else modalImages = currentGalleryQ;
         if (!modalImages || modalImages.length === 0) return; 
