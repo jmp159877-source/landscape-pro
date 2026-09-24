@@ -46,24 +46,9 @@
     <div class="relative z-10 flex flex-col items-center text-center">
       <!-- 배경을 흰색으로 변경하여 로고의 검은 선이 선명하게 보이도록 최적화 -->
       <!-- 배경을 흰색으로 변경하여 로고의 검은 선이 선명하게 보이도록 최적화 -->
-      <div class="w-24 h-24 rounded-[28px] bg-white flex items-center justify-center shadow-[0_0_50px_rgba(132,204,22,0.3)] mb-6 animate-bounce overflow-hidden relative">
-        <!-- 💡 왼쪽의 노트 무게감을 상쇄하기 위해 SVG 전체를 우측으로 살짝 이동(translate-x-1.5) 시켰습니다 -->
-        <svg width="60" height="60" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="relative z-10 mt-1 translate-x-1.5">
-          <rect x="10" y="20" width="50" height="70" rx="4" fill="none" stroke="#12261E" stroke-width="2.5"/>
-          <rect x="16" y="26" width="38" height="58" rx="2" fill="none" stroke="#12261E" stroke-width="1"/>
-          <line x1="21" y1="40" x2="49" y2="40" stroke="#A3A8A3" stroke-width="1.5" stroke-dasharray="2,3" />
-          <line x1="21" y1="53" x2="49" y2="53" stroke="#A3A8A3" stroke-width="1.5" stroke-dasharray="2,3" />
-          <line x1="21" y1="66" x2="49" y2="66" stroke="#A3A8A3" stroke-width="1.5" stroke-dasharray="2,3" />
-          <g transform="translate(10, 11) scale(0.8)">
-            <path d="M 40 53 C 32 35, 60 10, 96 6 C 90 35, 60 57, 40 53 Z" fill="#84CC16" opacity="0.95"/>
-            <path d="M 40 53 L 89 12" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.9"/>
-            <g transform="translate(40, 53) rotate(225)">
-               <path d="M -7,8 L 0,-15 L 7,8 C 5,12 -5,12 -7,8 Z" fill="#12261E"/>
-               <line x1="0" y1="-14" x2="0" y2="1" stroke="#ffffff" stroke-width="1.5"/>
-               <circle cx="0" cy="2.5" r="1.5" fill="#ffffff"/>
-            </g>
-          </g>
-        </svg>
+      <!-- 배경을 연두색으로 변경하고 깔끔한 나뭇잎 아이콘으로 교체 -->
+      <div class="w-24 h-24 rounded-[28px] bg-[#84CC16] flex items-center justify-center shadow-[0_0_50px_rgba(132,204,22,0.3)] mb-6 animate-bounce overflow-hidden relative">
+        <i data-lucide="leaf" class="w-12 h-12 text-[#151E2D]"></i>
       </div>
       <span class="text-[13px] bg-[#84CC16]/20 text-[#84CC16] font-black px-4 py-2 rounded-full uppercase tracking-[0.2em] border border-[#84CC16]/30 mb-3">Landscape Solution</span>
       <h1 class="text-white font-black text-[42px] tracking-tight mb-2">신화 조경노트</h1>
@@ -989,10 +974,10 @@
             let cName = myCompanyProfile.name || '';
             if (cName.endsWith('조경') && cName.length > 2) {
                 let mainName = cName.slice(0, -2); 
-                // 조경 글씨 크기를 text-[15px]에서 text-[18px]로 키우고, break-keep을 추가하여 긴 이름 깨짐 방지
-                headerEl.innerHTML = `<span class="block text-[22px] font-black leading-none text-white break-keep">${mainName}</span><span class="block text-[18px] font-black text-[#84CC16] mt-1 tracking-widest">조경</span>`;
+                // 💡 업체명(24px)과 조경(20px)의 크기 밸런스를 맞춰 시각적 안정감을 높임
+                headerEl.innerHTML = `<span class="block text-[24px] font-black leading-none text-white break-keep">${mainName}</span><span class="block text-[20px] font-black text-[#84CC16] mt-1 tracking-widest">조경</span>`;
             } else { 
-                headerEl.innerHTML = `<span class="block text-[20px] font-black leading-tight text-white break-keep">${cName}</span>`; 
+                headerEl.innerHTML = `<span class="block text-[24px] font-black leading-tight text-white break-keep">${cName}</span>`; 
             }
         }
     }
