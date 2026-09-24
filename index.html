@@ -3851,9 +3851,9 @@
           
           const swipeContainer = document.getElementById('swipeContainer');
           if(swipeContainer) swipeContainer.style.display = 'block';
-          switchView('lounge', false);
+          
+          // switchView('lounge', false); <-- 이 줄을 과감히 삭제하십시오! (원래 보던 화면이 자연스럽게 나타납니다)
 
-          // ✨ 상단 X(뒤로가기) 버튼을 눌러서 닫을 때만 history.back() 실행
           if(!isFromBackButton && history.state && history.state.isBoardOpen) {
               history.back();
           }
@@ -3970,7 +3970,7 @@
       // 3. 커뮤니티 게시글 불러오기 (파이어베이스 실시간 연동)
       async function loadCommunityPosts() {
           try {
-              const res = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_community.json`);
+              const res = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_community.json?auth=${currentIdToken}`);
               const data = await res.json();
               const container = document.getElementById('boardFeedContainer');
               
@@ -4129,7 +4129,7 @@
       async function loadChatMessages(forceScroll = false) {
           if(!currentChatRoom) return;
           try {
-              const res = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_chats/${currentChatRoom}.json`);
+              const res = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_chats/${currentChatRoom}.json?auth=${currentIdToken}`);
               const data = await res.json();
               const container = document.getElementById('boardChatMessages');
               
