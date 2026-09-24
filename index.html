@@ -4171,32 +4171,57 @@
           } catch(e) {}
       }
 
-      // 글쓰기 팝업 기능
+      // ==========================================
+      // ✍️ 커뮤니티 글쓰기 팝업 제어 및 뒤로가기 방어
+      // ==========================================
       function openBoardWrite() {
-          // 1. 입력창 텍스트 초기화
+          // 1. 입력창 초기화
           document.getElementById('bwTitle').value = ''; 
           document.getElementById('bwPhone').value = ''; 
           document.getElementById('bwContent').value = '';
           
-          // 2. ✨ 현재 켜져있는 탭(연두색 배경)을 찾아 카테고리 셀렉트박스 자동 맞춤
+          // 2. 현재 켜져있는 탭(연두색 배경)을 찾아 카테고리 셀렉트박스 자동 맞춤
           const activeTab = document.querySelector('.board-tab-btn.bg-\\[\\#84CC16\\]');
           if (activeTab) {
               const tabText = activeTab.innerText;
               const catSelect = document.getElementById('bwCategory');
-              
               if (tabText.includes('불량')) catSelect.value = '불량거래처';
               else if (tabText.includes('장비') || tabText.includes('자재')) catSelect.value = '장비자재';
               else if (tabText.includes('노하우')) catSelect.value = '노하우';
               else if (tabText.includes('현장')) catSelect.value = '현장협력';
-              // '전체보기' 탭일 경우는 기존에 선택된 기본값을 그대로 유지
           }
 
-          // 3. 팝업창 띄우기 애니메이션
+          // 3. 팝업 열기
           const modal = document.getElementById('boardWriteModal'); 
           const box = document.getElementById('boardWriteBox');
           modal.classList.remove('hidden'); 
           setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10);
+          
+          // ✨ 4. 안드로이드 뒤로가기 튕김 방지용 가상 히스토리 추가
+          history.pushState({ isBoardWriteOpen: true }, "", "");
       }
+
+      function closeBoardWrite(isFromBackButton = false) {
+          const modal = document.getElementById('boardWriteModal'); 
+          const box = document.getElementById('boardWriteBox');
+          if(modal) modal.classList.add('opacity-0'); 
+          if(box) box.classList.add('scale-95'); 
+          setTimeout(() => { if(modal) modal.classList.add('hidden'); }, 200);
+
+          // ✨ 상단 X버튼이나 취소를 눌러서 닫을 때만 history.back() 실행하여 꼬임 방지
+          if(!isFromBackButton && history.state && history.state.isBoardWriteOpen) {
+              history.back();
+          }
+      }
+
+      // ✨ 스마트폰 하단 물리 뒤로가기 버튼 감지 로직 (글쓰기 팝업 전용)
+      window.addEventListener('popstate', function(e) {
+          const writeModal = document.getElementById('boardWriteModal');
+          // 글쓰기 창이 열려있는 상태에서 뒤로가기를 누르면 앱을 끄지 않고 팝업만 닫음
+          if(writeModal && !writeModal.classList.contains('hidden')) {
+              closeBoardWrite(true);
+          }
+      });
   </script>  
 </body>
 </html>
