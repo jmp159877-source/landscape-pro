@@ -219,23 +219,22 @@
   <div id="swipeContainer" class="max-w-md mx-auto p-4 space-y-5">
     <!-- ================= [신규: 조경 사장님 라운지 화면] ================= -->
     <section id="loungeView" class="hidden space-y-5">
-      <!-- 1. 오늘의 조경 날씨 위젯 (시인성 극대화: 배경 톤다운 + 텍스트 그림자) -->
-      <div class="bg-gradient-to-br from-[#0284C7] to-[#0EA5E9] rounded-[28px] p-6 shadow-[0_10px_25px_rgba(2,132,199,0.4)] relative overflow-hidden">
-          <div class="absolute -right-4 -top-4 text-white/20"><i data-lucide="cloud-sun" class="w-32 h-32"></i></div>
+      <!-- 1. 오늘의 조경 날씨 위젯 (실제 GPS API 연동) -->
+      <div onclick="openWeatherModal()" class="cursor-pointer bg-gradient-to-br from-[#0284C7] to-[#0EA5E9] rounded-[28px] p-6 shadow-[0_10px_25px_rgba(2,132,199,0.4)] relative overflow-hidden transition-transform hover:scale-[1.02] active:scale-95">
+          <div class="absolute -right-4 -top-4 text-white/20"><i id="weatherBgIcon" data-lucide="cloud-sun" class="w-32 h-32"></i></div>
           <div class="relative z-10">
-              <!-- 💡 노란색과 흰색 글씨에 drop-shadow-md 를 주어 배경과 완벽히 분리시켰습니다 -->
               <h2 class="text-[15px] font-black text-[#FEE500] drop-shadow-md flex items-center gap-1.5 mb-1"><i data-lucide="sun" class="w-4 h-4"></i> 오늘의 조경 날씨</h2>
               <div class="flex items-end justify-between mt-3">
                   <div>
-                      <div class="text-[30px] font-black text-white leading-none drop-shadow-md">맑음 24°C</div>
-                      <div class="text-[13px] text-white font-bold mt-2 drop-shadow-sm"><i data-lucide="map-pin" class="w-3 h-3 inline"></i> 경기 수원시 (현재위치)</div>
+                      <div class="text-[30px] font-black text-white leading-none drop-shadow-md"><span id="weatherMainTemp">로딩중</span></div>
+                      <div class="text-[13px] text-white font-bold mt-2 drop-shadow-sm"><i data-lucide="map-pin" class="w-3 h-3 inline"></i> <span id="weatherLocation">위치 파악중...</span></div>
                   </div>
                   <div class="text-right">
-                      <span class="bg-[#151E2D]/40 text-white text-[11px] px-2.5 py-1.5 rounded-[8px] font-black border border-white/30 backdrop-blur-md shadow-sm">작업하기 좋은 날</span>
+                      <span id="weatherConditionBadge" class="bg-[#151E2D]/40 text-white text-[11px] px-2.5 py-1.5 rounded-[8px] font-black border border-white/30 backdrop-blur-md shadow-sm">분석중</span>
                   </div>
               </div>
               <div class="mt-4 pt-3 border-t border-white/30">
-                  <p class="text-[13.5px] text-white font-bold leading-relaxed break-keep drop-shadow-sm"><span class="text-[#FEE500] font-black drop-shadow-md">💡 스마트 비서의 팁:</span> 오후 강수 확률 0%, 바람이 적어 병해충 약제 살포 및 예초 작업에 최적입니다.</p>
+                  <p class="text-[13.5px] text-white font-bold leading-relaxed break-keep drop-shadow-sm"><span class="text-[#FEE500] font-black drop-shadow-md">💡 스마트 비서의 팁:</span> <span id="weatherSmartTip">날씨 기반 현장 팁을 불러오는 중입니다.</span></p>
               </div>
           </div>
       </div>
@@ -3446,6 +3445,195 @@
             inputEl.focus();
         }
     }
-  </script>
+ // ==========================================
+    // ☀️ 실제 GPS 및 실시간 날씨 API 연동 엔진
+    // ==========================================
+    let weatherIsLoaded = false;
+
+    // 날씨 상태 코드(WMO)를 한국어와 아이콘으로 변환하는 사전
+    const weatherCodes = {
+        0: { text: "맑음", icon: "sun", color: "text-red-500", tip: "자외선이 강하니 작업 시 충분한 휴식과 수분 섭취를 권장합니다." },
+        1: { text: "대체로 맑음", icon: "sun-dim", color: "text-orange-400", tip: "일조량이 적당하여 수목 식재 및 이식에 무난한 날씨입니다." },
+        2: { text: "구름조금", icon: "cloud-sun", color: "text-gray-500", tip: "야외 조경 작업하기 아주 쾌적하고 좋은 날씨입니다." },
+        3: { text: "흐림", icon: "cloud", color: "text-gray-500", tip: "직사광선이 없어 전지(가지치기) 작업 후 수분 증발 피해가 적습니다." },
+        45: { text: "안개", icon: "cloud-fog", color: "text-gray-400", tip: "시야 확보가 어려우니 중장비(굴삭기, 크레인) 작업 시 안전에 유의하세요." },
+        48: { text: "짙은 안개", icon: "cloud-fog", color: "text-gray-400", tip: "시야 확보가 어려우니 중장비(굴삭기, 크레인) 작업 시 안전에 유의하세요." },
+        51: { text: "약한 가랑비", icon: "cloud-drizzle", color: "text-blue-400", tip: "이슬비가 내립니다. 시멘트/몰탈 양생 및 제초제 살포는 미루는 것이 좋습니다." },
+        53: { text: "가랑비", icon: "cloud-drizzle", color: "text-blue-500", tip: "제초제나 병해충 약제 살포 시 약효가 씻겨 내려갈 수 있습니다." },
+        61: { text: "약한 비", icon: "cloud-rain", color: "text-blue-500", tip: "비가 내립니다. 토양 다짐 작업이나 콘크리트 타설을 중지하세요." },
+        63: { text: "보통 비", icon: "cloud-rain", color: "text-blue-600", tip: "비가 내립니다. 토양 다짐 작업이나 콘크리트 타설을 중지하세요." },
+        65: { text: "강한 비", icon: "cloud-lightning", color: "text-blue-700", tip: "강한 비가 내립니다. 현장 배수로를 긴급 점검하고 토사 유출을 방지하세요." },
+        71: { text: "약한 눈", icon: "snowflake", color: "text-sky-300", tip: "기온이 낮습니다. 수목 동해 방지(보온재 감싸기) 및 작업자 방한에 신경쓰세요." },
+        73: { text: "보통 눈", icon: "snowflake", color: "text-sky-400", tip: "현장 결빙 우려가 있으니 이동 시 미끄럼 안전 사고에 각별히 유의하세요." },
+        80: { text: "소나기", icon: "cloud-rain", color: "text-blue-600", tip: "갑작스러운 비 예보가 있습니다. 덮개(갑바)를 미리 준비해 자재를 보호하세요." }
+    };
+
+    function getWeatherInfo(code) {
+        return weatherCodes[code] || { text: "비/눈", icon: "cloud-rain", color: "text-blue-500", tip: "기상 상황이 불안정합니다. 현장 안전 및 자재 관리에 유의하세요." };
+    }
+
+    async function loadRealWeather() {
+        if (weatherIsLoaded) return;
+        
+        document.getElementById('weatherMainTemp').innerText = "위치 파악중..";
+        
+        // 1. 스마트폰 GPS 권한 요청 및 좌표 가져오기
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    await fetchWeatherApi(lat, lon);
+                },
+                (error) => {
+                    // 권한 거부 시 서울시청 좌표로 기본 세팅
+                    document.getElementById('weatherLocation').innerText = "서울 중구 (기본위치)";
+                    fetchWeatherApi(37.5665, 126.9780);
+                },
+                { timeout: 10000, maximumAge: 60000 }
+            );
+        } else {
+            fetchWeatherApi(37.5665, 126.9780);
+        }
+    }
+
+    async function fetchWeatherApi(lat, lon) {
+        try {
+            // 2. 좌표를 한글 동네 이름으로 변환 (무료 API)
+            try {
+                const geoRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=ko`);
+                const geoData = await geoRes.json();
+                if(geoData.city || geoData.locality) {
+                    document.getElementById('weatherLocation').innerText = `${geoData.principalSubdivision} ${geoData.city || geoData.locality}`;
+                } else {
+                    document.getElementById('weatherLocation').innerText = "현재 위치";
+                }
+            } catch(e) {}
+
+            // 3. Open-Meteo 날씨 API 호출 (현재, 시간별, 주간 예보 한 번에 가져오기)
+            const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=Asia%2FSeoul`;
+            const wRes = await fetch(weatherUrl);
+            const wData = await wRes.json();
+
+            // --- 4. 메인 위젯 업데이트 ---
+            const current = wData.current_weather;
+            const wInfo = getWeatherInfo(current.weathercode);
+            
+            document.getElementById('weatherMainTemp').innerText = `${wInfo.text} ${Math.round(current.temperature)}°C`;
+            document.getElementById('weatherConditionBadge').innerText = "업데이트 완료";
+            document.getElementById('weatherConditionBadge').className = "bg-white/20 text-white text-[11px] px-2.5 py-1.5 rounded-[8px] font-black border border-white/30 backdrop-blur-md shadow-sm";
+            document.getElementById('weatherSmartTip').innerText = wInfo.tip;
+            document.getElementById('weatherBgIcon').setAttribute('data-lucide', wInfo.icon);
+            
+            // --- 5. 시간별 예보(오늘) HTML 생성 ---
+            const hourlyContainer = document.getElementById('hourlyWeatherContainer');
+            hourlyContainer.innerHTML = '';
+            const currentHourIndex = new Date().getHours();
+            
+            for(let i = currentHourIndex; i < currentHourIndex + 12; i++) {
+                const timeText = i === currentHourIndex ? "지금" : `${i % 24}시`;
+                const temp = Math.round(wData.hourly.temperature_2m[i]);
+                const code = wData.hourly.weathercode[i];
+                const hInfo = getWeatherInfo(code);
+                
+                hourlyContainer.innerHTML += `
+                    <div class="flex flex-col items-center justify-center bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] min-w-[65px] py-3 shrink-0">
+                        <span class="text-[12px] font-bold text-[#8B95A1] mb-2">${timeText}</span>
+                        <i data-lucide="${hInfo.icon}" class="w-6 h-6 ${hInfo.color} mb-2"></i>
+                        <span class="text-[14px] font-black text-[#151E2D]">${temp}°</span>
+                    </div>
+                `;
+            }
+
+            // --- 6. 주간 예보 HTML 생성 ---
+            const dailyContainer = document.getElementById('dailyWeatherContainer');
+            dailyContainer.innerHTML = '';
+            const days = ['일', '월', '화', '수', '목', '금', '토'];
+            
+            for(let i = 1; i < 7; i++) {
+                const dateObj = new Date(wData.daily.time[i]);
+                const dayName = i === 1 ? "내일" : days[dateObj.getDay()] + "요일";
+                const dateText = `${dateObj.getMonth()+1}/${dateObj.getDate()}`;
+                
+                const minT = Math.round(wData.daily.temperature_2m_min[i]);
+                const maxT = Math.round(wData.daily.temperature_2m_max[i]);
+                const code = wData.daily.weathercode[i];
+                const dInfo = getWeatherInfo(code);
+
+                dailyContainer.innerHTML += `
+                    <div class="flex items-center justify-between p-3 bg-white border-b border-[#F4F5F4] last:border-0">
+                        <div class="w-16"><span class="text-[14px] font-black text-[#151E2D] block">${dayName}</span><span class="text-[11px] text-[#8B95A1] font-bold">${dateText}</span></div>
+                        <div class="flex items-center gap-2 w-20 justify-start"><i data-lucide="${dInfo.icon}" class="w-5 h-5 ${dInfo.color}"></i><span class="text-[13px] font-bold text-[#4E5968]">${dInfo.text}</span></div>
+                        <div class="w-24 text-right text-[14px] font-black"><span class="text-blue-500">${minT}°</span> <span class="text-[#D4D8D4] mx-1">/</span> <span class="text-red-500">${maxT}°</span></div>
+                    </div>
+                `;
+            }
+
+            lucide.createIcons();
+            weatherIsLoaded = true;
+        } catch(error) {
+            document.getElementById('weatherMainTemp').innerText = "날씨 오류";
+            document.getElementById('weatherSmartTip').innerText = "기상청 통신 지연으로 정보를 불러오지 못했습니다.";
+        }
+    }
+
+    function openWeatherModal() {
+        if(!weatherIsLoaded) {
+            alert("아직 실시간 날씨 데이터를 불러오고 있습니다. 잠시만 기다려주세요.");
+            return;
+        }
+        const modal = document.getElementById('weatherModal');
+        const box = document.getElementById('weatherBox');
+        modal.classList.remove('hidden');
+        setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10);
+        history.pushState({ modalOpen: true }, "", "");
+    }
+
+    function closeWeatherModal(fromPopstate = false) {
+        const modal = document.getElementById('weatherModal');
+        const box = document.getElementById('weatherBox');
+        if(modal) modal.classList.add('opacity-0');
+        if(box) box.classList.add('scale-95');
+        setTimeout(() => { if(modal) modal.classList.add('hidden'); }, 200);
+        if(!fromPopstate && history.state && history.state.modalOpen) history.back();
+    }
+
+    // 💡 라운지 탭 클릭 시 최초 1회 날씨 로드 실행되도록 switchView 보완!
+    const originalSwitchViewForWeather = switchView;
+    switchView = function(mode, pushHistory = true) {
+        originalSwitchViewForWeather(mode, pushHistory);
+        if(mode === 'lounge' && !weatherIsLoaded) {
+            loadRealWeather();
+        }
+    }   
+</script> 
+<!-- 🌤️ 네이버 스타일 주간 날씨 상세 팝업 -->
+  <div id="weatherModal" class="hidden fixed inset-0 z-[8000] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200" onclick="closeWeatherModal()">
+      <div id="weatherBox" class="bg-white w-full max-w-sm rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-[#EAEBEA]" onclick="event.stopPropagation()">
+          <div class="p-5 border-b border-[#F4F5F4] flex justify-between items-center bg-[#F9F9F8]">
+              <h3 class="text-[16px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="calendar-clock" class="w-5 h-5 text-[#0284C7]"></i> 주간 날씨 및 시간별 예보</h3>
+              <button onclick="closeWeatherModal()" class="text-[#A3A8A3] hover:text-[#151E2D] p-1"><i data-lucide="x" class="w-6 h-6"></i></button>
+          </div>
+          
+          <div class="p-5 bg-white overflow-y-auto max-h-[70vh] nav-scroll space-y-6">
+              <!-- 시간별 예보 가로 스크롤 -->
+              <div>
+                  <h4 class="text-[14px] font-black text-[#151E2D] mb-3">오늘 시간별 예보</h4>
+                  <div id="hourlyWeatherContainer" class="flex gap-3 overflow-x-auto nav-scroll pb-2">
+                      <!-- JS로 자동 생성 -->
+                  </div>
+              </div>
+              
+              <!-- 주간 예보 리스트 -->
+              <div class="border-t border-[#F4F5F4] pt-5">
+                  <h4 class="text-[14px] font-black text-[#151E2D] mb-3">주간 예보</h4>
+                  <div id="dailyWeatherContainer" class="space-y-3">
+                      <!-- JS로 자동 생성 -->
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>    
+
 </body>
 </html>
