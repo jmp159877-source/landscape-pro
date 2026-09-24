@@ -664,6 +664,10 @@
             const div = document.createElement('div');
             div.className = "glass-panel rounded-[24px] p-6 space-y-4 shadow-lg border-blue-500/20";
             let safeImg = acc.license ? acc.license.replace(/"/g, '&quot;') : '';
+            
+            // ✨ [추가] DB에 저장된 약관 동의 시간 데이터를 예쁘게 출력
+            const agreedText = acc.termsAgreedAt ? `<span class="text-[#84CC16] font-black">${acc.termsAgreedAt} 동의완료</span>` : '<span class="text-red-400 font-bold">기록 없음 (구버전 가입)</span>';
+
             div.innerHTML = `
                 <div class="flex justify-between items-start border-b border-white/10 pb-4">
                     <div>
@@ -678,6 +682,12 @@
                     <div><span class="text-[#94A3B8] block text-[11px] mb-0.5">대표자명</span><strong class="text-white">${acc.ceo}</strong></div>
                     <div class="col-span-2"><span class="text-[#94A3B8] block text-[11px] mb-0.5">사업자번호</span><strong class="text-[#3B82F6] tracking-wide">${acc.bizNum}</strong></div>
                     <div class="col-span-2"><span class="text-[#94A3B8] block text-[11px] mb-0.5">대표 연락처</span><strong class="text-white">${acc.phone}</strong></div>
+                    
+                    <!-- ✨ 법적 증빙: 승인 전 동의 일시를 확인하는 영역 -->
+                    <div class="col-span-2 pt-2 border-t border-white/5 mt-1">
+                        <span class="text-[#94A3B8] block text-[11px] mb-0.5">이용약관 및 개인정보 동의 일시 (법적 증빙)</span>
+                        <strong class="text-[13px] tracking-wide">${agreedText}</strong>
+                    </div>
                 </div>
                 <button onclick="openLicenseModal('${safeImg}')" class="w-full py-3.5 bg-white/5 border border-white/10 rounded-[14px] text-[13px] font-bold hover:bg-white/10 flex items-center justify-center gap-2 transition-colors text-blue-300">
                     <i data-lucide="file-image" class="w-4 h-4"></i> 사업자등록증 원본 확인
