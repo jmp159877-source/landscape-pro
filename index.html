@@ -1099,9 +1099,13 @@
         if (modal && !modal.classList.contains('hidden')) return;
 
         noticeQueue = [];
+        
+        // 💡 [캐시 방지] 매번 새로운 시간값을 달아서 무조건 서버의 최신 데이터를 가져오도록 강제합니다.
+        const t = new Date().getTime();
+
         // 1. 전체 공지 확인
         try {
-            const res = await fetch(getAuthUrl(`${SETTINGS_URL}/globalNotice.json`)); 
+            const res = await fetch(getAuthUrl(`${SETTINGS_URL}/globalNotice.json?t=${t}`)); 
             const globalNotice = await res.json();
             if(globalNotice && globalNotice.active && globalNotice.text && globalNotice.text.trim() !== '') {
                 const readNotice = localStorage.getItem('shinhwa_pro_read_global_notice');
@@ -1111,17 +1115,22 @@
             }
         } catch(e) { console.warn("전체 공지 로드 실패"); }
         
-        // 2. 개별 공지 확인 (마스터가 보낸 팝업)
-        if(myCompanyProfile && myCompanyProfile.targetNotice && myCompanyProfile.targetNotice.trim() !== '') { 
-            noticeQueue.push({ type: 'target', title: '운영본부 개별 안내', text: myCompanyProfile.targetNotice }); 
-        }
+        // 2. 개별 공지 확인 (마스터가 보낸 팝업 실시간 통신)
+        try {
+            const safeKey = getSafeKey(currentUserId);
+            const res = await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json?t=${t}`));
+            const freshProfile = await res.json();
+            if(freshProfile && freshProfile.targetNotice && freshProfile.targetNotice.trim() !== '') {
+                myCompanyProfile.targetNotice = freshProfile.targetNotice; // 로컬 동기화
+                noticeQueue.push({ type: 'target', title: '운영본부 개별 안내', text: freshProfile.targetNotice });
+            }
+        } catch(e) { console.warn("개별 공지 로드 실패"); }
         
         // 큐에 담긴 알림 순차적 실행
         if (noticeQueue.length > 0) {
             showNextNotice();
         }
     }
-
     function showNextNotice() {
         if(noticeQueue.length === 0) return; 
         currentShowingNotice = noticeQueue.shift(); 
