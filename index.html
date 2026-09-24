@@ -2572,8 +2572,8 @@
       if(typeof lucide !== 'undefined') lucide.createIcons(); window.scrollTo(0, 0); 
       if (pushHistory && mode !== 'client_shared') history.pushState({ view: mode }, "", "");
     }
-    // 💡 [UX 완벽 패치] 스와이프 명단에서 'lounge(라운지)'도 아예 삭제해버립니다.
-    const mainTabsOrder = ['calendar', 'admin', 'clients', 'quote', 'quoteList', 'contacts', 'encyclopedia', 'lens'];
+    // 💡 [UX 완벽 패치] 달력, 장부, 라운지를 스와이프 명단에서 제외합니다.
+    const mainTabsOrder = ['admin', 'clients', 'quote', 'quoteList', 'contacts', 'encyclopedia', 'lens'];
     const swipeContainerEl = document.getElementById('swipeContainer');
     let viewTouchStartX = 0; let viewTouchStartY = 0;
     
@@ -2604,8 +2604,8 @@
             else if (!document.getElementById('ledgerView').classList.contains('hidden')) currentActiveMode = 'ledger';
             else return;
             
-            // ✨ [핵심] 개인장부(ledger)와 사장님 라운지(lounge) 화면에서는 좌우 스와이프를 '완전 먹통'으로 만듭니다!
-            if(currentActiveMode === 'ledger' || currentActiveMode === 'lounge') return;
+            // ✨ [핵심] 일정표(달력), 개인장부, 사장님 라운지 화면에서는 좌우 스와이프를 '완전 먹통'으로 만듭니다!
+            if(currentActiveMode === 'calendar' || currentActiveMode === 'ledger' || currentActiveMode === 'lounge') return;
 
             let currentIndex = mainTabsOrder.indexOf(currentActiveMode);
             if (currentIndex !== -1) { 
