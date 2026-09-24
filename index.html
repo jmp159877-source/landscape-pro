@@ -190,21 +190,19 @@
                 <button id="tabLedger" onclick="checkLedgerPin()" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="wallet" class="w-6 h-6 text-yellow-400"></i><span class="text-[13px] font-bold text-white/90">개인장부</span></button>
                 <button id="tabEncyclopedia" onclick="switchView('encyclopedia')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="book-open" class="w-6 h-6 text-white/80"></i><span class="text-[13px] font-bold text-white/90">식물검색</span></button>
                 
-                <!-- 💡 신규 추가: 1:1 고객센터 -->
+                <!-- 💡 고객센터 & 스마트렌즈 버튼 크기 규격 통일 -->
                 <button id="tabInquiry" onclick="openInquiryModal()" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="headphones" class="w-6 h-6 text-[#F59E0B]"></i><span class="text-[13px] font-bold text-white/90">고객센터</span></button>
-                
-                <!-- 💡 AI 검색렌즈 (가로로 길게 배치하여 전체 10개 버튼 레이아웃 균형 완성) -->
-                <button id="tabLens" onclick="switchView('lens')" class="col-span-3 w-full py-4 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex items-center justify-center gap-2.5 mt-0.5"><i data-lucide="scan-line" class="w-6 h-6 text-[#151E2D]"></i><span class="text-[14px] font-black text-[#151E2D]">AI 스마트 검색렌즈</span></button>
+                <button id="tabLens" onclick="switchView('lens')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="scan-line" class="w-6 h-6 text-[#3B82F6]"></i><span class="text-[13px] font-bold text-white/90">검색렌즈</span></button>
             </nav>
         </div>
         
-        <!-- ✨ 시인성 극대화: 고급스러운 접기/펼치기 토글 버튼 -->
-        <div class="flex justify-center mt-3 relative">
-            <button onclick="toggleMainCategory()" class="flex items-center gap-1.5 text-[11px] font-black text-[#84CC16] hover:text-[#9BE32D] transition-colors px-5 py-2 bg-[#151E2D] rounded-full border border-[#84CC16]/40 shadow-lg z-50">
+        <!-- ✨ 시인성 극대화: 어르신들도 잘 보이는 큼직한 화이트 톤 버튼 -->
+        <div class="flex justify-center mt-5 relative">
+            <button onclick="toggleMainCategory()" class="flex items-center gap-2 text-[14px] font-black text-white hover:bg-white/10 transition-colors px-7 py-3.5 bg-[#1E293B] rounded-full border-[1.5px] border-white/30 shadow-[0_10px_25px_rgba(0,0,0,0.5)] z-50 tracking-wide">
                 <span id="toggleCategoryText">메뉴 접기 (화면 넓게 쓰기)</span>
-                <i id="toggleCategoryIcon" data-lucide="chevron-up" class="w-4 h-4"></i>
+                <i id="toggleCategoryIcon" data-lucide="chevron-up" class="w-5 h-5 text-[#84CC16]"></i>
             </button>
-            <div class="absolute top-1/2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/15 to-transparent -z-10"></div>
+            <div class="absolute top-1/2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent -z-10"></div>
         </div>
     </div>
   </header>
@@ -2377,7 +2375,7 @@
       const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView', 'calendarView', 'ledgerView', 'encyclopediaView'];
       views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
       
-      const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient', 'tabContacts', 'tabCalendar', 'tabLedger', 'tabEncyclopedia', 'tabInquiry'];
+      const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient', 'tabContacts', 'tabCalendar', 'tabLedger', 'tabEncyclopedia', 'tabInquiry', 'tabLens'];
       mainTabs.forEach(t => { 
           const el = document.getElementById(t); 
           if(el) {
@@ -2390,13 +2388,11 @@
                   if(t === 'tabAdmin' || t === 'tabQuoteList') icon.classList.add('text-[#84CC16]');
                   else if(t === 'tabLedger') icon.classList.add('text-yellow-400');
                   else if(t === 'tabInquiry') icon.classList.add('text-[#F59E0B]');
+                  else if(t === 'tabLens') icon.classList.add('text-[#3B82F6]');
                   else icon.classList.add('text-white/80');
               }
           }
       });
-      
-      const lensTab = document.getElementById('tabLens');
-      if(lensTab) lensTab.className = "col-span-3 w-full py-4 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex items-center justify-center gap-2.5 mt-0.5";
       
       let activeTabId = '';
       if (mode === 'admin') { document.getElementById('adminView').classList.remove('hidden'); activeTabId = 'tabAdmin'; }
@@ -2413,14 +2409,13 @@
 
       if(activeTabId) {
         const activeEl = document.getElementById(activeTabId);
-        if(activeEl && activeTabId !== 'tabLens') { 
+        if(activeEl) { 
             activeEl.className = "w-full py-5 rounded-[20px] bg-white/15 border border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md";
             const span = activeEl.querySelector('span');
             if(span) span.className = "text-[13px] font-black text-white";
         }
       }
 
-      // ✨ [스마트 UX] 일지/견적 등 메인 뷰 전환 시 알아서 공간 확보를 위해 메뉴를 접어줍니다.
       if (mode !== 'calendar' && mode !== 'lens' && mode !== 'client_shared') {
           setTimeout(() => toggleMainCategory('collapse'), 100);
       } else {
@@ -3183,6 +3178,7 @@
     // 💬 1:1 문의 (스마트 고객센터) 로직
     // ==========================================
     let userInquiries = [];
+    let inquiryRefreshTimer = null; // ✨ 실시간 채팅 스캐너 추가
 
     async function openInquiryModal() {
         const modal = document.getElementById('inquiryModal');
@@ -3193,10 +3189,17 @@
         setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10);
         history.pushState({ modalOpen: true }, "", "");
         
-        await loadInquiries();
+        await loadInquiries(false); // 최초 진입 시에는 로딩 스피너 띄움
+        
+        // 💡 채팅창이 열려있는 동안 3초마다 몰래(Silent) 새 답변을 확인
+        if(inquiryRefreshTimer) clearInterval(inquiryRefreshTimer);
+        inquiryRefreshTimer = setInterval(() => loadInquiries(true), 3000);
     }
 
     function closeInquiryModal(fromPopstate = false) {
+        // 💡 모달이 닫히면 스캐너 작동 중지
+        if(inquiryRefreshTimer) clearInterval(inquiryRefreshTimer);
+        
         const modal = document.getElementById('inquiryModal');
         const box = document.getElementById('inquiryBox');
         if(modal) modal.classList.add('opacity-0');
@@ -3205,18 +3208,22 @@
         if(!fromPopstate && history.state && history.state.modalOpen) history.back();
     }
 
-    async function loadInquiries() {
+    async function loadInquiries(isSilent = false) {
         const container = document.getElementById('inquiryListContainer');
-        container.innerHTML = '<div class="text-center text-[#A3A8A3] text-[12px] font-bold py-10 animate-pulse">상담 내역을 불러오는 중...</div>';
+        if (!isSilent) container.innerHTML = '<div class="text-center text-[#A3A8A3] text-[12px] font-bold py-10 animate-pulse">상담 내역을 불러오는 중...</div>';
         
         try {
             const safeKey = getSafeKey(currentUserId);
-            // 캐시 방지를 위해 시간값(t) 부여
             const res = await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/inquiries.json?t=${new Date().getTime()}`));
             const data = await res.json();
             
-            userInquiries = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
-            userInquiries = userInquiries.filter(Boolean);
+            let freshInquiries = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
+            freshInquiries = freshInquiries.filter(Boolean);
+            
+            // 🔥 내용이 똑같으면 화면 깜빡임을 막기 위해 렌더링 스킵 (실시간 카톡 효과)
+            if (isSilent && JSON.stringify(userInquiries) === JSON.stringify(freshInquiries)) return;
+            
+            userInquiries = freshInquiries;
             
             if (userInquiries.length === 0) {
                 container.innerHTML = `<div class="bg-white/5 border border-white/10 rounded-[16px] p-5 text-center mt-10"><i data-lucide="headphones" class="w-8 h-8 text-[#4E5968] mx-auto mb-3"></i><p class="text-[13px] text-[#A3A8A3] font-bold leading-relaxed">궁금한 점이나 문제가 있으신가요?<br>이곳에 남겨주시면 운영본부에서<br>신속히 답변해 드립니다.</p></div>`;
@@ -3229,7 +3236,6 @@
                         
                     html += `
                         <div class="flex flex-col gap-2 mb-5">
-                            <!-- 내 질문 -->
                             <div class="self-end max-w-[85%]">
                                 <div class="flex items-end gap-1.5 justify-end mb-1.5">
                                     <span class="text-[10px] text-[#4E5968] font-bold">${inq.date}</span>
@@ -3238,7 +3244,6 @@
                                 <div class="bg-[#84CC16] text-[#12261E] text-[13px] font-bold p-3.5 rounded-[16px] rounded-tr-[4px] shadow-sm break-keep whitespace-pre-wrap">${inq.text}</div>
                             </div>
                             
-                            <!-- 관리자 답변 -->
                             ${inq.reply ? `
                             <div class="self-start max-w-[85%] mt-1">
                                 <div class="flex items-center gap-1.5 mb-1 text-[11px] font-black text-[#A3A8A3]">
@@ -3251,14 +3256,13 @@
                     `;
                 });
                 container.innerHTML = html;
-                container.scrollTop = container.scrollHeight; // 스크롤 맨 아래로 이동
+                container.scrollTop = container.scrollHeight;
             }
             if(typeof lucide !== 'undefined') lucide.createIcons();
         } catch(e) {
-            container.innerHTML = '<div class="text-center text-red-400 text-[12px] font-bold py-10">통신 오류가 발생했습니다.</div>';
+            if (!isSilent) container.innerHTML = '<div class="text-center text-red-400 text-[12px] font-bold py-10">통신 오류가 발생했습니다.</div>';
         }
     }
-
     async function sendInquiry() {
         const inputEl = document.getElementById('inquiryInput');
         const text = inputEl.value.trim();
