@@ -1160,42 +1160,35 @@
 
         let realDoc = extractRealDoc(currentCompanyFullData, docId) || {};
         const docData = { ...shortcut, ...realDoc };
+        
+        // 💡 핵심: 현장 앱에서 압축해서 보낸 페이로드(payload) 덩어리를 직접 까서 읽습니다.
+        const payload = docData.payload || docData; 
 
-        const docDate = docData.date || docData.createdAt || '날짜 미상';
-        const clientName = docData.clientName || docData.customerName || '고객명 미상';
+        const docDate = docData.date || '날짜 미상';
+        const clientName = payload.c || docData.clientName || '고객명 미상';
 
         const contentArea = document.getElementById('previewModalContent');
         let html = '';
 
         if(docData.type === 'quote') {
-            const receiver = docData.receiver || docData.receiverName || clientName || '-';
+            const receiver = clientName;
+            let supplier = payload.supName || '-';
             
-            let supplier = '-';
-            if (typeof docData.supplier === 'string') {
-                supplier = docData.supplier;
-            } else if (docData.supplier && docData.supplier.name) {
-                supplier = docData.supplier.name;
-            } else {
-                supplier = docData.supplierName || docData.provider || '-';
-            }
-            
-            const items = normalizeData(docData.items || docData.rows || docData.quoteItems || docData.details || docData.productList);
-            
+            const items = payload.m || []; // 견적 내역 배열
             let itemsHtml = '';
             if(items.length > 0) {
                 items.forEach(item => {
-                    const name = item.name || item.itemName || item.title || '-';
-                    const spec = item.spec || item.standard || item.size || '-';
-                    const qty = item.qty || item.quantity || item.amount || '1';
-                    const price = item.price || item.unitPrice || item.cost || 0;
-                    itemsHtml += `<tr class="border-b border-white/5 last:border-0"><td class="py-3 text-white text-[13px] font-bold">${name}</td><td class="py-3 text-right text-[#94A3B8] text-[12px]">${spec}</td><td class="py-3 text-right text-white text-[13px]">${qty}</td><td class="py-3 text-right text-[#3B82F6] font-bold text-[13px]">${Number(price).toLocaleString()}원</td></tr>`;
+                    const name = item.m || '-'; // 분류명 (예: 1월, 01 등)
+                    const desc = item.d || '-'; // 상세 내용
+                    const price = item.p || 0;  // 금액
+                    itemsHtml += `<tr class="border-b border-white/5 last:border-0"><td class="py-3 text-white text-[13px] font-bold w-[15%]">${name}</td><td class="py-3 text-left text-[#94A3B8] text-[12px] break-keep leading-snug">${desc}</td><td class="py-3 text-right text-[#3B82F6] font-bold text-[13px] w-[25%] whitespace-nowrap">${Number(price).toLocaleString()}원</td></tr>`;
                 });
             } else {
-                itemsHtml = `<tr><td colspan="4" class="py-6 text-center text-[#94A3B8] text-[13px]">세부 품목 데이터가 등록되지 않았습니다.</td></tr>`;
+                itemsHtml = `<tr><td colspan="3" class="py-6 text-center text-[#94A3B8] text-[13px]">세부 품목 데이터가 등록되지 않았습니다.</td></tr>`;
             }
 
-            const totalPrice = docData.totalPrice || docData.totalAmount || docData.sum || 0;
-            const memo = docData.memo || docData.note || docData.remark || docData.description || '';
+            const totalPrice = payload.s || 0;
+            const memo = payload.memo || '';
 
             html = `
                 <div class="space-y-4">
@@ -1224,7 +1217,7 @@
                     <div class="bg-black/20 rounded-[16px] p-4 border border-white/5">
                         <table class="w-full text-left">
                             <thead class="text-[#94A3B8] text-[11px] border-b border-white/10">
-                                <tr><th class="pb-2 font-medium">품명/공종</th><th class="pb-2 font-medium text-right">규격</th><th class="pb-2 font-medium text-right">수량</th><th class="pb-2 font-medium text-right">단가</th></tr>
+                                <tr><th class="pb-2 font-medium">분류</th><th class="pb-2 font-medium text-left">상세 내역</th><th class="pb-2 font-medium text-right">단가</th></tr>
                             </thead>
                             <tbody>${itemsHtml}</tbody>
                         </table>
@@ -1237,20 +1230,27 @@
                 </div>
             `;
         } else {
-            const tags = normalizeData(docData.categories || docData.tags || docData.workTypes || docData.badge || docData.category);
+            const tags = payload.cat ? payload.cat.split(',').filter(Boolean) : [];
             let tagsHtml = '';
             if(tags.length > 0) {
                 tagsHtml = tags.map(c => `<span class="bg-[#84CC16]/10 text-[#84CC16] border border-[#84CC16]/20 px-2.5 py-1 rounded-md text-[11px] font-bold">${c}</span>`).join('');
             }
             
-            const img = docData.issue || docData.image || docData.photo || docData.img || docData.photoUrl || '';
+            // 현장 사진 (작업중, 후, 전, 이슈 중 첫번째 사진 썸네일)
+            let img = '';
+            if (payload.dur) img = payload.dur.split(',')[0];
+            else if (payload.a) img = payload.a.split(',')[0];
+            else if (payload.b) img = payload.b.split(',')[0];
+            else if (payload.imgsIssue) img = payload.imgsIssue.split(',')[0];
+
             let imgHtml = '';
-            if(img && typeof img === 'string' && (img.startsWith('data:image') || img.startsWith('http'))) {
-                imgHtml = `<div class="mt-4"><div class="text-[11px] font-bold text-[#94A3B8] mb-2">현장 첨부 사진</div><img src="${img}" class="w-full rounded-[16px] border border-white/10 object-contain"></div>`;
+            if(img && img.startsWith('http')) {
+                imgHtml = `<div class="mt-4"><div class="text-[11px] font-bold text-[#94A3B8] mb-2">현장 첨부 사진 (대표 1장)</div><img src="${img}" class="w-full h-48 rounded-[16px] border border-white/10 object-cover"></div>`;
             }
 
-            const rawContent = docData.d || docData.memo || docData.content || docData.workDetails || docData.details || docData.text || docData.description || '';
-            const reportContent = typeof rawContent === 'string' ? rawContent.replace(/\n/g, '<br>') : rawContent;
+            const rawContent = payload.d || payload.memo || '';
+            const reportContent = rawContent ? rawContent.replace(/\n/g, '<br>') : '';
+            const issueContent = payload.issue ? payload.issue.replace(/\n/g, '<br>') : '';
 
             html = `
                 <div class="space-y-4">
@@ -1268,8 +1268,9 @@
                         ${tagsHtml ? `<div><div class="text-[11px] font-bold text-[#94A3B8] mb-2">작업 분류</div><div class="flex flex-wrap gap-1.5">${tagsHtml}</div></div>` : ''}
                         <div>
                             <div class="text-[11px] font-bold text-[#94A3B8] mb-1.5">작업 상세 내용</div>
-                            <div class="text-white text-[14px] leading-relaxed break-keep bg-white/5 p-3 rounded-[12px]">${reportContent ? reportContent : '<span class="text-[#94A3B8]">수기 입력 내용이 없습니다.</span>'}</div>
+                            <div class="text-white text-[14px] leading-relaxed break-keep bg-white/5 p-3 rounded-[12px]">${reportContent ? reportContent : '<span class="text-[#94A3B8]">작업 코멘트가 없습니다.</span>'}</div>
                         </div>
+                        ${issueContent ? `<div><div class="text-[11px] font-bold text-[#F59E0B] mb-1.5">특이사항</div><div class="text-[#F59E0B] text-[14px] leading-relaxed break-keep bg-[#F59E0B]/10 border border-[#F59E0B]/20 p-3 rounded-[12px]">${issueContent}</div></div>` : ''}
                         ${imgHtml}
                     </div>
                 </div>
