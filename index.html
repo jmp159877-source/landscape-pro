@@ -3684,7 +3684,7 @@
           <button onclick="filterBoard('노하우', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">💡 노하우</button>
       </div>
 
-      <!-- 💡 [신규 추가] 카테고리별 맞춤형 공지사항 및 법적 면책 조항 (가독성을 위해 깔끔한 박스 형태) -->
+      <!-- 카테고리별 맞춤형 공지사항 및 법적 면책 조항 -->
       <div id="boardNoticeBox" class="bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] p-4 mx-1 mt-1 shadow-sm flex items-start gap-2.5 transition-all">
           <i data-lucide="info" class="w-5 h-5 text-[#8B95A1] shrink-0 mt-0.5"></i>
           <p id="boardNoticeText" class="text-[13px] font-bold text-[#4E5968] leading-[1.6] break-keep">
@@ -3694,7 +3694,7 @@
 
       <!-- 피드 리스트 -->
       <div class="space-y-5 mt-3" id="boardFeedContainer">
-          <!-- 샘플 1: 불량 거래처 (익명 유지) -->
+          <!-- 샘플 1: 불량 거래처 -->
           <div class="board-feed-item bg-white rounded-[24px] p-6 luxury-shadow border border-[#F4F5F4]" data-category="불량거래처">
               <div class="flex items-center justify-between mb-4">
                   <span class="bg-[#FEF2F2] text-[#EF4444] text-[13px] font-black px-3 py-1.5 rounded-md border border-[#FEE2E2]">🚨 불량거래처 경보</span>
@@ -3710,7 +3710,7 @@
               </div>
           </div>
 
-          <!-- 샘플 2: 현장 협력 (작성자 상호명 추가) -->
+          <!-- 샘플 2: 현장 협력 (💡 카톡 색상 빼고 시그니처 연두색 적용) -->
           <div class="board-feed-item bg-white rounded-[24px] p-6 luxury-shadow border border-[#F4F5F4]" data-category="현장협력">
               <div class="flex items-center justify-between mb-4">
                   <span class="bg-[#EFF6FF] text-blue-600 text-[13px] font-black px-3 py-1.5 rounded-md border border-[#DBEAFE]">🤝 현장 지원요청</span>
@@ -3721,9 +3721,8 @@
               
               <div class="mt-5 flex gap-2.5">
                   <button onclick="alert('전화 연결 기능이 실행됩니다.')" class="flex-1 bg-blue-600 text-white py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md hover:bg-blue-700 transition-colors"><i data-lucide="phone" class="w-5 h-5"></i> 직통 전화하기</button>
-                  <button onclick="alert('1:1 채팅방이 열립니다.')" class="flex-1 bg-[#FEE500] text-[#151E2D] py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md hover:brightness-95 transition-colors"><i data-lucide="message-circle" class="w-5 h-5 fill-current"></i> 1:1 대화하기</button>
+                  <button onclick="alert('1:1 채팅방이 열립니다.')" class="flex-1 bg-[#84CC16] text-[#151E2D] py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md hover:bg-[#9BE32D] transition-colors"><i data-lucide="message-square" class="w-5 h-5"></i> 1:1 대화하기</button>
               </div>
-              <!-- 💡 작성자 정보 추가 -->
               <div class="mt-5 pt-4 border-t border-[#F4F5F4] flex items-center justify-between">
                   <div class="flex items-center gap-2.5">
                       <div class="w-8 h-8 rounded-full bg-[#E0E7FF] flex items-center justify-center text-blue-600 border border-[#C7D2FE]"><i data-lucide="building-2" class="w-4 h-4"></i></div>
@@ -3732,7 +3731,7 @@
               </div>
           </div>
           
-          <!-- 샘플 3: 장비/자재 직거래 (작성자 상호명 추가) -->
+          <!-- 샘플 3: 장비/자재 직거래 -->
           <div class="board-feed-item bg-white rounded-[24px] p-6 luxury-shadow border border-[#F4F5F4]" data-category="장비자재">
               <div class="flex items-center justify-between mb-4">
                   <span class="bg-[#ECFCCB] text-[#4D7C0F] text-[13px] font-black px-3 py-1.5 rounded-md border border-[#84CC16]/40">🛒 장비·자재 직거래</span>
@@ -3742,9 +3741,8 @@
               <p class="text-[15px] text-[#4E5968] font-bold line-clamp-2 leading-[1.6]">화성 현장입니다. 내일 오전 7시부터 오후 4시까지 사용 예정입니다.</p>
               <div class="mt-5 flex gap-2.5">
                   <button onclick="alert('전화 연결 기능이 실행됩니다.')" class="flex-1 bg-blue-600 text-white py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md hover:bg-blue-700 transition-colors"><i data-lucide="phone" class="w-5 h-5"></i> 직통 전화하기</button>
-                  <button onclick="alert('1:1 채팅방이 열립니다.')" class="flex-1 bg-[#FEE500] text-[#151E2D] py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md hover:brightness-95 transition-colors"><i data-lucide="message-circle" class="w-5 h-5 fill-current"></i> 1:1 대화하기</button>
+                  <button onclick="alert('1:1 채팅방이 열립니다.')" class="flex-1 bg-[#84CC16] text-[#151E2D] py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md hover:bg-[#9BE32D] transition-colors"><i data-lucide="message-square" class="w-5 h-5"></i> 1:1 대화하기</button>
               </div>
-              <!-- 💡 작성자 정보 추가 -->
               <div class="mt-5 pt-4 border-t border-[#F4F5F4] flex items-center justify-between">
                   <div class="flex items-center gap-2.5">
                       <div class="w-8 h-8 rounded-full bg-[#ECFCCB] flex items-center justify-center text-[#4D7C0F] border border-[#D9F99D]"><i data-lucide="tree-pine" class="w-4 h-4"></i></div>
@@ -3762,10 +3760,9 @@
 
   <script>
       // ==========================================
-      // 👥 커뮤니티 게시판 실시간 필터링 및 오토 탭 로직
+      // 👥 커뮤니티 게시판 제어 및 뒤로가기 완벽 방어
       // ==========================================
       
-      // 💡 [핵심] 카테고리별 맞춤형 안내/면책 조항 텍스트
       const boardNotices = {
           '전체': '건강한 조경 문화를 위해 상호 존중과 매너를 지켜주세요. 당사자 간의 거래 및 분쟁에 대해 조경노트PRO는 법적 책임을 지지 않습니다.',
           '불량거래처': '<span class="text-red-500 font-black">🚨 [주의] 반드시 객관적 사실에 근거하여 작성해 주세요.</span> 허위 사실 유포 및 악의적 비방 시 발생하는 법적 책임(명예훼손 등)은 작성자 본인에게 있으며, 운영진은 분쟁에 개입하거나 책임지지 않습니다.',
@@ -3775,18 +3772,15 @@
       };
 
       function filterBoard(category, btnElement) {
-          // 1. 모든 탭 버튼 초기화 (하얀 바탕, 회색 글씨)
           const allBtns = document.querySelectorAll('.board-tab-btn');
           allBtns.forEach(btn => {
               btn.className = "board-tab-btn px-4 py-3 bg-white text-[#8B95A1] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all hover:text-[#4E5968] hover:border-[#4E5968]";
           });
           
-          // 2. 선택된 탭은 연두색 바탕에 까만 글씨로 '불 켜짐' 효과
           if(btnElement) {
               btnElement.className = "board-tab-btn px-5 py-3 bg-[#84CC16] text-[#151E2D] rounded-full text-[15px] font-black shrink-0 shadow-md border border-[#84CC16] transition-all";
           }
 
-          // 3. 상단 헤더 타이틀 변경
           const titleMap = {
               '전체': '사장님 커뮤니티',
               '불량거래처': '불량 거래처 경보',
@@ -3799,13 +3793,11 @@
               titleEl.innerText = titleMap[category];
           }
 
-          // 4. ✨ 해당 탭에 맞는 공지사항(Disclaimer) 텍스트 갈아끼우기 ✨
           const noticeEl = document.getElementById('boardNoticeText');
           if(noticeEl && boardNotices[category]) {
               noticeEl.innerHTML = boardNotices[category];
           }
 
-          // 5. 게시글 필터링
           const items = document.querySelectorAll('.board-feed-item');
           items.forEach(item => {
               if (category === '전체' || item.getAttribute('data-category') === category) {
@@ -3842,16 +3834,34 @@
           
           window.scrollTo(0, 0);
           if(typeof lucide !== 'undefined') lucide.createIcons();
+
+          // ✨ 안드로이드 뒤로가기 튕김 방지용 가상 히스토리 추가
+          history.pushState({ isBoardOpen: true }, "", "");
       }
       
-      function closeBoard() {
+      // 💡 isFromBackButton 파라미터를 추가하여 꼬임 방지
+      function closeBoard(isFromBackButton = false) {
           const board = document.getElementById('boardView');
           if(board) board.classList.add('hidden');
           
           const swipeContainer = document.getElementById('swipeContainer');
           if(swipeContainer) swipeContainer.style.display = 'block';
           switchView('lounge', false);
+
+          // ✨ 상단 X(뒤로가기) 버튼을 눌러서 닫을 때만 history.back() 실행
+          if(!isFromBackButton && history.state && history.state.isBoardOpen) {
+              history.back();
+          }
       }
+
+      // ✨ 스마트폰 하단 물리 뒤로가기 버튼 감지 로직
+      window.addEventListener('popstate', function(e) {
+          const board = document.getElementById('boardView');
+          // 게시판이 열려있는 상태에서 뒤로가기를 누르면 앱을 끄지 않고 게시판만 닫음
+          if(board && !board.classList.contains('hidden')) {
+              closeBoard(true);
+          }
+      });
 
       window.addEventListener('DOMContentLoaded', () => {
           setTimeout(() => {
