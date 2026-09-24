@@ -1195,7 +1195,6 @@
         let realDoc = extractRealDoc(currentCompanyFullData, docId) || {};
         const docData = { ...shortcut, ...realDoc };
         
-        // 💡 핵심: 현장 앱에서 압축해서 보낸 페이로드(payload) 덩어리를 직접 까서 읽습니다.
         const payload = docData.payload || docData; 
 
         const docDate = docData.date || '날짜 미상';
@@ -1206,9 +1205,13 @@
 
         if(docData.type === 'quote') {
             const receiver = clientName;
-            let supplier = payload.supName || document.getElementById('modalCompanyName').innerText || '-';
             
-            const items = payload.m || []; // 견적 내역 배열
+            // 💡 견적서 공급자 정보 연결
+            const currentCompanyName = document.getElementById('modalCompanyName').innerText || '';
+            const profile = allAccounts.find(acc => acc.name === currentCompanyName) || {};
+            let supplier = payload.supName || profile.name || currentCompanyName || '-';
+            
+            const items = payload.m || []; 
             let itemsHtml = '';
             if(items.length > 0) {
                 items.forEach(item => {
@@ -1264,9 +1267,10 @@
                 </div>
             `;
         } else {
-            // 💡 [수정] 공급자(업체) 정보: 알 수 없는 업체로 뜨지 않게, 이미 모달 상단에 불러온 업체명을 강제로 꽂아넣습니다!
+            // 💡 [수정 완료] 공급자(업체) 정보: 글로벌 계정 목록(allAccounts)에서 직접 프로필을 찾아 매칭!
             const currentCompanyName = document.getElementById('modalCompanyName').innerText || '조경 업체';
-            const profile = currentCompanyFullData?.profile || {};
+            const profile = allAccounts.find(acc => acc.name === currentCompanyName) || {};
+            
             const supName = profile.name || currentCompanyName;
             const supCeo = profile.ceo || '-';
             const supBiz = profile.bizNum || '-';
@@ -1276,7 +1280,6 @@
             const phone = payload.p || docData.phone || '연락처 없음';
             const address = payload.addr || docData.address || payload.address || '주소 정보 없음';
             
-            // 💡 [렌더링] 작업 목록
             const tags = payload.cat ? String(payload.cat).split(',').filter(Boolean) : [];
             let tagsHtml = '';
             if(tags.length > 0) {
@@ -1286,7 +1289,6 @@
                            `</div>`;
             }
 
-            // 💡 [렌더링] 오리지널 사진 갤러리 폼 (작업 전,중,후,특이사항 분류)
             const renderReportPhotos = (photoString, title) => {
                 if(!photoString) return '';
                 const imgs = String(photoString).split(',').filter(Boolean);
@@ -1309,10 +1311,10 @@
             const rawContent = payload.d || payload.memo || '';
             const reportContent = rawContent ? String(rawContent).replace(/\n/g, '<br>') : '코멘트 없음';
             
-            // 💡 [수정] 실제 사용자가 앱에서 입력한 제목을 1순위로 가져오도록 완벽 수정!
-            const docTitle = payload.t || payload.title || docData.title || docData.clientName || '현장 일지';
+            // 💡 [수정 완료] 제목 강제 덮어쓰기 로직 완전 제거. 오직 실제 저장된 리포트 제목만 가져옴.
+            const docTitle = docData.title || payload.title || payload.t || payload.subject || '현장 일지';
 
-            // 💡 [최종 HTML] 오리지널 현장 리포트 (하얀색 웹 문서 UI) 100% 동일 구현!
+            // 💡 [최종 HTML] 오리지널 현장 리포트 100% 동일 구현!
             html = `
                 <div class="bg-white p-6 md:p-8 rounded-[20px] text-[#111827] max-w-lg mx-auto shadow-2xl" style="font-family: 'Pretendard', sans-serif;">
                     
