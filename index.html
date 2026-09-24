@@ -3880,5 +3880,307 @@
           }, 1500);
       });
   </script>
+<!-- ================= [신규: 커뮤니티 글쓰기 팝업창] ================= -->
+  <div id="boardWriteModal" class="hidden fixed inset-0 z-[9000] bg-black/80 flex flex-col items-center justify-end sm:justify-center px-4 pb-4 sm:p-4 opacity-0 transition-opacity duration-200" onclick="closeBoardWrite()">
+      <div class="bg-white w-full max-w-md rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-[#EAEBEA]" id="boardWriteBox" onclick="event.stopPropagation()">
+          <div class="p-5 border-b border-[#F4F5F4] flex justify-between items-center bg-[#F9F9F8]">
+              <h3 class="text-[17px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="pen-tool" class="w-5 h-5 text-[#84CC16]"></i> 커뮤니티 글쓰기</h3>
+              <button onclick="closeBoardWrite()" class="text-[#A3A8A3] hover:text-[#151E2D] p-1"><i data-lucide="x" class="w-6 h-6"></i></button>
+          </div>
+          <div class="p-5 space-y-4 max-h-[70vh] overflow-y-auto bg-white nav-scroll">
+              <div>
+                  <label class="block text-[13px] font-black text-[#151E2D] mb-2">카테고리 선택</label>
+                  <select id="bwCategory" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-3 py-3.5 text-[15px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
+                      <option value="현장협력">🤝 현장 협력·지원</option>
+                      <option value="장비자재">🛒 장비·자재 직거래</option>
+                      <option value="노하우">💡 실무 노하우 공유</option>
+                      <option value="불량거래처">🚨 불량 거래처 경보</option>
+                  </select>
+              </div>
+              <div>
+                  <label class="block text-[13px] font-black text-[#151E2D] mb-2">게시글 제목</label>
+                  <input type="text" id="bwTitle" placeholder="제목을 입력해 주세요." autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[14px] px-4 py-3.5 text-[15px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16]">
+              </div>
+              <div>
+                  <label class="block text-[13px] font-black text-[#151E2D] mb-2">연락 받을 전화번호 (선택)</label>
+                  <input type="tel" id="bwPhone" placeholder="예: 010-1234-5678" oninput="autoHyphen(this)" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[14px] px-4 py-3.5 text-[15px] font-black text-blue-600 focus:outline-none focus:border-blue-500">
+              </div>
+              <div>
+                  <label class="block text-[13px] font-black text-[#151E2D] mb-2">상세 내용</label>
+                  <textarea id="bwContent" rows="5" placeholder="현장 위치, 일당, 장비 규격 등 상세한 내용을 적어주세요." class="w-full bg-white border border-[#EAEBEA] rounded-[14px] p-4 text-[14px] font-bold text-[#4E5968] focus:outline-none focus:border-[#84CC16] resize-none leading-relaxed"></textarea>
+              </div>
+          </div>
+          <div class="p-4 bg-[#F9F9F8] border-t border-[#F4F5F4] flex gap-2">
+              <button onclick="closeBoardWrite()" class="flex-1 bg-white border border-[#EAEBEA] text-[#4E5968] font-black py-4 rounded-[14px] text-[15px] hover:bg-[#F4F5F4] transition-colors shadow-sm">취소</button>
+              <button onclick="submitBoardPost()" class="flex-1 bg-[#151E2D] text-[#84CC16] font-black py-4 rounded-[14px] text-[15px] shadow-md hover:bg-black transition-colors">등록하기</button>
+          </div>
+      </div>
+  </div>
+
+  <!-- ================= [신규: 1:1 대화하기(실시간 채팅) 팝업창] ================= -->
+  <div id="boardChatModal" class="hidden fixed inset-0 z-[9500] bg-black/80 flex flex-col items-center justify-end sm:justify-center px-4 pb-4 sm:p-4 opacity-0 transition-opacity duration-200" onclick="closeBoardChat()">
+      <div class="bg-[#151E2D] w-full max-w-md rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 h-[75vh]" id="boardChatBox" onclick="event.stopPropagation()">
+          <div class="p-4 border-b border-white/10 flex justify-between items-center bg-[#0F1722] shrink-0">
+              <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-full bg-[#84CC16] flex items-center justify-center text-[#151E2D]"><i data-lucide="user" class="w-5 h-5"></i></div>
+                  <div class="flex flex-col">
+                      <span id="chatTargetName" class="text-[15px] font-black text-white">상대방 상호명</span>
+                      <span class="text-[11px] font-bold text-[#84CC16]">실시간 클라우드 암호화 대화</span>
+                  </div>
+              </div>
+              <button onclick="closeBoardChat()" class="text-[#A3A8A3] hover:text-white p-1"><i data-lucide="x" class="w-6 h-6"></i></button>
+          </div>
+          <div class="flex-1 overflow-y-auto p-5 space-y-4 bg-[#151E2D] nav-scroll" id="boardChatMessages">
+          </div>
+          <div class="p-3 bg-[#0F1722] border-t border-white/10 shrink-0">
+              <div class="flex gap-2">
+                  <input type="text" id="chatInputText" onkeypress="if(event.key==='Enter') sendRealChatMessage()" placeholder="메시지를 입력하세요..." class="flex-1 bg-black/40 border border-white/10 rounded-full px-5 text-white text-[14px] font-bold focus:outline-none focus:border-[#84CC16]">
+                  <button onclick="sendRealChatMessage()" class="w-12 h-12 bg-[#84CC16] text-[#151E2D] rounded-full flex items-center justify-center hover:bg-[#9BE32D] transition-colors shrink-0"><i data-lucide="send" class="w-5 h-5 ml-1"></i></button>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <script>
+      // ==========================================
+      // 🚀 [실전 상용화] 파이어베이스 실시간 커뮤니티 & 1:1 채팅 엔진
+      // ==========================================
+
+      let currentChatRoom = "";
+      let chatTargetId = "";
+      let chatRefreshTimer = null;
+      let lastMessageCount = 0;
+
+      // 1. 기존 '글쓰기' 버튼 클릭 이벤트 덮어씌우기
+      window.addEventListener('DOMContentLoaded', () => {
+          setTimeout(() => {
+              const writeBtn = document.querySelector('#boardView button.fixed.bottom-6.right-4');
+              if(writeBtn) writeBtn.setAttribute('onclick', 'openBoardWrite()');
+              // 첫 구동 시 커뮤니티 게시글 불러오기
+              loadCommunityPosts();
+          }, 1500);
+      });
+
+      // 2. 직통 전화 걸기 (스마트폰 통화 앱 자동 연결)
+      function callPhone(phoneNumber) {
+          if(!phoneNumber || phoneNumber === '') return alert("등록된 연락처가 없습니다.");
+          window.location.href = 'tel:' + phoneNumber.replace(/[^0-9]/g, '');
+      }
+
+      // 3. 커뮤니티 게시글 불러오기 (파이어베이스 실시간 연동)
+      async function loadCommunityPosts() {
+          try {
+              const res = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_community.json`);
+              const data = await res.json();
+              const container = document.getElementById('boardFeedContainer');
+              
+              if(!data) {
+                  container.innerHTML = `<div class="p-10 text-center text-[#8B95A1] font-bold bg-white rounded-[24px] border border-[#EAEBEA] mt-5">아직 등록된 게시글이 없습니다. 첫 글을 작성해보세요!</div>`;
+                  return;
+              }
+
+              container.innerHTML = ''; 
+              const posts = Object.values(data).sort((a,b) => b.timestamp - a.timestamp);
+
+              posts.forEach(post => {
+                  let badgeHtml = '';
+                  if(post.category === '불량거래처') badgeHtml = `<span class="bg-[#FEF2F2] text-[#EF4444] text-[13px] font-black px-3 py-1.5 rounded-md border border-[#FEE2E2]">🚨 불량거래처 경보</span>`;
+                  else if(post.category === '현장협력') badgeHtml = `<span class="bg-[#EFF6FF] text-blue-600 text-[13px] font-black px-3 py-1.5 rounded-md border border-[#DBEAFE]">🤝 현장 지원요청</span>`;
+                  else if(post.category === '장비자재') badgeHtml = `<span class="bg-[#ECFCCB] text-[#4D7C0F] text-[13px] font-black px-3 py-1.5 rounded-md border border-[#84CC16]/40">🛒 장비·자재 직거래</span>`;
+                  else if(post.category === '노하우') badgeHtml = `<span class="bg-[#F4F5F4] text-[#4E5968] text-[13px] font-black px-3 py-1.5 rounded-md border border-[#EAEBEA]">💡 실무 노하우 공유</span>`;
+
+                  let buttonsHtml = '';
+                  if(post.category !== '불량거래처') {
+                      const isMyPost = (post.authorId === currentUserId);
+                      buttonsHtml = `
+                      <div class="mt-5 flex gap-2.5">
+                          <button onclick="callPhone('${post.phone}')" class="flex-1 bg-blue-600 text-white py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md hover:bg-blue-700 transition-colors"><i data-lucide="phone" class="w-5 h-5"></i> 직통 전화하기</button>
+                          ${isMyPost ? 
+                          `<button onclick="alert('내가 쓴 글입니다.')" class="flex-1 bg-gray-200 text-[#4E5968] py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md transition-colors"><i data-lucide="check-circle" class="w-5 h-5"></i> 내 게시글</button>` :
+                          `<button onclick="openBoardChat('${post.authorId}', '${post.authorName}')" class="flex-1 bg-[#84CC16] text-[#151E2D] py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md hover:bg-[#9BE32D] transition-colors"><i data-lucide="message-square" class="w-5 h-5"></i> 1:1 대화하기</button>`
+                          }
+                      </div>`;
+                  }
+
+                  let authorHtml = '';
+                  if(post.category === '불량거래처') {
+                      authorHtml = `<div class="mt-5 pt-4 border-t border-[#F4F5F4] flex items-center justify-between"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-full bg-[#F4F5F4] flex items-center justify-center text-[#8B95A1]"><i data-lucide="user-x" class="w-4 h-4"></i></div><span class="text-[13px] font-black text-[#8B95A1]">익명 보호</span></div><span class="text-[12px] font-bold text-[#8B95A1]">${post.dateStr}</span></div>`;
+                  } else {
+                      authorHtml = `<div class="mt-5 pt-4 border-t border-[#F4F5F4] flex items-center justify-between"><div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-full bg-[#E0E7FF] flex items-center justify-center text-blue-600 border border-[#C7D2FE]"><i data-lucide="building-2" class="w-4 h-4"></i></div><span class="text-[14px] font-black text-[#151E2D]">${post.authorName}</span></div><span class="text-[12px] font-bold text-[#8B95A1]">${post.dateStr}</span></div>`;
+                  }
+
+                  const cardHtml = `
+                  <div class="board-feed-item bg-white rounded-[24px] p-6 luxury-shadow border border-[#F4F5F4] modal-enter" data-category="${post.category}">
+                      <div class="flex items-center justify-between mb-4">${badgeHtml}</div>
+                      <h3 class="text-[19px] font-black text-[#151E2D] mb-3 leading-snug">${post.title}</h3>
+                      <p class="text-[15px] text-[#4E5968] font-bold line-clamp-3 leading-[1.6]">${post.content.replace(/\n/g, '<br>')}</p>
+                      ${buttonsHtml}
+                      ${authorHtml}
+                  </div>`;
+                  
+                  container.insertAdjacentHTML('beforeend', cardHtml);
+              });
+              if(typeof lucide !== 'undefined') lucide.createIcons();
+          } catch(e) { console.error("게시글 로드 실패", e); }
+      }
+
+      // 4. 게시글 파이어베이스 서버로 전송 (글 등록)
+      async function submitBoardPost() {
+          const category = document.getElementById('bwCategory').value;
+          const title = document.getElementById('bwTitle').value.trim();
+          const phone = document.getElementById('bwPhone').value.trim();
+          const content = document.getElementById('bwContent').value.trim();
+
+          if(!title || !content) return alert("제목과 상세 내용을 모두 입력해주세요.");
+          if(!currentUserId) return alert("세션이 만료되었습니다. 앱을 재시작 해주세요.");
+
+          let myName = myCompanyProfile && myCompanyProfile.name ? myCompanyProfile.name : "상호 미등록 사장님";
+
+          const postData = {
+              id: 'post_' + Date.now(),
+              authorId: currentUserId,
+              authorName: myName,
+              category: category,
+              title: title,
+              phone: phone,
+              content: content,
+              timestamp: new Date().getTime(),
+              dateStr: new Date().toLocaleString('ko-KR', {month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit'})
+          };
+
+          showLoadingOverlay("클라우드 서버에 등록 중...");
+          try {
+              await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_community.json?auth=${currentIdToken}`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(postData)
+              });
+              alert("성공적으로 등록되었습니다!");
+              closeBoardWrite();
+              
+              await loadCommunityPosts();
+              
+              // 등록 직후 전체 탭 버튼 시각적 효과 초기화 후 이동
+              const tabs = document.querySelectorAll('.board-tab-btn');
+              tabs.forEach(btn => { 
+                  if(btn.innerText.includes(category.substring(0,2))) filterBoard(category, btn); 
+              });
+          } catch(e) { alert("통신 오류가 발생했습니다."); } 
+          finally { document.getElementById('loadingOverlay')?.remove(); }
+      }
+
+      // 5. 실시간 1:1 채팅 열기 및 고유 채팅방 자동 생성
+      function openBoardChat(targetId, targetName) {
+          if(!currentUserId) return alert("로그인 후 이용 가능합니다.");
+          
+          chatTargetId = targetId;
+          document.getElementById('chatTargetName').innerText = targetName;
+          
+          const roomKeys = [currentUserId, targetId].sort();
+          currentChatRoom = `room_${roomKeys[0]}_${roomKeys[1]}`;
+          lastMessageCount = 0;
+          
+          const modal = document.getElementById('boardChatModal');
+          const box = document.getElementById('boardChatBox');
+          modal.classList.remove('hidden');
+          setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10);
+          
+          document.getElementById('boardChatMessages').innerHTML = '<div class="text-center text-[#A3A8A3] text-[12px] font-bold py-5 animate-pulse">상대방과의 통신을 연결 중입니다...</div>';
+          
+          loadChatMessages(true);
+          if(chatRefreshTimer) clearInterval(chatRefreshTimer);
+          chatRefreshTimer = setInterval(() => loadChatMessages(false), 2000); 
+      }
+
+      function closeBoardChat() {
+          if(chatRefreshTimer) clearInterval(chatRefreshTimer);
+          const modal = document.getElementById('boardChatModal');
+          const box = document.getElementById('boardChatBox');
+          modal.classList.add('opacity-0'); box.classList.add('scale-95');
+          setTimeout(() => { modal.classList.add('hidden'); }, 200);
+      }
+
+      // 6. 실시간 메시지 전송
+      async function sendRealChatMessage() {
+          const inputEl = document.getElementById('chatInputText');
+          const text = inputEl.value.trim();
+          if(!text || !currentChatRoom) return;
+          
+          inputEl.value = '';
+          
+          const msgData = {
+              senderId: currentUserId,
+              text: text,
+              timestamp: new Date().getTime(),
+              timeStr: new Date().toLocaleString('ko-KR', {hour: '2-digit', minute:'2-digit'})
+          };
+
+          try {
+              await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_chats/${currentChatRoom}.json?auth=${currentIdToken}`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(msgData)
+              });
+              loadChatMessages(true);
+          } catch(e) { alert("메시지 전송 실패"); }
+      }
+
+      // 7. 실시간 메시지 수신 및 화면 그리기
+      async function loadChatMessages(forceScroll = false) {
+          if(!currentChatRoom) return;
+          try {
+              const res = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_chats/${currentChatRoom}.json`);
+              const data = await res.json();
+              const container = document.getElementById('boardChatMessages');
+              
+              if(!data) {
+                  container.innerHTML = '<div class="text-center text-[#A3A8A3] text-[12px] font-bold py-5">채팅방이 생성되었습니다. 첫 메시지를 보내보세요.</div>';
+                  return;
+              }
+
+              const msgs = Object.values(data).sort((a,b) => a.timestamp - b.timestamp);
+              
+              if(msgs.length === lastMessageCount && !forceScroll) return; 
+              lastMessageCount = msgs.length;
+
+              let html = `<div class="text-center text-[11px] text-[#A3A8A3] font-bold mb-4 bg-white/5 py-1.5 rounded-full w-max mx-auto px-4">양방향 보안 채팅이 연결되었습니다.</div>`;
+              
+              msgs.forEach(msg => {
+                  const isMe = (msg.senderId === currentUserId);
+                  if(isMe) {
+                      html += `
+                      <div class="flex justify-end mb-3">
+                          <div class="flex items-end gap-1.5">
+                              <span class="text-[10px] font-bold text-[#4E5968] mb-0.5">${msg.timeStr}</span>
+                              <div class="bg-[#84CC16] text-[#12261E] text-[14px] font-black p-3.5 rounded-[16px] rounded-tr-[4px] shadow-sm max-w-xs break-keep whitespace-pre-wrap">${msg.text}</div>
+                          </div>
+                      </div>`;
+                  } else {
+                      html += `
+                      <div class="flex justify-start mb-3">
+                          <div class="flex items-end gap-1.5">
+                              <div class="bg-white text-[#151E2D] text-[14px] font-black p-3.5 rounded-[16px] rounded-tl-[4px] shadow-sm max-w-xs break-keep whitespace-pre-wrap">${msg.text}</div>
+                              <span class="text-[10px] font-bold text-[#4E5968] mb-0.5">${msg.timeStr}</span>
+                          </div>
+                      </div>`;
+                  }
+              });
+              
+              container.innerHTML = html;
+              container.scrollTop = container.scrollHeight;
+          } catch(e) {}
+      }
+
+      // 글쓰기 팝업 기능
+      function openBoardWrite() {
+          document.getElementById('bwTitle').value = ''; document.getElementById('bwPhone').value = ''; document.getElementById('bwContent').value = '';
+          const modal = document.getElementById('boardWriteModal'); const box = document.getElementById('boardWriteBox');
+          modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10);
+      }
+      function closeBoardWrite() {
+          const modal = document.getElementById('boardWriteModal'); const box = document.getElementById('boardWriteBox');
+          modal.classList.add('opacity-0'); box.classList.add('scale-95'); setTimeout(() => { modal.classList.add('hidden'); }, 200);
+      }
+  </script>  
 </body>
 </html>
