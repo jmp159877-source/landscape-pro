@@ -205,6 +205,19 @@
 
   <div id="swipeContainer" class="max-w-md mx-auto p-4 space-y-5">
     <section id="adminView" class="hidden space-y-5">
+        <!-- ✨ 신규 추가: 전체 일지 보관함 진입 버튼 ✨ -->
+        <div onclick="openAllLogsModal()" class="bg-white border-[1.5px] border-[#12261E] rounded-[24px] p-5 flex justify-between items-center shadow-sm cursor-pointer hover:border-[#84CC16] group transition-all mb-4">
+            <div class="flex items-center gap-3.5">
+                <div class="w-12 h-12 bg-[#F9F9F8] group-hover:bg-[#84CC16]/20 rounded-[16px] flex items-center justify-center transition-colors">
+                    <i data-lucide="folder-clock" class="w-6 h-6 text-[#12261E] group-hover:text-[#84CC16] transition-colors"></i>
+                </div>
+                <div class="flex flex-col gap-0.5">
+                    <h3 class="text-[16px] font-black text-[#12261E]">전체 일지 보관함</h3>
+                    <p class="text-[13px] text-[#8B95A1] font-bold">작성한 모든 현장 일지를 날짜별로 모아봅니다.</p>
+                </div>
+            </div>
+            <i data-lucide="chevron-right" class="w-5 h-5 text-[#A3A8A3] group-hover:text-[#12261E] transition-colors"></i>
+        </div>
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5 relative overflow-hidden">
         <div class="flex items-center justify-between pb-4 border-b border-[#F4F5F4] relative z-10"><h2 class="text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="map-pin" class="w-5 h-5 text-[#84CC16]"></i> 현장 기본 정보</h2></div>
         <div class="relative z-10">
@@ -840,6 +853,16 @@
         <button onclick="submitLedgerPin()" class="flex-1 py-4 bg-[#84CC16] text-[#12261E] rounded-[16px] font-black text-[15px] shadow-[0_4px_12px_rgba(132,204,22,0.2)] hover:bg-[#9BE32D] transition-colors">확인</button>
       </div>
     </div>
+  </div>
+  <!-- 🗂️ 전체 일지 보관함 풀스크린 모달 -->
+  <div id="allLogsModal" class="hidden fixed inset-0 z-[7000] bg-[#F9F9F8] flex flex-col opacity-0 transition-opacity duration-200">
+        <div class="p-5 border-b border-[#EAEBEA] flex justify-between items-center bg-white shrink-0 shadow-sm relative z-10 pt-safe">
+            <h3 class="text-[18px] font-black text-[#12261E] flex items-center gap-2"><i data-lucide="folder-clock" class="w-6 h-6 text-[#84CC16]"></i> 전체 일지 보관함</h3>
+            <button onclick="closeAllLogsModal()" class="text-[#A3A8A3] hover:text-[#12261E] p-2 bg-[#F4F5F4] rounded-full transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+        <div id="allLogsContainer" class="p-4 flex-1 overflow-y-auto space-y-3 pb-20">
+            <!-- 자바스크립트가 여기에 날짜순으로 카드들을 꽂아줍니다 -->
+        </div>
   </div>
   <!-- 📝 일정 추가/수정 모달 -->
   <div id="scheduleModal" class="hidden fixed inset-0 z-[6500] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200">
@@ -2848,6 +2871,86 @@
             alert("검색 실패: " + e.message);
         } finally {
             document.getElementById('loadingOverlay')?.remove();
+        }
+    }
+  // ==========================================
+    // 🗂️ 전체 일지 보관함 (모든 거래처 통합)
+    // ==========================================
+    function openAllLogsModal() {
+        const modal = document.getElementById('allLogsModal');
+        const container = document.getElementById('allLogsContainer');
+        if(!modal || !container) return;
+        container.innerHTML = '';
+
+        let allLogs = [];
+        
+        // 1. 모든 거래처를 돌면서 일지 데이터 싹 다 수집
+        clients.forEach(client => {
+            if(client.history && client.history.length > 0) {
+                client.history.forEach(log => {
+                    allLogs.push({ ...log, clientName: client.name, clientId: client.id });
+                });
+            }
+        });
+
+        // 2. 날짜 최신순으로 정렬 (내림차순)
+        allLogs.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        // 3. 화면에 그리기
+        if (allLogs.length === 0) {
+            container.innerHTML = `<div class="p-10 text-center text-[#8B95A1] font-bold bg-white rounded-[24px] border border-dashed border-[#EAEBEA] shadow-sm mt-4">아직 작성된 일지가 없습니다.</div>`;
+        } else {
+            allLogs.forEach(log => {
+                const isQuote = log.isQuote;
+                const typeIcon = isQuote ? 'calculator' : 'shield-check';
+                const typeColor = isQuote ? 'text-[#C5A880]' : 'text-[#84CC16]';
+                const typeText = isQuote ? '견적서' : '작업 일지';
+
+                const card = document.createElement('div');
+                card.className = `bg-white p-5 rounded-[20px] shadow-sm border border-[#EAEBEA] cursor-pointer hover:border-[#84CC16] hover:shadow-md transition-all flex flex-col gap-3`;
+                
+                // 💡 핵심: 카드를 누르면 해당 거래처의 '상세 히스토리 창'으로 곧바로 이동
+                card.onclick = () => {
+                    closeAllLogsModal();
+                    setTimeout(() => showHistory(log.clientName), 200); 
+                };
+
+                let imgThumb = '';
+                if(log.issue && typeof log.issue === 'string' && log.issue.startsWith('data:image')) {
+                    imgThumb = `<img src="${log.issue}" class="w-16 h-16 rounded-[14px] object-cover shrink-0 border border-[#EAEBEA]">`;
+                }
+
+                const snippet = log.d || log.memo || '상세 내용 없음';
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[12px] font-black bg-[#12261E] text-white px-2.5 py-1 rounded-md shadow-sm">${log.date}</span>
+                            <span class="text-[14px] font-black text-[#12261E] truncate max-w-[150px]">${log.clientName}</span>
+                        </div>
+                        <span class="text-[12px] font-black ${typeColor} flex items-center gap-1 shrink-0"><i data-lucide="${typeIcon}" class="w-4 h-4"></i>${typeText}</span>
+                    </div>
+                    <div class="flex gap-3 items-center mt-1">
+                        ${imgThumb}
+                        <div class="flex-1 min-w-0">
+                            <div class="text-[13.5px] font-medium text-[#4E5968] leading-snug break-keep">${snippet}</div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        modal.classList.remove('hidden');
+        setTimeout(() => { modal.classList.remove('opacity-0'); }, 10);
+        if(typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    function closeAllLogsModal() {
+        const modal = document.getElementById('allLogsModal');
+        if(modal) {
+            modal.classList.add('opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 200);
         }
     }
     </script>  
