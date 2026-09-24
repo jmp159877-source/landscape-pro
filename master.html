@@ -1206,15 +1206,15 @@
 
         if(docData.type === 'quote') {
             const receiver = clientName;
-            let supplier = payload.supName || '-';
+            let supplier = payload.supName || document.getElementById('modalCompanyName').innerText || '-';
             
             const items = payload.m || []; // 견적 내역 배열
             let itemsHtml = '';
             if(items.length > 0) {
                 items.forEach(item => {
-                    const name = item.m || '-'; // 분류명 (예: 1월, 01 등)
-                    const desc = item.d || '-'; // 상세 내용
-                    const price = item.p || 0;  // 금액
+                    const name = item.m || '-'; 
+                    const desc = item.d || '-'; 
+                    const price = item.p || 0;  
                     itemsHtml += `<tr class="border-b border-white/5 last:border-0"><td class="py-3 text-white text-[13px] font-bold w-[15%]">${name}</td><td class="py-3 text-left text-[#94A3B8] text-[12px] break-keep leading-snug">${desc}</td><td class="py-3 text-right text-[#3B82F6] font-bold text-[13px] w-[25%] whitespace-nowrap">${Number(price).toLocaleString()}원</td></tr>`;
                 });
             } else {
@@ -1264,18 +1264,19 @@
                 </div>
             `;
         } else {
-            // 💡 [데이터 추출] 공급자(업체) 정보 추출
+            // 💡 [수정] 공급자(업체) 정보: 알 수 없는 업체로 뜨지 않게, 이미 모달 상단에 불러온 업체명을 강제로 꽂아넣습니다!
+            const currentCompanyName = document.getElementById('modalCompanyName').innerText || '조경 업체';
             const profile = currentCompanyFullData?.profile || {};
-            const supName = profile.name || '알 수 없는 업체';
+            const supName = profile.name || currentCompanyName;
             const supCeo = profile.ceo || '-';
             const supBiz = profile.bizNum || '-';
             const supPhone = profile.phone || '-';
 
-            // 💡 [데이터 추출] 수신자(고객) 정보 추출
+            // 💡 [데이터 추출] 수신자(고객) 정보
             const phone = payload.p || docData.phone || '연락처 없음';
             const address = payload.addr || docData.address || payload.address || '주소 정보 없음';
             
-            // 💡 [렌더링] 작업 목록 (초록색 텍스트 폼)
+            // 💡 [렌더링] 작업 목록
             const tags = payload.cat ? String(payload.cat).split(',').filter(Boolean) : [];
             let tagsHtml = '';
             if(tags.length > 0) {
@@ -1307,7 +1308,9 @@
 
             const rawContent = payload.d || payload.memo || '';
             const reportContent = rawContent ? String(rawContent).replace(/\n/g, '<br>') : '코멘트 없음';
-            const docTitle = docData.title || tags[0] || '현장 일지';
+            
+            // 💡 [수정] 실제 사용자가 앱에서 입력한 제목을 1순위로 가져오도록 완벽 수정!
+            const docTitle = payload.t || payload.title || docData.title || docData.clientName || '현장 일지';
 
             // 💡 [최종 HTML] 오리지널 현장 리포트 (하얀색 웹 문서 UI) 100% 동일 구현!
             html = `
