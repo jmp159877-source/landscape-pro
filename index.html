@@ -3666,6 +3666,107 @@
           </div>
       </div>
   </div>    
+<!-- ================= [신규: 조경인 커뮤니티 통합 게시판 화면] ================= -->
+  <section id="boardView" class="hidden space-y-4 pb-10" style="position: absolute; top: 0; left: 0; width: 100%; min-height: 100vh; background-color: #151E2D; z-index: 50; padding: 20px;">
+      <!-- 게시판 상단 헤더 & 뒤로가기 -->
+      <div class="flex items-center justify-between bg-white p-4 rounded-[24px] luxury-shadow sticky top-0 z-40">
+          <button onclick="closeBoard()" class="w-10 h-10 flex items-center justify-center bg-[#F4F5F4] rounded-full text-[#151E2D] hover:bg-[#EAEBEA] transition-colors"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+          <h2 id="boardMainTitle" class="text-[17px] font-black text-[#151E2D]">사장님 커뮤니티</h2>
+          <button class="w-10 h-10 flex items-center justify-center bg-[#84CC16]/10 rounded-full text-[#65A30D] hover:bg-[#84CC16]/20 transition-colors"><i data-lucide="search" class="w-5 h-5"></i></button>
+      </div>
 
+      <!-- 가로 스크롤 카테고리 탭 -->
+      <div class="flex gap-2 overflow-x-auto nav-scroll px-1 pb-1 mt-4">
+          <button class="px-4 py-2 bg-[#151E2D] text-[#84CC16] rounded-full text-[13px] font-black shrink-0 shadow-sm border border-[#151E2D]">전체보기</button>
+          <button class="px-4 py-2 bg-white text-[#4E5968] rounded-full text-[13px] font-bold shrink-0 border border-[#EAEBEA] hover:border-[#C5A880] hover:text-[#C5A880]">🚨 불량거래처</button>
+          <button class="px-4 py-2 bg-white text-[#4E5968] rounded-full text-[13px] font-bold shrink-0 border border-[#EAEBEA] hover:border-blue-500 hover:text-blue-500">🤝 현장협력</button>
+          <button class="px-4 py-2 bg-white text-[#4E5968] rounded-full text-[13px] font-bold shrink-0 border border-[#EAEBEA] hover:border-[#84CC16] hover:text-[#65A30D]">🛒 장비·자재</button>
+          <button class="px-4 py-2 bg-white text-[#4E5968] rounded-full text-[13px] font-bold shrink-0 border border-[#EAEBEA]">💡 노하우</button>
+      </div>
+
+      <!-- 피드 리스트 (카드형 디자인) -->
+      <div class="space-y-4 mt-2">
+          <!-- 샘플 1: 불량 거래처 -->
+          <div class="bg-white rounded-[24px] p-5 luxury-shadow border border-[#F4F5F4]">
+              <div class="flex items-center justify-between mb-3">
+                  <span class="bg-[#FEF2F2] text-[#EF4444] text-[11px] font-black px-2.5 py-1 rounded-md border border-[#FEE2E2]">🚨 불량거래처 경보</span>
+                  <span class="text-[11.5px] text-[#8B95A1] font-bold">10분 전 · <i data-lucide="eye" class="w-3 h-3 inline"></i> 42</span>
+              </div>
+              <h3 class="text-[15.5px] font-black text-[#151E2D] mb-2 leading-snug">경기 화성시 ○○건설 미수금 악질입니다. 주의하세요.</h3>
+              <p class="text-[13px] text-[#4E5968] font-bold line-clamp-2 leading-relaxed">지난 달 소나무 식재 공사 3천만원 건, 핑계 대면서 결제 한 달째 미루고 연락 피합니다. 절대 들어가지 마세요.</p>
+              <div class="mt-4 pt-3 border-t border-[#F4F5F4] flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                      <div class="w-7 h-7 rounded-full bg-[#F4F5F4] flex items-center justify-center text-[#8B95A1]"><i data-lucide="user-x" class="w-4 h-4"></i></div>
+                      <span class="text-[12px] font-black text-[#8B95A1]">수원 조경업체 (익명)</span>
+                  </div>
+              </div>
+          </div>
+
+          <!-- 샘플 2: 현장 협력 -->
+          <div class="bg-white rounded-[24px] p-5 luxury-shadow border border-[#F4F5F4]">
+              <div class="flex items-center justify-between mb-3">
+                  <span class="bg-[#EFF6FF] text-blue-600 text-[11px] font-black px-2.5 py-1 rounded-md border border-[#DBEAFE]">🤝 현장 지원요청</span>
+                  <span class="text-[11.5px] text-[#8B95A1] font-bold">1시간 전 · <i data-lucide="eye" class="w-3 h-3 inline"></i> 89</span>
+              </div>
+              <h3 class="text-[15.5px] font-black text-[#151E2D] mb-2 leading-snug">내일 용인 기흥구 예초/제초 작업자 2명 급구합니다 (일당 18만)</h3>
+              <p class="text-[13px] text-[#4E5968] font-bold line-clamp-2 leading-relaxed">장비는 저희가 다 준비합니다. 내일 비 안오면 바로 투입 가능하신 반장님들 연락주세요.</p>
+              <div class="mt-4 flex gap-2">
+                  <button class="flex-1 bg-blue-50 text-blue-600 py-2.5 rounded-xl text-[13px] font-black flex items-center justify-center gap-1.5 hover:bg-blue-100 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i> 직통 전화하기</button>
+                  <button class="flex-1 bg-[#F4F5F4] text-[#4E5968] py-2.5 rounded-xl text-[13px] font-black flex items-center justify-center gap-1.5 hover:bg-[#EAEBEA] transition-colors"><i data-lucide="message-circle" class="w-4 h-4"></i> 비밀 톡</button>
+              </div>
+          </div>
+      </div>
+
+      <!-- 우측 하단 글쓰기 플로팅 버튼 -->
+      <button class="fixed bottom-6 right-4 w-14 h-14 bg-[#84CC16] text-[#151E2D] rounded-full shadow-[0_4px_20px_rgba(132,204,22,0.4)] flex items-center justify-center hover:scale-105 transition-transform z-50">
+          <i data-lucide="pen-line" class="w-6 h-6"></i>
+      </button>
+  </section>
+
+  <script>
+      // ==========================================
+      // 👥 커뮤니티 게시판 열고 닫기 (겹침 완벽 차단)
+      // ==========================================
+      function openBoard(categoryTitle) {
+          // 1. 달력, 메인화면 등 모든 기존 뷰를 강제로 가립니다.
+          const swipeContainer = document.getElementById('swipeContainer');
+          if(swipeContainer) swipeContainer.style.display = 'none';
+          
+          // 2. 오직 게시판만 맨 위에 독립적으로 띄웁니다.
+          const board = document.getElementById('boardView');
+          if(board) board.classList.remove('hidden');
+          
+          if(categoryTitle) {
+              const titleEl = document.getElementById('boardMainTitle');
+              if(titleEl) titleEl.innerText = categoryTitle;
+          }
+          window.scrollTo(0, 0);
+          if(typeof lucide !== 'undefined') lucide.createIcons();
+      }
+      
+      function closeBoard() {
+          // 1. 게시판을 숨깁니다.
+          const board = document.getElementById('boardView');
+          if(board) board.classList.add('hidden');
+          
+          // 2. 가려뒀던 메인 화면과 라운지 뷰를 다시 살려냅니다.
+          const swipeContainer = document.getElementById('swipeContainer');
+          if(swipeContainer) swipeContainer.style.display = 'block';
+          switchView('lounge', false);
+      }
+
+      // 백업본의 기존 4대장 버튼들을 자동으로 openBoard 기능으로 연결해주는 마법의 코드
+      window.addEventListener('DOMContentLoaded', () => {
+          setTimeout(() => {
+              const buttons = document.querySelectorAll('#loungeView .grid-cols-2 button');
+              if(buttons.length === 4) {
+                  buttons[0].setAttribute('onclick', "openBoard('불량 거래처 경보')");
+                  buttons[1].setAttribute('onclick', "openBoard('현장 협력·지원')");
+                  buttons[2].setAttribute('onclick', "openBoard('장비·자재 직거래')");
+                  buttons[3].setAttribute('onclick', "openBoard('실무 노하우 공유')");
+              }
+          }, 1500);
+      });
+  </script>
 </body>
 </html>
