@@ -250,30 +250,35 @@
               <h2 class="text-[20px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="users" class="w-6 h-6 text-[#84CC16]"></i> 조경 사장님 커뮤니티</h2>
           </div>
           <div class="grid grid-cols-2 gap-3">
-              <button onclick="alert('게시판 준비 중입니다.')" class="bg-[#FFFDF9] border border-[#C5A880]/30 rounded-[18px] p-4 text-left flex flex-col gap-2 hover:border-[#C5A880] transition-all shadow-sm group">
+              <!-- 버튼 1 -->
+              <button onclick="openBoard('불량 거래처 경보')" class="bg-[#FFFDF9] border border-[#C5A880]/30 rounded-[18px] p-4 text-left flex flex-col gap-2 hover:border-[#C5A880] transition-all shadow-sm group">
                   <div class="w-9 h-9 rounded-full bg-[#C5A880]/20 flex items-center justify-center text-[#C5A880]"><i data-lucide="alert-triangle" class="w-5 h-5"></i></div>
                   <div>
-                      <!-- 💡 각 게시판 제목 크기 확대 (14px -> 15px) 및 설명글 진검정(text-[#1A1D1A]) 굵게 처리 -->
                       <h3 class="text-[15px] font-black text-[#151E2D] group-hover:text-[#C5A880] transition-colors">불량 거래처 경보</h3>
                       <p class="text-[12px] text-[#1A1D1A] font-black mt-1.5 break-keep leading-snug">미수금 발생, 주의 요망 거래처 팩트 공유</p>
                   </div>
               </button>
-              <button onclick="alert('게시판 준비 중입니다.')" class="bg-[#F0F9FF] border border-[#BAE6FD] rounded-[18px] p-4 text-left flex flex-col gap-2 hover:border-[#3B82F6] transition-all shadow-sm group">
+              
+              <!-- 버튼 2: 현장 협력 (💡 글씨 깨짐 방지: <br> 태그로 아주 깔끔하게 두 줄 분리) -->
+              <button onclick="openBoard('현장 협력·지원')" class="bg-[#F0F9FF] border border-[#BAE6FD] rounded-[18px] p-4 text-left flex flex-col gap-2 hover:border-[#3B82F6] transition-all shadow-sm group">
                   <div class="w-9 h-9 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-600"><i data-lucide="handshake" class="w-5 h-5"></i></div>
                   <div>
-                      <!-- 💡 (협력해요) 텍스트 추가 -->
-                      <h3 class="text-[15px] font-black text-[#151E2D] group-hover:text-blue-600 transition-colors">현장 협력·지원 <span class="text-blue-500 text-[12px]">(협력해요)</span></h3>
+                      <h3 class="text-[15px] font-black text-[#151E2D] group-hover:text-blue-600 transition-colors leading-tight">현장 협력·지원<br><span class="text-blue-500 text-[12px] font-bold">(협력해요)</span></h3>
                       <p class="text-[12px] text-[#1A1D1A] font-black mt-1.5 break-keep leading-snug">사장님 모십니다 / 현장 지원합니다</p>
                   </div>
               </button>
-              <button onclick="alert('게시판 준비 중입니다.')" class="bg-[#F2FBEC] border border-[#84CC16]/40 rounded-[18px] p-4 text-left flex flex-col gap-2 hover:border-[#84CC16] transition-all shadow-sm group">
+              
+              <!-- 버튼 3: 장비 자재 (💡 '무료 나눔' 텍스트 포인트 컬러로 추가) -->
+              <button onclick="openBoard('장비·자재 직거래')" class="bg-[#F2FBEC] border border-[#84CC16]/40 rounded-[18px] p-4 text-left flex flex-col gap-2 hover:border-[#84CC16] transition-all shadow-sm group">
                   <div class="w-9 h-9 rounded-full bg-[#84CC16]/20 flex items-center justify-center text-[#65A30D]"><i data-lucide="shopping-cart" class="w-5 h-5"></i></div>
                   <div>
                       <h3 class="text-[15px] font-black text-[#151E2D] group-hover:text-[#65A30D] transition-colors">장비·자재 직거래</h3>
-                      <p class="text-[12px] text-[#1A1D1A] font-black mt-1.5 break-keep leading-snug">조경 장비 렌탈, 남은 수목/자재 안전 거래</p>
+                      <p class="text-[12px] text-[#1A1D1A] font-black mt-1.5 break-keep leading-snug">조경 장비 렌탈, 남은 수목/자재 안전 거래, <span class="text-[#65A30D]">무료 나눔</span></p>
                   </div>
               </button>
-              <button onclick="alert('게시판 준비 중입니다.')" class="bg-[#F4F5F4] border border-[#EAEBEA] rounded-[18px] p-4 text-left flex flex-col gap-2 hover:border-[#4E5968] transition-all shadow-sm group">
+              
+              <!-- 버튼 4 -->
+              <button onclick="openBoard('실무 노하우 공유')" class="bg-[#F4F5F4] border border-[#EAEBEA] rounded-[18px] p-4 text-left flex flex-col gap-2 hover:border-[#4E5968] transition-all shadow-sm group">
                   <div class="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-[#4E5968]"><i data-lucide="lightbulb" class="w-5 h-5"></i></div>
                   <div>
                       <h3 class="text-[15px] font-black text-[#151E2D] group-hover:text-[#151E2D] transition-colors">실무 노하우 공유</h3>
@@ -3675,13 +3680,13 @@
           <button class="w-11 h-11 flex items-center justify-center bg-[#84CC16]/10 rounded-full text-[#65A30D] hover:bg-[#84CC16]/20 transition-colors"><i data-lucide="search" class="w-6 h-6"></i></button>
       </div>
 
-      <!-- 가로 스크롤 카테고리 탭 -->
+      <!-- 가로 스크롤 카테고리 탭 (💡 불량거래처를 맨 우측 끝으로 이동 배치) -->
       <div class="flex gap-2.5 overflow-x-auto nav-scroll px-1 pb-2 mt-4" id="boardTabContainer">
           <button onclick="filterBoard('전체', this)" class="board-tab-btn px-5 py-3 bg-[#84CC16] text-[#151E2D] rounded-full text-[15px] font-black shrink-0 shadow-md border border-[#84CC16] transition-all">전체보기</button>
-          <button onclick="filterBoard('불량거래처', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">🚨 불량거래처</button>
           <button onclick="filterBoard('현장협력', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">🤝 현장협력</button>
           <button onclick="filterBoard('장비자재', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">🛒 장비·자재</button>
           <button onclick="filterBoard('노하우', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">💡 노하우</button>
+          <button onclick="filterBoard('불량거래처', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">🚨 불량거래처</button>
       </div>
 
       <!-- 카테고리별 맞춤형 공지사항 및 법적 면책 조항 -->
