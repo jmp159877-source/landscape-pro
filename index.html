@@ -3666,73 +3666,77 @@
           </div>
       </div>
   </div>    
-<!-- ================= [신규: 조경인 커뮤니티 통합 게시판 화면] ================= -->
+<!-- ================= [신규: 조경인 커뮤니티 통합 게시판 화면 (시니어 맞춤형 UX)] ================= -->
   <section id="boardView" class="hidden space-y-4 pb-10" style="position: absolute; top: 0; left: 0; width: 100%; min-height: 100vh; background-color: #151E2D; z-index: 50; padding: 20px;">
       <!-- 게시판 상단 헤더 & 뒤로가기 -->
       <div class="flex items-center justify-between bg-white p-4 rounded-[24px] luxury-shadow sticky top-0 z-40">
-          <button onclick="closeBoard()" class="w-10 h-10 flex items-center justify-center bg-[#F4F5F4] rounded-full text-[#151E2D] hover:bg-[#EAEBEA] transition-colors"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
-          <h2 id="boardMainTitle" class="text-[17px] font-black text-[#151E2D]">사장님 커뮤니티</h2>
-          <button class="w-10 h-10 flex items-center justify-center bg-[#84CC16]/10 rounded-full text-[#65A30D] hover:bg-[#84CC16]/20 transition-colors"><i data-lucide="search" class="w-5 h-5"></i></button>
+          <button onclick="closeBoard()" class="w-11 h-11 flex items-center justify-center bg-[#F4F5F4] rounded-full text-[#151E2D] hover:bg-[#EAEBEA] transition-colors"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+          <h2 id="boardMainTitle" class="text-[18px] font-black text-[#151E2D]">사장님 커뮤니티</h2>
+          <button class="w-11 h-11 flex items-center justify-center bg-[#84CC16]/10 rounded-full text-[#65A30D] hover:bg-[#84CC16]/20 transition-colors"><i data-lucide="search" class="w-6 h-6"></i></button>
       </div>
 
-      <!-- 가로 스크롤 카테고리 탭 (전체보기 텍스트 확대 및 클래스 추가) -->
+      <!-- 가로 스크롤 카테고리 탭 (꺼진 탭은 회색, 켜진 탭은 남색으로 시인성 극대화) -->
       <div class="flex gap-2.5 overflow-x-auto nav-scroll px-1 pb-2 mt-4" id="boardTabContainer">
-          <button onclick="filterBoard('전체', this)" class="board-tab-btn px-5 py-2.5 bg-[#151E2D] text-[#84CC16] rounded-full text-[15px] font-black shrink-0 shadow-md border border-[#151E2D] transition-all">전체보기</button>
-          <button onclick="filterBoard('불량거래처', this)" class="board-tab-btn px-4 py-2.5 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">🚨 불량거래처</button>
-          <button onclick="filterBoard('현장협력', this)" class="board-tab-btn px-4 py-2.5 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">🤝 현장협력</button>
-          <button onclick="filterBoard('장비자재', this)" class="board-tab-btn px-4 py-2.5 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">🛒 장비·자재</button>
-          <button onclick="filterBoard('노하우', this)" class="board-tab-btn px-4 py-2.5 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">💡 노하우</button>
+          <button onclick="filterBoard('전체', this)" class="board-tab-btn px-5 py-3 bg-[#151E2D] text-[#84CC16] rounded-full text-[15px] font-black shrink-0 shadow-md border border-[#151E2D] transition-all">전체보기</button>
+          <button onclick="filterBoard('불량거래처', this)" class="board-tab-btn px-4 py-3 bg-white text-[#8B95A1] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">🚨 불량거래처</button>
+          <button onclick="filterBoard('현장협력', this)" class="board-tab-btn px-4 py-3 bg-white text-[#8B95A1] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">🤝 현장협력</button>
+          <button onclick="filterBoard('장비자재', this)" class="board-tab-btn px-4 py-3 bg-white text-[#8B95A1] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">🛒 장비·자재</button>
+          <button onclick="filterBoard('노하우', this)" class="board-tab-btn px-4 py-3 bg-white text-[#8B95A1] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">💡 노하우</button>
       </div>
 
-      <!-- 피드 리스트 (data-category 속성 추가) -->
-      <div class="space-y-4 mt-2" id="boardFeedContainer">
+      <!-- 피드 리스트 (글씨 폰트/간격 대폭 확대 적용) -->
+      <div class="space-y-5 mt-2" id="boardFeedContainer">
           <!-- 샘플 1: 불량 거래처 -->
-          <div class="board-feed-item bg-white rounded-[24px] p-5 luxury-shadow border border-[#F4F5F4]" data-category="불량거래처">
-              <div class="flex items-center justify-between mb-3">
-                  <span class="bg-[#FEF2F2] text-[#EF4444] text-[11px] font-black px-2.5 py-1 rounded-md border border-[#FEE2E2]">🚨 불량거래처 경보</span>
-                  <span class="text-[11.5px] text-[#8B95A1] font-bold">10분 전 · <i data-lucide="eye" class="w-3 h-3 inline"></i> 42</span>
+          <div class="board-feed-item bg-white rounded-[24px] p-6 luxury-shadow border border-[#F4F5F4]" data-category="불량거래처">
+              <div class="flex items-center justify-between mb-4">
+                  <span class="bg-[#FEF2F2] text-[#EF4444] text-[13px] font-black px-3 py-1.5 rounded-md border border-[#FEE2E2]">🚨 불량거래처 경보</span>
+                  <span class="text-[13px] text-[#8B95A1] font-bold">10분 전 · <i data-lucide="eye" class="w-4 h-4 inline mb-0.5"></i> 42</span>
               </div>
-              <h3 class="text-[15.5px] font-black text-[#151E2D] mb-2 leading-snug">경기 화성시 ○○건설 미수금 악질입니다. 주의하세요.</h3>
-              <p class="text-[13px] text-[#4E5968] font-bold line-clamp-2 leading-relaxed">지난 달 소나무 식재 공사 3천만원 건, 핑계 대면서 결제 한 달째 미루고 연락 피합니다. 절대 들어가지 마세요.</p>
-              <div class="mt-4 pt-3 border-t border-[#F4F5F4] flex items-center justify-between">
+              <!-- 💡 제목 19px, 본문 15px로 대폭 확대 및 줄간격 확보 -->
+              <h3 class="text-[19px] font-black text-[#151E2D] mb-3 leading-snug">경기 화성시 ○○건설 미수금 악질입니다. 주의하세요.</h3>
+              <p class="text-[15px] text-[#4E5968] font-bold line-clamp-2 leading-[1.6]">지난 달 소나무 식재 공사 3천만원 건, 핑계 대면서 결제 한 달째 미루고 연락 피합니다. 절대 들어가지 마세요.</p>
+              <div class="mt-5 pt-4 border-t border-[#F4F5F4] flex items-center justify-between">
                   <div class="flex items-center gap-2">
-                      <div class="w-7 h-7 rounded-full bg-[#F4F5F4] flex items-center justify-center text-[#8B95A1]"><i data-lucide="user-x" class="w-4 h-4"></i></div>
-                      <span class="text-[12px] font-black text-[#8B95A1]">수원 조경업체 (익명)</span>
+                      <div class="w-8 h-8 rounded-full bg-[#F4F5F4] flex items-center justify-center text-[#8B95A1]"><i data-lucide="user-x" class="w-4 h-4"></i></div>
+                      <span class="text-[13px] font-black text-[#8B95A1]">수원 조경업체 (익명)</span>
                   </div>
               </div>
           </div>
 
-          <!-- 샘플 2: 현장 협력 -->
-          <div class="board-feed-item bg-white rounded-[24px] p-5 luxury-shadow border border-[#F4F5F4]" data-category="현장협력">
-              <div class="flex items-center justify-between mb-3">
-                  <span class="bg-[#EFF6FF] text-blue-600 text-[11px] font-black px-2.5 py-1 rounded-md border border-[#DBEAFE]">🤝 현장 지원요청</span>
-                  <span class="text-[11.5px] text-[#8B95A1] font-bold">1시간 전 · <i data-lucide="eye" class="w-3 h-3 inline"></i> 89</span>
+          <!-- 샘플 2: 현장 협력 (원색 버튼 적용형) -->
+          <div class="board-feed-item bg-white rounded-[24px] p-6 luxury-shadow border border-[#F4F5F4]" data-category="현장협력">
+              <div class="flex items-center justify-between mb-4">
+                  <span class="bg-[#EFF6FF] text-blue-600 text-[13px] font-black px-3 py-1.5 rounded-md border border-[#DBEAFE]">🤝 현장 지원요청</span>
+                  <span class="text-[13px] text-[#8B95A1] font-bold">1시간 전 · <i data-lucide="eye" class="w-4 h-4 inline mb-0.5"></i> 89</span>
               </div>
-              <h3 class="text-[15.5px] font-black text-[#151E2D] mb-2 leading-snug">내일 용인 기흥구 예초/제초 작업자 2명 급구합니다 (일당 18만)</h3>
-              <p class="text-[13px] text-[#4E5968] font-bold line-clamp-2 leading-relaxed">장비는 저희가 다 준비합니다. 내일 비 안오면 바로 투입 가능하신 반장님들 연락주세요.</p>
-              <div class="mt-4 flex gap-2">
-                  <button class="flex-1 bg-blue-50 text-blue-600 py-2.5 rounded-xl text-[13px] font-black flex items-center justify-center gap-1.5 hover:bg-blue-100 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i> 직통 전화하기</button>
-                  <button class="flex-1 bg-[#F4F5F4] text-[#4E5968] py-2.5 rounded-xl text-[13px] font-black flex items-center justify-center gap-1.5 hover:bg-[#EAEBEA] transition-colors"><i data-lucide="message-circle" class="w-4 h-4"></i> 비밀 톡</button>
+              <h3 class="text-[19px] font-black text-[#151E2D] mb-3 leading-snug">내일 용인 기흥구 예초/제초 작업자 2명 급구합니다 (일당 18만)</h3>
+              <p class="text-[15px] text-[#4E5968] font-bold line-clamp-2 leading-[1.6]">장비는 저희가 다 준비합니다. 내일 비 안오면 바로 투입 가능하신 반장님들 연락주세요.</p>
+              
+              <!-- 💡 직통 전화(파랑), 1:1 대화하기(노랑) 버튼으로 시인성 극대화 -->
+              <div class="mt-5 flex gap-2.5">
+                  <button onclick="alert('전화 연결 기능이 실행됩니다.')" class="flex-1 bg-blue-600 text-white py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md hover:bg-blue-700 transition-colors"><i data-lucide="phone" class="w-5 h-5"></i> 직통 전화하기</button>
+                  <button onclick="alert('1:1 채팅방이 열립니다.')" class="flex-1 bg-[#FEE500] text-[#151E2D] py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md hover:brightness-95 transition-colors"><i data-lucide="message-circle" class="w-5 h-5 fill-current"></i> 1:1 대화하기</button>
               </div>
           </div>
           
-          <!-- 샘플 3: 필터 테스트를 위한 장비/자재 게시글 추가 -->
-          <div class="board-feed-item bg-white rounded-[24px] p-5 luxury-shadow border border-[#F4F5F4]" data-category="장비자재">
-              <div class="flex items-center justify-between mb-3">
-                  <span class="bg-[#F2FBEC] text-[#65A30D] text-[11px] font-black px-2.5 py-1 rounded-md border border-[#84CC16]/30">🛒 장비·자재 직거래</span>
-                  <span class="text-[11.5px] text-[#8B95A1] font-bold">3시간 전 · <i data-lucide="eye" class="w-3 h-3 inline"></i> 112</span>
+          <!-- 샘플 3: 장비/자재 직거래 (뱃지 컬러 선명도 강화) -->
+          <div class="board-feed-item bg-white rounded-[24px] p-6 luxury-shadow border border-[#F4F5F4]" data-category="장비자재">
+              <div class="flex items-center justify-between mb-4">
+                  <!-- 💡 연한 연두색을 선명한 톤으로 교체 -->
+                  <span class="bg-[#ECFCCB] text-[#4D7C0F] text-[13px] font-black px-3 py-1.5 rounded-md border border-[#84CC16]/40">🛒 장비·자재 직거래</span>
+                  <span class="text-[13px] text-[#8B95A1] font-bold">3시간 전 · <i data-lucide="eye" class="w-4 h-4 inline mb-0.5"></i> 112</span>
               </div>
-              <h3 class="text-[15.5px] font-black text-[#151E2D] mb-2 leading-snug">미니 굴삭기(017) 내일 하루 렌탈 원합니다 (수원/화성)</h3>
-              <p class="text-[13px] text-[#4E5968] font-bold line-clamp-2 leading-relaxed">화성 현장입니다. 내일 오전 7시부터 오후 4시까지 사용 예정입니다.</p>
-              <div class="mt-4 flex gap-2">
-                  <button class="flex-1 bg-[#F4F5F4] text-[#4E5968] py-2.5 rounded-xl text-[13px] font-black flex items-center justify-center gap-1.5 hover:bg-[#EAEBEA] transition-colors"><i data-lucide="message-circle" class="w-4 h-4"></i> 비밀 톡 보내기</button>
+              <h3 class="text-[19px] font-black text-[#151E2D] mb-3 leading-snug">미니 굴삭기(017) 내일 하루 렌탈 원합니다 (수원/화성)</h3>
+              <p class="text-[15px] text-[#4E5968] font-bold line-clamp-2 leading-[1.6]">화성 현장입니다. 내일 오전 7시부터 오후 4시까지 사용 예정입니다.</p>
+              <div class="mt-5 flex gap-2.5">
+                  <button onclick="alert('1:1 채팅방이 열립니다.')" class="w-full bg-[#FEE500] text-[#151E2D] py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md hover:brightness-95 transition-colors"><i data-lucide="message-circle" class="w-5 h-5 fill-current"></i> 1:1 대화하기</button>
               </div>
           </div>
       </div>
 
-      <!-- 우측 하단 글쓰기 플로팅 버튼 -->
-      <button class="fixed bottom-6 right-4 w-14 h-14 bg-[#84CC16] text-[#151E2D] rounded-full shadow-[0_4px_20px_rgba(132,204,22,0.4)] flex items-center justify-center hover:scale-105 transition-transform z-50">
-          <i data-lucide="pen-line" class="w-6 h-6"></i>
+      <!-- 💡 우측 하단 글쓰기 플로팅 버튼 (직관적인 캡슐 형태로 텍스트 추가) -->
+      <button class="fixed bottom-6 right-4 px-6 h-14 bg-[#84CC16] text-[#151E2D] rounded-full shadow-[0_4px_20px_rgba(132,204,22,0.4)] flex items-center justify-center gap-2 hover:scale-105 transition-transform z-50">
+          <i data-lucide="pen-line" class="w-6 h-6"></i><span class="text-[16px] font-black">글쓰기</span>
       </button>
   </section>
 
@@ -3741,19 +3745,18 @@
       // 👥 커뮤니티 게시판 실시간 필터링 및 오토 탭 로직
       // ==========================================
       function filterBoard(category, btnElement) {
-          // 1. 모든 탭 버튼 스타일 초기화 (회색 테두리, 흰 배경)
+          // 1. 모든 탭 버튼 스타일 '꺼짐(비활성화)' 상태로 초기화 (회색 텍스트)
           const allBtns = document.querySelectorAll('.board-tab-btn');
           allBtns.forEach(btn => {
-              // 원래 클래스로 되돌리기
-              btn.className = "board-tab-btn px-4 py-2.5 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all";
+              btn.className = "board-tab-btn px-4 py-3 bg-white text-[#8B95A1] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all hover:text-[#4E5968] hover:border-[#4E5968]";
           });
           
-          // 2. 선택된 버튼만 강조 (남색 배경, 연두색 글씨)
+          // 2. 선택된 버튼만 '켜짐(활성화)' 상태로 강조 (남색 배경, 연두색 글씨)
           if(btnElement) {
               if (category === '전체') {
-                  btnElement.className = "board-tab-btn px-5 py-2.5 bg-[#151E2D] text-[#84CC16] rounded-full text-[15px] font-black shrink-0 shadow-md border border-[#151E2D] transition-all";
+                  btnElement.className = "board-tab-btn px-5 py-3 bg-[#151E2D] text-[#84CC16] rounded-full text-[15px] font-black shrink-0 shadow-md border border-[#151E2D] transition-all";
               } else {
-                  btnElement.className = "board-tab-btn px-4 py-2.5 bg-[#151E2D] text-[#84CC16] rounded-full text-[14px] font-black shrink-0 shadow-md border border-[#151E2D] transition-all";
+                  btnElement.className = "board-tab-btn px-5 py-3 bg-[#151E2D] text-[#84CC16] rounded-full text-[14px] font-black shrink-0 shadow-md border border-[#151E2D] transition-all";
               }
           }
 
@@ -3779,7 +3782,7 @@
               const titleEl = document.getElementById('boardMainTitle');
               if(titleEl) titleEl.innerText = categoryTitle;
               
-              // 🔥 마법의 오토 필터링 로직 (메인 화면에서 누른 버튼에 맞춰 탭 자동 선택)
+              // 🔥 마법의 오토 필터링 로직
               let filterMap = {
                   '불량 거래처 경보': '불량거래처',
                   '현장 협력·지원': '현장협력',
@@ -3791,7 +3794,7 @@
               // 해당 탭을 찾아서 클릭 효과 발동
               const tabs = document.querySelectorAll('.board-tab-btn');
               tabs.forEach(btn => {
-                  if(btn.innerText.replace(/[^가-힣a-zA-Z]/g, '').includes(targetCat)) {
+                  if(btn.innerText.replace(/[^가-힣a-zA-Z]/g, '').includes(targetCat) || (targetCat === '전체' && btn.innerText.includes('전체보기'))) {
                       filterBoard(targetCat, btn);
                   }
               });
