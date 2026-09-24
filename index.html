@@ -2146,14 +2146,15 @@
             const isSelected = selectedDate.toDateString() === new Date(year, month, i).toDateString();
             const selectedClass = isSelected && !isToday ? 'border-2 border-[#12261E] rounded-full' : '';
             
-            // ✨ 일요일(0) 및 법정 공휴일 빨간색 처리!
             const isSunday = new Date(year, month, i).getDay() === 0;
             const isHoliday = isKoreanHoliday(year, month + 1, i);
             const isRedDay = isSunday || isHoliday;
             
-            let textClass = 'text-[#1A1D1A]';
-            if (isToday) textClass = 'bg-[#151E2D] text-[#84CC16] rounded-full';
-            else if (isRedDay) textClass = 'text-red-500'; // 빨간색 텍스트
+            // 💡 숫자 색상: 쉬는 날은 빨간색, 평일은 검정색 유지!
+            let textClass = isRedDay ? 'text-red-500' : 'text-[#1A1D1A]';
+            
+            // 💡 오늘 날짜 표시: 숫자 색은 건드리지 않고, 연한 연두색 배경만 둥글게 깔아줌
+            if (isToday) textClass += ' bg-[#84CC16]/30 border border-[#84CC16]/50 rounded-full';
 
             grid.innerHTML += `
                 <div onclick="selectDate(${year}, ${month}, ${i})" class="flex flex-col items-center justify-center p-1 cursor-pointer">
@@ -2554,7 +2555,6 @@
         
         let monthInc = 0; let monthExp = 0; let monthVat = 0; 
         
-        // --- 연간 데이터 합산 로직 ---
         let yearInc = 0; let yearExp = 0; let yearVat = 0;
         const yearPrefix = `${year}-`;
         const yearLedgers = ledgers.filter(l => l.date && l.date.startsWith(yearPrefix));
@@ -2582,14 +2582,15 @@
             const isSelected = selectedLedgerDate.toDateString() === new Date(year, month, i).toDateString();
             const selectedClass = isSelected && !isToday ? 'border-2 border-[#12261E] rounded-full' : '';
 
-            // ✨ 일요일(0) 및 법정 공휴일 빨간색 처리!
             const isSunday = new Date(year, month, i).getDay() === 0;
             const isHoliday = isKoreanHoliday(year, month + 1, i);
             const isRedDay = isSunday || isHoliday;
             
-            let textClass = 'text-[#1A1D1A]';
-            if (isToday) textClass = 'bg-[#151E2D] text-[#84CC16] rounded-full';
-            else if (isRedDay) textClass = 'text-red-500';
+            // 💡 숫자 색상: 쉬는 날은 빨간색, 평일은 검정색 유지!
+            let textClass = isRedDay ? 'text-red-500' : 'text-[#1A1D1A]';
+            
+            // 💡 오늘 날짜 표시: 숫자 색은 건드리지 않고, 연한 연두색 배경만 둥글게 깔아줌
+            if (isToday) textClass += ' bg-[#84CC16]/30 border border-[#84CC16]/50 rounded-full';
 
             grid.innerHTML += `
                 <div onclick="selectLedgerDate(${year}, ${month}, ${i})" class="flex flex-col items-center justify-center p-1 cursor-pointer">
@@ -2599,7 +2600,6 @@
             `;
         }
 
-        // 월간 UI 업데이트
         const mIncEl = document.getElementById('ledgerMonthIncome');
         const mExpEl = document.getElementById('ledgerMonthExpense');
         const mVatEl = document.getElementById('ledgerMonthVat');
@@ -2613,7 +2613,6 @@
             mNetEl.className = mNet >= 0 ? "text-[15px] font-black text-[#1E3A8A] tracking-tighter whitespace-nowrap pl-1 text-right" : "text-[15px] font-black text-[#BE123C] tracking-tighter whitespace-nowrap pl-1 text-right";
         }
 
-        // 연간 UI 업데이트
         const yIncEl = document.getElementById('ledgerYearIncome');
         const yExpEl = document.getElementById('ledgerYearExpense');
         const yVatEl = document.getElementById('ledgerYearVat');
