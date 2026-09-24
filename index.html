@@ -1042,7 +1042,12 @@
             const safeKey = getSafeKey(id); const res = await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`)); const existing = await res.json();
             if(existing && !existing.error) { document.getElementById('loadingOverlay')?.remove(); return alert("이미 사용 중인 아이디입니다."); }
             let licenseUrl = await uploadToFirebaseStorage(obBizLicenseBase64, "licenses");
-            const profileData = { id, pw, name, ceo, phone, bizNum, license: licenseUrl, status: 'pending' };
+            
+            // ✨ [법적 증빙] 약관 동의 버튼을 누른 정확한 시간(Timestamp) 생성
+            const nowTime = new Date();
+            const agreedTime = `${nowTime.getFullYear()}-${String(nowTime.getMonth()+1).padStart(2,'0')}-${String(nowTime.getDate()).padStart(2,'0')} ${String(nowTime.getHours()).padStart(2,'0')}:${String(nowTime.getMinutes()).padStart(2,'0')}`;
+            
+            const profileData = { id, pw, name, ceo, phone, bizNum, license: licenseUrl, status: 'pending', termsAgreedAt: agreedTime };
             await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(profileData) });
             alert("가입이 완료되었습니다. 관리자 승인을 기다려주세요."); currentIdToken = ""; showLogin();
         } catch(e) { alert("서버 오류"); } finally { document.getElementById('loadingOverlay')?.remove(); }
