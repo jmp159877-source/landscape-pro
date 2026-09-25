@@ -261,48 +261,52 @@
       </div>
       <!-- 2. 라운지 게시판 4대장 (프리미엄 다크/네온 테마 적용) -->
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
-         <!-- 💡 타이틀을 쨍한 옐로우 배너로 변경하여 밖의 메뉴와 100% 일체감 형성 -->
-          <div onclick="openBoard('전체')" class="bg-[#FEE500] rounded-[20px] px-3.5 py-4 flex items-center justify-between gap-1.5 shadow-sm cursor-pointer hover:brightness-95 transition-all">
-              <h2 class="text-[20px] font-black text-[#151E2D] flex items-center gap-1.5 tracking-tight shrink-0"><i data-lucide="message-square" class="w-5 h-5 text-[#151E2D] fill-[#151E2D]/10 shrink-0"></i> 사장님 소통방</h2>
-              <div class="flex items-center gap-0.5 text-[11px] font-black text-white bg-[#2A394C] px-2.5 py-1.5 rounded-full shadow-md tracking-tighter shrink-0">협력하고, 나눔하고, 공유해요 <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-[#FEE500] -mr-0.5"></i></div>
+         <!-- 💡 타이틀 배너를 2배 크기로 대폭 키워 메인 간판으로서의 시인성과 존재감 극대화 -->
+          <div onclick="openBoard('전체')" class="bg-[#FEE500] rounded-[24px] p-6 flex flex-col gap-3.5 shadow-md cursor-pointer hover:brightness-95 active:scale-[0.99] transition-all">
+              <h2 class="text-[24px] font-black text-[#151E2D] flex items-center gap-2.5 tracking-tight leading-none">
+                  <i data-lucide="message-square" class="w-7 h-7 text-[#151E2D] fill-[#151E2D]/15 shrink-0"></i> 사장님 소통방
+              </h2>
+              <div class="w-full flex items-center justify-between text-[14px] font-black text-white bg-[#3B4C63] px-4 py-3 rounded-[14px] shadow-sm tracking-tight">
+                  <span>협력하고, 나눔하고, 공유해요</span>
+                  <i data-lucide="chevron-right" class="w-5 h-5 text-[#FEE500]"></i>
+              </div>
           </div>
           
-          <!-- 💡 4대장 버튼 순서 변경 및 부드러운 '소프트 네이비' 톤 적용 -->
-          <!-- 💡 4대장 버튼 순서 변경 및 한 톤 더 부드러운 '코지 네이비' 톤 적용 -->
+          <!-- 💡 4대장 버튼을 한 톤 더 부드러운 '슬레이트 네이비(#3B4C63)'로 낮추어 눈의 피로도 완벽 제거 -->
           <div class="grid grid-cols-2 gap-3">
               <!-- 버튼 1: 현장 협력 -->
-              <button onclick="openBoard('현장 협력·지원')" class="bg-[#2A394C] border border-white/10 rounded-[20px] p-5 text-left flex flex-col gap-3 hover:border-blue-500 transition-all shadow-md group">
-                  <div class="w-11 h-11 rounded-[14px] bg-blue-500/20 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform"><i data-lucide="handshake" class="w-6 h-6"></i></div>
+              <button onclick="openBoard('현장 협력·지원')" class="bg-[#3B4C63] border border-white/10 rounded-[20px] p-5 text-left flex flex-col gap-3 hover:border-blue-400 transition-all shadow-sm group">
+                  <div class="w-11 h-11 rounded-[14px] bg-blue-500/20 flex items-center justify-center text-blue-300 group-hover:scale-110 transition-transform"><i data-lucide="handshake" class="w-6 h-6"></i></div>
                   <div>
-                      <h3 class="text-[15px] font-black text-white group-hover:text-blue-400 transition-colors leading-tight">현장 협력·지원<br><span class="text-blue-400 text-[12px] font-bold">(협력해요)</span></h3>
-                      <p class="text-[12px] text-[#A3A8A3] font-bold mt-1.5 break-keep leading-snug">사장님 모십니다 / 현장 지원합니다</p>
+                      <h3 class="text-[15px] font-black text-white group-hover:text-blue-300 transition-colors leading-tight">현장 협력·지원<br><span class="text-blue-300 text-[12px] font-bold">(협력해요)</span></h3>
+                      <p class="text-[12px] text-[#CBD5E1] font-bold mt-1.5 break-keep leading-snug">사장님 모십니다 / 현장 지원합니다</p>
                   </div>
               </button>
               
               <!-- 버튼 2: 장비 자재 -->
-              <button onclick="openBoard('장비·자재 직거래')" class="bg-[#2A394C] border border-white/10 rounded-[20px] p-5 text-left flex flex-col gap-3 hover:border-[#84CC16] transition-all shadow-md group">
+              <button onclick="openBoard('장비·자재 직거래')" class="bg-[#3B4C63] border border-white/10 rounded-[20px] p-5 text-left flex flex-col gap-3 hover:border-[#84CC16] transition-all shadow-sm group">
                   <div class="w-11 h-11 rounded-[14px] bg-[#84CC16]/20 flex items-center justify-center text-[#84CC16] group-hover:scale-110 transition-transform"><i data-lucide="shopping-cart" class="w-6 h-6"></i></div>
                   <div>
                       <h3 class="text-[15px] font-black text-white group-hover:text-[#84CC16] transition-colors">장비·자재 직거래</h3>
-                      <p class="text-[12px] text-[#A3A8A3] font-bold mt-1.5 break-keep leading-snug">장비 렌탈, 남은 수목/자재 안전 거래, <span class="text-[#84CC16]">무료 나눔</span></p>
+                      <p class="text-[12px] text-[#CBD5E1] font-bold mt-1.5 break-keep leading-snug">장비 렌탈, 남은 수목/자재 안전 거래, <span class="text-[#84CC16]">무료 나눔</span></p>
                   </div>
               </button>
               
               <!-- 버튼 3: 실무 노하우 -->
-              <button onclick="openBoard('실무 노하우 공유')" class="bg-[#2A394C] border border-white/10 rounded-[20px] p-5 text-left flex flex-col gap-3 hover:border-[#FEE500] transition-all shadow-md group">
+              <button onclick="openBoard('실무 노하우 공유')" class="bg-[#3B4C63] border border-white/10 rounded-[20px] p-5 text-left flex flex-col gap-3 hover:border-[#FEE500] transition-all shadow-sm group">
                   <div class="w-11 h-11 rounded-[14px] bg-[#FEE500]/20 flex items-center justify-center text-[#FEE500] group-hover:scale-110 transition-transform"><i data-lucide="lightbulb" class="w-6 h-6"></i></div>
                   <div>
                       <h3 class="text-[15px] font-black text-white group-hover:text-[#FEE500] transition-colors">실무 노하우 공유</h3>
-                      <p class="text-[12px] text-[#A3A8A3] font-bold mt-1.5 break-keep leading-snug">수목 관리, 전지 요령 등 현장 지식 나눔</p>
+                      <p class="text-[12px] text-[#CBD5E1] font-bold mt-1.5 break-keep leading-snug">수목 관리, 전지 요령 등 현장 지식 나눔</p>
                   </div>
               </button>
 
               <!-- 버튼 4: 불량 거래처 -->
-              <button onclick="openBoard('불량 거래처 경보')" class="bg-[#2A394C] border border-white/10 rounded-[20px] p-5 text-left flex flex-col gap-3 hover:border-red-500 transition-all shadow-md group">
-                  <div class="w-11 h-11 rounded-[14px] bg-red-500/20 flex items-center justify-center text-red-400 group-hover:scale-110 transition-transform"><i data-lucide="alert-triangle" class="w-6 h-6"></i></div>
+              <button onclick="openBoard('불량 거래처 경보')" class="bg-[#3B4C63] border border-white/10 rounded-[20px] p-5 text-left flex flex-col gap-3 hover:border-red-400 transition-all shadow-sm group">
+                  <div class="w-11 h-11 rounded-[14px] bg-red-500/20 flex items-center justify-center text-red-300 group-hover:scale-110 transition-transform"><i data-lucide="alert-triangle" class="w-6 h-6"></i></div>
                   <div>
-                      <h3 class="text-[15px] font-black text-white group-hover:text-red-400 transition-colors">불량 거래처 경보</h3>
-                      <p class="text-[12px] text-[#A3A8A3] font-bold mt-1.5 break-keep leading-snug">미수금 발생, 주의 요망 거래처 팩트 공유</p>
+                      <h3 class="text-[15px] font-black text-white group-hover:text-red-300 transition-colors">불량 거래처 경보</h3>
+                      <p class="text-[12px] text-[#CBD5E1] font-bold mt-1.5 break-keep leading-snug">미수금 발생, 주의 요망 거래처 팩트 공유</p>
                   </div>
               </button>
           </div>
