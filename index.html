@@ -159,7 +159,6 @@
       <div class="flex items-start gap-3.5">
         <div class="w-12 h-12 rounded-[16px] bg-[#84CC16] flex items-center justify-center shadow-lg shrink-0 mt-1"><i data-lucide="leaf" class="w-6 h-6 text-[#151E2D]"></i></div>
         <div class="flex flex-col min-w-0">
-                <!-- flex-wrap을 추가하여 이름이 5~6글자 이상 길어지면 뱃지가 안전하게 아래로 내려가 레이아웃을 보호합니다 -->
                 <div class="flex items-start gap-2 flex-wrap">
                     <div id="company-name-header" class="font-black text-white tracking-tight flex flex-col min-w-0 shrink-0">업체명</div>
                     <div class="flex flex-col gap-1 mt-0.5 shrink-0">
@@ -169,74 +168,73 @@
                        </div>
                     </div>
                 </div>
-                <!-- 텍스트 크기를 13px -> 14px로 키우고 '신화 조경노트'로 변경 -->
                 <span class="text-[14px] font-bold text-[#A3A8A3] tracking-wide mt-1.5">스마트 관리 솔루션 <strong class="text-[#84CC16]">신화 조경노트</strong></span>
               </div>
       </div>
       <div class="flex items-start gap-3 shrink-0 mt-0.5">
                  <button onclick="openSettings()" class="flex flex-col items-center gap-1.5 group">
                      <div class="w-8 h-8 bg-white/10 group-hover:bg-white/20 rounded-full flex items-center justify-center transition-all border border-white/20 shadow-sm"><i data-lucide="settings" class="w-4 h-4 text-white"></i></div>
-                     <span class="text-[11px] font-bold text-white tracking-wide">설정</span>
+                     <span class="text-[12px] font-bold text-white tracking-wide">설정</span>
                  </button>
                  <button onclick="logoutAdmin()" class="flex flex-col items-center gap-1.5 group">
                      <div class="w-8 h-8 bg-red-500/10 group-hover:bg-red-500/20 rounded-full flex items-center justify-center transition-all border border-red-500/20 shadow-sm"><i data-lucide="power" class="w-4 h-4 text-red-500"></i></div>
-                     <span class="text-[11px] font-bold text-white tracking-wide">로그아웃</span>
+                     <span class="text-[12px] font-bold text-white tracking-wide">로그아웃</span>
                  </button>
               </div>
     </div>
     
     <div class="max-w-md mx-auto mt-4">
-        <!-- 접기/펼치기 영역 시작 -->
+        <!-- 접기/펼치기 영역 시작 (모든 버튼 텍스트 1단계 확대 및 명칭 변경 완료) -->
         <div id="mainCategoryWrapper" class="overflow-hidden transition-all duration-500 ease-in-out max-h-[800px] opacity-100">
             <nav class="grid grid-cols-3 gap-3">
-                <button id="tabCalendar" onclick="switchView('calendar')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="calendar-days" class="w-6 h-6 text-white/80"></i><span class="text-[13px] font-bold text-white/90">일정표</span></button>
-                <button id="tabAdmin" onclick="switchView('admin')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="pen-tool" class="w-6 h-6 text-[#84CC16]"></i><span class="text-[13px] font-bold text-white/90">작업 일지 작성</span></button>
-                <button id="tabClient" onclick="switchView('clients')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="building-2" class="w-6 h-6 text-white/80"></i><span class="text-[13px] font-bold text-white/90">거래처 목록</span></button>
-                <button id="tabQuote" onclick="switchView('quote')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="calculator" class="w-6 h-6 text-white/80"></i><span class="text-[13px] font-bold text-white/90">견적작성</span></button>
-                <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="folder-open" class="w-6 h-6 text-[#84CC16]"></i><span class="text-[13px] font-bold text-white/90">견적보관함</span></button>
-                <button id="tabContacts" onclick="switchView('contacts')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="users" class="w-6 h-6 text-white/80"></i><span class="text-[13px] font-bold text-white/90">연락처</span></button>
-                <button id="tabLedger" onclick="checkLedgerPin()" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="wallet" class="w-6 h-6 text-yellow-400"></i><span class="text-[13px] font-bold text-white/90">개인장부</span></button>
-                <!-- 8. 1:1 문의하기 (기존 식물검색 자리로 이동, 기본 다크 테마) -->
+                <button id="tabCalendar" onclick="switchView('calendar')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="calendar-days" class="w-6 h-6 text-white/80"></i><span class="text-[15px] font-black text-white tracking-tight">작업 일정표</span></button>
+                <button id="tabAdmin" onclick="switchView('admin')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="pen-tool" class="w-6 h-6 text-[#84CC16]"></i><span class="text-[15px] font-black text-white tracking-tight">작업 일지 작성</span></button>
+                <button id="tabClient" onclick="switchView('clients')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="building-2" class="w-6 h-6 text-white/80"></i><span class="text-[15px] font-black text-white tracking-tight">거래처 목록</span></button>
+                <button id="tabQuote" onclick="switchView('quote')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="calculator" class="w-6 h-6 text-white/80"></i><span class="text-[15px] font-black text-white tracking-tight">견적서 작성</span></button>
+                <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="folder-open" class="w-6 h-6 text-[#84CC16]"></i><span class="text-[15px] font-black text-white tracking-tight">견적 보관함</span></button>
+                <button id="tabContacts" onclick="switchView('contacts')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="users" class="w-6 h-6 text-white/80"></i><span class="text-[15px] font-black text-white tracking-tight">연락처</span></button>
+                <button id="tabLedger" onclick="checkLedgerPin()" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="wallet" class="w-6 h-6 text-yellow-400"></i><span class="text-[15px] font-black text-white tracking-tight">개인장부</span></button>
+                <!-- 8. 1:1 문의하기 -->
                 <button id="tabInquiry" onclick="openInquiryModal()" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md">
                     <i data-lucide="headphones" class="w-6 h-6 text-[#F59E0B]"></i>
-                    <span class="text-[13px] font-bold text-white/90">1:1 문의하기</span>
+                    <span class="text-[15px] font-black text-white tracking-tight">1:1 문의하기</span>
                 </button>
                 
-                <!-- 9. 사장님 소통방 (가장 눈에 띄는 쨍한 시그니처 옐로우 적용) -->
+                <!-- 9. 사장님 소통방 -->
                 <button id="tabLounge" onclick="switchView('lounge')" class="w-full py-5 rounded-[20px] bg-[#FEE500] border border-[#FEE500] shadow-[0_4px_15px_rgba(254,229,0,0.3)] hover:brightness-95 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md">
                     <i data-lucide="message-square" class="w-6 h-6 text-[#151E2D] fill-[#151E2D]/10"></i>
-                    <span class="text-[14px] font-black text-[#151E2D] tracking-tight">사장님 소통방</span>
+                    <span class="text-[15.5px] font-black text-[#151E2D] tracking-tight">사장님 소통방</span>
                 </button>
                 
-                <!-- 10. 식물검색 (AI 렌즈 옆으로 이동, 동일한 연두색 적용) -->
+                <!-- 10. 식물검색 -->
                 <button id="tabEncyclopedia" onclick="switchView('encyclopedia')" class="w-full py-5 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md">
                     <i data-lucide="book-open" class="w-6 h-6 text-[#151E2D]"></i>
-                    <span class="text-[14px] font-black text-[#151E2D] tracking-tight">식물검색</span>
+                    <span class="text-[15.5px] font-black text-[#151E2D] tracking-tight">식물검색</span>
                 </button>
 
-                <!-- 11. AI 수목검색 렌즈 (텍스트 수정 및 폰트 크기 확대) -->
-          <button id="tabLens" onclick="switchView('lens')" class="w-full py-5 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex flex-col items-center justify-center gap-1.5">
-              <i data-lucide="scan-line" class="w-6 h-6 text-[#151E2D]"></i>
-              <span class="text-[14px] font-black text-[#151E2D] tracking-tight">AI 수목검색 렌즈</span>
-          </button>
+                <!-- 11. AI 수목검색 렌즈 -->
+                <button id="tabLens" onclick="switchView('lens')" class="w-full py-5 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex flex-col items-center justify-center gap-1.5">
+                    <i data-lucide="scan-line" class="w-6 h-6 text-[#151E2D]"></i>
+                    <span class="text-[15px] font-black text-[#151E2D] tracking-tight">AI 수목검색 렌즈</span>
+                </button>
 
-          <!-- 12. 오늘의 조경 날씨 (다른 버튼들과 크기·높이 100% 동일 + 고급 오션 블루 & 실시간 기상 디자인) -->
-          <button id="tabWeather" onclick="loadRealWeather(); openWeatherModal();" class="w-full py-5 rounded-[20px] relative overflow-hidden shadow-[0_4px_15px_rgba(2,132,199,0.35)] border border-sky-300/40 hover:brightness-105 transition-all flex flex-col items-center justify-center gap-1.5 group" style="background: linear-gradient(135deg, #0369A1 0%, #0284C7 55%, #0EA5E9 100%);">
-              <i data-lucide="cloud-sun" class="w-16 h-16 text-white/15 absolute -right-2 -bottom-2 pointer-events-none transition-transform group-hover:scale-110"></i>
-              <div class="relative z-10 flex items-center gap-1.5">
-                  <i data-lucide="sun" class="w-5 h-5 text-[#FEE500] stroke-[2.5]"></i>
-                  <span class="bg-[#FEE500] text-[#151E2D] text-[10px] font-black px-1.5 py-0.5 rounded-md leading-none shadow-sm">실시간 기상</span>
-              </div>
-              <span class="relative z-10 text-[14px] font-black text-white tracking-tight drop-shadow-sm">오늘의 조경 날씨</span>
-          </button>
-        </nav>
-      </div>
+                <!-- 12. 오늘의 조경 날씨 -->
+                <button id="tabWeather" onclick="loadRealWeather(); openWeatherModal();" class="w-full py-5 rounded-[20px] relative overflow-hidden shadow-[0_4px_15px_rgba(2,132,199,0.35)] border border-sky-300/40 hover:brightness-105 transition-all flex flex-col items-center justify-center gap-1.5 group" style="background: linear-gradient(135deg, #0369A1 0%, #0284C7 55%, #0EA5E9 100%);">
+                    <i data-lucide="cloud-sun" class="w-16 h-16 text-white/15 absolute -right-2 -bottom-2 pointer-events-none transition-transform group-hover:scale-110"></i>
+                    <div class="relative z-10 flex items-center gap-1.5">
+                        <i data-lucide="sun" class="w-5 h-5 text-[#FEE500] stroke-[2.5]"></i>
+                        <span class="bg-[#FEE500] text-[#151E2D] text-[10.5px] font-black px-1.5 py-0.5 rounded-md leading-none shadow-sm">실시간 기상</span>
+                    </div>
+                    <span class="relative z-10 text-[15px] font-black text-white tracking-tight drop-shadow-sm">오늘의 조경 날씨</span>
+                </button>
+            </nav>
+        </div>
                 
-        <!-- ✨ 프리미엄 퀄리티: 깔끔하고 고급스러운 순백색(White) 버튼으로 변경 -->
+        <!-- ✨ 메뉴 접기 버튼 (글씨 크기 16px -> 18px로 1단계 확대) -->
         <div class="flex justify-center mt-5 relative">
-            <button onclick="toggleMainCategory()" class="flex items-center gap-2 text-[16px] font-black text-[#151E2D] hover:bg-[#F4F5F4] active:scale-95 transition-all px-8 py-3.5 bg-white border border-[#EAEBEA] rounded-full shadow-[0_8px_20px_rgba(255,255,255,0.15)] z-50 tracking-wide">
+            <button onclick="toggleMainCategory()" class="flex items-center gap-2 text-[18px] font-black text-[#151E2D] hover:bg-[#F4F5F4] active:scale-95 transition-all px-8 py-4 bg-white border border-[#EAEBEA] rounded-full shadow-[0_8px_20px_rgba(255,255,255,0.15)] z-50 tracking-tight">
                 <span id="toggleCategoryText">메뉴 접기 (화면 넓게 쓰기)</span>
-                <i id="toggleCategoryIcon" data-lucide="chevron-up" class="w-5 h-5 stroke-[2.5] text-[#151E2D]"></i>
+                <i id="toggleCategoryIcon" data-lucide="chevron-up" class="w-6 h-6 stroke-[3] text-[#151E2D]"></i>
             </button>
             <div class="absolute top-1/2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent -z-10"></div>
         </div>
@@ -359,120 +357,155 @@
       </div>
     </section>
     <section id="adminView" class="hidden space-y-5">
-        <!-- ✨ 신규 추가: 전체 일지 보관함 진입 버튼 ✨ -->
-        <!-- 배경을 연노랑색(bg-[#FEF9C3])으로 변경하고 그림자(shadow-md)를 살짝 키워 시인성을 높였습니다 -->
+        <!-- ✨ 전체 일지 보관함 진입 버튼 (타이틀 18px로 확대) ✨ -->
         <div onclick="openAllLogsModal()" class="bg-[#FEF9C3] border-[1.5px] border-[#12261E] rounded-[24px] p-5 flex justify-between items-center shadow-md cursor-pointer hover:border-[#84CC16] hover:bg-[#FEF08A] group transition-all mb-4">
             <div class="flex items-center gap-3.5">
-                <!-- 아이콘 배경을 순백색(bg-white)으로 바꿔 노란 바탕에서 깔끔하게 떨어져 보이게 합니다 -->
                 <div class="w-12 h-12 bg-white group-hover:bg-[#84CC16]/20 rounded-[16px] flex items-center justify-center transition-colors shadow-sm">
                     <i data-lucide="folder-clock" class="w-6 h-6 text-[#151E2D] group-hover:text-[#84CC16] transition-colors"></i>
                 </div>
                 <div class="flex flex-col gap-0.5">
-                    <h3 class="text-[16px] font-black text-[#151E2D]">전체 일지 보관함</h3>
-                    <p class="text-[13px] text-[#6B7684] font-bold">작성한 모든 현장 일지를 날짜별로 모아봅니다.</p>
+                    <h3 class="text-[18px] font-black text-[#151E2D]">전체 일지 보관함</h3>
+                    <p class="text-[13.5px] text-[#4E5968] font-extrabold">작성한 모든 현장 일지를 날짜별로 모아봅니다.</p>
                 </div>
             </div>
-            <i data-lucide="chevron-right" class="w-5 h-5 text-[#A3A8A3] group-hover:text-[#151E2D] transition-colors"></i>
+            <i data-lucide="chevron-right" class="w-6 h-6 text-[#151E2D] transition-colors"></i>
         </div>
+
+      <!-- 1. 현장 기본 정보 (타이틀 특대 확대 & 항목명 17px 굵게 & 안내문구 13.5px 작게) -->
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5 relative overflow-hidden">
-        <div class="flex items-center justify-between pb-4 border-b border-[#F4F5F4] relative z-10"><h2 class="text-[18px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="map-pin" class="w-5 h-5 text-[#84CC16]"></i> 현장 기본 정보</h2></div>
+        <div class="flex items-center justify-between pb-4 border-b-2 border-[#F1F5F9] relative z-10">
+          <h2 class="text-[22px] font-black text-[#151E2D] flex items-center gap-2 tracking-tight">
+            <i data-lucide="map-pin" class="w-6 h-6 text-[#84CC16] stroke-[2.5]"></i> 현장 기본 정보
+          </h2>
+        </div>
+
         <div class="relative z-10">
-          <label class="block text-[13px] font-black text-[#151E2D] mb-2">고객명 / 현장명</label>
-          <input type="text" id="clientSelect" oninput="onSelectClient(this.value)" placeholder="기존 거래처 선택 또는 새 고객명 직접 입력" autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16] placeholder:text-[#4E5968] placeholder:font-bold">
+          <label class="block text-[17px] font-black text-[#151E2D] mb-2">고객명 / 현장명</label>
+          <input type="text" id="clientSelect" oninput="onSelectClient(this.value)" placeholder="기존 거래처 선택 또는 새 고객명 직접 입력" autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" class="w-full bg-[#F9F9F8] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 py-4 text-[17px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16] placeholder:text-[#94A3B8] placeholder:font-bold placeholder:text-[13.5px]">
         </div>
+
         <div class="grid grid-cols-2 gap-3 relative z-10">
-          <div><label class="block text-[13px] font-black text-[#151E2D] mb-2">연락처</label><input type="tel" id="inputClientPhone" oninput="autoHyphen(this)" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16] placeholder:text-[#4E5968] placeholder:font-bold"></div>
-          <div><label class="block text-[13px] font-black text-[#151E2D] mb-2">작업타이틀</label><input type="text" id="inputRound" placeholder="작업타이틀 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16] placeholder:text-[#4E5968] placeholder:font-bold"></div>
+          <div>
+            <label class="block text-[17px] font-black text-[#151E2D] mb-2">연락처</label>
+            <input type="tel" id="inputClientPhone" oninput="autoHyphen(this)" placeholder="연락처 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 py-4 text-[17px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16] placeholder:text-[#94A3B8] placeholder:font-bold placeholder:text-[13.5px]">
+          </div>
+          <div>
+            <label class="block text-[17px] font-black text-[#151E2D] mb-2">작업타이틀</label>
+            <input type="text" id="inputRound" placeholder="작업타이틀 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 py-4 text-[17px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16] placeholder:text-[#94A3B8] placeholder:font-bold placeholder:text-[13.5px]">
+          </div>
         </div>
+
         <div class="relative z-10 mt-1">
-          <label class="block text-[13px] font-black text-[#151E2D] mb-2">현장 주소</label>
-          <input type="text" id="inputClientAddress" placeholder="현장주소 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16] placeholder:text-[#4E5968] placeholder:font-bold">
+          <label class="block text-[17px] font-black text-[#151E2D] mb-2">현장 주소</label>
+          <input type="text" id="inputClientAddress" placeholder="현장주소 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 py-4 text-[17px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16] placeholder:text-[#94A3B8] placeholder:font-bold placeholder:text-[13.5px]">
         </div>
-        <div class="relative z-10 mt-3 pt-4 border-t border-[#F4F5F4]">
-          <label class="block text-[13px] font-black text-[#151E2D] mb-2">신규 고객 등록 시 유형 지정 <span class="text-[#A3A8A3] text-[11px] font-bold">(기존 고객은 자동 무시됨)</span></label>
-          <div class="flex gap-2">
-            <label class="flex-1 flex items-center justify-center gap-2 py-3 rounded-[12px] bg-[#F4F5F4] border border-[#EAEBEA] text-[#4E5968] cursor-pointer has-[:checked]:bg-[#151E2D] has-[:checked]:text-[#84CC16] has-[:checked]:border-[#12261E] transition-all shadow-sm">
-                <input type="radio" name="newClientTypeReport" value="정기 관리" checked class="hidden"><span class="text-[13px] font-black">정기 관리처</span>
+
+        <div class="relative z-10 mt-3 pt-4 border-t-2 border-[#F1F5F9]">
+          <label class="block text-[16.5px] font-black text-[#151E2D] mb-2.5">신규 고객 등록 시 유형 지정 <span class="text-[#64748B] text-[12.5px] font-bold block sm:inline mt-0.5 sm:mt-0">(기존 고객은 자동 무시됨)</span></label>
+          <div class="flex gap-2.5">
+            <label class="flex-1 flex items-center justify-center gap-2 py-4 rounded-[14px] bg-[#F4F5F4] border-[1.5px] border-[#CBD5E1] text-[#151E2D] cursor-pointer has-[:checked]:bg-[#151E2D] has-[:checked]:text-[#84CC16] has-[:checked]:border-[#151E2D] transition-all shadow-sm">
+                <input type="radio" name="newClientTypeReport" value="정기 관리" checked class="hidden"><span class="text-[16px] font-black">정기 관리처</span>
             </label>
-            <label class="flex-1 flex items-center justify-center gap-2 py-3 rounded-[12px] bg-[#F4F5F4] border border-[#EAEBEA] text-[#4E5968] cursor-pointer has-[:checked]:bg-[#151E2D] has-[:checked]:text-[#84CC16] has-[:checked]:border-[#12261E] transition-all shadow-sm">
-                <input type="radio" name="newClientTypeReport" value="개별 고객" class="hidden"><span class="text-[13px] font-black">개별 고객처</span>
+            <label class="flex-1 flex items-center justify-center gap-2 py-4 rounded-[14px] bg-[#F4F5F4] border-[1.5px] border-[#CBD5E1] text-[#151E2D] cursor-pointer has-[:checked]:bg-[#151E2D] has-[:checked]:text-[#84CC16] has-[:checked]:border-[#151E2D] transition-all shadow-sm">
+                <input type="radio" name="newClientTypeReport" value="개별 고객" class="hidden"><span class="text-[16px] font-black">개별 고객처</span>
             </label>
           </div>
         </div>
       </div>
 
+      <!-- 2. 당일 작업 내역 (괄호 안내문구 추가 & 하위 항목 font-black 초고굵기 적용) -->
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-4">
-        <label class="block text-[18px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="check-square" class="w-5 h-5 text-[#84CC16]"></i> 당일 작업 내역</label>
+        <label class="block text-[20px] font-black text-[#151E2D] flex items-center flex-wrap gap-1.5">
+          <i data-lucide="check-square" class="w-6 h-6 text-[#84CC16] stroke-[2.5]"></i>
+          <span>당일 작업 내역</span>
+          <span class="text-[14.5px] font-extrabold text-[#65A30D]">(작업 내역을 선택하세요)</span>
+        </label>
         <div class="grid grid-cols-2 gap-2.5" id="categoryContainer">
-          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968]" data-val="소나무 전지작업">+ 소나무 전지작업</button>
-          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968]" data-val="병해충 방제 및 약제">+ 병해충 방제 및 약제</button>
-          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968]" data-val="잔디깍기, 잡초예초작업">+ 잔디깍기, 잡초예초작업</button>
-          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968]" data-val="화단관리 (잡초·예초)">+ 화단관리 (잡초·예초)</button>
-          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968]" data-val="관목전정작업">+ 관목전정작업</button>
-          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968]" data-val="수목 시비 및 영양">+ 수목 시비 및 영양</button>
-          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968]" data-val="수목 월동 조치">+ 수목 월동 조치</button>
-          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968]" data-val="작업부산물 수거처리">+ 작업부산물 수거처리</button>
+          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-black text-left bg-white border-[1.5px] border-[#CBD5E1] text-[#151E2D]" data-val="소나무 전지작업">+ 소나무 전지작업</button>
+          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-black text-left bg-white border-[1.5px] border-[#CBD5E1] text-[#151E2D]" data-val="병해충 방제 및 약제">+ 병해충 방제 및 약제</button>
+          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-black text-left bg-white border-[1.5px] border-[#CBD5E1] text-[#151E2D]" data-val="잔디깍기, 잡초예초작업">+ 잔디깍기, 잡초예초작업</button>
+          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-black text-left bg-white border-[1.5px] border-[#CBD5E1] text-[#151E2D]" data-val="화단관리 (잡초·예초)">+ 화단관리 (잡초·예초)</button>
+          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-black text-left bg-white border-[1.5px] border-[#CBD5E1] text-[#151E2D]" data-val="관목전정작업">+ 관목전정작업</button>
+          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-black text-left bg-white border-[1.5px] border-[#CBD5E1] text-[#151E2D]" data-val="수목 시비 및 영양">+ 수목 시비 및 영양</button>
+          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-black text-left bg-white border-[1.5px] border-[#CBD5E1] text-[#151E2D]" data-val="수목 월동 조치">+ 수목 월동 조치</button>
+          <button type="button" onclick="toggleBadge(this)" class="cat-btn p-4 text-[13px] rounded-[16px] font-black text-left bg-white border-[1.5px] border-[#CBD5E1] text-[#151E2D]" data-val="작업부산물 수거처리">+ 작업부산물 수거처리</button>
           <div class="col-span-2 pt-1 flex flex-col gap-2.5">
             <div class="relative w-full">
               <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none"><i data-lucide="edit-3" class="w-5 h-5 text-[#65A30D]"></i></div>
-              <input type="text" id="inputTreePruning" placeholder="수목가지치기 수기 입력" autocomplete="off" class="w-full bg-[#F6FDF3] border border-[#84CC16]/50 rounded-[16px] pl-11 pr-4 py-4 text-[14px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16]">
+              <input type="text" id="inputTreePruning" placeholder="수목가지치기 수기 입력" autocomplete="off" class="w-full bg-[#F6FDF3] border-[1.5px] border-[#84CC16]/60 rounded-[16px] pl-11 pr-4 py-4 text-[16px] font-black text-[#151E2D] placeholder:text-[#65A30D] placeholder:font-bold placeholder:text-[13.5px] focus:outline-none focus:border-[#84CC16]">
             </div>
-            <input type="text" id="inputExtraCategory" placeholder="+ 기타 작업 직접 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[14px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16]">
+            <input type="text" id="inputExtraCategory" placeholder="+ 기타 작업 직접 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 py-4 text-[16px] font-black text-[#151E2D] placeholder:text-[#94A3B8] placeholder:font-bold placeholder:text-[13.5px] focus:outline-none focus:border-[#84CC16]">
           </div>
         </div>
       </div>
 
+      <!-- 3. 현장 비교 사진 (작업 전 / 작업 중 / 작업 후 텍스트 18px로 대폭 확대) -->
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
-        <label class="block text-[18px] font-black text-[#151E2D] flex items-center justify-between"><span class="flex items-center gap-2"><i data-lucide="image" class="w-5 h-5 text-[#84CC16]"></i> 현장 비교 사진</span></label>
+        <label class="block text-[20px] font-black text-[#151E2D] flex items-center justify-between">
+          <span class="flex items-center gap-2"><i data-lucide="image" class="w-6 h-6 text-[#84CC16] stroke-[2.5]"></i> 현장 비교 사진</span>
+        </label>
         
         <!-- 1. 작업 전 -->
         <div class="space-y-3">
-          <div class="flex items-center justify-between"><span class="text-[13px] font-black text-[#151E2D] flex items-center gap-1.5 uppercase"><span class="w-2 h-2 rounded-full bg-[#4E5968]"></span> 작업 전</span><span id="beforeCount" class="text-[13px] font-black text-[#4E5968]">0장</span></div>
+          <div class="flex items-center justify-between">
+            <span class="text-[18px] font-black text-[#151E2D] flex items-center gap-2 uppercase"><span class="w-3 h-3 rounded-full bg-[#4E5968]"></span> 작업 전</span>
+            <span id="beforeCount" class="text-[16px] font-black text-[#4E5968]">0장</span>
+          </div>
           <div class="flex gap-2.5 overflow-x-auto pb-2" id="beforeThumbRow">
-            <label class="flex-shrink-0 w-24 h-24 rounded-[18px] border-[1.5px] border-dashed border-[#D4D8D4] bg-[#FAFAFA] flex flex-col items-center justify-center cursor-pointer hover:border-[#84CC16] hover:bg-[#F2FBEC] transition-all"><i data-lucide="plus" class="w-6 h-6 text-[#4E5968] mb-1.5"></i><span class="text-[12px] font-black text-[#151E2D]">추가하기</span><input type="file" accept="image/*" multiple onchange="handleImageUpload(event, 'before')" class="hidden"></label>
+            <label class="flex-shrink-0 w-24 h-24 rounded-[18px] border-2 border-dashed border-[#CBD5E1] bg-[#FAFAFA] flex flex-col items-center justify-center cursor-pointer hover:border-[#84CC16] hover:bg-[#F2FBEC] transition-all"><i data-lucide="plus" class="w-7 h-7 text-[#151E2D] mb-1"></i><span class="text-[14px] font-black text-[#151E2D]">추가하기</span><input type="file" accept="image/*" multiple onchange="handleImageUpload(event, 'before')" class="hidden"></label>
             <div id="beforeThumbList" class="flex gap-2.5"></div>
           </div>
         </div>
 
-        <!-- 2. 작업 중 (신규 분리) -->
-        <div class="space-y-3 pt-4 border-t border-[#F4F5F4]">
-          <div class="flex items-center justify-between"><span class="text-[13px] font-black text-[#151E2D] flex items-center gap-1.5 uppercase"><span class="w-2 h-2 rounded-full bg-[#3B82F6]"></span> 작업 중</span><span id="duringCount" class="text-[13px] font-black text-[#4E5968]">0장</span></div>
+        <!-- 2. 작업 중 -->
+        <div class="space-y-3 pt-4 border-t-2 border-[#F1F5F9]">
+          <div class="flex items-center justify-between">
+            <span class="text-[18px] font-black text-[#151E2D] flex items-center gap-2 uppercase"><span class="w-3 h-3 rounded-full bg-[#3B82F6]"></span> 작업 중</span>
+            <span id="duringCount" class="text-[16px] font-black text-[#3B82F6]">0장</span>
+          </div>
           <div class="flex gap-2.5 overflow-x-auto pb-2" id="duringThumbRow">
-            <label class="flex-shrink-0 w-24 h-24 rounded-[18px] border-[1.5px] border-dashed border-[#D4D8D4] bg-[#FAFAFA] flex flex-col items-center justify-center cursor-pointer hover:border-[#84CC16] hover:bg-[#F2FBEC] transition-all"><i data-lucide="plus" class="w-6 h-6 text-[#4E5968] mb-1.5"></i><span class="text-[12px] font-black text-[#151E2D]">추가하기</span><input type="file" accept="image/*" multiple onchange="handleImageUpload(event, 'during')" class="hidden"></label>
+            <label class="flex-shrink-0 w-24 h-24 rounded-[18px] border-2 border-dashed border-[#CBD5E1] bg-[#FAFAFA] flex flex-col items-center justify-center cursor-pointer hover:border-[#84CC16] hover:bg-[#F2FBEC] transition-all"><i data-lucide="plus" class="w-7 h-7 text-[#151E2D] mb-1"></i><span class="text-[14px] font-black text-[#151E2D]">추가하기</span><input type="file" accept="image/*" multiple onchange="handleImageUpload(event, 'during')" class="hidden"></label>
             <div id="duringThumbList" class="flex gap-2.5"></div>
           </div>
         </div>
 
         <!-- 3. 작업 후 -->
-        <div class="space-y-3 pt-4 border-t border-[#F4F5F4]">
-          <div class="flex items-center justify-between"><span class="text-[13px] font-black text-[#151E2D] flex items-center gap-1.5 uppercase"><span class="w-2 h-2 rounded-full bg-[#84CC16]"></span> 작업 후</span><span id="afterCount" class="text-[13px] font-black text-[#151E2D]">0장</span></div>
+        <div class="space-y-3 pt-4 border-t-2 border-[#F1F5F9]">
+          <div class="flex items-center justify-between">
+            <span class="text-[18px] font-black text-[#151E2D] flex items-center gap-2 uppercase"><span class="w-3 h-3 rounded-full bg-[#84CC16]"></span> 작업 후</span>
+            <span id="afterCount" class="text-[16px] font-black text-[#65A30D]">0장</span>
+          </div>
           <div class="flex gap-2.5 overflow-x-auto pb-2" id="afterThumbRow">
-            <label class="flex-shrink-0 w-24 h-24 rounded-[18px] border-[1.5px] border-dashed border-[#D4D8D4] bg-[#FAFAFA] flex flex-col items-center justify-center cursor-pointer hover:border-[#84CC16] hover:bg-[#F2FBEC] transition-all"><i data-lucide="plus" class="w-6 h-6 text-[#4E5968] mb-1.5"></i><span class="text-[12px] font-black text-[#151E2D]">추가하기</span><input type="file" accept="image/*" multiple onchange="handleImageUpload(event, 'after')" class="hidden"></label>
+            <label class="flex-shrink-0 w-24 h-24 rounded-[18px] border-2 border-dashed border-[#CBD5E1] bg-[#FAFAFA] flex flex-col items-center justify-center cursor-pointer hover:border-[#84CC16] hover:bg-[#F2FBEC] transition-all"><i data-lucide="plus" class="w-7 h-7 text-[#151E2D] mb-1"></i><span class="text-[14px] font-black text-[#151E2D]">추가하기</span><input type="file" accept="image/*" multiple onchange="handleImageUpload(event, 'after')" class="hidden"></label>
             <div id="afterThumbList" class="flex gap-2.5"></div>
           </div>
         </div>
       </div>
 
+      <!-- 4. 특이사항 -->
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-4">
-        <label class="block text-[18px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="alert-circle" class="w-5 h-5 text-[#C5A880]"></i> 특이사항</label>
-        <textarea id="inputIssue" rows="3" placeholder="예: 소나무에 응애 발견하여 친환경 약제 살포 완료" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[18px] p-4 text-[15px] font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] leading-relaxed"></textarea>
+        <label class="block text-[20px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="alert-circle" class="w-6 h-6 text-[#C5A880] stroke-[2.5]"></i> 특이사항</label>
+        <textarea id="inputIssue" rows="3" placeholder="예: 소나무에 응애 발견하여 친환경 약제 살포 완료" autocomplete="off" class="w-full bg-[#F9F9F8] border-[1.5px] border-[#CBD5E1] rounded-[18px] p-4 text-[17px] font-black text-[#151E2D] placeholder:text-[#94A3B8] placeholder:font-bold placeholder:text-[13.5px] focus:outline-none focus:border-[#84CC16] leading-relaxed"></textarea>
         <div class="space-y-3 pt-2">
-          <div class="flex items-center justify-between"><span class="text-[13px] font-black text-[#151E2D] flex items-center gap-1.5 uppercase"><span class="w-2 h-2 rounded-full bg-[#C5A880]"></span> 특이사항</span><span id="issueCount" class="text-[13px] font-black text-[#4E5968]">0장</span></div>
+          <div class="flex items-center justify-between">
+            <span class="text-[17px] font-black text-[#151E2D] flex items-center gap-2 uppercase"><span class="w-3 h-3 rounded-full bg-[#C5A880]"></span> 특이사항 사진</span>
+            <span id="issueCount" class="text-[16px] font-black text-[#4E5968]">0장</span>
+          </div>
           <div class="flex gap-2.5 overflow-x-auto pb-2" id="issueThumbRow">
-            <label class="flex-shrink-0 w-24 h-24 rounded-[18px] border-[1.5px] border-dashed border-[#C5A880]/60 bg-[#FFFDF9] flex flex-col items-center justify-center cursor-pointer hover:border-[#C5A880] transition-all"><i data-lucide="camera" class="w-6 h-6 text-[#C5A880] mb-1.5"></i><span class="text-[12px] font-black text-[#151E2D]">특이사항</span><input type="file" accept="image/*" multiple onchange="handleImageUpload(event, 'issue')" class="hidden"></label>
+            <label class="flex-shrink-0 w-24 h-24 rounded-[18px] border-2 border-dashed border-[#C5A880] bg-[#FFFDF9] flex flex-col items-center justify-center cursor-pointer hover:border-[#C5A880] transition-all"><i data-lucide="camera" class="w-7 h-7 text-[#C5A880] mb-1"></i><span class="text-[14px] font-black text-[#151E2D]">특이사항</span><input type="file" accept="image/*" multiple onchange="handleImageUpload(event, 'issue')" class="hidden"></label>
             <div id="issueThumbList" class="flex gap-2.5"></div>
           </div>
         </div>
       </div>
 
+      <!-- 5. 현장 작업자 코멘트 -->
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-3">
-        <label class="block text-[18px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="pen-tool" class="w-5 h-5 text-[#84CC16]"></i> 현장 작업자 코멘트</label>
-        <textarea id="inputDiagnosis" rows="3" placeholder="작업 내용을 입력하세요" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[18px] p-4 text-[15px] font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] leading-relaxed"></textarea>
+        <label class="block text-[20px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="pen-tool" class="w-6 h-6 text-[#84CC16] stroke-[2.5]"></i> 현장 작업자 코멘트</label>
+        <textarea id="inputDiagnosis" rows="3" placeholder="작업 내용을 입력하세요" autocomplete="off" class="w-full bg-[#F9F9F8] border-[1.5px] border-[#CBD5E1] rounded-[18px] p-4 text-[17px] font-black text-[#151E2D] placeholder:text-[#94A3B8] placeholder:font-bold placeholder:text-[13.5px] focus:outline-none focus:border-[#84CC16] leading-relaxed"></textarea>
       </div>
 
       <button id="btnGenerateReport" onclick="generateReport()" class="w-full py-5 bg-[#84CC16] text-[#151E2D] rounded-[22px] font-black text-[20px] flex items-center justify-center gap-3 shadow-[0_10px_25px_rgba(132,204,22,0.4)] hover:bg-[#9BE32D] active:scale-[0.98] transition-all mb-4"><i data-lucide="send" class="w-6 h-6 stroke-[2.5]"></i> 리포트 발행 및 저장</button>
     </section>
-
     <!-- ================= [2. 견적서 작성 화면] ================= -->
     <section id="quoteAdminView" class="hidden space-y-5">
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5 relative overflow-hidden">
