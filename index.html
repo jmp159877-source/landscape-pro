@@ -236,24 +236,55 @@
   <div id="swipeContainer" class="max-w-md mx-auto p-4 space-y-5">
     <!-- ================= [신규: 조경 사장님 라운지 화면] ================= -->
     <section id="loungeView" class="hidden space-y-5">
-      <!-- 1. 오늘의 조경 날씨 위젯 (스카이블루 톤으로 변경하여 시인성 및 날씨 감성 극대화) -->
-      <div onclick="openWeatherModal()" class="cursor-pointer bg-gradient-to-br from-[#E0F2FE] to-[#38BDF8] rounded-[28px] p-6 shadow-[0_10px_25px_rgba(56,189,248,0.3)] border border-[#BAE6FD] relative overflow-hidden transition-transform hover:scale-[1.02] active:scale-95">
-          <div class="absolute -right-4 -top-4 text-[#0284C7]/15"><i id="weatherBgIcon" data-lucide="cloud-sun" class="w-32 h-32"></i></div>
-          <div class="relative z-10">
-              <h2 class="text-[15px] font-black text-[#0C4A6E] flex items-center gap-1.5 mb-1"><i data-lucide="sun" class="w-4 h-4"></i> 오늘의 조경 날씨</h2>
-              <div class="flex items-end justify-between mt-3">
-                  <div>
-                      <div class="text-[32px] font-black text-[#0C4A6E] leading-none tracking-tight"><span id="weatherMainTemp">로딩중</span></div>
-                      <div class="text-[13px] text-[#0C4A6E]/80 font-black mt-2"><i data-lucide="map-pin" class="w-3 h-3 inline"></i> <span id="weatherLocation">위치 파악중...</span></div>
+      <!-- 🌤️ [VIP 에디션] 오늘의 조경 날씨 (로얄 오션 그라데이션 & 초고시인성 대시보드) -->
+          <div onclick="openWeatherModal()" class="relative overflow-hidden rounded-[26px] p-6 cursor-pointer shadow-[0_12px_30px_rgba(2,132,199,0.35)] border border-sky-300/30 transition-all active:scale-[0.99] group" style="background: linear-gradient(135deg, #0B1F3A 0%, #0369A1 55%, #0284C7 100%);">
+              <!-- 우측 상단 입체 배경 장식 아이콘 -->
+              <i id="weatherBgIcon" data-lucide="cloud-sun" class="w-36 h-36 text-white/10 absolute -right-4 -top-4 pointer-events-none transition-transform group-hover:scale-105"></i>
+              
+              <div class="relative z-10 flex flex-col gap-4">
+                  <!-- 1. 메인 타이틀 헤더 (압도적 크기와 권위 있는 뱃지) -->
+                  <div class="flex items-center justify-between border-b border-white/15 pb-3">
+                      <h2 class="text-[21px] font-black text-white flex items-center gap-2 tracking-tight drop-shadow-sm">
+                          <i data-lucide="sun" class="w-6 h-6 text-[#FEE500] fill-[#FEE500]/20 shrink-0"></i> 오늘의 조경 날씨
+                      </h2>
+                      <span class="bg-[#FEE500] text-[#151E2D] text-[11px] font-black px-2.5 py-1 rounded-full shadow-sm tracking-tight flex items-center gap-1">
+                          <span class="w-1.5 h-1.5 rounded-full bg-[#151E2D] animate-ping"></span> 실시간 기상
+                      </span>
                   </div>
-                  <div class="text-right flex flex-col items-end">
-                      <span id="weatherConditionBadge" class="bg-[#0C4A6E] text-[#BAE6FD] text-[11px] px-3 py-1.5 rounded-[10px] font-black shadow-sm">분석중</span>
-                      <!-- 💡 최고급 기상 데이터 출처 및 근거 표기 -->
-                      <div class="mt-2 text-[9.5px] font-black text-[#0C4A6E]/60 flex items-center gap-1 tracking-tight">
-                          <i data-lucide="satellite" class="w-3 h-3"></i> Open-Meteo 글로벌 모델
+
+                  <!-- 2. 온도 & 위치 정보 영역 -->
+                  <div class="flex items-end justify-between gap-2 pt-0.5">
+                      <div class="space-y-2">
+                          <!-- 날씨 상태 및 기온 (초대형 순백색 텍스트) -->
+                          <div id="weatherMainTemp" class="text-[32px] font-black text-white tracking-tight leading-none drop-shadow-md">
+                              날씨 분석중..
+                          </div>
+                          <!-- 현위치 주소 및 고시인성 위치갱신 버튼 -->
+                          <div class="flex items-center gap-1.5 text-[14px] font-extrabold text-sky-100 pt-1">
+                              <i data-lucide="map-pin" class="w-4 h-4 text-[#84CC16] shrink-0"></i>
+                              <div id="weatherLocation" class="inline-flex items-center flex-wrap gap-1.5">위치 파악중..</div>
+                          </div>
+                      </div>
+
+                      <!-- 우측 상세예보 더보기 유도 버튼 -->
+                      <div class="flex flex-col items-end shrink-0">
+                          <div class="bg-white/15 hover:bg-white/25 backdrop-blur-md border border-white/30 text-white text-[12px] font-black px-3.5 py-2 rounded-[14px] shadow-sm flex items-center gap-1 transition-all">
+                              시간별 상세 <i data-lucide="chevron-right" class="w-4 h-4 text-[#FEE500]"></i>
+                          </div>
                       </div>
                   </div>
+
+                  <!-- 3. 조경 실무 지침 TIP 박스 (크리스탈 다크 글래스 카드 + 순백색 텍스트) -->
+                  <div class="bg-[#091526]/75 backdrop-blur-md border border-white/15 rounded-[18px] p-4 shadow-inner flex items-start gap-3 mt-1">
+                      <span class="bg-[#84CC16] text-[#151E2D] text-[11.5px] font-black px-2.5 py-1 rounded-lg shrink-0 mt-0.5 shadow-sm tracking-tight">
+                          작업 지침
+                      </span>
+                      <p id="weatherTip" class="text-[14px] font-extrabold text-white leading-[1.55] break-keep tracking-tight">
+                          현장 기상 데이터를 기반으로 오늘의 조경 작업 적합도를 분석하고 있습니다.
+                      </p>
+                  </div>
               </div>
+          </div>
               <div class="mt-4 pt-3 border-t border-[#0C4A6E]/10">
                   <p class="text-[13.5px] text-[#0C4A6E] font-bold leading-relaxed break-keep"><span class="font-black bg-[#0C4A6E] text-[#BAE6FD] px-1.5 py-0.5 rounded text-[11px] mr-1">TIP</span> <span id="weatherSmartTip">날씨 기반 현장 팁을 불러오는 중입니다.</span></p>
               </div>
@@ -3554,35 +3585,35 @@
         const tempEl = document.getElementById('weatherMainTemp');
         const tipEl = document.getElementById('weatherTip');
 
-        // 위치 영역 터치 시 즉각 반응하는 강제 새로고침 이벤트 연결
+        // 위치 영역 터치 시 상세창이 뜨지 않고 오직 '위치 갱신'만 작동하도록 정밀 제어 (e.stopPropagation)
         if (locEl && !locEl.dataset.bound) {
             locEl.dataset.bound = "true";
-            locEl.className = "inline-flex items-center gap-1.5 cursor-pointer active:scale-95 transition-transform";
-            locEl.onclick = () => { 
+            locEl.className = "inline-flex items-center flex-wrap gap-1.5 cursor-pointer active:scale-95 transition-transform";
+            locEl.onclick = (e) => { 
+                if (e && e.stopPropagation) e.stopPropagation(); // 부모 카드 클릭 방지
                 weatherIsLoaded = false; 
                 loadRealWeather(true); 
             };
         }
 
-        // 직관적인 UI 헬퍼 함수: 주소 옆에 눈에 확 띄는 [🔄 위치갱신] 캡슐 버튼 렌더링
+        // 💡 초고시인성 [🔄 위치갱신] 버튼: 다크 네이비 바탕 + 쨍한 옐로우 텍스트로 100% 시인성 확보
         const setLocationBadge = (text, isSpinning = false) => {
             if (!locEl) return;
-            const spinClass = isSpinning ? "animate-spin text-[#FEE500]" : "text-[#84CC16]";
-            const btnLabel = isSpinning ? "탐색중" : "위치갱신";
+            const spinClass = isSpinning ? "animate-spin text-[#84CC16]" : "text-[#FEE500]";
+            const btnLabel = isSpinning ? "위성 탐색중.." : "위치갱신";
             locEl.innerHTML = `
-                <span>${text}</span>
-                <span class="inline-flex items-center gap-1 bg-white/15 border border-white/25 text-white text-[11px] font-extrabold px-2 py-0.5 rounded-full shadow-sm ml-1">
+                <span class="text-white font-black tracking-tight drop-shadow-sm">${text}</span>
+                <span class="inline-flex items-center gap-1 bg-[#091526]/90 border border-[#FEE500]/60 text-[#FEE500] text-[11.5px] font-black px-2.5 py-1 rounded-full shadow-md ml-0.5">
                     <i data-lucide="refresh-cw" class="w-3 h-3 ${spinClass}"></i> ${btnLabel}
                 </span>`;
             if (window.lucide) lucide.createIcons();
         };
 
-        // 1. 스마트 캐시 확인 (새로고침 버튼을 누른 게 아니면 20분간 마지막 위치 즉시 표시)
+        // 1. 스마트 캐시 확인 (20분간 마지막 위치 즉시 표시)
         const cachedLoc = localStorage.getItem('shinhwa_last_loc');
         if (cachedLoc && !forceRefresh) {
             try {
                 const { lat, lon, name, time } = JSON.parse(cachedLoc);
-                // 과거에 2단어로 저장된 캐시('경기도 수원시')가 있으면 무시하고 구/동까지 새로 잡도록 유도
                 if (name && name.split(' ').length >= 3 && (Date.now() - time < 20 * 60 * 1000)) {
                     setLocationBadge(name, false);
                     await fetchWeatherApi(lat, lon);
@@ -3591,17 +3622,15 @@
             } catch(e) {}
         }
 
-        // 버튼을 눌러 갱신할 때 사용자에게 확실한 피드백 제공
-        if (tempEl) tempEl.innerText = "위치 확인중..";
+        if (tempEl) tempEl.innerText = "기상 수신중..";
         if (tipEl) tipEl.innerText = "현장 GPS 위성 및 기상청 데이터를 실시간으로 다시 불러오고 있습니다...";
-        setLocationBadge("실시간 위치 탐색중..", true);
+        setLocationBadge("실시간 위치 탐색중", true);
 
-        // 2. 3단계 하이브리드 위치 추적 (1차: 정밀 GPS -> 2차: 기지국/Wi-Fi -> 3차: 통신사 IP)
+        // 2. 3단계 하이브리드 위치 추적
         const getBestLocation = () => new Promise((resolve) => {
             if (!navigator.geolocation) {
                 resolve(null); return;
             }
-            // 강제 갱신(forceRefresh)일 때는 이전 기기 캐시(maximumAge: 0)를 쓰지 않고 실시간 좌표를 새로 잡음
             const maxAge = forceRefresh ? 0 : 300000;
             navigator.geolocation.getCurrentPosition(
                 pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
@@ -3631,7 +3660,7 @@
         if (coords) {
             await fetchWeatherApi(coords.lat, coords.lon);
         } else {
-            setLocationBadge("경기도 수원시 장안구", false);
+            setLocationBadge("경기도 수원시 율천동", false);
             await fetchWeatherApi(37.3034, 127.0097);
         }
     }
@@ -3642,16 +3671,20 @@
                 const geoRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=ko`);
                 const geoData = await geoRes.json();
                 
-                // 💡 구(장안구 등)·동 단위까지 3단계 행정구역 정밀 추출
-                const r1 = (geoData.principalSubdivision || '').trim(); // 예: 경기도
-                const r2 = (geoData.city || '').trim();                 // 예: 수원시
-                let r3 = (geoData.locality || '').trim();               // 예: 장안구 (또는 동 이름)
+                const r1 = (geoData.principalSubdivision || '').trim();
+                const r2 = (geoData.city || '').trim();
+                let r3 = (geoData.locality || '').trim();
                 
-                // 세부 행정구역(administrative) 정보에서 '구/군/읍/면/동' 보완 추출
-                if ((!r3 || r3 === r2) && geoData.localityInfo && geoData.localityInfo.administrative) {
+                // 구/동 단위 정밀 추출
+                if (geoData.localityInfo && geoData.localityInfo.administrative) {
                     const adminList = geoData.localityInfo.administrative;
-                    const subArea = adminList.find(item => item.name && (item.name.endsWith('구') || item.name.endsWith('읍') || item.name.endsWith('면') || item.name.endsWith('동')));
-                    if (subArea) r3 = subArea.name.trim();
+                    const guArea = adminList.find(item => item.name && item.name.endsWith('구'));
+                    const dongArea = adminList.find(item => item.name && (item.name.endsWith('동') || item.name.endsWith('읍') || item.name.endsWith('면')));
+                    if (guArea && dongArea) {
+                        r3 = `${guArea.name.trim()} ${dongArea.name.trim()}`; // 예: 장안구 율천동
+                    } else if (guArea) {
+                        r3 = guArea.name.trim();
+                    }
                 }
 
                 const uniqueParts = [];
@@ -3659,15 +3692,14 @@
                     if (part && !uniqueParts.includes(part)) uniqueParts.push(part);
                 });
                 
-                // slice(0, 2) 제한을 해제하여 '경기도 수원시 장안구' 전체가 다 나오도록 수정!
                 const cleanName = uniqueParts.slice(0, 3).join(' ') || "현재 위치";
                 
                 const locEl = document.getElementById('weatherLocation');
                 if (locEl) {
                     locEl.innerHTML = `
-                        <span>${cleanName}</span>
-                        <span class="inline-flex items-center gap-1 bg-white/15 border border-white/25 text-white text-[11px] font-extrabold px-2 py-0.5 rounded-full shadow-sm ml-1">
-                            <i data-lucide="refresh-cw" class="w-3 h-3 text-[#84CC16]"></i> 위치갱신
+                        <span class="text-white font-black tracking-tight drop-shadow-sm">${cleanName}</span>
+                        <span class="inline-flex items-center gap-1 bg-[#091526]/90 border border-[#FEE500]/60 text-[#FEE500] text-[11.5px] font-black px-2.5 py-1 rounded-full shadow-md ml-0.5">
+                            <i data-lucide="refresh-cw" class="w-3 h-3 text-[#FEE500]"></i> 위치갱신
                         </span>`;
                     if (window.lucide) lucide.createIcons();
                 }
