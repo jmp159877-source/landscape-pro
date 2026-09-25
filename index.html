@@ -2827,14 +2827,7 @@
           }
       });
       
-      const loungeTab = document.getElementById('tabLounge');
-      if(loungeTab) {
-          loungeTab.className = "w-full py-5 rounded-[20px] bg-[#FEE500] border border-[#FEE500] shadow-[0_4px_15px_rgba(254,229,0,0.3)] hover:brightness-95 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md";
-          const span = loungeTab.querySelector('span');
-          if(span) span.className = "text-[15.5px] font-black text-[#151E2D] tracking-tight";
-          const icon = loungeTab.querySelector('i');
-          if(icon) { icon.className = icon.className.replace(/text-\S+/g, ''); icon.classList.add('text-[#151E2D]'); }
-      }
+      
 
       const encyTab = document.getElementById('tabEncyclopedia');
       if(encyTab) {
