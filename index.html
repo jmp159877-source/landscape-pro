@@ -223,7 +223,16 @@
                 <button id="tabQuote" onclick="switchView('quote')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="calculator" class="w-6 h-6 text-white/80"></i><span class="text-[15px] font-black text-white tracking-tight">견적서 작성</span></button>
                 <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="folder-open" class="w-6 h-6 text-[#84CC16]"></i><span class="text-[15px] font-black text-white tracking-tight">견적 보관함</span></button>
                 <button id="tabContacts" onclick="switchView('contacts')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="users" class="w-6 h-6 text-white/80"></i><span class="text-[15px] font-black text-white tracking-tight">연락처</span></button>
-                <button id="tabLedger" onclick="checkLedgerPin()" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="wallet" class="w-6 h-6 text-yellow-400"></i><span class="text-[15px] font-black text-white tracking-tight">개인장부</span></button>
+                <!-- 7. 개인 장부함 (순금 골드바 메탈릭 그라데이션 + 지갑 & 보안 잠금 아이콘) -->
+                <button id="tabLedger" onclick="checkLedgerPin()" class="w-full py-5 rounded-[20px] relative overflow-hidden border-[1.5px] border-[#FEF08A] shadow-[0_4px_18px_rgba(212,175,55,0.4)] hover:brightness-105 transition-all flex flex-col items-center justify-center gap-2" style="background: linear-gradient(135deg, #B48327 0%, #D4AF37 45%, #F7E9A0 75%, #C59B27 100%);">
+                    <div class="flex items-center gap-1.5">
+                        <i data-lucide="wallet" class="w-6 h-6 text-[#151E2D] stroke-[2.5]"></i>
+                        <span class="bg-[#151E2D] text-[#FDE047] p-1 rounded-md shadow-sm flex items-center justify-center">
+                            <i data-lucide="lock" class="w-3.5 h-3.5 stroke-[3]"></i>
+                        </span>
+                    </div>
+                    <span class="text-[15.5px] font-black text-[#151E2D] tracking-tight">개인 장부함</span>
+                </button>
                 
                 <!-- 8. 사장님 소통방 -->
                 <button id="tabLounge" onclick="switchView('lounge')" class="w-full py-5 rounded-[20px] bg-[#FEE500] border border-[#FEE500] shadow-[0_4px_15px_rgba(254,229,0,0.3)] hover:brightness-95 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md">
@@ -2778,7 +2787,7 @@
       const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView', 'calendarView', 'ledgerView', 'encyclopediaView', 'loungeView'];
       views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
       
-      const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient', 'tabContacts', 'tabCalendar', 'tabLedger'];
+      const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient', 'tabContacts', 'tabCalendar'];
       mainTabs.forEach(t => { 
           const el = document.getElementById(t); 
           if(el) {
@@ -2840,7 +2849,7 @@
 
       if(activeTabId) {
         const activeEl = document.getElementById(activeTabId);
-        if(activeEl && activeTabId !== 'tabLens' && activeTabId !== 'tabEncyclopedia' && activeTabId !== 'tabLounge') {
+        if(activeEl && activeTabId !== 'tabLens' && activeTabId !== 'tabEncyclopedia' && activeTabId !== 'tabLounge' && activeTabId !== 'tabLedger') {
             activeEl.className = "w-full py-5 rounded-[20px] bg-white/15 border border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md";
             const span = activeEl.querySelector('span');
             if(span) span.className = "text-[15px] font-black text-white tracking-tight";
