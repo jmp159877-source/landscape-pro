@@ -165,36 +165,45 @@
 
   <!-- 🔥 메인 헤더 레이아웃 🔥 -->
   <header id="mainHeader" class="no-print sticky top-0 z-40 glass-nav px-5 py-4 shadow-md" style="display: none;">
-    <div class="max-w-md mx-auto flex items-start justify-between">
-      <div class="flex items-start gap-3.5">
+    <div class="max-w-md mx-auto flex items-start justify-between gap-2">
+      <!-- 좌측: 로고 및 상호명 -->
+      <div class="flex items-start gap-3.5 min-w-0">
         <div class="w-12 h-12 rounded-[16px] bg-[#84CC16] flex items-center justify-center shadow-lg shrink-0 mt-1"><i data-lucide="leaf" class="w-6 h-6 text-[#151E2D]"></i></div>
         <div class="flex flex-col min-w-0">
-                <div class="flex items-start gap-2 flex-wrap">
-                    <div id="company-name-header" class="font-black text-white tracking-tight flex flex-col min-w-0 shrink-0">업체명</div>
-                    <div class="flex flex-col gap-1 mt-0.5 shrink-0">
-                       <div class="flex items-center gap-1.5">
-                           <span class="text-[10px] bg-[#84CC16]/20 text-[#84CC16] font-black px-2 py-0.5 rounded uppercase tracking-widest border border-[#84CC16]/30">PRO</span>
-                           <span id="cloudStatusBadge" class="text-[10px] bg-blue-500/20 text-blue-400 font-black px-2 py-0.5 rounded uppercase tracking-widest border border-blue-500/30 flex items-center gap-1"><i data-lucide="cloud" class="w-3 h-3"></i> 보안 연동됨</span>
-                       </div>
-                    </div>
-                </div>
-                <span class="text-[14px] font-bold text-[#A3A8A3] tracking-wide mt-1.5">스마트 관리 솔루션 <strong class="text-[#84CC16]">신화 조경노트</strong></span>
+          <div class="flex items-start gap-2 flex-wrap">
+            <div id="company-name-header" class="font-black text-white tracking-tight flex flex-col min-w-0 shrink-0">업체명</div>
+            <div class="flex flex-col gap-1 mt-0.5 shrink-0">
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] bg-[#84CC16]/20 text-[#84CC16] font-black px-2 py-0.5 rounded uppercase tracking-widest border border-[#84CC16]/30">PRO</span>
+                <span id="cloudStatusBadge" class="text-[10px] bg-blue-500/20 text-blue-400 font-black px-2 py-0.5 rounded uppercase tracking-widest border border-blue-500/30 flex items-center gap-1"><i data-lucide="cloud" class="w-3 h-3"></i> 보안 연동됨</span>
               </div>
+            </div>
+          </div>
+          <span class="text-[14px] font-bold text-[#A3A8A3] tracking-wide mt-1.5">스마트 관리 솔루션 <strong class="text-[#84CC16]">신화 조경노트</strong></span>
+        </div>
       </div>
-      <div class="flex items-start gap-3 shrink-0 mt-0.5">
-                 <button onclick="openSettings()" class="flex flex-col items-center gap-1.5 group">
-                     <div class="w-8 h-8 bg-white/10 group-hover:bg-white/20 rounded-full flex items-center justify-center transition-all border border-white/20 shadow-sm"><i data-lucide="settings" class="w-4 h-4 text-white"></i></div>
-                     <span class="text-[12px] font-bold text-white tracking-wide">설정</span>
-                 </button>
-                 <button onclick="logoutAdmin()" class="flex flex-col items-center gap-1.5 group">
-                     <div class="w-8 h-8 bg-red-500/10 group-hover:bg-red-500/20 rounded-full flex items-center justify-center transition-all border border-red-500/20 shadow-sm"><i data-lucide="power" class="w-4 h-4 text-red-500"></i></div>
-                     <span class="text-[12px] font-bold text-white tracking-wide">로그아웃</span>
-                 </button>
-              </div>
+
+      <!-- 우측: 설정 / 로그아웃 + 그 아래 작은 [1:1 문의하기] 버튼 배치 -->
+      <div class="flex flex-col items-end gap-2 shrink-0 mt-0.5">
+        <div class="flex items-start gap-3">
+          <button onclick="openSettings()" class="flex flex-col items-center gap-1 group">
+            <div class="w-8 h-8 bg-white/10 group-hover:bg-white/20 rounded-full flex items-center justify-center transition-all border border-white/20 shadow-sm"><i data-lucide="settings" class="w-4 h-4 text-white"></i></div>
+            <span class="text-[11px] font-bold text-white tracking-wide">설정</span>
+          </button>
+          <button onclick="logoutAdmin()" class="flex flex-col items-center gap-1 group">
+            <div class="w-8 h-8 bg-red-500/10 group-hover:bg-red-500/20 rounded-full flex items-center justify-center transition-all border border-red-500/20 shadow-sm"><i data-lucide="power" class="w-4 h-4 text-red-500"></i></div>
+            <span class="text-[11px] font-bold text-white tracking-wide">로그아웃</span>
+          </button>
+        </div>
+        <!-- ✨ 설정·로그아웃 바로 아래에 쏙 들어간 아담한 1:1 문의하기 버튼 -->
+        <button id="tabInquiry" onclick="openInquiryModal()" class="px-2.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-[#F59E0B]/50 text-white text-[11.5px] font-black flex items-center gap-1 shadow-sm active:scale-95 transition-all">
+          <i data-lucide="headphones" class="w-3.5 h-3.5 text-[#F59E0B]"></i> 1:1 문의하기
+        </button>
+      </div>
     </div>
     
     <div class="max-w-md mx-auto mt-4">
-        <!-- 접기/펼치기 영역 시작 (모든 버튼 텍스트 1단계 확대 및 명칭 변경 완료) -->
+        <!-- 접기/펼치기 영역 시작 (1:1 문의하기 제외 후 11개 버튼 완벽 정렬) -->
         <div id="mainCategoryWrapper" class="overflow-hidden transition-all duration-500 ease-in-out max-h-[800px] opacity-100">
             <nav class="grid grid-cols-3 gap-3">
                 <button id="tabCalendar" onclick="switchView('calendar')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="calendar-days" class="w-6 h-6 text-white/80"></i><span class="text-[15px] font-black text-white tracking-tight">작업 일정표</span></button>
@@ -204,43 +213,38 @@
                 <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="folder-open" class="w-6 h-6 text-[#84CC16]"></i><span class="text-[15px] font-black text-white tracking-tight">견적 보관함</span></button>
                 <button id="tabContacts" onclick="switchView('contacts')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="users" class="w-6 h-6 text-white/80"></i><span class="text-[15px] font-black text-white tracking-tight">연락처</span></button>
                 <button id="tabLedger" onclick="checkLedgerPin()" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="wallet" class="w-6 h-6 text-yellow-400"></i><span class="text-[15px] font-black text-white tracking-tight">개인장부</span></button>
-                <!-- 8. 1:1 문의하기 -->
-                <button id="tabInquiry" onclick="openInquiryModal()" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md">
-                    <i data-lucide="headphones" class="w-6 h-6 text-[#F59E0B]"></i>
-                    <span class="text-[15px] font-black text-white tracking-tight">1:1 문의하기</span>
-                </button>
                 
-                <!-- 9. 사장님 소통방 -->
+                <!-- 8. 사장님 소통방 -->
                 <button id="tabLounge" onclick="switchView('lounge')" class="w-full py-5 rounded-[20px] bg-[#FEE500] border border-[#FEE500] shadow-[0_4px_15px_rgba(254,229,0,0.3)] hover:brightness-95 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md">
                     <i data-lucide="message-square" class="w-6 h-6 text-[#151E2D] fill-[#151E2D]/10"></i>
                     <span class="text-[15.5px] font-black text-[#151E2D] tracking-tight">사장님 소통방</span>
                 </button>
                 
-                <!-- 10. 식물검색 -->
+                <!-- 9. 식물검색 -->
                 <button id="tabEncyclopedia" onclick="switchView('encyclopedia')" class="w-full py-5 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md">
                     <i data-lucide="book-open" class="w-6 h-6 text-[#151E2D]"></i>
                     <span class="text-[15.5px] font-black text-[#151E2D] tracking-tight">식물검색</span>
                 </button>
 
-                <!-- 11. AI 수목검색 렌즈 -->
+                <!-- 10. AI 수목검색 렌즈 -->
                 <button id="tabLens" onclick="switchView('lens')" class="w-full py-5 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex flex-col items-center justify-center gap-1.5">
                     <i data-lucide="scan-line" class="w-6 h-6 text-[#151E2D]"></i>
                     <span class="text-[15px] font-black text-[#151E2D] tracking-tight">AI 수목검색 렌즈</span>
                 </button>
 
-                <!-- 12. 오늘의 조경 날씨 -->
-                <button id="tabWeather" onclick="loadRealWeather(); openWeatherModal();" class="w-full py-5 rounded-[20px] relative overflow-hidden shadow-[0_4px_15px_rgba(2,132,199,0.35)] border border-sky-300/40 hover:brightness-105 transition-all flex flex-col items-center justify-center gap-1.5 group" style="background: linear-gradient(135deg, #0369A1 0%, #0284C7 55%, #0EA5E9 100%);">
-                    <i data-lucide="cloud-sun" class="w-16 h-16 text-white/15 absolute -right-2 -bottom-2 pointer-events-none transition-transform group-hover:scale-110"></i>
+                <!-- 11. 오늘의 조경 날씨 (남은 2칸을 꽉 채워 빈자리 없이 균형 완성) -->
+                <button id="tabWeather" onclick="loadRealWeather(); openWeatherModal();" class="col-span-2 w-full py-5 rounded-[20px] relative overflow-hidden shadow-[0_4px_15px_rgba(2,132,199,0.35)] border border-sky-300/40 hover:brightness-105 transition-all flex flex-col items-center justify-center gap-1.5 group" style="background: linear-gradient(135deg, #0369A1 0%, #0284C7 55%, #0EA5E9 100%);">
+                    <i data-lucide="cloud-sun" class="w-20 h-20 text-white/15 absolute -right-2 -bottom-3 pointer-events-none transition-transform group-hover:scale-110"></i>
                     <div class="relative z-10 flex items-center gap-1.5">
                         <i data-lucide="sun" class="w-5 h-5 text-[#FEE500] stroke-[2.5]"></i>
-                        <span class="bg-[#FEE500] text-[#151E2D] text-[10.5px] font-black px-1.5 py-0.5 rounded-md leading-none shadow-sm">실시간 기상</span>
+                        <span class="bg-[#FEE500] text-[#151E2D] text-[11px] font-black px-2 py-0.5 rounded-md leading-none shadow-sm">실시간 위치 기상청 연동</span>
                     </div>
-                    <span class="relative z-10 text-[15px] font-black text-white tracking-tight drop-shadow-sm">오늘의 조경 날씨</span>
+                    <span class="relative z-10 text-[16px] font-black text-white tracking-tight drop-shadow-sm">오늘의 조경 날씨 확인하기</span>
                 </button>
             </nav>
         </div>
                 
-        <!-- ✨ 메뉴 접기 버튼 (글씨 크기 16px -> 18px로 1단계 확대) -->
+        <!-- 메뉴 접기 버튼 -->
         <div class="flex justify-center mt-5 relative">
             <button onclick="toggleMainCategory()" class="flex items-center gap-2 text-[18px] font-black text-[#151E2D] hover:bg-[#F4F5F4] active:scale-95 transition-all px-8 py-4 bg-white border border-[#EAEBEA] rounded-full shadow-[0_8px_20px_rgba(255,255,255,0.15)] z-50 tracking-tight">
                 <span id="toggleCategoryText">메뉴 접기 (화면 넓게 쓰기)</span>
@@ -2760,7 +2764,7 @@
       const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView', 'calendarView', 'ledgerView', 'encyclopediaView', 'loungeView'];
       views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
       
-      const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient', 'tabContacts', 'tabCalendar', 'tabLedger', 'tabInquiry'];
+      const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient', 'tabContacts', 'tabCalendar', 'tabLedger'];
       mainTabs.forEach(t => { 
           const el = document.getElementById(t); 
           if(el) {
