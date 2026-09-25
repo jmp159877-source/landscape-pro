@@ -279,11 +279,14 @@
                       <span class="bg-[#84CC16] text-[#151E2D] text-[11.5px] font-black px-2.5 py-1 rounded-lg shrink-0 mt-0.5 shadow-sm tracking-tight">
                           작업 지침
                       </span>
-                      <p id="weatherTip" class="text-[14px] font-extrabold text-white leading-[1.55] break-keep tracking-tight">
+                      <p id="weatherSmartTip" class="text-[14px] font-extrabold text-white leading-[1.55] break-keep tracking-tight">
                           현장 기상 데이터를 기반으로 오늘의 조경 작업 적합도를 분석하고 있습니다.
                       </p>
                   </div>
               </div>
+              <!-- 3722번, 3724번 줄이 찾는 ID를 에러 없이 받아주는 호환 태그 -->
+              <span id="weatherConditionBadge" class="hidden"></span>
+              <i id="weatherBgIcon" class="hidden"></i>
           </div>
               <div class="mt-4 pt-3 border-t border-[#0C4A6E]/10">
                   <p class="text-[13.5px] text-[#0C4A6E] font-bold leading-relaxed break-keep"><span class="font-black bg-[#0C4A6E] text-[#BAE6FD] px-1.5 py-0.5 rounded text-[11px] mr-1">TIP</span> <span id="weatherSmartTip">날씨 기반 현장 팁을 불러오는 중입니다.</span></p>
@@ -3583,7 +3586,7 @@
         if (weatherIsLoaded && !forceRefresh) return;
         const locEl = document.getElementById('weatherLocation');
         const tempEl = document.getElementById('weatherMainTemp');
-        const tipEl = document.getElementById('weatherTip');
+        const tipEl = document.getElementById('weatherSmartTip');
 
         // 위치 영역 터치 시 상세창이 뜨지 않고 오직 '위치 갱신'만 작동하도록 정밀 제어 (e.stopPropagation)
         if (locEl && !locEl.dataset.bound) {
