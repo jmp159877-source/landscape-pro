@@ -1421,11 +1421,29 @@
 
     let currentLensImg = "";
     
+    // 🔥 AI 렌즈 전용 고화질 이미지 변환기 (잎맥과 작은 벌레까지 선명하게 유지)
+    function compressImageForLens(file, callback) {
+        const reader = new FileReader(); reader.readAsDataURL(file);
+        reader.onload = event => {
+            const img = new Image(); img.src = event.target.result;
+            img.onload = () => {
+                const MAX_SIZE = 1600; // 렌즈 판독용으로 해상도를 1600px로 대폭 상향
+                let width = img.width, height = img.height;
+                if (width > height) { if (width > MAX_SIZE) { height = Math.round(height * (MAX_SIZE / width)); width = MAX_SIZE; } }
+                else { if (height > MAX_SIZE) { width = Math.round(width * (MAX_SIZE / height)); height = MAX_SIZE; } }
+                const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height;
+                const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
+                callback(canvas.toDataURL('image/jpeg', 0.9)); // 화질 손실 없도록 압축률 90% 적용
+            };
+        };
+    }
+
     function handleLensUpload(event, type) { 
         const file = event.target.files[0]; 
         if (!file) return; 
-        showLoadingOverlay("실제 AI가 정밀 분석 중입니다..."); 
-        compressImage(file, (base64) => { analyzeImageWithAI(base64, type); }); 
+        showLoadingOverlay("초고화질 스캔 및 AI 정밀 감정 중..."); 
+        // 일반 압축 대신 렌즈 전용 고화질 함수 호출
+        compressImageForLens(file, (base64) => { analyzeImageWithAI(base64, type); }); 
         event.target.value = ''; 
     }
 
@@ -1433,8 +1451,22 @@
         const GOOGLE_PROXY_URL = "https://script.google.com/macros/s/AKfycbysZFaBJt9Iu964hP9rJVjmYHDMMo_TQAocjih4h8q0_im414WA6-23LS6Wm4xQvTJRQw/exec";
 
         const promptText = type === 'plant' 
-            ? "너는 대한민국 최고 권위의 30년 차 조경수목 감정평가사이자 식물분류학자야. 제공된 이미지의 꽃 색상(진분홍, 연분홍, 백색 등), 꽃봉오리 모양, 꽃자루 길이, 잎의 톱니(거치) 유무, 가지의 배열을 극도로 정밀하게 관찰해. 절대 회피성 답변은 하지 말고 한국 조경 실무에서 식재되는 수목 품종(예: 서부해당화, 수서해당화, 꽃사과, 명자나무, 산철쭉 등) 중 가장 일치율이 높은 1~2종을 확정적으로 판정해줘.\n\n📌 최종 판정 수종: [가장 유력한 공식 수목명]\n🌿 주요 식별 포인트: [꽃 색상, 꽃자루, 잎 모양 등 육안 확인된 결정적 특징]\n✂️ 관리 가이드: [해당 수종의 실무 전지 적기 및 관리 유의점 한 줄]"
-            : "너는 대한민국 국립산림과학원 출신의 수목병리학 및 해충방제 최고 전문가야. 사진 속 병반의 색상, 환부 형태, 해충의 외형적 특징을 정밀 진단해줘. \n🚨 진단 결과: [정확한 병명 또는 해충명]\n🛡️ 추천 약제 및 방제법: [농약안전정보시스템 기준 실무 방제 약제 성분 및 현장 조치법]";
+            ? `너는 대한민국 최고 권위의 30년 차 조경수목 감정평가사야. 현장에서 작업자가 즉각 참고할 수 있도록 권위 있고 단호한 전문가 어조('~입니다', '~로 판정합니다')로만 대답해. '아마도', '~인 것 같습니다', '추정됩니다', '정확한 확인은 어렵지만' 같은 자신 없는 회피성 표현은 절대 사용하지 마.
+
+사진 속 잎의 배열, 거치(톱니), 수피, 꽃과 열매의 형태를 정밀 분석해서 한국 조경 실무 기준으로 가장 확실한 1순위 수종을 단정 지어 알려줘.
+
+📌 최종 판정 수종: [확정 수목명 (과명)]
+🔍 핵심 식별 근거: [잎 모양, 수피, 꽃/열매 등 사진에서 확인된 결정적 특징 2~3가지 명확히 서술]
+💡 혼동 주의 수종: [현장에서 헷갈리기 쉬운 유사 수종 1가지와 구별 포인트 한 줄]
+✂️ 실무 관리 핵심: [전지(가지치기) 적기, 내한성, 식재 및 관리 시 주의사항 명확히 지시]`
+            : `너는 대한민국 국립산림과학원 수석 연구원 출신의 수목병리학 및 해충방제 최고 권위자야. 현장에서 즉각 방제 작업을 지시할 수 있도록 단호하고 확신에 찬 어조('~입니다', '~해야 합니다')로만 대답해. '추정됩니다', '~일 수 있습니다' 같은 모호한 표현은 절대 금지한다.
+
+사진 속 병반의 형태, 변색 부위, 해충의 외형을 정밀 판독하여 가장 확실한 진단명을 확정해 줘.
+
+🚨 최종 진단명: [확정 병명 또는 해충명]
+🔍 피해 증상 및 원인: [사진에서 포착된 구체적인 병징/충해 특징과 발생 원인]
+💊 실무 방제 및 추천 약제: [한국 농약안전정보시스템 기준 가장 효과적인 적용 약제(성분명/계통) 및 살포 요령]
+🛡️ 현장 조치 지침: [전염 방지, 피해 가지 제거, 통풍 개선 등 작업자가 당장 실행해야 할 조치]`;
 
         try {
             const response = await fetch(GOOGLE_PROXY_URL, {
@@ -1443,8 +1475,11 @@
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({
                     model: "gpt-4o", 
-                    messages: [{ role: "user", content: [ { type: "text", text: promptText }, { type: "image_url", image_url: { url: base64Image, detail: "high" } } ] }],
-                    max_tokens: 500, temperature: 0.2
+                    messages: [
+                        { role: "system", content: "당신은 추측성 단어를 절대 쓰지 않고, 언제나 확신에 찬 단정형 어조로 명확한 결론을 내리는 30년 경력의 조경 및 수목 의학 최고 권위자입니다." },
+                        { role: "user", content: [ { type: "text", text: promptText }, { type: "image_url", image_url: { url: base64Image, detail: "high" } } ] }
+                    ],
+                    max_tokens: 700, temperature: 0.1
                 })
             });
 
