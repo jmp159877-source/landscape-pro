@@ -3933,16 +3933,13 @@
           }
       });
 
-      window.addEventListener('DOMContentLoaded', () => {
-          setTimeout(() => {
-              const buttons = document.querySelectorAll('#loungeView .grid-cols-2 button');
-              if(buttons.length === 4) {
-                  buttons[0].setAttribute('onclick', "openBoard('불량 거래처 경보')");
-                  buttons[1].setAttribute('onclick', "openBoard('현장 협력·지원')");
-                  buttons[2].setAttribute('onclick', "openBoard('장비·자재 직거래')");
-                  buttons[3].setAttribute('onclick', "openBoard('실무 노하우 공유')");
-              }
-          }, 1500);
+      // ✨ 스마트폰 하단 물리 뒤로가기 버튼 감지 로직
+      window.addEventListener('popstate', function(e) {
+          const board = document.getElementById('boardView');
+          // 게시판이 열려있는 상태에서 뒤로가기를 누르면 앱을 끄지 않고 게시판만 닫음
+          if(board && !board.classList.contains('hidden')) {
+              closeBoard(true);
+          }
       });
   </script>
 <!-- ================= [신규: 커뮤니티 글쓰기 팝업창] ================= -->
