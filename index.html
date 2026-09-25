@@ -28,8 +28,18 @@
     .font-serif { font-family: 'Noto Serif KR', serif; }
     html, body { overscroll-behavior-y: none; }
     * { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background-color: #151E2D; background-image: url('https://www.transparenttextures.com/patterns/stardust.png'); }
-    .glass-nav { background: rgba(21, 30, 45, 0.90); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+    
+    /* 💡 배경 네이비를 한 톤 깊고 차분하게 톤 다운 (#151E2D -> #0B101B) */
+    body { background-color: #0B101B; background-image: url('https://www.transparenttextures.com/patterns/stardust.png'); }
+    .glass-nav { background: rgba(11, 16, 27, 0.94); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+    
+    /* 💡 버튼 안의 네이비 색감은 그대로 살리고 테두리를 또렷하게 잡아 입체감 극대화 */
+    #mainCategoryWrapper nav button.bg-white\/5 {
+      background-color: #1B2638 !important;
+      border-color: rgba(255, 255, 255, 0.18) !important;
+      box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.5) !important;
+    }
+
     .luxury-shadow { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35); } 
     .print-card { background: linear-gradient(145deg, #FFFFFF 0%, #FCFAF6 100%); border: 1px solid rgba(197, 168, 128, 0.3); }
     div[class*="tiiny"], div[id*="tiiny"], iframe[src*="tiiny"], a[href*="tiiny.host"], .netlify-badge, #netlify-badge, iframe[src*="netlify"], div[style*="z-index: 2147483647"], div[style*="z-index: 9999999"], .disclaimer, #disclaimer { display: none !important; }
