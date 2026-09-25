@@ -1562,9 +1562,12 @@
             
             // 🔥 클라우드에서 일정(캘린더) 데이터 가져오기
             schedules = cloudData.schedules ? (Array.isArray(cloudData.schedules) ? cloudData.schedules : Object.values(cloudData.schedules)).filter(Boolean) : [];
+            ledgers = cloudData.ledgers ? (Array.isArray(cloudData.ledgers) ? cloudData.ledgers : Object.values(cloudData.ledgers)).filter(Boolean) : (JSON.parse(localStorage.getItem('shinhwa_pro_ledgers')) || []);
+            localStorage.setItem('shinhwa_pro_ledgers', JSON.stringify(ledgers));
 
             renderClientSelect(); renderClientsList(); renderQuoteList(); renderContactsList();
-            renderCalendar(); renderScheduleList(); // 🔥 일정 목록도 앱 켤 때 자동 갱신
+            renderCalendar(); renderScheduleList();
+            renderLedgerCalendar(); renderLedgerList();
 
             const badge = document.getElementById('cloudStatusBadge'); if(badge) { badge.innerHTML = '<i data-lucide="cloud-check" class="w-3 h-3"></i> 보안 연동됨'; }
         } catch(e) { alert("동기화 실패"); } finally { lucide.createIcons(); }
@@ -1787,7 +1790,7 @@
         let inputEl = document.getElementById(`quoteDesc_${inputIdx}`);
         if(btn.classList.contains('bg-[#151E2D]')) btn.className = "single-tag-btn px-2.5 py-1.5 text-[11px] rounded-[8px] font-black bg-white border border-[#EAEBEA] text-[#4E5968] transition-colors";
         else btn.className = "single-tag-btn px-2.5 py-1.5 text-[11px] rounded-[8px] font-black bg-[#151E2D] text-[#84CC16] transition-colors";
-        let activeTags = []; btn.parentElement.querySelectorAll('.single-tag-btn.bg-\\[\\#12261E\\]').forEach(t => activeTags.push(t.innerText)); inputEl.value = activeTags.join(', ');
+        let activeTags = []; btn.parentElement.querySelectorAll('.single-tag-btn.bg-\\[\\#151E2D\\]').forEach(t => activeTags.push(t.innerText)); inputEl.value = activeTags.join(', ');
     }
 
     function loadQuoteTemplate(type) {
@@ -2028,7 +2031,7 @@
         if(document.getElementById('inputTreePruning')) document.getElementById('inputTreePruning').value = ''; 
         if(document.getElementById('inputExtraCategory')) document.getElementById('inputExtraCategory').value = '';
 
-        beforeImages = []; afterImages = []; issueImages = []; renderThumbList('before'); renderThumbList('after'); renderThumbList('issue');
+        beforeImages = []; duringImages = []; afterImages = []; issueImages = []; renderThumbList('before'); renderThumbList('during'); renderThumbList('after'); renderThumbList('issue');
       } catch (e) { alert("오류가 발생했습니다."); } finally { document.getElementById('loadingOverlay')?.remove(); lucide.createIcons(); }
     }
     async function generateQuote() {
