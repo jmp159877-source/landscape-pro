@@ -2776,29 +2776,35 @@
         const icon = document.getElementById('toggleCategoryIcon');
         if(!wrapper) return;
 
-        // forceState가 'collapse'면 무조건 접기, 'expand'면 무조건 펼치기
         const targetState = forceState !== null ? (forceState === 'collapse') : !isCategoryCollapsed;
 
         if (targetState) {
-            // 접기 모드 (숨김)
+            // 접기 모드: 눈에서도 숨기고, 터치(클릭)도 100% 통과하도록 완전 차단!
             wrapper.style.maxHeight = '0px';
             wrapper.style.opacity = '0';
-            wrapper.style.marginTop = '-10px';
+            wrapper.style.overflow = 'hidden';
+            wrapper.style.pointerEvents = 'none';
+            wrapper.style.marginTop = '0px';
+            wrapper.style.paddingTop = '0px';
+            wrapper.style.borderTopWidth = '0px';
             text.innerText = '메뉴 펼치기 (다른 탭 이동)';
-            icon.setAttribute('data-lucide', 'chevron-down');
+            icon.setAttribute('data-lucide', 'arrow-down');
             isCategoryCollapsed = true;
         } else {
-            // 펼치기 모드 (보임)
-            wrapper.style.maxHeight = '800px';
+            // 펼치기 모드: 다시 보이게 하고 터치 활성화!
+            wrapper.style.maxHeight = '900px';
             wrapper.style.opacity = '1';
-            wrapper.style.marginTop = '0px';
+            wrapper.style.overflow = 'visible';
+            wrapper.style.pointerEvents = 'auto';
+            wrapper.style.marginTop = '22px';
+            wrapper.style.paddingTop = '22px';
+            wrapper.style.borderTopWidth = '1px';
             text.innerText = '메뉴 접기 (화면 넓게 쓰기)';
-            icon.setAttribute('data-lucide', 'chevron-up');
+            icon.setAttribute('data-lucide', 'arrow-up');
             isCategoryCollapsed = false;
         }
         if(typeof lucide !== 'undefined') lucide.createIcons();
     }
-
     function switchView(mode, pushHistory = true) {
       const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView', 'calendarView', 'ledgerView', 'encyclopediaView', 'loungeView'];
       views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
