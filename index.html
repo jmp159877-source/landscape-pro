@@ -3747,17 +3747,23 @@
                 const code = wData.hourly.weathercode[i]; const hInfo = getWeatherInfo(code);
 
                 let precipProb = wData.hourly.precipitation_probability[i] || 0;
-                let precipAmt = wData.hourly.precipitation[i] || 0;
+                let precipAmt = Number((wData.hourly.precipitation[i] || 0).toFixed(1));
                 if(precipAmt === 0) precipProb = 0;
 
                 const isNow = i === currentHourIndex;
 
-                // 💡 강수확률: 원색 파랑 대신 세련된 민트그린/차분한 회색으로 표시
-                let hourlyRain = precipProb > 0
-                    ? `<div class="text-[11.5px] font-black text-[#0D9488] bg-[#CCFBF1] px-1.5 py-0.5 rounded-md mt-1.5 flex items-center gap-0.5"><i data-lucide="droplet" class="w-3 h-3"></i>${precipProb}%</div>`
-                    : `<div class="text-[11px] font-bold text-[#94A3B8] mt-1.5 flex items-center gap-0.5">맑음</div>`;
+                // 💡 시간별 강수확률(%) + 예상 강수량(mm) 2단 표시 (주간 날씨와 완벽 통일)
+                let hourlyRain = (precipProb > 0 && precipAmt > 0)
+                    ? `<div class="flex flex-col items-center justify-center bg-[#CCFBF1] border border-[#99F6E4] px-2 py-1 rounded-[10px] mt-1.5 leading-tight w-full">
+                           <span class="text-[12px] font-black text-[#0D9488] flex items-center gap-0.5"><i data-lucide="droplet" class="w-3 h-3 shrink-0"></i>${precipProb}%</span>
+                           <span class="text-[10.5px] font-extrabold text-[#0F766E] whitespace-nowrap">(${precipAmt}mm)</span>
+                       </div>`
+                    : `<div class="flex flex-col items-center justify-center ${isNow ? 'bg-white/60' : 'bg-white'} border border-[#E2E8F0]/80 px-2 py-1 rounded-[10px] mt-1.5 leading-tight w-full">
+                           <span class="text-[11.5px] font-extrabold text-[#65A30D]">강수 0%</span>
+                           <span class="text-[10px] font-bold text-[#94A3B8]">0mm</span>
+                       </div>`;
 
-                // 💡 '지금' 카드는 화사한 햇살 옐로우(#FEF08A), 나머지 카드는 깨끗한 순백색(#FFFFFF)
+                // '지금' 카드는 화사한 햇살 옐로우(#FEF08A), 나머지 카드는 깨끗한 화이트톤
                 const bgClass = isNow 
                     ? "bg-gradient-to-b from-[#FEF08A] to-[#FDE047] border-2 border-[#EAB308] shadow-md" 
                     : "bg-[#F8FAFC] border border-[#E2E8F0]";
@@ -3765,7 +3771,7 @@
                 const iconColor = code <= 1 ? "text-[#F59E0B]" : (precipProb > 0 ? "text-[#0D9488]" : "text-[#65A30D]");
 
                 hourlyContainer.innerHTML += `
-                    <div class="flex flex-col items-center justify-center ${bgClass} rounded-[20px] min-w-[78px] py-3.5 px-2 shrink-0">
+                    <div class="flex flex-col items-center justify-center ${bgClass} rounded-[20px] min-w-[82px] py-3.5 px-2 shrink-0">
                         ${badgeHtml}
                         <span class="tracking-tight ${timeClass} mb-1.5">${timeDisplay}</span>
                         <i data-lucide="${hInfo.icon}" class="w-7 h-7 ${iconColor} mb-1.5 stroke-[2.2]"></i>
