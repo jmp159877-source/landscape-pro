@@ -3775,7 +3775,7 @@
                 `;
             }
 
-            // 💡 주간 날씨 보기 (네이버 스타일 '오전 / 오후' 정밀 분할 브리핑 탑재)
+            // 💡 주간 날씨 보기 (네이버 스타일 '오전 / 오후' 분할 + 예상 강수량 mm 정밀 합산)
             const dailyContainer = document.getElementById('dailyWeatherContainer');
             dailyContainer.innerHTML = '';
             const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
@@ -3792,7 +3792,7 @@
 
                 const dayColor = i <= 2 ? 'text-[#4D7C0F]' : 'text-[#151E2D]';
 
-                // ☀️ 오전(09시 기준) & 🌤️ 오후(15시 기준) 시간별 인덱스 정밀 계산 (i일째 * 24시간)
+                // ☀️ 오전(09시 대표) & 🌤️ 오후(15시 대표) 인덱스
                 const amIdx = i * 24 + 9;
                 const pmIdx = i * 24 + 15;
                 const hasAmPm = wData.hourly && wData.hourly.weathercode && wData.hourly.weathercode[pmIdx] !== undefined;
@@ -3800,57 +3800,70 @@
                 let centerWeatherHtml = '';
 
                 if (hasAmPm) {
-                    // 오전(06~11시) 및 오후(12~18시) 구간 최대 강수확률 및 대표 날씨 추출
                     const amCode = wData.hourly.weathercode[amIdx];
                     const pmCode = wData.hourly.weathercode[pmIdx];
                     const amInfo = getWeatherInfo(amCode);
                     const pmInfo = getWeatherInfo(pmCode);
 
-                    const amSlice = wData.hourly.precipitation_probability.slice(i * 24 + 6, i * 24 + 12);
-                    const pmSlice = wData.hourly.precipitation_probability.slice(i * 24 + 12, i * 24 + 19);
-                    const amRainSlice = wData.hourly.precipitation.slice(i * 24 + 6, i * 24 + 12);
-                    const pmRainSlice = wData.hourly.precipitation.slice(i * 24 + 12, i * 24 + 19);
+                    // 오전(00~12시) 및 오후(12~24시) 강수확률 및 예상 강수량(mm) 정밀 추출
+                    const amProbSlice = wData.hourly.precipitation_probability.slice(i * 24, i * 24 + 12);
+                    const pmProbSlice = wData.hourly.precipitation_probability.slice(i * 24 + 12, i * 24 + 24);
+                    const amRainSlice = wData.hourly.precipitation.slice(i * 24, i * 24 + 12);
+                    const pmRainSlice = wData.hourly.precipitation.slice(i * 24 + 12, i * 24 + 24);
 
-                    let amProb = Math.max(...amSlice, 0);
-                    let pmProb = Math.max(...pmSlice, 0);
-                    if (Math.max(...amRainSlice, 0) === 0) amProb = 0;
-                    if (Math.max(...pmRainSlice, 0) === 0) pmProb = 0;
+                    // 시간대별 총 강수량(mm) 합산 (소수점 1자리까지 깔끔하게 반올림)
+                    const amSum = Number(amRainSlice.reduce((acc, val) => acc + (val || 0), 0).toFixed(1));
+                    const pmSum = Number(pmRainSlice.reduce((acc, val) => acc + (val || 0), 0).toFixed(1));
 
-                    const amIconColor = amCode <= 1 ? 'text-[#F59E0B]' : (amProb >= 30 ? 'text-[#0D9488]' : 'text-[#65A30D]');
-                    const pmIconColor = pmCode <= 1 ? 'text-[#F59E0B]' : (pmProb >= 30 ? 'text-[#0D9488]' : 'text-[#65A30D]');
+                    let amProb = Math.max(...amProbSlice, 0);
+                    let pmProb = Math.max(...pmProbSlice, 0);
+                    if (amSum === 0) amProb = 0;
+                    if (pmSum === 0) pmProb = 0;
 
-                    const amBadge = amProb > 0 ? `<span class="text-[#0D9488] font-black">${amProb}%</span>` : `<span class="text-[#65A30D] font-extrabold">${amInfo.text}</span>`;
-                    const pmBadge = pmProb > 0 ? `<span class="text-[#0D9488] font-black">${pmProb}%</span>` : `<span class="text-[#65A30D] font-extrabold">${pmInfo.text}</span>`;
+                    const amIconColor = amCode <= 1 ? 'text-[#F59E0B]' : (amProb > 0 ? 'text-[#0D9488]' : 'text-[#65A30D]');
+                    const pmIconColor = pmCode <= 1 ? 'text-[#F59E0B]' : (pmProb > 0 ? 'text-[#0D9488]' : 'text-[#65A30D]');
+
+                    // 💡 비가 올 때는 [확률% + (예상 mm)]를 함께 표시하고, 비가 안 올 때는 날씨 상태 표시
+                    const amBadge = (amProb > 0 && amSum > 0)
+                        ? `<div class="flex flex-col items-center leading-tight"><span class="text-[12.5px] text-[#0D9488] font-black">${amProb}%</span><span class="text-[11px] text-[#0F766E] font-extrabold">(${amSum}mm)</span></div>`
+                        : `<div class="flex flex-col items-center leading-tight"><span class="text-[12px] text-[#65A30D] font-extrabold">${amInfo.text}</span><span class="text-[10.5px] text-[#94A3B8] font-bold">0mm</span></div>`;
+
+                    const pmBadge = (pmProb > 0 && pmSum > 0)
+                        ? `<div class="flex flex-col items-center leading-tight"><span class="text-[12.5px] text-[#0D9488] font-black">${pmProb}%</span><span class="text-[11px] text-[#0F766E] font-extrabold">(${pmSum}mm)</span></div>`
+                        : `<div class="flex flex-col items-center leading-tight"><span class="text-[12px] text-[#65A30D] font-extrabold">${pmInfo.text}</span><span class="text-[10.5px] text-[#94A3B8] font-bold">0mm</span></div>`;
 
                     centerWeatherHtml = `
                         <div class="flex-1 grid grid-cols-2 gap-1.5 px-1">
                             <!-- 오전 박스 -->
-                            <div class="bg-[#F8FAFC] border border-[#E2E8F0] rounded-[14px] px-2.5 py-2 flex flex-col items-center justify-center">
+                            <div class="bg-[#F8FAFC] border border-[#E2E8F0] rounded-[14px] px-2 py-2 flex flex-col items-center justify-center">
                                 <span class="text-[11px] font-extrabold text-[#64748B] mb-1">오전</span>
                                 <i data-lucide="${amInfo.icon}" class="w-5 h-5 ${amIconColor} mb-1 stroke-[2.2]"></i>
-                                <div class="text-[12px] tracking-tight whitespace-nowrap">${amBadge}</div>
+                                <div class=" tracking-tight whitespace-nowrap">${amBadge}</div>
                             </div>
                             <!-- 오후 박스 -->
-                            <div class="bg-[#F8FAFC] border border-[#E2E8F0] rounded-[14px] px-2.5 py-2 flex flex-col items-center justify-center">
+                            <div class="bg-[#F8FAFC] border border-[#E2E8F0] rounded-[14px] px-2 py-2 flex flex-col items-center justify-center">
                                 <span class="text-[11px] font-extrabold text-[#64748B] mb-1">오후</span>
                                 <i data-lucide="${pmInfo.icon}" class="w-5 h-5 ${pmIconColor} mb-1 stroke-[2.2]"></i>
-                                <div class="text-[12px] tracking-tight whitespace-nowrap">${pmBadge}</div>
+                                <div class="tracking-tight whitespace-nowrap">${pmBadge}</div>
                             </div>
                         </div>
                     `;
                 } else {
                     const iconBox = dCode <= 1 ? 'bg-[#FEF9C3] border-[#FDE047] text-[#D97706]' : 'bg-[#ECFCCB] border-[#D9F99D] text-[#65A30D]';
+                    const fallbackRain = (dProb > 0 && dSum > 0) ? `${dProb}% (${dSum}mm)` : '0mm';
                     centerWeatherHtml = `
                         <div class="flex-1 flex items-center gap-2.5 min-w-0 px-1">
                             <div class="w-10 h-10 rounded-[14px] border ${iconBox} flex items-center justify-center shrink-0">
                                 <i data-lucide="${dInfo.icon}" class="w-5 h-5 stroke-[2.2]"></i>
                             </div>
-                            <div class="text-[15px] font-black text-[#151E2D] truncate">${dInfo.text}</div>
+                            <div class="min-w-0">
+                                <div class="text-[15px] font-black text-[#151E2D] truncate">${dInfo.text}</div>
+                                <div class="text-[12px] font-extrabold text-[#0D9488]">${fallbackRain}</div>
+                            </div>
                         </div>
                     `;
                 }
 
-                // 내일·모레 카드는 햇살 연두 테두리로 한 번 더 강조
                 const cardBorder = i <= 2 ? 'border-[1.5px] border-[#84CC16]/60 bg-[#FAFAF9]' : 'border border-[#E2E8F0] bg-white';
 
                 dailyContainer.innerHTML += `
@@ -3860,7 +3873,7 @@
                             <div class="text-[16px] font-black ${dayColor} tracking-tight leading-tight">${dayName}</div>
                             <div class="text-[12px] font-bold text-[#94A3B8] mt-0.5">${dateStr}</div>
                         </div>
-                        <!-- 중앙 [오전 / 오후] 2분할 날씨 브리핑 -->
+                        <!-- 중앙 [오전 / 오후] 2분할 날씨 및 강수량(mm) 브리핑 -->
                         ${centerWeatherHtml}
                         <!-- 우측 최저/최고 기온 -->
                         <div class="text-right shrink-0 bg-[#F8FAFC] px-2.5 py-2 rounded-[14px] border border-[#E2E8F0]">
