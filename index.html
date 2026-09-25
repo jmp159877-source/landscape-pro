@@ -215,12 +215,18 @@
                 </button>
 
                 <!-- 11. AI 수목검색 렌즈 (텍스트 수정 및 폰트 크기 확대) -->
-                <button id="tabLens" onclick="switchView('lens')" class="w-full py-5 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md">
-                    <i data-lucide="scan-line" class="w-6 h-6 text-[#151E2D]"></i>
-                    <span class="text-[14px] font-black text-[#151E2D] tracking-tight">AI 수목검색 렌즈</span>
-                </button>
-            </nav>
-        </div>
+          <button id="tabLens" onclick="switchView('lens')" class="w-full py-5 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex flex-col items-center justify-center gap-1.5">
+              <i data-lucide="scan-line" class="w-6 h-6 text-[#151E2D]"></i>
+              <span class="text-[14px] font-black text-[#151E2D] tracking-tight">AI 수목검색 렌즈</span>
+          </button>
+
+          <!-- 12. 오늘의 조경 날씨 (11번과 100% 동일한 크기·모양 규격 + 시원한 스카이 블루 컬러) -->
+          <button id="tabWeather" onclick="loadRealWeather(); openWeatherModal();" class="w-full py-5 rounded-[20px] bg-[#38BDF8] border border-[#38BDF8] shadow-[0_4px_15px_rgba(56,189,248,0.3)] hover:bg-[#7DD3FC] transition-all flex flex-col items-center justify-center gap-1.5">
+              <i data-lucide="cloud-sun" class="w-6 h-6 text-[#151E2D]"></i>
+              <span class="text-[14px] font-black text-[#151E2D] tracking-tight">오늘의 조경 날씨</span>
+          </button>
+        </nav>
+      </div>
                 <!-- 12번째 카테고리: 오늘의 조경 날씨 (로얄 오션 블루 시그니처 컬러) -->
           <button onclick="loadRealWeather(); openWeatherModal();" class="relative overflow-hidden rounded-[22px] p-4 text-left flex flex-col justify-between shadow-[0_8px_20px_rgba(2,132,199,0.3)] border border-sky-300/40 transition-all active:scale-95 group" style="background: linear-gradient(135deg, #0369A1 0%, #0284C7 55%, #0EA5E9 100%);">
               <i data-lucide="cloud-sun" class="w-20 h-20 text-white/15 absolute -right-2 -bottom-2 pointer-events-none transition-transform group-hover:scale-110"></i>
