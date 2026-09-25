@@ -509,116 +509,146 @@
     <!-- ================= [2. 견적서 작성 화면] ================= -->
     <section id="quoteAdminView" class="hidden space-y-5">
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5 relative overflow-hidden">
-        <div class="flex items-center justify-between pb-4 border-b border-[#F4F5F4] relative z-10">
-          <h2 class="text-[18px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="calculator" class="w-5 h-5 text-[#84CC16]"></i> 견적 기본 정보</h2>
+        <div class="flex items-center justify-between pb-4 border-b-2 border-[#F1F5F9] relative z-10">
+          <h2 class="text-[22px] font-black text-[#151E2D] flex items-center gap-2 tracking-tight">
+            <i data-lucide="calculator" class="w-6 h-6 text-[#84CC16] stroke-[2.5]"></i> 견적 기본 정보
+          </h2>
         </div>
+
         <div class="relative z-10">
-          <label class="block text-[13px] font-black text-[#151E2D] mb-2">고객명 / 현장명</label>
-          <input type="text" id="quoteClientSelect" autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" placeholder="고객명 직접 입력" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16]">
+          <label class="block text-[17px] font-black text-[#151E2D] mb-2">고객명 / 현장명</label>
+          <input type="text" id="quoteClientSelect" autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" placeholder="고객명 직접 입력" class="w-full bg-[#F9F9F8] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 py-4 text-[17px] font-black text-[#151E2D] placeholder:text-[#94A3B8] placeholder:font-bold placeholder:text-[13.5px] focus:outline-none focus:border-[#84CC16]">
         </div>
+
         <div class="grid grid-cols-2 gap-3 relative z-10 mt-3">
-          <div><label class="block text-[13px] font-black text-[#151E2D] mb-2">연락처</label><input type="tel" id="quoteInputClientPhone" oninput="autoHyphen(this)" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16]"></div>
-          <div><label class="block text-[13px] font-black text-[#151E2D] mb-2">견적 제목</label><input type="text" id="quoteInputRound" value="연간 정기 조경 관리 견적서" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16]"></div>
+          <div>
+            <label class="block text-[17px] font-black text-[#151E2D] mb-2">연락처</label>
+            <input type="tel" id="quoteInputClientPhone" oninput="autoHyphen(this)" placeholder="연락처 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 py-4 text-[17px] font-black text-[#151E2D] placeholder:text-[#94A3B8] placeholder:font-bold placeholder:text-[13.5px] focus:outline-none focus:border-[#84CC16]">
+          </div>
+          <div>
+            <label class="block text-[17px] font-black text-[#151E2D] mb-2">견적 제목</label>
+            <input type="text" id="quoteInputRound" value="연간 정기 조경 관리 견적서" autocomplete="off" class="w-full bg-[#F9F9F8] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 py-4 text-[16.5px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16]">
+          </div>
         </div>
+
         <div class="relative z-10 mt-1">
-          <label class="block text-[13px] font-black text-[#151E2D] mb-2">현장 주소</label>
-          <input type="text" id="quoteInputClientAddress" placeholder="현장주소 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 text-[15px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16]">
+          <label class="block text-[17px] font-black text-[#151E2D] mb-2">현장 주소</label>
+          <input type="text" id="quoteInputClientAddress" placeholder="현장주소 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 py-4 text-[17px] font-black text-[#151E2D] placeholder:text-[#94A3B8] placeholder:font-bold placeholder:text-[13.5px] focus:outline-none focus:border-[#84CC16]">
         </div>
-        <div class="pt-2 relative z-10">
-          <label class="block text-[13px] font-black text-[#151E2D] uppercase tracking-wider mb-2">맞춤형 견적 템플릿 (터치 시 자동 작성)</label>
-          <div class="grid grid-cols-2 gap-2">
-            <button onclick="loadQuoteTemplate('single')" class="py-3.5 bg-[#FFF8ED] text-[#F59E0B] border border-[#F59E0B]/40 rounded-[14px] font-black text-[13px] hover:bg-[#F59E0B] hover:text-white transition-all flex flex-col items-center justify-center"><span>단건 의뢰</span><span class="text-[11px] font-bold mt-0.5">(VAT 별도)</span></button>
-            <button onclick="loadQuoteTemplate('residential')" class="py-3.5 bg-[#F2FBEC] text-[#65A30D] border border-[#84CC16]/40 rounded-[14px] font-black text-[14px] hover:bg-[#84CC16] hover:text-white transition-all flex flex-col items-center justify-center"><span>개인주택</span><span class="text-[11px] font-bold mt-0.5">(VAT 면제)</span></button>
-            <button onclick="loadQuoteTemplate('commercial')" class="py-3.5 bg-[#F0F4F8] text-[#3B82F6] border border-[#3B82F6]/40 rounded-[14px] font-black text-[14px] hover:bg-[#3B82F6] hover:text-white transition-all flex flex-col items-center justify-center"><span>상업/빌딩</span><span class="text-[11px] font-bold mt-0.5">(VAT 10%)</span></button>
-            <button onclick="loadQuoteTemplate('construction')" class="py-3.5 bg-[#F3E8FF] text-[#8B5CF6] border border-[#8B5CF6]/40 rounded-[14px] font-black text-[14px] hover:bg-[#8B5CF6] hover:text-white transition-all flex flex-col items-center justify-center"><span>조경공사</span><span class="text-[11px] font-bold mt-0.5">(맞춤 견적)</span></button>
+
+        <!-- 💡 맞춤형 견적 템플릿 (흐릿한 파스텔톤 제거 -> 선명한 고대비 테두리 & 17px 굵은 글씨) -->
+        <div class="pt-4 border-t-2 border-[#F1F5F9] relative z-10">
+          <label class="block text-[17px] font-black text-[#151E2D] mb-3 flex items-center gap-1.5">
+            <i data-lucide="sparkles" class="w-5 h-5 text-[#65A30D]"></i> 맞춤형 견적 템플릿 <span class="text-[13.5px] font-extrabold text-[#65A30D]">(터치 시 자동 작성)</span>
+          </label>
+          <div class="grid grid-cols-2 gap-2.5">
+            <button onclick="loadQuoteTemplate('single')" class="py-4 bg-[#FEF3C7] text-[#92400E] border-2 border-[#F59E0B] rounded-[16px] font-black text-[17px] hover:bg-[#F59E0B] hover:text-white transition-all flex flex-col items-center justify-center shadow-sm active:scale-95">
+              <span>단건 의뢰</span>
+              <span class="text-[13px] font-extrabold mt-0.5 opacity-90">(VAT 별도)</span>
+            </button>
+            <button onclick="loadQuoteTemplate('residential')" class="py-4 bg-[#ECFCCB] text-[#365314] border-2 border-[#84CC16] rounded-[16px] font-black text-[17px] hover:bg-[#84CC16] hover:text-[#151E2D] transition-all flex flex-col items-center justify-center shadow-sm active:scale-95">
+              <span>개인주택</span>
+              <span class="text-[13px] font-extrabold mt-0.5 opacity-90">(VAT 면제)</span>
+            </button>
+            <button onclick="loadQuoteTemplate('commercial')" class="py-4 bg-[#E0F2FE] text-[#075985] border-2 border-[#0284C7] rounded-[16px] font-black text-[17px] hover:bg-[#0284C7] hover:text-white transition-all flex flex-col items-center justify-center shadow-sm active:scale-95">
+              <span>상업/빌딩</span>
+              <span class="text-[13px] font-extrabold mt-0.5 opacity-90">(VAT 10%)</span>
+            </button>
+            <button onclick="loadQuoteTemplate('construction')" class="py-4 bg-[#F3E8FF] text-[#5B21B6] border-2 border-[#8B5CF6] rounded-[16px] font-black text-[17px] hover:bg-[#8B5CF6] hover:text-white transition-all flex flex-col items-center justify-center shadow-sm active:scale-95">
+              <span>조경공사</span>
+              <span class="text-[13px] font-extrabold mt-0.5 opacity-90">(맞춤 견적)</span>
+            </button>
           </div>
         </div>
       </div>
 
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-4">
-        <div class="flex items-center justify-between mb-2">
-          <label class="block text-[18px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="package-search" class="w-5 h-5 text-[#84CC16]"></i> 자재 단가 정보 (관리자용)</label>
-          <button onclick="openMaterialModal()" class="text-[13px] font-black bg-[#151E2D] text-[#84CC16] px-4 py-2.5 rounded-[12px] shadow-md flex items-center gap-1.5 hover:bg-black"><i data-lucide="external-link" class="w-4 h-4"></i> 단가표 열기</button>
+        <div class="flex items-center justify-between">
+          <label class="block text-[19px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="package-search" class="w-6 h-6 text-[#84CC16] stroke-[2.5]"></i> 자재 단가 정보 <span class="text-[14px] text-[#64748B] font-extrabold">(관리자용)</span></label>
+          <button onclick="openMaterialModal()" class="text-[15px] font-black bg-[#151E2D] text-[#84CC16] px-4 py-3 rounded-[14px] shadow-md flex items-center gap-1.5 hover:bg-black shrink-0"><i data-lucide="external-link" class="w-4 h-4"></i> 단가표 열기</button>
         </div>
       </div>
 
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-4">
-        <label class="block text-[18px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="camera" class="w-5 h-5 text-[#84CC16]"></i> 현장 상태 사진 <span class="text-[12px] text-red-500 font-black ml-1 bg-red-5 px-2.5 py-1 rounded-md border border-red-100">(내부 기록용)</span></label>
+        <label class="block text-[20px] font-black text-[#151E2D] flex items-center flex-wrap gap-2"><i data-lucide="camera" class="w-6 h-6 text-[#84CC16] stroke-[2.5]"></i> 현장 상태 사진 <span class="text-[13.5px] text-red-600 font-black bg-red-50 px-2.5 py-1 rounded-lg border border-red-200">(내부 기록용)</span></label>
         <div class="flex gap-2.5 overflow-x-auto pb-2" id="quoteThumbRow">
-          <label class="flex-shrink-0 w-24 h-24 rounded-[18px] border-[1.5px] border-dashed border-[#D4D8D4] bg-[#FAFAFA] flex flex-col items-center justify-center cursor-pointer hover:border-[#84CC16] hover:bg-[#F2FBEC] transition-all"><i data-lucide="plus" class="w-6 h-6 text-[#4E5968] mb-1.5"></i><span class="text-[12px] font-black text-[#151E2D]">추가하기</span><input type="file" accept="image/*" multiple onchange="handleQuoteImageUpload(event)" class="hidden"></label>
+          <label class="flex-shrink-0 w-24 h-24 rounded-[18px] border-2 border-dashed border-[#CBD5E1] bg-[#FAFAFA] flex flex-col items-center justify-center cursor-pointer hover:border-[#84CC16] hover:bg-[#F2FBEC] transition-all"><i data-lucide="plus" class="w-7 h-7 text-[#151E2D] mb-1"></i><span class="text-[14px] font-black text-[#151E2D]">추가하기</span><input type="file" accept="image/*" multiple onchange="handleQuoteImageUpload(event)" class="hidden"></label>
           <div id="quoteThumbList" class="flex gap-2.5"></div>
         </div>
       </div>
 
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-4">
         <div class="flex items-center justify-between mb-2">
-          <label class="block text-[18px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="list" class="w-5 h-5 text-[#84CC16]"></i> 세부 견적 내역</label>
+          <label class="block text-[20px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="list" class="w-6 h-6 text-[#84CC16] stroke-[2.5]"></i> 세부 견적 내역</label>
         </div>
         <div id="quoteItemsContainer" class="space-y-3"></div>
-        <button id="btnAddQuoteRow" onclick="addQuoteRow()" class="w-full py-4 mt-2 border-2 border-dashed border-[#84CC16]/60 bg-[#F2FBEC] text-[#65A30D] rounded-[16px] font-black text-[14px] hover:bg-[#E8F5E9] transition-all flex items-center justify-center gap-1.5"><i data-lucide="plus-circle" class="w-5 h-5"></i> 견적 항목 추가하기</button>
+        <button id="btnAddQuoteRow" onclick="addQuoteRow()" class="w-full py-4 mt-2 border-2 border-dashed border-[#84CC16] bg-[#F2FBEC] text-[#3F6212] rounded-[16px] font-black text-[16px] hover:bg-[#E8F5E9] transition-all flex items-center justify-center gap-2"><i data-lucide="plus-circle" class="w-5 h-5 stroke-[2.5]"></i> 견적 항목 추가하기</button>
       </div>
 
-      <div class="bg-[#151E2D] rounded-[28px] p-6 luxury-shadow space-y-3 text-white border border-[#1c3829]">
-        <div class="flex justify-between items-center text-[15px] font-extrabold"><span>공급가액 총합</span><span id="quoteSubtotal">0원</span></div>
-        <div class="flex justify-between items-center text-[14px] text-[#A3A8A3] font-bold pb-3 border-b border-white/10"><span id="quoteVatLabel">부가가치세</span><span id="quoteVat">0원</span></div>
-        <div class="flex justify-between items-center pt-1"><span class="text-[18px] font-black text-white">견적 총액</span><span id="quoteGrandTotal" class="text-[20px] font-black text-[#84CC16]">0원</span></div>
+      <div class="bg-[#151E2D] rounded-[28px] p-6 luxury-shadow space-y-3.5 text-white border border-[#1c3829]">
+        <div class="flex justify-between items-center text-[17px] font-extrabold"><span>공급가액 총합</span><span id="quoteSubtotal">0원</span></div>
+        <div class="flex justify-between items-center text-[16px] text-[#CBD5E1] font-bold pb-3.5 border-b border-white/15"><span id="quoteVatLabel">부가가치세</span><span id="quoteVat">0원</span></div>
+        <div class="flex justify-between items-center pt-1"><span class="text-[20px] font-black text-white">견적 총액</span><span id="quoteGrandTotal" class="text-[24px] font-black text-[#84CC16]">0원</span></div>
       </div>
 
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-3 mt-4">
-        <label class="block text-[18px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="pen-tool" class="w-5 h-5 text-[#84CC16]"></i> 참고 및 특이사항</label>
-        <textarea id="quoteInputMemo" rows="3" placeholder="견적서 하단 특이사항" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[18px] p-4 text-[15px] font-bold focus:outline-none focus:border-[#84CC16]"></textarea>
+        <label class="block text-[20px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="pen-tool" class="w-6 h-6 text-[#84CC16] stroke-[2.5]"></i> 참고 및 특이사항</label>
+        <textarea id="quoteInputMemo" rows="3" placeholder="견적서 하단 특이사항 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border-[1.5px] border-[#CBD5E1] rounded-[18px] p-4 text-[17px] font-black text-[#151E2D] placeholder:text-[#94A3B8] placeholder:font-bold placeholder:text-[13.5px] focus:outline-none focus:border-[#84CC16]"></textarea>
       </div>
 
       <button id="btnGenerateQuote" onclick="generateQuote()" class="w-full py-5 bg-[#84CC16] text-[#151E2D] rounded-[22px] font-black text-[20px] flex items-center justify-center gap-3 shadow-[0_10px_25px_rgba(132,204,22,0.4)] hover:bg-[#9BE32D] active:scale-[0.98] transition-all mt-4 mb-4"><i data-lucide="file-check-2" class="w-6 h-6 stroke-[2.5]"></i> 견적서 발행 및 보관함 저장</button>
     </section>
 
+    <!-- ================= [3. 견적 보관함 화면] ================= -->
     <section id="quoteListView" class="hidden space-y-4">
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
-        <div class="flex items-center justify-between pb-4 border-b border-[#F4F5F4]">
-          <h2 class="text-[18px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="folder-open" class="w-6 h-6 text-[#84CC16]"></i> 발행된 견적서 보관함</h2>
-          <span id="quoteCountBadge" class="text-[13px] font-black bg-[#151E2D] text-[#84CC16] px-3 py-1.5 rounded-lg shadow-sm">0건</span>
+        <div class="flex items-center justify-between pb-4 border-b-2 border-[#F1F5F9]">
+          <h2 class="text-[22px] font-black text-[#151E2D] flex items-center gap-2 tracking-tight"><i data-lucide="folder-open" class="w-6 h-6 text-[#84CC16] stroke-[2.5]"></i> 발행된 견적서 보관함</h2>
+          <span id="quoteCountBadge" class="text-[15px] font-black bg-[#151E2D] text-[#84CC16] px-3.5 py-1.5 rounded-xl shadow-sm">0건</span>
         </div>
-        <div id="quoteListContainer" class="space-y-3 max-h-[65vh] overflow-y-auto pr-1"></div>
+        <div id="quoteListContainer" class="space-y-3.5 max-h-[65vh] overflow-y-auto pr-1"></div>
       </div>
     </section>
 
     <!-- ================= [4. 거래처 관리 화면] ================= -->
     <section id="clientsView" class="hidden space-y-4">
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-6">
-        <div class="flex items-center justify-between pb-2 border-b border-[#F4F5F4]">
-          <h2 class="text-[18px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="building-2" class="w-6 h-6 text-[#84CC16]"></i> 거래처 데이터베이스</h2>
-          <span id="clientCountBadge" class="text-[13px] font-black bg-[#151E2D] text-[#84CC16] px-3 py-1.5 rounded-lg shadow-sm">0건</span>
+        <div class="flex items-center justify-between pb-3 border-b-2 border-[#F1F5F9]">
+          <h2 class="text-[22px] font-black text-[#151E2D] flex items-center gap-2 tracking-tight"><i data-lucide="building-2" class="w-6 h-6 text-[#84CC16] stroke-[2.5]"></i> 거래처 데이터베이스</h2>
+          <span id="clientCountBadge" class="text-[15px] font-black bg-[#151E2D] text-[#84CC16] px-3.5 py-1.5 rounded-xl shadow-sm">0건</span>
         </div>
-        <div id="clientFormBox" class="bg-[#F9F9F8] p-5 rounded-[20px] border border-[#EAEBEA] space-y-3.5">
-          <h3 id="clientFormTitle" class="text-[14px] font-black text-[#151E2D] flex items-center gap-1.5"><i data-lucide="plus" class="w-5 h-5 text-[#84CC16]"></i> <span>신규 등록</span></h3>
-          <div class="space-y-2.5">
-            <input type="text" id="newClientName" placeholder="고객명 또는 현장명" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16]">
-            <input type="tel" id="newClientPhone" oninput="autoHyphen(this)" placeholder="연락처" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16]">
-            <input type="text" id="newClientAddress" placeholder="주소 입력" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16]">
-            <div class="flex gap-2 w-full">
-                <label class="flex-1 flex items-center justify-center py-3.5 rounded-[12px] bg-[#F4F5F4] border border-[#EAEBEA] text-[#4E5968] cursor-pointer has-[:checked]:bg-[#151E2D] has-[:checked]:text-[#84CC16] has-[:checked]:border-[#12261E] transition-all shadow-sm">
-                    <input type="radio" name="newClientType" value="정기 관리" checked class="hidden"><span class="text-[13px] font-black">정기 관리처</span>
+
+        <div id="clientFormBox" class="bg-[#F9F9F8] p-5 rounded-[22px] border-[1.5px] border-[#CBD5E1] space-y-4">
+          <h3 id="clientFormTitle" class="text-[18px] font-black text-[#151E2D] flex items-center gap-1.5"><i data-lucide="plus" class="w-6 h-6 text-[#65A30D] stroke-[3]"></i> <span>신규 등록</span></h3>
+          <div class="space-y-3">
+            <input type="text" id="newClientName" placeholder="고객명 또는 현장명 입력" autocomplete="off" class="w-full bg-white border-[1.5px] border-[#CBD5E1] rounded-[14px] px-4 py-4 text-[17px] font-black text-[#151E2D] placeholder:text-[#94A3B8] placeholder:font-bold placeholder:text-[14px] focus:outline-none focus:border-[#84CC16]">
+            <input type="tel" id="newClientPhone" oninput="autoHyphen(this)" placeholder="연락처 입력" autocomplete="off" class="w-full bg-white border-[1.5px] border-[#CBD5E1] rounded-[14px] px-4 py-4 text-[17px] font-black text-[#151E2D] placeholder:text-[#94A3B8] placeholder:font-bold placeholder:text-[14px] focus:outline-none focus:border-[#84CC16]">
+            <input type="text" id="newClientAddress" placeholder="주소 입력" autocomplete="off" class="w-full bg-white border-[1.5px] border-[#CBD5E1] rounded-[14px] px-4 py-4 text-[17px] font-black text-[#151E2D] placeholder:text-[#94A3B8] placeholder:font-bold placeholder:text-[14px] focus:outline-none focus:border-[#84CC16]">
+            <div class="flex gap-2.5 w-full pt-1">
+                <label class="flex-1 flex items-center justify-center py-4 rounded-[14px] bg-white border-[1.5px] border-[#CBD5E1] text-[#151E2D] cursor-pointer has-[:checked]:bg-[#151E2D] has-[:checked]:text-[#84CC16] has-[:checked]:border-[#151E2D] transition-all shadow-sm">
+                    <input type="radio" name="newClientType" value="정기 관리" checked class="hidden"><span class="text-[16.5px] font-black">정기 관리처</span>
                 </label>
-                <label class="flex-1 flex items-center justify-center py-3.5 rounded-[12px] bg-[#F4F5F4] border border-[#EAEBEA] text-[#4E5968] cursor-pointer has-[:checked]:bg-[#151E2D] has-[:checked]:text-[#84CC16] has-[:checked]:border-[#12261E] transition-all shadow-sm">
-                    <input type="radio" name="newClientType" value="개별 고객" class="hidden"><span class="text-[13px] font-black">개별 고객처</span>
+                <label class="flex-1 flex items-center justify-center py-4 rounded-[14px] bg-white border-[1.5px] border-[#CBD5E1] text-[#151E2D] cursor-pointer has-[:checked]:bg-[#151E2D] has-[:checked]:text-[#84CC16] has-[:checked]:border-[#151E2D] transition-all shadow-sm">
+                    <input type="radio" name="newClientType" value="개별 고객" class="hidden"><span class="text-[16.5px] font-black">개별 고객처</span>
                 </label>
             </div>
           </div>
-          <div class="flex gap-2">
-            <button id="saveClientBtn" onclick="saveClient()" class="flex-1 py-4 bg-[#151E2D] text-[#84CC16] rounded-[12px] text-[15px] font-black shadow-md hover:bg-black transition-colors">데이터 저장</button>
-            <button id="cancelEditBtn" onclick="cancelEdit()" class="hidden px-4 py-4 bg-[#EAEBEA] text-[#4E5968] rounded-[12px] text-[15px] font-black">취소</button>
+          <div class="flex gap-2.5 pt-1">
+            <button id="saveClientBtn" onclick="saveClient()" class="flex-1 py-4 bg-[#151E2D] text-[#84CC16] rounded-[14px] text-[18px] font-black shadow-md hover:bg-black transition-colors">데이터 저장</button>
+            <button id="cancelEditBtn" onclick="cancelEdit()" class="hidden px-5 py-4 bg-[#E2E8F0] text-[#151E2D] rounded-[14px] text-[17px] font-black">취소</button>
           </div>
         </div>
-        <div class="space-y-3 pt-2 mt-4">
+
+        <div class="space-y-3.5 pt-2 mt-4">
           <div class="relative mb-3">
-              <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none"><i data-lucide="search" class="w-4 h-4 text-[#A3A8A3]"></i></div>
-              <input type="text" id="clientSearchInput" oninput="renderClientsList()" placeholder="고객명, 연락처, 주소로 빠른 검색" class="w-full bg-[#F4F5F4] border border-[#EAEBEA] rounded-[12px] pl-9 pr-4 py-3 text-[14px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16]">
+              <div class="absolute inset-y-0 left-3.5 flex items-center pointer-events-none"><i data-lucide="search" class="w-5 h-5 text-[#64748B]"></i></div>
+              <input type="text" id="clientSearchInput" oninput="renderClientsList()" placeholder="고객명, 연락처, 주소로 빠른 검색" class="w-full bg-[#F4F5F4] border-[1.5px] border-[#CBD5E1] rounded-[14px] pl-11 pr-4 py-3.5 text-[16.5px] font-black text-[#151E2D] placeholder:text-[#64748B] placeholder:font-bold placeholder:text-[14px] focus:outline-none focus:border-[#84CC16]">
           </div>
-          <div class="flex bg-[#F4F5F4] p-1.5 rounded-[14px]">
-            <button id="btnFilterRegular" onclick="setClientFilter('정기 관리')" class="flex-1 py-3 rounded-[12px] bg-white shadow-sm text-[#151E2D] font-black text-[14px] transition-all border border-[#EAEBEA]">정기 관리처</button>
-            <button id="btnFilterSingle" onclick="setClientFilter('개별 고객')" class="flex-1 py-3 rounded-[12px] text-[#4E5968] font-black text-[14px] hover:text-[#151E2D] transition-all border border-transparent">개별 고객처</button>
+          <div class="flex bg-[#F1F5F9] p-1.5 rounded-[16px] border border-[#CBD5E1]">
+            <button id="btnFilterRegular" onclick="setClientFilter('정기 관리')" class="flex-1 py-3.5 rounded-[12px] bg-white shadow-sm text-[#151E2D] font-black text-[16.5px] transition-all border border-[#CBD5E1]">정기 관리처</button>
+            <button id="btnFilterSingle" onclick="setClientFilter('개별 고객')" class="flex-1 py-3.5 rounded-[12px] text-[#4E5968] font-black text-[16.5px] hover:text-[#151E2D] transition-all border border-transparent">개별 고객처</button>
           </div>
-          <div id="clientsListContainer" class="space-y-3 mt-3 max-h-[50vh] overflow-y-auto pr-1"></div>
+          <div id="clientsListContainer" class="space-y-3.5 mt-3 max-h-[50vh] overflow-y-auto pr-1"></div>
         </div>
       </div>
     </section>
@@ -626,30 +656,32 @@
     <!-- ================= [5. 연락처 관리 화면] ================= -->
     <section id="contactsView" class="hidden space-y-4">
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-6">
-        <div class="flex items-center justify-between pb-2 border-b border-[#F4F5F4]">
-          <h2 class="text-[18px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="book-open" class="w-6 h-6 text-[#84CC16]"></i> 스마트 전화번호부</h2>
-          <span id="contactCountBadge" class="text-[13px] font-black bg-[#151E2D] text-[#84CC16] px-3 py-1.5 rounded-lg shadow-sm">0건</span>
+        <div class="flex items-center justify-between pb-3 border-b-2 border-[#F1F5F9]">
+          <h2 class="text-[22px] font-black text-[#151E2D] flex items-center gap-2 tracking-tight"><i data-lucide="book-open" class="w-6 h-6 text-[#84CC16] stroke-[2.5]"></i> 스마트 전화번호부</h2>
+          <span id="contactCountBadge" class="text-[15px] font-black bg-[#151E2D] text-[#84CC16] px-3.5 py-1.5 rounded-xl shadow-sm">0건</span>
         </div>
-        <div class="flex bg-[#F4F5F4] p-1.5 rounded-[14px] mb-4">
-          <button id="btnContactClient" onclick="switchContactTab('clients')" class="flex-1 py-3 rounded-[12px] bg-white shadow-sm text-[#151E2D] font-black text-[14px] transition-all border border-[#EAEBEA]">거래처 연락처</button>
-          <button id="btnContactLabor" onclick="switchContactTab('labors')" class="flex-1 py-3 rounded-[12px] text-[#4E5968] font-black text-[14px] hover:text-[#151E2D] transition-all border border-transparent bg-transparent">인력 전화번호</button>
+
+        <div class="flex bg-[#F1F5F9] p-1.5 rounded-[16px] border border-[#CBD5E1] mb-4">
+          <button id="btnContactClient" onclick="switchContactTab('clients')" class="flex-1 py-3.5 rounded-[12px] bg-white shadow-sm text-[#151E2D] font-black text-[16.5px] transition-all border border-[#CBD5E1]">거래처 연락처</button>
+          <button id="btnContactLabor" onclick="switchContactTab('labors')" class="flex-1 py-3.5 rounded-[12px] text-[#4E5968] font-black text-[16.5px] hover:text-[#151E2D] transition-all border border-transparent bg-transparent">인력 전화번호</button>
         </div>
-        <div class="bg-[#F9F9F8] p-5 rounded-[20px] border border-[#EAEBEA] space-y-3.5">
-          <h3 id="contactFormTitle" class="text-[14px] font-black text-[#151E2D] flex items-center gap-1.5"><i data-lucide="user-plus" class="w-5 h-5 text-[#84CC16]"></i> <span>새 연락처 추가</span></h3>
-          <div class="space-y-2.5">
-            <input type="text" id="newContactName" placeholder="업체명 (또는 성명) 입력" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
-            <input type="tel" id="newContactPhone" oninput="autoHyphen(this)" placeholder="연락처 (저장 후 터치 시 자동 연결)" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
-            <input type="text" id="newContactMemo" placeholder="기타 사항 (주소, 단가, 특징 등)" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[12px] px-4 py-3.5 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
+
+        <div class="bg-[#F9F9F8] p-5 rounded-[22px] border-[1.5px] border-[#CBD5E1] space-y-4">
+          <h3 id="contactFormTitle" class="text-[18px] font-black text-[#151E2D] flex items-center gap-1.5"><i data-lucide="user-plus" class="w-6 h-6 text-[#65A30D] stroke-[2.5]"></i> <span>새 연락처 추가</span></h3>
+          <div class="space-y-3">
+            <input type="text" id="newContactName" placeholder="업체명 (또는 성명) 입력" autocomplete="off" class="w-full bg-white border-[1.5px] border-[#CBD5E1] rounded-[14px] px-4 py-4 text-[17px] font-black text-[#151E2D] placeholder:text-[#94A3B8] placeholder:font-bold placeholder:text-[14px] focus:outline-none focus:border-[#84CC16]">
+            <input type="tel" id="newContactPhone" oninput="autoHyphen(this)" placeholder="연락처 (저장 후 터치 시 자동 연결)" autocomplete="off" class="w-full bg-white border-[1.5px] border-[#CBD5E1] rounded-[14px] px-4 py-4 text-[17px] font-black text-[#151E2D] placeholder:text-[#94A3B8] placeholder:font-bold placeholder:text-[14px] focus:outline-none focus:border-[#84CC16]">
+            <input type="text" id="newContactMemo" placeholder="기타 사항 (주소, 단가, 특징 등)" autocomplete="off" class="w-full bg-white border-[1.5px] border-[#CBD5E1] rounded-[14px] px-4 py-4 text-[17px] font-black text-[#151E2D] placeholder:text-[#94A3B8] placeholder:font-bold placeholder:text-[14px] focus:outline-none focus:border-[#84CC16]">
           </div>
-          <div class="flex gap-2">
-            <button id="saveContactBtn" onclick="saveContact()" class="flex-1 py-4 bg-[#151E2D] text-[#84CC16] rounded-[12px] text-[15px] font-black shadow-md hover:bg-black transition-colors flex items-center justify-center gap-1.5"><i data-lucide="save" class="w-5 h-5"></i> 연락처 저장하기</button>
-            <button id="cancelContactEditBtn" onclick="cancelContactEdit()" class="hidden px-4 py-4 bg-[#EAEBEA] text-[#4E5968] rounded-[12px] text-[15px] font-black">취소</button>
+          <div class="flex gap-2.5 pt-1">
+            <button id="saveContactBtn" onclick="saveContact()" class="flex-1 py-4 bg-[#151E2D] text-[#84CC16] rounded-[14px] text-[18px] font-black shadow-md hover:bg-black transition-colors flex items-center justify-center gap-2"><i data-lucide="save" class="w-5 h-5 stroke-[2.5]"></i> 연락처 저장하기</button>
+            <button id="cancelContactEditBtn" onclick="cancelContactEdit()" class="hidden px-5 py-4 bg-[#E2E8F0] text-[#151E2D] rounded-[14px] text-[17px] font-black">취소</button>
           </div>
         </div>
-        <div id="contactsListContainer" class="space-y-3 pt-2 max-h-[50vh] overflow-y-auto pr-1"></div>
+
+        <div id="contactsListContainer" class="space-y-3.5 pt-2 max-h-[50vh] overflow-y-auto pr-1"></div>
       </div>
     </section>
-
    
    <!-- ================= [6. 과거 일지 (히스토리) 화면] ================= -->
     <section id="historyView" class="hidden space-y-5">
