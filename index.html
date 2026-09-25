@@ -1280,8 +1280,9 @@
                 document.getElementById('authView').classList.add('hidden'); 
                 document.getElementById('mainHeader').style.display = 'block';
                 await syncWithCloud(); 
-                history.replaceState({ view: 'lounge' }, "", ""); 
-                switchView('lounge', false); 
+                loadRealWeather(); 
+                history.replaceState({ view: 'home' }, "", ""); 
+                switchView('home', false); 
                 // 앱 진입 1초 후 최초 팝업 확인
                 setTimeout(() => {
                     checkAppNotices();
@@ -2679,6 +2680,7 @@
       else if (mode === 'ledger') { document.getElementById('ledgerView').classList.remove('hidden'); activeTabId = 'tabLedger'; renderLedgerCalendar(); }
       else if (mode === 'encyclopedia') { document.getElementById('encyclopediaView').classList.remove('hidden'); activeTabId = 'tabEncyclopedia'; }
       else if (mode === 'lounge') { document.getElementById('loungeView').classList.remove('hidden'); activeTabId = 'tabLounge'; }
+      else if (mode === 'home') { activeTabId = ''; }
       else { document.getElementById('clientView').classList.remove('hidden'); activeTabId = currentIsQuote ? 'tabQuoteList' : 'tabClient'; }
 
       if(activeTabId) {
@@ -2690,13 +2692,9 @@
         }
       }
 
-      // 처음 접속했는지 확인하는 꼬리표 달기
-      if (typeof window.isAppJustStarted === 'undefined') window.isAppJustStarted = true;
-
-      // 첫 접속이거나 문서 뷰어일 때는 메뉴를 활짝 열어둠
-      if (mode === 'client_shared' || window.isAppJustStarted) {
+      // 첫 접속(home)이거나 문서 뷰어일 때는 12개 카테고리 메뉴판을 활짝 열어둠
+      if (mode === 'home' || mode === 'client_shared') {
           setTimeout(() => toggleMainCategory('expand'), 100);
-          window.isAppJustStarted = false; // 한 번 열어준 뒤에는 꼬리표 떼기 (이후엔 탭 누르면 접힘)
       } else {
           setTimeout(() => toggleMainCategory('collapse'), 100);
       }
@@ -3908,9 +3906,10 @@
 
     // --- 안드로이드 뒤로가기 버튼 완벽 방어 ---
     function openWeatherModal() {
-        if(!weatherIsLoaded) return alert("아직 실시간 날씨 데이터를 불러오고 있습니다. 잠시만 기다려주세요.");
+        if(!weatherIsLoaded) loadRealWeather();
         const modal = document.getElementById('weatherModal'); const box = document.getElementById('weatherBox');
-        modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10);
+        modal.classList.remove('hidden'); modal.classList.add('flex');
+        setTimeout(() => { modal.classList.remove('opacity-0'); if(box) box.classList.remove('scale-95'); }, 10);
         history.pushState({ isWeatherPopup: true }, "weather", "");
     }
 
