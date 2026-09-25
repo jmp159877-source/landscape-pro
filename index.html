@@ -254,64 +254,9 @@
   <div id="swipeContainer" class="max-w-md mx-auto p-4 space-y-5">
     <!-- ================= [신규: 조경 사장님 라운지 화면] ================= -->
     <section id="loungeView" class="hidden space-y-5">
-      <!-- 🌤️ [VIP 에디션] 오늘의 조경 날씨 (초대형 상세버튼 탑재 & 하단 찌꺼기 완벽 제거본) -->
-          <div id="weatherCard" onclick="openWeatherModal()" class="hidden relative overflow-hidden rounded-[26px] p-6 cursor-pointer shadow-[0_12px_30px_rgba(2,132,199,0.35)] border border-sky-300/30 transition-all active:scale-[0.99] group" style="background: linear-gradient(135deg, #0B1F3A 0%, #0369A1 55%, #0284C7 100%);">
-              <!-- 우측 상단 입체 배경 장식 아이콘 -->
-              <div class="w-36 h-36 text-white/10 absolute -right-4 -top-4 pointer-events-none transition-transform group-hover:scale-105 flex items-center justify-center">
-                  <i id="weatherIcon" data-lucide="cloud-sun" class="w-36 h-36"></i>
-              </div>
-              
-              <div class="relative z-10 flex flex-col gap-4">
-                  <!-- 1. 메인 타이틀 헤더 -->
-                  <div class="flex items-center justify-between border-b border-white/15 pb-3">
-                      <h2 class="text-[22px] font-black text-white flex items-center gap-2 tracking-tight drop-shadow-sm">
-                          <i data-lucide="sun" class="w-6 h-6 text-[#FEE500] fill-[#FEE500]/20 shrink-0"></i> 오늘의 조경 날씨
-                      </h2>
-                      <span class="bg-[#091526]/80 border border-[#84CC16]/50 text-[#84CC16] text-[11.5px] font-black px-2.5 py-1 rounded-full shadow-sm tracking-tight flex items-center gap-1.5">
-                          <span class="w-2 h-2 rounded-full bg-[#84CC16] animate-ping"></span> 실시간 기상청 연동
-                      </span>
-                  </div>
-
-                  <!-- 2. 온도 & 위치 정보 + 초대형 [시간별·주간 상세] 버튼 -->
-                  <div class="flex items-center justify-between gap-2 pt-1">
-                      <div class="space-y-2.5">
-                          <div id="weatherMainTemp" class="text-[34px] font-black text-white tracking-tight leading-none drop-shadow-md">
-                              날씨 분석중..
-                          </div>
-                          <div class="flex items-center gap-1.5 text-[14px] font-extrabold text-sky-100">
-                              <i data-lucide="map-pin" class="w-4 h-4 text-[#84CC16] shrink-0"></i>
-                              <div id="weatherLocation" class="inline-flex items-center flex-wrap gap-1.5">위치 파악중..</div>
-                          </div>
-                      </div>
-
-                      <!-- 💡 어르신들을 위해 크기와 시인성을 2배 키운 골드 입체 버튼 -->
-                      <div class="shrink-0">
-                          <div class="bg-[#FEE500] hover:brightness-105 text-[#151E2D] px-4 py-3 rounded-[18px] shadow-[0_6px_16px_rgba(0,0,0,0.25)] border-2 border-white/40 flex flex-col items-center justify-center gap-0.5 transition-transform group-hover:scale-105">
-                              <div class="flex items-center gap-1 text-[15px] font-black tracking-tight leading-none">
-                                  <i data-lucide="calendar-clock" class="w-4 h-4 text-[#151E2D] stroke-[2.5]"></i> 시간별 상세
-                              </div>
-                              <span class="text-[11px] font-extrabold text-[#151E2D]/80 tracking-tighter flex items-center">
-                                  내일·모레 예보 <i data-lucide="chevron-right" class="w-3.5 h-3.5 stroke-[3] -mr-1"></i>
-                              </span>
-                          </div>
-                      </div>
-                  </div>
-
-                  <!-- 3. 조경 실무 지침 TIP 박스 (크리스탈 다크 글래스 카드 + 순백색 텍스트) -->
-                  <div class="bg-[#091526]/85 backdrop-blur-md border border-white/20 rounded-[18px] p-4 shadow-inner flex items-start gap-3 mt-1">
-                      <span class="bg-[#84CC16] text-[#151E2D] text-[12px] font-black px-2.5 py-1 rounded-lg shrink-0 mt-0.5 shadow-sm tracking-tight">
-                          작업 지침
-                      </span>
-                      <p id="weatherSmartTip" class="text-[14.5px] font-extrabold text-white leading-[1.55] break-keep tracking-tight">
-                          현장 기상 데이터를 기반으로 오늘의 조경 작업 적합도를 분석하고 있습니다.
-                      </p>
-                  </div>
-              </div>
-
-              <!-- 기존 JS 호환용 숨김 태그 -->
-              <span id="weatherConditionBadge" class="hidden"></span>
-              <i id="weatherBgIcon" class="hidden"></i>
-          </div>
+      <!-- 기존 JS 호환용 숨김 태그 (실시간 위치 카드는 날씨 팝업창 안으로 이동 완료) -->
+      <span id="weatherConditionBadge" class="hidden"></span>
+      <i id="weatherBgIcon" class="hidden"></i>
              
       <!-- 2. 라운지 게시판 4대장 (프리미엄 다크/네온 테마 적용) -->
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
@@ -4142,19 +4087,19 @@
         if(mode === 'lounge' && !weatherIsLoaded) loadRealWeather();
     }   
 </script> 
-<!-- ☀️ [선샤인 & 보태니컬 에디션] 밝고 청명한 연두·옐로우·화이트 정밀 기상도 모달 -->
-  <div id="weatherModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4" onclick="closeWeatherModal()">
-      <div class="bg-[#F7FAF7] border-2 border-white rounded-[32px] w-full max-w-md overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.25)] flex flex-col max-h-[86vh]" onclick="event.stopPropagation()">
+<!-- ☀️ [선샤인 & 보태니컬 에디션] 실시간 GPS 위치 연동 + 시간별·주간 정밀 기상도 모달 -->
+  <div id="weatherModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4" onclick="closeWeatherModal()">
+      <div id="weatherBox" class="bg-[#F7FAF7] border-2 border-white rounded-[32px] w-full max-w-md overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.35)] flex flex-col max-h-[88vh]" onclick="event.stopPropagation()">
           
-          <!-- 모달 상단 헤더 (어두운 남색 대신 화사한 햇살 옐로우 & 싱그러운 라임 그린 그라데이션) -->
-          <div class="px-6 py-5 flex items-center justify-between shrink-0 border-b border-[#E2E8F0]" style="background: linear-gradient(135deg, #ECFCCB 0%, #FEF9C3 55%, #DCFCE7 100%);">
+          <!-- 모달 상단 헤더 -->
+          <div class="px-6 py-4 flex items-center justify-between shrink-0 border-b border-[#E2E8F0]" style="background: linear-gradient(135deg, #ECFCCB 0%, #FEF9C3 55%, #DCFCE7 100%);">
               <div class="flex items-center gap-3">
                   <div class="w-11 h-11 rounded-[16px] bg-[#84CC16] flex items-center justify-center text-white shadow-sm shrink-0">
                       <i data-lucide="sun" class="w-6 h-6 stroke-[2.5]"></i>
                   </div>
                   <div>
-                      <h3 class="text-[20px] font-black text-[#151E2D] tracking-tight leading-tight">시간별·주간 조경 날씨</h3>
-                      <p class="text-[12.5px] font-extrabold text-[#4D7C0F] mt-0.5">맑고 정확한 실시간 현장 기상 브리핑</p>
+                      <h3 class="text-[20px] font-black text-[#151E2D] tracking-tight leading-tight">오늘의 조경 날씨</h3>
+                      <p class="text-[12.5px] font-extrabold text-[#4D7C0F] mt-0.5">실시간 GPS 위치 기반 현장 기상 브리핑</p>
                   </div>
               </div>
               <button onclick="closeWeatherModal()" class="w-10 h-10 rounded-full bg-white/80 hover:bg-white text-[#151E2D] shadow-sm flex items-center justify-center transition-colors shrink-0">
@@ -4162,8 +4107,40 @@
               </button>
           </div>
 
-          <!-- 모달 본문 스크롤 영역 (밝고 깨끗한 화이트·민트그레이 톤) -->
-          <div class="p-5 overflow-y-auto space-y-6 flex-1">
+          <!-- 모달 본문 스크롤 영역 -->
+          <div class="p-4 sm:p-5 overflow-y-auto space-y-5 flex-1 nav-scroll">
+              
+              <!-- 🔥 [완벽 복구] 실시간 지역 위치 & 위치갱신 & 현재 기온 & 작업 지침 카드 -->
+              <div class="relative overflow-hidden rounded-[24px] p-5 shadow-md border border-sky-300/40" style="background: linear-gradient(135deg, #0B1F3A 0%, #0369A1 55%, #0284C7 100%);">
+                  <div class="relative z-10 flex flex-col gap-3.5">
+                      <!-- 실시간 지역 표시 & [🔄 위치갱신] 터치 영역 -->
+                      <div class="flex items-center justify-between gap-2">
+                          <div class="flex items-center gap-1.5 text-[15px] font-black text-white">
+                              <i data-lucide="map-pin" class="w-5 h-5 text-[#84CC16] shrink-0"></i>
+                              <div id="weatherLocation" class="inline-flex items-center flex-wrap gap-1.5">실시간 위치 파악중..</div>
+                          </div>
+                      </div>
+
+                      <!-- 현재 날씨 및 기온 -->
+                      <div class="flex items-baseline justify-between pt-1">
+                          <div id="weatherMainTemp" class="text-[32px] font-black text-white tracking-tight leading-none drop-shadow-md">
+                              기상 분석중..
+                          </div>
+                          <span class="text-[12px] font-black text-[#84CC16] bg-[#091526]/80 px-2.5 py-1 rounded-full border border-[#84CC16]/40 flex items-center gap-1.5 shrink-0">
+                              <span class="w-2 h-2 rounded-full bg-[#84CC16] animate-ping"></span> 실시간 연동
+                          </span>
+                      </div>
+
+                      <!-- 조경 작업 지침 박스 -->
+                      <div class="bg-[#091526]/85 backdrop-blur-md border border-white/20 rounded-[16px] p-3.5 flex items-start gap-2.5 mt-0.5">
+                          <span class="bg-[#84CC16] text-[#151E2D] text-[12px] font-black px-2.5 py-1 rounded-lg shrink-0 mt-0.5">작업 지침</span>
+                          <p id="weatherSmartTip" class="text-[14px] font-extrabold text-white leading-[1.5] break-keep">
+                              현장 기상 데이터를 기반으로 오늘의 조경 작업 적합도를 분석하고 있습니다.
+                          </p>
+                      </div>
+                  </div>
+              </div>
+
               <!-- 1. 시간별 날씨 보기 -->
               <div class="bg-white rounded-[24px] p-4 shadow-sm border border-[#E2E8F0]">
                   <div class="flex items-center justify-between mb-3 px-1">
@@ -4173,7 +4150,7 @@
                       <span class="text-[12px] font-extrabold text-[#4D7C0F] bg-[#ECFCCB] px-2.5 py-1 rounded-full">옆으로 밀어서 확인 👉</span>
                   </div>
                   <div id="hourlyWeatherContainer" class="flex gap-2.5 overflow-x-auto pb-2 pt-1 scrollbar-hide">
-                      <!-- JS에서 밝고 화사한 카드 자동 생성 -->
+                      <!-- JS에서 자동 생성 -->
                   </div>
               </div>
 
@@ -4186,7 +4163,7 @@
                       <span class="text-[12px] font-bold text-[#64748B]">향후 6일 예보</span>
                   </div>
                   <div id="dailyWeatherContainer" class="space-y-2.5">
-                      <!-- JS에서 순백색 카드 자동 생성 -->
+                      <!-- JS에서 자동 생성 -->
                   </div>
               </div>
           </div>
