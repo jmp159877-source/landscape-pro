@@ -236,63 +236,65 @@
   <div id="swipeContainer" class="max-w-md mx-auto p-4 space-y-5">
     <!-- ================= [신규: 조경 사장님 라운지 화면] ================= -->
     <section id="loungeView" class="hidden space-y-5">
-      <!-- 🌤️ [VIP 에디션] 오늘의 조경 날씨 (로얄 오션 그라데이션 & 초고시인성 대시보드) -->
-          <div onclick="openWeatherModal()" class="relative overflow-hidden rounded-[26px] p-6 cursor-pointer shadow-[0_12px_30px_rgba(2,132,199,0.35)] border border-sky-300/30 transition-all active:scale-[0.99] group" style="background: linear-gradient(135deg, #0B1F3A 0%, #0369A1 55%, #0284C7 100%);">
+      <!-- 🌤️ [VIP 에디션] 오늘의 조경 날씨 (초대형 상세버튼 탑재 & 하단 찌꺼기 완벽 제거본) -->
+          <div id="weatherCard" onclick="openWeatherModal()" class="relative overflow-hidden rounded-[26px] p-6 cursor-pointer shadow-[0_12px_30px_rgba(2,132,199,0.35)] border border-sky-300/30 transition-all active:scale-[0.99] group" style="background: linear-gradient(135deg, #0B1F3A 0%, #0369A1 55%, #0284C7 100%);">
               <!-- 우측 상단 입체 배경 장식 아이콘 -->
-              <i id="weatherBgIcon" data-lucide="cloud-sun" class="w-36 h-36 text-white/10 absolute -right-4 -top-4 pointer-events-none transition-transform group-hover:scale-105"></i>
+              <div class="w-36 h-36 text-white/10 absolute -right-4 -top-4 pointer-events-none transition-transform group-hover:scale-105 flex items-center justify-center">
+                  <i id="weatherIcon" data-lucide="cloud-sun" class="w-36 h-36"></i>
+              </div>
               
               <div class="relative z-10 flex flex-col gap-4">
-                  <!-- 1. 메인 타이틀 헤더 (압도적 크기와 권위 있는 뱃지) -->
+                  <!-- 1. 메인 타이틀 헤더 -->
                   <div class="flex items-center justify-between border-b border-white/15 pb-3">
-                      <h2 class="text-[21px] font-black text-white flex items-center gap-2 tracking-tight drop-shadow-sm">
+                      <h2 class="text-[22px] font-black text-white flex items-center gap-2 tracking-tight drop-shadow-sm">
                           <i data-lucide="sun" class="w-6 h-6 text-[#FEE500] fill-[#FEE500]/20 shrink-0"></i> 오늘의 조경 날씨
                       </h2>
-                      <span class="bg-[#FEE500] text-[#151E2D] text-[11px] font-black px-2.5 py-1 rounded-full shadow-sm tracking-tight flex items-center gap-1">
-                          <span class="w-1.5 h-1.5 rounded-full bg-[#151E2D] animate-ping"></span> 실시간 기상
+                      <span class="bg-[#091526]/80 border border-[#84CC16]/50 text-[#84CC16] text-[11.5px] font-black px-2.5 py-1 rounded-full shadow-sm tracking-tight flex items-center gap-1.5">
+                          <span class="w-2 h-2 rounded-full bg-[#84CC16] animate-ping"></span> 실시간 기상청 연동
                       </span>
                   </div>
 
-                  <!-- 2. 온도 & 위치 정보 영역 -->
-                  <div class="flex items-end justify-between gap-2 pt-0.5">
-                      <div class="space-y-2">
-                          <!-- 날씨 상태 및 기온 (초대형 순백색 텍스트) -->
-                          <div id="weatherMainTemp" class="text-[32px] font-black text-white tracking-tight leading-none drop-shadow-md">
+                  <!-- 2. 온도 & 위치 정보 + 초대형 [시간별·주간 상세] 버튼 -->
+                  <div class="flex items-center justify-between gap-2 pt-1">
+                      <div class="space-y-2.5">
+                          <div id="weatherMainTemp" class="text-[34px] font-black text-white tracking-tight leading-none drop-shadow-md">
                               날씨 분석중..
                           </div>
-                          <!-- 현위치 주소 및 고시인성 위치갱신 버튼 -->
-                          <div class="flex items-center gap-1.5 text-[14px] font-extrabold text-sky-100 pt-1">
+                          <div class="flex items-center gap-1.5 text-[14px] font-extrabold text-sky-100">
                               <i data-lucide="map-pin" class="w-4 h-4 text-[#84CC16] shrink-0"></i>
                               <div id="weatherLocation" class="inline-flex items-center flex-wrap gap-1.5">위치 파악중..</div>
                           </div>
                       </div>
 
-                      <!-- 우측 상세예보 더보기 유도 버튼 -->
-                      <div class="flex flex-col items-end shrink-0">
-                          <div class="bg-white/15 hover:bg-white/25 backdrop-blur-md border border-white/30 text-white text-[12px] font-black px-3.5 py-2 rounded-[14px] shadow-sm flex items-center gap-1 transition-all">
-                              시간별 상세 <i data-lucide="chevron-right" class="w-4 h-4 text-[#FEE500]"></i>
+                      <!-- 💡 어르신들을 위해 크기와 시인성을 2배 키운 골드 입체 버튼 -->
+                      <div class="shrink-0">
+                          <div class="bg-[#FEE500] hover:brightness-105 text-[#151E2D] px-4 py-3 rounded-[18px] shadow-[0_6px_16px_rgba(0,0,0,0.25)] border-2 border-white/40 flex flex-col items-center justify-center gap-0.5 transition-transform group-hover:scale-105">
+                              <div class="flex items-center gap-1 text-[15px] font-black tracking-tight leading-none">
+                                  <i data-lucide="calendar-clock" class="w-4 h-4 text-[#151E2D] stroke-[2.5]"></i> 시간별 상세
+                              </div>
+                              <span class="text-[11px] font-extrabold text-[#151E2D]/80 tracking-tighter flex items-center">
+                                  내일·모레 예보 <i data-lucide="chevron-right" class="w-3.5 h-3.5 stroke-[3] -mr-1"></i>
+                              </span>
                           </div>
                       </div>
                   </div>
 
                   <!-- 3. 조경 실무 지침 TIP 박스 (크리스탈 다크 글래스 카드 + 순백색 텍스트) -->
-                  <div class="bg-[#091526]/75 backdrop-blur-md border border-white/15 rounded-[18px] p-4 shadow-inner flex items-start gap-3 mt-1">
-                      <span class="bg-[#84CC16] text-[#151E2D] text-[11.5px] font-black px-2.5 py-1 rounded-lg shrink-0 mt-0.5 shadow-sm tracking-tight">
+                  <div class="bg-[#091526]/85 backdrop-blur-md border border-white/20 rounded-[18px] p-4 shadow-inner flex items-start gap-3 mt-1">
+                      <span class="bg-[#84CC16] text-[#151E2D] text-[12px] font-black px-2.5 py-1 rounded-lg shrink-0 mt-0.5 shadow-sm tracking-tight">
                           작업 지침
                       </span>
-                      <p id="weatherSmartTip" class="text-[14px] font-extrabold text-white leading-[1.55] break-keep tracking-tight">
+                      <p id="weatherSmartTip" class="text-[14.5px] font-extrabold text-white leading-[1.55] break-keep tracking-tight">
                           현장 기상 데이터를 기반으로 오늘의 조경 작업 적합도를 분석하고 있습니다.
                       </p>
                   </div>
               </div>
-              <!-- 3722번, 3724번 줄이 찾는 ID를 에러 없이 받아주는 호환 태그 -->
+
+              <!-- 기존 JS 호환용 숨김 태그 -->
               <span id="weatherConditionBadge" class="hidden"></span>
               <i id="weatherBgIcon" class="hidden"></i>
           </div>
-              <div class="mt-4 pt-3 border-t border-[#0C4A6E]/10">
-                  <p class="text-[13.5px] text-[#0C4A6E] font-bold leading-relaxed break-keep"><span class="font-black bg-[#0C4A6E] text-[#BAE6FD] px-1.5 py-0.5 rounded text-[11px] mr-1">TIP</span> <span id="weatherSmartTip">날씨 기반 현장 팁을 불러오는 중입니다.</span></p>
-              </div>
-          </div>
-      </div>
+             
       <!-- 2. 라운지 게시판 4대장 (프리미엄 다크/네온 테마 적용) -->
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
          <!-- 💡 타이틀 배너를 2배 크기로 대폭 키워 메인 간판으로서의 시인성과 존재감 극대화 -->
@@ -3726,96 +3728,92 @@
             document.getElementById('weatherSmartTip').innerText = customTip;
             document.getElementById('weatherBgIcon').setAttribute('data-lucide', wInfo.icon);
             
-            const hourlyTitle = document.getElementById('hourlyWeatherContainer').previousElementSibling;
-            if(hourlyTitle) hourlyTitle.innerText = "시간별 예보";
-
             const hourlyContainer = document.getElementById('hourlyWeatherContainer');
             hourlyContainer.innerHTML = '';
             const currentHourIndex = new Date().getHours();
-            
+
             for(let i = currentHourIndex; i < currentHourIndex + 48; i++) {
                 const dateObj = new Date(wData.hourly.time[i]); const hour = dateObj.getHours();
                 let timeDisplay = i === currentHourIndex ? "지금" : `${hour}시`;
                 let badgeHtml = "";
-                
+
                 if (hour === 0 && i !== currentHourIndex) {
                     const targetDay = dateObj.getDate();
-                    if (targetDay === new Date(Date.now() + 86400000).getDate()) badgeHtml = `<div class="bg-[#1E293B] text-[#84CC16] text-[9px] font-black px-2 py-0.5 rounded-full mb-1 shadow-sm">내일</div>`;
-                    else if (targetDay === new Date(Date.now() + 86400000 * 2).getDate()) badgeHtml = `<div class="bg-[#1E293B] text-[#84CC16] text-[9px] font-black px-2 py-0.5 rounded-full mb-1 shadow-sm">모레</div>`;
+                    if (targetDay === new Date(Date.now() + 86400000).getDate()) badgeHtml = `<div class="bg-[#FEE500] text-[#151E2D] text-[10.5px] font-black px-2.5 py-0.5 rounded-full mb-1.5 shadow-sm">내일</div>`;
+                    else if (targetDay === new Date(Date.now() + 86400000 * 2).getDate()) badgeHtml = `<div class="bg-[#84CC16] text-[#151E2D] text-[10.5px] font-black px-2.5 py-0.5 rounded-full mb-1.5 shadow-sm">모레</div>`;
                 }
-                
+
                 const temp = Math.round(wData.hourly.temperature_2m[i]);
                 const code = wData.hourly.weathercode[i]; const hInfo = getWeatherInfo(code);
-                
+
                 let precipProb = wData.hourly.precipitation_probability[i] || 0;
                 let precipAmt = wData.hourly.precipitation[i] || 0;
                 if(precipAmt === 0) precipProb = 0;
 
-                // 💡 [피드백 반영 1] 0%의 투명도를 없애고, 폰트를 두껍고 진하게 만들어 시인성을 극대화했습니다.
+                // 💡 어르신들도 한눈에 보시는 고시인성 강수확률 표시
                 let hourlyRain = precipProb > 0
-                    ? `<div class="text-[12px] font-black text-[#0EA5E9] mt-1.5 flex items-center gap-0.5"><i data-lucide="droplet" class="w-3.5 h-3.5"></i>${precipProb}%</div>`
-                    : `<div class="text-[11.5px] font-black text-[#94A3B8] mt-1.5 flex items-center gap-0.5"><i data-lucide="droplet" class="w-3.5 h-3.5"></i>0%</div>`;
+                    ? `<div class="text-[13px] font-black text-[#38BDF8] bg-[#0284C7]/25 px-2 py-0.5 rounded-md mt-2 flex items-center gap-0.5"><i data-lucide="droplet" class="w-3.5 h-3.5 fill-[#38BDF8]"></i>${precipProb}%</div>`
+                    : `<div class="text-[12px] font-bold text-[#64748B] mt-2 flex items-center gap-0.5"><i data-lucide="droplet" class="w-3 h-3"></i>0%</div>`;
 
                 const isNow = i === currentHourIndex;
-                const bgClass = isNow ? "bg-gradient-to-b from-[#1E293B] to-[#0F172A] shadow-lg border-transparent" : "bg-white border-[#F1F5F9] shadow-sm";
-                const textClass = isNow ? "text-white" : "text-[#1E293B]";
-                const timeClass = isNow ? "text-[#94A3B8]" : "text-[#64748B]";
-                const iconColor = isNow && (code === 0 || code === 1) ? hInfo.color : (isNow ? "text-white" : hInfo.color); 
-                
+                // '지금' 카드는 로얄 블루 그라데이션 + 옐로우 테두리로 강렬하게 강조, 나머지는 다크 슬레이트 카드
+                const bgClass = isNow 
+                    ? "bg-gradient-to-b from-[#0284C7] to-[#0369A1] border-2 border-[#FEE500] shadow-[0_8px_20px_rgba(2,132,199,0.4)]" 
+                    : "bg-[#1E293B] border border-white/10 shadow-md";
+                const timeClass = isNow ? "text-[#FEE500] font-black text-[15px]" : "text-[#CBD5E1] font-extrabold text-[14px]";
+                const iconColor = isNow ? "text-white" : (code <= 1 ? "text-[#FEE500]" : "text-[#38BDF8]");
+
                 hourlyContainer.innerHTML += `
-                    <div class="flex flex-col items-center justify-center border ${bgClass} rounded-[22px] min-w-[76px] py-4 shrink-0 transition-transform hover:scale-105">
+                    <div class="flex flex-col items-center justify-center ${bgClass} rounded-[24px] min-w-[86px] py-4 px-2 shrink-0 transition-transform">
                         ${badgeHtml}
-                        <span class="text-[13px] font-bold tracking-wide ${timeClass} mb-1">${timeDisplay}</span>
-                        <i data-lucide="${hInfo.icon}" class="w-7 h-7 ${iconColor} mb-1.5"></i>
-                        <span class="text-[18px] font-black ${textClass}">${temp}°</span>
+                        <span class="tracking-tight ${timeClass} mb-2">${timeDisplay}</span>
+                        <i data-lucide="${hInfo.icon}" class="w-8 h-8 ${iconColor} mb-2 stroke-[2.2]"></i>
+                        <span class="text-[21px] font-black text-white tracking-tight">${temp}°</span>
                         ${hourlyRain}
                     </div>
                 `;
             }
 
+            // 💡 주간 예보 (7일) - 다크 글래스 카드 & 대형 기온 표시
             const dailyContainer = document.getElementById('dailyWeatherContainer');
             dailyContainer.innerHTML = '';
-            const days = ['일', '월', '화', '수', '목', '금', '토'];
-            
+            const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+
             for(let i = 1; i < 7; i++) {
-                const dateObj = new Date(wData.daily.time[i]);
-                const dayOfWeek = dateObj.getDay();
-                
-                const dayNameColor = (dayOfWeek === 0) ? "text-[#F43F5E]" : "text-[#1E293B]"; 
-                const dayName = i === 1 ? "내일" : days[dayOfWeek] + "요일";
-                const dateText = `${dateObj.getMonth()+1}/${dateObj.getDate()}`;
-                
-                const minT = Math.round(wData.daily.temperature_2m_min[i]); const maxT = Math.round(wData.daily.temperature_2m_max[i]);
-                const code = wData.daily.weathercode[i]; const dInfo = getWeatherInfo(code);
+                const dDate = new Date(wData.daily.time[i]);
+                const dayName = i === 1 ? '내일' : (i === 2 ? '모레' : days[dDate.getDay()]);
+                const dateStr = `${dDate.getMonth()+1}/${dDate.getDate()}`;
+                const dCode = wData.daily.weathercode[i]; const dInfo = getWeatherInfo(dCode);
+                const maxT = Math.round(wData.daily.temperature_2m_max[i]);
+                const minT = Math.round(wData.daily.temperature_2m_min[i]);
+                const dProb = wData.daily.precipitation_probability_max?.[i] || 0;
+                const dSum = wData.daily.precipitation_sum?.[i] || 0;
 
-                let precipProbMax = wData.daily.precipitation_probability_max[i] || 0;
-                const precipSum = wData.daily.precipitation_sum[i] || 0;
-                if (precipSum === 0) { precipProbMax = 0; } 
+                const dayColor = dDate.getDay() === 0 ? 'text-[#F87171]' : (dDate.getDay() === 6 ? 'text-[#60A5FA]' : (i <= 2 ? 'text-[#FEE500]' : 'text-white'));
+                const iconTint = dCode <= 1 ? 'text-[#FEE500]' : (dProb >= 40 ? 'text-[#38BDF8]' : 'text-[#CBD5E1]');
                 
-                // 💡 [피드백 반영 1-2] 주간 예보의 0%도 아주 진하고 또렷하게 보이도록 수정
-                let rainDisplay = precipProbMax > 0 
-                    ? `<span class="text-[#0EA5E9] flex items-center gap-1 font-black"><i data-lucide="droplet" class="w-4 h-4"></i> ${precipProbMax}% <span class="text-[11px] font-bold opacity-70">(${precipSum}mm)</span></span>` 
-                    : `<span class="text-[#94A3B8] flex items-center gap-1 font-black"><i data-lucide="droplet" class="w-4 h-4"></i> 0%</span>`;
+                const rainBadge = (dProb > 0 && dSum > 0)
+                    ? `<div class="inline-flex items-center gap-1 text-[12.5px] font-black text-[#38BDF8] bg-[#0284C7]/20 border border-[#38BDF8]/30 px-2.5 py-0.5 rounded-full mt-1"><i data-lucide="umbrella" class="w-3.5 h-3.5"></i> ${dProb}% (${dSum}mm)</div>`
+                    : `<div class="inline-flex items-center gap-1 text-[12px] font-bold text-[#94A3B8] mt-1"><i data-lucide="sun-check" class="w-3.5 h-3.5 text-[#84CC16]"></i> 야외 조경작업 적합 (강수 0%)</div>`;
 
-                // 💡 [피드백 반영 2] 박스 배경을 촌스럽지 않은 프리미엄 '쿨 그레이(bg-[#F8FAFC])'로 깔고 테두리를 더 선명하게 잡아주었습니다.
                 dailyContainer.innerHTML += `
-                    <div class="flex items-center justify-between p-5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[24px] shadow-sm hover:shadow-md transition-all mb-3">
-                        <div class="w-16">
-                            <span class="text-[16px] font-black ${dayNameColor} block tracking-wide">${dayName}</span>
-                            <span class="text-[12px] text-[#94A3B8] font-bold mt-0.5 block">${dateText}</span>
+                    <div class="bg-[#1E293B] border border-white/10 rounded-[22px] p-4 flex items-center justify-between shadow-md">
+                        <div class="w-[76px] shrink-0">
+                            <div class="text-[17px] font-black ${dayColor} tracking-tight">${dayName}</div>
+                            <div class="text-[12.5px] font-extrabold text-[#94A3B8] mt-0.5">${dateStr}</div>
                         </div>
-                        <div class="flex-1 flex flex-col justify-center pl-4 border-l border-[#E2E8F0] ml-2">
-                            <div class="flex items-center gap-2.5">
-                                <i data-lucide="${dInfo.icon}" class="w-6 h-6 ${dInfo.color}"></i>
-                                <span class="text-[15px] font-black text-[#334155]">${dInfo.text}</span>
+                        <div class="flex-1 flex items-center gap-3 px-2">
+                            <div class="w-11 h-11 rounded-[14px] bg-[#0F172A] border border-white/10 flex items-center justify-center shrink-0">
+                                <i data-lucide="${dInfo.icon}" class="w-6 h-6 ${iconTint}"></i>
                             </div>
-                            <div class="text-[13px] font-black mt-1.5">
-                                ${rainDisplay}
+                            <div>
+                                <div class="text-[16px] font-black text-white tracking-tight">${dInfo.text}</div>
+                                ${rainBadge}
                             </div>
                         </div>
-                        <div class="w-20 flex flex-col items-end justify-center gap-1">
-                            <div class="flex items-center gap-2"><span class="text-[11px] text-[#94A3B8] font-bold">최저</span><span class="text-[16px] text-[#64748B] font-black">${minT}°</span></div>
-                            <div class="flex items-center gap-2"><span class="text-[11px] text-[#D97706] font-bold">최고</span><span class="text-[16px] text-[#D97706] font-black">${maxT}°</span></div>
+                        <div class="text-right shrink-0 space-y-1 bg-[#0F172A]/80 px-3 py-2 rounded-[14px] border border-white/5">
+                            <div class="text-[13px] font-extrabold text-[#94A3B8]">최저 <span class="text-[16px] font-black text-[#38BDF8] ml-0.5">${minT}°</span></div>
+                            <div class="text-[13px] font-extrabold text-[#94A3B8]">최고 <span class="text-[16px] font-black text-[#F97316] ml-0.5">${maxT}°</span></div>
                         </div>
                     </div>
                 `;
@@ -3853,28 +3851,48 @@
         if(mode === 'lounge' && !weatherIsLoaded) loadRealWeather();
     }   
 </script> 
-<!-- 🌤️ 네이버 스타일 주간 날씨 상세 팝업 -->
-  <div id="weatherModal" class="hidden fixed inset-0 z-[8000] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200" onclick="closeWeatherModal()">
-      <div id="weatherBox" class="bg-white w-full max-w-sm rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-[#EAEBEA]" onclick="event.stopPropagation()">
-          <div class="p-5 border-b border-[#F4F5F4] flex justify-between items-center bg-[#F9F9F8]">
-              <h3 class="text-[16px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="calendar-clock" class="w-5 h-5 text-[#0284C7]"></i> 주간 날씨 및 시간별 예보</h3>
-              <button onclick="closeWeatherModal()" class="text-[#A3A8A3] hover:text-[#151E2D] p-1"><i data-lucide="x" class="w-6 h-6"></i></button>
-          </div>
+<!-- 🌌 [VIP 다크 에디션] 시간별 상세 및 주간 조경 기상청 팝업 모달 -->
+  <div id="weatherModal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center z-50 p-4" onclick="closeWeatherModal()">
+      <div class="bg-gradient-to-b from-[#151E2D] to-[#0B111E] border border-white/15 rounded-[32px] w-full max-w-md overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.7)] flex flex-col max-h-[86vh]" onclick="event.stopPropagation()">
           
-          <div class="p-5 bg-white overflow-y-auto max-h-[70vh] nav-scroll space-y-6">
-              <!-- 시간별 예보 가로 스크롤 -->
-              <div>
-                  <h4 class="text-[14px] font-black text-[#151E2D] mb-3">오늘 시간별 예보</h4>
-                  <div id="hourlyWeatherContainer" class="flex gap-3 overflow-x-auto nav-scroll pb-2">
-                      <!-- JS로 자동 생성 -->
+          <!-- 모달 상단 헤더 -->
+          <div class="bg-[#1E293B]/90 px-6 py-5 flex items-center justify-between border-b border-white/10 shrink-0">
+              <div class="flex items-center gap-2.5">
+                  <div class="w-10 h-10 rounded-[14px] bg-[#0284C7]/20 border border-[#38BDF8]/30 flex items-center justify-center text-[#38BDF8] shadow-inner">
+                      <i data-lucide="cloud-sun-rain" class="w-6 h-6"></i>
+                  </div>
+                  <div>
+                      <h3 class="text-[19px] font-black text-white tracking-tight leading-tight">시간별·주간 정밀 기상도</h3>
+                      <p class="text-[12px] font-bold text-[#94A3B8] mt-0.5">48시간 연속 예보 및 주간 강수·기온 분석</p>
                   </div>
               </div>
-              
-              <!-- 주간 예보 리스트 -->
-              <div class="border-t border-[#F4F5F4] pt-5">
-                  <h4 class="text-[14px] font-black text-[#151E2D] mb-3">주간 예보</h4>
+              <button onclick="closeWeatherModal()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors">
+                  <i data-lucide="x" class="w-6 h-6"></i>
+              </button>
+          </div>
+
+          <!-- 모달 본문 스크롤 영역 -->
+          <div class="p-6 overflow-y-auto space-y-7 flex-1">
+              <!-- 1. 시간별 예보 섹션 -->
+              <div>
+                  <div class="flex items-center justify-between mb-3.5">
+                      <h4 class="text-[16px] font-black text-[#FEE500] flex items-center gap-2 tracking-tight">
+                          <i data-lucide="clock" class="w-5 h-5 text-[#FEE500]"></i> 시간별 작업 기상 (48시간)
+                      </h4>
+                      <span class="text-[11.5px] font-bold text-[#94A3B8]">좌우로 밀어서 확인 👉</span>
+                  </div>
+                  <div id="hourlyWeatherContainer" class="flex gap-3 overflow-x-auto pb-3 pt-1 scrollbar-hide">
+                      <!-- JS에서 VIP 캡슐 카드 자동 생성 -->
+                  </div>
+              </div>
+
+              <!-- 2. 주간 예보 섹션 -->
+              <div>
+                  <h4 class="text-[16px] font-black text-[#84CC16] flex items-center gap-2 mb-3.5 tracking-tight">
+                      <i data-lucide="calendar-days" class="w-5 h-5 text-[#84CC16]"></i> 주간 현장 일정 계획표 (7일)
+                  </h4>
                   <div id="dailyWeatherContainer" class="space-y-3">
-                      <!-- JS로 자동 생성 -->
+                      <!-- JS에서 VIP 주간 카드 자동 생성 -->
                   </div>
               </div>
           </div>
