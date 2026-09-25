@@ -666,28 +666,53 @@
       </div>
     </section>
 
-    <!-- ================= [스마트 작업 일정표 화면] ================= -->
+    <!-- ================= [스마트 작업 일정표 화면 - VIP 시인성 극대화 에디션] ================= -->
     <section id="calendarView" class="hidden space-y-4">
-      <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
-        <div class="flex items-center justify-between pb-4 border-b border-[#F4F5F4]">
-            <button onclick="changeMonth(-1)" class="p-2 bg-[#F4F5F4] hover:bg-[#EAEBEA] rounded-[12px] transition-colors"><i data-lucide="chevron-left" class="w-5 h-5 text-[#4E5968]"></i></button>
-            <h2 id="calendarMonthText" class="text-[20px] font-black text-[#151E2D]">2026년 9월</h2>
-            <button onclick="changeMonth(1)" class="p-2 bg-[#F4F5F4] hover:bg-[#EAEBEA] rounded-[12px] transition-colors"><i data-lucide="chevron-right" class="w-5 h-5 text-[#4E5968]"></i></button>
-        </div>
-        <div class="w-full">
-            <div class="grid grid-cols-7 gap-1 text-center text-[12px] font-black text-[#8B95A1] mb-2">
-                <div class="text-red-500">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div class="text-blue-500">토</div>
+      <div class="bg-white rounded-[32px] p-5 sm:p-6 luxury-shadow space-y-5 border border-[#E2E8F0]">
+        
+        <!-- 1. 상단 연/월 네비게이션 (시원한 딥 네이비 & 라임 포인트 헤더) -->
+        <div class="flex items-center justify-between bg-[#151E2D] px-4 py-3.5 rounded-[22px] shadow-md">
+            <button onclick="changeMonth(-1)" class="w-11 h-11 bg-white/10 hover:bg-white/20 active:scale-95 rounded-[14px] flex items-center justify-center transition-all border border-white/15">
+                <i data-lucide="chevron-left" class="w-6 h-6 text-white stroke-[2.5]"></i>
+            </button>
+            <div class="flex flex-col items-center">
+                <span class="text-[11px] font-extrabold text-[#84CC16] tracking-widest uppercase">WORK SCHEDULE</span>
+                <h2 id="calendarMonthText" class="text-[22px] font-black text-white tracking-tight leading-tight mt-0.5">2026년 9월</h2>
             </div>
-            <div id="calendarGrid" class="grid grid-cols-7 gap-1 text-center mb-4"></div>
+            <button onclick="changeMonth(1)" class="w-11 h-11 bg-white/10 hover:bg-white/20 active:scale-95 rounded-[14px] flex items-center justify-center transition-all border border-white/15">
+                <i data-lucide="chevron-right" class="w-6 h-6 text-white stroke-[2.5]"></i>
+            </button>
         </div>
-        <div class="pt-4 border-t border-[#F4F5F4]">
-            <div class="flex justify-between items-center mb-4">
-                <h3 id="selectedDateText" class="font-black text-[#151E2D] text-[15px] flex items-center gap-1.5"><i data-lucide="calendar-check" class="w-5 h-5 text-[#84CC16]"></i> 선택된 날짜</h3>
-                <button onclick="openScheduleModal()" class="w-full mt-4 py-4.5 bg-[#84CC16] text-[#151E2D] text-[18px] font-black rounded-[16px] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex items-center justify-center gap-2 active:scale-95">
-    <i data-lucide="plus-circle" class="w-6 h-6 stroke-[2.5]"></i> 일정 추가
-</button>
+
+        <!-- 2. 요일 헤더 & 달력 그리드 (칸마다 또렷한 구분감 부여) -->
+        <div class="w-full bg-[#F8FAFC] p-3 rounded-[24px] border border-[#E2E8F0]">
+            <div class="grid grid-cols-7 gap-1.5 text-center text-[14px] font-black mb-2.5 pb-2 border-b border-[#E2E8F0]">
+                <div class="text-[#E11D48]">일</div>
+                <div class="text-[#334155]">월</div>
+                <div class="text-[#334155]">화</div>
+                <div class="text-[#334155]">수</div>
+                <div class="text-[#334155]">목</div>
+                <div class="text-[#334155]">금</div>
+                <div class="text-[#0284C7]">토</div>
             </div>
-            <div id="scheduleList" class="space-y-3 max-h-[40vh] overflow-y-auto pr-1"></div>
+            <div id="calendarGrid" class="grid grid-cols-7 gap-1.5 text-center"></div>
+        </div>
+
+        <!-- 3. 하단 선택된 날짜 배너 & 초대형 일정 추가 버튼 (2단 분리로 글자 깨짐 완벽 해결) -->
+        <div class="pt-2 space-y-3.5">
+            <div class="flex items-center justify-between bg-[#F2FBEC] border-2 border-[#84CC16]/60 px-4 py-3.5 rounded-[18px]">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-[#65A30D]"></span>
+                    <h3 id="selectedDateText" class="font-black text-[#151E2D] text-[18px] tracking-tight">날짜를 선택하세요</h3>
+                </div>
+                <span class="text-[12px] font-extrabold text-[#4D7C0F] bg-white px-2.5 py-1 rounded-full border border-[#84CC16]/40">선택됨</span>
+            </div>
+
+            <button onclick="openScheduleModal()" class="w-full py-4.5 bg-[#151E2D] hover:bg-black text-[#84CC16] text-[18px] font-black rounded-[20px] shadow-[0_8px_20px_rgba(21,30,45,0.25)] border-2 border-[#84CC16]/50 transition-all flex items-center justify-center gap-2.5 active:scale-[0.98]">
+                <i data-lucide="calendar-plus" class="w-6 h-6 text-[#84CC16] stroke-[2.5]"></i> 새 작업 일정 등록하기
+            </button>
+
+            <div id="scheduleList" class="space-y-3 max-h-[45vh] overflow-y-auto pr-1 pt-1"></div>
         </div>
       </div>
     </section>
@@ -1050,57 +1075,103 @@
             <!-- 자바스크립트가 여기에 날짜순으로 카드들을 꽂아줍니다 -->
         </div>
   </div>
-  <!-- 📝 일정 추가/수정 모달 -->
-  <div id="scheduleModal" class="hidden fixed inset-0 z-[6500] bg-black/80 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200">
-    <div id="scheduleBox" class="bg-white w-full max-w-sm rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-[#EAEBEA]" onclick="event.stopPropagation()">
-        <div class="p-5 border-b border-[#F4F5F4] flex justify-between items-center bg-[#F9F9F8]">
-            <h3 class="text-[16px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="calendar-plus" class="w-5 h-5 text-[#84CC16]"></i> 작업 일정 등록</h3>
-            <button onclick="closeScheduleModal()" class="text-[#A3A8A3] hover:text-[#151E2D] p-1"><i data-lucide="x" class="w-6 h-6"></i></button>
-        </div>
-        <div class="p-5 space-y-4 max-h-[70vh] overflow-y-auto bg-white">
-            <input type="hidden" id="scheduleId">
-            <div>
-                <label class="block text-[13px] font-black text-[#151E2D] mb-2">작업 날짜</label>
-                <input type="date" id="scheduleDate" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-4 py-3 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
-            </div>
-            <div>
-                <label class="block text-[13px] font-black text-[#151E2D] mb-2">현장명 및 작업 내용</label>
-                <input type="text" id="scheduleTitle" placeholder="" autocomplete="off" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-4 py-3 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
-            </div>
-            <div class="flex gap-2">
-                <div class="flex-1">
-                    <label class="block text-[13px] font-black text-[#151E2D] mb-2">작업 분류명 (직접 입력)</label>
-                    <input type="text" id="scheduleTagText" value="" placeholder="" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-4 py-3 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
+  <!-- 📝 일정 추가/수정 모달 (VIP 고시인성 & 보태니컬 골드 테마) -->
+  <div id="scheduleModal" class="hidden fixed inset-0 z-[6500] bg-black/75 backdrop-blur-sm flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-200">
+    <div id="scheduleBox" class="bg-[#F8FAFC] w-full max-w-md rounded-[30px] overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.45)] flex flex-col scale-95 transition-transform duration-200 border-2 border-white" onclick="event.stopPropagation()">
+        
+        <!-- 모달 상단 헤더 (무게감 있는 딥 네이비 & 라임 그린 포인트) -->
+        <div class="px-6 py-5 flex justify-between items-center bg-[#151E2D] border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-[14px] bg-[#84CC16] flex items-center justify-center text-[#151E2D] shadow-sm">
+                    <i data-lucide="calendar-plus" class="w-6 h-6 stroke-[2.5]"></i>
                 </div>
-                <div class="w-24 shrink-0">
-                    <label class="block text-[13px] font-black text-[#151E2D] mb-2">테마 색상</label>
-                    <select id="scheduleColor" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-2 py-3 text-[14px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
-                        <option value="border-[#84CC16]">🟢 녹색</option>
-                        <option value="border-blue-400">🔵 파랑</option>
-                        <option value="border-orange-400">🟠 주황</option>
-                        <option value="border-red-400">🔴 빨강</option>
+                <div>
+                    <h3 class="text-[20px] font-black text-white tracking-tight leading-none">작업 일정 등록</h3>
+                    <p class="text-[12px] font-bold text-[#84CC16] mt-1">상담 및 현장 일정을 큼직하게 기록하세요</p>
+                </div>
+            </div>
+            <button onclick="closeScheduleModal()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors">
+                <i data-lucide="x" class="w-6 h-6 stroke-[2.5]"></i>
+            </button>
+        </div>
+
+        <!-- 모달 본문 입력 영역 (초고시인성 굵은 라벨 & 또렷한 화이트 입력칸) -->
+        <div class="p-5 space-y-5 max-h-[72vh] overflow-y-auto bg-[#F8FAFC]">
+            <input type="hidden" id="scheduleId">
+            
+            <!-- 1. 작업 날짜 -->
+            <div class="bg-white p-4 rounded-[20px] border-2 border-[#CBD5E1] shadow-sm">
+                <label class="flex items-center gap-1.5 text-[15px] font-black text-[#151E2D] mb-2">
+                    <i data-lucide="calendar" class="w-4 h-4 text-[#65A30D]"></i> 작업 날짜
+                </label>
+                <input type="date" id="scheduleDate" class="w-full bg-[#F8FAFC] border-2 border-[#E2E8F0] rounded-[14px] px-4 py-3.5 text-[18px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16] focus:bg-white transition-colors">
+            </div>
+
+            <!-- 2. 현장명 및 작업 내용 -->
+            <div class="bg-white p-4 rounded-[20px] border-2 border-[#CBD5E1] shadow-sm">
+                <label class="flex items-center gap-1.5 text-[15px] font-black text-[#151E2D] mb-2">
+                    <i data-lucide="map-pin" class="w-4 h-4 text-[#65A30D]"></i> 현장명 및 작업 내용 <span class="text-[12px] font-extrabold text-[#65A30D]">(필수)</span>
+                </label>
+                <input type="text" id="scheduleTitle" placeholder="예: 일산 주택 소나무 전지 및 방제" autocomplete="off" class="w-full bg-[#F8FAFC] border-2 border-[#E2E8F0] rounded-[14px] px-4 py-4 text-[17px] font-black text-[#151E2D] placeholder:text-[#94A3B8] placeholder:font-bold focus:outline-none focus:border-[#84CC16] focus:bg-white transition-colors">
+            </div>
+
+            <!-- 3. 작업 분류명 & 표시 색상 -->
+            <div class="bg-white p-4 rounded-[20px] border-2 border-[#CBD5E1] shadow-sm grid grid-cols-12 gap-3">
+                <div class="col-span-7">
+                    <label class="block text-[15px] font-black text-[#151E2D] mb-2">작업 분류명</label>
+                    <input type="text" id="scheduleTagText" placeholder="예: 전지작업, 견적방문" class="w-full bg-[#F8FAFC] border-2 border-[#E2E8F0] rounded-[14px] px-3.5 py-3.5 text-[16px] font-black text-[#151E2D] placeholder:text-[#94A3B8] placeholder:font-bold focus:outline-none focus:border-[#84CC16] focus:bg-white">
+                </div>
+                <div class="col-span-5">
+                    <label class="block text-[15px] font-black text-[#151E2D] mb-2">중요도 색상</label>
+                    <select id="scheduleColor" class="w-full bg-[#F8FAFC] border-2 border-[#E2E8F0] rounded-[14px] px-2.5 py-3.5 text-[15px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16]">
+                        <option value="border-[#84CC16]">🌿 기본 녹색</option>
+                        <option value="border-[#0284C7]">💎 오션 블루</option>
+                        <option value="border-[#D97706]">👑 골드 앰버</option>
+                        <option value="border-[#E11D48]">🚨 긴급 코랄</option>
                     </select>
                 </div>
             </div>
-            <!-- ✨ 신규 추가: 예상 수입/지출 (개인장부 자동 연동) -->
-            <div class="grid grid-cols-2 gap-2">
-                <div>
-                    <label class="block text-[13px] font-black text-red-600 mb-2">예상 수입 (작업비)</label>
-                    <input type="text" id="scheduleIncome" placeholder="0" inputmode="numeric" oninput="formatNumberInput(this)" class="w-full bg-[#FEF2F2] border border-[#FECACA] rounded-[14px] px-4 py-3 text-[14px] font-black text-red-700 focus:outline-none focus:border-red-500 text-right placeholder:text-red-300">
+
+            <!-- 4. 예상 수입/지출 (촌스러운 빨강·파랑 제거 -> 고급 에메랄드 그린 & 차콜 슬레이트 테마) -->
+            <div class="bg-white p-4 rounded-[20px] border-2 border-[#CBD5E1] shadow-sm space-y-2.5">
+                <div class="flex items-center justify-between">
+                    <span class="text-[14px] font-black text-[#151E2D] flex items-center gap-1.5">
+                        <i data-lucide="wallet" class="w-4 h-4 text-[#65A30D]"></i> 금액 메모 <span class="text-[12px] font-bold text-[#64748B]">(입력 시 장부 자동연동)</span>
+                    </span>
                 </div>
-                <div>
-                    <label class="block text-[13px] font-black text-blue-600 mb-2">예상 지출 (자재,인건비)</label>
-                    <input type="text" id="scheduleExpense" placeholder="0" inputmode="numeric" oninput="formatNumberInput(this)" class="w-full bg-[#F0F9FF] border border-[#BAE6FD] rounded-[14px] px-4 py-3 text-[14px] font-black text-blue-700 focus:outline-none focus:border-blue-500 text-right placeholder:text-blue-300">
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-[#F2FBEC] border-2 border-[#84CC16]/50 rounded-[16px] p-3">
+                        <label class="block text-[13.5px] font-black text-[#3F6212] mb-1.5">➕ 예상 수입 (작업비)</label>
+                        <div class="flex items-center bg-white rounded-[12px] px-3 py-2.5 border border-[#84CC16]/40">
+                            <input type="text" id="scheduleIncome" placeholder="0" inputmode="numeric" oninput="formatNumberInput(this)" class="w-full bg-transparent text-[17px] font-black text-[#151E2D] focus:outline-none text-right placeholder:text-[#CBD5E1]">
+                            <span class="text-[14px] font-black text-[#3F6212] ml-1 shrink-0">원</span>
+                        </div>
+                    </div>
+                    <div class="bg-[#F1F5F9] border-2 border-[#CBD5E1] rounded-[16px] p-3">
+                        <label class="block text-[13.5px] font-black text-[#334155] mb-1.5">➖ 예상 지출 (인건·자재)</label>
+                        <div class="flex items-center bg-white rounded-[12px] px-3 py-2.5 border border-[#CBD5E1]">
+                            <input type="text" id="scheduleExpense" placeholder="0" inputmode="numeric" oninput="formatNumberInput(this)" class="w-full bg-transparent text-[17px] font-black text-[#151E2D] focus:outline-none text-right placeholder:text-[#CBD5E1]">
+                            <span class="text-[14px] font-black text-[#475569] ml-1 shrink-0">원</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div>
-                <label class="block text-[13px] font-black text-[#151E2D] mb-2">상세 메모 (작업 예약 시간, 인력, 자재 등)</label>
-                <textarea id="scheduleMemo" rows="3" placeholder="메모 입력" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] p-4 text-[14px] font-bold text-[#1A1D1A] focus:outline-none focus:border-[#84CC16] resize-none"></textarea>
+
+            <!-- 5. 상세 메모 -->
+            <div class="bg-white p-4 rounded-[20px] border-2 border-[#CBD5E1] shadow-sm">
+                <label class="flex items-center gap-1.5 text-[15px] font-black text-[#151E2D] mb-2">
+                    <i data-lucide="file-text" class="w-4 h-4 text-[#65A30D]"></i> 상세 메모 (시간, 인력, 준비물 등)
+                </label>
+                <textarea id="scheduleMemo" rows="3" placeholder="예: 오전 8시 현장 도착, 사다리차 및 소나무 약제 준비" class="w-full bg-[#F8FAFC] border-2 border-[#E2E8F0] rounded-[14px] p-3.5 text-[16px] font-bold text-[#151E2D] placeholder:text-[#94A3B8] focus:outline-none focus:border-[#84CC16] focus:bg-white resize-none leading-relaxed"></textarea>
             </div>
         </div>
-        <div class="p-4 bg-[#F9F9F8] border-t border-[#F4F5F4] flex gap-2">
-            <button onclick="closeScheduleModal()" class="flex-1 bg-white border border-[#EAEBEA] text-[#4E5968] font-black py-4 rounded-[14px] text-[15px] hover:bg-[#F4F5F4] transition-colors">취소</button>
-            <button onclick="saveSchedule()" class="flex-1 bg-[#151E2D] text-[#84CC16] font-black py-4 rounded-[14px] text-[15px] shadow-md hover:bg-black transition-colors">저장하기</button>
+
+        <!-- 하단 취소 / 저장 버튼 (크고 시원한 터치 영역) -->
+        <div class="p-4 bg-white border-t border-[#E2E8F0] flex gap-3">
+            <button onclick="closeScheduleModal()" class="w-[38%] bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#475569] font-black py-4.5 rounded-[16px] text-[17px] transition-colors">취소</button>
+            <button onclick="saveSchedule()" class="flex-1 bg-[#84CC16] hover:bg-[#9BE32D] text-[#151E2D] font-black py-4.5 rounded-[16px] text-[18px] shadow-[0_6px_16px_rgba(132,204,22,0.35)] transition-all flex items-center justify-center gap-2">
+                <i data-lucide="check" class="w-6 h-6 stroke-[3]"></i> 일정 저장하기
+            </button>
         </div>
     </div>
   </div>
@@ -2342,43 +2413,58 @@
         const month = currentCalDate.getMonth();
         document.getElementById('calendarMonthText').innerText = `${year}년 ${month + 1}월`;
         
+        // 처음 열었을 때도 '선택된 날짜' 대신 정확한 날짜와 요일이 즉시 표시되도록 보장
+        const days = ['일', '월', '화', '수', '목', '금', '토'];
+        const selEl = document.getElementById('selectedDateText');
+        if (selEl) {
+            selEl.innerHTML = `${selectedDate.getMonth() + 1}월 ${selectedDate.getDate()}일 (${days[selectedDate.getDay()]}) 작업 일정`;
+        }
+
         const firstDay = new Date(year, month, 1).getDay();
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         const grid = document.getElementById('calendarGrid');
         grid.innerHTML = '';
         
-        for (let i = 0; i < firstDay; i++) { grid.innerHTML += `<div class="p-2"></div>`; }
+        for (let i = 0; i < firstDay; i++) { grid.innerHTML += `<div class="h-14"></div>`; }
         
         for (let i = 1; i <= daysInMonth; i++) {
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
             const daySchedules = schedules.filter(s => s.date === dateStr);
             
-            let dotHtml = '';
-            if (daySchedules.length > 0) {
-                const color = daySchedules[0].color.replace('border-', 'bg-');
-                dotHtml = `<div class="w-1.5 h-1.5 ${color} rounded-full mx-auto mt-1"></div>`;
-            } else {
-                dotHtml = `<div class="w-1.5 h-1.5 mt-1 opacity-0"></div>`;
-            }
-            
             const isToday = new Date().toDateString() === new Date(year, month, i).toDateString();
             const isSelected = selectedDate.toDateString() === new Date(year, month, i).toDateString();
-            const selectedClass = isSelected && !isToday ? 'border-2 border-[#12261E] rounded-full' : '';
             
-            const isSunday = new Date(year, month, i).getDay() === 0;
+            const dayOfWeek = new Date(year, month, i).getDay();
+            const isSunday = dayOfWeek === 0;
+            const isSaturday = dayOfWeek === 6;
             const isHoliday = isKoreanHoliday(year, month + 1, i);
             const isRedDay = isSunday || isHoliday;
             
-            // 💡 숫자 색상: 쉬는 날은 빨간색, 평일은 검정색 유지!
-            let textClass = isRedDay ? 'text-red-500' : 'text-[#1A1D1A]';
+            // 숫자 색상 (선택된 날짜는 다크 네이비 박스에 흰색/연두색 글씨로 초고시인성 강조)
+            let numColor = isRedDay ? 'text-[#E11D48]' : (isSaturday ? 'text-[#0284C7]' : 'text-[#151E2D]');
+            let boxStyle = 'bg-white border border-[#E2E8F0] hover:border-[#84CC16]';
             
-            // 💡 오늘 날짜 표시: 숫자 색은 건드리지 않고, 연한 연두색 배경만 둥글게 깔아줌
-            if (isToday) textClass += ' bg-[#84CC16]/30 border border-[#84CC16]/50 rounded-full';
+            if (isSelected) {
+                boxStyle = 'bg-[#151E2D] border-2 border-[#151E2D] shadow-md scale-[1.03]';
+                numColor = 'text-[#84CC16]';
+            } else if (isToday) {
+                boxStyle = 'bg-[#FEF9C3] border-2 border-[#EAB308]';
+            }
+
+            // 작은 점 대신 시인성이 뛰어난 '일정 건수 바(Bar)' 표시
+            let badgeHtml = '';
+            if (daySchedules.length > 0) {
+                badgeHtml = `<span class="mt-0.5 px-1.5 py-0.2 rounded-full text-[10px] font-black leading-tight ${isSelected ? 'bg-[#84CC16] text-[#151E2D]' : 'bg-[#ECFCCB] text-[#3F6212] border border-[#84CC16]/50'}">${daySchedules.length}건</span>`;
+            } else if (isToday && !isSelected) {
+                badgeHtml = `<span class="mt-0.5 text-[9.5px] font-black text-[#B45309] leading-tight">오늘</span>`;
+            } else {
+                badgeHtml = `<span class="mt-0.5 text-[10px] opacity-0 leading-tight">-</span>`;
+            }
 
             grid.innerHTML += `
-                <div onclick="selectDate(${year}, ${month}, ${i})" class="flex flex-col items-center justify-center p-1 cursor-pointer">
-                    <div class="w-9 h-9 flex items-center justify-center text-[14px] font-black ${textClass} ${selectedClass}">${i}</div>
-                    ${dotHtml}
+                <div onclick="selectDate(${year}, ${month}, ${i})" class="h-14 rounded-[14px] ${boxStyle} flex flex-col items-center justify-center cursor-pointer transition-all select-none">
+                    <span class="text-[16px] font-black leading-none ${numColor}">${i}</span>
+                    ${badgeHtml}
                 </div>
             `;
         }
@@ -2392,8 +2478,6 @@
     function selectDate(year, month, day) {
         selectedDate = new Date(year, month, day);
         renderCalendar();
-        const days = ['일', '월', '화', '수', '목', '금', '토'];
-        document.getElementById('selectedDateText').innerHTML = `<i data-lucide="calendar-check" class="w-5 h-5 text-[#84CC16]"></i> ${month + 1}월 ${day}일 (${days[selectedDate.getDay()]})`;
         renderScheduleList();
     }
 
@@ -2404,21 +2488,26 @@
         const daySchedules = schedules.filter(s => s.date === dateStr);
         
         if (daySchedules.length === 0) {
-            list.innerHTML = `<div class="p-6 text-center text-[#8B95A1] text-[13px] bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA] font-bold">등록된 일정이 없습니다.</div>`;
+            list.innerHTML = `
+                <div class="p-7 text-center bg-[#F8FAFC] rounded-[20px] border-2 border-dashed border-[#CBD5E1]">
+                    <p class="text-[#475569] text-[15px] font-black">등록된 작업 일정이 없습니다.</p>
+                    <p class="text-[#94A3B8] text-[13px] font-bold mt-1">위 버튼을 눌러 새 현장 일정을 등록해 보세요.</p>
+                </div>`;
             return;
         }
         
         daySchedules.forEach(s => {
-            const tagName = s.tag || '작업 일정';
-            const textColor = s.color.replace('border-', 'text-');
+            const tagName = s.tag && s.tag.trim() !== '' ? s.tag : '현장 작업';
             list.innerHTML += `
-                <div class="border-l-4 rounded-r-[16px] p-4 shadow-sm bg-white border-y border-r border-[#EAEBEA] ${s.color} hover:shadow-md transition-all">
-                    <div class="text-[12px] font-black ${textColor} mb-1.5">${tagName}</div>
-                    <div class="flex justify-between items-start mb-1.5">
-                        <h4 class="font-black text-[15px] text-[#1A1D1A] truncate pr-2">${s.title}</h4>
-                        <button onclick="deleteSchedule(${s.id})" class="text-[#A3A8A3] hover:text-red-500 bg-[#F4F5F4] p-1.5 rounded-lg"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                <div class="border-l-[6px] rounded-[20px] p-5 shadow-md bg-white border border-[#CBD5E1] ${s.color || 'border-[#84CC16]'} transition-all">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="bg-[#151E2D] text-[#84CC16] text-[12.5px] font-black px-3 py-1 rounded-full">${tagName}</span>
+                        <button onclick="deleteSchedule(${s.id})" class="text-[#64748B] hover:text-red-600 bg-[#F1F5F9] px-2.5 py-1.5 rounded-[10px] text-[12px] font-black flex items-center gap-1 transition-colors">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i> 삭제
+                        </button>
                     </div>
-                    ${s.memo ? `<div class="text-[13px] text-[#4E5968] font-bold bg-[#F9F9F8] px-3 py-2 rounded-lg mt-2">${s.memo.replace(/\n/g, '<br>')}</div>` : ''}
+                    <h4 class="font-black text-[18px] text-[#151E2D] leading-snug break-keep mt-1">${s.title}</h4>
+                    ${s.memo ? `<div class="text-[15px] text-[#334155] font-bold bg-[#F8FAFC] border border-[#E2E8F0] px-4 py-3 rounded-[14px] mt-3 leading-relaxed break-keep">${s.memo.replace(/\n/g, '<br>')}</div>` : ''}
                 </div>
             `;
         });
