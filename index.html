@@ -3552,55 +3552,72 @@
         if (weatherIsLoaded && !forceRefresh) return;
         const locEl = document.getElementById('weatherLocation');
         const tempEl = document.getElementById('weatherMainTemp');
+        const tipEl = document.getElementById('weatherTip');
 
-        // 위치 이름을 터치하면 언제든 현위치 GPS를 즉시 재탐색하도록 편의 기능 장착
+        // 위치 영역 터치 시 즉각 반응하는 강제 새로고침 이벤트 연결
         if (locEl && !locEl.dataset.bound) {
             locEl.dataset.bound = "true";
-            locEl.classList.add('cursor-pointer', 'active:opacity-60');
-            locEl.title = "터치하면 현재 위치를 다시 검색합니다";
-            locEl.onclick = () => { weatherIsLoaded = false; loadRealWeather(true); };
+            locEl.className = "inline-flex items-center gap-1.5 cursor-pointer active:scale-95 transition-transform";
+            locEl.onclick = () => { 
+                weatherIsLoaded = false; 
+                loadRealWeather(true); 
+            };
         }
 
-        // 1. 스마트 캐시 적용: 마지막으로 잡은 위치(예: 수원시)를 0.1초 만에 즉시 표시하여 딜레이 제거
+        // 직관적인 UI 헬퍼 함수: 주소 옆에 눈에 확 띄는 [🔄 위치갱신] 캡슐 버튼 렌더링
+        const setLocationBadge = (text, isSpinning = false) => {
+            if (!locEl) return;
+            const spinClass = isSpinning ? "animate-spin text-[#FEE500]" : "text-[#84CC16]";
+            const btnLabel = isSpinning ? "탐색중" : "위치갱신";
+            locEl.innerHTML = `
+                <span>${text}</span>
+                <span class="inline-flex items-center gap-1 bg-white/15 border border-white/25 text-white text-[11px] font-extrabold px-2 py-0.5 rounded-full shadow-sm ml-1">
+                    <i data-lucide="refresh-cw" class="w-3 h-3 ${spinClass}"></i> ${btnLabel}
+                </span>`;
+            if (window.lucide) lucide.createIcons();
+        };
+
+        // 1. 스마트 캐시 확인 (새로고침 버튼을 누른 게 아니면 20분간 마지막 위치 즉시 표시)
         const cachedLoc = localStorage.getItem('shinhwa_last_loc');
         if (cachedLoc && !forceRefresh) {
             try {
                 const { lat, lon, name, time } = JSON.parse(cachedLoc);
-                if (locEl && name) locEl.innerText = name;
-                // 20분 이내에 확인한 위치가 있으면 GPS 대기 없이 즉시 날씨 데이터 호출
-                if (Date.now() - time < 20 * 60 * 1000) {
+                // 과거에 2단어로 저장된 캐시('경기도 수원시')가 있으면 무시하고 구/동까지 새로 잡도록 유도
+                if (name && name.split(' ').length >= 3 && (Date.now() - time < 20 * 60 * 1000)) {
+                    setLocationBadge(name, false);
                     await fetchWeatherApi(lat, lon);
                     return;
                 }
             } catch(e) {}
         }
 
-        if (tempEl) tempEl.innerText = "위치 파악중..";
-        if (locEl) locEl.innerText = "위성 수신중..";
+        // 버튼을 눌러 갱신할 때 사용자에게 확실한 피드백 제공
+        if (tempEl) tempEl.innerText = "위치 확인중..";
+        if (tipEl) tipEl.innerText = "현장 GPS 위성 및 기상청 데이터를 실시간으로 다시 불러오고 있습니다...";
+        setLocationBadge("실시간 위치 탐색중..", true);
 
-        // 2. 3단계 하이브리드 위치 추적 (1차: 정밀 GPS -> 2차: 기지국/Wi-Fi -> 3차: 통신사 IP 위치)
+        // 2. 3단계 하이브리드 위치 추적 (1차: 정밀 GPS -> 2차: 기지국/Wi-Fi -> 3차: 통신사 IP)
         const getBestLocation = () => new Promise((resolve) => {
             if (!navigator.geolocation) {
                 resolve(null); return;
             }
-            // 1차: 정밀 GPS 탐색
+            // 강제 갱신(forceRefresh)일 때는 이전 기기 캐시(maximumAge: 0)를 쓰지 않고 실시간 좌표를 새로 잡음
+            const maxAge = forceRefresh ? 0 : 300000;
             navigator.geolocation.getCurrentPosition(
                 pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
                 err => {
-                    // 2차: 실내/차량에서 위성 실패 시 기지국·Wi-Fi 기반으로 즉시 전환 (서울 튕김 방지)
                     navigator.geolocation.getCurrentPosition(
                         pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
                         () => resolve(null),
-                        { enableHighAccuracy: false, timeout: 6000, maximumAge: 600000 }
+                        { enableHighAccuracy: false, timeout: 6000, maximumAge: maxAge }
                     );
                 },
-                { enableHighAccuracy: true, timeout: 6000, maximumAge: 300000 }
+                { enableHighAccuracy: true, timeout: 6000, maximumAge: maxAge }
             );
         });
 
         let coords = await getBestLocation();
 
-        // 3차: 만약 기기 GPS 권한이 꺼져있거나 실패해도 서울로 찍지 않고 통신사 IP로 수원시 등 실제 지역 추적
         if (!coords) {
             try {
                 const ipRes = await fetch('https://ipapi.co/json/');
@@ -3614,9 +3631,8 @@
         if (coords) {
             await fetchWeatherApi(coords.lat, coords.lon);
         } else {
-            // 모든 수단이 차단된 경우에만 기본 좌표(경기도 수원시청 기준) 호출
-            if (locEl) locEl.innerText = "경기도 수원시";
-            await fetchWeatherApi(37.2636, 127.0286);
+            setLocationBadge("경기도 수원시 장안구", false);
+            await fetchWeatherApi(37.3034, 127.0097);
         }
     }
 
@@ -3626,20 +3642,36 @@
                 const geoRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=ko`);
                 const geoData = await geoRes.json();
                 
-                // 💡 '서울특별시 서울특별시' 중복 완벽 제거 및 구/동 단위 정밀 조합 알고리즘
-                const r1 = (geoData.principalSubdivision || '').trim(); // 예: 경기도, 서울특별시
-                const r2 = (geoData.city || '').trim();                 // 예: 수원시, 서울특별시
-                const r3 = (geoData.locality || '').trim();             // 예: 팔달구, 인계동
+                // 💡 구(장안구 등)·동 단위까지 3단계 행정구역 정밀 추출
+                const r1 = (geoData.principalSubdivision || '').trim(); // 예: 경기도
+                const r2 = (geoData.city || '').trim();                 // 예: 수원시
+                let r3 = (geoData.locality || '').trim();               // 예: 장안구 (또는 동 이름)
                 
+                // 세부 행정구역(administrative) 정보에서 '구/군/읍/면/동' 보완 추출
+                if ((!r3 || r3 === r2) && geoData.localityInfo && geoData.localityInfo.administrative) {
+                    const adminList = geoData.localityInfo.administrative;
+                    const subArea = adminList.find(item => item.name && (item.name.endsWith('구') || item.name.endsWith('읍') || item.name.endsWith('면') || item.name.endsWith('동')));
+                    if (subArea) r3 = subArea.name.trim();
+                }
+
                 const uniqueParts = [];
                 [r1, r2, r3].forEach(part => {
                     if (part && !uniqueParts.includes(part)) uniqueParts.push(part);
                 });
                 
-                const cleanName = uniqueParts.slice(0, 2).join(' ') || "현재 위치";
-                document.getElementById('weatherLocation').innerText = cleanName;
+                // slice(0, 2) 제한을 해제하여 '경기도 수원시 장안구' 전체가 다 나오도록 수정!
+                const cleanName = uniqueParts.slice(0, 3).join(' ') || "현재 위치";
                 
-                // 성공한 위치와 좌표를 스마트폰에 기억시켜 다음 접속 시 0.1초 만에 로드
+                const locEl = document.getElementById('weatherLocation');
+                if (locEl) {
+                    locEl.innerHTML = `
+                        <span>${cleanName}</span>
+                        <span class="inline-flex items-center gap-1 bg-white/15 border border-white/25 text-white text-[11px] font-extrabold px-2 py-0.5 rounded-full shadow-sm ml-1">
+                            <i data-lucide="refresh-cw" class="w-3 h-3 text-[#84CC16]"></i> 위치갱신
+                        </span>`;
+                    if (window.lucide) lucide.createIcons();
+                }
+                
                 localStorage.setItem('shinhwa_last_loc', JSON.stringify({ lat, lon, name: cleanName, time: Date.now() }));
             } catch(e) {}
             const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=temperature_2m,weathercode,precipitation_probability,precipitation&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum&timezone=Asia%2FSeoul`;
