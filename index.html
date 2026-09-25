@@ -277,10 +277,10 @@
                 
         <!-- 메뉴 접기 버튼 -->
             <div class="flex justify-center mt-5 relative">
-                <button onclick="toggleMainCategory()" class="flex items-center gap-2.5 text-[19.5px] font-black text-[#151E2D] tracking-tight hover:bg-[#F4F5F4] active:scale-95 transition-all px-8 py-4 bg-white border border-[#EAEBEA] rounded-full shadow-lg" style="font-family: 'Pretendard', sans-serif !important;">
-                    <span id="toggleCategoryText" class="font-black text-[#151E2D] tracking-tight" style="font-family: 'Pretendard', sans-serif !important; font-size: 19.5px !important;">메뉴 접기 (화면 넓게 쓰기)</span>
-                    <div class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-[#84CC16] shadow-sm shrink-0">
-                        <i id="toggleCategoryIcon" data-lucide="arrow-up" class="w-5 h-5 stroke-[3] text-[#151E2D]"></i>
+                <button onclick="toggleMainCategory()" class="flex items-center gap-2.5 text-[17px] font-black text-[#151E2D] tracking-tight hover:bg-[#F4F5F4] active:scale-95 transition-all px-7 py-3.5 bg-white border border-[#EAEBEA] rounded-full shadow-lg" style="font-family: 'Pretendard', sans-serif !important;">
+                    <span id="toggleCategoryText" class="font-black text-[#151E2D] tracking-tight" style="font-family: 'Pretendard', sans-serif !important; font-size: 17px !important;">메뉴 접기</span>
+                    <div class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#84CC16] shadow-sm shrink-0">
+                        <i id="toggleCategoryIcon" data-lucide="arrow-up" class="w-4 h-4 stroke-[3] text-[#151E2D]"></i>
                     </div>
                 </button>
                 <div class="absolute top-1/2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent -z-10"></div>
@@ -2779,7 +2779,7 @@
         const targetState = forceState !== null ? (forceState === 'collapse') : !isCategoryCollapsed;
 
         if (targetState) {
-            // 접기 모드: 눈에서도 숨기고, 터치(클릭)도 100% 통과하도록 완전 차단!
+            // 접기 모드: 메뉴 숨김 & '메뉴 펼치기 (목록 보기)' 표시
             wrapper.style.maxHeight = '0px';
             wrapper.style.opacity = '0';
             wrapper.style.overflow = 'hidden';
@@ -2787,11 +2787,11 @@
             wrapper.style.marginTop = '0px';
             wrapper.style.paddingTop = '0px';
             wrapper.style.borderTopWidth = '0px';
-            text.innerText = '메뉴 펼치기 (다른 탭 이동)';
+            text.innerText = '메뉴 펼치기 (목록 보기)';
             icon.setAttribute('data-lucide', 'arrow-down');
             isCategoryCollapsed = true;
         } else {
-            // 펼치기 모드: 다시 보이게 하고 터치 활성화!
+            // 펼치기 모드: 메뉴 표시 & '메뉴 접기' 표시
             wrapper.style.maxHeight = '900px';
             wrapper.style.opacity = '1';
             wrapper.style.overflow = 'visible';
@@ -2799,7 +2799,7 @@
             wrapper.style.marginTop = '22px';
             wrapper.style.paddingTop = '22px';
             wrapper.style.borderTopWidth = '1px';
-            text.innerText = '메뉴 접기 (화면 넓게 쓰기)';
+            text.innerText = '메뉴 접기';
             icon.setAttribute('data-lucide', 'arrow-up');
             isCategoryCollapsed = false;
         }
