@@ -789,17 +789,19 @@
     <!-- ================= [스마트 식물검색 화면] ================= -->
     <section id="encyclopediaView" class="hidden space-y-4">
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
-        <div class="flex items-center justify-between pb-4 border-b border-[#F4F5F4]">
-          <h2 class="text-[18px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="search" class="w-6 h-6 text-[#84CC16]"></i> 스마트 식물검색</h2>
+        <div class="flex items-center justify-between pb-4 border-b-2 border-[#F1F5F9]">
+          <h2 class="text-[22px] font-black text-[#151E2D] flex items-center gap-2 tracking-tight">
+            <i data-lucide="search" class="w-6 h-6 text-[#84CC16] stroke-[2.5]"></i> 스마트 식물검색
+          </h2>
         </div>
-        <div class="bg-[#F2FBEC] rounded-[16px] p-4 border border-[#84CC16]/40 mb-2">
-            <p class="text-[13px] text-[#2E7D32] font-black leading-relaxed break-keep">💡 식물명을 검색하면 AI가 조경 전문가의 시각(월동, 전지방법, 특성)에 맞춰 맞춤형 데이터를 요약해 줍니다.</p>
+        <div class="bg-[#F2FBEC] rounded-[18px] p-4 border-[1.5px] border-[#84CC16]/60 mb-2">
+            <p class="text-[15px] text-[#2E7D32] font-black leading-relaxed break-keep">💡 식물명을 검색하면 AI가 조경 전문가의 시각(월동, 전지방법, 특성)에 맞춰 맞춤형 데이터를 요약해 줍니다.</p>
         </div>
         <div class="relative">
-            <input type="text" id="plantSearchInput" placeholder="식물명 검색 (예: 소나무, 명자나무)" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[16px] px-4 py-4 pr-14 text-[15px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
-            <button onclick="searchPlant()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-[#151E2D] text-[#84CC16] p-2.5 rounded-[12px] shadow-sm hover:bg-black transition-colors"><i data-lucide="search" class="w-5 h-5"></i></button>
+            <input type="text" id="plantSearchInput" onkeypress="if(event.key==='Enter') searchPlant()" placeholder="식물명 검색 (여기를 터치하고 입력하세요)" class="w-full bg-[#F9F9F8] border-2 border-[#CBD5E1] rounded-[18px] px-4 py-4 pr-16 text-[17px] font-black text-[#151E2D] placeholder:text-[#4E5968] placeholder:font-extrabold placeholder:text-[15.5px] focus:outline-none focus:border-[#84CC16] focus:bg-white transition-colors">
+            <button onclick="searchPlant()" class="absolute right-2.5 top-1/2 -translate-y-1/2 bg-[#151E2D] text-[#84CC16] p-3 rounded-[14px] shadow-md hover:bg-black transition-colors"><i data-lucide="search" class="w-6 h-6 stroke-[2.5]"></i></button>
         </div>
-        <div id="encyclopediaResult" class="hidden bg-[#F9F9F8] rounded-[20px] p-5 border border-[#EAEBEA] space-y-4 mt-2">
+        <div id="encyclopediaResult" class="hidden bg-[#F9F9F8] rounded-[20px] p-5 border-[1.5px] border-[#CBD5E1] space-y-4 mt-2">
             <!-- 검색 결과가 여기에 뜹니다 -->
         </div>
       </div>
