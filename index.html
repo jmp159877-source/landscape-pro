@@ -3775,7 +3775,7 @@
                 `;
             }
 
-            // 💡 주간 날씨 보기 (7일) - 시꺼먼 박스와 원색 빨강/파랑 완전 제거, 밝은 화이트 & 연두 에디션
+            // 💡 주간 날씨 보기 (네이버 스타일 '오전 / 오후' 정밀 분할 브리핑 탑재)
             const dailyContainer = document.getElementById('dailyWeatherContainer');
             dailyContainer.innerHTML = '';
             const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
@@ -3790,38 +3790,82 @@
                 const dProb = wData.daily.precipitation_probability_max?.[i] || 0;
                 const dSum = wData.daily.precipitation_sum?.[i] || 0;
 
-                // 촌스러운 원색 빨강/파랑 대신 내일·모레는 싱그러운 다크그린, 평일은 차콜 네이비
                 const dayColor = i <= 2 ? 'text-[#4D7C0F]' : 'text-[#151E2D]';
-                const iconBox = dCode <= 1 
-                    ? 'bg-[#FEF9C3] border-[#FDE047] text-[#D97706]' 
-                    : (dProb >= 40 ? 'bg-[#CCFBF1] border-[#99F6E4] text-[#0D9488]' : 'bg-[#ECFCCB] border-[#D9F99D] text-[#65A30D]');
-                
-                // 한 줄에 반듯하게 들어가는 밝은 연두/민트 상태 배지 (줄바꿈 원천 차단)
-                const statusBadge = (dProb > 0 && dSum > 0)
-                    ? `<div class="inline-flex items-center gap-1 text-[12px] font-extrabold text-[#0F766E] bg-[#CCFBF1] px-2.5 py-0.5 rounded-full mt-1 whitespace-nowrap"><i data-lucide="umbrella" class="w-3 h-3 shrink-0"></i><span>강수 ${dProb}% (${dSum}mm)</span></div>`
-                    : `<div class="inline-flex items-center gap-1 text-[12px] font-extrabold text-[#3F6212] bg-[#ECFCCB] px-2.5 py-0.5 rounded-full mt-1 whitespace-nowrap"><i data-lucide="sun" class="w-3 h-3 shrink-0"></i><span>조경 작업 좋음</span></div>`;
+
+                // ☀️ 오전(09시 기준) & 🌤️ 오후(15시 기준) 시간별 인덱스 정밀 계산 (i일째 * 24시간)
+                const amIdx = i * 24 + 9;
+                const pmIdx = i * 24 + 15;
+                const hasAmPm = wData.hourly && wData.hourly.weathercode && wData.hourly.weathercode[pmIdx] !== undefined;
+
+                let centerWeatherHtml = '';
+
+                if (hasAmPm) {
+                    // 오전(06~11시) 및 오후(12~18시) 구간 최대 강수확률 및 대표 날씨 추출
+                    const amCode = wData.hourly.weathercode[amIdx];
+                    const pmCode = wData.hourly.weathercode[pmIdx];
+                    const amInfo = getWeatherInfo(amCode);
+                    const pmInfo = getWeatherInfo(pmCode);
+
+                    const amSlice = wData.hourly.precipitation_probability.slice(i * 24 + 6, i * 24 + 12);
+                    const pmSlice = wData.hourly.precipitation_probability.slice(i * 24 + 12, i * 24 + 19);
+                    const amRainSlice = wData.hourly.precipitation.slice(i * 24 + 6, i * 24 + 12);
+                    const pmRainSlice = wData.hourly.precipitation.slice(i * 24 + 12, i * 24 + 19);
+
+                    let amProb = Math.max(...amSlice, 0);
+                    let pmProb = Math.max(...pmSlice, 0);
+                    if (Math.max(...amRainSlice, 0) === 0) amProb = 0;
+                    if (Math.max(...pmRainSlice, 0) === 0) pmProb = 0;
+
+                    const amIconColor = amCode <= 1 ? 'text-[#F59E0B]' : (amProb >= 30 ? 'text-[#0D9488]' : 'text-[#65A30D]');
+                    const pmIconColor = pmCode <= 1 ? 'text-[#F59E0B]' : (pmProb >= 30 ? 'text-[#0D9488]' : 'text-[#65A30D]');
+
+                    const amBadge = amProb > 0 ? `<span class="text-[#0D9488] font-black">${amProb}%</span>` : `<span class="text-[#65A30D] font-extrabold">${amInfo.text}</span>`;
+                    const pmBadge = pmProb > 0 ? `<span class="text-[#0D9488] font-black">${pmProb}%</span>` : `<span class="text-[#65A30D] font-extrabold">${pmInfo.text}</span>`;
+
+                    centerWeatherHtml = `
+                        <div class="flex-1 grid grid-cols-2 gap-1.5 px-1">
+                            <!-- 오전 박스 -->
+                            <div class="bg-[#F8FAFC] border border-[#E2E8F0] rounded-[14px] px-2.5 py-2 flex flex-col items-center justify-center">
+                                <span class="text-[11px] font-extrabold text-[#64748B] mb-1">오전</span>
+                                <i data-lucide="${amInfo.icon}" class="w-5 h-5 ${amIconColor} mb-1 stroke-[2.2]"></i>
+                                <div class="text-[12px] tracking-tight whitespace-nowrap">${amBadge}</div>
+                            </div>
+                            <!-- 오후 박스 -->
+                            <div class="bg-[#F8FAFC] border border-[#E2E8F0] rounded-[14px] px-2.5 py-2 flex flex-col items-center justify-center">
+                                <span class="text-[11px] font-extrabold text-[#64748B] mb-1">오후</span>
+                                <i data-lucide="${pmInfo.icon}" class="w-5 h-5 ${pmIconColor} mb-1 stroke-[2.2]"></i>
+                                <div class="text-[12px] tracking-tight whitespace-nowrap">${pmBadge}</div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    const iconBox = dCode <= 1 ? 'bg-[#FEF9C3] border-[#FDE047] text-[#D97706]' : 'bg-[#ECFCCB] border-[#D9F99D] text-[#65A30D]';
+                    centerWeatherHtml = `
+                        <div class="flex-1 flex items-center gap-2.5 min-w-0 px-1">
+                            <div class="w-10 h-10 rounded-[14px] border ${iconBox} flex items-center justify-center shrink-0">
+                                <i data-lucide="${dInfo.icon}" class="w-5 h-5 stroke-[2.2]"></i>
+                            </div>
+                            <div class="text-[15px] font-black text-[#151E2D] truncate">${dInfo.text}</div>
+                        </div>
+                    `;
+                }
+
+                // 내일·모레 카드는 햇살 연두 테두리로 한 번 더 강조
+                const cardBorder = i <= 2 ? 'border-[1.5px] border-[#84CC16]/60 bg-[#FAFAF9]' : 'border border-[#E2E8F0] bg-white';
 
                 dailyContainer.innerHTML += `
-                    <div class="bg-white border border-[#E2E8F0] rounded-[22px] px-4 py-3.5 flex items-center justify-between gap-2 shadow-sm">
+                    <div class="${cardBorder} rounded-[22px] px-3.5 py-3 flex items-center justify-between gap-1.5 shadow-sm">
                         <!-- 좌측 요일/날짜 -->
-                        <div class="w-[50px] shrink-0">
-                            <div class="text-[16.5px] font-black ${dayColor} tracking-tight leading-tight">${dayName}</div>
+                        <div class="w-[46px] shrink-0">
+                            <div class="text-[16px] font-black ${dayColor} tracking-tight leading-tight">${dayName}</div>
                             <div class="text-[12px] font-bold text-[#94A3B8] mt-0.5">${dateStr}</div>
                         </div>
-                        <!-- 중앙 날씨 아이콘 및 상태 (한 줄 고정) -->
-                        <div class="flex-1 flex items-center gap-3 min-w-0">
-                            <div class="w-11 h-11 rounded-[15px] border ${iconBox} flex items-center justify-center shrink-0">
-                                <i data-lucide="${dInfo.icon}" class="w-6 h-6 stroke-[2.2]"></i>
-                            </div>
-                            <div class="min-w-0">
-                                <div class="text-[16px] font-black text-[#151E2D] tracking-tight leading-tight truncate">${dInfo.text}</div>
-                                ${statusBadge}
-                            </div>
-                        </div>
-                        <!-- 우측 최저/최고 기온 (원색 파랑·빨강을 없애고 밝은 크림 박스 + 세련된 차콜/그린 텍스트 적용) -->
-                        <div class="text-right shrink-0 bg-[#F8FAFC] px-3 py-1.5 rounded-[14px] border border-[#E2E8F0]">
-                            <div class="text-[12px] font-bold text-[#64748B] whitespace-nowrap">최저 <span class="text-[15px] font-black text-[#475569] ml-0.5">${minT}°</span></div>
-                            <div class="text-[12px] font-bold text-[#64748B] whitespace-nowrap">최고 <span class="text-[15px] font-black text-[#15803D] ml-0.5">${maxT}°</span></div>
+                        <!-- 중앙 [오전 / 오후] 2분할 날씨 브리핑 -->
+                        ${centerWeatherHtml}
+                        <!-- 우측 최저/최고 기온 -->
+                        <div class="text-right shrink-0 bg-[#F8FAFC] px-2.5 py-2 rounded-[14px] border border-[#E2E8F0]">
+                            <div class="text-[11.5px] font-bold text-[#64748B] whitespace-nowrap">최저 <span class="text-[14.5px] font-black text-[#475569] ml-0.5">${minT}°</span></div>
+                            <div class="text-[11.5px] font-bold text-[#64748B] whitespace-nowrap mt-0.5">최고 <span class="text-[14.5px] font-black text-[#15803D] ml-0.5">${maxT}°</span></div>
                         </div>
                     </div>
                 `;
