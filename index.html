@@ -1552,8 +1552,15 @@
 
     function switchContactTab(tab) {
         currentContactTab = tab; const btnClient = document.getElementById('btnContactClient'); const btnLabor = document.getElementById('btnContactLabor'); const inputName = document.getElementById('newContactName');
-        if(tab === 'clients') { btnClient.className = "flex-1 py-3 rounded-[12px] bg-white shadow-sm text-[#151E2D] font-black text-[14px] transition-all border border-[#EAEBEA]"; btnLabor.className = "flex-1 py-3 rounded-[12px] text-[#4E5968] font-black text-[14px] hover:text-[#151E2D] transition-all border border-transparent bg-transparent"; inputName.placeholder = "업체명 입력"; } 
-        else { btnClient.className = "flex-1 py-3 rounded-[12px] text-[#4E5968] font-black text-[14px] hover:text-[#151E2D] transition-all border border-transparent bg-transparent"; btnLabor.className = "flex-1 py-3 rounded-[12px] bg-white shadow-sm text-[#151E2D] font-black text-[14px] transition-all border border-[#EAEBEA]"; inputName.placeholder = "성명 입력"; }
+        if(tab === 'clients') {
+            btnClient.className = "flex-1 py-3.5 rounded-[12px] bg-white shadow-sm text-[#151E2D] font-black text-[16.5px] transition-all border border-[#CBD5E1]";
+            btnLabor.className = "flex-1 py-3.5 rounded-[12px] text-[#4E5968] font-black text-[16.5px] hover:text-[#151E2D] transition-all border border-transparent bg-transparent";
+            inputName.placeholder = "업체명 입력";
+        } else {
+            btnClient.className = "flex-1 py-3.5 rounded-[12px] text-[#4E5968] font-black text-[16.5px] hover:text-[#151E2D] transition-all border border-transparent bg-transparent";
+            btnLabor.className = "flex-1 py-3.5 rounded-[12px] bg-white shadow-sm text-[#151E2D] font-black text-[16.5px] transition-all border border-[#CBD5E1]";
+            inputName.placeholder = "성명 입력";
+        }
         renderContactsList();
     }
 
@@ -1568,12 +1575,12 @@
     function editContact(tab, index) {
         editingContactIndex = index; if (currentContactTab !== tab) switchContactTab(tab); const c = contactsData[tab][index];
         document.getElementById('newContactName').value = c.name; document.getElementById('newContactPhone').value = c.phone; document.getElementById('newContactMemo').value = c.memo || '';
-        document.getElementById('contactFormTitle').innerHTML = `<i data-lucide="edit-3" class="w-5 h-5 text-[#84CC16]"></i> <span>연락처 수정</span>`; document.getElementById('saveContactBtn').innerHTML = `<i data-lucide="save" class="w-5 h-5"></i> 수정 완료`; document.getElementById('cancelContactEditBtn').classList.remove('hidden'); lucide.createIcons(); window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.getElementById('contactFormTitle').innerHTML = `<i data-lucide="edit-3" class="w-6 h-6 text-[#65A30D]"></i> <span>연락처 수정</span>`; document.getElementById('saveContactBtn').innerHTML = `<i data-lucide="save" class="w-5 h-5"></i> 수정 완료`; document.getElementById('cancelContactEditBtn').classList.remove('hidden'); lucide.createIcons(); window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function cancelContactEdit() {
         editingContactIndex = null; document.getElementById('newContactName').value = ''; document.getElementById('newContactPhone').value = ''; document.getElementById('newContactMemo').value = '';
-        document.getElementById('contactFormTitle').innerHTML = `<i data-lucide="user-plus" class="w-5 h-5 text-[#84CC16]"></i> <span>새 연락처 추가</span>`; document.getElementById('saveContactBtn').innerHTML = `<i data-lucide="save" class="w-5 h-5"></i> 연락처 저장하기`; document.getElementById('cancelContactEditBtn').classList.add('hidden'); lucide.createIcons();
+        document.getElementById('contactFormTitle').innerHTML = `<i data-lucide="user-plus" class="w-6 h-6 text-[#65A30D] stroke-[2.5]"></i> <span>새 연락처 추가</span>`; document.getElementById('saveContactBtn').innerHTML = `<i data-lucide="save" class="w-5 h-5 stroke-[2.5]"></i> 연락처 저장하기`; document.getElementById('cancelContactEditBtn').classList.add('hidden'); lucide.createIcons();
     }
 
     function deleteContact(tab, index) { if(confirm("삭제하시겠습니까?")) { contactsData[tab].splice(index, 1); updateData('contacts', contactsData); if(editingContactIndex === index) cancelContactEdit(); renderContactsList(); } }
@@ -1581,15 +1588,14 @@
 
     function renderContactsList() {
         const container = document.getElementById('contactsListContainer'); const list = contactsData[currentContactTab] || []; document.getElementById('contactCountBadge').innerText = `${list.length}건`; container.innerHTML = '';
-        if(list.length === 0) { container.innerHTML = `<div class="p-6 text-center text-[#8B95A1] text-[13px] bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA] font-bold">등록된 연락처가 없습니다.</div>`; return; }
+        if(list.length === 0) { container.innerHTML = `<div class="p-7 text-center text-[#64748B] text-[15px] bg-[#F9F9F8] rounded-[18px] border-2 border-dashed border-[#CBD5E1] font-black">등록된 연락처가 없습니다.</div>`; return; }
         list.forEach((item, idx) => {
-            const div = document.createElement('div'); div.className = "bg-white p-5 rounded-[16px] border border-[#EAEBEA] shadow-sm flex justify-between items-center transition-all hover:border-[#84CC16]";
-            let memoHtml = item.memo ? `<div class="text-[12px] text-[#4E5968] mt-2 bg-[#F4F5F4] px-2.5 py-1.5 rounded-lg inline-block font-bold">${item.memo}</div>` : '';
-            div.innerHTML = `<div><div class="font-black text-[#1A1D1A] text-[15px] flex items-center gap-1.5"><i data-lucide="${currentContactTab === 'clients' ? 'building' : 'user'}" class="w-4 h-4 text-[#4E5968]"></i> ${item.name}</div><div class="text-[15px] mt-1.5"><i data-lucide="phone" class="w-4 h-4 inline-block text-blue-500 mr-1"></i> ${formatPhoneToLink(item.phone)}</div>${memoHtml}</div><div class="flex gap-1.5 shrink-0"><button onclick="editContact('${currentContactTab}', ${idx})" class="p-3 text-[#A3A8A3] hover:text-[#84CC16] bg-gray-50 rounded-xl transition-all"><i data-lucide="edit-2" class="w-5 h-5"></i></button><button onclick="deleteContact('${currentContactTab}', ${idx})" class="p-3 text-[#A3A8A3] hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div>`;
+            const div = document.createElement('div'); div.className = "bg-white p-5 rounded-[20px] border-[1.5px] border-[#CBD5E1] shadow-sm flex justify-between items-center transition-all hover:border-[#84CC16]";
+            let memoHtml = item.memo ? `<div class="text-[14px] text-[#334155] mt-2 bg-[#F1F5F9] px-3 py-1.5 rounded-xl inline-block font-extrabold">${item.memo}</div>` : '';
+            div.innerHTML = `<div><div class="font-black text-[#151E2D] text-[18px] flex items-center gap-2"><i data-lucide="${currentContactTab === 'clients' ? 'building' : 'user'}" class="w-5 h-5 text-[#65A30D]"></i> ${item.name}</div><div class="text-[17px] mt-1.5 font-black"><i data-lucide="phone" class="w-4 h-4 inline-block text-blue-600 mr-1"></i> ${formatPhoneToLink(item.phone)}</div>${memoHtml}</div><div class="flex gap-2 shrink-0"><button onclick="editContact('${currentContactTab}', ${idx})" class="p-3 text-[#4E5968] hover:text-[#151E2D] bg-[#F1F5F9] rounded-xl transition-all"><i data-lucide="edit-2" class="w-5 h-5"></i></button><button onclick="deleteContact('${currentContactTab}', ${idx})" class="p-3 text-[#4E5968] hover:text-red-600 hover:bg-red-50 bg-[#F1F5F9] rounded-xl transition-all"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div>`;
             container.appendChild(div);
         }); lucide.createIcons();
     }
-
     function openMaterialModal() { if (!materialsData || materialsData.length === 0) { materialsData = JSON.parse(JSON.stringify(defaultMaterials)); updateData('materials', materialsData); } isMaterialEditMode = false; renderMaterialTable(); const modal = document.getElementById('materialModal'); const box = document.getElementById('materialBox'); modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10); history.pushState({ modalOpen: true }, "", ""); }
     function closeMaterialModal(fromPopstate = false) { if(isMaterialEditMode) { if(!confirm("저장하지 않고 닫으시겠습니까?")) return; } const modal = document.getElementById('materialModal'); const box = document.getElementById('materialBox'); if(modal) modal.classList.add('opacity-0'); if(box) box.classList.add('scale-95'); setTimeout(() => { if(modal) modal.classList.add('hidden'); isMaterialEditMode = false; }, 200); if(!fromPopstate && history.state && history.state.modalOpen) history.back(); }
     
@@ -2322,8 +2328,13 @@
 
     function setClientFilter(type) {
       currentClientFilter = type;
-      if(type === '정기 관리') { document.getElementById('btnFilterRegular').className = "flex-1 py-3 rounded-[12px] bg-white shadow-sm text-[#151E2D] font-black text-[14px] transition-all border border-[#EAEBEA]"; document.getElementById('btnFilterSingle').className = "flex-1 py-3 rounded-[12px] text-[#4E5968] font-black text-[14px] hover:text-[#151E2D] transition-all border border-transparent"; } 
-      else { document.getElementById('btnFilterRegular').className = "flex-1 py-3 rounded-[12px] text-[#4E5968] font-black text-[14px] hover:text-[#151E2D] transition-all border border-transparent"; document.getElementById('btnFilterSingle').className = "flex-1 py-3 rounded-[12px] bg-white shadow-sm text-[#151E2D] font-black text-[14px] shadow-sm transition-all text-center border border-[#EAEBEA]"; }
+      if(type === '정기 관리') {
+        document.getElementById('btnFilterRegular').className = "flex-1 py-3.5 rounded-[12px] bg-white shadow-sm text-[#151E2D] font-black text-[16.5px] transition-all border border-[#CBD5E1]";
+        document.getElementById('btnFilterSingle').className = "flex-1 py-3.5 rounded-[12px] text-[#4E5968] font-black text-[16.5px] hover:text-[#151E2D] transition-all border border-transparent";
+      } else {
+        document.getElementById('btnFilterRegular').className = "flex-1 py-3.5 rounded-[12px] text-[#4E5968] font-black text-[16.5px] hover:text-[#151E2D] transition-all border border-transparent";
+        document.getElementById('btnFilterSingle').className = "flex-1 py-3.5 rounded-[12px] bg-white shadow-sm text-[#151E2D] font-black text-[16.5px] transition-all text-center border border-[#CBD5E1]";
+      }
       renderClientsList();
     }
 
@@ -2333,37 +2344,36 @@
       let filtered = clients.filter(c => c.type === currentClientFilter);
       if(query) { filtered = filtered.filter(c => (c.name&&c.name.toLowerCase().includes(query)) || (c.phone&&c.phone.replace(/-/g, '').includes(query.replace(/-/g, ''))) || (c.address&&c.address.toLowerCase().includes(query))); }
       document.getElementById('clientCountBadge').innerText = `${filtered.length}건`;
-      if (filtered.length === 0) { container.innerHTML = `<div class="p-6 text-center text-[#8B95A1] text-[13px] bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA] font-bold">일치하는 거래처가 없습니다.</div>`; return; }
+      if (filtered.length === 0) { container.innerHTML = `<div class="p-7 text-center text-[#64748B] text-[15px] bg-[#F9F9F8] rounded-[18px] border-2 border-dashed border-[#CBD5E1] font-black">일치하는 거래처가 없습니다.</div>`; return; }
       
       filtered.forEach((c) => {
         const div = document.createElement('div'); 
-        div.className = "bg-white p-4 rounded-[16px] border border-[#EAEBEA] shadow-sm hover:border-[#84CC16] hover:shadow-md transition-all flex flex-col";
+        div.className = "bg-white p-5 rounded-[20px] border-[1.5px] border-[#CBD5E1] shadow-sm hover:border-[#84CC16] hover:shadow-md transition-all flex flex-col";
         
         div.innerHTML = `
-          <div class="flex justify-between items-start gap-2">
+          <div class="flex justify-between items-start gap-2.5">
             <div class="cursor-pointer flex-1 min-w-0" onclick="showHistory('${c.name}')">
-              <div class="font-black text-[#1A1D1A] text-[16px] flex items-center gap-1.5">
-                <i data-lucide="building" class="w-4 h-4 text-[#4E5968] shrink-0"></i> 
+              <div class="font-black text-[#151E2D] text-[18px] flex items-center gap-1.5">
+                <i data-lucide="building" class="w-5 h-5 text-[#65A30D] shrink-0"></i> 
                 <span class="truncate">${c.name}</span>
               </div>
-              <div class="text-[13px] font-medium text-[#8B95A1] mt-1.5 break-keep truncate">
-                <i data-lucide="map-pin" class="w-3.5 h-3.5 inline-block mr-1"></i> ${c.address || '주소 미등록'}
+              <div class="text-[14.5px] font-bold text-[#4E5968] mt-1.5 break-keep truncate">
+                <i data-lucide="map-pin" class="w-4 h-4 inline-block mr-1 text-[#64748B]"></i> ${c.address || '주소 미등록'}
               </div>
-              <div class="text-[14px] font-bold text-[#4E5968] mt-1">
-                <i data-lucide="phone" class="w-3.5 h-3.5 inline-block text-blue-500 mr-1"></i> ${formatPhoneToLink(c.phone)}
+              <div class="text-[16px] font-black text-[#151E2D] mt-1.5">
+                <i data-lucide="phone" class="w-4 h-4 inline-block text-blue-600 mr-1"></i> ${formatPhoneToLink(c.phone)}
               </div>
             </div>
             
-            <!-- ✨ 대표님이 원하신 바로 그 위치! 고객명 우측 '새 일지 작성' 다이렉트 버튼 ✨ -->
-            <button onclick="createNewReportFromClient('${c.id}'); event.stopPropagation();" class="shrink-0 text-[12px] font-black bg-[#151E2D] text-white px-3 py-2.5 rounded-[10px] shadow-sm hover:bg-black active:scale-95 transition-all flex items-center gap-1.5 mt-0.5">
-              <i data-lucide="pen-tool" class="w-3.5 h-3.5 text-[#84CC16]"></i> 새 일지 작성
+            <button onclick="createNewReportFromClient('${c.id}'); event.stopPropagation();" class="shrink-0 text-[14px] font-black bg-[#151E2D] text-white px-3.5 py-3 rounded-[12px] shadow-sm hover:bg-black active:scale-95 transition-all flex items-center gap-1.5 mt-0.5">
+              <i data-lucide="pen-tool" class="w-4 h-4 text-[#84CC16]"></i> 새 일지 작성
             </button>
           </div>
           
-          <div class="flex gap-2 items-center justify-end pt-3 border-t border-[#F4F5F4] mt-3">
-            <button onclick="showHistory('${c.name}'); event.stopPropagation();" class="flex-1 py-2.5 bg-[#F4F5F4] text-[#4E5968] rounded-[10px] font-black text-[13px] hover:text-[#151E2D] transition-all flex items-center justify-center gap-1.5"><i data-lucide="history" class="w-4 h-4"></i> 과거 기록 열람</button>
-            <button onclick="editClient('${c.id}'); event.stopPropagation();" class="p-2.5 text-[#A3A8A3] hover:text-[#84CC16] bg-[#F4F5F4] rounded-[10px] transition-all shrink-0"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
-            <button onclick="deleteClient('${c.id}'); event.stopPropagation();" class="p-2.5 text-[#A3A8A3] hover:text-red-500 bg-[#F4F5F4] rounded-[10px] transition-all shrink-0"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+          <div class="flex gap-2 items-center justify-end pt-3.5 border-t border-[#F1F5F9] mt-3.5">
+            <button onclick="showHistory('${c.name}'); event.stopPropagation();" class="flex-1 py-3 bg-[#F1F5F9] text-[#151E2D] rounded-[12px] font-black text-[15px] hover:bg-[#E2E8F0] transition-all flex items-center justify-center gap-1.5"><i data-lucide="history" class="w-4 h-4"></i> 과거 기록 열람</button>
+            <button onclick="editClient('${c.id}'); event.stopPropagation();" class="p-3 text-[#4E5968] hover:text-[#151E2D] bg-[#F1F5F9] rounded-[12px] transition-all shrink-0"><i data-lucide="edit-2" class="w-5 h-5"></i></button>
+            <button onclick="deleteClient('${c.id}'); event.stopPropagation();" class="p-3 text-[#4E5968] hover:text-red-600 bg-[#F1F5F9] rounded-[12px] transition-all shrink-0"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
           </div>
         `;
         container.appendChild(div);
@@ -2381,63 +2391,55 @@
             const idx = clients.findIndex(c => c.id === editingClientIndex); 
             if(idx !== -1) { 
                 const oldName = clients[idx].name; 
-                
                 clients[idx].name = name; clients[idx].phone = phone; clients[idx].address = address; clients[idx].type = type; 
-                
                 if (oldName !== name) {
                     let isChanged = false;
                     records.forEach(r => {
                         if (r && r.clientName === oldName) {
                             r.clientName = name; 
-                            if (r.payload) { 
-                                r.payload.c = name; 
-                                r.payload.p = phone; 
-                                r.payload.addr = address; 
-                            }
+                            if (r.payload) { r.payload.c = name; r.payload.p = phone; r.payload.addr = address; }
                             isChanged = true;
                         }
                     });
-                    if (isChanged) { 
-                        updateData('records', records); 
-                        localStorage.setItem('shinhwa_pro_records', JSON.stringify(records)); 
-                    }
+                    if (isChanged) { updateData('records', records); localStorage.setItem('shinhwa_pro_records', JSON.stringify(records)); }
                 }
             } 
             alert("수정 완료"); 
-        } 
-        else { 
+        } else { 
             clients.push({ id: Date.now().toString(), name, phone, address, type }); 
             alert("저장 완료"); 
         }
         updateData('clients', clients); cancelEdit(); renderClientSelect(); renderClientsList();
     }
+
     function editClient(id) {
         editingClientIndex = id; const client = clients.find(c => c.id === id); if(!client) return;
         document.getElementById('newClientName').value = client.name; document.getElementById('newClientPhone').value = client.phone; document.getElementById('newClientAddress').value = client.address || ''; 
         let r1 = document.querySelector('input[name="newClientType"][value="정기 관리"]'); let r2 = document.querySelector('input[name="newClientType"][value="개별 고객"]');
         if (client.type === '개별 고객') { if(r2) r2.checked = true; } else { if(r1) r1.checked = true; }
-        document.getElementById('clientFormTitle').innerHTML = `<i data-lucide="edit-3" class="w-5 h-5 text-[#84CC16]"></i> <span>거래처 정보 수정</span>`; document.getElementById('saveClientBtn').innerText = "수정 완료"; document.getElementById('cancelEditBtn').classList.remove('hidden'); lucide.createIcons(); window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.getElementById('clientFormTitle').innerHTML = `<i data-lucide="edit-3" class="w-6 h-6 text-[#65A30D]"></i> <span>거래처 정보 수정</span>`; document.getElementById('saveClientBtn').innerText = "수정 완료"; document.getElementById('cancelEditBtn').classList.remove('hidden'); lucide.createIcons(); window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
     function cancelEdit() {
         editingClientIndex = null; document.getElementById('newClientName').value = ''; document.getElementById('newClientPhone').value = ''; document.getElementById('newClientAddress').value = ''; 
         let r1_cancel = document.querySelector('input[name="newClientType"][value="정기 관리"]'); if(r1_cancel) r1_cancel.checked = true;
-        document.getElementById('clientFormTitle').innerHTML = `<i data-lucide="plus" class="w-5 h-5 text-[#84CC16]"></i> <span>신규 등록</span>`; document.getElementById('saveClientBtn').innerText = "데이터 저장"; document.getElementById('cancelEditBtn').classList.add('hidden'); lucide.createIcons();
+        document.getElementById('clientFormTitle').innerHTML = `<i data-lucide="plus" class="w-6 h-6 text-[#65A30D] stroke-[3]"></i> <span>신규 등록</span>`; document.getElementById('saveClientBtn').innerText = "데이터 저장"; document.getElementById('cancelEditBtn').classList.add('hidden'); lucide.createIcons();
     }
+
     function deleteClient(id) { if(confirm("삭제하시겠습니까?")) { clients = clients.filter(c => c.id !== id); updateData('clients', clients); if(editingClientIndex === id) cancelEdit(); renderClientSelect(); renderClientsList(); } }
 
     function renderQuoteList() {
       const container = document.getElementById('quoteListContainer'); const qList = records.filter(r => r && r.type === 'quote').sort((a,b) => b.id.localeCompare(a.id)); container.innerHTML = '';
       document.getElementById('quoteCountBadge').innerText = `${qList.length}건`;
-      if(qList.length === 0) { container.innerHTML = `<div class="p-8 text-center text-[#8B95A1] text-[13px] bg-[#F9F9F8] rounded-[16px] border border-dashed border-[#EAEBEA] font-bold">발행된 견적서가 없습니다.</div>`; return; }
+      if(qList.length === 0) { container.innerHTML = `<div class="p-8 text-center text-[#64748B] text-[15px] bg-[#F9F9F8] rounded-[18px] border-2 border-dashed border-[#CBD5E1] font-black">발행된 견적서가 없습니다.</div>`; return; }
       qList.forEach(r => {
-        const div = document.createElement('div'); div.className = "bg-white p-5 rounded-[16px] border border-[#EAEBEA] shadow-sm cursor-pointer hover:border-[#84CC16] hover:shadow-md transition-all flex flex-col gap-2 relative";
+        const div = document.createElement('div'); div.className = "bg-white p-5 rounded-[20px] border-[1.5px] border-[#CBD5E1] shadow-sm cursor-pointer hover:border-[#84CC16] hover:shadow-md transition-all flex flex-col gap-2.5 relative";
         div.onclick = () => loadHistoryRecord(r.id, true, r);
         let sumValue = r.payload ? (r.payload.s || 0).toLocaleString('ko-KR') : "0";
-        div.innerHTML = `<button onclick="deleteRecord(event, '${r.id}', true)" class="absolute top-4 right-4 text-[#A3A8A3] hover:text-red-500 p-1 bg-[#F4F5F4] rounded-md transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button><div class="flex items-center gap-2 mb-1"><span class="text-[10px] font-black bg-[#1E3A8A]/10 text-[#1E3A8A] px-2 py-0.5 rounded border border-[#1E3A8A]/20">견적서</span><span class="text-[12px] font-bold text-[#8B95A1]">${r.date}</span></div><div class="font-black text-[#1A1D1A] text-[15px] truncate pr-8">${r.round}</div><div class="flex justify-between items-end mt-1"><div class="text-[13px] font-bold text-[#4E5968] flex items-center gap-1.5"><i data-lucide="building" class="w-3.5 h-3.5"></i> ${r.clientName}</div><div class="text-[16px] font-black text-[#84CC16]">${sumValue}원</div></div>`;
+        div.innerHTML = `<button onclick="deleteRecord(event, '${r.id}', true)" class="absolute top-4 right-4 text-[#64748B] hover:text-red-600 p-2 bg-[#F1F5F9] rounded-xl transition-colors"><i data-lucide="trash-2" class="w-5 h-5"></i></button><div class="flex items-center gap-2"><span class="text-[12px] font-black bg-[#1E3A8A] text-white px-2.5 py-1 rounded-lg">견적서</span><span class="text-[14px] font-extrabold text-[#64748B]">${r.date}</span></div><div class="font-black text-[#151E2D] text-[18px] truncate pr-10">${r.round}</div><div class="flex justify-between items-end mt-1 pt-2 border-t border-[#F1F5F9]"><div class="text-[15.5px] font-black text-[#334155] flex items-center gap-1.5"><i data-lucide="building" class="w-4 h-4 text-[#65A30D]"></i> ${r.clientName}</div><div class="text-[19px] font-black text-[#65A30D]">${sumValue}원</div></div>`;
         container.appendChild(div);
       }); lucide.createIcons();
     }
-
     function showHistory(clientName) {
       document.getElementById('historyClientName').innerText = clientName; const container = document.getElementById('historyListContainer'); container.innerHTML = '';
       const list = records.filter(r => r && r.clientName === clientName && r.type !== 'quote').sort((a, b) => b.id.localeCompare(a.id));
@@ -2783,7 +2785,7 @@
               el.className = "w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md";
               const icon = el.querySelector('i');
               const span = el.querySelector('span');
-              if(span) span.className = "text-[13px] font-bold text-white/90";
+              if(span) span.className = "text-[15px] font-black text-white tracking-tight";
               if(icon) {
                   icon.className = icon.className.replace(/text-\S+/g, '');
                   if(t === 'tabAdmin' || t === 'tabQuoteList') icon.classList.add('text-[#84CC16]');
@@ -2798,7 +2800,7 @@
       if(loungeTab) {
           loungeTab.className = "w-full py-5 rounded-[20px] bg-[#FEE500] border border-[#FEE500] shadow-[0_4px_15px_rgba(254,229,0,0.3)] hover:brightness-95 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md";
           const span = loungeTab.querySelector('span');
-          if(span) span.className = "text-[14px] font-black text-[#151E2D] tracking-tight";
+          if(span) span.className = "text-[15.5px] font-black text-[#151E2D] tracking-tight";
           const icon = loungeTab.querySelector('i');
           if(icon) { icon.className = icon.className.replace(/text-\S+/g, ''); icon.classList.add('text-[#151E2D]'); }
       }
@@ -2807,16 +2809,16 @@
       if(encyTab) {
           encyTab.className = "w-full py-5 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md";
           const span = encyTab.querySelector('span');
-          if(span) span.className = "text-[14px] font-black text-[#151E2D] tracking-tight";
+          if(span) span.className = "text-[15.5px] font-black text-[#151E2D] tracking-tight";
           const icon = encyTab.querySelector('i');
           if(icon) { icon.className = icon.className.replace(/text-\S+/g, ''); icon.classList.add('text-[#151E2D]'); }
       }
 
       const lensTab = document.getElementById('tabLens');
       if(lensTab) {
-          lensTab.className = "w-full py-5 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md";
+          lensTab.className = "w-full py-5 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex flex-col items-center justify-center gap-1.5 backdrop-blur-md";
           const span = lensTab.querySelector('span');
-          if(span) span.className = "text-[14px] font-black text-[#151E2D] tracking-tight";
+          if(span) span.className = "text-[15px] font-black text-[#151E2D] tracking-tight";
           const icon = lensTab.querySelector('i');
           if(icon) { icon.className = icon.className.replace(/text-\S+/g, ''); icon.classList.add('text-[#151E2D]'); }
       }
@@ -2841,7 +2843,7 @@
         if(activeEl && activeTabId !== 'tabLens' && activeTabId !== 'tabEncyclopedia' && activeTabId !== 'tabLounge') {
             activeEl.className = "w-full py-5 rounded-[20px] bg-white/15 border border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md";
             const span = activeEl.querySelector('span');
-            if(span) span.className = "text-[13px] font-black text-white";
+            if(span) span.className = "text-[15px] font-black text-white tracking-tight";
         }
       }
 
@@ -2855,11 +2857,8 @@
       if(typeof lucide !== 'undefined') lucide.createIcons(); window.scrollTo(0, 0); 
       if (pushHistory && mode !== 'client_shared') history.pushState({ view: mode }, "", "");
     }
-    // ==========================================
-    // 🚫 전체 화면 스와이프(화면 넘기기) 기능 완전 삭제 (오터치 방지)
-    // ==========================================
-    // (대표님의 UX 결단에 따라, 오작동을 유발하던 스와이프 화면 이동 로직을 완전히 제거했습니다.)
-     function openModal(type, idx) { 
+
+    function openModal(type, idx) { 
         if (type === 'b') modalImages = currentGalleryB; else if (type === 'dur') modalImages = currentGalleryD; else if (type === 'a') modalImages = currentGalleryA; else if (type === 'i') modalImages = currentGalleryI; else modalImages = currentGalleryQ;
         if (!modalImages || modalImages.length === 0) return; 
         modalCurrentIdx = idx; updateModalImage(); document.getElementById('imageModal').style.zIndex = "4000"; document.getElementById('imageModal').classList.remove('hidden'); history.pushState({ modalOpen: true }, "", ""); 
@@ -2873,7 +2872,7 @@
     imageModalEl.addEventListener('touchstart', e => { modalTouchStartX = e.changedTouches[0].screenX; modalTouchStartY = e.changedTouches[0].screenY; }, {passive: true});
     imageModalEl.addEventListener('touchend', e => { if (imageModalEl.classList.contains('hidden')) return; const diffX = e.changedTouches[0].screenX - modalTouchStartX; const diffY = e.changedTouches[0].screenY - modalTouchStartY; if (Math.abs(diffX) > Math.abs(diffY) * 1.5 && Math.abs(diffX) > 40) { if (diffX < 0) nextImage(); else prevImage(); } }, {passive: true});
     
-    function toggleBadge(btn) { if(btn.classList.contains('bg-[#151E2D]')) { btn.className = "cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-white border border-[#EAEBEA] text-[#4E5968] transition-all"; btn.innerText = "+ " + btn.getAttribute('data-val'); } else { btn.className = "cat-btn p-4 text-[13px] rounded-[16px] font-bold text-left bg-[#151E2D] text-[#84CC16] shadow-md border border-transparent"; btn.innerText = "✓ " + btn.getAttribute('data-val'); } }
+    function toggleBadge(btn) { if(btn.classList.contains('bg-[#151E2D]')) { btn.className = "cat-btn p-4 text-[13px] rounded-[16px] font-black text-left bg-white border-[1.5px] border-[#CBD5E1] text-[#151E2D] transition-all"; btn.innerText = "+ " + btn.getAttribute('data-val'); } else { btn.className = "cat-btn p-4 text-[13px] rounded-[16px] font-black text-left bg-[#151E2D] text-[#84CC16] shadow-md border-[1.5px] border-[#151E2D] transition-all"; btn.innerText = "✓ " + btn.getAttribute('data-val'); } }
 
     window.addEventListener('DOMContentLoaded', async () => {
       loadQuoteTemplate('residential'); 
