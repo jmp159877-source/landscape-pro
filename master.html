@@ -227,9 +227,10 @@
         </div>
 
         <div class="glass-panel rounded-[24px] p-6 space-y-4 border-[#FDE047]/30"><!-- 📌 [패치 #10] 라운지 예시글 관리 -->
-            <h3 class="text-white font-black text-[16px] flex items-center gap-2 mb-2"><i data-lucide="pin" class="w-5 h-5 text-[#FDE047]"></i> 라운지 예시글 관리</h3>
+            <h3 class="text-white font-black text-[16px] flex items-center gap-2 mb-2"><i data-lucide="pin" class="w-5 h-5 text-[#FDE047]"></i> 라운지 게시판 관리</h3>
             <p class="text-[#94A3B8] text-[12px] leading-relaxed">8개 카테고리에 [조경노트 운영팀] 명의의 📌 예시글(카테고리별 3개, 총 24개)을 등록합니다. 예시글에는 전화·대화 버튼이 표시되지 않습니다.</p>
             <button onclick="seedOfficialPosts()" class="w-full py-3.5 bg-[#FDE047]/20 text-[#FDE047] font-black rounded-[12px] hover:bg-[#FDE047]/30 border border-[#FDE047]/40">📌 예시글 일괄 등록</button>
+            <button onclick="openPostManager()" class="w-full py-3.5 bg-[#3B82F6]/20 text-blue-300 font-black rounded-[12px] hover:bg-[#3B82F6]/30 border border-blue-500/30">📋 전체 게시글 목록 관리 (삭제·마감)</button><!-- 📋 [패치 #11] -->
             <button onclick="deleteOfficialPosts()" class="w-full py-3 bg-white/5 text-[#94A3B8] font-bold rounded-[12px] hover:bg-white/10 border border-white/10 text-[13px]">예시글 전체 삭제 (회원 글은 유지)</button>
         </div>
 
@@ -256,6 +257,24 @@
       </div>
     </div>
   </main>
+
+  <!-- 📋 [패치 #11] 라운지 게시글 관리 창 -->
+  <div id="postManagerModal" class="hidden fixed inset-0 z-[9000] bg-black/80 flex items-center justify-center p-3" onclick="closePostManager()">
+    <div class="bg-[#0F172A] w-full max-w-3xl max-h-[92vh] rounded-[24px] border border-white/10 flex flex-col overflow-hidden" onclick="event.stopPropagation()">
+      <div class="p-5 border-b border-white/10 flex items-center justify-between">
+        <h3 class="text-white font-black text-[18px]">📋 라운지 게시글 관리 <span id="pmCount" class="text-[#94A3B8] text-[13px] font-bold"></span></h3>
+        <button onclick="closePostManager()" class="text-[#94A3B8] hover:text-white text-[22px] font-black px-2">✕</button>
+      </div>
+      <div class="p-4 border-b border-white/10 flex flex-col sm:flex-row gap-2">
+        <select id="pmCategory" onchange="renderPostManager()" class="bg-[#1E293B] border border-white/10 rounded-[10px] px-3 py-2.5 text-white text-[13px] font-bold">
+          <option value="">전체 카테고리</option><option value="자유소통">☕ 자유 소통</option><option value="정보교환">📢 정보 교환</option><option value="현장협력">🤝 현장 협력</option><option value="장비자재">🛒 장비·자재</option><option value="일감양도">💼 일감 양도</option><option value="견적단가">📊 견적·단가</option><option value="노하우">💡 노하우</option><option value="불량거래처">🚨 불량 거래처</option>
+        </select>
+        <input id="pmSearch" oninput="renderPostManager()" placeholder="제목, 내용, 업체명, 아이디 검색" class="flex-1 bg-[#1E293B] border border-white/10 rounded-[10px] px-3 py-2.5 text-white text-[13px] font-bold">
+        <button onclick="loadPostManager()" class="bg-white/10 text-white rounded-[10px] px-4 py-2.5 text-[13px] font-bold hover:bg-white/20">새로고침</button>
+      </div>
+      <div id="pmList" class="p-4 space-y-3 overflow-y-auto flex-1"></div>
+    </div>
+  </div>
 
   <!-- 모바일 네비게이션 -->
   <nav class="md:hidden glass-panel fixed bottom-0 w-full flex justify-around p-3 pb-8 z-50 border-t border-white/10">
@@ -634,6 +653,49 @@
             for (const k of keys) { await fetch(getAuthUrl(`${COMMUNITY_URL}/${k}.json`), { method: 'DELETE' }); }
             alert(`✅ 예시글 ${keys.length}개가 삭제되었습니다.`);
         } catch (e) { alert("삭제 중 오류가 발생했습니다."); }
+    }
+
+    // 📋 [패치 #11] 라운지 게시글 관리 (관리자 전용: 삭제 · 마감 처리)
+    const PM_CAT = { '자유소통': '☕ 자유 소통', '정보교환': '📢 정보 교환', '현장협력': '🤝 현장 협력', '장비자재': '🛒 장비·자재', '일감양도': '💼 일감 양도', '견적단가': '📊 견적·단가', '노하우': '💡 노하우', '불량거래처': '🚨 불량 거래처' };
+    const PM_STATUS = { '현장협력': '마감', '장비자재': '거래완료', '일감양도': '마감' };
+    let pmPosts = [];
+    function pmEsc(v) { return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+    function openPostManager() { document.getElementById('postManagerModal').classList.remove('hidden'); loadPostManager(); }
+    function closePostManager() { document.getElementById('postManagerModal').classList.add('hidden'); }
+    async function loadPostManager() {
+        document.getElementById('pmList').innerHTML = '<div class="text-center text-[#94A3B8] py-10 font-bold">불러오는 중...</div>';
+        try {
+            const res = await fetch(getAuthUrl(`${COMMUNITY_URL}.json?t=${Date.now()}`)); const data = await res.json();
+            pmPosts = data ? Object.entries(data).filter(([k, p]) => p && typeof p === 'object').map(([k, p]) => Object.assign({ _key: k }, p)).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)) : [];
+            renderPostManager();
+        } catch (e) { document.getElementById('pmList').innerHTML = '<div class="text-center text-red-400 py-10 font-bold">불러오기 실패</div>'; }
+    }
+    function renderPostManager() {
+        const cat = document.getElementById('pmCategory').value; const q = document.getElementById('pmSearch').value.trim().toLowerCase();
+        const list = pmPosts.filter(p => (!cat || p.category === cat) && (!q || [p.title, p.content, p.authorName, p.authorId, p.authorRegion].join(' ').toLowerCase().includes(q)));
+        document.getElementById('pmCount').innerText = `(${list.length} / 전체 ${pmPosts.length}개)`;
+        if (!list.length) { document.getElementById('pmList').innerHTML = '<div class="text-center text-[#94A3B8] py-10 font-bold">게시글이 없습니다.</div>'; return; }
+        document.getElementById('pmList').innerHTML = list.map(p => {
+            const closed = PM_STATUS[p.category] && p.status === 'closed'; const imgs = Array.isArray(p.imgs) ? p.imgs : [];
+            const who = p.isOfficial ? '📌 조경노트 운영팀 (예시글)' : `${p.authorRegion ? '[' + p.authorRegion + '] ' : ''}${p.authorName || ''} · ${p.authorId || ''}`;
+            return `<div class="bg-[#1E293B] border border-white/10 rounded-[16px] p-4 ${closed ? 'opacity-70' : ''}">
+                <div class="flex flex-wrap items-center gap-1.5 mb-2"><span class="bg-white/10 text-white text-[11px] font-bold px-2 py-0.5 rounded">${pmEsc(PM_CAT[p.category] || p.category)}</span>${closed ? `<span class="bg-gray-600 text-white text-[11px] font-bold px-2 py-0.5 rounded">🔒 ${PM_STATUS[p.category]}</span>` : ''}${imgs.length ? `<span class="bg-blue-500/20 text-blue-300 text-[11px] font-bold px-2 py-0.5 rounded">📷 ${imgs.length}장</span>` : ''}<span class="text-[#94A3B8] text-[11px] ml-auto">${pmEsc(p.dateStr)}</span></div>
+                <div class="text-white font-black text-[15px] mb-1 ${closed ? 'line-through' : ''}">${pmEsc(p.title)}</div>
+                <div class="text-[#CBD5E1] text-[13px] leading-relaxed mb-2 max-h-[60px] overflow-hidden">${pmEsc(p.content).replace(/\n/g, '<br>')}</div>
+                ${imgs.length ? `<div class="flex gap-1.5 overflow-x-auto mb-2">${imgs.map(u => `<a href="${pmEsc(u)}" target="_blank" rel="noopener"><img src="${pmEsc(u)}" loading="lazy" class="w-14 h-14 object-cover rounded-[8px] border border-white/10"></a>`).join('')}</div>` : ''}
+                <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-white/5"><span class="text-[#94A3B8] text-[12px] font-bold flex-1">${pmEsc(who)}</span>
+                ${PM_STATUS[p.category] ? `<button onclick="adminTogglePostStatus('${p._key}')" class="px-3 py-1.5 bg-white/10 text-white rounded-[8px] text-[12px] font-bold hover:bg-white/20">${closed ? '진행 중으로' : PM_STATUS[p.category] + ' 처리'}</button>` : ''}
+                <button onclick="adminDeletePost('${p._key}')" class="px-3 py-1.5 bg-red-500/20 text-red-300 border border-red-500/30 rounded-[8px] text-[12px] font-bold hover:bg-red-500/30">삭제</button></div>
+            </div>`; }).join('');
+    }
+    async function adminDeletePost(key) {
+        const p = pmPosts.find(x => x._key === key); if (!p) return;
+        if (!confirm(`[${p.title}]\n이 게시글을 삭제하시겠습니까? 복구할 수 없습니다.`)) return;
+        try { const r = await fetch(getAuthUrl(`${COMMUNITY_URL}/${key}.json`), { method: 'DELETE' }); if (!r.ok) throw new Error(); pmPosts = pmPosts.filter(x => x._key !== key); renderPostManager(); } catch (e) { alert('삭제 중 오류가 발생했습니다.'); }
+    }
+    async function adminTogglePostStatus(key) {
+        const p = pmPosts.find(x => x._key === key); if (!p) return; const next = p.status === 'closed' ? 'open' : 'closed';
+        try { const r = await fetch(getAuthUrl(`${COMMUNITY_URL}/${key}/status.json`), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(next) }); if (!r.ok) throw new Error(); p.status = next; renderPostManager(); } catch (e) { alert('상태 변경 중 오류가 발생했습니다.'); }
     }
 
     async function saveTermsText() {

@@ -4909,6 +4909,11 @@
                   <label class="block text-[17.5px] font-black text-[#151E2D] mb-2">4. 상세 내용</label>
                   <textarea id="bwContent" rows="5" placeholder="여기를 눌러 내용을 작성해 주세요. 입력하시는 글씨가 큼직하고 선명하게 보입니다." class="w-full bg-[#F8FAFC] border-2 border-[#94A3B8] rounded-[16px] p-4 text-[19.5px] font-black text-[#151E2D] placeholder:text-[#64748B] placeholder:text-[16px] placeholder:font-bold focus:outline-none focus:border-[#84CC16] focus:bg-white resize-none leading-[1.6]"></textarea>
               </div>
+              <div><!-- 📷 [패치 #11] 사진 첨부 -->
+                  <label class="block text-[17.5px] font-black text-[#151E2D] mb-2">5. 사진 첨부 <span class="text-[14px] text-[#64748B] font-bold">(선택 · 최대 10장)</span> <span id="bwImgCount" class="text-[14px] text-[#15803D] font-black"></span></label>
+                  <label class="w-full flex items-center justify-center gap-2 bg-[#F8FAFC] border-2 border-dashed border-[#94A3B8] rounded-[16px] py-4 text-[17px] font-black text-[#151E2D] cursor-pointer hover:bg-[#F1F5F9]"><i data-lucide="camera" class="w-6 h-6 text-[#84CC16]"></i> 사진 선택하기<input type="file" id="bwImgInput" accept="image/*" multiple class="hidden" onchange="handleBoardImages(event)"></label>
+                  <div id="bwImgList" class="flex gap-2 overflow-x-auto nav-scroll mt-2.5"></div>
+              </div>
           </div>
 
           <!-- 하단 취소 / 등록 버튼 확대 -->
@@ -5158,7 +5163,8 @@
               }
 
               container.innerHTML = ''; 
-              const posts = Object.values(data).sort((a,b) => b.timestamp - a.timestamp);
+              boardPostCache = {}; // 📷 [패치 #11] 게시글 키 보존 (마감 처리·사진 보기용)
+              const posts = Object.entries(data).filter(([k, p]) => p && typeof p === 'object').map(([k, p]) => { p._key = k; boardPostCache[k] = p; return p; }).sort((a,b) => b.timestamp - a.timestamp);
 
               posts.forEach(post => {
                   let badgeHtml = '';
@@ -5173,6 +5179,8 @@
 
                   // 📍 [패치 #10] 지역+상호 표시, 운영팀 예시글 구분, 글 내용 안전 처리
                   const displayName = (post.authorRegion ? post.authorRegion + ' ' : '') + (post.authorName || '');
+                  const statusLabel = BOARD_STATUS_LABEL[post.category]; const isClosed = !!statusLabel && post.status === 'closed'; // 📷 [패치 #11]
+                  const imgsHtml = (Array.isArray(post.imgs) && post.imgs.length) ? `<div class="flex gap-2 overflow-x-auto nav-scroll mt-4 pb-1">${post.imgs.map((u, ii) => `<button onclick="openPostImage('${post._key}', ${ii})" class="relative flex-shrink-0 w-24 h-24 rounded-[14px] overflow-hidden border border-[#EAEBEA]"><img src="${escHtml(u)}" loading="lazy" class="w-full h-full object-cover">${ii === 0 && post.imgs.length > 1 ? `<span class="absolute bottom-1 right-1 bg-black/70 text-white text-[11px] font-black px-1.5 py-0.5 rounded">${post.imgs.length}장</span>` : ''}</button>`).join('')}</div>` : '';
                   const safeName = escHtml(displayName); const jsName = escHtml(displayName.replace(/\\/g, '\\\\').replace(/'/g, "\\'")); const jsId = escHtml(String(post.authorId || '').replace(/'/g, ''));
                   let buttonsHtml = '';
                   if(post.category !== '불량거래처' && !post.isOfficial) {
@@ -5181,7 +5189,7 @@
                       <div class="mt-5 flex gap-2.5">
                           ${post.phone ? `<button onclick="callPhone('${escHtml(String(post.phone).replace(/[^0-9-]/g, ''))}')" class="flex-1 bg-blue-600 text-white py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md hover:bg-blue-700 transition-colors"><i data-lucide="phone" class="w-5 h-5"></i> 직통 전화하기</button>` : ''}
                           ${isMyPost ? 
-                          `<button onclick="alert('내가 작성한 게시글입니다.')" class="flex-1 bg-gray-200 text-[#4E5968] py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md transition-colors"><i data-lucide="check-circle" class="w-5 h-5"></i> 내 게시글</button>` :
+                          (statusLabel ? `<button onclick="togglePostStatus('${post._key}')" class="flex-1 ${isClosed ? 'bg-gray-200 text-[#4E5968]' : 'bg-[#151E2D] text-[#FDE047]'} py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md"><i data-lucide="${isClosed ? 'rotate-ccw' : 'lock'}" class="w-5 h-5"></i> ${isClosed ? '다시 진행 중으로' : statusLabel + ' 처리하기'}</button>` : '') + `<button onclick="alert('내가 작성한 게시글입니다.')" class="flex-1 bg-gray-200 text-[#4E5968] py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md transition-colors"><i data-lucide="check-circle" class="w-5 h-5"></i> 내 게시글</button>` :
                           `<button onclick="openBoardChat('${jsId}', '${jsName}')" class="flex-1 bg-[#84CC16] text-[#151E2D] py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md hover:bg-[#9BE32D] transition-colors"><i data-lucide="message-square" class="w-5 h-5"></i> 1:1 답변·대화하기</button>`
                           }
                       </div>`;
@@ -5197,10 +5205,11 @@
                   }
 
                   const cardHtml = `
-                  <div class="board-feed-item bg-white rounded-[24px] p-6 luxury-shadow border border-[#F4F5F4] modal-enter" data-category="${escHtml(post.category)}">
-                      <div class="flex items-center justify-between mb-4">${badgeHtml}${post.isOfficial ? '<span class="bg-[#151E2D] text-[#FDE047] text-[12px] font-black px-2.5 py-1 rounded-md">📌 예시</span>' : ''}</div>
-                      <h3 class="text-[19px] font-black text-[#151E2D] mb-3 leading-snug">${escHtml(post.title)}</h3>
+                  <div class="board-feed-item bg-white rounded-[24px] p-6 luxury-shadow border border-[#F4F5F4] modal-enter ${isClosed ? 'opacity-75' : ''}" data-category="${escHtml(post.category)}">
+                      <div class="flex items-center justify-between mb-4">${badgeHtml}${isClosed ? `<span class="bg-gray-700 text-white text-[12.5px] font-black px-2.5 py-1 rounded-md">🔒 ${statusLabel}</span>` : ""}${post.isOfficial ? '<span class="bg-[#151E2D] text-[#FDE047] text-[12px] font-black px-2.5 py-1 rounded-md">📌 예시</span>' : ''}</div>
+                      <h3 class="text-[19px] font-black ${isClosed ? 'text-[#94A3B8] line-through' : 'text-[#151E2D]'} mb-3 leading-snug">${escHtml(post.title)}</h3>
                       <p class="text-[15px] text-[#4E5968] font-bold leading-[1.6] break-keep">${escHtml(post.content).replace(/\n/g, '<br>')}</p>
+                      ${imgsHtml}
                       ${buttonsHtml}
                       ${authorHtml}
                   </div>`;
@@ -5209,6 +5218,41 @@
               });
               if(typeof lucide !== 'undefined') lucide.createIcons();
           } catch(e) { console.error("게시글 로드 실패", e); }
+      }
+
+      // 📷 [패치 #11] 게시글 사진 첨부 / 마감 처리 / 사진 크게 보기
+      const BOARD_MAX_IMAGES = 10;
+      const BOARD_STATUS_LABEL = { '현장협력': '마감', '장비자재': '거래완료', '일감양도': '마감' };
+      let boardWriteImages = []; let boardPostCache = {};
+      function handleBoardImages(event) {
+          const files = Array.from(event.target.files || []); event.target.value = '';
+          const room = BOARD_MAX_IMAGES - boardWriteImages.length;
+          if (room <= 0) return alert(`사진은 최대 ${BOARD_MAX_IMAGES}장까지 첨부할 수 있습니다.`);
+          if (files.length > room) alert(`최대 ${BOARD_MAX_IMAGES}장까지만 첨부됩니다. (${room}장 추가)`);
+          files.slice(0, room).forEach(file => { if (!file.type.startsWith('image/')) return; compressImage(file, b64 => { if (boardWriteImages.length < BOARD_MAX_IMAGES) { boardWriteImages.push(b64); renderBoardThumbs(); } }); });
+      }
+      function removeBoardImage(idx) { boardWriteImages.splice(idx, 1); renderBoardThumbs(); }
+      function renderBoardThumbs() {
+          const list = document.getElementById('bwImgList'); const cnt = document.getElementById('bwImgCount'); if (!list) return;
+          list.innerHTML = boardWriteImages.map((src, idx) => `<div class="relative flex-shrink-0 w-20 h-20 rounded-[14px] overflow-hidden border border-[#CBD5E1]"><img src="${src}" class="w-full h-full object-cover"><button type="button" onclick="removeBoardImage(${idx})" class="absolute top-1 right-1 bg-black/70 text-white w-6 h-6 rounded-full text-[12px] font-black">✕</button></div>`).join('');
+          if (cnt) cnt.innerText = boardWriteImages.length ? `${boardWriteImages.length}/${BOARD_MAX_IMAGES}` : '';
+      }
+      function openPostImage(key, idx) {
+          const post = boardPostCache[key]; if (!post || !Array.isArray(post.imgs) || !post.imgs.length) return;
+          modalImages = post.imgs; modalCurrentIdx = idx; updateModalImage();
+          const modal = document.getElementById('imageModal'); modal.style.zIndex = '9500'; modal.classList.remove('hidden'); history.pushState({ modalOpen: true }, '', '');
+      }
+      async function togglePostStatus(key) {
+          const post = boardPostCache[key]; if (!post || post.authorId !== currentUserId) return;
+          const label = BOARD_STATUS_LABEL[post.category]; if (!label) return;
+          const next = post.status === 'closed' ? 'open' : 'closed';
+          if (!confirm(next === 'closed' ? `이 게시글을 [${label}] 처리하시겠습니까?` : `[${label}]을 취소하고 다시 진행 중으로 바꾸시겠습니까?`)) return;
+          showLoadingOverlay('상태 변경 중...');
+          try {
+              const res = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_community/${key}/status.json?auth=${currentIdToken}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(next) });
+              if (!res.ok) throw new Error('fail');
+              await loadCommunityPosts();
+          } catch (e) { alert('상태 변경에 실패했습니다. 잠시 후 다시 시도해 주세요.'); } finally { document.getElementById('loadingOverlay')?.remove(); }
       }
 
       async function submitBoardPost() {
@@ -5234,17 +5278,26 @@
               title: title,
               phone: phone,
               content: content,
+              status: BOARD_STATUS_LABEL[category] ? 'open' : null, // 📷 [패치 #11]
               timestamp: new Date().getTime(),
               dateStr: new Date().toLocaleString('ko-KR', {month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit'})
           };
 
-          showLoadingOverlay("클라우드 서버에 등록 중...");
+          showLoadingOverlay(boardWriteImages.length ? `사진 ${boardWriteImages.length}장 업로드 중...` : "클라우드 서버에 등록 중...");
           try {
-              await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_community.json?auth=${currentIdToken}`, {
+              // 📷 [패치 #11] 사진 업로드 (실패한 사진이 있으면 알려줌)
+              if (boardWriteImages.length) {
+                  const urls = await Promise.all(boardWriteImages.map(b64 => uploadToFirebaseStorage(b64, 'images').catch(() => null)));
+                  postData.imgs = urls.filter(Boolean);
+                  if (postData.imgs.length < boardWriteImages.length && !confirm(`사진 ${boardWriteImages.length - postData.imgs.length}장이 업로드되지 않았습니다. 나머지 사진으로 등록할까요?`)) return;
+              }
+              const postRes = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_community.json?auth=${currentIdToken}`, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify(postData)
               });
+              if (!postRes.ok) throw new Error('post fail');
+              boardWriteImages = [];
               await addLoungePoints(100);
               alert("🎉 게시글이 등록되어 활동 포인트 +100 P가 적립되었습니다!");
               closeBoardWrite();
@@ -5336,6 +5389,7 @@
           document.getElementById('bwTitle').value = ''; 
           document.getElementById('bwPhone').value = ''; 
           document.getElementById('bwContent').value = '';
+          boardWriteImages = []; renderBoardThumbs(); // 📷 [패치 #11]
           
           const activeTab = document.querySelector('.board-tab-btn.bg-\\[\\#84CC16\\]');
           if (activeTab) {
