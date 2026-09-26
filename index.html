@@ -5175,6 +5175,61 @@
               closeBoardWrite(true);
           }
       });
-  </script>  
+  </script>
+  <!-- === [VIP 에디션 패치] 1. 메인 배경(시안 A: 티타늄 블루) & 2. AI비서 연두 말풍선 === -->
+<style>
+    /* 1. 메인 대시보드 배경: 시안 A (제네시스 미드나잇 티타늄 블루) 영구 적용 */
+    body, html, #app, .app-container, .main-container, #mainView, .dashboard-wrapper {
+        background: linear-gradient(180deg, #1E293B 0%, #29384D 100%) !important;
+        background-attachment: fixed !important;
+    }
+
+    /* 12개 메인 카테고리 버튼 입체감 강화 */
+    .menu-card, .dashboard-btn, .grid-item, [onclick*="open"], [onclick*="show"] {
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+    }
+
+    /* 2. AI 현장 비서: 내 말풍선 (화사한 연두색 배경 + 진한 검정 글씨) */
+    .user-msg, .user-bubble, .chat-user, .my-msg, .ai-user-msg {
+        background: linear-gradient(135deg, #bbf7d0 0%, #86efac 100%) !important;
+        color: #111827 !important;
+        font-weight: 800 !important;
+        border: 1.5px solid #4ade80 !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    }
+</style>
+
+<script>
+    // AI 현장 비서 말풍선이 자바스크립트 인라인 스타일로 생성될 경우에도 100% 연두 배경+검정 글씨로 자동 변환
+    (function() {
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((m) => {
+                m.addedNodes.forEach((node) => {
+                    if (node.nodeType === 1) {
+                        const els = [node, ...node.querySelectorAll('*')];
+                        els.forEach((el) => {
+                            const st = el.getAttribute('style') || '';
+                            // 오른쪽 정렬된 내 말풍선 또는 기존 검정배경+연두글씨 말풍선 감지
+                            if ((st.includes('margin-left: auto') || st.includes('margin-left:auto') || st.includes('align-self: flex-end') || st.includes('align-self:flex-end')) || 
+                                ((st.includes('#4ade80') || st.includes('#22c55e') || st.includes('#a3e635') || st.includes('rgb(74, 222, 128)')) && (st.includes('#0') || st.includes('#1') || st.includes('black') || st.includes('rgb(0')))) {
+                                if (!el.querySelector('input') && !el.querySelector('button') && el.tagName !== 'BUTTON') {
+                                    el.style.setProperty('background', 'linear-gradient(135deg, #bbf7d0 0%, #86efac 100%)', 'important');
+                                    el.style.setProperty('color', '#111827', 'important');
+                                    el.style.setProperty('font-weight', '800', 'important');
+                                    el.style.setProperty('border', '1.5px solid #4ade80', 'important');
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+        });
+        window.addEventListener('DOMContentLoaded', () => {
+            observer.observe(document.body, { childList: true, subtree: true });
+        });
+        if (document.body) observer.observe(document.body, { childList: true, subtree: true });
+    })();
+</script>
+<!-- === [VIP 에디션 패치 끝] === -->
 </body>
 </html>
