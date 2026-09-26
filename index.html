@@ -21,7 +21,7 @@
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%23000000'/%3E%3Cpath d='M180 140v232h168' fill='none' stroke='%23C5A880' stroke-width='48' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='348' cy='140' r='32' fill='%2384CC16'/%3E%3C/svg%3E">
   <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23000000'/%3E%3Cpath d='M180 140v232h168' fill='none' stroke='%23C5A880' stroke-width='48' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='348' cy='140' r='32' fill='%2384CC16'/%3E%3C/svg%3E">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://unpkg.com/lucide@1.47.0"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
@@ -1808,6 +1808,8 @@
 ① 회사는 천재지변, 통신 장애 등 불가항력적 사유로 서비스를 제공할 수 없는 경우 책임을 지지 않습니다.
 ② 서비스 내 AI 진단 결과, 수목 정보, 자재 단가 및 자동 생성된 견적서의 내용은 업무를 위한 '참고용 보조 지표'이며, 이를 현장에 적용하여 발생한 법적/금전적 최종 책임은 전적으로 회원(작성자) 본인에게 있습니다.`; 
         }
+        // 📜 [패치 #5] 관리자센터(master)에서 저장한 최신 약관이 있으면 그 내용으로 교체 (없으면 기존 문구 그대로)
+        if (type !== 'privacy') { fetch(getAuthUrl(`${SETTINGS_URL}/terms.json?t=${Date.now()}`)).then(r => r.ok ? r.json() : null).then(d => { if (d && d.text && currentTermType === 'terms') content.innerText = d.text; }).catch(() => {}); }
         const modal = document.getElementById('termsModal'); const box = document.getElementById('termsBox');
         modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10); lucide.createIcons();
     }
@@ -1815,6 +1817,25 @@
     document.getElementById('btnAgreeTerms').addEventListener('click', () => { if (currentTermType === 'privacy') document.getElementById('obPrivacyCheck').checked = true; else if (currentTermType === 'terms') document.getElementById('obTermsCheck').checked = true; closeTermsModal(); });
 
     function getAuthUrl(url) { if (!currentIdToken) return url; const sep = url.includes('?') ? '&' : '?'; return `${url}${sep}auth=${currentIdToken}`; }
+    // 🔐 [패치 #3] 로그인 토큰 자동 갱신 (Firebase 토큰은 1시간 뒤 만료되므로 45분마다 새로 발급)
+    let currentRefreshToken = ""; let tokenIssuedAt = 0; let tokenRefreshTimer = null;
+    async function refreshIdToken() {
+        if (!currentRefreshToken) return false;
+        try {
+            const res = await fetch(`https://securetoken.googleapis.com/v1/token?key=${API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: `grant_type=refresh_token&refresh_token=${encodeURIComponent(currentRefreshToken)}` });
+            const data = await res.json();
+            if (data.id_token) { currentIdToken = data.id_token; currentRefreshToken = data.refresh_token || currentRefreshToken; tokenIssuedAt = Date.now(); return true; }
+        } catch (e) {}
+        return false;
+    }
+    function startTokenAutoRefresh(refreshToken) {
+        if (refreshToken) currentRefreshToken = refreshToken;
+        tokenIssuedAt = Date.now();
+        if (tokenRefreshTimer) clearInterval(tokenRefreshTimer);
+        tokenRefreshTimer = setInterval(refreshIdToken, 45 * 60 * 1000);
+    }
+    // 휴대폰에서 앱을 오래 백그라운드에 뒀다가 다시 열었을 때 즉시 갱신
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && currentRefreshToken && Date.now() - tokenIssuedAt > 40 * 60 * 1000) refreshIdToken(); });
     function autoHyphen(target) { let str = target.value.replace(/[^0-9]/g, ''); let tmp = ''; if (str.length < 4) { target.value = str; return; } else if (str.length < 7) { tmp += str.substr(0, 3) + '-' + str.substr(3); } else if (str.length < 11) { tmp += str.substr(0, 3) + '-' + str.substr(3, 3) + '-' + str.substr(6); } else { tmp += str.substr(0, 3) + '-' + str.substr(3, 4) + '-' + str.substr(7); } target.value = tmp; }
 
     async function uploadToFirebaseStorage(base64Data, folder="images") {
@@ -1936,7 +1957,7 @@
                 document.getElementById('authView').classList.remove('hidden');
                 alert("이용 정지된 계정입니다. 운영본부에 문의하세요.");
             } else {
-                currentUserId = id; 
+                currentUserId = id; startTokenAutoRefresh(authData.refreshToken); // 🔐 [패치 #3]
                 myCompanyProfile = profile; 
                 if (myCompanyProfile.license && myCompanyProfile.license.startsWith('data:image')) delete myCompanyProfile.license;
                 
@@ -2052,7 +2073,10 @@
         if (!pw) return alert("새로운 비밀번호를 입력해 주세요."); if (pw.length < 6) return alert("비밀번호는 6자리 이상 숫자로 설정해 주세요.");
         showLoadingOverlay("업데이트 중...");
         try { 
-            await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:update?key=${API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken: currentIdToken, password: pw, returnSecureToken: true }) });
+            const updRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:update?key=${API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken: currentIdToken, password: pw, returnSecureToken: true }) });
+            const updData = await updRes.json(); // 🔐 [패치 #3] 서버 변경 실패 시 여기서 중단 (DB와 로그인 비번 불일치 방지)
+            if (updData.error) { alert("비밀번호 변경에 실패했습니다. 로그아웃 후 다시 로그인해서 시도해 주세요."); return; }
+            if (updData.idToken) { currentIdToken = updData.idToken; startTokenAutoRefresh(updData.refreshToken); }
             myCompanyProfile.pw = pw; localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile)); localStorage.setItem('shinhwa_pro_logged_in_pw', pw);
             const safeKey = getSafeKey(currentUserId); await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pw: pw }) }); 
             alert("변경 완료"); closeSettings(); 
@@ -3348,7 +3372,6 @@
       else if (mode === 'calendar') { document.getElementById('calendarView').classList.remove('hidden'); activeTabId = 'tabCalendar'; renderCalendar(); renderScheduleList(); }
       else if (mode === 'ledger') { document.getElementById('ledgerView').classList.remove('hidden'); activeTabId = 'tabLedger'; renderLedgerCalendar(); }
       else if (mode === 'encyclopedia') { document.getElementById('encyclopediaView').classList.remove('hidden'); activeTabId = 'tabEncyclopedia'; }
-      else if (mode === 'lounge') { document.getElementById('loungeView').classList.remove('hidden'); activeTabId = 'tabLounge'; }
       else if (mode === 'lounge') { document.getElementById('loungeView').classList.remove('hidden'); activeTabId = 'tabLounge'; }
       else if (mode === 'aiChat') { document.getElementById('aiChatView').classList.remove('hidden'); activeTabId = 'tabAiChat'; initAiChatView(); }
       else if (mode === 'home') { activeTabId = ''; }
