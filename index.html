@@ -391,105 +391,114 @@
           </div>
         </div>
           
-        <!-- 3. 8대 카테고리 그리드 (시안 B 고대비 다크 카드) -->
+        <!-- 3. 8대 카테고리 그리드 (시안 3: 노란 명찰 박스 적용) -->
+        <style>
+          .lounge-nameplate {
+            background: linear-gradient(135deg, #FEF08A 0%, #FDE047 100%);
+            border: 1.5px solid #FFFFFF;
+            border-radius: 12px;
+            padding: 8px 6px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+          }
+        </style>
         <div class="grid grid-cols-2 gap-3">
           <!-- 1: 자유 소통·일상방 -->
-          <button onclick="openBoard('자유 소통·일상방')" class="rounded-[20px] p-4 text-left flex flex-col gap-2.5 hover:border-[#FDE047] transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
+          <button onclick="openBoard('자유 소통·일상방')" class="rounded-[20px] p-3.5 text-left flex flex-col gap-2.5 hover:border-[#FDE047] transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
             <div class="flex items-center justify-between">
-              <div class="w-10 h-10 rounded-[12px] bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-[#FDE047]"><i data-lucide="coffee" class="w-5 h-5"></i></div>
+              <div class="w-9 h-9 rounded-[10px] bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-[#FDE047]"><i data-lucide="coffee" class="w-5 h-5"></i></div>
               <span class="text-[11px] font-black bg-[#FDE047] text-[#151E2D] px-2 py-0.5 rounded-md">일상·소통</span>
             </div>
-            <div>
-              <h3 class="text-[16.5px] font-black text-white leading-snug tracking-tight">자유 소통·일상방</h3>
-              <p class="text-[12.5px] text-[#CBD5E1] font-bold mt-1 break-keep leading-snug">현장 일상, 오늘 점심, 세상 사는 이야기 편하게 나눠요</p>
+            <div class="lounge-nameplate">
+              <h3 class="text-[16px] font-black text-[#151E2D] text-center leading-none tracking-tight whitespace-nowrap">자유 소통·일상방</h3>
             </div>
+            <p class="text-[13px] text-[#E2E8F0] font-bold break-keep leading-snug px-0.5">현장 일상, 오늘 점심, 세상 사는 이야기 편하게 나눠요</p>
           </button>
 
           <!-- 2: 정보 교환·업체 찾기 -->
-          <button onclick="openBoard('정보 교환·업체 찾기')" class="rounded-[20px] p-4 text-left flex flex-col gap-2.5 hover:border-[#84CC16] transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
+          <button onclick="openBoard('정보 교환·업체 찾기')" class="rounded-[20px] p-3.5 text-left flex flex-col gap-2.5 hover:border-[#84CC16] transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
             <div class="flex items-center justify-between">
-              <div class="w-10 h-10 rounded-[12px] bg-lime-500/20 border border-lime-400/40 flex items-center justify-center text-[#84CC16]"><i data-lucide="compass" class="w-5 h-5"></i></div>
+              <div class="w-9 h-9 rounded-[10px] bg-lime-500/20 border border-lime-400/40 flex items-center justify-center text-[#84CC16]"><i data-lucide="compass" class="w-5 h-5"></i></div>
               <span class="text-[11px] font-black bg-[#84CC16] text-[#151E2D] px-2 py-0.5 rounded-md">묻고 답하기</span>
             </div>
-            <div>
-              <h3 class="text-[16.5px] font-black text-white leading-snug tracking-tight">정보 교환·업체 찾기</h3>
-              <p class="text-[12.5px] text-[#CBD5E1] font-bold mt-1 break-keep leading-snug">타지역 폐기물 처리, 인근 업체 찾기, 현장 정보 교환</p>
+            <div class="lounge-nameplate">
+              <h3 class="text-[16px] font-black text-[#151E2D] text-center leading-none tracking-tight whitespace-nowrap">정보 교환·업체 찾기</h3>
             </div>
+            <p class="text-[13px] text-[#E2E8F0] font-bold break-keep leading-snug px-0.5">타지역 폐기물 처리, 인근 업체 찾기, 현장 정보 교환</p>
           </button>
 
           <!-- 3: 현장 협력·지원 -->
-          <button onclick="openBoard('현장 협력·지원')" class="rounded-[20px] p-4 text-left flex flex-col gap-2.5 hover:border-sky-400 transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
+          <button onclick="openBoard('현장 협력·지원')" class="rounded-[20px] p-3.5 text-left flex flex-col gap-2.5 hover:border-sky-400 transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
             <div class="flex items-center justify-between">
-              <div class="w-10 h-10 rounded-[12px] bg-sky-500/20 border border-sky-400/40 flex items-center justify-center text-sky-300"><i data-lucide="handshake" class="w-5 h-5"></i></div>
+              <div class="w-9 h-9 rounded-[10px] bg-sky-500/20 border border-sky-400/40 flex items-center justify-center text-sky-300"><i data-lucide="handshake" class="w-5 h-5"></i></div>
               <span class="text-[11px] font-black bg-sky-400/20 text-sky-300 border border-sky-400/40 px-2 py-0.5 rounded-md">협력해요</span>
             </div>
-            <div>
-              <h3 class="text-[16.5px] font-black text-white leading-snug tracking-tight">현장 협력·지원</h3>
-              <p class="text-[12.5px] text-[#CBD5E1] font-bold mt-1 break-keep leading-snug">사장님 모십니다 / 인력·장비 현장 지원합니다</p>
+            <div class="lounge-nameplate">
+              <h3 class="text-[16px] font-black text-[#151E2D] text-center leading-none tracking-tight whitespace-nowrap">현장 협력·지원</h3>
             </div>
+            <p class="text-[13px] text-[#E2E8F0] font-bold break-keep leading-snug px-0.5">사장님 모십니다 / 인력·장비 현장 지원합니다</p>
           </button>
 
           <!-- 4: 장비·자재 직거래 -->
-          <button onclick="openBoard('장비·자재 직거래')" class="rounded-[20px] p-4 text-left flex flex-col gap-2.5 hover:border-[#84CC16] transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
+          <button onclick="openBoard('장비·자재 직거래')" class="rounded-[20px] p-3.5 text-left flex flex-col gap-2.5 hover:border-[#84CC16] transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
             <div class="flex items-center justify-between">
-              <div class="w-10 h-10 rounded-[12px] bg-[#84CC16]/20 border border-[#84CC16]/40 flex items-center justify-center text-[#84CC16]"><i data-lucide="shopping-cart" class="w-5 h-5"></i></div>
+              <div class="w-9 h-9 rounded-[10px] bg-[#84CC16]/20 border border-[#84CC16]/40 flex items-center justify-center text-[#84CC16]"><i data-lucide="shopping-cart" class="w-5 h-5"></i></div>
               <span class="text-[11px] font-black bg-[#84CC16]/20 text-[#84CC16] border border-[#84CC16]/40 px-2 py-0.5 rounded-md">무료나눔</span>
             </div>
-            <div>
-              <h3 class="text-[16.5px] font-black text-white leading-snug tracking-tight">장비·자재 직거래</h3>
-              <p class="text-[12.5px] text-[#CBD5E1] font-bold mt-1 break-keep leading-snug">중고 장비, 남은 수목·블럭·부자재 직거래 및 나눔</p>
+            <div class="lounge-nameplate">
+              <h3 class="text-[16px] font-black text-[#151E2D] text-center leading-none tracking-tight whitespace-nowrap">장비·자재 직거래</h3>
             </div>
+            <p class="text-[13px] text-[#E2E8F0] font-bold break-keep leading-snug px-0.5">중고 장비, 남은 수목·블럭·부자재 직거래 및 나눔</p>
           </button>
 
           <!-- 5: 일감 패스·공사 양도 -->
-          <button onclick="openBoard('일감 패스·공사 양도')" class="rounded-[20px] p-4 text-left flex flex-col gap-2.5 hover:border-purple-400 transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
+          <button onclick="openBoard('일감 패스·공사 양도')" class="rounded-[20px] p-3.5 text-left flex flex-col gap-2.5 hover:border-purple-400 transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
             <div class="flex items-center justify-between">
-              <div class="w-10 h-10 rounded-[12px] bg-purple-500/20 border border-purple-400/40 flex items-center justify-center text-purple-300"><i data-lucide="briefcase" class="w-5 h-5"></i></div>
+              <div class="w-9 h-9 rounded-[10px] bg-purple-500/20 border border-purple-400/40 flex items-center justify-center text-purple-300"><i data-lucide="briefcase" class="w-5 h-5"></i></div>
               <span class="text-[11px] font-black bg-purple-400/20 text-purple-300 border border-purple-400/40 px-2 py-0.5 rounded-md">확정오더</span>
             </div>
-            <div>
-              <h3 class="text-[16.5px] font-black text-white leading-snug tracking-tight">일감 패스·공사 양도</h3>
-              <p class="text-[12.5px] text-[#CBD5E1] font-bold mt-1 break-keep leading-snug">일정 중복·타지역 확정 공사 양도 및 공동수급</p>
+            <div class="lounge-nameplate">
+              <h3 class="text-[16px] font-black text-[#151E2D] text-center leading-none tracking-tight whitespace-nowrap">일감 패스·공사 양도</h3>
             </div>
+            <p class="text-[13px] text-[#E2E8F0] font-bold break-keep leading-snug px-0.5">일정 중복·타지역 확정 공사 양도 및 공동수급</p>
           </button>
 
           <!-- 6: 실전 견적·단가 자문 -->
-          <button onclick="openBoard('실전 견적·단가 자문')" class="rounded-[20px] p-4 text-left flex flex-col gap-2.5 hover:border-emerald-400 transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
+          <button onclick="openBoard('실전 견적·단가 자문')" class="rounded-[20px] p-3.5 text-left flex flex-col gap-2.5 hover:border-emerald-400 transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
             <div class="flex items-center justify-between">
-              <div class="w-10 h-10 rounded-[12px] bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-emerald-300"><i data-lucide="calculator" class="w-5 h-5"></i></div>
+              <div class="w-9 h-9 rounded-[10px] bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-emerald-300"><i data-lucide="calculator" class="w-5 h-5"></i></div>
               <span class="text-[11px] font-black bg-emerald-400/20 text-emerald-300 border border-emerald-400/40 px-2 py-0.5 rounded-md">손해방지</span>
             </div>
-            <div>
-              <h3 class="text-[16.5px] font-black text-white leading-snug tracking-tight">실전 견적·단가 자문</h3>
-              <p class="text-[12.5px] text-[#CBD5E1] font-bold mt-1 break-keep leading-snug">이 현장 얼마가 적당할까요? 적정 단가 상호 자문</p>
+            <div class="lounge-nameplate">
+              <h3 class="text-[16px] font-black text-[#151E2D] text-center leading-none tracking-tight whitespace-nowrap">실전 견적·단가 자문</h3>
             </div>
+            <p class="text-[13px] text-[#E2E8F0] font-bold break-keep leading-snug px-0.5">이 현장 얼마가 적당할까요? 적정 단가 상호 자문</p>
           </button>
 
           <!-- 7: 실무 노하우 공유 -->
-          <button onclick="openBoard('실무 노하우 공유')" class="rounded-[20px] p-4 text-left flex flex-col gap-2.5 hover:border-[#FEE500] transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
+          <button onclick="openBoard('실무 노하우 공유')" class="rounded-[20px] p-3.5 text-left flex flex-col gap-2.5 hover:border-[#FEE500] transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
             <div class="flex items-center justify-between">
-              <div class="w-10 h-10 rounded-[12px] bg-[#FEE500]/20 border border-[#FEE500]/40 flex items-center justify-center text-[#FEE500]"><i data-lucide="lightbulb" class="w-5 h-5"></i></div>
+              <div class="w-9 h-9 rounded-[10px] bg-[#FEE500]/20 border border-[#FEE500]/40 flex items-center justify-center text-[#FEE500]"><i data-lucide="lightbulb" class="w-5 h-5"></i></div>
               <span class="text-[11px] font-black bg-[#FEE500]/20 text-[#FEE500] border border-[#FEE500]/40 px-2 py-0.5 rounded-md">기술나눔</span>
             </div>
-            <div>
-              <h3 class="text-[16.5px] font-black text-white leading-snug tracking-tight">실무 노하우 공유</h3>
-              <p class="text-[12.5px] text-[#CBD5E1] font-bold mt-1 break-keep leading-snug">전지 요령, 석재 시공 팁 등 베테랑 현장 기술 공유</p>
+            <div class="lounge-nameplate">
+              <h3 class="text-[16px] font-black text-[#151E2D] text-center leading-none tracking-tight whitespace-nowrap">실무 노하우 공유</h3>
             </div>
+            <p class="text-[13px] text-[#E2E8F0] font-bold break-keep leading-snug px-0.5">전지 요령, 석재 시공 팁 등 베테랑 현장 기술 공유</p>
           </button>
 
           <!-- 8: 불량 거래처 경보 -->
-          <button onclick="openBoard('불량 거래처 경보')" class="rounded-[20px] p-4 text-left flex flex-col gap-2.5 hover:border-red-400 transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
+          <button onclick="openBoard('불량 거래처 경보')" class="rounded-[20px] p-3.5 text-left flex flex-col gap-2.5 hover:border-red-400 transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
             <div class="flex items-center justify-between">
-              <div class="w-10 h-10 rounded-[12px] bg-red-500/20 border border-red-400/40 flex items-center justify-center text-red-300"><i data-lucide="alert-triangle" class="w-5 h-5"></i></div>
+              <div class="w-9 h-9 rounded-[10px] bg-red-500/20 border border-red-400/40 flex items-center justify-center text-red-300"><i data-lucide="alert-triangle" class="w-5 h-5"></i></div>
               <span class="text-[11px] font-black bg-red-500/20 text-red-300 border border-red-400/40 px-2 py-0.5 rounded-md">익명보호</span>
             </div>
-            <div>
-              <h3 class="text-[16.5px] font-black text-white leading-snug tracking-tight">불량 거래처 경보</h3>
-              <p class="text-[12.5px] text-[#CBD5E1] font-bold mt-1 break-keep leading-snug">상습 미수금, 악성 클레임 주의 요망 현장 팩트 공유</p>
+            <div class="lounge-nameplate">
+              <h3 class="text-[16px] font-black text-[#151E2D] text-center leading-none tracking-tight whitespace-nowrap">불량 거래처 경보</h3>
             </div>
+            <p class="text-[13px] text-[#E2E8F0] font-bold break-keep leading-snug px-0.5">상습 미수금, 악성 클레임 주의 요망 현장 팩트 공유</p>
           </button>
         </div>
-     </div>
+      </div>
     </section>
     <section id="adminView" class="hidden space-y-5">
         <!-- ✨ 전체 일지 보관함 진입 버튼 (타이틀 18px로 확대) ✨ -->
@@ -4751,19 +4760,25 @@
       </button>
   </section>
 
-  <!-- 커뮤니티 글쓰기 팝업창 -->
-  <div id="boardWriteModal" class="hidden fixed inset-0 z-[9000] bg-black/80 flex flex-col items-center justify-end sm:justify-center px-4 pb-4 sm:p-4 opacity-0 transition-opacity duration-200" onclick="closeBoardWrite()">
-      <div class="bg-white w-full max-w-md rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-[#EAEBEA]" id="boardWriteBox" onclick="event.stopPropagation()">
-          <div class="p-5 border-b border-[#F4F5F4] flex justify-between items-center bg-[#F9F9F8]">
-              <h3 class="text-[17px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="pen-tool" class="w-5 h-5 text-[#84CC16]"></i> 소통방 글쓰기 <span class="text-[12px] bg-[#84CC16]/20 text-[#4D7C0F] px-2 py-0.5 rounded-md">+100P 적립</span></h3>
-              <button onclick="closeBoardWrite()" class="text-[#A3A8A3] hover:text-[#151E2D] p-1"><i data-lucide="x" class="w-6 h-6"></i></button>
+  <!-- 커뮤니티 글쓰기 팝업창 (시니어 맞춤 초대형 폰트 & 19.5px 타이핑 시인성 강화) -->
+  <div id="boardWriteModal" class="hidden fixed inset-0 z-[9000] bg-black/80 flex flex-col items-center justify-end sm:justify-center px-3 pb-3 sm:p-4 opacity-0 transition-opacity duration-200" onclick="closeBoardWrite()">
+      <div class="bg-white w-full max-w-md rounded-[28px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border-2 border-[#D4AF37]" id="boardWriteBox" onclick="event.stopPropagation()">
+          <!-- 상단 헤더 (20px 특대 타이틀) -->
+          <div class="px-5 py-4 border-b border-[#E2E8F0] flex justify-between items-center bg-[#151E2D]">
+              <h3 class="text-[20px] font-black text-white flex items-center gap-2">
+                  <i data-lucide="pen-tool" class="w-6 h-6 text-[#84CC16]"></i> 소통방 글쓰기
+                  <span class="text-[13px] bg-[#84CC16] text-[#151E2D] px-2.5 py-0.5 rounded-lg font-black">+100P 적립</span>
+              </h3>
+              <button onclick="closeBoardWrite()" class="w-9 h-9 rounded-full bg-white/15 text-white hover:bg-white/25 flex items-center justify-center transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
           </div>
-          <div class="p-5 space-y-4 max-h-[70vh] overflow-y-auto bg-white nav-scroll">
+
+          <!-- 본문 입력창 (항목명 17.5px & 직접 타이핑하는 글씨 19px~19.5px 확대) -->
+          <div class="p-5 space-y-4 max-h-[75vh] overflow-y-auto bg-white nav-scroll">
               <div>
-                  <label class="block text-[13px] font-black text-[#151E2D] mb-2">카테고리 선택</label>
-                  <select id="bwCategory" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-3 py-3.5 text-[15px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
+                  <label class="block text-[17.5px] font-black text-[#151E2D] mb-2">1. 카테고리 선택</label>
+                  <select id="bwCategory" class="w-full bg-[#F8FAFC] border-2 border-[#94A3B8] rounded-[16px] px-4 py-4 text-[18px] font-black text-[#151E2D] focus:outline-none focus:border-[#151E2D]">
                       <option value="자유소통">☕ 자유 소통·일상방</option>
-                      <option value="정보교환">📢 정보 교환·업체 찾기 (폐기물·자재·장비 문의)</option>
+                      <option value="정보교환">📢 정보 교환·업체 찾기 (폐기물·업체·장비)</option>
                       <option value="현장협력">🤝 현장 협력·지원</option>
                       <option value="장비자재">🛒 장비·자재 직거래</option>
                       <option value="일감양도">💼 일감 패스·공사 양도</option>
@@ -4773,25 +4788,26 @@
                   </select>
               </div>
               <div>
-                  <label class="block text-[13px] font-black text-[#151E2D] mb-2">게시글 제목</label>
-                  <input type="text" id="bwTitle" placeholder="예: 화성 근처 전지목 폐기물 처리장 아시는 분 계신가요?" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[14px] px-4 py-3.5 text-[15px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16]">
+                  <label class="block text-[17.5px] font-black text-[#151E2D] mb-2">2. 게시글 제목</label>
+                  <input type="text" id="bwTitle" placeholder="여기를 눌러 제목을 크게 입력하세요" autocomplete="off" class="w-full bg-[#F8FAFC] border-2 border-[#94A3B8] rounded-[16px] px-4 py-4 text-[19px] font-black text-[#151E2D] placeholder:text-[#64748B] placeholder:text-[16px] placeholder:font-bold focus:outline-none focus:border-[#84CC16] focus:bg-white">
               </div>
               <div>
-                  <label class="block text-[13px] font-black text-[#151E2D] mb-2">연락 받을 전화번호 (선택)</label>
-                  <input type="tel" id="bwPhone" placeholder="예: 010-1234-5678" oninput="autoHyphen(this)" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[14px] px-4 py-3.5 text-[15px] font-black text-blue-600 focus:outline-none focus:border-blue-500">
+                  <label class="block text-[17.5px] font-black text-[#151E2D] mb-2">3. 연락 받을 전화번호 <span class="text-[14px] text-[#64748B] font-bold">(선택)</span></label>
+                  <input type="tel" id="bwPhone" placeholder="예: 010-1234-5678" oninput="autoHyphen(this)" autocomplete="off" class="w-full bg-[#F8FAFC] border-2 border-[#94A3B8] rounded-[16px] px-4 py-4 text-[19px] font-black text-blue-700 placeholder:text-[#64748B] placeholder:text-[16px] placeholder:font-bold focus:outline-none focus:border-blue-600 focus:bg-white">
               </div>
               <div>
-                  <label class="block text-[13px] font-black text-[#151E2D] mb-2">상세 내용</label>
-                  <textarea id="bwContent" rows="5" placeholder="궁금하신 현장 정보, 업체 추천 요청, 일상 이야기 등을 편하게 적어주세요." class="w-full bg-white border border-[#EAEBEA] rounded-[14px] p-4 text-[14px] font-bold text-[#4E5968] focus:outline-none focus:border-[#84CC16] resize-none leading-relaxed"></textarea>
+                  <label class="block text-[17.5px] font-black text-[#151E2D] mb-2">4. 상세 내용</label>
+                  <textarea id="bwContent" rows="5" placeholder="여기를 눌러 내용을 작성해 주세요. 입력하시는 글씨가 큼직하고 선명하게 보입니다." class="w-full bg-[#F8FAFC] border-2 border-[#94A3B8] rounded-[16px] p-4 text-[19.5px] font-black text-[#151E2D] placeholder:text-[#64748B] placeholder:text-[16px] placeholder:font-bold focus:outline-none focus:border-[#84CC16] focus:bg-white resize-none leading-[1.6]"></textarea>
               </div>
           </div>
-          <div class="p-4 bg-[#F9F9F8] border-t border-[#F4F5F4] flex gap-2">
-              <button onclick="closeBoardWrite()" class="flex-1 bg-white border border-[#EAEBEA] text-[#4E5968] font-black py-4 rounded-[14px] text-[15px] hover:bg-[#F4F5F4] transition-colors shadow-sm">취소</button>
-              <button onclick="submitBoardPost()" class="flex-1 bg-[#151E2D] text-[#84CC16] font-black py-4 rounded-[14px] text-[15px] shadow-md hover:bg-black transition-colors">등록하기 (+100P)</button>
+
+          <!-- 하단 취소 / 등록 버튼 확대 -->
+          <div class="p-4 bg-[#F8FAFC] border-t border-[#E2E8F0] flex gap-3">
+              <button onclick="closeBoardWrite()" class="w-[35%] bg-white border-2 border-[#CBD5E1] text-[#475569] font-black py-4 rounded-[16px] text-[17.5px] hover:bg-[#F1F5F9] transition-colors shadow-sm">취소</button>
+              <button onclick="submitBoardPost()" class="flex-1 bg-[#151E2D] text-[#84CC16] font-black py-4 rounded-[16px] text-[18.5px] shadow-lg hover:bg-black transition-colors">등록하기 (+100P)</button>
           </div>
       </div>
   </div>
-
   <!-- 1:1 대화하기(실시간 채팅) 팝업창 -->
   <div id="boardChatModal" class="hidden fixed inset-0 z-[9500] bg-black/80 flex flex-col items-center justify-end sm:justify-center px-4 pb-4 sm:p-4 opacity-0 transition-opacity duration-200" onclick="closeBoardChat()">
       <div class="bg-[#151E2D] w-full max-w-md rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 h-[75vh]" id="boardChatBox" onclick="event.stopPropagation()">
