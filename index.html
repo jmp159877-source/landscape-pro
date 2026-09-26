@@ -34,11 +34,19 @@
     body { background: linear-gradient(180deg, #1E293B 0%, #29384D 100%) fixed !important; }
     .glass-nav { background: linear-gradient(180deg, rgba(30, 41, 59, 0.96) 0%, rgba(41, 56, 77, 0.96) 100%) !important; backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.12); }
     
-    /* 💡 버튼 안의 네이비 색감은 그대로 살리고 테두리를 또렷하게 잡아 입체감 극대화 */
-    #mainCategoryWrapper nav button.bg-white\/5 {
-      background-color: #1B2638 !important;
-      border-color: rgba(255, 255, 255, 0.18) !important;
-      box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.5) !important;
+    /* 💡 [상단 6개 버튼] 플래티넘 아이스 실버블루 4단 메탈릭 그라데이션 & 초고대비 네이비 글씨 */
+    #tabCalendar, #tabAdmin, #tabClient, #tabQuote, #tabQuoteList, #tabContacts {
+      background: linear-gradient(135deg, #7DD3FC 0%, #BAE6FD 42%, #F0F9FF 75%, #38BDF8 100%) !important;
+      border: 1.5px solid #E0F2FE !important;
+      box-shadow: 0 6px 18px rgba(14, 165, 233, 0.28) !important;
+    }
+    #tabCalendar span, #tabAdmin span, #tabClient span, #tabQuote span, #tabQuoteList span, #tabContacts span {
+      color: #151E2D !important;
+      font-weight: 900 !important;
+    }
+    #tabCalendar svg, #tabAdmin svg, #tabClient svg, #tabQuote svg, #tabQuoteList svg, #tabContacts svg {
+      color: #0F172A !important;
+      stroke-width: 2.5px !important;
     }
 
     .luxury-shadow { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35); } 
@@ -241,14 +249,14 @@
                     <span class="font-black tracking-tight" style="font-size: 15px !important; color: #151E2D !important;">AI 수목검색 렌즈</span>
                 </button>
 
-                <!-- 9. 오늘의 조경 날씨 (3번째 줄 우측 · 톤 다운 연두 + 진노랑 해바라기 태양 + 연두 배지) -->
-                <button onclick="openWeatherModal()" class="w-full py-5 rounded-[20px] relative overflow-hidden group shadow-[0_4px_15px_rgba(163,230,53,0.25)] hover:brightness-95 transition-all flex flex-col items-center justify-center gap-1.5" style="background: linear-gradient(135deg, #D9F99D 0%, #A3E635 100%) !important; border: 1.5px solid #BEF264 !important;">
+                <!-- 9. 오늘의 조경 날씨 (3번째 줄 우측 · 에메랄드 민트 & 샴페인 투톤 메탈릭 그라데이션 + 골드 테두리) -->
+                <button onclick="openWeatherModal()" class="w-full py-5 rounded-[20px] relative overflow-hidden group shadow-[0_4px_18px_rgba(16,185,129,0.35)] hover:brightness-105 transition-all flex flex-col items-center justify-center gap-1.5" style="background: linear-gradient(135deg, #10B981 0%, #6EE7B7 45%, #FEF9C3 78%, #059669 100%) !important; border: 1.5px solid #FDE047 !important;">
                     <div class="flex items-center gap-1.5 z-10">
-                        <svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));">
+                        <svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.35));">
                             <path d="M12 1L14.2 4.2L18 2.8L18.2 6.8L22.2 7.5L20.3 11L23 14L19.5 16L20.2 20L16.3 19.8L14.8 23.5L12 20.8L9.2 23.5L7.7 19.8L3.8 20L4.5 16L1 14L3.7 11L1.8 7.5L5.8 6.8L6 2.8L9.8 4.2L12 1Z" fill="#FFB800" stroke="#B45309" stroke-width="1"/>
                             <circle cx="12" cy="12" r="5.2" fill="#FFE600" stroke="#D97706" stroke-width="1.2"/>
                         </svg>
-                        <small style="font-size: 10.5px !important; line-height: 1.1 !important; background-color: #84CC16 !important; color: #151E2D !important; border: 1px solid rgba(21,30,45,0.2) !important; padding: 3px 6px !important; border-radius: 6px !important; font-weight: 900 !important;">실시간 기상</small>
+                        <small style="font-size: 10.5px !important; line-height: 1.1 !important; background-color: #151E2D !important; color: #FDE047 !important; border: 1px solid #D4AF37 !important; padding: 3px 6px !important; border-radius: 6px !important; font-weight: 900 !important;">실시간 기상</small>
                     </div>
                     <span id="weatherBannerSub" class="font-black tracking-tight z-10" style="font-size: 15px !important; color: #151E2D !important;">오늘의 조경 날씨</span>
                 </button>
