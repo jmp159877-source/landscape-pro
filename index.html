@@ -5175,32 +5175,6 @@
               closeBoardWrite(true);
           }
       });
-  </script>
-<!-- === [임시 테스트용] VIP 배경 시안 A/B/C 실시간 비교 리모컨 (확인 후 삭제) === -->
-<div id="bgTestRemote" style="position:fixed; top:10px; left:50%; transform:translateX(-50%); z-index:999999; background:rgba(0,0,0,0.85); padding:8px 12px; border-radius:30px; border:2px solid #fbbf24; display:flex; gap:6px; box-shadow:0 8px 25px rgba(0,0,0,0.6); backdrop-filter:blur(6px); white-space:nowrap;">
-    <span style="color:#fbbf24; font-size:12px; font-weight:800; display:flex; align-items:center; margin-right:4px;">🎨 배경비교:</span>
-    <button onclick="applyTestBg('orig')" style="background:#0B101B; color:#fff; border:1px solid #475569; padding:6px 10px; border-radius:16px; font-size:12px; font-weight:700; cursor:pointer;">기존(블랙)</button>
-    <button onclick="applyTestBg('A')" style="background:#233044; color:#fff; border:1px solid #60a5fa; padding:6px 10px; border-radius:16px; font-size:12px; font-weight:700; cursor:pointer;">시안A (티타늄블루)</button>
-    <button onclick="applyTestBg('B')" style="background:#35465E; color:#fde047; border:2px solid #fde047; padding:6px 10px; border-radius:16px; font-size:12px; font-weight:800; cursor:pointer;">★시안B (스틸슬레이트)</button>
-    <button onclick="applyTestBg('C')" style="background:#52637A; color:#fff; border:1px solid #cbd5e1; padding:6px 10px; border-radius:16px; font-size:12px; font-weight:700; cursor:pointer;">시안C (플래티넘실버)</button>
-</div>
-
-<script>
-function applyTestBg(type) {
-    let bgStyle = '';
-    if (type === 'orig') bgStyle = 'linear-gradient(180deg, #0B101B 0%, #151E2D 100%)';
-    if (type === 'A') bgStyle = 'linear-gradient(180deg, #1E293B 0%, #29384D 100%)';
-    if (type === 'B') bgStyle = 'linear-gradient(180deg, #2E3D52 0%, #3F526D 100%)';
-    if (type === 'C') bgStyle = 'linear-gradient(180deg, #475569 0%, #64748B 100%)';
-
-    // 메인 배경 요소들에 일괄 적용
-    const targets = document.querySelectorAll('body, html, #app, .app-container, .main-container, #mainView, .dashboard-wrapper');
-    targets.forEach(el => {
-        el.style.setProperty('background', bgStyle, 'important');
-    });
-    document.body.style.setProperty('background', bgStyle, 'important');
-}
-</script>
-<!-- === [임시 테스트용 리모컨 끝] === -->  
+  </script>  
 </body>
 </html>
