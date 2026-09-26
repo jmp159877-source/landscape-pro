@@ -344,35 +344,48 @@
       <!-- 시안 B: 화이트 클린 배경 & 골드 테두리 라운지 -->
       <div class="bg-white rounded-[28px] p-5 space-y-4 border-2 border-[#D4AF37] luxury-shadow">
         
-        <!-- 1. VIP 멤버십 & 활동 포인트 카드 -->
-        <div class="rounded-[22px] p-4 border-[1.5px] border-[#FDE047] shadow-lg relative overflow-hidden" style="background: linear-gradient(135deg, #141A23 0%, #1E293B 55%, #0F172A 100%);">
-          <div class="flex items-center justify-between gap-2 pb-3 border-b border-white/15">
-            <div class="flex items-center gap-2.5 min-w-0">
-              <div class="w-11 h-11 rounded-[14px] bg-gradient-to-br from-[#D4AF37] to-[#F59E0B] flex items-center justify-center text-[#151E2D] shadow-md shrink-0">
-                <i data-lucide="award" class="w-6 h-6 stroke-[2.5]"></i>
-              </div>
-              <div class="min-w-0">
-                <div class="flex items-center gap-1.5 flex-wrap">
-                  <span id="loungeMyCompanyName" class="text-[16.5px] font-black text-white truncate">대표님</span>
-                  <span id="loungeMyGradeBadge" class="text-[11px] bg-[#84CC16] text-[#151E2D] font-black px-2 py-0.5 rounded-md whitespace-nowrap">🌿 파트너 대표님</span>
-                </div>
-                <p class="text-[12px] font-bold text-[#CBD5E1] mt-0.5">소통·정보교환 활동으로 포인트가 적립됩니다</p>
-              </div>
+        <!-- 1. VIP 멤버십 & 활동 포인트 카드 (시안 A: 와이드 전광판 분리형 & 초대형 폰트) -->
+        <style>
+          #loungeMyGradeBadge {
+            font-size: 13.5px !important;
+            padding: 4px 10px !important;
+            border-radius: 8px !important;
+          }
+        </style>
+        <div class="rounded-[24px] p-5 border-2 border-[#FDE047] shadow-xl relative overflow-hidden space-y-4" style="background: linear-gradient(135deg, #141A23 0%, #1E293B 55%, #0F172A 100%);">
+          <!-- 1단: 특대 메달 아이콘 + 상호명(22px) + 등급배지(13.5px) -->
+          <div class="flex items-center gap-3.5">
+            <div class="w-14 h-14 rounded-[18px] bg-gradient-to-br from-[#D4AF37] to-[#F59E0B] flex items-center justify-center text-[#151E2D] shadow-lg border border-white/40 shrink-0">
+              <i data-lucide="award" class="w-8 h-8 stroke-[2.5]"></i>
             </div>
-            <div class="text-right shrink-0">
-              <span class="text-[11px] font-extrabold text-[#FDE047] block">보유 포인트</span>
-              <span id="loungeMyPoints" class="text-[20px] font-black text-[#84CC16] tracking-tight">1,000 P</span>
+            <div class="min-w-0 flex-1">
+              <span id="loungeMyCompanyName" class="block text-[22px] font-black text-white tracking-tight leading-tight truncate">대표님</span>
+              <div class="mt-1.5 flex items-center gap-2 flex-wrap">
+                <span id="loungeMyGradeBadge" class="text-[13.5px] bg-[#84CC16] text-[#151E2D] font-black px-3 py-1 rounded-lg shadow-sm whitespace-nowrap">🌿 파트너 대표님</span>
+                <span class="text-[13px] font-bold text-[#CBD5E1] whitespace-nowrap">VIP 인증 회원</span>
+              </div>
             </div>
           </div>
 
-          <div class="pt-3 flex items-center justify-between gap-2">
-            <button id="btnLoungeAttend" onclick="claimLoungeAttendance()" class="flex-1 py-2.5 px-3 rounded-[12px] font-black text-[13.5px] text-[#151E2D] flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-all" style="background: linear-gradient(135deg, #FEF08A 0%, #FDE047 100%); border: 1px solid #FFFFFF;">
-              <i data-lucide="calendar-check" class="w-4 h-4 stroke-[2.5]"></i> 오늘 출석체크 (+50P 받기)
+          <!-- 2단: 보유 포인트 와이드 전광판 박스 (26px 특대 숫자 & 안내문구 한 줄 깔끔 배치) -->
+          <div class="bg-black/40 border border-[#D4AF37]/50 rounded-[18px] px-4 py-3.5 flex items-center justify-between gap-2">
+            <div class="min-w-0">
+              <div class="text-[15.5px] font-black text-[#FDE047]">나의 보유 포인트</div>
+              <div class="text-[13px] font-bold text-[#CBD5E1] mt-0.5 whitespace-nowrap">소통·정보교환 시 포인트 자동 적립</div>
+            </div>
+            <span id="loungeMyPoints" class="text-[26px] font-black text-[#84CC16] tracking-tight whitespace-nowrap drop-shadow shrink-0">1,000 P</span>
+          </div>
+
+          <!-- 3단: 큼직한 출석체크(16px) & 혜택안내(15.5px) 버튼 -->
+          <div class="flex items-center gap-2.5">
+            <button id="btnLoungeAttend" onclick="claimLoungeAttendance()" class="flex-1 py-3.5 px-3 rounded-[14px] font-black text-[16px] text-[#151E2D] flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-all whitespace-nowrap" style="background: linear-gradient(135deg, #FEF08A 0%, #FDE047 100%); border: 1.5px solid #FFFFFF;">
+              <i data-lucide="calendar-check" class="w-5 h-5 stroke-[2.5]"></i> 오늘 출석체크 (+50P 받기)
             </button>
-            <button onclick="alert('💎 [대표님 라운지 포인트 적립 안내]\n\n• 신규 가입 기본 축하금: 1,000 P\n• 매일 라운지 출석체크: +50 P\n• 소통방 게시글·질문·정보 작성: +100 P\n\n[등급 기준]\n🌿 파트너 대표님 (1,000P~)\n🌲 명장 대표님 (2,000P~)\n👑 마스터 대표님 (5,000P~)')" class="py-2.5 px-3 rounded-[12px] bg-white/10 hover:bg-white/20 border border-white/25 text-white font-black text-[12.5px] flex items-center gap-1 shrink-0">
-              <i data-lucide="help-circle" class="w-4 h-4 text-[#FDE047]"></i> 혜택안내
+            <button onclick="alert('💎 [대표님 라운지 포인트 적립 안내]\n\n• 신규 가입 기본 축하금: 1,000 P\n• 매일 라운지 출석체크: +50 P\n• 소통방 게시글·질문·정보 작성: +100 P\n\n[등급 기준]\n🌿 파트너 대표님 (1,000P~)\n🌲 명장 대표님 (2,000P~)\n👑 마스터 대표님 (5,000P~)')" class="py-3.5 px-4 rounded-[14px] bg-white/15 hover:bg-white/25 border-[1.5px] border-white/30 text-white font-black text-[15.5px] flex items-center gap-1.5 shrink-0 whitespace-nowrap">
+              <i data-lucide="help-circle" class="w-5 h-5 text-[#FDE047]"></i> 혜택안내
             </button>
           </div>
+        </div>
         </div>
 
         <!-- 2. 대표님 소통방 전체보기 메인 간판 -->
