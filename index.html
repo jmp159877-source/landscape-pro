@@ -5207,8 +5207,8 @@
                   const cardHtml = `
                   <div class="board-feed-item bg-white rounded-[24px] p-6 luxury-shadow border border-[#F4F5F4] modal-enter ${isClosed ? 'opacity-75' : ''}" data-category="${escHtml(post.category)}">
                       <div class="flex items-center justify-between mb-4">${badgeHtml}${isClosed ? `<span class="bg-gray-700 text-white text-[12.5px] font-black px-2.5 py-1 rounded-md">🔒 ${statusLabel}</span>` : ""}${post.isOfficial ? '<span class="bg-[#151E2D] text-[#FDE047] text-[12px] font-black px-2.5 py-1 rounded-md">📌 예시</span>' : ''}</div>
-                      <h3 class="text-[19px] font-black ${isClosed ? 'text-[#94A3B8] line-through' : 'text-[#151E2D]'} mb-3 leading-snug">${escHtml(post.title)}</h3>
-                      <p class="text-[15px] text-[#4E5968] font-bold leading-[1.6] break-keep">${escHtml(post.content).replace(/\n/g, '<br>')}</p>
+                      <h3 class="text-[21px] font-black leading-snug break-keep mb-3 px-4 py-3 rounded-[14px] border-l-[7px] ${isClosed ? 'bg-[#F1F5F9] border-[#94A3B8] text-[#94A3B8] line-through' : 'bg-[#F4FBEA] border-[#84CC16] text-[#0F172A]'}">${escHtml(post.title)}</h3><!-- 👀 [패치 #12] 제목 박스 -->
+                      <p class="text-[16.5px] text-[#334155] font-bold leading-[1.7] break-keep px-1">${escHtml(post.content).replace(/\n/g, '<br>')}</p>
                       ${imgsHtml}
                       ${buttonsHtml}
                       ${authorHtml}
