@@ -30,9 +30,9 @@
     html, body { overscroll-behavior-y: none; }
     * { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
     
-    /* 💡 배경 네이비를 한 톤 깊고 차분하게 톤 다운 (#151E2D -> #0B101B) */
-    body { background-color: #0B101B; background-image: url('https://www.transparenttextures.com/patterns/stardust.png'); }
-    .glass-nav { background: rgba(11, 16, 27, 0.94); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+    /* 💡 [시안 A 정석 적용] 상단 헤더(.glass-nav)와 하단 배경(body)을 제네시스 미드나잇 티타늄 블루로 완벽 통일 */
+    body { background: linear-gradient(180deg, #1E293B 0%, #29384D 100%) fixed !important; }
+    .glass-nav { background: linear-gradient(180deg, rgba(30, 41, 59, 0.96) 0%, rgba(41, 56, 77, 0.96) 100%) !important; backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.12); }
     
     /* 💡 버튼 안의 네이비 색감은 그대로 살리고 테두리를 또렷하게 잡아 입체감 극대화 */
     #mainCategoryWrapper nav button.bg-white\/5 {
@@ -956,7 +956,7 @@
           const box = document.getElementById('aiChatMessages');
           box.insertAdjacentHTML('beforeend', `
               <div class="flex justify-end">
-                  <div class="bg-[#151E2D] text-[#84CC16] border border-[#84CC16]/30 rounded-[20px] rounded-tr-[4px] px-4 py-3 text-[15.5px] font-black leading-relaxed break-keep max-w-[82%] shadow-md">
+                  <div class="bg-[#84CC16] text-[#151E2D] border-2 border-[#65A30D] rounded-[20px] rounded-tr-[4px] px-4 py-3 text-[15.5px] font-black leading-relaxed break-keep max-w-[82%] shadow-md">
                       ${msg}
                   </div>
               </div>
@@ -3200,26 +3200,6 @@
           }
       });
       
-      
-
-      const encyTab = document.getElementById('tabEncyclopedia');
-      if(encyTab) {
-          encyTab.className = "w-full py-5 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md";
-          const span = encyTab.querySelector('span');
-          if(span) span.className = "text-[15.5px] font-black text-[#151E2D] tracking-tight";
-          const icon = encyTab.querySelector('i');
-          if(icon) { icon.className = icon.className.replace(/text-\S+/g, ''); icon.classList.add('text-[#151E2D]'); }
-      }
-
-      const lensTab = document.getElementById('tabLens');
-      if(lensTab) {
-          lensTab.className = "w-full py-5 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex flex-col items-center justify-center gap-1.5 backdrop-blur-md";
-          const span = lensTab.querySelector('span');
-          if(span) span.className = "text-[15px] font-black text-[#151E2D] tracking-tight";
-          const icon = lensTab.querySelector('i');
-          if(icon) { icon.className = icon.className.replace(/text-\S+/g, ''); icon.classList.add('text-[#151E2D]'); }
-      }
-      
       let activeTabId = '';
       if (mode === 'admin') { document.getElementById('adminView').classList.remove('hidden'); activeTabId = 'tabAdmin'; }
       else if (mode === 'quote') { document.getElementById('quoteAdminView').classList.remove('hidden'); activeTabId = 'tabQuote'; }
@@ -5176,80 +5156,5 @@
           }
       });
   </script>
-  <!-- === [VIP 에디션 패치 최종] 1. 상하단 전체 시안 A 통일 & 2. AI비서 연두 말풍선 === -->
-<style>
-    /* 1. 전체 바탕 시안 A (제네시스 미드나잇 티타늄 블루) */
-    body, html {
-        background: linear-gradient(180deg, #1E293B 0%, #29384D 100%) !important;
-        background-attachment: fixed !important;
-    }
-
-    /* 2. AI 현장 비서: 내 말풍선 (화사한 연두색 배경 + 진한 검정 글씨) */
-    .user-msg, .user-bubble, .chat-user, .my-msg, .ai-user-msg {
-        /* 기존: 검정 배경 + 연두 글씨 ➔ 변경: 화사한 연두 배경 + 진한 검정 글씨 */
-        background: linear-gradient(135deg, #bbf7d0 0%, #86efac 100%) !important;
-        color: #111827 !important;
-        font-weight: 700 !important;
-        border: 1.5px solid #4ade80 !important;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25) !important;
-    }
-</style>
-
-<script>
-(function() {
-    function applyVipThemeFix() {
-        // 1) '메뉴 접기'와 '작업 일정표'를 감싸고 있는 상단 검은색 배경 박스를 찾아 투명/시안A로 통일
-        const allEls = document.querySelectorAll('div, section, main, header');
-        allEls.forEach(el => {
-            const txt = el.innerText || '';
-            // 12개 메뉴 전체를 감싸는 큰 컨테이너인 경우 (개별 버튼은 제외)
-            if ((txt.includes('작업 일정표') && txt.includes('대표님 라운지')) || 
-                (txt.includes('신화토탈') && txt.includes('보안 연동됨') && !txt.includes('작업 일정표'))) {
-                
-                // 작은 배지나 버튼이 아닌 큰 레이아웃 박스만 배경 해제
-                if (el.offsetWidth > 280) {
-                    el.style.setProperty('background', 'transparent', 'important');
-                    el.style.setProperty('background-color', 'transparent', 'important');
-                    el.style.setProperty('border-bottom', 'none', 'important');
-                    el.style.setProperty('box-shadow', 'none', 'important');
-                }
-            }
-
-            // 상단 6개 기본 버튼(작업 일정표 ~ 연락처)이 밝아진 배경에서 선명하게 튀어나오도록 테두리/그림자 보강
-            const top6Titles = ['작업 일정표', '작업 일지 작성', '거래처 목록', '견적서 작성', '견적 보관함', '연락처'];
-            const cleanTxt = txt.trim();
-            if (top6Titles.includes(cleanTxt) && el.offsetWidth > 70 && el.offsetWidth < 180 && el.offsetHeight > 70) {
-                el.style.setProperty('background', 'linear-gradient(145deg, #162032 0%, #0F172A 100%)', 'important');
-                el.style.setProperty('border', '1.5px solid rgba(148, 163, 184, 0.35)', 'important');
-                el.style.setProperty('box-shadow', '0 8px 18px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.2)', 'important');
-            }
-        });
-
-        // 2) AI 현장 비서 내 말풍선 연두색 배경 + 검정 글씨 적용
-        const chatNodes = document.querySelectorAll('div, p, span');
-        chatNodes.forEach(el => {
-            const st = el.getAttribute('style') || '';
-            if ((st.includes('margin-left: auto') || st.includes('margin-left:auto') || st.includes('align-self: flex-end') || st.includes('align-self:flex-end')) || 
-                ((st.includes('#4ade80') || st.includes('#22c55e') || st.includes('#a3e635') || st.includes('rgb(74, 222, 128)')) && (st.includes('#0') || st.includes('#1') || st.includes('black') || st.includes('rgb(0')))) {
-                if (!el.querySelector('input') && !el.querySelector('button') && el.tagName !== 'BUTTON' && el.offsetWidth < 360) {
-                    el.style.setProperty('background', 'linear-gradient(135deg, #bbf7d0 0%, #86efac 100%)', 'important');
-                    el.style.setProperty('color', '#111827', 'important');
-                    el.style.setProperty('font-weight', '800', 'important');
-                    el.style.setProperty('border', '1.5px solid #4ade80', 'important');
-                }
-            }
-        });
-    }
-
-    window.addEventListener('DOMContentLoaded', applyVipThemeFix);
-    window.addEventListener('load', applyVipThemeFix);
-    setTimeout(applyVipThemeFix, 300);
-
-    const observer = new MutationObserver(() => applyVipThemeFix());
-    if (document.body) observer.observe(document.body, { childList: true, subtree: true });
-    else window.addEventListener('DOMContentLoaded', () => observer.observe(document.body, { childList: true, subtree: true }));
-})();
-</script>
-<!-- === [VIP 에디션 패치 끝] === -->
 </body>
 </html>
