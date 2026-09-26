@@ -338,82 +338,159 @@
   <div id="swipeContainer" class="max-w-md mx-auto p-4 space-y-5">
     <!-- ================= [신규: 조경 사장님 라운지 화면] ================= -->
     <section id="loungeView" class="hidden space-y-5">
-      <!-- 기존 JS 호환용 숨김 태그 (실시간 위치 카드는 날씨 팝업창 안으로 이동 완료) -->
       <span id="weatherConditionBadge" class="hidden"></span>
       <i id="weatherBgIcon" class="hidden"></i>
              
-      <!-- 2. 라운지 게시판 4대장 (프리미엄 다크/네온 테마 적용) -->
-      <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
-         <!-- 💡 타이틀 배너를 2배 크기로 대폭 키워 메인 간판으로서의 시인성과 존재감 극대화 -->
-          <div onclick="openBoard('전체')" class="bg-[#FEE500] rounded-[24px] p-6 flex flex-col gap-3.5 shadow-md cursor-pointer hover:brightness-95 active:scale-[0.99] transition-all">
-              <h2 class="text-[24px] font-black text-[#151E2D] flex items-center gap-2.5 tracking-tight leading-none">
-                  <i data-lucide="message-square" class="w-7 h-7 text-[#151E2D] fill-[#151E2D]/15 shrink-0"></i> 사장님 소통방
-              </h2>
-              <div class="w-full flex items-center justify-between text-[14px] font-black text-white bg-[#3B4C63] px-4 py-3 rounded-[14px] shadow-sm tracking-tight">
-                  <span>협력하고, 나눔하고, 공유해요</span>
-                  <i data-lucide="chevron-right" class="w-5 h-5 text-[#FEE500]"></i>
+      <!-- 시안 B: 화이트 클린 배경 & 골드 테두리 라운지 -->
+      <div class="bg-white rounded-[28px] p-5 space-y-4 border-2 border-[#D4AF37] luxury-shadow">
+        
+        <!-- 1. VIP 멤버십 & 활동 포인트 카드 -->
+        <div class="rounded-[22px] p-4 border-[1.5px] border-[#FDE047] shadow-lg relative overflow-hidden" style="background: linear-gradient(135deg, #141A23 0%, #1E293B 55%, #0F172A 100%);">
+          <div class="flex items-center justify-between gap-2 pb-3 border-b border-white/15">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div class="w-11 h-11 rounded-[14px] bg-gradient-to-br from-[#D4AF37] to-[#F59E0B] flex items-center justify-center text-[#151E2D] shadow-md shrink-0">
+                <i data-lucide="award" class="w-6 h-6 stroke-[2.5]"></i>
               </div>
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span id="loungeMyCompanyName" class="text-[16.5px] font-black text-white truncate">대표님</span>
+                  <span id="loungeMyGradeBadge" class="text-[11px] bg-[#84CC16] text-[#151E2D] font-black px-2 py-0.5 rounded-md whitespace-nowrap">🌿 파트너 대표님</span>
+                </div>
+                <p class="text-[12px] font-bold text-[#CBD5E1] mt-0.5">소통·정보교환 활동으로 포인트가 적립됩니다</p>
+              </div>
+            </div>
+            <div class="text-right shrink-0">
+              <span class="text-[11px] font-extrabold text-[#FDE047] block">보유 포인트</span>
+              <span id="loungeMyPoints" class="text-[20px] font-black text-[#84CC16] tracking-tight">1,000 P</span>
+            </div>
           </div>
+
+          <div class="pt-3 flex items-center justify-between gap-2">
+            <button id="btnLoungeAttend" onclick="claimLoungeAttendance()" class="flex-1 py-2.5 px-3 rounded-[12px] font-black text-[13.5px] text-[#151E2D] flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-all" style="background: linear-gradient(135deg, #FEF08A 0%, #FDE047 100%); border: 1px solid #FFFFFF;">
+              <i data-lucide="calendar-check" class="w-4 h-4 stroke-[2.5]"></i> 오늘 출석체크 (+50P 받기)
+            </button>
+            <button onclick="alert('💎 [대표님 라운지 포인트 적립 안내]\n\n• 신규 가입 기본 축하금: 1,000 P\n• 매일 라운지 출석체크: +50 P\n• 소통방 게시글·질문·정보 작성: +100 P\n\n[등급 기준]\n🌿 파트너 대표님 (1,000P~)\n🌲 명장 대표님 (2,000P~)\n👑 마스터 대표님 (5,000P~)')" class="py-2.5 px-3 rounded-[12px] bg-white/10 hover:bg-white/20 border border-white/25 text-white font-black text-[12.5px] flex items-center gap-1 shrink-0">
+              <i data-lucide="help-circle" class="w-4 h-4 text-[#FDE047]"></i> 혜택안내
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. 대표님 소통방 전체보기 메인 간판 -->
+        <div onclick="openBoard('전체')" class="rounded-[22px] p-5 flex items-center justify-between cursor-pointer hover:brightness-95 active:scale-[0.99] transition-all shadow-lg" style="background: linear-gradient(135deg, #B48327 0%, #D4AF37 45%, #F7E9A0 78%, #C59B27 100%); border: 1.5px solid #FEF08A;">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-[16px] bg-[#151E2D] flex items-center justify-center text-[#FDE047] shadow-md shrink-0">
+              <i data-lucide="messages-square" class="w-6 h-6 stroke-[2.4]"></i>
+            </div>
+            <div>
+              <h2 class="text-[21px] font-black text-[#151E2D] tracking-tight leading-none">대표님 소통방 전체보기</h2>
+              <p class="text-[13.5px] font-black text-[#151E2D]/80 mt-1.5">글 작성 시 +100P 즉시 적립 · 실시간 대화</p>
+            </div>
+          </div>
+          <div class="w-9 h-9 rounded-full bg-[#151E2D] flex items-center justify-center text-[#FDE047] shrink-0">
+            <i data-lucide="chevron-right" class="w-5 h-5 stroke-[3]"></i>
+          </div>
+        </div>
           
-          <!-- 💡 4대장 버튼 타이틀 폰트 확대(17px)로 직관성 및 시인성 극대화 -->
-          <div class="grid grid-cols-2 gap-3">
-              <!-- 버튼 1: 현장 협력 -->
-              <button onclick="openBoard('현장 협력·지원')" class="bg-[#3B4C63] border border-white/10 rounded-[20px] p-5 text-left flex flex-col gap-3 hover:border-blue-400 transition-all shadow-sm group">
-                  <div class="w-11 h-11 rounded-[14px] bg-blue-500/20 flex items-center justify-center text-blue-300 group-hover:scale-110 transition-transform"><i data-lucide="handshake" class="w-6 h-6"></i></div>
-                  <div>
-                      <h3 class="text-[17px] font-black text-white group-hover:text-blue-300 transition-colors leading-snug tracking-tight">현장 협력·지원<br><span class="text-blue-300 text-[13px] font-bold">(협력해요)</span></h3>
-                      <p class="text-[12px] text-[#CBD5E1] font-bold mt-1.5 break-keep leading-snug">사장님 모십니다 / 현장 지원합니다</p>
-                  </div>
-              </button>
-              
-              <!-- 버튼 2: 장비 자재 -->
-              <button onclick="openBoard('장비·자재 직거래')" class="bg-[#3B4C63] border border-white/10 rounded-[20px] p-5 text-left flex flex-col gap-3 hover:border-[#84CC16] transition-all shadow-sm group">
-                  <div class="w-11 h-11 rounded-[14px] bg-[#84CC16]/20 flex items-center justify-center text-[#84CC16] group-hover:scale-110 transition-transform"><i data-lucide="shopping-cart" class="w-6 h-6"></i></div>
-                  <div>
-                      <h3 class="text-[17px] font-black text-white group-hover:text-[#84CC16] transition-colors leading-snug tracking-tight">장비·자재 직거래</h3>
-                      <p class="text-[12px] text-[#CBD5E1] font-bold mt-1.5 break-keep leading-snug">장비 렌탈, 남은 수목/자재 안전 거래, <span class="text-[#84CC16]">무료 나눔</span></p>
-                  </div>
-              </button>
-              
-              <!-- 버튼 3: 실무 노하우 -->
-              <button onclick="openBoard('실무 노하우 공유')" class="bg-[#3B4C63] border border-white/10 rounded-[20px] p-5 text-left flex flex-col gap-3 hover:border-[#FEE500] transition-all shadow-sm group">
-                  <div class="w-11 h-11 rounded-[14px] bg-[#FEE500]/20 flex items-center justify-center text-[#FEE500] group-hover:scale-110 transition-transform"><i data-lucide="lightbulb" class="w-6 h-6"></i></div>
-                  <div>
-                      <h3 class="text-[17px] font-black text-white group-hover:text-[#FEE500] transition-colors leading-snug tracking-tight">실무 노하우 공유</h3>
-                      <p class="text-[12px] text-[#CBD5E1] font-bold mt-1.5 break-keep leading-snug">수목 관리, 전지 요령 등 현장 지식 나눔</p>
-                  </div>
-              </button>
+        <!-- 3. 8대 카테고리 그리드 (시안 B 고대비 다크 카드) -->
+        <div class="grid grid-cols-2 gap-3">
+          <!-- 1: 자유 소통·일상방 -->
+          <button onclick="openBoard('자유 소통·일상방')" class="rounded-[20px] p-4 text-left flex flex-col gap-2.5 hover:border-[#FDE047] transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
+            <div class="flex items-center justify-between">
+              <div class="w-10 h-10 rounded-[12px] bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-[#FDE047]"><i data-lucide="coffee" class="w-5 h-5"></i></div>
+              <span class="text-[11px] font-black bg-[#FDE047] text-[#151E2D] px-2 py-0.5 rounded-md">일상·소통</span>
+            </div>
+            <div>
+              <h3 class="text-[16.5px] font-black text-white leading-snug tracking-tight">자유 소통·일상방</h3>
+              <p class="text-[12.5px] text-[#CBD5E1] font-bold mt-1 break-keep leading-snug">현장 일상, 오늘 점심, 세상 사는 이야기 편하게 나눠요</p>
+            </div>
+          </button>
 
-              <!-- 버튼 4: 일감 패스·공사 양도 (신규 1순위) -->
-              <button onclick="openBoard('일감 패스·공사 양도')" class="bg-[#3B4C63] border border-white/10 rounded-[20px] p-5 text-left flex flex-col gap-3 hover:border-purple-400 transition-all shadow-sm group">
-                  <div class="w-11 h-11 rounded-[14px] bg-purple-500/20 flex items-center justify-center text-purple-300 group-hover:scale-110 transition-transform"><i data-lucide="briefcase" class="w-6 h-6"></i></div>
-                  <div>
-                      <h3 class="text-[17px] font-black text-white group-hover:text-purple-300 transition-colors leading-snug tracking-tight">일감 패스·공사 양도<br><span class="text-purple-300 text-[13px] font-bold">(확정 오더)</span></h3>
-                      <p class="text-[12px] text-[#CBD5E1] font-bold mt-1.5 break-keep leading-snug">일정 중복·타지역 확정 공사 양도 및 공동수급</p>
-                  </div>
-              </button>
+          <!-- 2: 정보 교환·업체 찾기 -->
+          <button onclick="openBoard('정보 교환·업체 찾기')" class="rounded-[20px] p-4 text-left flex flex-col gap-2.5 hover:border-[#84CC16] transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
+            <div class="flex items-center justify-between">
+              <div class="w-10 h-10 rounded-[12px] bg-lime-500/20 border border-lime-400/40 flex items-center justify-center text-[#84CC16]"><i data-lucide="compass" class="w-5 h-5"></i></div>
+              <span class="text-[11px] font-black bg-[#84CC16] text-[#151E2D] px-2 py-0.5 rounded-md">묻고 답하기</span>
+            </div>
+            <div>
+              <h3 class="text-[16.5px] font-black text-white leading-snug tracking-tight">정보 교환·업체 찾기</h3>
+              <p class="text-[12.5px] text-[#CBD5E1] font-bold mt-1 break-keep leading-snug">타지역 폐기물 처리, 인근 업체 찾기, 현장 정보 교환</p>
+            </div>
+          </button>
 
-              <!-- 버튼 5: 실전 견적·단가 자문 (신규 3순위) -->
-              <button onclick="openBoard('실전 견적·단가 자문')" class="bg-[#3B4C63] border border-white/10 rounded-[20px] p-5 text-left flex flex-col gap-3 hover:border-emerald-400 transition-all shadow-sm group">
-                  <div class="w-11 h-11 rounded-[14px] bg-emerald-500/20 flex items-center justify-center text-emerald-300 group-hover:scale-110 transition-transform"><i data-lucide="calculator" class="w-6 h-6"></i></div>
-                  <div>
-                      <h3 class="text-[17px] font-black text-white group-hover:text-emerald-300 transition-colors leading-snug tracking-tight">실전 견적·단가 자문<br><span class="text-emerald-300 text-[13px] font-bold">(손해 방지)</span></h3>
-                      <p class="text-[12px] text-[#CBD5E1] font-bold mt-1.5 break-keep leading-snug">현장 적정 실행 단가 및 입찰 견적 상호 자문</p>
-                  </div>
-              </button>
+          <!-- 3: 현장 협력·지원 -->
+          <button onclick="openBoard('현장 협력·지원')" class="rounded-[20px] p-4 text-left flex flex-col gap-2.5 hover:border-sky-400 transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
+            <div class="flex items-center justify-between">
+              <div class="w-10 h-10 rounded-[12px] bg-sky-500/20 border border-sky-400/40 flex items-center justify-center text-sky-300"><i data-lucide="handshake" class="w-5 h-5"></i></div>
+              <span class="text-[11px] font-black bg-sky-400/20 text-sky-300 border border-sky-400/40 px-2 py-0.5 rounded-md">협력해요</span>
+            </div>
+            <div>
+              <h3 class="text-[16.5px] font-black text-white leading-snug tracking-tight">현장 협력·지원</h3>
+              <p class="text-[12.5px] text-[#CBD5E1] font-bold mt-1 break-keep leading-snug">사장님 모십니다 / 인력·장비 현장 지원합니다</p>
+            </div>
+          </button>
 
-              <!-- 버튼 6: 불량 거래처 경보 -->
-              <button onclick="openBoard('불량 거래처 경보')" class="bg-[#3B4C63] border border-white/10 rounded-[20px] p-5 text-left flex flex-col gap-3 hover:border-red-400 transition-all shadow-sm group">
-                  <div class="w-11 h-11 rounded-[14px] bg-red-500/20 flex items-center justify-center text-red-300 group-hover:scale-110 transition-transform"><i data-lucide="alert-triangle" class="w-6 h-6"></i></div>
-                  <div>
-                      <h3 class="text-[17px] font-black text-white group-hover:text-red-300 transition-colors leading-snug tracking-tight">불량 거래처 경보</h3>
-                      <p class="text-[12px] text-[#CBD5E1] font-bold mt-1.5 break-keep leading-snug">미수금 발생, 주의 요망 거래처 팩트 공유</p>
-                  </div>
-              </button>
-          </div>
+          <!-- 4: 장비·자재 직거래 -->
+          <button onclick="openBoard('장비·자재 직거래')" class="rounded-[20px] p-4 text-left flex flex-col gap-2.5 hover:border-[#84CC16] transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
+            <div class="flex items-center justify-between">
+              <div class="w-10 h-10 rounded-[12px] bg-[#84CC16]/20 border border-[#84CC16]/40 flex items-center justify-center text-[#84CC16]"><i data-lucide="shopping-cart" class="w-5 h-5"></i></div>
+              <span class="text-[11px] font-black bg-[#84CC16]/20 text-[#84CC16] border border-[#84CC16]/40 px-2 py-0.5 rounded-md">무료나눔</span>
+            </div>
+            <div>
+              <h3 class="text-[16.5px] font-black text-white leading-snug tracking-tight">장비·자재 직거래</h3>
+              <p class="text-[12.5px] text-[#CBD5E1] font-bold mt-1 break-keep leading-snug">중고 장비, 남은 수목·블럭·부자재 직거래 및 나눔</p>
+            </div>
+          </button>
+
+          <!-- 5: 일감 패스·공사 양도 -->
+          <button onclick="openBoard('일감 패스·공사 양도')" class="rounded-[20px] p-4 text-left flex flex-col gap-2.5 hover:border-purple-400 transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
+            <div class="flex items-center justify-between">
+              <div class="w-10 h-10 rounded-[12px] bg-purple-500/20 border border-purple-400/40 flex items-center justify-center text-purple-300"><i data-lucide="briefcase" class="w-5 h-5"></i></div>
+              <span class="text-[11px] font-black bg-purple-400/20 text-purple-300 border border-purple-400/40 px-2 py-0.5 rounded-md">확정오더</span>
+            </div>
+            <div>
+              <h3 class="text-[16.5px] font-black text-white leading-snug tracking-tight">일감 패스·공사 양도</h3>
+              <p class="text-[12.5px] text-[#CBD5E1] font-bold mt-1 break-keep leading-snug">일정 중복·타지역 확정 공사 양도 및 공동수급</p>
+            </div>
+          </button>
+
+          <!-- 6: 실전 견적·단가 자문 -->
+          <button onclick="openBoard('실전 견적·단가 자문')" class="rounded-[20px] p-4 text-left flex flex-col gap-2.5 hover:border-emerald-400 transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
+            <div class="flex items-center justify-between">
+              <div class="w-10 h-10 rounded-[12px] bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-emerald-300"><i data-lucide="calculator" class="w-5 h-5"></i></div>
+              <span class="text-[11px] font-black bg-emerald-400/20 text-emerald-300 border border-emerald-400/40 px-2 py-0.5 rounded-md">손해방지</span>
+            </div>
+            <div>
+              <h3 class="text-[16.5px] font-black text-white leading-snug tracking-tight">실전 견적·단가 자문</h3>
+              <p class="text-[12.5px] text-[#CBD5E1] font-bold mt-1 break-keep leading-snug">이 현장 얼마가 적당할까요? 적정 단가 상호 자문</p>
+            </div>
+          </button>
+
+          <!-- 7: 실무 노하우 공유 -->
+          <button onclick="openBoard('실무 노하우 공유')" class="rounded-[20px] p-4 text-left flex flex-col gap-2.5 hover:border-[#FEE500] transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
+            <div class="flex items-center justify-between">
+              <div class="w-10 h-10 rounded-[12px] bg-[#FEE500]/20 border border-[#FEE500]/40 flex items-center justify-center text-[#FEE500]"><i data-lucide="lightbulb" class="w-5 h-5"></i></div>
+              <span class="text-[11px] font-black bg-[#FEE500]/20 text-[#FEE500] border border-[#FEE500]/40 px-2 py-0.5 rounded-md">기술나눔</span>
+            </div>
+            <div>
+              <h3 class="text-[16.5px] font-black text-white leading-snug tracking-tight">실무 노하우 공유</h3>
+              <p class="text-[12.5px] text-[#CBD5E1] font-bold mt-1 break-keep leading-snug">전지 요령, 석재 시공 팁 등 베테랑 현장 기술 공유</p>
+            </div>
+          </button>
+
+          <!-- 8: 불량 거래처 경보 -->
+          <button onclick="openBoard('불량 거래처 경보')" class="rounded-[20px] p-4 text-left flex flex-col gap-2.5 hover:border-red-400 transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
+            <div class="flex items-center justify-between">
+              <div class="w-10 h-10 rounded-[12px] bg-red-500/20 border border-red-400/40 flex items-center justify-center text-red-300"><i data-lucide="alert-triangle" class="w-5 h-5"></i></div>
+              <span class="text-[11px] font-black bg-red-500/20 text-red-300 border border-red-400/40 px-2 py-0.5 rounded-md">익명보호</span>
+            </div>
+            <div>
+              <h3 class="text-[16.5px] font-black text-white leading-snug tracking-tight">불량 거래처 경보</h3>
+              <p class="text-[12.5px] text-[#CBD5E1] font-bold mt-1 break-keep leading-snug">상습 미수금, 악성 클레임 주의 요망 현장 팩트 공유</p>
+            </div>
+          </button>
+        </div>
       </div>
     </section>
-    <section id="adminView" class="hidden space-y-5">
         <!-- ✨ 전체 일지 보관함 진입 버튼 (타이틀 18px로 확대) ✨ -->
         <div onclick="openAllLogsModal()" class="bg-[#FEF9C3] border-[1.5px] border-[#12261E] rounded-[24px] p-5 flex justify-between items-center shadow-md cursor-pointer hover:border-[#84CC16] hover:bg-[#FEF08A] group transition-all mb-4">
             <div class="flex items-center gap-3.5">
@@ -4634,27 +4711,29 @@
           </div>
       </div>
   </div>    
-<!-- ================= [신규: 조경인 커뮤니티 통합 게시판 화면 (시니어 맞춤형 UX + 법적 공지)] ================= -->
-  <section id="boardView" class="hidden space-y-4 pb-10" style="position: absolute; top: 0; left: 0; width: 100%; min-height: 100vh; background-color: #151E2D; z-index: 50; padding: 20px;">
+<!-- ================= [신규: 조경인 커뮤니티 통합 게시판 화면 (8대 카테고리 + 포인트 시스템 연동)] ================= -->
+  <section id="boardView" class="hidden space-y-4 pb-10" style="position: absolute; top: 0; left: 0; width: 100%; min-height: 100vh; background: linear-gradient(180deg, #0B1512 0%, #152620 100%); z-index: 50; padding: 20px;">
       <!-- 게시판 상단 헤더 & 뒤로가기 -->
       <div class="flex items-center justify-between bg-white p-4 rounded-[24px] luxury-shadow sticky top-0 z-40">
           <button onclick="closeBoard()" class="w-11 h-11 flex items-center justify-center bg-[#F4F5F4] rounded-full text-[#151E2D] hover:bg-[#EAEBEA] transition-colors"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
-          <h2 id="boardMainTitle" class="text-[18px] font-black text-[#151E2D]">사장님 소통방</h2>
-          <button class="w-11 h-11 flex items-center justify-center bg-[#84CC16]/10 rounded-full text-[#65A30D] hover:bg-[#84CC16]/20 transition-colors"><i data-lucide="search" class="w-6 h-6"></i></button>
+          <h2 id="boardMainTitle" class="text-[18px] font-black text-[#151E2D]">대표님 소통방</h2>
+          <button onclick="openBoardWrite()" class="px-3.5 h-10 flex items-center justify-center gap-1 bg-[#84CC16] rounded-full text-[#151E2D] font-black text-[13px] shadow-sm"><i data-lucide="pen-line" class="w-4 h-4"></i> 글쓰기</button>
       </div>
 
-      <!-- 가로 스크롤 카테고리 탭 (💡 불량거래처를 맨 우측 끝으로 이동 배치) -->
-      <div class="flex gap-2.5 overflow-x-auto nav-scroll px-1 pb-2 mt-4" id="boardTabContainer">
+      <!-- 가로 스크롤 카테고리 탭 (8대 카테고리 완비) -->
+      <div class="flex gap-2 overflow-x-auto nav-scroll px-1 pb-2 mt-4" id="boardTabContainer">
           <button onclick="filterBoard('전체', this)" class="board-tab-btn px-5 py-3 bg-[#84CC16] text-[#151E2D] rounded-full text-[15px] font-black shrink-0 shadow-md border border-[#84CC16] transition-all">전체보기</button>
+          <button onclick="filterBoard('자유소통', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">☕ 자유소통</button>
+          <button onclick="filterBoard('정보교환', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">📢 정보교환·업체찾기</button>
           <button onclick="filterBoard('현장협력', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">🤝 현장협력</button>
           <button onclick="filterBoard('장비자재', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">🛒 장비·자재</button>
-          <button onclick="filterBoard('노하우', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">💡 노하우</button>
           <button onclick="filterBoard('일감양도', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">💼 일감양도</button>
           <button onclick="filterBoard('견적단가', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">📊 견적·단가</button>
+          <button onclick="filterBoard('노하우', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">💡 노하우</button>
           <button onclick="filterBoard('불량거래처', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">🚨 불량거래처</button>
       </div>
 
-      <!-- 카테고리별 맞춤형 공지사항 및 법적 면책 조항 (시인성 극대화 연노랑 테마) -->
+      <!-- 카테고리별 맞춤형 공지사항 및 법적 면책 조항 -->
       <div id="boardNoticeBox" class="bg-[#FEF9C3] border-[1.5px] border-[#FDE047] rounded-[16px] p-4 mx-1 mt-1 shadow-md flex items-start gap-2.5 transition-all">
           <i data-lucide="megaphone" class="w-5 h-5 text-[#D97706] shrink-0 mt-0.5"></i>
           <p id="boardNoticeText" class="text-[13.5px] font-black text-[#151E2D] leading-[1.6] break-keep">
@@ -4663,85 +4742,173 @@
       </div>
 
       <!-- 피드 리스트 -->
-      <div class="space-y-5 mt-3" id="boardFeedContainer">
-          <!-- 샘플 1: 불량 거래처 -->
-          <div class="board-feed-item bg-white rounded-[24px] p-6 luxury-shadow border border-[#F4F5F4]" data-category="불량거래처">
-              <div class="flex items-center justify-between mb-4">
-                  <span class="bg-[#FEF2F2] text-[#EF4444] text-[13px] font-black px-3 py-1.5 rounded-md border border-[#FEE2E2]">🚨 불량거래처 경보</span>
-                  <span class="text-[13px] text-[#8B95A1] font-bold">10분 전 · <i data-lucide="eye" class="w-4 h-4 inline mb-0.5"></i> 42</span>
-              </div>
-              <h3 class="text-[19px] font-black text-[#151E2D] mb-3 leading-snug">경기 화성시 ○○건설 미수금 악질입니다. 주의하세요.</h3>
-              <p class="text-[15px] text-[#4E5968] font-bold line-clamp-2 leading-[1.6]">지난 달 소나무 식재 공사 3천만원 건, 핑계 대면서 결제 한 달째 미루고 연락 피합니다. 절대 들어가지 마세요.</p>
-              <div class="mt-5 pt-4 border-t border-[#F4F5F4] flex items-center justify-between">
-                  <div class="flex items-center gap-2">
-                      <div class="w-8 h-8 rounded-full bg-[#F4F5F4] flex items-center justify-center text-[#8B95A1]"><i data-lucide="user-x" class="w-4 h-4"></i></div>
-                      <span class="text-[13px] font-black text-[#8B95A1]">수원 조경업체 (익명)</span>
-                  </div>
-              </div>
-          </div>
-
-          <!-- 샘플 2: 현장 협력 (💡 카톡 색상 빼고 시그니처 연두색 적용) -->
-          <div class="board-feed-item bg-white rounded-[24px] p-6 luxury-shadow border border-[#F4F5F4]" data-category="현장협력">
-              <div class="flex items-center justify-between mb-4">
-                  <span class="bg-[#EFF6FF] text-blue-600 text-[13px] font-black px-3 py-1.5 rounded-md border border-[#DBEAFE]">🤝 현장 지원요청</span>
-                  <span class="text-[13px] text-[#8B95A1] font-bold">1시간 전 · <i data-lucide="eye" class="w-4 h-4 inline mb-0.5"></i> 89</span>
-              </div>
-              <h3 class="text-[19px] font-black text-[#151E2D] mb-3 leading-snug">내일 용인 기흥구 예초/제초 작업자 2명 급구합니다 (일당 18만)</h3>
-              <p class="text-[15px] text-[#4E5968] font-bold line-clamp-2 leading-[1.6]">장비는 저희가 다 준비합니다. 내일 비 안오면 바로 투입 가능하신 반장님들 연락주세요.</p>
-              
-              <div class="mt-5 flex gap-2.5">
-                  <button onclick="alert('전화 연결 기능이 실행됩니다.')" class="flex-1 bg-blue-600 text-white py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md hover:bg-blue-700 transition-colors"><i data-lucide="phone" class="w-5 h-5"></i> 직통 전화하기</button>
-                  <button onclick="alert('1:1 채팅방이 열립니다.')" class="flex-1 bg-[#84CC16] text-[#151E2D] py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md hover:bg-[#9BE32D] transition-colors"><i data-lucide="message-square" class="w-5 h-5"></i> 1:1 대화하기</button>
-              </div>
-              <div class="mt-5 pt-4 border-t border-[#F4F5F4] flex items-center justify-between">
-                  <div class="flex items-center gap-2.5">
-                      <div class="w-8 h-8 rounded-full bg-[#E0E7FF] flex items-center justify-center text-blue-600 border border-[#C7D2FE]"><i data-lucide="building-2" class="w-4 h-4"></i></div>
-                      <span class="text-[14px] font-black text-[#151E2D]">신화토탈조경 <span class="text-[#8B95A1] text-[12px] font-bold ml-0.5">(경기 수원)</span></span>
-                  </div>
-              </div>
-          </div>
-          
-          <!-- 샘플 3: 장비/자재 직거래 -->
-          <div class="board-feed-item bg-white rounded-[24px] p-6 luxury-shadow border border-[#F4F5F4]" data-category="장비자재">
-              <div class="flex items-center justify-between mb-4">
-                  <span class="bg-[#ECFCCB] text-[#4D7C0F] text-[13px] font-black px-3 py-1.5 rounded-md border border-[#84CC16]/40">🛒 장비·자재 직거래</span>
-                  <span class="text-[13px] text-[#8B95A1] font-bold">3시간 전 · <i data-lucide="eye" class="w-4 h-4 inline mb-0.5"></i> 112</span>
-              </div>
-              <h3 class="text-[19px] font-black text-[#151E2D] mb-3 leading-snug">미니 굴삭기(017) 내일 하루 렌탈 원합니다 (수원/화성)</h3>
-              <p class="text-[15px] text-[#4E5968] font-bold line-clamp-2 leading-[1.6]">화성 현장입니다. 내일 오전 7시부터 오후 4시까지 사용 예정입니다.</p>
-              <div class="mt-5 flex gap-2.5">
-                  <button onclick="alert('전화 연결 기능이 실행됩니다.')" class="flex-1 bg-blue-600 text-white py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md hover:bg-blue-700 transition-colors"><i data-lucide="phone" class="w-5 h-5"></i> 직통 전화하기</button>
-                  <button onclick="alert('1:1 채팅방이 열립니다.')" class="flex-1 bg-[#84CC16] text-[#151E2D] py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md hover:bg-[#9BE32D] transition-colors"><i data-lucide="message-square" class="w-5 h-5"></i> 1:1 대화하기</button>
-              </div>
-              <div class="mt-5 pt-4 border-t border-[#F4F5F4] flex items-center justify-between">
-                  <div class="flex items-center gap-2.5">
-                      <div class="w-8 h-8 rounded-full bg-[#ECFCCB] flex items-center justify-center text-[#4D7C0F] border border-[#D9F99D]"><i data-lucide="tree-pine" class="w-4 h-4"></i></div>
-                      <span class="text-[14px] font-black text-[#151E2D]">푸른소나무 <span class="text-[#8B95A1] text-[12px] font-bold ml-0.5">(경기 화성)</span></span>
-                  </div>
-              </div>
-          </div>
-      </div>
+      <div class="space-y-5 mt-3" id="boardFeedContainer"></div>
 
       <!-- 우측 하단 글쓰기 플로팅 버튼 -->
-      <button class="fixed bottom-6 right-4 px-6 h-14 bg-[#84CC16] text-[#151E2D] rounded-full shadow-[0_4px_20px_rgba(132,204,22,0.4)] flex items-center justify-center gap-2 hover:scale-105 transition-transform z-50">
-          <i data-lucide="pen-line" class="w-6 h-6"></i><span class="text-[16px] font-black">글쓰기</span>
+      <button onclick="openBoardWrite()" class="fixed bottom-6 right-4 px-6 h-14 bg-[#84CC16] text-[#151E2D] rounded-full shadow-[0_4px_20px_rgba(132,204,22,0.4)] flex items-center justify-center gap-2 hover:scale-105 transition-transform z-50">
+          <i data-lucide="pen-line" class="w-6 h-6"></i><span class="text-[16px] font-black">글쓰기 (+100P)</span>
       </button>
   </section>
 
+  <!-- 커뮤니티 글쓰기 팝업창 -->
+  <div id="boardWriteModal" class="hidden fixed inset-0 z-[9000] bg-black/80 flex flex-col items-center justify-end sm:justify-center px-4 pb-4 sm:p-4 opacity-0 transition-opacity duration-200" onclick="closeBoardWrite()">
+      <div class="bg-white w-full max-w-md rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-[#EAEBEA]" id="boardWriteBox" onclick="event.stopPropagation()">
+          <div class="p-5 border-b border-[#F4F5F4] flex justify-between items-center bg-[#F9F9F8]">
+              <h3 class="text-[17px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="pen-tool" class="w-5 h-5 text-[#84CC16]"></i> 소통방 글쓰기 <span class="text-[12px] bg-[#84CC16]/20 text-[#4D7C0F] px-2 py-0.5 rounded-md">+100P 적립</span></h3>
+              <button onclick="closeBoardWrite()" class="text-[#A3A8A3] hover:text-[#151E2D] p-1"><i data-lucide="x" class="w-6 h-6"></i></button>
+          </div>
+          <div class="p-5 space-y-4 max-h-[70vh] overflow-y-auto bg-white nav-scroll">
+              <div>
+                  <label class="block text-[13px] font-black text-[#151E2D] mb-2">카테고리 선택</label>
+                  <select id="bwCategory" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-3 py-3.5 text-[15px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
+                      <option value="자유소통">☕ 자유 소통·일상방</option>
+                      <option value="정보교환">📢 정보 교환·업체 찾기 (폐기물·자재·장비 문의)</option>
+                      <option value="현장협력">🤝 현장 협력·지원</option>
+                      <option value="장비자재">🛒 장비·자재 직거래</option>
+                      <option value="일감양도">💼 일감 패스·공사 양도</option>
+                      <option value="견적단가">📊 실전 견적·단가 자문</option>
+                      <option value="노하우">💡 실무 노하우 공유</option>
+                      <option value="불량거래처">🚨 불량 거래처 경보</option>
+                  </select>
+              </div>
+              <div>
+                  <label class="block text-[13px] font-black text-[#151E2D] mb-2">게시글 제목</label>
+                  <input type="text" id="bwTitle" placeholder="예: 화성 근처 전지목 폐기물 처리장 아시는 분 계신가요?" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[14px] px-4 py-3.5 text-[15px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16]">
+              </div>
+              <div>
+                  <label class="block text-[13px] font-black text-[#151E2D] mb-2">연락 받을 전화번호 (선택)</label>
+                  <input type="tel" id="bwPhone" placeholder="예: 010-1234-5678" oninput="autoHyphen(this)" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[14px] px-4 py-3.5 text-[15px] font-black text-blue-600 focus:outline-none focus:border-blue-500">
+              </div>
+              <div>
+                  <label class="block text-[13px] font-black text-[#151E2D] mb-2">상세 내용</label>
+                  <textarea id="bwContent" rows="5" placeholder="궁금하신 현장 정보, 업체 추천 요청, 일상 이야기 등을 편하게 적어주세요." class="w-full bg-white border border-[#EAEBEA] rounded-[14px] p-4 text-[14px] font-bold text-[#4E5968] focus:outline-none focus:border-[#84CC16] resize-none leading-relaxed"></textarea>
+              </div>
+          </div>
+          <div class="p-4 bg-[#F9F9F8] border-t border-[#F4F5F4] flex gap-2">
+              <button onclick="closeBoardWrite()" class="flex-1 bg-white border border-[#EAEBEA] text-[#4E5968] font-black py-4 rounded-[14px] text-[15px] hover:bg-[#F4F5F4] transition-colors shadow-sm">취소</button>
+              <button onclick="submitBoardPost()" class="flex-1 bg-[#151E2D] text-[#84CC16] font-black py-4 rounded-[14px] text-[15px] shadow-md hover:bg-black transition-colors">등록하기 (+100P)</button>
+          </div>
+      </div>
+  </div>
+
+  <!-- 1:1 대화하기(실시간 채팅) 팝업창 -->
+  <div id="boardChatModal" class="hidden fixed inset-0 z-[9500] bg-black/80 flex flex-col items-center justify-end sm:justify-center px-4 pb-4 sm:p-4 opacity-0 transition-opacity duration-200" onclick="closeBoardChat()">
+      <div class="bg-[#151E2D] w-full max-w-md rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 h-[75vh]" id="boardChatBox" onclick="event.stopPropagation()">
+          <div class="p-4 border-b border-white/10 flex justify-between items-center bg-[#0F1722] shrink-0">
+              <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-full bg-[#84CC16] flex items-center justify-center text-[#151E2D]"><i data-lucide="user" class="w-5 h-5"></i></div>
+                  <div class="flex flex-col">
+                      <span id="chatTargetName" class="text-[15px] font-black text-white">상대방 상호명</span>
+                      <span class="text-[11px] font-bold text-[#84CC16]">실시간 클라우드 암호화 대화</span>
+                  </div>
+              </div>
+              <button onclick="closeBoardChat()" class="text-[#A3A8A3] hover:text-white p-1"><i data-lucide="x" class="w-6 h-6"></i></button>
+          </div>
+          <div class="flex-1 overflow-y-auto p-5 space-y-4 bg-[#151E2D] nav-scroll" id="boardChatMessages"></div>
+          <div class="p-3 bg-[#0F1722] border-t border-white/10 shrink-0">
+              <div class="flex gap-2">
+                  <input type="text" id="chatInputText" onkeypress="if(event.key==='Enter') sendRealChatMessage()" placeholder="메시지를 입력하세요..." class="flex-1 bg-black/40 border border-white/10 rounded-full px-5 text-white text-[14px] font-bold focus:outline-none focus:border-[#84CC16]">
+                  <button onclick="sendRealChatMessage()" class="w-12 h-12 bg-[#84CC16] text-[#151E2D] rounded-full flex items-center justify-center hover:bg-[#9BE32D] transition-colors shrink-0"><i data-lucide="send" class="w-5 h-5 ml-1"></i></button>
+              </div>
+          </div>
+      </div>
+  </div>
+
   <script>
       // ==========================================
-      // 👥 커뮤니티 게시판 제어 및 뒤로가기 완벽 방어
+      // 🏆 대표님 라운지 포인트 & 등급 시스템 + 8대 게시판 제어
       // ==========================================
-      
       const boardNotices = {
-          '전체': '건강한 조경 문화를 위해 상호 존중과 매너를 지켜주세요. 당사자 간의 거래 및 분쟁에 대해 조경노트PRO는 법적 책임을 지지 않습니다.',
+          '전체': '건강한 조경 문화를 위해 상호 존중과 매너를 지켜주세요. 소통방에 게시글이나 정보를 작성하시면 +100P가 즉시 적립됩니다.',
+          '자유소통': '☕ <span class="text-amber-800 font-black">[자유 소통 · 일상방 안내]</span> 오늘 현장 날씨, 점심 메뉴, 작업 중 있었던 소소한 일상이나 조경인들의 이야기를 부담 없이 편하게 나누는 사랑방입니다.',
+          '정보교환': '📢 <span class="text-[#15803D] font-black">[정보 교환 · 업체 찾기 안내]</span> 타지역 현장에서 <strong>폐기물 처리할 곳, 인근 자재상·농원·중장비 업체</strong>를 급히 찾거나, <strong>수목 시세·신제품 장비 정보</strong>가 궁금할 때 편하게 묻고 답하는 공간입니다. 좋은 정보를 알고 계신 대표님들도 자유롭게 올려주세요!',
           '불량거래처': '<span class="text-red-600 font-black">🚨 [주의] 반드시 객관적 사실에 근거하여 작성해 주세요.</span> 허위 사실 유포 및 악의적 비방 시 발생하는 법적 책임(명예훼손 등)은 작성자 본인에게 있으며, 운영진은 분쟁에 개입하거나 책임지지 않습니다.',
           '현장협력': '🤝 사업자 인증을 마친 검증된 대표님들의 공간입니다. 상호 간의 약속 이행과 매너를 부탁드립니다. (※ 당사자 간 분쟁 시 앱에서는 책임지지 않습니다.)',
           '장비자재': '🛒 장비 렌탈, 잉여 수목/자재 매매 및 <span class="text-blue-600 font-black">[무료 나눔]</span>을 위한 공간입니다. 거래 시 상태를 정확히 고지하고 안전 거래를 지향해 주세요.',
           '노하우': '💡 조경 기술, 수목 관리, 전지 요령 등 대표님만의 귀중한 현장 노하우를 자유롭게 나누는 공간입니다.',
-          '일감양도': '💼 <span class="text-purple-700 font-black">[일감 패스·공사 양도 주의사항]</span> 단순 미확정 문의가 아닌, 일정 중복·타지역 등으로 진행이 어려운 <strong>확정된 공사 및 관리 오더</strong>를 양도·협업하는 공간입니다. 사전 답사, 작업 범위, 정산 조건을 당사자 간 명확히 확인하시고, 양도 후 발생하는 시공 하자·대금 미지급 등 모든 분쟁에 대해 본 플랫폼은 일체 개입하거나 법적 책임을 지지 않습니다.',
-          '견적단가': '📊 <span class="text-emerald-800 font-black">[실전 견적·단가 자문 안내]</span> 현장 여건을 모른 채 너무 낮게 견적을 넣어 손해를 보거나, 과다 산출로 공사를 놓치는 피해를 서로 방지하기 위해 <strong>검증된 대표님들끼리만 적정 실행 단가를 자문하고 공유하는 비밀 공간</strong>입니다. 공유된 단가는 참고용 지표이며 최종 투찰 및 계약의 책임은 본인에게 있습니다.'
+          '일감양도': '💼 <span class="text-purple-700 font-black">[일감 패스·공사 양도 주의사항]</span> 일정 중복·타지역 등으로 진행이 어려운 <strong>확정된 공사 및 관리 오더</strong>를 양도·협업하는 공간입니다. 사전 답사, 작업 범위, 정산 조건을 당사자 간 명확히 확인하시고, 양도 후 발생하는 모든 분쟁에 대해 본 플랫폼은 법적 책임을 지지 않습니다.',
+          '견적단가': '📊 <span class="text-emerald-800 font-black">[실전 견적·단가 자문 안내]</span> 현장 여건을 모른 채 너무 낮게 견적을 넣어 손해를 보거나 공사를 놓치는 피해를 방지하기 위해 <strong>검증된 대표님들끼리만 적정 실행 단가를 자문하고 공유하는 공간</strong>입니다.'
       };
+
+      function getLoungePoints() {
+          if (myCompanyProfile && typeof myCompanyProfile.points === 'number') return myCompanyProfile.points;
+          const saved = localStorage.getItem('shinhwa_pro_points_' + (currentUserId || 'guest'));
+          return saved ? parseInt(saved) : 1000;
+      }
+
+      async function addLoungePoints(amount) {
+          let pts = getLoungePoints() + amount;
+          localStorage.setItem('shinhwa_pro_points_' + (currentUserId || 'guest'), pts);
+          if (myCompanyProfile) {
+              myCompanyProfile.points = pts;
+              localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile));
+              if (currentUserId) {
+                  try {
+                      const safeKey = getSafeKey(currentUserId);
+                      await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`), {
+                          method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ points: pts })
+                      });
+                  } catch(e) {}
+              }
+          }
+          renderLoungePointCard();
+      }
+
+      function renderLoungePointCard() {
+          const nameEl = document.getElementById('loungeMyCompanyName');
+          const ptsEl = document.getElementById('loungeMyPoints');
+          const gradeEl = document.getElementById('loungeMyGradeBadge');
+          const attendBtn = document.getElementById('btnLoungeAttend');
+          if (!ptsEl) return;
+
+          if (nameEl && myCompanyProfile && myCompanyProfile.name) {
+              nameEl.innerText = myCompanyProfile.name;
+          }
+          const pts = getLoungePoints();
+          ptsEl.innerText = pts.toLocaleString('ko-KR') + ' P';
+
+          if (gradeEl) {
+              if (pts >= 5000) {
+                  gradeEl.innerText = '👑 마스터 대표님';
+                  gradeEl.className = 'text-[11px] bg-[#FDE047] text-[#151E2D] font-black px-2 py-0.5 rounded-md whitespace-nowrap';
+              } else if (pts >= 2000) {
+                  gradeEl.innerText = '🌲 명장 대표님';
+                  gradeEl.className = 'text-[11px] bg-[#84CC16] text-[#151E2D] font-black px-2 py-0.5 rounded-md whitespace-nowrap';
+              } else {
+                  gradeEl.innerText = '🌿 파트너 대표님';
+                  gradeEl.className = 'text-[11px] bg-[#84CC16] text-[#151E2D] font-black px-2 py-0.5 rounded-md whitespace-nowrap';
+              }
+          }
+
+          const todayKey = new Date().toISOString().slice(0, 10);
+          const lastAttend = localStorage.getItem('shinhwa_attend_' + (currentUserId || 'guest'));
+          if (attendBtn) {
+              if (lastAttend === todayKey) {
+                  attendBtn.innerHTML = '✓ 오늘 출석 완료 (+50P 적립됨)';
+                  attendBtn.style.background = '#334155';
+                  attendBtn.style.color = '#84CC16';
+                  attendBtn.style.borderColor = '#84CC16';
+              } else {
+                  attendBtn.innerHTML = '<i data-lucide="calendar-check" class="w-4 h-4 stroke-[2.5]"></i> 오늘 출석체크 (+50P 받기)';
+                  attendBtn.style.background = 'linear-gradient(135deg, #FEF08A 0%, #FDE047 100%)';
+                  attendBtn.style.color = '#151E2D';
+                  attendBtn.style.borderColor = '#FFFFFF';
+              }
+          }
+          if (typeof lucide !== 'undefined') lucide.createIcons();
+      }
+
+      async function claimLoungeAttendance() {
+          const todayKey = new Date().toISOString().slice(0, 10);
+          const storageKey = 'shinhwa_attend_' + (currentUserId || 'guest');
+          if (localStorage.getItem(storageKey) === todayKey) {
+              return alert('오늘은 이미 출석체크 포인트를 받으셨습니다! 내일 또 방문해 주세요.');
+          }
+          localStorage.setItem(storageKey, todayKey);
+          await addLoungePoints(50);
+          alert('🎉 오늘의 라운지 출석체크 완료! +50 P가 적립되었습니다.');
+      }
 
       function filterBoard(category, btnElement) {
           const allBtns = document.querySelectorAll('.board-tab-btn');
@@ -4754,7 +4921,9 @@
           }
 
           const titleMap = {
-              '전체': '사장님 소통방',
+              '전체': '대표님 소통방 전체보기',
+              '자유소통': '자유 소통·일상방',
+              '정보교환': '정보 교환·업체 찾기',
               '불량거래처': '불량 거래처 경보',
               '현장협력': '현장 협력·지원',
               '장비자재': '장비·자재 직거래',
@@ -4790,6 +4959,8 @@
           if(board) board.classList.remove('hidden');
           
           let filterMap = {
+              '자유 소통·일상방': '자유소통',
+              '정보 교환·업체 찾기': '정보교환',
               '불량 거래처 경보': '불량거래처',
               '현장 협력·지원': '현장협력',
               '장비·자재 직거래': '장비자재',
@@ -4810,134 +4981,44 @@
           
           window.scrollTo(0, 0);
           if(typeof lucide !== 'undefined') lucide.createIcons();
-
-          // ✨ 안드로이드 뒤로가기 튕김 방지용 가상 히스토리 추가
           history.pushState({ isBoardOpen: true }, "", "");
       }
       
-      // 💡 isFromBackButton 파라미터를 추가하여 꼬임 방지
       function closeBoard(isFromBackButton = false) {
           const board = document.getElementById('boardView');
           if(board) board.classList.add('hidden');
           
           const swipeContainer = document.getElementById('swipeContainer');
           if(swipeContainer) swipeContainer.style.display = 'block';
-          
-          // switchView('lounge', false); <-- 이 줄을 과감히 삭제하십시오! (원래 보던 화면이 자연스럽게 나타납니다)
 
           if(!isFromBackButton && history.state && history.state.isBoardOpen) {
               history.back();
           }
       }
 
-      // ✨ 스마트폰 하단 물리 뒤로가기 버튼 감지 로직
-      window.addEventListener('popstate', function(e) {
-          const board = document.getElementById('boardView');
-          // 게시판이 열려있는 상태에서 뒤로가기를 누르면 앱을 끄지 않고 게시판만 닫음
-          if(board && !board.classList.contains('hidden')) {
-              closeBoard(true);
-          }
-      });
-
-      // ✨ 스마트폰 하단 물리 뒤로가기 버튼 감지 로직
-      window.addEventListener('popstate', function(e) {
-          const board = document.getElementById('boardView');
-          // 게시판이 열려있는 상태에서 뒤로가기를 누르면 앱을 끄지 않고 게시판만 닫음
-          if(board && !board.classList.contains('hidden')) {
-              closeBoard(true);
-          }
-      });
-  </script>
-<!-- ================= [신규: 커뮤니티 글쓰기 팝업창] ================= -->
-  <div id="boardWriteModal" class="hidden fixed inset-0 z-[9000] bg-black/80 flex flex-col items-center justify-end sm:justify-center px-4 pb-4 sm:p-4 opacity-0 transition-opacity duration-200" onclick="closeBoardWrite()">
-      <div class="bg-white w-full max-w-md rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-[#EAEBEA]" id="boardWriteBox" onclick="event.stopPropagation()">
-          <div class="p-5 border-b border-[#F4F5F4] flex justify-between items-center bg-[#F9F9F8]">
-              <h3 class="text-[17px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="pen-tool" class="w-5 h-5 text-[#84CC16]"></i> 커뮤니티 글쓰기</h3>
-              <button onclick="closeBoardWrite()" class="text-[#A3A8A3] hover:text-[#151E2D] p-1"><i data-lucide="x" class="w-6 h-6"></i></button>
-          </div>
-          <div class="p-5 space-y-4 max-h-[70vh] overflow-y-auto bg-white nav-scroll">
-              <div>
-                  <label class="block text-[13px] font-black text-[#151E2D] mb-2">카테고리 선택</label>
-                  <select id="bwCategory" class="w-full bg-[#F9F9F8] border border-[#EAEBEA] rounded-[14px] px-3 py-3.5 text-[15px] font-black text-[#1A1D1A] focus:outline-none focus:border-[#84CC16]">
-                      <option value="현장협력">🤝 현장 협력·지원</option>
-                      <option value="장비자재">🛒 장비·자재 직거래</option>
-                      <option value="노하우">💡 실무 노하우 공유</option>
-                      <option value="일감양도">💼 일감 패스·공사 양도</option>
-                      <option value="견적단가">📊 실전 견적·단가 자문</option>
-                      <option value="불량거래처">🚨 불량 거래처 경보</option>
-                  </select>
-              </div>
-              <div>
-                  <label class="block text-[13px] font-black text-[#151E2D] mb-2">게시글 제목</label>
-                  <input type="text" id="bwTitle" placeholder="제목을 입력해 주세요." autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[14px] px-4 py-3.5 text-[15px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16]">
-              </div>
-              <div>
-                  <label class="block text-[13px] font-black text-[#151E2D] mb-2">연락 받을 전화번호 (선택)</label>
-                  <input type="tel" id="bwPhone" placeholder="예: 010-1234-5678" oninput="autoHyphen(this)" autocomplete="off" class="w-full bg-white border border-[#EAEBEA] rounded-[14px] px-4 py-3.5 text-[15px] font-black text-blue-600 focus:outline-none focus:border-blue-500">
-              </div>
-              <div>
-                  <label class="block text-[13px] font-black text-[#151E2D] mb-2">상세 내용</label>
-                  <textarea id="bwContent" rows="5" placeholder="현장 위치, 일당, 장비 규격 등 상세한 내용을 적어주세요." class="w-full bg-white border border-[#EAEBEA] rounded-[14px] p-4 text-[14px] font-bold text-[#4E5968] focus:outline-none focus:border-[#84CC16] resize-none leading-relaxed"></textarea>
-              </div>
-          </div>
-          <div class="p-4 bg-[#F9F9F8] border-t border-[#F4F5F4] flex gap-2">
-              <button onclick="closeBoardWrite()" class="flex-1 bg-white border border-[#EAEBEA] text-[#4E5968] font-black py-4 rounded-[14px] text-[15px] hover:bg-[#F4F5F4] transition-colors shadow-sm">취소</button>
-              <button onclick="submitBoardPost()" class="flex-1 bg-[#151E2D] text-[#84CC16] font-black py-4 rounded-[14px] text-[15px] shadow-md hover:bg-black transition-colors">등록하기</button>
-          </div>
-      </div>
-  </div>
-
-  <!-- ================= [신규: 1:1 대화하기(실시간 채팅) 팝업창] ================= -->
-  <div id="boardChatModal" class="hidden fixed inset-0 z-[9500] bg-black/80 flex flex-col items-center justify-end sm:justify-center px-4 pb-4 sm:p-4 opacity-0 transition-opacity duration-200" onclick="closeBoardChat()">
-      <div class="bg-[#151E2D] w-full max-w-md rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 h-[75vh]" id="boardChatBox" onclick="event.stopPropagation()">
-          <div class="p-4 border-b border-white/10 flex justify-between items-center bg-[#0F1722] shrink-0">
-              <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-full bg-[#84CC16] flex items-center justify-center text-[#151E2D]"><i data-lucide="user" class="w-5 h-5"></i></div>
-                  <div class="flex flex-col">
-                      <span id="chatTargetName" class="text-[15px] font-black text-white">상대방 상호명</span>
-                      <span class="text-[11px] font-bold text-[#84CC16]">실시간 클라우드 암호화 대화</span>
-                  </div>
-              </div>
-              <button onclick="closeBoardChat()" class="text-[#A3A8A3] hover:text-white p-1"><i data-lucide="x" class="w-6 h-6"></i></button>
-          </div>
-          <div class="flex-1 overflow-y-auto p-5 space-y-4 bg-[#151E2D] nav-scroll" id="boardChatMessages">
-          </div>
-          <div class="p-3 bg-[#0F1722] border-t border-white/10 shrink-0">
-              <div class="flex gap-2">
-                  <input type="text" id="chatInputText" onkeypress="if(event.key==='Enter') sendRealChatMessage()" placeholder="메시지를 입력하세요..." class="flex-1 bg-black/40 border border-white/10 rounded-full px-5 text-white text-[14px] font-bold focus:outline-none focus:border-[#84CC16]">
-                  <button onclick="sendRealChatMessage()" class="w-12 h-12 bg-[#84CC16] text-[#151E2D] rounded-full flex items-center justify-center hover:bg-[#9BE32D] transition-colors shrink-0"><i data-lucide="send" class="w-5 h-5 ml-1"></i></button>
-              </div>
-          </div>
-      </div>
-  </div>
-
-  <script>
-      // ==========================================
-      // 🚀 [실전 상용화] 파이어베이스 실시간 커뮤니티 & 1:1 채팅 엔진
-      // ==========================================
-
       let currentChatRoom = "";
       let chatTargetId = "";
       let chatRefreshTimer = null;
       let lastMessageCount = 0;
 
-      // 1. 기존 '글쓰기' 버튼 클릭 이벤트 덮어씌우기
       window.addEventListener('DOMContentLoaded', () => {
           setTimeout(() => {
-              const writeBtn = document.querySelector('#boardView button.fixed.bottom-6.right-4');
-              if(writeBtn) writeBtn.setAttribute('onclick', 'openBoardWrite()');
-              // 첫 구동 시 커뮤니티 게시글 불러오기
+              renderLoungePointCard();
               loadCommunityPosts();
-          }, 1500);
+          }, 1200);
       });
 
-      // 2. 직통 전화 걸기 (스마트폰 통화 앱 자동 연결)
+      const origSwitchForLounge = switchView;
+      switchView = function(mode, pushHistory = true) {
+          origSwitchForLounge(mode, pushHistory);
+          if (mode === 'lounge') renderLoungePointCard();
+      };
+
       function callPhone(phoneNumber) {
           if(!phoneNumber || phoneNumber === '') return alert("등록된 연락처가 없습니다.");
           window.location.href = 'tel:' + phoneNumber.replace(/[^0-9]/g, '');
       }
 
-      // 3. 커뮤니티 게시글 불러오기 (파이어베이스 실시간 연동)
       async function loadCommunityPosts() {
           try {
               const res = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_community.json?auth=${currentIdToken}`);
@@ -4945,7 +5026,7 @@
               const container = document.getElementById('boardFeedContainer');
               
               if(!data) {
-                  container.innerHTML = `<div class="p-10 text-center text-[#8B95A1] font-bold bg-white rounded-[24px] border border-[#EAEBEA] mt-5">아직 등록된 게시글이 없습니다. 첫 글을 작성해보세요!</div>`;
+                  container.innerHTML = `<div class="p-10 text-center text-[#8B95A1] font-bold bg-white rounded-[24px] border border-[#EAEBEA] mt-5">아직 등록된 게시글이 없습니다. 첫 글을 작성하고 +100P를 받아보세요!</div>`;
                   return;
               }
 
@@ -4954,21 +5035,24 @@
 
               posts.forEach(post => {
                   let badgeHtml = '';
-                  if(post.category === '불량거래처') badgeHtml = `<span class="bg-[#FEF2F2] text-[#EF4444] text-[13px] font-black px-3 py-1.5 rounded-md border border-[#FEE2E2]">🚨 불량거래처 경보</span>`;
+                  if(post.category === '자유소통') badgeHtml = `<span class="bg-amber-50 text-amber-800 text-[13px] font-black px-3 py-1.5 rounded-md border border-amber-200">☕ 자유 소통·일상</span>`;
+                  else if(post.category === '정보교환') badgeHtml = `<span class="bg-lime-50 text-[#15803D] text-[13px] font-black px-3 py-1.5 rounded-md border border-lime-300">📢 정보 교환·업체 찾기</span>`;
+                  else if(post.category === '불량거래처') badgeHtml = `<span class="bg-[#FEF2F2] text-[#EF4444] text-[13px] font-black px-3 py-1.5 rounded-md border border-[#FEE2E2]">🚨 불량거래처 경보</span>`;
                   else if(post.category === '현장협력') badgeHtml = `<span class="bg-[#EFF6FF] text-blue-600 text-[13px] font-black px-3 py-1.5 rounded-md border border-[#DBEAFE]">🤝 현장 지원요청</span>`;
                   else if(post.category === '장비자재') badgeHtml = `<span class="bg-[#ECFCCB] text-[#4D7C0F] text-[13px] font-black px-3 py-1.5 rounded-md border border-[#84CC16]/40">🛒 장비·자재 직거래</span>`;
                   else if(post.category === '노하우') badgeHtml = `<span class="bg-[#F4F5F4] text-[#4E5968] text-[13px] font-black px-3 py-1.5 rounded-md border border-[#EAEBEA]">💡 실무 노하우 공유</span>`;
                   else if(post.category === '일감양도') badgeHtml = `<span class="bg-purple-50 text-purple-700 text-[13px] font-black px-3 py-1.5 rounded-md border border-purple-200">💼 일감 패스·공사 양도</span>`;
                   else if(post.category === '견적단가') badgeHtml = `<span class="bg-emerald-50 text-emerald-700 text-[13px] font-black px-3 py-1.5 rounded-md border border-emerald-200">📊 실전 견적·단가 자문</span>`;     
+
                   let buttonsHtml = '';
                   if(post.category !== '불량거래처') {
                       const isMyPost = (post.authorId === currentUserId);
                       buttonsHtml = `
                       <div class="mt-5 flex gap-2.5">
-                          <button onclick="callPhone('${post.phone}')" class="flex-1 bg-blue-600 text-white py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md hover:bg-blue-700 transition-colors"><i data-lucide="phone" class="w-5 h-5"></i> 직통 전화하기</button>
+                          ${post.phone ? `<button onclick="callPhone('${post.phone}')" class="flex-1 bg-blue-600 text-white py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md hover:bg-blue-700 transition-colors"><i data-lucide="phone" class="w-5 h-5"></i> 직통 전화하기</button>` : ''}
                           ${isMyPost ? 
-                          `<button onclick="alert('내가 쓴 글입니다.')" class="flex-1 bg-gray-200 text-[#4E5968] py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md transition-colors"><i data-lucide="check-circle" class="w-5 h-5"></i> 내 게시글</button>` :
-                          `<button onclick="openBoardChat('${post.authorId}', '${post.authorName}')" class="flex-1 bg-[#84CC16] text-[#151E2D] py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md hover:bg-[#9BE32D] transition-colors"><i data-lucide="message-square" class="w-5 h-5"></i> 1:1 대화하기</button>`
+                          `<button onclick="alert('내가 작성한 게시글입니다.')" class="flex-1 bg-gray-200 text-[#4E5968] py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md transition-colors"><i data-lucide="check-circle" class="w-5 h-5"></i> 내 게시글</button>` :
+                          `<button onclick="openBoardChat('${post.authorId}', '${post.authorName}')" class="flex-1 bg-[#84CC16] text-[#151E2D] py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md hover:bg-[#9BE32D] transition-colors"><i data-lucide="message-square" class="w-5 h-5"></i> 1:1 답변·대화하기</button>`
                           }
                       </div>`;
                   }
@@ -4984,7 +5068,7 @@
                   <div class="board-feed-item bg-white rounded-[24px] p-6 luxury-shadow border border-[#F4F5F4] modal-enter" data-category="${post.category}">
                       <div class="flex items-center justify-between mb-4">${badgeHtml}</div>
                       <h3 class="text-[19px] font-black text-[#151E2D] mb-3 leading-snug">${post.title}</h3>
-                      <p class="text-[15px] text-[#4E5968] font-bold line-clamp-3 leading-[1.6]">${post.content.replace(/\n/g, '<br>')}</p>
+                      <p class="text-[15px] text-[#4E5968] font-bold leading-[1.6] break-keep">${post.content.replace(/\n/g, '<br>')}</p>
                       ${buttonsHtml}
                       ${authorHtml}
                   </div>`;
@@ -4995,7 +5079,6 @@
           } catch(e) { console.error("게시글 로드 실패", e); }
       }
 
-      // 4. 게시글 파이어베이스 서버로 전송 (글 등록)
       async function submitBoardPost() {
           const category = document.getElementById('bwCategory').value;
           const title = document.getElementById('bwTitle').value.trim();
@@ -5026,27 +5109,23 @@
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify(postData)
               });
-              alert("성공적으로 등록되었습니다!");
+              await addLoungePoints(100);
+              alert("🎉 게시글이 등록되어 활동 포인트 +100 P가 적립되었습니다!");
               closeBoardWrite();
-              
               await loadCommunityPosts();
               
-              // 등록 직후 전체 탭 버튼 시각적 효과 초기화 후 이동
               const tabs = document.querySelectorAll('.board-tab-btn');
               tabs.forEach(btn => { 
-                  if(btn.innerText.includes(category.substring(0,2))) filterBoard(category, btn); 
+                  if(btn.innerText.replace(/[^가-힣]/g, '').includes(category.substring(0,2))) filterBoard(category, btn); 
               });
           } catch(e) { alert("통신 오류가 발생했습니다."); } 
           finally { document.getElementById('loadingOverlay')?.remove(); }
       }
 
-      // 5. 실시간 1:1 채팅 열기 및 고유 채팅방 자동 생성
       function openBoardChat(targetId, targetName) {
           if(!currentUserId) return alert("로그인 후 이용 가능합니다.");
-          
           chatTargetId = targetId;
           document.getElementById('chatTargetName').innerText = targetName;
-          
           const roomKeys = [currentUserId, targetId].sort();
           currentChatRoom = `room_${roomKeys[0]}_${roomKeys[1]}`;
           lastMessageCount = 0;
@@ -5055,7 +5134,6 @@
           const box = document.getElementById('boardChatBox');
           modal.classList.remove('hidden');
           setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10);
-          
           document.getElementById('boardChatMessages').innerHTML = '<div class="text-center text-[#A3A8A3] text-[12px] font-bold py-5 animate-pulse">상대방과의 통신을 연결 중입니다...</div>';
           
           loadChatMessages(true);
@@ -5071,104 +5149,76 @@
           setTimeout(() => { modal.classList.add('hidden'); }, 200);
       }
 
-      // 6. 실시간 메시지 전송
       async function sendRealChatMessage() {
           const inputEl = document.getElementById('chatInputText');
           const text = inputEl.value.trim();
           if(!text || !currentChatRoom) return;
-          
           inputEl.value = '';
-          
           const msgData = {
               senderId: currentUserId,
               text: text,
               timestamp: new Date().getTime(),
               timeStr: new Date().toLocaleString('ko-KR', {hour: '2-digit', minute:'2-digit'})
           };
-
           try {
               await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_chats/${currentChatRoom}.json?auth=${currentIdToken}`, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(msgData)
+                  method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(msgData)
               });
               loadChatMessages(true);
           } catch(e) { alert("메시지 전송 실패"); }
       }
 
-      // 7. 실시간 메시지 수신 및 화면 그리기
       async function loadChatMessages(forceScroll = false) {
           if(!currentChatRoom) return;
           try {
               const res = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_chats/${currentChatRoom}.json?auth=${currentIdToken}`);
               const data = await res.json();
               const container = document.getElementById('boardChatMessages');
-              
               if(!data) {
                   container.innerHTML = '<div class="text-center text-[#A3A8A3] text-[12px] font-bold py-5">채팅방이 생성되었습니다. 첫 메시지를 보내보세요.</div>';
                   return;
               }
-
               const msgs = Object.values(data).sort((a,b) => a.timestamp - b.timestamp);
-              
               if(msgs.length === lastMessageCount && !forceScroll) return; 
               lastMessageCount = msgs.length;
 
               let html = `<div class="text-center text-[11px] text-[#A3A8A3] font-bold mb-4 bg-white/5 py-1.5 rounded-full w-max mx-auto px-4">양방향 보안 채팅이 연결되었습니다.</div>`;
-              
               msgs.forEach(msg => {
                   const isMe = (msg.senderId === currentUserId);
                   if(isMe) {
-                      html += `
-                      <div class="flex justify-end mb-3">
-                          <div class="flex items-end gap-1.5">
-                              <span class="text-[10px] font-bold text-[#4E5968] mb-0.5">${msg.timeStr}</span>
-                              <div class="bg-[#84CC16] text-[#12261E] text-[14px] font-black p-3.5 rounded-[16px] rounded-tr-[4px] shadow-sm max-w-xs break-keep whitespace-pre-wrap">${msg.text}</div>
-                          </div>
-                      </div>`;
+                      html += `<div class="flex justify-end mb-3"><div class="flex items-end gap-1.5"><span class="text-[10px] font-bold text-[#4E5968] mb-0.5">${msg.timeStr}</span><div class="bg-[#84CC16] text-[#12261E] text-[14px] font-black p-3.5 rounded-[16px] rounded-tr-[4px] shadow-sm max-w-xs break-keep whitespace-pre-wrap">${msg.text}</div></div></div>`;
                   } else {
-                      html += `
-                      <div class="flex justify-start mb-3">
-                          <div class="flex items-end gap-1.5">
-                              <div class="bg-white text-[#151E2D] text-[14px] font-black p-3.5 rounded-[16px] rounded-tl-[4px] shadow-sm max-w-xs break-keep whitespace-pre-wrap">${msg.text}</div>
-                              <span class="text-[10px] font-bold text-[#4E5968] mb-0.5">${msg.timeStr}</span>
-                          </div>
-                      </div>`;
+                      html += `<div class="flex justify-start mb-3"><div class="flex items-end gap-1.5"><div class="bg-white text-[#151E2D] text-[14px] font-black p-3.5 rounded-[16px] rounded-tl-[4px] shadow-sm max-w-xs break-keep whitespace-pre-wrap">${msg.text}</div><span class="text-[10px] font-bold text-[#4E5968] mb-0.5">${msg.timeStr}</span></div></div>`;
                   }
               });
-              
               container.innerHTML = html;
               container.scrollTop = container.scrollHeight;
           } catch(e) {}
       }
 
-      // ==========================================
-      // ✍️ 커뮤니티 글쓰기 팝업 제어 및 뒤로가기 방어
-      // ==========================================
       function openBoardWrite() {
-          // 1. 입력창 초기화
           document.getElementById('bwTitle').value = ''; 
           document.getElementById('bwPhone').value = ''; 
           document.getElementById('bwContent').value = '';
           
-          // 2. 현재 켜져있는 탭(연두색 배경)을 찾아 카테고리 셀렉트박스 자동 맞춤
           const activeTab = document.querySelector('.board-tab-btn.bg-\\[\\#84CC16\\]');
           if (activeTab) {
               const tabText = activeTab.innerText;
               const catSelect = document.getElementById('bwCategory');
-              if (tabText.includes('불량')) catSelect.value = '불량거래처';
+              if (tabText.includes('자유')) catSelect.value = '자유소통';
+              else if (tabText.includes('정보') || tabText.includes('업체')) catSelect.value = '정보교환';
+              else if (tabText.includes('불량')) catSelect.value = '불량거래처';
               else if (tabText.includes('장비') || tabText.includes('자재')) catSelect.value = '장비자재';
               else if (tabText.includes('노하우')) catSelect.value = '노하우';
+              else if (tabText.includes('일감')) catSelect.value = '일감양도';
+              else if (tabText.includes('견적') || tabText.includes('단가')) catSelect.value = '견적단가';
               else if (tabText.includes('현장')) catSelect.value = '현장협력';
           }
 
-          // 3. 팝업 열기
           const modal = document.getElementById('boardWriteModal'); 
           const box = document.getElementById('boardWriteBox');
           modal.classList.remove('hidden'); 
           setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10);
-          
-          // ✨ 4. 안드로이드 뒤로가기 튕김 방지용 가상 히스토리 추가
           history.pushState({ isBoardWriteOpen: true }, "", "");
       }
 
@@ -5178,19 +5228,20 @@
           if(modal) modal.classList.add('opacity-0'); 
           if(box) box.classList.add('scale-95'); 
           setTimeout(() => { if(modal) modal.classList.add('hidden'); }, 200);
-
-          // ✨ 상단 X버튼이나 취소를 눌러서 닫을 때만 history.back() 실행하여 꼬임 방지
           if(!isFromBackButton && history.state && history.state.isBoardWriteOpen) {
               history.back();
           }
       }
 
-      // ✨ 스마트폰 하단 물리 뒤로가기 버튼 감지 로직 (글쓰기 팝업 전용)
       window.addEventListener('popstate', function(e) {
           const writeModal = document.getElementById('boardWriteModal');
-          // 글쓰기 창이 열려있는 상태에서 뒤로가기를 누르면 앱을 끄지 않고 팝업만 닫음
           if(writeModal && !writeModal.classList.contains('hidden')) {
               closeBoardWrite(true);
+              return;
+          }
+          const board = document.getElementById('boardView');
+          if(board && !board.classList.contains('hidden')) {
+              closeBoard(true);
           }
       });
   </script>
