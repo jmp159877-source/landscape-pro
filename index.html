@@ -144,6 +144,7 @@
           <input type="password" id="obPw" placeholder="비밀번호 설정 (6자리 이상 숫자)" inputmode="numeric" pattern="[0-9]*" autocomplete="off" class="w-full bg-[#0F1722] border border-[#84CC16]/50 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
         </div>
         <input type="text" id="obCompanyName" placeholder="상호명 (예: 마카롱조경)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
+        <input type="text" id="obCompanyRegion" placeholder="활동 지역 (예: 수원, 남양주, 대전) - 게시판에 표시" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white/40 placeholder:text-[14px]"><!-- 📍 [패치 #10] -->
         <input type="text" id="obCompanyCeo" placeholder="대표자명 (예: 홍길동)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
         <input type="tel" id="obCompanyPhone" oninput="autoHyphen(this)" placeholder="대표 연락처 (예: 010-0000-0000)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
         <input type="text" id="obCompanyBizNum" placeholder="사업자등록번호 (예: 123-45-67890)" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] mb-1 placeholder:text-white placeholder:font-bold placeholder:text-[13px]">
@@ -187,6 +188,10 @@
           <div><label class="block text-[12px] font-black text-[#A3A8A3] ml-1 mb-1">대표자명</label><input type="text" id="setCompanyCeo" readonly class="w-full bg-white/5 border border-white/10 rounded-[12px] px-4 py-3 text-white/50 text-[15px] font-black outline-none cursor-not-allowed"></div>
           <div><label class="block text-[12px] font-black text-[#A3A8A3] ml-1 mb-1">연락처</label><input type="tel" id="setCompanyPhone" oninput="autoHyphen(this)" readonly class="w-full bg-white/5 border border-white/10 rounded-[12px] px-4 py-3 text-white/50 text-[15px] font-black outline-none cursor-not-allowed"></div>
           <div><label class="block text-[12px] font-black text-[#A3A8A3] ml-1 mb-1">사업자등록번호</label><input type="text" id="setCompanyBizNum" readonly class="w-full bg-white/5 border border-white/10 rounded-[12px] px-4 py-3 text-white/50 text-[15px] font-black outline-none cursor-not-allowed"></div>
+        </div>
+        <div class="pt-4 border-t border-white/10 space-y-2"><!-- 📍 [패치 #10] 활동 지역 -->
+          <label class="block text-[13px] font-black text-[#84CC16] ml-1"><i data-lucide="map-pin" class="w-4 h-4 inline-block -mt-0.5"></i> 활동 지역 <span class="text-[#A3A8A3] font-bold">(게시판 이름 앞에 표시)</span></label>
+          <div class="flex gap-2"><input type="text" id="setCompanyRegion" placeholder="예: 수원, 남양주, 대전" class="flex-1 min-w-0 bg-black/40 border border-[#84CC16]/50 rounded-[14px] px-4 py-3.5 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16]"><button onclick="saveRegion()" class="shrink-0 px-4 bg-[#84CC16]/20 text-[#84CC16] border border-[#84CC16]/40 rounded-[14px] text-[14px] font-black hover:bg-[#84CC16]/30">지역 저장</button></div>
         </div>
         <div class="pt-4 border-t border-white/10 space-y-3">
           <label class="block text-[13px] font-black text-[#84CC16] ml-1"><i data-lucide="key" class="w-4 h-4 inline-block -mt-0.5"></i> 새로운 비밀번호 설정</label>
@@ -1821,6 +1826,10 @@
     document.getElementById('btnAgreeTerms').addEventListener('click', () => { if (currentTermType === 'privacy') document.getElementById('obPrivacyCheck').checked = true; else if (currentTermType === 'terms') document.getElementById('obTermsCheck').checked = true; closeTermsModal(); });
 
     function getAuthUrl(url) { if (!currentIdToken) return url; const sep = url.includes('?') ? '&' : '?'; return `${url}${sep}auth=${currentIdToken}`; }
+    // 📍 [패치 #10] 활동 지역 도우미 (예: '수원시' → '수원', '서울특별시' → '서울')
+    function normalizeRegion(v) { let r = (v || '').replace(/\s/g, ''); r = r.replace(/(특별자치시|특별자치도|특별시|광역시)$/, ''); if (r.length >= 3) r = r.replace(/(시|군)$/, ''); return r.slice(0, 10); }
+    function isValidRegion(r) { return /^[가-힣]{2,10}$/.test(r); }
+    function escHtml(v) { return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
     // 📅 [패치 #9] 작업 날짜 도우미
     function getTodayStr() { const t = new Date(); return `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`; }
     function formatDotDate(ymd) { if (!ymd) return ''; const p = ymd.split('-'); return p.length === 3 ? `${p[0]}. ${p[1]}. ${p[2]}` : ymd; }
@@ -1910,7 +1919,7 @@
 
     async function saveOnboarding() {
         const id = document.getElementById('obId').value.trim(); const pw = document.getElementById('obPw').value.trim();
-        const name = document.getElementById('obCompanyName').value.trim(); const ceo = document.getElementById('obCompanyCeo').value.trim();
+        const name = document.getElementById('obCompanyName').value.trim(); const ceo = document.getElementById('obCompanyCeo').value.trim(); const region = normalizeRegion(document.getElementById('obCompanyRegion') ? document.getElementById('obCompanyRegion').value : ''); if (!isValidRegion(region)) return alert("활동 지역을 한글로 입력해 주세요. (예: 수원, 남양주, 대전)"); // 📍 [패치 #10]
         const phone = document.getElementById('obCompanyPhone').value.trim(); const bizNum = document.getElementById('obCompanyBizNum').value.trim();
         if (!id || !pw || !name || !ceo || !phone || !bizNum) return alert("항목을 모두 입력해 주세요.");
         if (/[^a-zA-Z0-9]/.test(id)) return alert("아이디는 영문과 숫자만 사용해 주세요."); if (id.length < 2) return alert("아이디는 2글자 이상 입력해 주세요."); if (pw.length < 6) return alert("비밀번호는 6자리 이상 입력해 주세요.");
@@ -1933,7 +1942,7 @@
             const nowTime = new Date();
             const agreedTime = `${nowTime.getFullYear()}-${String(nowTime.getMonth()+1).padStart(2,'0')}-${String(nowTime.getDate()).padStart(2,'0')} ${String(nowTime.getHours()).padStart(2,'0')}:${String(nowTime.getMinutes()).padStart(2,'0')}`;
             
-            const profileData = { id, pw, name, ceo, phone, bizNum, license: licenseUrl, status: 'pending', termsAgreedAt: agreedTime };
+            const profileData = { id, pw, name, ceo, phone, bizNum, region, license: licenseUrl, status: 'pending', termsAgreedAt: agreedTime }; // 📍 [패치 #10] region 추가
             await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(profileData) });
             alert("가입이 완료되었습니다. 관리자 승인을 기다려주세요."); currentIdToken = ""; showLogin();
         } catch(e) { alert("서버 오류"); } finally { document.getElementById('loadingOverlay')?.remove(); }
@@ -2082,7 +2091,7 @@
     function openSettings() {
         if(!myCompanyProfile) return;
         document.getElementById('setCompanyName').value = myCompanyProfile.name || ''; document.getElementById('setCompanyCeo').value = myCompanyProfile.ceo || '';
-        document.getElementById('setCompanyPhone').value = myCompanyProfile.phone || ''; document.getElementById('setCompanyBizNum').value = myCompanyProfile.bizNum || ''; document.getElementById('setCompanyPw').value = ''; 
+        document.getElementById('setCompanyPhone').value = myCompanyProfile.phone || ''; document.getElementById('setCompanyBizNum').value = myCompanyProfile.bizNum || ''; document.getElementById('setCompanyPw').value = ''; if (document.getElementById('setCompanyRegion')) document.getElementById('setCompanyRegion').value = myCompanyProfile.region || ''; /* 📍 [패치 #10] */ 
         const modal = document.getElementById('settingsModal'); const box = document.getElementById('settingsBox');
         modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10); history.pushState({ modalOpen: true }, "", "");
     }
@@ -2090,6 +2099,19 @@
         const modal = document.getElementById('settingsModal'); const box = document.getElementById('settingsBox');
         if(modal) modal.classList.add('opacity-0'); if(box) box.classList.add('scale-95'); setTimeout(() => { if(modal) modal.classList.add('hidden'); }, 200);
         if(!fromPopstate && history.state && history.state.modalOpen) history.back();
+    }
+    // 📍 [패치 #10] 활동 지역 저장
+    async function saveRegion() {
+        const region = normalizeRegion(document.getElementById('setCompanyRegion').value);
+        if (!isValidRegion(region)) return alert("활동 지역을 한글로 입력해 주세요. (예: 수원, 남양주, 대전)");
+        showLoadingOverlay("저장 중...");
+        try {
+            const res = await fetch(getAuthUrl(`${DB_BASE_URL}/${getSafeKey(currentUserId)}/profile.json`), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ region: region }) });
+            if (!res.ok) throw new Error('save fail');
+            myCompanyProfile.region = region; localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile));
+            document.getElementById('setCompanyRegion').value = region;
+            alert(`✅ 활동 지역이 [${region}](으)로 저장되었습니다.\n이제 게시판에 "${region} ${myCompanyProfile.name || ''}"(으)로 표시됩니다.`);
+        } catch (e) { alert("저장 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."); } finally { document.getElementById('loadingOverlay')?.remove(); }
     }
     async function saveSettings() {
         const pw = document.getElementById('setCompanyPw').value.trim();
@@ -5149,31 +5171,36 @@
                   else if(post.category === '일감양도') badgeHtml = `<span class="bg-purple-50 text-purple-700 text-[13px] font-black px-3 py-1.5 rounded-md border border-purple-200">💼 일감 패스·공사 양도</span>`;
                   else if(post.category === '견적단가') badgeHtml = `<span class="bg-emerald-50 text-emerald-700 text-[13px] font-black px-3 py-1.5 rounded-md border border-emerald-200">📊 실전 견적·단가 자문</span>`;     
 
+                  // 📍 [패치 #10] 지역+상호 표시, 운영팀 예시글 구분, 글 내용 안전 처리
+                  const displayName = (post.authorRegion ? post.authorRegion + ' ' : '') + (post.authorName || '');
+                  const safeName = escHtml(displayName); const jsName = escHtml(displayName.replace(/\\/g, '\\\\').replace(/'/g, "\\'")); const jsId = escHtml(String(post.authorId || '').replace(/'/g, ''));
                   let buttonsHtml = '';
-                  if(post.category !== '불량거래처') {
+                  if(post.category !== '불량거래처' && !post.isOfficial) {
                       const isMyPost = (post.authorId === currentUserId);
                       buttonsHtml = `
                       <div class="mt-5 flex gap-2.5">
-                          ${post.phone ? `<button onclick="callPhone('${post.phone}')" class="flex-1 bg-blue-600 text-white py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md hover:bg-blue-700 transition-colors"><i data-lucide="phone" class="w-5 h-5"></i> 직통 전화하기</button>` : ''}
+                          ${post.phone ? `<button onclick="callPhone('${escHtml(String(post.phone).replace(/[^0-9-]/g, ''))}')" class="flex-1 bg-blue-600 text-white py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md hover:bg-blue-700 transition-colors"><i data-lucide="phone" class="w-5 h-5"></i> 직통 전화하기</button>` : ''}
                           ${isMyPost ? 
                           `<button onclick="alert('내가 작성한 게시글입니다.')" class="flex-1 bg-gray-200 text-[#4E5968] py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md transition-colors"><i data-lucide="check-circle" class="w-5 h-5"></i> 내 게시글</button>` :
-                          `<button onclick="openBoardChat('${post.authorId}', '${post.authorName}')" class="flex-1 bg-[#84CC16] text-[#151E2D] py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md hover:bg-[#9BE32D] transition-colors"><i data-lucide="message-square" class="w-5 h-5"></i> 1:1 답변·대화하기</button>`
+                          `<button onclick="openBoardChat('${jsId}', '${jsName}')" class="flex-1 bg-[#84CC16] text-[#151E2D] py-3.5 rounded-[14px] text-[15px] font-black flex items-center justify-center gap-2 shadow-md hover:bg-[#9BE32D] transition-colors"><i data-lucide="message-square" class="w-5 h-5"></i> 1:1 답변·대화하기</button>`
                           }
                       </div>`;
                   }
 
                   let authorHtml = '';
-                  if(post.category === '불량거래처') {
+                  if(post.isOfficial) {
+                      authorHtml = `<div class="mt-5 pt-4 border-t border-[#F4F5F4] flex items-center justify-between"><div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-full bg-[#151E2D] flex items-center justify-center text-[#84CC16]"><i data-lucide="shield-check" class="w-4 h-4"></i></div><span class="text-[14px] font-black text-[#151E2D]">조경노트 운영팀</span></div><span class="text-[12px] font-bold text-[#8B95A1]">${escHtml(post.dateStr)}</span></div>`;
+                  } else if(post.category === '불량거래처') {
                       authorHtml = `<div class="mt-5 pt-4 border-t border-[#F4F5F4] flex items-center justify-between"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-full bg-[#F4F5F4] flex items-center justify-center text-[#8B95A1]"><i data-lucide="user-x" class="w-4 h-4"></i></div><span class="text-[13px] font-black text-[#8B95A1]">익명 보호</span></div><span class="text-[12px] font-bold text-[#8B95A1]">${post.dateStr}</span></div>`;
                   } else {
-                      authorHtml = `<div class="mt-5 pt-4 border-t border-[#F4F5F4] flex items-center justify-between"><div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-full bg-[#E0E7FF] flex items-center justify-center text-blue-600 border border-[#C7D2FE]"><i data-lucide="building-2" class="w-4 h-4"></i></div><span class="text-[14px] font-black text-[#151E2D]">${post.authorName}</span></div><span class="text-[12px] font-bold text-[#8B95A1]">${post.dateStr}</span></div>`;
+                      authorHtml = `<div class="mt-5 pt-4 border-t border-[#F4F5F4] flex items-center justify-between"><div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-full bg-[#E0E7FF] flex items-center justify-center text-blue-600 border border-[#C7D2FE]"><i data-lucide="building-2" class="w-4 h-4"></i></div><span class="text-[14px] font-black text-[#151E2D]">${post.authorRegion ? `<span class="text-[#15803D] bg-lime-50 border border-lime-200 rounded px-1.5 py-0.5 mr-1 text-[12.5px]">${escHtml(post.authorRegion)}</span>` : ''}${escHtml(post.authorName)}</span></div><span class="text-[12px] font-bold text-[#8B95A1]">${escHtml(post.dateStr)}</span></div>`;
                   }
 
                   const cardHtml = `
-                  <div class="board-feed-item bg-white rounded-[24px] p-6 luxury-shadow border border-[#F4F5F4] modal-enter" data-category="${post.category}">
-                      <div class="flex items-center justify-between mb-4">${badgeHtml}</div>
-                      <h3 class="text-[19px] font-black text-[#151E2D] mb-3 leading-snug">${post.title}</h3>
-                      <p class="text-[15px] text-[#4E5968] font-bold leading-[1.6] break-keep">${post.content.replace(/\n/g, '<br>')}</p>
+                  <div class="board-feed-item bg-white rounded-[24px] p-6 luxury-shadow border border-[#F4F5F4] modal-enter" data-category="${escHtml(post.category)}">
+                      <div class="flex items-center justify-between mb-4">${badgeHtml}${post.isOfficial ? '<span class="bg-[#151E2D] text-[#FDE047] text-[12px] font-black px-2.5 py-1 rounded-md">📌 예시</span>' : ''}</div>
+                      <h3 class="text-[19px] font-black text-[#151E2D] mb-3 leading-snug">${escHtml(post.title)}</h3>
+                      <p class="text-[15px] text-[#4E5968] font-bold leading-[1.6] break-keep">${escHtml(post.content).replace(/\n/g, '<br>')}</p>
                       ${buttonsHtml}
                       ${authorHtml}
                   </div>`;
@@ -5194,11 +5221,15 @@
           if(!currentUserId) return alert("세션이 만료되었습니다. 앱을 재시작 해주세요.");
 
           let myName = myCompanyProfile && myCompanyProfile.name ? myCompanyProfile.name : "상호 미등록 사장님";
+          // 📍 [패치 #10] 활동 지역이 없으면 먼저 설정하도록 안내
+          const myRegion = myCompanyProfile && myCompanyProfile.region ? myCompanyProfile.region : '';
+          if (!myRegion) { alert("게시글을 올리기 전에 [활동 지역]을 먼저 설정해 주세요.\n(다른 대표님들이 가까운 업체를 알아볼 수 있도록 이름 앞에 표시됩니다)"); openSettings(); return; }
 
           const postData = {
               id: 'post_' + Date.now(),
               authorId: currentUserId,
               authorName: myName,
+              authorRegion: myRegion, // 📍 [패치 #10]
               category: category,
               title: title,
               phone: phone,
