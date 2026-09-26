@@ -1132,7 +1132,7 @@
                   method: "POST",
                   headers: { "Content-Type": "text/plain;charset=utf-8" },
                   body: JSON.stringify({
-                      model: "gpt-4o",
+                      idToken: currentIdToken, userId: currentUserId, model: "gpt-4o", /* 🔐 [패치 #7] 로그인 확인용 */
                       messages: [
                           { role: "system", content: systemPrompt },
                           ...aiChatHistory
@@ -2233,7 +2233,7 @@
                 method: "POST",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({
-                    model: "gpt-4o", 
+                    idToken: currentIdToken, userId: currentUserId, model: "gpt-4o", /* 🔐 [패치 #7] 로그인 확인용 */ 
                     messages: [
                         { role: "system", content: systemRole },
                         { role: "user", content: [ { type: "text", text: promptText }, { type: "image_url", image_url: { url: base64Image, detail: "high" } } ] }
@@ -3993,7 +3993,7 @@
                 method: "POST",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({
-                    model: "gpt-4o",
+                    idToken: currentIdToken, userId: currentUserId, model: "gpt-4o", /* 🔐 [패치 #7] 로그인 확인용 */
                     messages: [{ role: "user", content: [{ type: "text", text: promptText }] }],
                     max_tokens: 800, temperature: 0.3
                 })
