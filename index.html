@@ -31,10 +31,11 @@
     * { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
     
     /* 💡 [시안 A 배경] 상하단 끊김 없는 미드나잇 티타늄 블루 통일 */
-    body { background: linear-gradient(180deg, #1E293B 0%, #29384D 100%) fixed !important; }
-    .glass-nav { background: linear-gradient(180deg, rgba(30, 41, 59, 0.96) 0%, rgba(41, 56, 77, 0.96) 100%) !important; backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.12); }
-    
-   /* 💡 [최종 확정] 12개 버튼 크기 확대 & 글씨 확대 & 테두리 통일 */
+    /* 💡 [배경 2 확정] 상단 헤더(.glass-nav)와 하단 배경(body)을 '딥 포레스트 나이트(소나무 밤숲)'로 완벽 통일 */
+    body { background: linear-gradient(180deg, #0B1512 0%, #152620 100%) fixed !important; }
+    .glass-nav { background: linear-gradient(180deg, rgba(11, 21, 18, 0.96) 0%, rgba(21, 38, 32, 0.96) 100%) !important; backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.12); }
+
+    /* 💡 [공통] 12개 버튼 크기 확대 & 야외 초고시인성 텍스트 확대 */
     #mainCategoryWrapper nav button {
       padding-top: 22px !important;
       padding-bottom: 22px !important;
@@ -42,6 +43,7 @@
       padding-right: 4px !important;
       border-radius: 22px !important;
     }
+    #tabCalendar span, #tabAdmin span, #tabClient span, #tabQuote span, #tabQuoteList span, #tabContacts span,
     #mainCategoryWrapper nav button span.btn-title {
       font-size: 17px !important;
       letter-spacing: -0.04em !important;
@@ -57,18 +59,20 @@
       font-weight: 900 !important;
     }
 
-    /* 1~6번: 시안 4-B (다크 포레스트 티타늄 + 24K 골드 테두리) */
+    /* 💡 [스타일 B 확정] 상단 6개 버튼: 모던 다크 티타늄 + 선명한 실버 테두리 + 야외 시인성 강화 */
     #tabCalendar, #tabAdmin, #tabClient, #tabQuote, #tabQuoteList, #tabContacts {
-      background: linear-gradient(135deg, #13241E 0%, #233D33 48%, #325447 75%, #11201A 100%) !important;
-      border: 2px solid #D4AF37 !important;
+      background: linear-gradient(145deg, #242C37 0%, #323D4D 52%, #1C222B 100%) !important;
+      border: 1.5px solid rgba(255, 255, 255, 0.38) !important;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55), inset 0 1px 1px rgba(255, 255, 255, 0.28) !important;
     }
     #tabCalendar span, #tabAdmin span, #tabClient span, #tabQuote span, #tabQuoteList span, #tabContacts span {
       color: #FFFFFF !important;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6) !important;
     }
     #tabCalendar svg, #tabAdmin svg, #tabClient svg, #tabQuote svg, #tabQuoteList svg, #tabContacts svg {
-      color: #FDE047 !important;
+      color: #84CC16 !important;
       stroke-width: 2.4px !important;
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4)) !important;
     }
 
     .luxury-shadow { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35); } 
@@ -251,7 +255,7 @@
         <!-- 접기/펼치기 영역 시작 (1:1 문의하기 제외 후 11개 버튼 완벽 정렬) -->
         <div id="mainCategoryWrapper" class="max-w-md mx-auto" style="margin-top: 22px !important; padding-top: 22px !important; border-top: 1px solid rgba(255, 255, 255, 0.12) !important;">
             <nav class="grid grid-cols-3 gap-3">
-                <!-- 1~6. 상단 6개 버튼 (4-B 다크 포레스트 티타늄 + 24K 골드 테두리) -->
+                <!-- 1~6. 상단 6개 버튼 (스타일 B: 모던 다크 티타늄 + 실버 테두리) -->
                 <button id="tabCalendar" onclick="switchView('calendar')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="calendar-days" class="w-6 h-6"></i><span class="btn-title">작업 일정표</span></button>
                 <button id="tabAdmin" onclick="switchView('admin')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="pen-tool" class="w-6 h-6"></i><span class="btn-title">작업 일지 작성</span></button>
                 <button id="tabClient" onclick="switchView('clients')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="building-2" class="w-6 h-6"></i><span class="btn-title">거래처 목록</span></button>
@@ -259,20 +263,20 @@
                 <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="folder-open" class="w-6 h-6"></i><span class="btn-title">견적 보관함</span></button>
                 <button id="tabContacts" onclick="switchView('contacts')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="users" class="w-6 h-6"></i><span class="btn-title">연락처</span></button>
 
-                <!-- 7. 식물 검색 (웜 연노랑 그라데이션 + 앰버골드 이중 테두리) -->
-                <button id="tabEncyclopedia" onclick="switchView('encyclopedia')" class="w-full hover:brightness-95 transition-all flex flex-col items-center justify-center gap-2.5" style="background: linear-gradient(135deg, #FEF08A 0%, #FDE047 50%, #FEF9C3 80%, #FACC15 100%) !important; border: 2px solid #B45309 !important; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45), inset 0 0 0 1.5px #FFFFFF !important;">
+                <!-- 7. 식물 검색 (웜 연노랑 그라데이션 + 깔끔한 화이트실버 테두리) -->
+                <button id="tabEncyclopedia" onclick="switchView('encyclopedia')" class="w-full hover:brightness-95 transition-all flex flex-col items-center justify-center gap-2.5" style="background: linear-gradient(135deg, #FEF08A 0%, #FDE047 100%) !important; border: 1.5px solid rgba(255, 255, 255, 0.9) !important; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45), inset 0 1px 1px #FFFFFF !important;">
                     <i data-lucide="book-open" class="w-6 h-6 text-[#151E2D] stroke-[2.5]" style="color: #151E2D !important;"></i>
                     <span class="btn-title font-black text-[#151E2D]" style="color: #151E2D !important;">식물 검색</span>
                 </button>
 
-                <!-- 8. AI 수목검색 렌즈 (웜 연노랑 그라데이션 + 앰버골드 이중 테두리) -->
-                <button id="tabLens" onclick="switchView('lens')" class="w-full hover:brightness-95 transition-all flex flex-col items-center justify-center gap-2.5" style="background: linear-gradient(135deg, #FEF08A 0%, #FDE047 50%, #FEF9C3 80%, #FACC15 100%) !important; border: 2px solid #B45309 !important; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45), inset 0 0 0 1.5px #FFFFFF !important;">
+                <!-- 8. AI 수목검색 렌즈 (웜 연노랑 그라데이션 + 깔끔한 화이트실버 테두리) -->
+                <button id="tabLens" onclick="switchView('lens')" class="w-full hover:brightness-95 transition-all flex flex-col items-center justify-center gap-2.5" style="background: linear-gradient(135deg, #FEF08A 0%, #FDE047 100%) !important; border: 1.5px solid rgba(255, 255, 255, 0.9) !important; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45), inset 0 1px 1px #FFFFFF !important;">
                     <i data-lucide="scan-line" class="w-6 h-6 text-[#151E2D] stroke-[2.5]" style="color: #151E2D !important;"></i>
                     <span class="btn-title-long font-black text-[#151E2D]" style="color: #151E2D !important;">AI 수목검색 렌즈</span>
                 </button>
 
-                <!-- 9. 오늘의 조경 날씨 (날씨 D: 하늘빛 백금 그라데이션 + 24K 골드 테두리) -->
-                <button id="tabWeather" onclick="openWeatherModal()" class="w-full relative overflow-hidden group hover:brightness-95 transition-all flex flex-col items-center justify-center gap-2" style="background: linear-gradient(135deg, #8FA6B8 0%, #D8E8F2 45%, #FFFFFF 75%, #B0C4D4 100%) !important; border: 2px solid #D4AF37 !important; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45), inset 0 1px 1px #FFFFFF !important;">
+                <!-- 9. 오늘의 조경 날씨 (날씨 D: 하늘빛 백금 그라데이션 + 화이트실버 테두리) -->
+                <button id="tabWeather" onclick="openWeatherModal()" class="w-full relative overflow-hidden group hover:brightness-95 transition-all flex flex-col items-center justify-center gap-2" style="background: linear-gradient(135deg, #8FA6B8 0%, #D8E8F2 45%, #FFFFFF 75%, #B0C4D4 100%) !important; border: 1.5px solid #FFFFFF !important; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45), inset 0 1px 1px #FFFFFF !important;">
                     <div class="flex items-center gap-1 z-10">
                         <svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.35));">
                             <path d="M12 1L14.2 4.2L18 2.8L18.2 6.8L22.2 7.5L20.3 11L23 14L19.5 16L20.2 20L16.3 19.8L14.8 23.5L12 20.8L9.2 23.5L7.7 19.8L3.8 20L4.5 16L1 14L3.7 11L1.8 7.5L5.8 6.8L6 2.8L9.8 4.2L12 1Z" fill="#FFB800" stroke="#B45309" stroke-width="1"/>
@@ -284,7 +288,7 @@
                 </button>
 
                 <!-- 10. 개인 장부함 (24K 골드 그라데이션 + 크림골드 테두리) -->
-                <button id="tabLedger" onclick="checkLedgerPin()" class="w-full relative overflow-hidden hover:brightness-105 transition-all flex flex-col items-center justify-center gap-2.5" style="background: linear-gradient(135deg, #B48327 0%, #D4AF37 45%, #F7E9A0 75%, #C59B27 100%) !important; border: 2px solid #FEF08A !important; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45), inset 0 1px 1px #FFFFFF !important;">
+                <button id="tabLedger" onclick="checkLedgerPin()" class="w-full relative overflow-hidden hover:brightness-105 transition-all flex flex-col items-center justify-center gap-2.5" style="background: linear-gradient(135deg, #B48327 0%, #D4AF37 45%, #F7E9A0 75%, #C59B27 100%) !important; border: 1.5px solid #FEF08A !important; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45), inset 0 1px 1px #FFFFFF !important;">
                     <div class="flex items-center gap-1.5">
                         <i data-lucide="wallet" class="w-6 h-6 text-[#151E2D] stroke-[2.5]"></i>
                         <span class="bg-[#151E2D] text-[#FDE047] p-1 rounded-md shadow-sm flex items-center justify-center">
@@ -295,7 +299,7 @@
                 </button>
 
                 <!-- 11. 대표님 라운지 (티타늄 건메탈 + 24K 골드 테두리) -->
-                <button id="tabLounge" onclick="switchView('lounge')" class="w-full relative overflow-hidden hover:brightness-110 transition-all flex flex-col items-center justify-center gap-2.5" style="background: linear-gradient(135deg, #1E293B 0%, #334155 48%, #475569 75%, #1E293B 100%) !important; border: 2px solid #D4AF37 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.28) !important;">
+                <button id="tabLounge" onclick="switchView('lounge')" class="w-full relative overflow-hidden hover:brightness-110 transition-all flex flex-col items-center justify-center gap-2.5" style="background: linear-gradient(135deg, #1E293B 0%, #334155 48%, #475569 75%, #1E293B 100%) !important; border: 1.5px solid #D4AF37 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.28) !important;">
                     <div class="flex items-center gap-1.5">
                         <i data-lucide="messages-square" class="w-5 h-5 text-[#FDE047] stroke-[2.3]"></i>
                         <small style="font-size: 10.5px !important; line-height: 1.1 !important; background-color: #FDE047 !important; color: #151E2D !important; padding: 3px 6px !important; border-radius: 6px !important; font-weight: 900 !important;">실시간 소통</small>
@@ -304,7 +308,7 @@
                 </button>
 
                 <!-- 12. AI 현장 비서 (티타늄 건메탈 + 24K 골드 테두리) -->
-                <button id="tabAiChat" onclick="switchView('aiChat')" class="w-full relative overflow-hidden hover:brightness-110 transition-all flex flex-col items-center justify-center gap-2" style="background: linear-gradient(135deg, #1E293B 0%, #334155 48%, #475569 75%, #1E293B 100%) !important; border: 2px solid #D4AF37 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.28) !important;">
+                <button id="tabAiChat" onclick="switchView('aiChat')" class="w-full relative overflow-hidden hover:brightness-110 transition-all flex flex-col items-center justify-center gap-2" style="background: linear-gradient(135deg, #1E293B 0%, #334155 48%, #475569 75%, #1E293B 100%) !important; border: 1.5px solid #D4AF37 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.28) !important;">
                     <div class="flex items-center gap-1.5">
                         <i data-lucide="bot" class="w-7 h-7 text-[#84CC16] stroke-[2.5] drop-shadow-[0_0_8px_rgba(132,204,22,0.45)]"></i>
                         <small style="font-size: 10.5px !important; line-height: 1.1 !important; background-color: #84CC16 !important; color: #151E2D !important; padding: 3px 6px !important; border-radius: 6px !important; font-weight: 900 !important;">만능 질문</small>
