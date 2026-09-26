@@ -5176,17 +5176,12 @@
           }
       });
   </script>
-  <!-- === [VIP 에디션 패치] 1. 메인 배경(시안 A: 티타늄 블루) & 2. AI비서 연두 말풍선 === -->
+  <!-- === [VIP 에디션 패치 최종] 1. 상하단 전체 시안 A 통일 & 2. AI비서 연두 말풍선 === -->
 <style>
-    /* 1. 메인 대시보드 배경: 시안 A (제네시스 미드나잇 티타늄 블루) 영구 적용 */
-    body, html, #app, .app-container, .main-container, #mainView, .dashboard-wrapper {
+    /* 1. 전체 바탕 시안 A (제네시스 미드나잇 티타늄 블루) */
+    body, html {
         background: linear-gradient(180deg, #1E293B 0%, #29384D 100%) !important;
         background-attachment: fixed !important;
-    }
-
-    /* 12개 메인 카테고리 버튼 입체감 강화 */
-    .menu-card, .dashboard-btn, .grid-item, [onclick*="open"], [onclick*="show"] {
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.15);
     }
 
     /* 2. AI 현장 비서: 내 말풍선 (화사한 연두색 배경 + 진한 검정 글씨) */
@@ -5200,35 +5195,59 @@
 </style>
 
 <script>
-    // AI 현장 비서 말풍선이 자바스크립트 인라인 스타일로 생성될 경우에도 100% 연두 배경+검정 글씨로 자동 변환
-    (function() {
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((m) => {
-                m.addedNodes.forEach((node) => {
-                    if (node.nodeType === 1) {
-                        const els = [node, ...node.querySelectorAll('*')];
-                        els.forEach((el) => {
-                            const st = el.getAttribute('style') || '';
-                            // 오른쪽 정렬된 내 말풍선 또는 기존 검정배경+연두글씨 말풍선 감지
-                            if ((st.includes('margin-left: auto') || st.includes('margin-left:auto') || st.includes('align-self: flex-end') || st.includes('align-self:flex-end')) || 
-                                ((st.includes('#4ade80') || st.includes('#22c55e') || st.includes('#a3e635') || st.includes('rgb(74, 222, 128)')) && (st.includes('#0') || st.includes('#1') || st.includes('black') || st.includes('rgb(0')))) {
-                                if (!el.querySelector('input') && !el.querySelector('button') && el.tagName !== 'BUTTON') {
-                                    el.style.setProperty('background', 'linear-gradient(135deg, #bbf7d0 0%, #86efac 100%)', 'important');
-                                    el.style.setProperty('color', '#111827', 'important');
-                                    el.style.setProperty('font-weight', '800', 'important');
-                                    el.style.setProperty('border', '1.5px solid #4ade80', 'important');
-                                }
-                            }
-                        });
-                    }
-                });
-            });
+(function() {
+    function applyVipThemeFix() {
+        // 1) '메뉴 접기'와 '작업 일정표'를 감싸고 있는 상단 검은색 배경 박스를 찾아 투명/시안A로 통일
+        const allEls = document.querySelectorAll('div, section, main, header');
+        allEls.forEach(el => {
+            const txt = el.innerText || '';
+            // 12개 메뉴 전체를 감싸는 큰 컨테이너인 경우 (개별 버튼은 제외)
+            if ((txt.includes('작업 일정표') && txt.includes('대표님 라운지')) || 
+                (txt.includes('신화토탈') && txt.includes('보안 연동됨') && !txt.includes('작업 일정표'))) {
+                
+                // 작은 배지나 버튼이 아닌 큰 레이아웃 박스만 배경 해제
+                if (el.offsetWidth > 280) {
+                    el.style.setProperty('background', 'transparent', 'important');
+                    el.style.setProperty('background-color', 'transparent', 'important');
+                    el.style.setProperty('border-bottom', 'none', 'important');
+                    el.style.setProperty('box-shadow', 'none', 'important');
+                }
+            }
+
+            // 상단 6개 기본 버튼(작업 일정표 ~ 연락처)이 밝아진 배경에서 선명하게 튀어나오도록 테두리/그림자 보강
+            const top6Titles = ['작업 일정표', '작업 일지 작성', '거래처 목록', '견적서 작성', '견적 보관함', '연락처'];
+            const cleanTxt = txt.trim();
+            if (top6Titles.includes(cleanTxt) && el.offsetWidth > 70 && el.offsetWidth < 180 && el.offsetHeight > 70) {
+                el.style.setProperty('background', 'linear-gradient(145deg, #162032 0%, #0F172A 100%)', 'important');
+                el.style.setProperty('border', '1.5px solid rgba(148, 163, 184, 0.35)', 'important');
+                el.style.setProperty('box-shadow', '0 8px 18px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.2)', 'important');
+            }
         });
-        window.addEventListener('DOMContentLoaded', () => {
-            observer.observe(document.body, { childList: true, subtree: true });
+
+        // 2) AI 현장 비서 내 말풍선 연두색 배경 + 검정 글씨 적용
+        const chatNodes = document.querySelectorAll('div, p, span');
+        chatNodes.forEach(el => {
+            const st = el.getAttribute('style') || '';
+            if ((st.includes('margin-left: auto') || st.includes('margin-left:auto') || st.includes('align-self: flex-end') || st.includes('align-self:flex-end')) || 
+                ((st.includes('#4ade80') || st.includes('#22c55e') || st.includes('#a3e635') || st.includes('rgb(74, 222, 128)')) && (st.includes('#0') || st.includes('#1') || st.includes('black') || st.includes('rgb(0')))) {
+                if (!el.querySelector('input') && !el.querySelector('button') && el.tagName !== 'BUTTON' && el.offsetWidth < 360) {
+                    el.style.setProperty('background', 'linear-gradient(135deg, #bbf7d0 0%, #86efac 100%)', 'important');
+                    el.style.setProperty('color', '#111827', 'important');
+                    el.style.setProperty('font-weight', '800', 'important');
+                    el.style.setProperty('border', '1.5px solid #4ade80', 'important');
+                }
+            }
         });
-        if (document.body) observer.observe(document.body, { childList: true, subtree: true });
-    })();
+    }
+
+    window.addEventListener('DOMContentLoaded', applyVipThemeFix);
+    window.addEventListener('load', applyVipThemeFix);
+    setTimeout(applyVipThemeFix, 300);
+
+    const observer = new MutationObserver(() => applyVipThemeFix());
+    if (document.body) observer.observe(document.body, { childList: true, subtree: true });
+    else window.addEventListener('DOMContentLoaded', () => observer.observe(document.body, { childList: true, subtree: true }));
+})();
 </script>
 <!-- === [VIP 에디션 패치 끝] === -->
 </body>
