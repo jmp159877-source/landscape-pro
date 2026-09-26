@@ -5225,18 +5225,37 @@ box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25) !important;
             }
         });
 
-        // 2) AI 현장 비서 내 말풍선 연두색 배경 + 검정 글씨 적용
+        // 2) AI 현장 비서 내 말풍선 연두색 배경 + 검정 글씨 강제 적용 (완전판)
         const chatNodes = document.querySelectorAll('div, p, span');
         chatNodes.forEach(el => {
-            const st = el.getAttribute('style') || '';
-            if ((st.includes('margin-left: auto') || st.includes('margin-left:auto') || st.includes('align-self: flex-end') || st.includes('align-self:flex-end')) || 
-                ((st.includes('#4ade80') || st.includes('#22c55e') || st.includes('#a3e635') || st.includes('rgb(74, 222, 128)')) && (st.includes('#0') || st.includes('#1') || st.includes('black') || st.includes('rgb(0')))) {
-                if (!el.querySelector('input') && !el.querySelector('button') && el.tagName !== 'BUTTON' && el.offsetWidth < 360) {
-                    el.style.setProperty('background', 'linear-gradient(135deg, #bbf7d0 0%, #86efac 100%)', 'important');
-                    el.style.setProperty('color', '#111827', 'important');
-                    el.style.setProperty('font-weight', '800', 'important');
-                    el.style.setProperty('border', '1.5px solid #4ade80', 'important');
+            if (el.tagName === 'BUTTON' || el.querySelector('input') || el.querySelector('textarea') || el.querySelector('button')) return;
+            const txt = (el.innerText || '').trim();
+            if (!txt || txt.includes('AI 현장 비서') || txt.includes('오늘의 조경 날씨') || txt.includes('보안 연동됨') || txt === 'PRO') return;
+
+            const st = (el.getAttribute('style') || '').toLowerCase();
+            const cs = window.getComputedStyle(el);
+            const rgb = (cs.color || '').match(/\d+/g);
+
+            // 초록/연두색 글씨인지 확인 (R, G, B 중 G(초록) 수치가 뚜렷하게 높은 모든 요소)
+            const isGreenText = rgb && rgb.length >= 3 && (parseInt(rgb[1]) > 140 && parseInt(rgb[1]) > parseInt(rgb[0]) + 25 && parseInt(rgb[1]) > parseInt(rgb[2]) + 15);
+            // 오른쪽 정렬된 내 말풍선인지 확인
+            const isRightBubble = st.includes('margin-left: auto') || st.includes('margin-left:auto') || st.includes('flex-end') || st.includes('right');
+
+            if ((isGreenText || isRightBubble) && el.offsetHeight > 16 && el.offsetHeight < 400) {
+                let targetBox = el;
+                if ((cs.backgroundColor === 'rgba(0, 0, 0, 0)' || cs.backgroundColor === 'transparent') && el.parentElement) {
+                    targetBox = el.parentElement;
                 }
+                targetBox.style.setProperty('background', 'linear-gradient(135deg, #bbf7d0 0%, #86efac 100%)', 'important');
+                targetBox.style.setProperty('background-color', '#86efac', 'important');
+                targetBox.style.setProperty('color', '#111827', 'important');
+                targetBox.style.setProperty('font-weight', '800', 'important');
+                targetBox.style.setProperty('border', '1.5px solid #22c55e', 'important');
+
+                targetBox.querySelectorAll('*').forEach(child => {
+                    child.style.setProperty('color', '#111827', 'important');
+                    child.style.setProperty('font-weight', '800', 'important');
+                });
             }
         });
     }
