@@ -1,5 +1,3 @@
-/vs 연동 테스트
-/배포 테스트
 
 <!DOCTYPE html>
 <html lang="ko">
@@ -231,49 +229,57 @@
                 <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="folder-open" class="w-6 h-6 text-[#84CC16]"></i><span class="text-[15px] font-black text-white tracking-tight">견적 보관함</span></button>
                 <button id="tabContacts" onclick="switchView('contacts')" class="w-full py-5 rounded-[20px] bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md"><i data-lucide="users" class="w-6 h-6 text-white/80"></i><span class="text-[15px] font-black text-white tracking-tight">연락처</span></button>
 
-                <!-- 7. 식물 검색 (3번째 줄 좌측 · 네이비 블랙 글씨) -->
-                <button id="tabEncyclopedia" onclick="switchView('encyclopedia')" class="w-full py-5 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md">
-                    <i data-lucide="book-open" class="w-6 h-6 text-[#151E2D]"></i>
-                    <span class="text-[15.5px] font-black text-[#151E2D] tracking-tight" style="color: #151E2D !important;">식물 검색</span>
+                <!-- 7. 식물 검색 (3번째 줄 좌측 · 시안 4-A 웜 연노랑) -->
+                <button id="tabEncyclopedia" onclick="switchView('encyclopedia')" class="w-full py-5 rounded-[20px] shadow-[0_4px_15px_rgba(253,224,71,0.25)] hover:brightness-95 transition-all flex flex-col items-center justify-center gap-2.5" style="background: linear-gradient(135deg, #FEF08A 0%, #FDE047 100%) !important; border: 1.5px solid #FDE047 !important;">
+                    <i data-lucide="book-open" class="w-6 h-6 text-[#151E2D] stroke-[2.5]" style="color: #151E2D !important;"></i>
+                    <span class="font-black tracking-tight" style="font-size: 15.5px !important; color: #151E2D !important;">식물 검색</span>
                 </button>
 
-                <!-- 8. AI 수목검색 렌즈 (3번째 줄 중앙 · 네이비 블랙 글씨) -->
-                <button id="tabLens" onclick="switchView('lens')" class="w-full py-5 rounded-[20px] bg-[#84CC16] shadow-[0_4px_15px_rgba(132,204,22,0.3)] hover:bg-[#9BE32D] transition-all flex flex-col items-center justify-center gap-2.5 backdrop-blur-md">
-                    <i data-lucide="scan-line" class="w-6 h-6 text-[#151E2D]"></i>
-                    <span class="text-[15px] font-black text-[#151E2D] tracking-tight" style="color: #151E2D !important;">AI 수목검색 렌즈</span>
+                <!-- 8. AI 수목검색 렌즈 (3번째 줄 중앙 · 시안 4-A 웜 연노랑) -->
+                <button id="tabLens" onclick="switchView('lens')" class="w-full py-5 rounded-[20px] shadow-[0_4px_15px_rgba(253,224,71,0.25)] hover:brightness-95 transition-all flex flex-col items-center justify-center gap-2.5" style="background: linear-gradient(135deg, #FEF08A 0%, #FDE047 100%) !important; border: 1.5px solid #FDE047 !important;">
+                    <i data-lucide="scan-line" class="w-6 h-6 text-[#151E2D] stroke-[2.5]" style="color: #151E2D !important;"></i>
+                    <span class="font-black tracking-tight" style="font-size: 15px !important; color: #151E2D !important;">AI 수목검색 렌즈</span>
                 </button>
 
-                <!-- 9. 오늘의 조경 날씨 (3번째 줄 우측) -->
-                <button id="tabWeather" onclick="loadRealWeather(); openWeatherModal();" class="w-full py-5 rounded-[20px] relative overflow-hidden shadow-[0_4px_15px_rgba(2,132,199,0.35)] border border-sky-300/40 hover:brightness-105 transition-all flex flex-col items-center justify-center gap-1.5 group" style="background: linear-gradient(135deg, #0369A1 0%, #0284C7 55%, #0EA5E9 100%);">
-                    <i data-lucide="cloud-sun" class="w-16 h-16 text-white/15 absolute -right-2 -bottom-2 pointer-events-none transition-transform group-hover:scale-110"></i>
-                    <div class="relative z-10 flex items-center gap-1.5">
-                        <i data-lucide="sun" class="w-5 h-5 text-[#FEE500] stroke-[2.5]"></i>
-                        <small style="font-size: 10.5px !important; line-height: 1.1 !important; background-color: #FEE500 !important; color: #151E2D !important; padding: 3px 6px !important; border-radius: 6px !important; font-weight: 900 !important;">실시간 기상</small>
+                <!-- 9. 오늘의 조경 날씨 (3번째 줄 우측 · 톤 다운 연두 + 진노랑 해바라기 태양 + 연두 배지) -->
+                <button onclick="openWeatherModal()" class="w-full py-5 rounded-[20px] relative overflow-hidden group shadow-[0_4px_15px_rgba(163,230,53,0.25)] hover:brightness-95 transition-all flex flex-col items-center justify-center gap-1.5" style="background: linear-gradient(135deg, #D9F99D 0%, #A3E635 100%) !important; border: 1.5px solid #BEF264 !important;">
+                    <div class="flex items-center gap-1.5 z-10">
+                        <svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));">
+                            <path d="M12 1L14.2 4.2L18 2.8L18.2 6.8L22.2 7.5L20.3 11L23 14L19.5 16L20.2 20L16.3 19.8L14.8 23.5L12 20.8L9.2 23.5L7.7 19.8L3.8 20L4.5 16L1 14L3.7 11L1.8 7.5L5.8 6.8L6 2.8L9.8 4.2L12 1Z" fill="#FFB800" stroke="#B45309" stroke-width="1"/>
+                            <circle cx="12" cy="12" r="5.2" fill="#FFE600" stroke="#D97706" stroke-width="1.2"/>
+                        </svg>
+                        <small style="font-size: 10.5px !important; line-height: 1.1 !important; background-color: #84CC16 !important; color: #151E2D !important; border: 1px solid rgba(21,30,45,0.2) !important; padding: 3px 6px !important; border-radius: 6px !important; font-weight: 900 !important;">실시간 기상</small>
                     </div>
-                    <span class="relative z-10 text-[15px] font-black text-white tracking-tight drop-shadow-sm" style="color: #FFFFFF !important;">오늘의 조경 날씨</span>
+                    <span id="weatherBannerSub" class="font-black tracking-tight z-10" style="font-size: 15px !important; color: #151E2D !important;">오늘의 조경 날씨</span>
                 </button>
 
-                <!-- 10. 개인 장부함 (4번째 줄 좌측) -->
-                <button id="tabLedger" onclick="checkLedgerPin()" class="w-full py-5 rounded-[20px] relative overflow-hidden border-[1.5px] border-[#FEF08A] shadow-[0_4px_18px_rgba(212,175,55,0.4)] hover:brightness-105 transition-all flex flex-col items-center justify-center gap-2" style="background: linear-gradient(135deg, #B48327 0%, #D4AF37 45%, #F7E9A0 75%, #C59B27 100%);">
+                <!-- 10. 개인 장부함 (4번째 줄 좌측 · 프리미엄 골드) -->
+                <button id="tabLedger" onclick="switchView('ledger')" class="w-full py-5 rounded-[20px] relative overflow-hidden shadow-[0_4px_18px_rgba(212,175,55,0.35)] hover:brightness-105 transition-all flex flex-col items-center justify-center gap-2" style="background: linear-gradient(135deg, #B48327 0%, #D4AF37 45%, #F7E9A0 75%, #C59B27 100%) !important; border: 1.5px solid #FEF08A !important;">
                     <div class="flex items-center gap-1.5">
                         <i data-lucide="wallet" class="w-6 h-6 text-[#151E2D] stroke-[2.5]"></i>
                         <span class="bg-[#151E2D] text-[#FDE047] p-1 rounded-md shadow-sm flex items-center justify-center">
-                            <i data-lucide="lock" class="w-3.5 h-3.5 stroke-[3]"></i>
+                            <i data-lucide="lock" class="w-3.5 h-3.5 stroke-[2.5]"></i>
                         </span>
                     </div>
-                    <span class="text-[15.5px] font-black text-[#151E2D] tracking-tight" style="color: #151E2D !important;">개인 장부함</span>
+                    <span class="font-black tracking-tight" style="font-size: 15.5px !important; color: #151E2D !important;">개인 장부함</span>
                 </button>
-                
-                <!-- 11. 사장님 소통방 (4번째 줄 중앙) -->
-                <button id="tabLounge" onclick="switchView('lounge')" class="w-full py-5 rounded-[20px] shadow-[0_4px_18px_rgba(0,0,0,0.5)] hover:brightness-110 transition-all flex flex-col items-center justify-center gap-2" style="background: #2C1810 !important; background-color: #2C1810 !important; border: 1.5px solid rgba(253, 224, 71, 0.65) !important;">
+
+                <!-- 11. 대표님 라운지 (4번째 줄 중앙 · 다크 오닉스 & 골드 테두리) -->
+                <button id="tabLounge" onclick="switchView('lounge')" class="w-full py-5 rounded-[20px] relative overflow-hidden shadow-[0_4px_18px_rgba(0,0,0,0.45)] hover:brightness-110 transition-all flex flex-col items-center justify-center gap-2" style="background: linear-gradient(135deg, #141A23 0%, #1F2937 100%) !important; border: 1.5px solid #D4AF37 !important;">
                     <div class="flex items-center gap-1.5">
-                        <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="rgba(254, 229, 0, 0.25)" stroke="#FEE500" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v5Z"/>
-                            <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"/>
-                        </svg>
-                        <small style="font-size: 10.5px !important; line-height: 1.1 !important; background-color: #FEE500 !important; color: #2C1810 !important; padding: 3px 6px !important; border-radius: 6px !important; font-weight: 900 !important;">실시간 소통</small>
+                        <i data-lucide="messages-square" class="w-5 h-5 text-[#FDE047] stroke-[2.3]"></i>
+                        <small style="font-size: 10.5px !important; line-height: 1.1 !important; background-color: #FDE047 !important; color: #151E2D !important; padding: 3px 6px !important; border-radius: 6px !important; font-weight: 900 !important;">실시간 소통</small>
                     </div>
-                    <span class="font-black tracking-tight" style="font-size: 15.5px !important; color: #FFFFFF !important;">사장님 소통방</span>
+                    <span class="font-black tracking-tight" style="font-size: 15.5px !important; color: #FFFFFF !important;">대표님 라운지</span>
+                </button>
+
+                <!-- 12. AI 현장 비서 (4번째 줄 우측 · 시안 4-A 다크 오닉스 & 골드 테두리 + 대형 로봇 아이콘) -->
+                <button id="tabAiChat" onclick="switchView('aiChat')" class="w-full py-4 rounded-[20px] relative overflow-hidden shadow-[0_4px_18px_rgba(0,0,0,0.45)] hover:brightness-110 transition-all flex flex-col items-center justify-center gap-1.5" style="background: linear-gradient(135deg, #141A23 0%, #1F2937 100%) !important; border: 1.5px solid #D4AF37 !important;">
+                    <div class="flex items-center gap-1.5">
+                        <i data-lucide="bot" class="w-7 h-7 text-[#84CC16] stroke-[2.5] drop-shadow-[0_0_8px_rgba(132,204,22,0.45)]"></i>
+                        <small style="font-size: 10.5px !important; line-height: 1.1 !important; background-color: #84CC16 !important; color: #151E2D !important; padding: 3px 6px !important; border-radius: 6px !important; font-weight: 900 !important;">만능 질문</small>
+                    </div>
+                    <span class="font-black tracking-tight" style="font-size: 15.5px !important; color: #FFFFFF !important;">AI 현장 비서</span>
                 </button>
             </nav>
         </div>
@@ -340,7 +346,25 @@
                   </div>
               </button>
 
-              <!-- 버튼 4: 불량 거래처 -->
+              <!-- 버튼 4: 일감 패스·공사 양도 (신규 1순위) -->
+              <button onclick="openBoard('일감 패스·공사 양도')" class="bg-[#3B4C63] border border-white/10 rounded-[20px] p-5 text-left flex flex-col gap-3 hover:border-purple-400 transition-all shadow-sm group">
+                  <div class="w-11 h-11 rounded-[14px] bg-purple-500/20 flex items-center justify-center text-purple-300 group-hover:scale-110 transition-transform"><i data-lucide="briefcase" class="w-6 h-6"></i></div>
+                  <div>
+                      <h3 class="text-[17px] font-black text-white group-hover:text-purple-300 transition-colors leading-snug tracking-tight">일감 패스·공사 양도<br><span class="text-purple-300 text-[13px] font-bold">(확정 오더)</span></h3>
+                      <p class="text-[12px] text-[#CBD5E1] font-bold mt-1.5 break-keep leading-snug">일정 중복·타지역 확정 공사 양도 및 공동수급</p>
+                  </div>
+              </button>
+
+              <!-- 버튼 5: 실전 견적·단가 자문 (신규 3순위) -->
+              <button onclick="openBoard('실전 견적·단가 자문')" class="bg-[#3B4C63] border border-white/10 rounded-[20px] p-5 text-left flex flex-col gap-3 hover:border-emerald-400 transition-all shadow-sm group">
+                  <div class="w-11 h-11 rounded-[14px] bg-emerald-500/20 flex items-center justify-center text-emerald-300 group-hover:scale-110 transition-transform"><i data-lucide="calculator" class="w-6 h-6"></i></div>
+                  <div>
+                      <h3 class="text-[17px] font-black text-white group-hover:text-emerald-300 transition-colors leading-snug tracking-tight">실전 견적·단가 자문<br><span class="text-emerald-300 text-[13px] font-bold">(손해 방지)</span></h3>
+                      <p class="text-[12px] text-[#CBD5E1] font-bold mt-1.5 break-keep leading-snug">현장 적정 실행 단가 및 입찰 견적 상호 자문</p>
+                  </div>
+              </button>
+
+              <!-- 버튼 6: 불량 거래처 경보 -->
               <button onclick="openBoard('불량 거래처 경보')" class="bg-[#3B4C63] border border-white/10 rounded-[20px] p-5 text-left flex flex-col gap-3 hover:border-red-400 transition-all shadow-sm group">
                   <div class="w-11 h-11 rounded-[14px] bg-red-500/20 flex items-center justify-center text-red-300 group-hover:scale-110 transition-transform"><i data-lucide="alert-triangle" class="w-6 h-6"></i></div>
                   <div>
@@ -781,6 +805,352 @@
         </div>
       </div>
     </section>
+    <!-- ================= [신규: AI 현장 비서 (PRO 이그제큐티브 에디션)] ================= -->
+    <section id="aiChatView" class="hidden space-y-4">
+      <div class="bg-[#F8FAFC] rounded-[32px] overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.45)] flex flex-col h-[78vh] border border-[#CBD5E1]">
+        
+        <!-- 1. 상단 프리미엄 다크 네이비 헤더 (무게감 & 전문성 극대화) -->
+        <div class="bg-gradient-to-r from-[#0F172A] via-[#151E2D] to-[#1E293B] px-5 py-4 flex items-center justify-between border-b border-[#D4AF37]/40 shrink-0">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="w-11 h-11 rounded-[15px] bg-[#84CC16]/15 border border-[#84CC16]/50 flex items-center justify-center text-[#84CC16] shadow-inner shrink-0">
+              <i data-lucide="sparkles" class="w-6 h-6 stroke-[2.2]"></i>
+            </div>
+            <div class="min-w-0">
+              <div class="flex items-center gap-2">
+                <h2 class="text-[19px] font-black text-white tracking-tight leading-none">AI 현장 만능 비서</h2>
+                <span class="text-[10.5px] bg-gradient-to-r from-[#D4AF37] to-[#F59E0B] text-[#0F172A] px-2 py-0.5 rounded-md font-black tracking-wider">PRO</span>
+              </div>
+              <p id="aiChatLocText" class="text-[12.5px] font-bold text-[#94A3B8] mt-1.5 flex items-center gap-1 truncate">
+                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#84CC16] shrink-0"></i> 현장 위치 동기화 중...
+              </p>
+            </div>
+          </div>
+          <button onclick="resetAiChat()" class="px-3 py-2 bg-white/10 hover:bg-white/15 border border-white/15 text-[#E2E8F0] rounded-[12px] text-[12px] font-black flex items-center gap-1.5 transition-colors shrink-0">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-[#84CC16]"></i> 초기화
+          </button>
+        </div>
+
+        <!-- 2. 원터치 빠른 질문 바 (유치한 알록달록 색상 제거 ➔ 고급 다크/골드 포인트 칩) -->
+        <div class="bg-white px-4 py-3 border-b border-[#E2E8F0] shrink-0">
+          <div class="text-[11.5px] font-black text-[#64748B] mb-2 flex items-center gap-1">
+            <i data-lucide="zap" class="w-3.5 h-3.5 text-[#D97706]"></i> 자주 묻는 현장 질문 (터치 시 즉시 분석)
+          </div>
+          <div class="flex gap-2 overflow-x-auto nav-scroll pb-0.5">
+            <button onclick="sendQuickAiQuestion('근처 점심 백반·김치찌개 맛집 추천해줘')" class="px-3.5 py-2 bg-[#151E2D] hover:bg-black text-white rounded-[12px] text-[13px] font-black shrink-0 shadow-sm active:scale-95 transition-all flex items-center gap-1.5">
+              <i data-lucide="utensils" class="w-3.5 h-3.5 text-[#FEE500]"></i> 근처 점심·백반집
+            </button>
+            <button onclick="sendQuickAiQuestion('여기서 가장 가까운 철물점·건재상 알려줘')" class="px-3.5 py-2 bg-[#151E2D] hover:bg-black text-white rounded-[12px] text-[13px] font-black shrink-0 shadow-sm active:scale-95 transition-all flex items-center gap-1.5">
+              <i data-lucide="wrench" class="w-3.5 h-3.5 text-[#38BDF8]"></i> 가까운 철물점·건재상
+            </button>
+            <button onclick="sendQuickAiQuestion('오늘 오후에 비 올까? 야외 조경 작업해도 될지 알려줘')" class="px-3.5 py-2 bg-[#151E2D] hover:bg-black text-white rounded-[12px] text-[13px] font-black shrink-0 shadow-sm active:scale-95 transition-all flex items-center gap-1.5">
+              <i data-lucide="cloud-sun" class="w-3.5 h-3.5 text-[#84CC16]"></i> 오후 날씨·작업여부
+            </button>
+            <button onclick="sendQuickAiQuestion('소나무 전지 시기와 병해충 방제 약제 혼용 방법 알려줘')" class="px-3.5 py-2 bg-[#151E2D] hover:bg-black text-white rounded-[12px] text-[13px] font-black shrink-0 shadow-sm active:scale-95 transition-all flex items-center gap-1.5">
+              <i data-lucide="tree-pine" class="w-3.5 h-3.5 text-[#84CC16]"></i> 수목·약제·시공 자문
+            </button>
+          </div>
+        </div>
+
+        <!-- 3. 대화창 메시지 영역 (눈이 편안한 소프트 그레이 배경 & 깔끔한 화이트 카드) -->
+        <div id="aiChatMessages" class="flex-1 overflow-y-auto p-4 space-y-4 nav-scroll bg-[#F1F5F9]">
+          <!-- 초기 안내 말풍선 -->
+        </div>
+
+        <!-- 4. 하단 질문 입력창 (원색 빨강 제거 ➔ 웜 옐로우 음성 버튼 & 딥 네이비 전송 버튼) -->
+        <div class="p-3.5 bg-white border-t border-[#E2E8F0] shrink-0">
+          <div class="flex gap-2 items-center">
+            <!-- 🎙️ 음성 인식 버튼 (고급 웜 옐로우 & 다크 네이비 텍스트) -->
+            <button id="aiMicBtn" onclick="toggleAiVoiceInput()" type="button" class="px-4 py-3.5 bg-[#FEE500] hover:brightness-95 border border-[#EAB308]/50 text-[#151E2D] rounded-[16px] font-black text-[15px] shadow-sm active:scale-95 transition-all shrink-0 flex items-center justify-center gap-1.5" title="말로 질문하기">
+              <i id="aiMicIcon" data-lucide="mic" class="w-5 h-5 stroke-[2.5] text-[#151E2D]"></i>
+              <span id="aiMicText" class="text-[14.5px]">음성</span>
+            </button>
+
+            <input type="text" id="aiChatInput" onkeypress="if(event.key==='Enter') sendAiChatMessage()" placeholder="음성 버튼을 누르거나 질문을 입력하세요" autocomplete="off" class="flex-1 min-w-0 bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 py-3.5 text-[15.5px] font-black text-[#151E2D] placeholder:text-[#64748B] placeholder:font-bold placeholder:text-[13.5px] focus:outline-none focus:border-[#151E2D] focus:bg-white transition-colors">
+
+            <button onclick="sendAiChatMessage()" class="px-4 py-3.5 bg-[#151E2D] hover:bg-black text-[#84CC16] rounded-[16px] font-black text-[15px] shadow-md active:scale-95 transition-all shrink-0 flex items-center gap-1.5">
+              <span>전송</span> <i data-lucide="send" class="w-4 h-4 stroke-[2.5]"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <script>
+      let aiChatHistory = [];
+      let isAiChatInitialized = false;
+
+      function getAiCurrentContext() {
+          let locName = "현재 위치 미확인";
+          try {
+              const cached = localStorage.getItem('shinhwa_last_loc');
+              if (cached) {
+                  const parsed = JSON.parse(cached);
+                  if (parsed && parsed.name) locName = parsed.name;
+              }
+          } catch(e) {}
+          const tempText = document.getElementById('weatherMainTemp')?.innerText || "기상 수신 대기중";
+          const tipText = document.getElementById('weatherSmartTip')?.innerText || "";
+          return { locName, tempText, tipText };
+      }
+
+      function initAiChatView() {
+          if (!weatherIsLoaded && typeof loadRealWeather === 'function') loadRealWeather();
+          const ctx = getAiCurrentContext();
+          const locEl = document.getElementById('aiChatLocText');
+          if (locEl) locEl.innerHTML = `<i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#84CC16] shrink-0"></i> 현위치: <span class="text-white font-black">${ctx.locName}</span> <span class="text-[#84CC16]">(${ctx.tempText})</span>`;
+
+          if (!isAiChatInitialized) {
+              resetAiChat();
+              isAiChatInitialized = true;
+          }
+          if (typeof lucide !== 'undefined') lucide.createIcons();
+      }
+
+      function resetAiChat() {
+          aiChatHistory = [];
+          const ctx = getAiCurrentContext();
+          const box = document.getElementById('aiChatMessages');
+          if (!box) return;
+          box.innerHTML = `
+              <div class="flex items-start gap-3">
+                  <div class="w-9 h-9 rounded-[12px] bg-[#151E2D] border border-[#84CC16]/40 text-[#84CC16] flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                      <i data-lucide="sparkles" class="w-4 h-4"></i>
+                  </div>
+                  <div class="bg-white border border-[#CBD5E1] text-[#151E2D] rounded-[20px] rounded-tl-[4px] p-5 text-[15px] font-bold leading-relaxed break-keep max-w-[88%] shadow-sm space-y-3">
+                      <div class="font-black text-[16px] text-[#151E2D] border-b border-[#F1F5F9] pb-2.5">
+                          반갑습니다, 대표님. <span class="text-[#4D7C0F]">AI 현장 비서</span>입니다.
+                      </div>
+                      <p class="text-[14.5px] text-[#334155] leading-relaxed">
+                          현재 파악된 <strong>[${ctx.locName}]</strong> 위치와 실시간 기상 데이터를 기반으로 즉시 답변해 드립니다.
+                      </p>
+                      <div class="bg-[#F8FAFC] border border-[#E2E8F0] rounded-[14px] p-3.5 space-y-2 text-[14px] text-[#151E2D] font-black">
+                          <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#D97706]"></span> "근처 김치찌개·백반 잘하는 집 찾아줘"</div>
+                          <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#0284C7]"></span> "여기서 제일 가까운 철물점·시멘트 파는 곳"</div>
+                          <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#65A30D]"></span> "오늘 오후에 비 올까? 약제 살포해도 돼?"</div>
+                          <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#151E2D]"></span> "소나무 응애 방제 약제 희석 배수 알려줘"</div>
+                      </div>
+                      <p class="text-[13px] text-[#64748B] font-extrabold pt-0.5">
+                          상단 버튼을 터치하시거나 하단 [음성] 버튼을 눌러 편하게 말씀해 주세요.
+                      </p>
+                  </div>
+              </div>
+          `;
+          if (typeof lucide !== 'undefined') lucide.createIcons();
+      }
+
+      function sendQuickAiQuestion(qText) {
+          const input = document.getElementById('aiChatInput');
+          if (input) {
+              input.value = qText;
+              sendAiChatMessage();
+          }
+      }
+
+      async function sendAiChatMessage() {
+          const input = document.getElementById('aiChatInput');
+          const msg = input.value.trim();
+          if (!msg) return;
+          input.value = '';
+
+          const box = document.getElementById('aiChatMessages');
+          box.insertAdjacentHTML('beforeend', `
+              <div class="flex justify-end">
+                  <div class="bg-[#151E2D] text-[#84CC16] border border-[#84CC16]/30 rounded-[20px] rounded-tr-[4px] px-4 py-3 text-[15.5px] font-black leading-relaxed break-keep max-w-[82%] shadow-md">
+                      ${msg}
+                  </div>
+              </div>
+          `);
+
+          const loadingId = 'aiLoading_' + Date.now();
+          box.insertAdjacentHTML('beforeend', `
+              <div id="${loadingId}" class="flex items-start gap-3">
+                  <div class="w-9 h-9 rounded-[12px] bg-[#151E2D] text-[#84CC16] flex items-center justify-center shrink-0 mt-0.5">
+                      <i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>
+                  </div>
+                  <div class="bg-white border border-[#CBD5E1] text-[#475569] rounded-[20px] rounded-tl-[4px] px-4 py-3 text-[14.5px] font-black">
+                      현장 데이터와 주변 정보를 분석하고 있습니다...
+                  </div>
+              </div>
+          `);
+          box.scrollTop = box.scrollHeight;
+          if (typeof lucide !== 'undefined') lucide.createIcons();
+
+          const ctx = getAiCurrentContext();
+          const GOOGLE_PROXY_URL = "https://script.google.com/macros/s/AKfycbysZFaBJt9Iu964hP9rJVjmYHDMMo_TQAocjih4h8q0_im414WA6-23LS6Wm4xQvTJRQw/exec";
+
+          const systemPrompt = `당신은 '조경노트 PRO' 앱에 탑재된 유능하고 정중한 현장 전담 AI 비서입니다.
+현재 사용자의 현장 위치는 [${ctx.locName}]이며, 현재 기상 상태는 [${ctx.tempText} /${ctx.tipText}]입니다.
+조경업체 대표님들이 현장에서 한눈에 파악하기 좋도록 군더더기 없이 핵심만 굵직하고 명확하게 답변하세요.
+- 식당/맛집이나 철물점/건재상/농약사 등 주변 장소를 물어보면 [${ctx.locName}] 인근 기준으로 추천해 주고, 하단의 '네이버 지도 바로가기 버튼'을 누르면 가장 가까운 매장의 위치와 전화번호가 바로 나온다고 안내하세요.
+- 날씨나 작업 가능 여부를 물어보면 현재 기상 상태([${ctx.tempText}])를 바탕으로 오후 작업(약제 살포, 시멘트/몰탈 양생, 전지 등) 조언을 해주세요.
+- 조경 수목, 병해충, 약제 희석 배수, 시공/단가 질문을 하면 30년 경력 조경 전문가 수준으로 정확히 답변하세요.`;
+
+          aiChatHistory.push({ role: "user", content: msg });
+          if (aiChatHistory.length > 6) aiChatHistory = aiChatHistory.slice(-6);
+
+          try {
+              const response = await fetch(GOOGLE_PROXY_URL, {
+                  redirect: "follow",
+                  method: "POST",
+                  headers: { "Content-Type": "text/plain;charset=utf-8" },
+                  body: JSON.stringify({
+                      model: "gpt-4o",
+                      messages: [
+                          { role: "system", content: systemPrompt },
+                          ...aiChatHistory
+                      ],
+                      max_tokens: 700,
+                      temperature: 0.4
+                  })
+              });
+
+              const data = await response.json();
+              if (data.error) throw new Error(data.error.message);
+              let reply = data.choices[0].message.content;
+              aiChatHistory.push({ role: "assistant", content: reply });
+
+              let formattedReply = reply.replace(/\*\*(.*?)\*\*/g, '<strong class="text-[#151E2D] font-black underline decoration-[#84CC16] decoration-2 underline-offset-2">$1</strong>').replace(/\n/g, '<br>');
+
+              let mapButtonHtml = '';
+              const placeKeywords = ['맛집', '식당', '밥', '점심', '백반', '찌개', '국밥', '철물점', '건재', '시멘트', '농약', '자재', '종묘', '주유소', '근처', '가까운'];
+              if (placeKeywords.some(kw => msg.includes(kw))) {
+                  let cleanKeyword = '맛집';
+                  if (msg.includes('철물')) cleanKeyword = '철물점';
+                  else if (msg.includes('건재') || msg.includes('시멘트')) cleanKeyword = '건재상 철물점';
+                  else if (msg.includes('농약')) cleanKeyword = '농약사';
+                  else if (msg.includes('백반')) cleanKeyword = '백반 한식';
+                  else if (msg.includes('김치찌개')) cleanKeyword = '김치찌개';
+                  else if (msg.includes('국밥')) cleanKeyword = '국밥';
+
+                  const searchQuery = encodeURIComponent(`${ctx.locName}${cleanKeyword}`);
+                  mapButtonHtml = `
+                      <div class="mt-3.5 pt-3 border-t border-[#E2E8F0] flex flex-col gap-2">
+                          <a href="https://m.map.naver.com/search2/search.naver?query=${searchQuery}" target="_blank" class="w-full py-3 bg-[#151E2D] hover:bg-black text-[#84CC16] rounded-[12px] text-[14px] font-black flex items-center justify-center gap-1.5 shadow-sm transition-colors">
+                              <i data-lucide="map-pin" class="w-4 h-4"></i> 네이버 지도로 주변 [${cleanKeyword}] 즉시 검색
+                          </a>
+                      </div>
+                  `;
+              }
+
+              const safeSpeechText = reply.replace(/[*#\-`]/g, '').replace(/'/g, '').replace(/"/g, '').replace(/\n/g, ' ');
+
+              document.getElementById(loadingId)?.remove();
+              box.insertAdjacentHTML('beforeend', `
+                  <div class="flex items-start gap-3">
+                      <div class="w-9 h-9 rounded-[12px] bg-[#151E2D] border border-[#84CC16]/40 text-[#84CC16] flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                          <i data-lucide="sparkles" class="w-4 h-4"></i>
+                      </div>
+                      <div class="bg-white border border-[#CBD5E1] text-[#151E2D] rounded-[20px] rounded-tl-[4px] p-4 text-[15px] font-bold leading-relaxed break-keep max-w-[88%] shadow-sm">
+                          ${formattedReply}
+                          ${mapButtonHtml}
+                          <div class="mt-3 pt-2.5 border-t border-[#F1F5F9] flex justify-end">
+                              <button onclick="speakAiAnswer('${safeSpeechText}', this)" class="px-3.5 py-1.5 bg-[#F8FAFC] hover:bg-[#E2E8F0] text-[#151E2D] border border-[#CBD5E1] rounded-full text-[12.5px] font-black flex items-center gap-1.5 shadow-sm active:scale-95 transition-all">
+                                  <i data-lucide="volume-2" class="w-4 h-4 text-[#4D7C0F]"></i> 답변 음성으로 듣기
+                              </button>
+                          </div>
+                      </div>
+                  </div>
+              `);
+          } catch (e) {
+              document.getElementById(loadingId)?.remove();
+              box.insertAdjacentHTML('beforeend', `
+                  <div class="flex items-start gap-3">
+                      <div class="w-9 h-9 rounded-[12px] bg-[#151E2D] text-[#F59E0B] flex items-center justify-center shrink-0 mt-0.5">
+                          <i data-lucide="alert-circle" class="w-5 h-5"></i>
+                      </div>
+                      <div class="bg-white border border-[#CBD5E1] text-[#151E2D] rounded-[20px] rounded-tl-[4px] p-4 text-[14px] font-black">
+                          일시적인 통신 지연이 발생했습니다. 다시 한번 전송을 눌러주세요.
+                      </div>
+                  </div>
+              `);
+          }
+          box.scrollTop = box.scrollHeight;
+          if (typeof lucide !== 'undefined') lucide.createIcons();
+      }
+
+      // 🎙️ 1. 한국어 음성 인식
+      let aiSpeechRec = null;
+      let isAiListening = false;
+
+      function toggleAiVoiceInput() {
+          const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+          if (!SpeechRecognition) {
+              return alert("현재 사용 중인 인터넷 창에서는 음성 인식을 지원하지 않습니다. 크롬(Chrome)이나 삼성 인터넷, 사파리에서 이용해 주세요.");
+          }
+
+          const btn = document.getElementById('aiMicBtn');
+          const textEl = document.getElementById('aiMicText');
+          const input = document.getElementById('aiChatInput');
+
+          if (isAiListening && aiSpeechRec) {
+              aiSpeechRec.stop();
+              return;
+          }
+
+          aiSpeechRec = new SpeechRecognition();
+          aiSpeechRec.lang = 'ko-KR';
+          aiSpeechRec.interimResults = false;
+          aiSpeechRec.maxAlternatives = 1;
+
+          aiSpeechRec.onstart = () => {
+              isAiListening = true;
+              btn.className = "px-4 py-3.5 bg-[#151E2D] border-2 border-[#FEE500] text-[#FEE500] rounded-[16px] font-black text-[15px] shadow-md animate-pulse shrink-0 flex items-center justify-center gap-1.5";
+              textEl.innerText = "듣는중..";
+              input.placeholder = "지금 말씀하세요 (말씀이 끝나면 자동 전송됩니다)";
+          };
+
+          aiSpeechRec.onresult = (event) => {
+              const transcript = event.results[0][0].transcript;
+              if (transcript && transcript.trim() !== '') {
+                  input.value = transcript.trim();
+                  setTimeout(() => sendAiChatMessage(), 200);
+              }
+          };
+
+          aiSpeechRec.onerror = (event) => {
+              if (event.error === 'not-allowed') {
+                  alert("마이크 권한이 차단되어 있습니다. 주소창 옆 자물쇠(또는 설정)에서 마이크 권한을 '허용'해 주세요.");
+              }
+          };
+
+          aiSpeechRec.onend = () => {
+              isAiListening = false;
+              btn.className = "px-4 py-3.5 bg-[#FEE500] hover:brightness-95 border border-[#EAB308]/50 text-[#151E2D] rounded-[16px] font-black text-[15px] shadow-sm active:scale-95 transition-all shrink-0 flex items-center justify-center gap-1.5";
+              textEl.innerText = "음성";
+              input.placeholder = "음성 버튼을 누르거나 질문을 입력하세요";
+          };
+
+          aiSpeechRec.start();
+      }
+
+      // 🔊 2. 답변 소리로 읽어주기
+      function speakAiAnswer(text, btnEl) {
+          if (!('speechSynthesis' in window)) {
+              return alert("이 기기에서는 음성 읽어주기를 지원하지 않습니다.");
+          }
+          if (window.speechSynthesis.speaking) {
+              window.speechSynthesis.cancel();
+              if (btnEl) btnEl.innerHTML = `<i data-lucide="volume-2" class="w-4 h-4 text-[#4D7C0F]"></i> 답변 음성으로 듣기`;
+              if (typeof lucide !== 'undefined') lucide.createIcons();
+              return;
+          }
+          const utter = new SpeechSynthesisUtterance(text);
+          utter.lang = 'ko-KR';
+          utter.rate = 1.05;
+          if (btnEl) {
+              btnEl.innerHTML = `<i data-lucide="volume-x" class="w-4 h-4 text-[#D97706]"></i> 소리 끄기 (낭독 중)`;
+              if (typeof lucide !== 'undefined') lucide.createIcons();
+          }
+          utter.onend = () => {
+              if (btnEl) {
+                  btnEl.innerHTML = `<i data-lucide="volume-2" class="w-4 h-4 text-[#4D7C0F]"></i> 답변 음성으로 듣기`;
+                  if (typeof lucide !== 'undefined') lucide.createIcons();
+              }
+          };
+          window.speechSynthesis.speak(utter);
+      }
+    </script>
     <!-- ================= [스마트 식물검색 화면] ================= -->
     <section id="encyclopediaView" class="hidden space-y-4">
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5">
@@ -2809,7 +3179,7 @@
         if(typeof lucide !== 'undefined') lucide.createIcons();
     }
     function switchView(mode, pushHistory = true) {
-      const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView', 'calendarView', 'ledgerView', 'encyclopediaView', 'loungeView'];
+      const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView', 'calendarView', 'ledgerView', 'encyclopediaView', 'loungeView', 'aiChatView'];
       views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
       
       const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient', 'tabContacts', 'tabCalendar'];
@@ -2862,6 +3232,8 @@
       else if (mode === 'ledger') { document.getElementById('ledgerView').classList.remove('hidden'); activeTabId = 'tabLedger'; renderLedgerCalendar(); }
       else if (mode === 'encyclopedia') { document.getElementById('encyclopediaView').classList.remove('hidden'); activeTabId = 'tabEncyclopedia'; }
       else if (mode === 'lounge') { document.getElementById('loungeView').classList.remove('hidden'); activeTabId = 'tabLounge'; }
+      else if (mode === 'lounge') { document.getElementById('loungeView').classList.remove('hidden'); activeTabId = 'tabLounge'; }
+      else if (mode === 'aiChat') { document.getElementById('aiChatView').classList.remove('hidden'); activeTabId = 'tabAiChat'; initAiChatView(); }
       else if (mode === 'home') { activeTabId = ''; }
       else { document.getElementById('clientView').classList.remove('hidden'); activeTabId = currentIsQuote ? 'tabQuoteList' : 'tabClient'; }
 
@@ -3882,32 +4254,55 @@
     async function fetchWeatherApi(lat, lon) {
         try {
             try {
-                const geoRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=ko`);
-                const geoData = await geoRes.json();
-                
-                const r1 = (geoData.principalSubdivision || '').trim();
-                const r2 = (geoData.city || '').trim();
-                let r3 = (geoData.locality || '').trim();
-                
-                // 구/동 단위 정밀 추출
-                if (geoData.localityInfo && geoData.localityInfo.administrative) {
-                    const adminList = geoData.localityInfo.administrative;
-                    const guArea = adminList.find(item => item.name && item.name.endsWith('구'));
-                    const dongArea = adminList.find(item => item.name && (item.name.endsWith('동') || item.name.endsWith('읍') || item.name.endsWith('면')));
-                    if (guArea && dongArea) {
-                        r3 = `${guArea.name.trim()} ${dongArea.name.trim()}`; // 예: 장안구 율천동
-                    } else if (guArea) {
-                        r3 = guArea.name.trim();
+                let sido = "", siGun = "", dong = "";
+
+                // 1차: 한국 동(행정동/법정동) 단위 정밀 지도 엔진 호출
+                try {
+                    const nomRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&accept-language=ko`);
+                    const nomData = await nomRes.json();
+                    if (nomData && nomData.address) {
+                        const addr = nomData.address;
+                        sido = (addr.province || addr.state || '').trim();
+                        const cityCand = (addr.city || addr.county || '').trim();
+                        if (cityCand.endsWith('특별시') || cityCand.endsWith('광역시') || cityCand.endsWith('자치시')) {
+                            sido = cityCand;
+                        } else if (cityCand.endsWith('시') || cityCand.endsWith('군')) {
+                            siGun = cityCand;
+                        }
+                        // '구'는 건너뛰고 '동/읍/면/가'만 정확히 추출
+                        const dongCand = [addr.quarter, addr.neighbourhood, addr.suburb, addr.village, addr.town, addr.hamlet]
+                            .map(v => (v || '').trim())
+                            .find(v => v && !v.endsWith('구') && (v.endsWith('동') || v.endsWith('읍') || v.endsWith('면') || v.endsWith('가') || v.endsWith('리')));
+                        if (dongCand) dong = dongCand;
+                    }
+                } catch(e) {}
+
+                // 2차: 백업 위성 주소 엔진으로 빈칸 보완 ('~구'는 철저히 배제)
+                if (!sido || !dong) {
+                    const geoRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=ko`);
+                    const geoData = await geoRes.json();
+                    if (!sido) sido = (geoData.principalSubdivision || '').trim();
+                    const bCity = (geoData.city || '').trim();
+                    if (!siGun && (bCity.endsWith('시') || bCity.endsWith('군')) && !bCity.endsWith('특별시') && !bCity.endsWith('광역시')) {
+                        siGun = bCity;
+                    }
+                    if (!dong && geoData.localityInfo) {
+                        const allAreas = [...(geoData.localityInfo.administrative || []), ...(geoData.localityInfo.informative || [])];
+                        const foundDong = allAreas.find(item => item.name && !item.name.endsWith('구') && (item.name.endsWith('동') || item.name.endsWith('읍') || item.name.endsWith('면') || item.name.endsWith('가')));
+                        if (foundDong) dong = foundDong.name.trim();
+                        else if (geoData.locality && !geoData.locality.endsWith('구')) dong = geoData.locality.trim();
                     }
                 }
 
+                // 최종 조합: [시/도] + [시/군 (구 제외)] + [동/읍/면]
                 const uniqueParts = [];
-                [r1, r2, r3].forEach(part => {
-                    if (part && !uniqueParts.includes(part)) uniqueParts.push(part);
+                [sido, siGun, dong].forEach(part => {
+                    if (part && !part.endsWith('구') && !uniqueParts.includes(part)) uniqueParts.push(part);
                 });
                 
-                const cleanName = uniqueParts.slice(0, 3).join(' ') || "현재 위치";
+                const cleanName = uniqueParts.join(' ') || "현재 위치";
                 
+                // ① 오늘의 조경 날씨 모달 위치 업데이트
                 const locEl = document.getElementById('weatherLocation');
                 if (locEl) {
                     locEl.innerHTML = `
@@ -3915,10 +4310,17 @@
                         <span class="inline-flex items-center gap-1 bg-[#091526]/90 border border-[#FEE500]/60 text-[#FEE500] text-[11.5px] font-black px-2.5 py-1 rounded-full shadow-md ml-0.5">
                             <i data-lucide="refresh-cw" class="w-3 h-3 text-[#FEE500]"></i> 위치갱신
                         </span>`;
-                    if (window.lucide) lucide.createIcons();
                 }
                 
                 localStorage.setItem('shinhwa_last_loc', JSON.stringify({ lat, lon, name: cleanName, time: Date.now() }));
+
+                // ② AI 현장 만능 비서 상단 위치도 실시간 동기화
+                const aiLocEl = document.getElementById('aiChatLocText');
+                if (aiLocEl) {
+                    const tempNow = document.getElementById('weatherMainTemp')?.innerText || '';
+                    aiLocEl.innerHTML = `<i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#84CC16] shrink-0"></i> 현위치: <span class="text-white font-black">${cleanName}</span> <span class="text-[#84CC16]">(${tempNow})</span>`;
+                }
+                if (window.lucide) lucide.createIcons();
             } catch(e) {}
             const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=temperature_2m,weathercode,precipitation_probability,precipitation&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum&timezone=Asia%2FSeoul`;
             const wRes = await fetch(weatherUrl); const wData = await wRes.json();
@@ -4229,6 +4631,8 @@
           <button onclick="filterBoard('현장협력', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">🤝 현장협력</button>
           <button onclick="filterBoard('장비자재', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">🛒 장비·자재</button>
           <button onclick="filterBoard('노하우', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">💡 노하우</button>
+          <button onclick="filterBoard('일감양도', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">💼 일감양도</button>
+          <button onclick="filterBoard('견적단가', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">📊 견적·단가</button>
           <button onclick="filterBoard('불량거래처', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">🚨 불량거래처</button>
       </div>
 
@@ -4313,10 +4717,12 @@
       
       const boardNotices = {
           '전체': '건강한 조경 문화를 위해 상호 존중과 매너를 지켜주세요. 당사자 간의 거래 및 분쟁에 대해 조경노트PRO는 법적 책임을 지지 않습니다.',
-          '불량거래처': '<span class="text-red-500 font-black">🚨 [주의] 반드시 객관적 사실에 근거하여 작성해 주세요.</span> 허위 사실 유포 및 악의적 비방 시 발생하는 법적 책임(명예훼손 등)은 작성자 본인에게 있으며, 운영진은 분쟁에 개입하거나 책임지지 않습니다.',
+          '불량거래처': '<span class="text-red-600 font-black">🚨 [주의] 반드시 객관적 사실에 근거하여 작성해 주세요.</span> 허위 사실 유포 및 악의적 비방 시 발생하는 법적 책임(명예훼손 등)은 작성자 본인에게 있으며, 운영진은 분쟁에 개입하거나 책임지지 않습니다.',
           '현장협력': '🤝 사업자 인증을 마친 검증된 대표님들의 공간입니다. 상호 간의 약속 이행과 매너를 부탁드립니다. (※ 당사자 간 분쟁 시 앱에서는 책임지지 않습니다.)',
-          '장비자재': '🛒 장비 렌탈, 잉여 자재 매매 및 <span class="text-blue-500 font-black">[무료 나눔]</span>을 위한 공간입니다. 거래 시 상태를 정확히 고지하고 안전 거래를 지향해 주세요.',
-          '노하우': '💡 조경 기술, 수목 관리, 전지 요령 등 대표님만의 귀중한 현장 노하우를 자유롭게 나누는 공간입니다.'
+          '장비자재': '🛒 장비 렌탈, 잉여 수목/자재 매매 및 <span class="text-blue-600 font-black">[무료 나눔]</span>을 위한 공간입니다. 거래 시 상태를 정확히 고지하고 안전 거래를 지향해 주세요.',
+          '노하우': '💡 조경 기술, 수목 관리, 전지 요령 등 대표님만의 귀중한 현장 노하우를 자유롭게 나누는 공간입니다.',
+          '일감양도': '💼 <span class="text-purple-700 font-black">[일감 패스·공사 양도 주의사항]</span> 단순 미확정 문의가 아닌, 일정 중복·타지역 등으로 진행이 어려운 <strong>확정된 공사 및 관리 오더</strong>를 양도·협업하는 공간입니다. 사전 답사, 작업 범위, 정산 조건을 당사자 간 명확히 확인하시고, 양도 후 발생하는 시공 하자·대금 미지급 등 모든 분쟁에 대해 본 플랫폼은 일체 개입하거나 법적 책임을 지지 않습니다.',
+          '견적단가': '📊 <span class="text-emerald-800 font-black">[실전 견적·단가 자문 안내]</span> 현장 여건을 모른 채 너무 낮게 견적을 넣어 손해를 보거나, 과다 산출로 공사를 놓치는 피해를 서로 방지하기 위해 <strong>검증된 대표님들끼리만 적정 실행 단가를 자문하고 공유하는 비밀 공간</strong>입니다. 공유된 단가는 참고용 지표이며 최종 투찰 및 계약의 책임은 본인에게 있습니다.'
       };
 
       function filterBoard(category, btnElement) {
@@ -4334,7 +4740,9 @@
               '불량거래처': '불량 거래처 경보',
               '현장협력': '현장 협력·지원',
               '장비자재': '장비·자재 직거래',
-              '노하우': '실무 노하우 공유'
+              '노하우': '실무 노하우 공유',
+              '일감양도': '일감 패스·공사 양도',
+              '견적단가': '실전 견적·단가 자문'
           };
           const titleEl = document.getElementById('boardMainTitle');
           if(titleEl && titleMap[category]) {
@@ -4367,7 +4775,9 @@
               '불량 거래처 경보': '불량거래처',
               '현장 협력·지원': '현장협력',
               '장비·자재 직거래': '장비자재',
-              '실무 노하우 공유': '노하우'
+              '실무 노하우 공유': '노하우',
+              '일감 패스·공사 양도': '일감양도',
+              '실전 견적·단가 자문': '견적단가'
           };
           let targetCat = filterMap[categoryTitle] || '전체';
           
@@ -4434,6 +4844,8 @@
                       <option value="현장협력">🤝 현장 협력·지원</option>
                       <option value="장비자재">🛒 장비·자재 직거래</option>
                       <option value="노하우">💡 실무 노하우 공유</option>
+                      <option value="일감양도">💼 일감 패스·공사 양도</option>
+                      <option value="견적단가">📊 실전 견적·단가 자문</option>
                       <option value="불량거래처">🚨 불량 거래처 경보</option>
                   </select>
               </div>
@@ -4528,7 +4940,8 @@
                   else if(post.category === '현장협력') badgeHtml = `<span class="bg-[#EFF6FF] text-blue-600 text-[13px] font-black px-3 py-1.5 rounded-md border border-[#DBEAFE]">🤝 현장 지원요청</span>`;
                   else if(post.category === '장비자재') badgeHtml = `<span class="bg-[#ECFCCB] text-[#4D7C0F] text-[13px] font-black px-3 py-1.5 rounded-md border border-[#84CC16]/40">🛒 장비·자재 직거래</span>`;
                   else if(post.category === '노하우') badgeHtml = `<span class="bg-[#F4F5F4] text-[#4E5968] text-[13px] font-black px-3 py-1.5 rounded-md border border-[#EAEBEA]">💡 실무 노하우 공유</span>`;
-
+                  else if(post.category === '일감양도') badgeHtml = `<span class="bg-purple-50 text-purple-700 text-[13px] font-black px-3 py-1.5 rounded-md border border-purple-200">💼 일감 패스·공사 양도</span>`;
+                  else if(post.category === '견적단가') badgeHtml = `<span class="bg-emerald-50 text-emerald-700 text-[13px] font-black px-3 py-1.5 rounded-md border border-emerald-200">📊 실전 견적·단가 자문</span>`;     
                   let buttonsHtml = '';
                   if(post.category !== '불량거래처') {
                       const isMyPost = (post.authorId === currentUserId);
