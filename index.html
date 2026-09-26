@@ -546,6 +546,10 @@
             <input type="tel" id="inputClientPhone" oninput="autoHyphen(this)" placeholder="연락처 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 py-4 text-[17px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16] placeholder:text-[#94A3B8] placeholder:font-bold placeholder:text-[13.5px]">
           </div>
           <div>
+            <label class="block text-[17px] font-black text-[#151E2D] mb-2">작업 날짜 <span class="text-[12.5px] font-bold text-[#64748B]">(일정표에 자동 등록)</span></label>
+            <input type="date" id="inputWorkDate" class="w-full h-[58px] bg-[#F9F9F8] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 text-[17px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16]"><!-- 📅 [패치 #9] -->
+          </div>
+          <div>
             <label class="block text-[17px] font-black text-[#151E2D] mb-2">작업타이틀</label>
             <input type="text" id="inputRound" placeholder="작업타이틀 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 py-4 text-[17px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16] placeholder:text-[#94A3B8] placeholder:font-bold placeholder:text-[13.5px]">
           </div>
@@ -1455,7 +1459,7 @@
             <div class="bg-[#F2FBEC] p-4 rounded-[18px] border border-[#EAEBEA] shadow-sm flex flex-col gap-1.5">
               <div class="flex justify-between items-start w-full gap-2">
                 <div class="text-[15px] font-black text-[#151E2D] break-keep leading-snug">수신: <span id="viewDocClientName">-</span> 귀하</div>
-                <div class="text-[12px] font-bold text-[#4E5968] flex-shrink-0 mt-0.5 whitespace-nowrap">발행일: <span id="viewDate">-</span></div>
+                <div class="text-[12px] font-bold text-[#4E5968] flex-shrink-0 mt-0.5 whitespace-nowrap"><span id="viewDateLabel">발행일</span>: <span id="viewDate">-</span></div>
               </div>
               <div class="text-[12px] font-bold text-[#4E5968] flex items-center gap-1"><i data-lucide="phone" class="w-3.5 h-3.5"></i> <span id="viewDocClientPhone">-</span></div>
               <div class="text-[12px] font-bold text-[#4E5968] flex items-center gap-1 mt-0.5"><i data-lucide="map-pin" class="w-3.5 h-3.5"></i> <span id="viewDocClientAddress">-</span></div>
@@ -1817,6 +1821,25 @@
     document.getElementById('btnAgreeTerms').addEventListener('click', () => { if (currentTermType === 'privacy') document.getElementById('obPrivacyCheck').checked = true; else if (currentTermType === 'terms') document.getElementById('obTermsCheck').checked = true; closeTermsModal(); });
 
     function getAuthUrl(url) { if (!currentIdToken) return url; const sep = url.includes('?') ? '&' : '?'; return `${url}${sep}auth=${currentIdToken}`; }
+    // 📅 [패치 #9] 작업 날짜 도우미
+    function getTodayStr() { const t = new Date(); return `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`; }
+    function formatDotDate(ymd) { if (!ymd) return ''; const p = ymd.split('-'); return p.length === 3 ? `${p[0]}. ${p[1]}. ${p[2]}` : ymd; }
+    function resetWorkDateInput() { const el = document.getElementById('inputWorkDate'); if (el) el.value = getTodayStr(); }
+    resetWorkDateInput();
+    function linkWorkLogToSchedule(recId, workDate, clientName, round, cat) {
+        if (!workDate || !clientName) return;
+        const title = round ? `${clientName} - ${round}` : clientName;
+        const memo = cat ? `작업: ${cat.split(',').join(', ')}` : '';
+        let linked = schedules.find(s => s && s.recId === recId);
+        if (linked) { linked.date = workDate; linked.title = title; linked.memo = memo; }
+        else {
+            // 이미 같은 날짜에 같은 고객 일정이 있으면 중복 등록하지 않고 연결만 함
+            const same = schedules.find(s => s && s.date === workDate && !s.recId && s.title && s.title.includes(clientName));
+            if (same) { same.recId = recId; }
+            else { schedules.push({ id: Date.now() + 2, date: workDate, title: title, color: 'border-[#84CC16]', tag: '작업일지', memo: memo, recId: recId }); }
+        }
+        updateData('schedules', schedules);
+    }
     // 🔐 [패치 #3] 로그인 토큰 자동 갱신 (Firebase 토큰은 1시간 뒤 만료되므로 45분마다 새로 발급)
     let currentRefreshToken = ""; let tokenIssuedAt = 0; let tokenRefreshTimer = null;
     async function refreshIdToken() {
@@ -2388,7 +2411,7 @@
         
         let recordObj = {
             id: shortCloudId, type: clean.isQuote ? 'quote' : 'report',
-            date: existingIdx !== -1 ? savedRecords[existingIdx].date : `${new Date().getFullYear()}. ${String(new Date().getMonth()+1).padStart(2,'0')}. ${String(new Date().getDate()).padStart(2,'0')}`,
+            date: clean.wd ? formatDotDate(clean.wd) : existingIdx !== -1 ? savedRecords[existingIdx].date : `${new Date().getFullYear()}. ${String(new Date().getMonth()+1).padStart(2,'0')}. ${String(new Date().getDate()).padStart(2,'0')}`,
             clientName: clean.c, clientPhone: clean.p, round: clean.r, diagnosis: clean.d || '', issue: clean.issue || '',
             cat: clean.cat || '', b: clean.b || '', a: clean.a || '', imgsIssue: clean.imgsIssue || '', payload: clean
         };
@@ -2516,7 +2539,7 @@
       const clientPhone = document.getElementById('inputClientPhone').value; const clientAddress = document.getElementById('inputClientAddress') ? document.getElementById('inputClientAddress').value : '';
       showLoadingOverlay("리포트 발행 중...");
       try {
-        const round = document.getElementById('inputRound').value; const diagnosis = document.getElementById('inputDiagnosis').value; const issueText = document.getElementById('inputIssue').value; 
+        const round = document.getElementById('inputRound').value; const diagnosis = document.getElementById('inputDiagnosis').value; const issueText = document.getElementById('inputIssue').value; const workDate = (document.getElementById('inputWorkDate') && document.getElementById('inputWorkDate').value) || getTodayStr(); /* 📅 [패치 #9] */ 
         const activeBadges = Array.from(document.querySelectorAll('#categoryContainer .cat-btn')).filter(b => b.classList.contains('bg-[#151E2D]')).map(b => b.getAttribute('data-val'));
         const treePruning = document.getElementById('inputTreePruning') ? document.getElementById('inputTreePruning').value.trim() : ''; if(treePruning) activeBadges.push("수목가지치기 (" + treePruning + ")");
         const extraCat = document.getElementById('inputExtraCategory').value.trim(); if(extraCat) activeBadges.push(extraCat);
@@ -2527,12 +2550,13 @@
         const iUrls = await uploadImagesToCloud(issueImages); 
         
         const payloadData = { 
-            isQuote: false, c: clientName, p: clientPhone, addr: clientAddress, r: round, d: diagnosis, issue: issueText, cat: activeBadges.join(','), b: bUrls.join(','), dur: durUrls.join(','), a: aUrls.join(','), imgsIssue: iUrls.join(','),
+            isQuote: false, wd: workDate, c: clientName, p: clientPhone, addr: clientAddress, r: round, d: diagnosis, issue: issueText, cat: activeBadges.join(','), b: bUrls.join(','), dur: durUrls.join(','), a: aUrls.join(','), imgsIssue: iUrls.join(','),
             supName: myCompanyProfile.name, supCeo: myCompanyProfile.ceo, supBiz: myCompanyProfile.bizNum, supPhone: myCompanyProfile.phone 
         };
         
         generatedShareUrl = await createShortCloudLink(payloadData, editingRecordId);
         if (!generatedShareUrl) { document.getElementById('loadingOverlay')?.remove(); return; }
+        try { linkWorkLogToSchedule(new URL(generatedShareUrl).searchParams.get('id'), workDate, clientName, round, payloadData.cat); } catch(e) {} // 📅 [패치 #9] 일정표 자동 등록
 
         let existingClient = clients.find(c => c.name === clientName);
         let selectedTypeEl = document.querySelector('input[name="newClientTypeReport"]:checked'); 
@@ -2552,7 +2576,7 @@
         
         document.getElementById('clientSelect').value = ''; document.getElementById('inputClientPhone').value = '';
         if(document.getElementById('inputClientAddress')) document.getElementById('inputClientAddress').value = '';
-        document.getElementById('inputRound').value = ''; document.getElementById('inputDiagnosis').value = ''; document.getElementById('inputIssue').value = '';
+        document.getElementById('inputRound').value = ''; document.getElementById('inputDiagnosis').value = ''; document.getElementById('inputIssue').value = ''; resetWorkDateInput(); // 📅 [패치 #9]
         document.getElementById('inputExtraCategory').value = ''; if(document.getElementById('inputTreePruning')) document.getElementById('inputTreePruning').value = ''; 
         
         document.querySelectorAll('#categoryContainer .cat-btn').forEach(btn => {
@@ -2623,7 +2647,7 @@
       if(!currentLoadedRecordId) return; let rec = records.find(r => r && r.id === currentLoadedRecordId); if(!rec) return; let payload = rec.payload;
       document.getElementById('clientSelect').value = payload.c || ''; document.getElementById('inputClientPhone').value = payload.p || '';
       if(document.getElementById('inputClientAddress')) document.getElementById('inputClientAddress').value = payload.addr || '';
-      document.getElementById('inputRound').value = payload.r || ''; document.getElementById('inputDiagnosis').value = payload.d || ''; document.getElementById('inputIssue').value = payload.issue || '';
+      document.getElementById('inputRound').value = payload.r || ''; document.getElementById('inputDiagnosis').value = payload.d || ''; document.getElementById('inputIssue').value = payload.issue || ''; if (document.getElementById('inputWorkDate')) document.getElementById('inputWorkDate').value = payload.wd || getTodayStr(); // 📅 [패치 #9]
       
       const foundClient = clients.find(c => c.name === payload.c);
       let r1 = document.querySelector('input[name="newClientTypeReport"][value="정기 관리"]');
@@ -2690,6 +2714,8 @@
 
     function renderClientView(data, viewMode) {
       currentIsQuote = data.isQuote; 
+      if (data.wd) { document.getElementById('viewDateLabel').innerText = '작업일'; document.getElementById('viewDate').innerText = formatDotDate(data.wd); } else { document.getElementById('viewDateLabel').innerText = '발행일'; document.getElementById('viewDate').innerText = formattedDate; } // 📅 [패치 #9]
+      
       document.getElementById('viewDocClientName').innerText = data.c || '-'; 
       let displayPhone = data.p; let displayAddress = data.addr; 
       if (!displayPhone || displayPhone === '연락처 정보 없음' || !displayAddress) { const foundClient = clients.find(cl => cl.name === data.c); if (foundClient) { if(!displayPhone) displayPhone = foundClient.phone; if(!displayAddress) displayAddress = foundClient.address; } }
@@ -3402,14 +3428,41 @@
         if (!modalImages || modalImages.length === 0) return; 
         modalCurrentIdx = idx; updateModalImage(); document.getElementById('imageModal').style.zIndex = "4000"; document.getElementById('imageModal').classList.remove('hidden'); history.pushState({ modalOpen: true }, "", ""); 
     }
-    function updateModalImage() { document.getElementById('modalImg').src = modalImages[modalCurrentIdx]; document.getElementById('modalIndicator').innerText = `${modalCurrentIdx + 1} / ${modalImages.length}`; document.getElementById('prevBtn').style.display = (modalCurrentIdx === 0) ? 'none' : 'block'; document.getElementById('nextBtn').style.display = (modalCurrentIdx === modalImages.length - 1) ? 'none' : 'block'; }
+    function updateModalImage() { if (typeof resetModalZoom === 'function') resetModalZoom(); /* 🔍 [패치 #8] */ document.getElementById('modalImg').src = modalImages[modalCurrentIdx]; document.getElementById('modalIndicator').innerText = `${modalCurrentIdx + 1} / ${modalImages.length}`; document.getElementById('prevBtn').style.display = (modalCurrentIdx === 0) ? 'none' : 'block'; document.getElementById('nextBtn').style.display = (modalCurrentIdx === modalImages.length - 1) ? 'none' : 'block'; }
     function prevImage(e) { if(e) e.stopPropagation(); if(modalCurrentIdx > 0) { modalCurrentIdx--; updateModalImage(); } }
     function nextImage(e) { if(e) e.stopPropagation(); if(modalCurrentIdx < modalImages.length - 1) { modalCurrentIdx++; updateModalImage(); } }
-    function closeModal(fromPopstate = false) { const modal = document.getElementById('imageModal'); if (modal && !modal.classList.contains('hidden')) { modal.classList.add('hidden'); document.getElementById('modalImg').src = ''; if (!fromPopstate) history.back(); } }
+    function closeModal(fromPopstate = false) { const modal = document.getElementById('imageModal'); if (modal && !modal.classList.contains('hidden')) { modal.classList.add('hidden'); if (typeof resetModalZoom === 'function') resetModalZoom(); /* 🔍 [패치 #8] */ document.getElementById('modalImg').src = ''; if (!fromPopstate) history.back(); } }
     
     let modalTouchStartX = 0; let modalTouchStartY = 0; const imageModalEl = document.getElementById('imageModal');
     imageModalEl.addEventListener('touchstart', e => { modalTouchStartX = e.changedTouches[0].screenX; modalTouchStartY = e.changedTouches[0].screenY; }, {passive: true});
-    imageModalEl.addEventListener('touchend', e => { if (imageModalEl.classList.contains('hidden')) return; const diffX = e.changedTouches[0].screenX - modalTouchStartX; const diffY = e.changedTouches[0].screenY - modalTouchStartY; if (Math.abs(diffX) > Math.abs(diffY) * 1.5 && Math.abs(diffX) > 40) { if (diffX < 0) nextImage(); else prevImage(); } }, {passive: true});
+    imageModalEl.addEventListener('touchend', e => { if (imageModalEl.classList.contains('hidden')) return; if (modalZoomScale > 1.01 || modalPinchActive) return; /* 🔍 [패치 #8] 확대 중엔 사진 넘김 중지 */ const diffX = e.changedTouches[0].screenX - modalTouchStartX; const diffY = e.changedTouches[0].screenY - modalTouchStartY; if (Math.abs(diffX) > Math.abs(diffY) * 1.5 && Math.abs(diffX) > 40) { if (diffX < 0) nextImage(); else prevImage(); } }, {passive: true});
+    // 🔍 [패치 #8] 사진 팝업 손가락 확대/축소 + 두 번 톡톡 확대 (카카오톡 등 인앱 브라우저에서도 작동)
+    let modalZoomScale = 1, modalZoomX = 0, modalZoomY = 0, modalPinchActive = false;
+    let zoomStartDist = 0, zoomStartScale = 1, panStartX = 0, panStartY = 0, panOriginX = 0, panOriginY = 0, lastTapTime = 0;
+    const modalImgEl = document.getElementById('modalImg');
+    modalImgEl.style.touchAction = 'none';
+    function applyModalZoom(animate) { modalImgEl.style.transition = animate ? 'translate 0.25s ease, scale 0.25s ease' : 'none'; modalImgEl.style.translate = `${modalZoomX}px ${modalZoomY}px`; modalImgEl.style.scale = String(modalZoomScale); } /* 등장 애니메이션(transform)과 겹치지 않도록 translate/scale 속성 사용 */
+    function resetModalZoom() { modalZoomScale = 1; modalZoomX = 0; modalZoomY = 0; modalImgEl.style.translate = ''; modalImgEl.style.scale = ''; modalImgEl.style.transition = ''; }
+    function clampModalPan() { const maxX = modalImgEl.clientWidth * (modalZoomScale - 1) / 2; const maxY = modalImgEl.clientHeight * (modalZoomScale - 1) / 2; modalZoomX = Math.max(-maxX, Math.min(maxX, modalZoomX)); modalZoomY = Math.max(-maxY, Math.min(maxY, modalZoomY)); }
+    function touchDist(t) { return Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY); }
+    modalImgEl.addEventListener('touchstart', e => {
+        if (e.touches.length === 2) { modalPinchActive = true; zoomStartDist = touchDist(e.touches); zoomStartScale = modalZoomScale; }
+        else if (e.touches.length === 1) {
+            const now = Date.now();
+            if (now - lastTapTime < 300) { e.preventDefault(); lastTapTime = 0; if (modalZoomScale > 1.01) { modalZoomScale = 1; modalZoomX = 0; modalZoomY = 0; } else { modalZoomScale = 2.5; } applyModalZoom(true); return; }
+            lastTapTime = now; panStartX = e.touches[0].clientX; panStartY = e.touches[0].clientY; panOriginX = modalZoomX; panOriginY = modalZoomY;
+        }
+    }, { passive: false });
+    modalImgEl.addEventListener('touchmove', e => {
+        if (e.touches.length === 2 && modalPinchActive) { e.preventDefault(); modalZoomScale = Math.min(4, Math.max(1, zoomStartScale * touchDist(e.touches) / zoomStartDist)); clampModalPan(); applyModalZoom(false); }
+        else if (e.touches.length === 1 && modalZoomScale > 1.01) { e.preventDefault(); modalZoomX = panOriginX + (e.touches[0].clientX - panStartX); modalZoomY = panOriginY + (e.touches[0].clientY - panStartY); clampModalPan(); applyModalZoom(false); }
+    }, { passive: false });
+    modalImgEl.addEventListener('touchend', e => {
+        if (e.touches.length === 1) { panStartX = e.touches[0].clientX; panStartY = e.touches[0].clientY; panOriginX = modalZoomX; panOriginY = modalZoomY; }
+        if (e.touches.length === 0) { if (modalZoomScale <= 1.01) { modalZoomScale = 1; modalZoomX = 0; modalZoomY = 0; applyModalZoom(true); } setTimeout(() => { modalPinchActive = false; }, 80); }
+    });
+    // PC에서는 마우스 휠로 확대/축소
+    modalImgEl.addEventListener('wheel', e => { e.preventDefault(); modalZoomScale = Math.min(4, Math.max(1, modalZoomScale * (e.deltaY < 0 ? 1.15 : 0.87))); if (modalZoomScale <= 1.01) { modalZoomScale = 1; modalZoomX = 0; modalZoomY = 0; } clampModalPan(); applyModalZoom(false); }, { passive: false });
     
     function toggleBadge(btn) { if(btn.classList.contains('bg-[#151E2D]')) { btn.className = "cat-btn p-4 text-[13px] rounded-[16px] font-black text-left bg-white border-[1.5px] border-[#CBD5E1] text-[#151E2D] transition-all"; btn.innerText = "+ " + btn.getAttribute('data-val'); } else { btn.className = "cat-btn p-4 text-[13px] rounded-[16px] font-black text-left bg-[#151E2D] text-[#84CC16] shadow-md border-[1.5px] border-[#151E2D] transition-all"; btn.innerText = "✓ " + btn.getAttribute('data-val'); } }
 
@@ -3852,7 +3905,7 @@
       else { if(r1) r1.checked = true; }
 
       // 3. 텍스트 입력칸 싹 비우기
-      document.getElementById('inputRound').value = '';
+      document.getElementById('inputRound').value = ''; resetWorkDateInput(); // 📅 [패치 #9]
       document.getElementById('inputDiagnosis').value = '';
       document.getElementById('inputIssue').value = '';
 
