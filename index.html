@@ -205,48 +205,52 @@
   <!-- 🔥 메인 헤더 레이아웃 🔥 -->
   <header id="mainHeader" class="no-print sticky top-0 z-40 glass-nav px-5 py-4 shadow-md" style="display: none;">
     <div class="max-w-md mx-auto flex items-center justify-between gap-2">
-      <!-- 좌측: 로고 및 3단 중앙 타이틀 블록 -->
+      <!-- 좌측: 로고 및 3단 중앙 타이틀 블록 (시안 A: 황금비율 확대) -->
+      <style>
+        #company-name-header span:first-child { font-size: 26px !important; }
+        #company-name-header span:last-child { font-size: 25px !important; }
+      </style>
       <div class="flex items-center gap-3.5 min-w-0">
-        <!-- 3단 텍스트 높이에 맞춰 로고 크기를 54px로 키워 좌우 균형 완성 -->
-        <div class="w-[54px] h-[54px] rounded-[18px] bg-[#84CC16] flex items-center justify-center shadow-lg shrink-0">
-          <i data-lucide="leaf" class="w-7 h-7 text-[#151E2D] stroke-[2.5]"></i>
+        <!-- 로고 크기 확대 (54px -> 64px) 및 은은한 테두리 광택 추가 -->
+        <div class="w-[64px] h-[64px] rounded-[20px] bg-[#84CC16] flex items-center justify-center shadow-[0_6px_20px_rgba(132,204,22,0.35)] border border-white/40 shrink-0">
+          <i data-lucide="leaf" class="w-8 h-8 text-[#151E2D] stroke-[2.6]"></i>
         </div>
 
         <div class="flex flex-col min-w-0">
-          <!-- 1줄: 상호명 + 조경 (한 줄 나란히 배치 & 5글자 업체명도 거뜬한 공간 확보) -->
+          <!-- 1줄: 상호명 + 조경 (26px / 25px 확대) -->
           <div id="company-name-header" class="font-black text-white tracking-tight flex items-baseline gap-1.5 flex-wrap leading-none">
             업체명
           </div>
 
-          <!-- 2줄: PRO 마크 & 보안 연동됨 마크 -->
+          <!-- 2줄: PRO 마크 & 보안 연동됨 마크 (12px 확대) -->
           <div class="flex items-center gap-1.5 mt-2">
-            <span class="text-[10.5px] bg-[#84CC16]/20 text-[#84CC16] font-black px-2 py-0.5 rounded uppercase tracking-widest border border-[#84CC16]/30 whitespace-nowrap">PRO</span>
-            <span id="cloudStatusBadge" class="text-[10.5px] bg-blue-500/20 text-blue-400 font-black px-2 py-0.5 rounded uppercase tracking-widest border border-blue-500/30 flex items-center gap-1 whitespace-nowrap">
-              <i data-lucide="cloud" class="w-3 h-3"></i> 보안 연동됨
+            <span class="text-[12px] bg-[#84CC16]/25 text-[#84CC16] font-black px-2.5 py-0.5 rounded-md uppercase tracking-widest border border-[#84CC16]/50 whitespace-nowrap">PRO</span>
+            <span id="cloudStatusBadge" class="text-[12px] bg-sky-500/20 text-sky-300 font-black px-2.5 py-0.5 rounded-md uppercase tracking-widest border border-sky-400/40 flex items-center gap-1 whitespace-nowrap">
+              <i data-lucide="cloud" class="w-3.5 h-3.5"></i> 보안 연동됨
             </span>
           </div>
 
-          <!-- 3줄: 스마트 관리 솔루션 신화 조경노트 -->
-          <span class="text-[13.5px] font-bold text-[#A3A8A3] tracking-tight mt-1.5 whitespace-nowrap">
-            스마트 관리 솔루션 <strong class="text-[#84CC16]">신화 조경노트</strong>
+          <!-- 3줄: 스마트 관리 솔루션 신화 조경노트 (15px 확대) -->
+          <span class="text-[15px] font-extrabold text-[#CBD5E1] tracking-tight mt-1.5 whitespace-nowrap">
+            스마트 관리 솔루션 <strong class="text-[#84CC16] font-black">신화 조경노트</strong>
           </span>
         </div>
       </div>
 
-      <!-- 우측: 설정 / 로그아웃 + 그 아래 좌우 끝선을 칼같이 맞춘 [1:1 문의하기] -->
-      <div class="flex flex-col items-stretch w-[98px] gap-2 shrink-0">
-        <div class="flex items-start justify-between w-full px-0.5">
+      <!-- 우측: 설정 / 로그아웃 (40px 원형 + 13px 글씨) + [1:1 문의하기] 확대 -->
+      <div class="flex flex-col items-stretch w-[112px] gap-2.5 shrink-0">
+        <div class="flex items-start justify-between w-full px-1">
           <button onclick="openSettings()" class="flex flex-col items-center gap-1 group">
-            <div class="w-8 h-8 bg-white/10 group-hover:bg-white/20 rounded-full flex items-center justify-center transition-all border border-white/20 shadow-sm"><i data-lucide="settings" class="w-4 h-4 text-white"></i></div>
-            <span class="text-[11px] font-bold text-white tracking-wide whitespace-nowrap">설정</span>
+            <div class="w-10 h-10 bg-white/12 group-hover:bg-white/20 rounded-full flex items-center justify-center transition-all border border-white/30 shadow-sm"><i data-lucide="settings" class="w-5 h-5 text-white"></i></div>
+            <span class="text-[13px] font-black text-white tracking-wide whitespace-nowrap">설정</span>
           </button>
           <button onclick="logoutAdmin()" class="flex flex-col items-center gap-1 group">
-            <div class="w-8 h-8 bg-red-500/10 group-hover:bg-red-500/20 rounded-full flex items-center justify-center transition-all border border-red-500/20 shadow-sm"><i data-lucide="power" class="w-4 h-4 text-red-500"></i></div>
-            <span class="text-[11px] font-bold text-white tracking-wide whitespace-nowrap">로그아웃</span>
+            <div class="w-10 h-10 bg-red-500/15 group-hover:bg-red-500/25 rounded-full flex items-center justify-center transition-all border border-red-400/40 shadow-sm"><i data-lucide="power" class="w-5 h-5 text-red-400"></i></div>
+            <span class="text-[13px] font-black text-white tracking-wide whitespace-nowrap">로그아웃</span>
           </button>
         </div>
-        <button id="tabInquiry" onclick="openInquiryModal()" class="w-full py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-[#F59E0B]/50 text-white text-[11px] font-black flex items-center justify-center gap-1 shadow-sm active:scale-95 transition-all whitespace-nowrap">
-          <i data-lucide="headphones" class="w-3 h-3 text-[#F59E0B] shrink-0"></i> 1:1 문의하기
+        <button id="tabInquiry" onclick="openInquiryModal()" class="w-full py-2 rounded-full bg-white/12 hover:bg-white/20 border-[1.5px] border-[#FDE047]/70 text-white text-[12.5px] font-black flex items-center justify-center gap-1 shadow-md active:scale-95 transition-all whitespace-nowrap">
+          <i data-lucide="headphones" class="w-3.5 h-3.5 text-[#FDE047] shrink-0"></i> 1:1 문의하기
         </button>
       </div>
     </div>
@@ -318,15 +322,15 @@
             </nav>
         </div>
                 
-        <!-- 메뉴 접기 버튼 -->
+        <!-- 메뉴 접기 버튼 (골드&실버 입체 테두리 적용) -->
             <div class="flex justify-center mt-5 relative">
-                <button onclick="toggleMainCategory()" class="flex items-center gap-2.5 text-[17px] font-black text-[#151E2D] tracking-tight hover:bg-[#F4F5F4] active:scale-95 transition-all px-7 py-3.5 bg-white border border-[#EAEBEA] rounded-full shadow-lg" style="font-family: 'Pretendard', sans-serif !important;">
-                    <span id="toggleCategoryText" class="font-black text-[#151E2D] tracking-tight" style="font-family: 'Pretendard', sans-serif !important; font-size: 17px !important;">메뉴 접기</span>
-                    <div class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#84CC16] shadow-sm shrink-0">
+                <button onclick="toggleMainCategory()" class="flex items-center gap-2.5 text-[17.5px] font-black text-[#151E2D] tracking-tight hover:brightness-95 active:scale-95 transition-all px-8 py-3.5 rounded-full" style="font-family: 'Pretendard', sans-serif !important; background: linear-gradient(135deg, #FFFFFF 0%, #E2E8F0 100%) !important; border: 2px solid #D4AF37 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px #FFFFFF !important;">
+                    <span id="toggleCategoryText" class="font-black text-[#151E2D] tracking-tight" style="font-family: 'Pretendard', sans-serif !important; font-size: 17.5px !important;">메뉴 접기</span>
+                    <div class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#84CC16] border border-[#151E2D]/25 shadow-sm shrink-0">
                         <i id="toggleCategoryIcon" data-lucide="arrow-up" class="w-4 h-4 stroke-[3] text-[#151E2D]"></i>
                     </div>
                 </button>
-                <div class="absolute top-1/2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent -z-10"></div>
+                <div class="absolute top-1/2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent -z-10"></div>
             </div>
     </div>
   </header>
