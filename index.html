@@ -282,64 +282,59 @@
     <div class="max-w-md mx-auto mt-4">
         <!-- 접기/펼치기 영역 시작 (1:1 문의하기 제외 후 11개 버튼 완벽 정렬) -->
         <div id="mainCategoryWrapper" class="max-w-md mx-auto" style="margin-top: 22px !important; padding-top: 22px !important; border-top: 1px solid rgba(255, 255, 255, 0.12) !important;">
+            <!-- 🎨 [패치 #15] 메뉴 C안: 업무 관리 / 현장 도구 / 대표님 전용 3묶음 -->
+            <div class="menu-sec flex items-center gap-2 mb-2.5 mt-0 ml-1"><span class="w-1.5 h-5 rounded-full" style="background:#84CC16"></span><span class="text-[16px] font-black tracking-tight" style="color:#84CC16 !important;">업무 관리</span><span class="text-[13px] font-bold text-white/60"></span></div>
             <nav class="grid grid-cols-3 gap-3">
-                <!-- 1~6. 상단 6개 버튼 (스타일 B: 모던 다크 티타늄 + 실버 테두리) -->
                 <button id="tabCalendar" onclick="switchView('calendar')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="calendar-days" class="w-6 h-6"></i><span class="btn-title">작업 일정표</span></button>
                 <button id="tabAdmin" onclick="switchView('admin')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="pen-tool" class="w-6 h-6"></i><span class="btn-title">작업 일지 작성</span></button>
                 <button id="tabClient" onclick="switchView('clients')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="building-2" class="w-6 h-6"></i><span class="btn-title">거래처 목록</span></button>
                 <button id="tabQuote" onclick="switchView('quote')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="calculator" class="w-6 h-6"></i><span class="btn-title">견적서 작성</span></button>
                 <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="folder-open" class="w-6 h-6"></i><span class="btn-title">견적 보관함</span></button>
                 <button id="tabContacts" onclick="switchView('contacts')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="users" class="w-6 h-6"></i><span class="btn-title">연락처</span></button>
+            </nav>
 
-                <!-- 7. 식물 검색 (웜 연노랑 그라데이션 + 깔끔한 화이트실버 테두리) -->
-                <button id="tabEncyclopedia" onclick="switchView('encyclopedia')" class="w-full hover:brightness-95 transition-all flex flex-col items-center justify-center gap-2.5" style="background: linear-gradient(135deg, #FEF08A 0%, #FDE047 100%) !important; border: 1.5px solid rgba(255, 255, 255, 0.9) !important; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45), inset 0 1px 1px #FFFFFF !important;">
-                    <i data-lucide="book-open" class="w-6 h-6 text-[#151E2D] stroke-[2.5]" style="color: #151E2D !important;"></i>
-                    <span class="btn-title font-black text-[#151E2D]" style="color: #151E2D !important;">식물 검색</span>
+            <div class="menu-sec flex items-center gap-2 mb-2.5 mt-5 ml-1"><span class="w-1.5 h-5 rounded-full" style="background:#F8FAFC"></span><span class="text-[16px] font-black tracking-tight" style="color:#F8FAFC !important;">현장 도구</span><span class="text-[13px] font-bold text-white/60">식물·AI렌즈·날씨</span></div>
+            <nav class="grid grid-cols-3 gap-3">
+                <button id="tabEncyclopedia" onclick="switchView('encyclopedia')" class="w-full hover:brightness-95 transition-all flex flex-col items-center justify-center gap-2.5" style="background: linear-gradient(160deg, #FFFFFF 0%, #EEF2F6 100%) !important; border: 1.5px solid #84CC16 !important; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35) !important;">
+                    <i data-lucide="book-open" class="w-6 h-6 stroke-[2.5]" style="color: #3F6212 !important;"></i>
+                    <span class="btn-title font-black" style="color: #0F172A !important;">식물 검색</span>
                 </button>
-
-                <!-- 8. AI 수목검색 렌즈 (웜 연노랑 그라데이션 + 깔끔한 화이트실버 테두리) -->
-                <button id="tabLens" onclick="switchView('lens')" class="w-full hover:brightness-95 transition-all flex flex-col items-center justify-center gap-2.5" style="background: linear-gradient(135deg, #FEF08A 0%, #FDE047 100%) !important; border: 1.5px solid rgba(255, 255, 255, 0.9) !important; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45), inset 0 1px 1px #FFFFFF !important;">
-                    <i data-lucide="scan-line" class="w-6 h-6 text-[#151E2D] stroke-[2.5]" style="color: #151E2D !important;"></i>
-                    <span class="btn-title-long font-black text-[#151E2D]" style="color: #151E2D !important;">AI 수목검색 렌즈</span>
+                <button id="tabLens" onclick="switchView('lens')" class="w-full hover:brightness-95 transition-all flex flex-col items-center justify-center gap-2.5" style="background: linear-gradient(160deg, #FFFFFF 0%, #EEF2F6 100%) !important; border: 1.5px solid #84CC16 !important; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35) !important;">
+                    <i data-lucide="scan-line" class="w-6 h-6 stroke-[2.5]" style="color: #3F6212 !important;"></i>
+                    <span class="btn-title-long font-black" style="color: #0F172A !important;">AI 수목검색 렌즈</span>
                 </button>
-
-                <!-- 9. 오늘의 조경 날씨 (날씨 D: 하늘빛 백금 그라데이션 + 화이트실버 테두리) -->
-                <button id="tabWeather" onclick="openWeatherModal()" class="w-full relative overflow-hidden group hover:brightness-95 transition-all flex flex-col items-center justify-center gap-2" style="background: linear-gradient(135deg, #8FA6B8 0%, #D8E8F2 45%, #FFFFFF 75%, #B0C4D4 100%) !important; border: 1.5px solid #FFFFFF !important; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45), inset 0 1px 1px #FFFFFF !important;">
+                <button id="tabWeather" onclick="openWeatherModal()" class="w-full relative overflow-hidden group hover:brightness-95 transition-all flex flex-col items-center justify-center gap-2" style="background: linear-gradient(160deg, #FFFFFF 0%, #EEF2F6 100%) !important; border: 1.5px solid #84CC16 !important; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35) !important;">
                     <div class="flex items-center gap-1 z-10">
-                        <svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.35));">
+                        <svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none">
                             <path d="M12 1L14.2 4.2L18 2.8L18.2 6.8L22.2 7.5L20.3 11L23 14L19.5 16L20.2 20L16.3 19.8L14.8 23.5L12 20.8L9.2 23.5L7.7 19.8L3.8 20L4.5 16L1 14L3.7 11L1.8 7.5L5.8 6.8L6 2.8L9.8 4.2L12 1Z" fill="#FFB800" stroke="#B45309" stroke-width="1"/>
                             <circle cx="12" cy="12" r="5.2" fill="#FFE600" stroke="#D97706" stroke-width="1.2"/>
                         </svg>
-                        <small style="font-size: 10.5px !important; line-height: 1.1 !important; background-color: #151E2D !important; color: #FDE047 !important; border: 1px solid #D4AF37 !important; padding: 3px 5px !important; border-radius: 6px !important; font-weight: 900 !important;">실시간 기상</small>
+                        <small style="font-size: 11.5px !important; line-height: 1.1 !important; background-color: #151E2D !important; color: #FDE047 !important; padding: 3px 5px !important; border-radius: 6px !important; font-weight: 900 !important;">실시간</small>
                     </div>
                     <span id="weatherBannerSub" class="btn-title-long font-black z-10" style="color: #0F172A !important;">오늘의 조경 날씨</span>
                 </button>
+            </nav>
 
-                <!-- 10. 개인 장부함 (24K 골드 그라데이션 + 크림골드 테두리) -->
-                <button id="tabLedger" onclick="checkLedgerPin()" class="w-full relative overflow-hidden hover:brightness-105 transition-all flex flex-col items-center justify-center gap-2.5" style="background: linear-gradient(135deg, #B48327 0%, #D4AF37 45%, #F7E9A0 75%, #C59B27 100%) !important; border: 1.5px solid #FEF08A !important; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45), inset 0 1px 1px #FFFFFF !important;">
+            <div class="menu-sec flex items-center gap-2 mb-2.5 mt-5 ml-1"><span class="w-1.5 h-5 rounded-full" style="background:#E3B341"></span><span class="text-[16px] font-black tracking-tight" style="color:#E3B341 !important;">대표님 전용</span><span class="text-[13px] font-bold text-white/60">장부·라운지·AI비서</span></div>
+            <nav class="grid grid-cols-3 gap-3">
+                <button id="tabLedger" onclick="checkLedgerPin()" class="w-full relative overflow-hidden hover:brightness-110 transition-all flex flex-col items-center justify-center gap-2.5" style="background: linear-gradient(145deg, #1E293B 0%, #273449 60%, #1E293B 100%) !important; border: 1.5px solid #E3B341 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important;">
                     <div class="flex items-center gap-1.5">
-                        <i data-lucide="wallet" class="w-6 h-6 text-[#151E2D] stroke-[2.5]"></i>
-                        <span class="bg-[#151E2D] text-[#FDE047] p-1 rounded-md shadow-sm flex items-center justify-center">
-                            <i data-lucide="lock" class="w-3.5 h-3.5 stroke-[2.5]"></i>
-                        </span>
+                        <i data-lucide="wallet" class="w-6 h-6 stroke-[2.3]" style="color: #E3B341 !important;"></i>
+                        <i data-lucide="lock" class="w-4 h-4 stroke-[2.5]" style="color: #E3B341 !important;"></i>
                     </div>
-                    <span class="btn-title font-black" style="color: #151E2D !important;">개인 장부함</span>
+                    <span class="btn-title font-black" style="color: #FFFFFF !important;">개인 장부함</span>
                 </button>
-
-                <!-- 11. 대표님 라운지 (티타늄 건메탈 + 24K 골드 테두리) -->
-                <button id="tabLounge" onclick="switchView('lounge')" class="w-full relative overflow-hidden hover:brightness-110 transition-all flex flex-col items-center justify-center gap-2.5" style="background: linear-gradient(135deg, #1E293B 0%, #334155 48%, #475569 75%, #1E293B 100%) !important; border: 1.5px solid #D4AF37 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.28) !important;">
+                <button id="tabLounge" onclick="switchView('lounge')" class="w-full relative overflow-hidden hover:brightness-110 transition-all flex flex-col items-center justify-center gap-2.5" style="background: linear-gradient(145deg, #1E293B 0%, #273449 60%, #1E293B 100%) !important; border: 1.5px solid #E3B341 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important;">
                     <div class="flex items-center gap-1.5">
-                        <i data-lucide="messages-square" class="w-5 h-5 text-[#FDE047] stroke-[2.3]"></i>
-                        <small style="font-size: 10.5px !important; line-height: 1.1 !important; background-color: #FDE047 !important; color: #151E2D !important; padding: 3px 6px !important; border-radius: 6px !important; font-weight: 900 !important;">실시간 소통</small>
+                        <i data-lucide="messages-square" class="w-5 h-5 stroke-[2.3]" style="color: #E3B341 !important;"></i>
+                        <small style="font-size: 11.5px !important; line-height: 1.1 !important; background-color: #E3B341 !important; color: #151E2D !important; padding: 3px 6px !important; border-radius: 6px !important; font-weight: 900 !important;">소통</small>
                     </div>
                     <span class="btn-title font-black" style="color: #FFFFFF !important;">대표님 라운지</span>
                 </button>
-
-                <!-- 12. AI 현장 비서 (티타늄 건메탈 + 24K 골드 테두리) -->
-                <button id="tabAiChat" onclick="switchView('aiChat')" class="w-full relative overflow-hidden hover:brightness-110 transition-all flex flex-col items-center justify-center gap-2" style="background: linear-gradient(135deg, #1E293B 0%, #334155 48%, #475569 75%, #1E293B 100%) !important; border: 1.5px solid #D4AF37 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.28) !important;">
+                <button id="tabAiChat" onclick="switchView('aiChat')" class="w-full relative overflow-hidden hover:brightness-110 transition-all flex flex-col items-center justify-center gap-2" style="background: linear-gradient(145deg, #1E293B 0%, #273449 60%, #1E293B 100%) !important; border: 1.5px solid #E3B341 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important;">
                     <div class="flex items-center gap-1.5">
-                        <i data-lucide="bot" class="w-7 h-7 text-[#84CC16] stroke-[2.5] drop-shadow-[0_0_8px_rgba(132,204,22,0.45)]"></i>
-                        <small style="font-size: 10.5px !important; line-height: 1.1 !important; background-color: #84CC16 !important; color: #151E2D !important; padding: 3px 6px !important; border-radius: 6px !important; font-weight: 900 !important;">만능 질문</small>
+                        <i data-lucide="bot" class="w-6 h-6 stroke-[2.5]" style="color: #E3B341 !important;"></i>
+                        <small style="font-size: 11.5px !important; line-height: 1.1 !important; background-color: #E3B341 !important; color: #151E2D !important; padding: 3px 6px !important; border-radius: 6px !important; font-weight: 900 !important;">질문</small>
                     </div>
                     <span class="btn-title font-black" style="color: #FFFFFF !important;">AI 현장 비서</span>
                 </button>
@@ -709,7 +704,7 @@
             <label class="block text-[17px] font-black text-[#151E2D] mb-2">연락처</label>
             <input type="tel" id="quoteInputClientPhone" oninput="autoHyphen(this)" placeholder="연락처 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 py-4 text-[17px] font-black text-[#151E2D] placeholder:text-[#7C8A9E] placeholder:font-bold placeholder:text-[15px] focus:outline-none focus:border-[#84CC16]">
           </div>
-          <div>
+          <div class="col-span-2"><!-- 🎨 [패치 #14] 한 줄 전체 -->
             <label class="block text-[17px] font-black text-[#151E2D] mb-2">견적 제목</label>
             <input type="text" id="quoteInputRound" value="연간 정기 조경 관리 견적서" autocomplete="off" class="w-full bg-[#F9F9F8] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 py-4 text-[16.5px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16]">
           </div>
@@ -726,21 +721,21 @@
             <i data-lucide="sparkles" class="w-5 h-5 text-[#65A30D]"></i> 맞춤형 견적 템플릿 <span class="text-[13.5px] font-extrabold text-[#65A30D]">(터치 시 자동 작성)</span>
           </label>
           <div class="grid grid-cols-2 gap-2.5">
-            <button onclick="loadQuoteTemplate('single')" class="py-4 bg-[#FEF3C7] text-[#92400E] border-2 border-[#F59E0B] rounded-[16px] font-black text-[17px] hover:bg-[#F59E0B] hover:text-white transition-all flex flex-col items-center justify-center shadow-sm active:scale-95">
-              <span>단건 의뢰</span>
-              <span class="text-[13px] font-extrabold mt-0.5 opacity-90">(VAT 별도)</span>
+            <button onclick="loadQuoteTemplate('single'); markQuoteTemplate(this)" data-tpl="single" class="quote-tpl py-4 bg-white text-[#151E2D] border-2 border-[#CBD5E1] rounded-[16px] font-black text-[17px] hover:border-[#84CC16] transition-all flex flex-col items-center justify-center shadow-sm active:scale-95">
+              <i data-lucide="file-text" class="w-6 h-6 text-[#65A30D] mb-1"></i><span>단건 의뢰</span>
+              <span class="text-[13.5px] font-extrabold mt-0.5 text-[#64748B]">(VAT 별도)</span>
             </button>
-            <button onclick="loadQuoteTemplate('residential')" class="py-4 bg-[#ECFCCB] text-[#365314] border-2 border-[#84CC16] rounded-[16px] font-black text-[17px] hover:bg-[#84CC16] hover:text-[#151E2D] transition-all flex flex-col items-center justify-center shadow-sm active:scale-95">
-              <span>개인주택</span>
-              <span class="text-[13px] font-extrabold mt-0.5 opacity-90">(VAT 면제)</span>
+            <button onclick="loadQuoteTemplate('residential'); markQuoteTemplate(this)" data-tpl="residential" class="quote-tpl !border-[#84CC16] !bg-[#F4FBEA] ring-2 ring-[#84CC16]/30 py-4 bg-white text-[#151E2D] border-2 border-[#CBD5E1] rounded-[16px] font-black text-[17px] hover:border-[#84CC16] transition-all flex flex-col items-center justify-center shadow-sm active:scale-95">
+              <i data-lucide="home" class="w-6 h-6 text-[#65A30D] mb-1"></i><span>개인주택</span>
+              <span class="text-[13.5px] font-extrabold mt-0.5 text-[#64748B]">(VAT 면제)</span>
             </button>
-            <button onclick="loadQuoteTemplate('commercial')" class="py-4 bg-[#E0F2FE] text-[#075985] border-2 border-[#0284C7] rounded-[16px] font-black text-[17px] hover:bg-[#0284C7] hover:text-white transition-all flex flex-col items-center justify-center shadow-sm active:scale-95">
-              <span>상업/빌딩</span>
-              <span class="text-[13px] font-extrabold mt-0.5 opacity-90">(VAT 10%)</span>
+            <button onclick="loadQuoteTemplate('commercial'); markQuoteTemplate(this)" data-tpl="commercial" class="quote-tpl py-4 bg-white text-[#151E2D] border-2 border-[#CBD5E1] rounded-[16px] font-black text-[17px] hover:border-[#84CC16] transition-all flex flex-col items-center justify-center shadow-sm active:scale-95">
+              <i data-lucide="building-2" class="w-6 h-6 text-[#65A30D] mb-1"></i><span>상업/빌딩</span>
+              <span class="text-[13.5px] font-extrabold mt-0.5 text-[#64748B]">(VAT 10%)</span>
             </button>
-            <button onclick="loadQuoteTemplate('construction')" class="py-4 bg-[#F3E8FF] text-[#5B21B6] border-2 border-[#8B5CF6] rounded-[16px] font-black text-[17px] hover:bg-[#8B5CF6] hover:text-white transition-all flex flex-col items-center justify-center shadow-sm active:scale-95">
-              <span>조경공사</span>
-              <span class="text-[13px] font-extrabold mt-0.5 opacity-90">(맞춤 견적)</span>
+            <button onclick="loadQuoteTemplate('construction'); markQuoteTemplate(this)" data-tpl="construction" class="quote-tpl py-4 bg-white text-[#151E2D] border-2 border-[#CBD5E1] rounded-[16px] font-black text-[17px] hover:border-[#84CC16] transition-all flex flex-col items-center justify-center shadow-sm active:scale-95">
+              <i data-lucide="shovel" class="w-6 h-6 text-[#65A30D] mb-1"></i><span>조경공사</span>
+              <span class="text-[13.5px] font-extrabold mt-0.5 text-[#64748B]">(맞춤 견적)</span>
             </button>
           </div>
         </div>
@@ -997,21 +992,21 @@
 
         <!-- 2. 원터치 빠른 질문 바 (유치한 알록달록 색상 제거 ➔ 고급 다크/골드 포인트 칩) -->
         <div class="bg-white px-4 py-3 border-b border-[#E2E8F0] shrink-0">
-          <div class="text-[11.5px] font-black text-[#64748B] mb-2 flex items-center gap-1">
-            <i data-lucide="zap" class="w-3.5 h-3.5 text-[#D97706]"></i> 자주 묻는 현장 질문 (터치 시 즉시 분석)
+          <div class="text-[14px] font-black text-[#334155] mb-2 flex items-center gap-1.5">
+            <i data-lucide="zap" class="w-4 h-4 text-[#65A30D]"></i> 자주 묻는 질문 <span class="text-[12.5px] font-bold text-[#64748B]">(누르면 바로 답변)</span>
           </div>
           <div class="flex gap-2 overflow-x-auto nav-scroll pb-0.5">
-            <button onclick="sendQuickAiQuestion('근처 점심 백반·김치찌개 맛집 추천해줘')" class="px-3.5 py-2 bg-[#151E2D] hover:bg-black text-white rounded-[12px] text-[13px] font-black shrink-0 shadow-sm active:scale-95 transition-all flex items-center gap-1.5">
-              <i data-lucide="utensils" class="w-3.5 h-3.5 text-[#FEE500]"></i> 근처 점심·백반집
+            <button onclick="sendQuickAiQuestion('근처 점심 백반·김치찌개 맛집 추천해줘')" class="px-4 py-2.5 bg-[#151E2D] hover:bg-black text-white rounded-full text-[14.5px] font-black shrink-0 shadow-sm active:scale-95 transition-all flex items-center gap-1.5">
+              <i data-lucide="utensils" class="w-4 h-4 text-[#84CC16]"></i> 근처 점심·백반집
             </button>
-            <button onclick="sendQuickAiQuestion('여기서 가장 가까운 철물점·건재상 알려줘')" class="px-3.5 py-2 bg-[#151E2D] hover:bg-black text-white rounded-[12px] text-[13px] font-black shrink-0 shadow-sm active:scale-95 transition-all flex items-center gap-1.5">
-              <i data-lucide="wrench" class="w-3.5 h-3.5 text-[#38BDF8]"></i> 가까운 철물점·건재상
+            <button onclick="sendQuickAiQuestion('여기서 가장 가까운 철물점·건재상 알려줘')" class="px-4 py-2.5 bg-[#151E2D] hover:bg-black text-white rounded-full text-[14.5px] font-black shrink-0 shadow-sm active:scale-95 transition-all flex items-center gap-1.5">
+              <i data-lucide="wrench" class="w-4 h-4 text-[#84CC16]"></i> 가까운 철물점·건재상
             </button>
-            <button onclick="sendQuickAiQuestion('오늘 오후에 비 올까? 야외 조경 작업해도 될지 알려줘')" class="px-3.5 py-2 bg-[#151E2D] hover:bg-black text-white rounded-[12px] text-[13px] font-black shrink-0 shadow-sm active:scale-95 transition-all flex items-center gap-1.5">
-              <i data-lucide="cloud-sun" class="w-3.5 h-3.5 text-[#84CC16]"></i> 오후 날씨·작업여부
+            <button onclick="sendQuickAiQuestion('오늘 오후에 비 올까? 야외 조경 작업해도 될지 알려줘')" class="px-4 py-2.5 bg-[#151E2D] hover:bg-black text-white rounded-full text-[14.5px] font-black shrink-0 shadow-sm active:scale-95 transition-all flex items-center gap-1.5">
+              <i data-lucide="cloud-sun" class="w-4 h-4 text-[#84CC16]"></i> 오후 날씨·작업여부
             </button>
-            <button onclick="sendQuickAiQuestion('소나무 전지 시기와 병해충 방제 약제 혼용 방법 알려줘')" class="px-3.5 py-2 bg-[#151E2D] hover:bg-black text-white rounded-[12px] text-[13px] font-black shrink-0 shadow-sm active:scale-95 transition-all flex items-center gap-1.5">
-              <i data-lucide="tree-pine" class="w-3.5 h-3.5 text-[#84CC16]"></i> 수목·약제·시공 자문
+            <button onclick="sendQuickAiQuestion('소나무 전지 시기와 병해충 방제 약제 혼용 방법 알려줘')" class="px-4 py-2.5 bg-[#151E2D] hover:bg-black text-white rounded-full text-[14.5px] font-black shrink-0 shadow-sm active:scale-95 transition-all flex items-center gap-1.5">
+              <i data-lucide="tree-pine" class="w-4 h-4 text-[#84CC16]"></i> 수목·약제·시공 자문
             </button>
           </div>
         </div>
@@ -1025,15 +1020,15 @@
         <div class="p-3.5 bg-white border-t border-[#E2E8F0] shrink-0">
           <div class="flex gap-2 items-center">
             <!-- 🎙️ 음성 인식 버튼 (고급 웜 옐로우 & 다크 네이비 텍스트) -->
-            <button id="aiMicBtn" onclick="toggleAiVoiceInput()" type="button" class="px-4 py-3.5 bg-[#FEE500] hover:brightness-95 border border-[#EAB308]/50 text-[#151E2D] rounded-[16px] font-black text-[15px] shadow-sm active:scale-95 transition-all shrink-0 flex items-center justify-center gap-1.5" title="말로 질문하기">
-              <i id="aiMicIcon" data-lucide="mic" class="w-5 h-5 stroke-[2.5] text-[#151E2D]"></i>
-              <span id="aiMicText" class="text-[14.5px]">음성</span>
+            <button id="aiMicBtn" onclick="toggleAiVoiceInput()" type="button" class="w-[60px] h-[56px] bg-[#151E2D] hover:bg-black text-[#84CC16] rounded-[18px] font-black shadow-md active:scale-95 transition-all shrink-0 flex flex-col items-center justify-center gap-0.5" title="말로 질문하기">
+              <i id="aiMicIcon" data-lucide="mic" class="w-6 h-6 stroke-[2.5]"></i>
+              <span id="aiMicText" class="text-[12.5px] leading-none">음성</span>
             </button>
 
-            <input type="text" id="aiChatInput" onkeypress="if(event.key==='Enter') sendAiChatMessage()" placeholder="음성 버튼을 누르거나 질문을 입력하세요" autocomplete="off" class="flex-1 min-w-0 bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 py-3.5 text-[15.5px] font-black text-[#151E2D] placeholder:text-[#64748B] placeholder:font-bold placeholder:text-[13.5px] focus:outline-none focus:border-[#151E2D] focus:bg-white transition-colors">
+            <input type="text" id="aiChatInput" onkeypress="if(event.key==='Enter') sendAiChatMessage()" placeholder="질문을 입력하세요" autocomplete="off" class="flex-1 min-w-0 bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-[18px] px-4 h-[56px] text-[15.5px] font-black text-[#151E2D] placeholder:text-[#64748B] placeholder:font-bold placeholder:text-[15.5px] focus:outline-none focus:border-[#151E2D] focus:bg-white transition-colors">
 
-            <button onclick="sendAiChatMessage()" class="px-4 py-3.5 bg-[#151E2D] hover:bg-black text-[#84CC16] rounded-[16px] font-black text-[15px] shadow-md active:scale-95 transition-all shrink-0 flex items-center gap-1.5">
-              <span>전송</span> <i data-lucide="send" class="w-4 h-4 stroke-[2.5]"></i>
+            <button onclick="sendAiChatMessage()" class="w-[60px] h-[56px] bg-[#84CC16] hover:bg-[#9BE32D] text-[#151E2D] rounded-[18px] font-black shadow-md active:scale-95 transition-all shrink-0 flex flex-col items-center justify-center gap-0.5">
+              <i data-lucide="send" class="w-6 h-6 stroke-[2.5]"></i><span class="text-[12.5px] leading-none">전송</span>
             </button>
           </div>
         </div>
@@ -1083,21 +1078,16 @@
                       <i data-lucide="sparkles" class="w-4 h-4"></i>
                   </div>
                   <div class="bg-white border border-[#CBD5E1] text-[#151E2D] rounded-[20px] rounded-tl-[4px] p-5 text-[15px] font-bold leading-relaxed break-keep max-w-[88%] shadow-sm space-y-3">
-                      <div class="font-black text-[16px] text-[#151E2D] border-b border-[#F1F5F9] pb-2.5">
+                      <div class="font-black text-[18px] text-[#151E2D] border-b border-[#F1F5F9] pb-2.5">
                           반갑습니다, 대표님. <span class="text-[#4D7C0F]">AI 현장 비서</span>입니다.
                       </div>
-                      <p class="text-[14.5px] text-[#334155] leading-relaxed">
-                          현재 파악된 <strong>[${ctx.locName}]</strong> 위치와 실시간 기상 데이터를 기반으로 즉시 답변해 드립니다.
+                      <p class="text-[15.5px] text-[#334155] leading-relaxed"><!-- 🎨 [패치 #14] -->
+                          <strong class="text-[#151E2D]">${ctx.locName}</strong> 위치와 실시간 날씨를 바탕으로 답변해 드립니다. 아래 질문을 누르거나 직접 물어보세요.
                       </p>
-                      <div class="bg-[#F8FAFC] border border-[#E2E8F0] rounded-[14px] p-3.5 space-y-2 text-[14px] text-[#151E2D] font-black">
-                          <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#D97706]"></span> "근처 김치찌개·백반 잘하는 집 찾아줘"</div>
-                          <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#0284C7]"></span> "여기서 제일 가까운 철물점·시멘트 파는 곳"</div>
-                          <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#65A30D]"></span> "오늘 오후에 비 올까? 약제 살포해도 돼?"</div>
-                          <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#151E2D]"></span> "소나무 응애 방제 약제 희석 배수 알려줘"</div>
+                      <div class="space-y-2">
+                          ${['근처 김치찌개·백반 잘하는 집 찾아줘', '여기서 제일 가까운 철물점·시멘트 파는 곳 알려줘', '오늘 오후에 비 올까? 약제 살포해도 돼?', '소나무 응애 방제 약제 희석 배수 알려줘'].map(q => `<button onclick="sendQuickAiQuestion('${q}')" class="w-full text-left bg-[#F4FBEA] hover:bg-[#ECFCCB] border-l-[5px] border-[#84CC16] rounded-[12px] px-3.5 py-3 text-[15px] font-black text-[#151E2D] flex items-center justify-between gap-2 active:scale-[0.98] transition-all"><span class="break-keep">${q}</span><i data-lucide="chevron-right" class="w-5 h-5 text-[#65A30D] shrink-0"></i></button>`).join('')}
                       </div>
-                      <p class="text-[13px] text-[#64748B] font-extrabold pt-0.5">
-                          상단 버튼을 터치하시거나 하단 [음성] 버튼을 눌러 편하게 말씀해 주세요.
-                      </p>
+                      <p class="text-[14px] text-[#475569] font-bold pt-1 flex items-center gap-1.5"><i data-lucide="mic" class="w-4 h-4 text-[#65A30D] shrink-0"></i> 아래 [음성] 버튼을 누르고 말로 물어보셔도 됩니다.</p>
                   </div>
               </div>
           `;
@@ -1121,8 +1111,8 @@
           const box = document.getElementById('aiChatMessages');
           box.insertAdjacentHTML('beforeend', `
               <div class="flex justify-end">
-                  <div class="bg-[#84CC16] text-[#151E2D] border-2 border-[#65A30D] rounded-[20px] rounded-tr-[4px] px-4 py-3 text-[15.5px] font-black leading-relaxed break-keep max-w-[82%] shadow-md">
-                      ${msg}
+                  <div class="bg-[#151E2D] text-white rounded-[20px] rounded-tr-[4px] px-4 py-3 text-[16px] font-bold leading-relaxed break-keep max-w-[82%] shadow-md">
+                      ${escHtml(msg)}
                   </div>
               </div>
           `);
@@ -1260,7 +1250,7 @@
 
           aiSpeechRec.onstart = () => {
               isAiListening = true;
-              btn.className = "px-4 py-3.5 bg-[#151E2D] border-2 border-[#FEE500] text-[#FEE500] rounded-[16px] font-black text-[15px] shadow-md animate-pulse shrink-0 flex items-center justify-center gap-1.5";
+              btn.className = "w-[60px] h-[56px] bg-[#84CC16] text-[#151E2D] rounded-[18px] font-black shadow-md animate-pulse shrink-0 flex flex-col items-center justify-center gap-0.5";
               textEl.innerText = "듣는중..";
               input.placeholder = "지금 말씀하세요 (말씀이 끝나면 자동 전송됩니다)";
           };
@@ -1281,7 +1271,7 @@
 
           aiSpeechRec.onend = () => {
               isAiListening = false;
-              btn.className = "px-4 py-3.5 bg-[#FEE500] hover:brightness-95 border border-[#EAB308]/50 text-[#151E2D] rounded-[16px] font-black text-[15px] shadow-sm active:scale-95 transition-all shrink-0 flex items-center justify-center gap-1.5";
+              btn.className = "w-[60px] h-[56px] bg-[#151E2D] hover:bg-black text-[#84CC16] rounded-[18px] font-black shadow-md active:scale-95 transition-all shrink-0 flex flex-col items-center justify-center gap-0.5";
               textEl.innerText = "음성";
               input.placeholder = "음성 버튼을 누르거나 질문을 입력하세요";
           };
@@ -1340,9 +1330,11 @@
     <section id="ledgerView" class="hidden space-y-4">
       <!-- 💡 순수익 글씨 크기 1단계 축소(16.5px) 및 억 단위 입력 시에도 절대 깨지지 않도록 고정 -->
       <style>
+        /* 🎨 [패치 #14] 순수익을 크게 보여주는 요약 카드 */
+        #ledgerMonthNet { font-size: 30px !important; text-align: left !important; display: block; padding-left: 0 !important; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; }
+        #ledgerYearNet { font-size: 19px !important; }
         #ledgerMonthNet, #ledgerYearNet {
           color: #FEE500 !important;
-          font-size: 16.5px !important;
           font-weight: 900 !important;
           letter-spacing: -0.04em !important;
           text-shadow: 0 2px 8px rgba(254, 229, 0, 0.2) !important;
@@ -1357,8 +1349,8 @@
                 <i data-lucide="chevron-left" class="w-6 h-6 text-[#FDE047] stroke-[2.5]"></i>
             </button>
             <div class="flex flex-col items-center">
-                <span class="text-[11px] font-black text-[#D4AF37] tracking-[0.2em] flex items-center gap-1">
-                    <i data-lucide="gem" class="w-3.5 h-3.5 text-[#FDE047]"></i> PRIVATE ASSET VAULT
+                <span class="text-[13px] font-black text-[#D4AF37] tracking-tight flex items-center gap-1">
+                    <i data-lucide="lock" class="w-3.5 h-3.5 text-[#FDE047]"></i> 나만 보는 개인 장부
                 </span>
                 <h2 id="ledgerMonthText" class="text-[23px] font-black text-white tracking-tight mt-0.5"></h2>
             </div>
@@ -1367,58 +1359,20 @@
             </button>
         </div>
 
-        <!-- 2. VIP 자산 요약 카드 2종 (억 단위 숫자도 안전하게 들어가는 레이아웃) -->
-        <div class="grid grid-cols-2 gap-2.5 relative z-10">
-            <!-- 좌측: 이번 달 누적 합계 -->
-            <div class="bg-gradient-to-br from-[#141A23] to-[#1E293B] rounded-[22px] p-3.5 flex flex-col w-full min-w-0 overflow-hidden relative shadow-lg border-[1.5px] border-[#D4AF37]/70">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="bg-gradient-to-r from-[#D4AF37] to-[#F59E0B] text-[#0F141C] text-[12px] px-2 py-0.5 rounded-[7px] font-black shadow-sm">이번 달</span>
-                    <span class="text-[13px] font-black text-[#FDE047]">누적 합계</span>
-                </div>
-                <div class="space-y-1.5 mb-3.5">
-                    <div class="flex justify-between items-center w-full gap-1">
-                        <span class="text-[12.5px] font-extrabold text-[#CBD5E1] shrink-0">수입</span>
-                        <span id="ledgerMonthIncome" class="text-[13.5px] font-black text-[#4ADE80] tracking-tighter whitespace-nowrap text-right truncate">0원</span>
-                    </div>
-                    <div class="flex justify-between items-center w-full gap-1">
-                        <span class="text-[12.5px] font-extrabold text-[#CBD5E1] shrink-0">지출</span>
-                        <span id="ledgerMonthExpense" class="text-[13.5px] font-black text-white tracking-tighter whitespace-nowrap text-right truncate">0원</span>
-                    </div>
-                    <div class="flex justify-between items-center w-full gap-1">
-                        <span class="text-[12px] font-bold text-[#94A3B8] shrink-0">부가세</span>
-                        <span id="ledgerMonthVat" class="text-[12.5px] font-bold text-[#CBD5E1] tracking-tighter whitespace-nowrap text-right truncate">0원</span>
-                    </div>
-                </div>
-                <div class="mt-auto pt-2.5 border-t border-[#D4AF37]/40 flex flex-col items-end w-full">
-                    <span class="text-[12px] font-black text-white/90 mb-0.5">이번 달 순수익</span>
-                    <span id="ledgerMonthNet" class="text-[16.5px] font-black text-[#FEE500] tracking-tighter whitespace-nowrap text-right w-full truncate">0원</span>
+        <!-- 2. 🎨 [패치 #14] 요약: 이번 달 순수익을 크게, 연간은 한 줄 요약 -->
+        <div class="relative z-10 space-y-2.5">
+            <div class="bg-gradient-to-br from-[#141A23] to-[#1E293B] rounded-[24px] p-5 shadow-lg border-[1.5px] border-[#D4AF37]/70">
+                <div class="text-[15px] font-black text-[#FDE047] mb-1">이번 달 순수익</div>
+                <div id="ledgerMonthNet" class="font-black text-[#FEE500] tracking-tighter whitespace-nowrap truncate leading-tight">0원</div>
+                <div class="grid grid-cols-3 gap-2 mt-4 pt-3.5 border-t border-[#D4AF37]/30">
+                    <div class="min-w-0"><div class="text-[13.5px] font-bold text-[#CBD5E1]">수입</div><div id="ledgerMonthIncome" class="text-[15.5px] font-black text-[#4ADE80] tracking-tighter truncate">0원</div></div>
+                    <div class="min-w-0 border-x border-white/10 px-2"><div class="text-[13.5px] font-bold text-[#CBD5E1]">지출</div><div id="ledgerMonthExpense" class="text-[15.5px] font-black text-white tracking-tighter truncate">0원</div></div>
+                    <div class="min-w-0 pl-1"><div class="text-[13.5px] font-bold text-[#CBD5E1]">부가세</div><div id="ledgerMonthVat" class="text-[15.5px] font-black text-[#CBD5E1] tracking-tighter truncate">0원</div></div>
                 </div>
             </div>
-
-            <!-- 우측: 연간 누적 합계 -->
-            <div class="bg-gradient-to-br from-[#064E3B] to-[#0F2922] rounded-[22px] p-3.5 flex flex-col w-full min-w-0 overflow-hidden relative shadow-lg border-[1.5px] border-[#D4AF37]/70">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="bg-gradient-to-r from-[#D4AF37] to-[#F59E0B] text-[#0F141C] text-[12px] px-2.5 py-0.5 rounded-[7px] font-black shadow-sm">연간</span>
-                    <span class="text-[13px] font-black text-[#FDE047]">누적 합계</span>
-                </div>
-                <div class="space-y-1.5 mb-3.5">
-                    <div class="flex justify-between items-center w-full gap-1">
-                        <span class="text-[12.5px] font-extrabold text-[#D1FAE5] shrink-0">수입</span>
-                        <span id="ledgerYearIncome" class="text-[13.5px] font-black text-[#4ADE80] tracking-tighter whitespace-nowrap text-right truncate">0원</span>
-                    </div>
-                    <div class="flex justify-between items-center w-full gap-1">
-                        <span class="text-[12.5px] font-extrabold text-[#D1FAE5] shrink-0">지출</span>
-                        <span id="ledgerYearExpense" class="text-[13.5px] font-black text-white tracking-tighter whitespace-nowrap text-right truncate">0원</span>
-                    </div>
-                    <div class="flex justify-between items-center w-full gap-1">
-                        <span class="text-[12px] font-bold text-[#A7F3D0]/80 shrink-0">부가세</span>
-                        <span id="ledgerYearVat" class="text-[12.5px] font-bold text-[#D1FAE5] tracking-tighter whitespace-nowrap text-right truncate">0원</span>
-                    </div>
-                </div>
-                <div class="mt-auto pt-2.5 border-t border-[#D4AF37]/40 flex flex-col items-end w-full">
-                    <span class="text-[12px] font-black text-white/90 mb-0.5">연간 총 순수익</span>
-                    <span id="ledgerYearNet" class="text-[16.5px] font-black text-[#FEE500] tracking-tighter whitespace-nowrap text-right w-full truncate">0원</span>
-                </div>
+            <div class="bg-gradient-to-r from-[#064E3B] to-[#0F2922] rounded-[20px] px-5 py-3.5 shadow-md border border-[#D4AF37]/50">
+                <div class="flex items-center justify-between gap-2"><span class="text-[14.5px] font-black text-[#D1FAE5] shrink-0">올해 누적 순수익</span><span id="ledgerYearNet" class="font-black text-[#FEE500] tracking-tighter whitespace-nowrap truncate">0원</span></div>
+                <div class="flex justify-between gap-2 mt-1.5 text-[13px] font-bold text-[#A7F3D0]"><span class="truncate">수입 <b id="ledgerYearIncome" class="text-[#4ADE80]">0원</b></span><span class="truncate">지출 <b id="ledgerYearExpense" class="text-white">0원</b></span><span class="truncate">부가세 <b id="ledgerYearVat" class="text-[#D1FAE5]">0원</b></span></div>
             </div>
         </div>
 
@@ -1432,20 +1386,14 @@
 
         <!-- 4. 하단 컨트롤 바 & 입출금 내역 카드 리스트 (가로 스크롤 없이 수정/삭제 버튼 즉시 노출) -->
         <div class="pt-2 space-y-3.5">
-            <div class="flex flex-wrap justify-between items-center gap-2 bg-[#141A23] px-4 py-3.5 rounded-[20px] border border-[#D4AF37]/50 shadow-md">
-                <h3 id="selectedLedgerDateText" class="font-black text-[#FDE047] text-[16px] flex items-center gap-1.5 shrink-0 whitespace-nowrap">
-                    <i data-lucide="gem" class="w-5 h-5 text-[#D4AF37]"></i> 선택된 날짜
+            <div class="bg-[#141A23] px-4 py-4 rounded-[20px] border border-[#D4AF37]/50 shadow-md space-y-3"><!-- 🎨 [패치 #14] -->
+                <h3 id="selectedLedgerDateText" class="font-black text-[#FDE047] text-[18px] flex items-center gap-1.5">
+                    <i data-lucide="calendar-check" class="w-5 h-5 text-[#84CC16]"></i> 선택된 날짜
                 </h3>
-                <div class="flex gap-1.5 items-center ml-auto">
-                    <button onclick="openCalculator()" class="bg-white/10 text-[#FDE047] p-2.5 rounded-[12px] border border-[#D4AF37]/40 hover:bg-white/20 transition-colors shrink-0" title="계산기">
-                        <i data-lucide="calculator" class="w-5 h-5"></i>
-                    </button>
-                    <button onclick="openLedgerListModal()" class="bg-white text-[#151E2D] px-3 py-2.5 rounded-[12px] text-[13.5px] font-black shadow-sm hover:bg-[#F8FAFC] transition-colors flex items-center gap-1 shrink-0 whitespace-nowrap">
-                        <i data-lucide="list" class="w-4 h-4 text-[#B45309]"></i> 월별 전체보기
-                    </button>
-                    <button onclick="openLedgerModal()" class="bg-gradient-to-r from-[#D4AF37] to-[#F59E0B] text-[#0F141C] px-3.5 py-2.5 rounded-[12px] text-[14px] font-black shadow-md hover:brightness-105 transition-all flex items-center gap-1 shrink-0 whitespace-nowrap">
-                        <i data-lucide="plus" class="w-4 h-4 stroke-[3]"></i> 내역 추가
-                    </button>
+                <div class="grid grid-cols-[1.4fr_1fr_auto] gap-2">
+                    <button onclick="openLedgerModal()" class="bg-gradient-to-r from-[#D4AF37] to-[#F59E0B] text-[#0F141C] h-[52px] rounded-[14px] text-[16px] font-black shadow-md hover:brightness-105 flex items-center justify-center gap-1.5"><i data-lucide="plus" class="w-5 h-5 stroke-[3]"></i> 내역 추가</button>
+                    <button onclick="openLedgerListModal()" class="bg-white/10 text-[#FDE047] border border-[#D4AF37]/50 h-[52px] rounded-[14px] text-[15px] font-black hover:bg-white/20 flex items-center justify-center gap-1.5"><i data-lucide="list" class="w-5 h-5"></i> 월별 보기</button>
+                    <button onclick="openCalculator()" class="bg-white/10 text-[#FDE047] border border-[#D4AF37]/50 h-[52px] w-[52px] rounded-[14px] hover:bg-white/20 flex items-center justify-center" title="계산기"><i data-lucide="calculator" class="w-6 h-6"></i></button>
                 </div>
             </div>
 
@@ -2391,6 +2339,11 @@
         let activeTags = []; btn.parentElement.querySelectorAll('.single-tag-btn.bg-\\[\\#151E2D\\]').forEach(t => activeTags.push(t.innerText)); inputEl.value = activeTags.join(', ');
     }
 
+    // 🎨 [패치 #14] 선택한 견적 템플릿 표시
+    function markQuoteTemplate(btn) {
+        document.querySelectorAll('.quote-tpl').forEach(b => { b.classList.remove('!border-[#84CC16]', '!bg-[#F4FBEA]', 'ring-2', 'ring-[#84CC16]/30'); });
+        if (btn) btn.classList.add('!border-[#84CC16]', '!bg-[#F4FBEA]', 'ring-2', 'ring-[#84CC16]/30');
+    }
     function loadQuoteTemplate(type) {
       const template = quoteTemplates[type]; currentVatRate = template.vat; document.getElementById('quoteInputRound').value = template.title;
       const container = document.getElementById('quoteItemsContainer'); container.innerHTML = ''; currentQuoteRowCount = template.rows.length;
@@ -3393,7 +3346,7 @@
             isCategoryCollapsed = true;
         } else {
             // 펼치기 모드: 메뉴 표시 & '메뉴 접기' 표시
-            wrapper.style.maxHeight = '900px';
+            wrapper.style.maxHeight = '1100px'; // 🎨 [패치 #15] 묶음 제목 추가분
             wrapper.style.opacity = '1';
             wrapper.style.overflow = 'visible';
             wrapper.style.pointerEvents = 'auto';
