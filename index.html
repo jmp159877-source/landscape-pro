@@ -1870,7 +1870,7 @@
                 switchView('home', false); 
                 // 앱 진입 1초 후 최초 팝업 확인
                 setTimeout(() => {
-                    if (!maybeShowGuide(() => checkAppNotices())) checkAppNotices(); // 📖 [패치 #23]
+                    checkAppNotices(); // 📖 [패치 #24] 로그인 시 사용법 자동 표시 제거 (설정 > '앱 사용법 다시 보기'로만)
                     // 💡 [실시간 연동] 앱이 켜져 있는 동안 1분(60초)마다 몰래 서버를 확인하여 새 팝업이 있으면 즉시 띄웁니다.
                     setInterval(checkAppNotices, 60000); 
                 }, 1000);
