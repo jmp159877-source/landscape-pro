@@ -156,7 +156,7 @@
         <!-- 💡 시인성 업그레이드: 텍스트 17px 및 font-black(아주 굵게) 적용, 아이콘 크기 확대 -->
         <button onclick="showSignUp()" class="w-full py-5 bg-white/5 border border-white/10 text-white rounded-[18px] font-black text-[17px] hover:bg-white/10 transition-all flex items-center justify-center gap-2">업체 등록 신청하기 <i data-lucide="arrow-right" class="w-5 h-5"></i></button>
       </div>
-      <a href="/privacy.html" target="_blank" rel="noopener" class="block text-center mt-4 text-[14.5px] font-bold text-[#CBD5E1] underline underline-offset-4">개인정보처리방침</a><!-- 🔐 [패치 #27] -->
+      <div class="flex items-center justify-center gap-5 mt-4"><a href="/about.html" class="text-[15px] font-black text-[#84CC16] underline underline-offset-4">조경노트 PRO 소개</a><a href="/privacy.html" target="_blank" rel="noopener" class="text-[14.5px] font-bold text-[#CBD5E1] underline underline-offset-4">개인정보처리방침</a></div><!-- 🔐 [패치 #27] 🌱 [패치 #29] -->
     </div>
   </section>
 
@@ -3571,7 +3571,7 @@
         const savedPw = localStorage.getItem('shinhwa_pro_logged_in_pw');
         const autoLogin = localStorage.getItem('shinhwa_pro_auto_login');
         if (savedId && savedPw && autoLogin === 'true') { document.getElementById('loginId').value = savedId; document.getElementById('loginPw').value = savedPw; doLogin(); } 
-        else { document.getElementById('authView').classList.remove('hidden'); }
+        else { document.getElementById('authView').classList.remove('hidden'); if (new URLSearchParams(location.search).get('signup')) showSignUp(); } // 🌱 [패치 #29] 소개 페이지 '무료로 시작하기' → 업체 등록 화면
         lucide.createIcons();
       }
     });

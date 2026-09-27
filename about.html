@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>조경노트 PRO - 조경 사업자 대표님을 위한 현장 관리 앱</title>
+<meta name="description" content="20년 조경 현장 대표가 직접 만든 앱. 작업일지 한 번 쓰면 고객님께 사진 리포트가 가고, 일정과 장부는 자동 저장, 스마트한 AI 기능까지. 고객 작업 의뢰를 건당 수수료 없이 받고, 전국 조경 대표님들과 인력·장비·일감을 나누는 조경 전문 앱. 지금 가입하면 무료 체험.">
+<meta name="keywords" content="조경노트, 조경노트 PRO, 조경 앱, 조경 일지, 조경 견적, 조경 관리, 조경 사업자, 조경 일감, 조경 인력, 정원 관리, 수목 관리">
+<link rel="canonical" href="https://www.jogyeongnote.com/about.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="조경노트 PRO">
+<meta property="og:title" content="조경노트 PRO - 조경 대표님의 현장 일이 쉬워집니다">
+<meta property="og:description" content="사진 리포트, 일정·장부 자동 저장, AI 수목 렌즈, 대표님 소통방. 지금 가입하면 무료 체험.">
+<meta property="og:url" content="https://www.jogyeongnote.com/about.html">
+<meta property="og:image" content="https://www.jogyeongnote.com/icon-512.png">
+<meta name="theme-color" content="#151E2D">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.json">
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+  :root { --navy:#151E2D; --navy2:#1E293B; --lime:#84CC16; --lime-l:#BEF264; --lime-bg:#ECFCCB; --olive:#3F6212; --ink:#0F172A; --sub:#334155; --muted:#CBD5E1; --line:#E2E8F0; --bg:#F6F8F4; }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif; font-size:17px; line-height:1.65; word-break:keep-all; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:560px; margin:0 auto; }
+  svg.i { width:1em; height:1em; stroke:currentColor; fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
+
+  .hero { background:var(--navy); color:#fff; padding:22px 20px 30px; }
+  .brand { display:flex; align-items:center; gap:10px; font-size:20px; font-weight:900; }
+  .logo { width:40px; height:40px; border-radius:12px; background:var(--lime); color:var(--navy); display:flex; align-items:center; justify-content:center; font-size:24px; }
+  .brand b { color:var(--lime); }
+  .badge { display:inline-block; margin-top:26px; background:var(--lime-l); color:#1A2E05; font-size:15px; font-weight:800; padding:5px 12px; border-radius:8px; }
+  .hero h1 { font-size:32px; line-height:1.3; margin:12px 0 0; font-weight:900; letter-spacing:-0.02em; }
+  .hero p { color:var(--muted); font-size:18px; line-height:1.6; margin:12px 0 0; }
+  .hero p em { color:var(--lime-l); font-style:normal; font-weight:800; }
+  .btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; height:60px; border-radius:16px; font-size:19px; font-weight:900; text-decoration:none; margin-top:12px; }
+  .btn-main { background:var(--lime); color:#1A2E05; margin-top:24px; box-shadow:0 8px 20px rgba(132,204,22,0.35); }
+  .btn-line { border:1.5px solid #64748B; color:#fff; font-size:17px; font-weight:800; height:54px; }
+
+  .maker { margin:18px 14px 0; background:#fff; border:2px solid var(--lime); border-radius:22px; padding:22px 20px 20px; position:relative; }
+  .maker .q { font-size:64px; line-height:0.6; color:var(--lime); font-weight:900; font-family:Georgia,serif; height:28px; display:block; }
+  .maker h2 { font-size:24px; line-height:1.35; margin:6px 0 0; font-weight:900; color:var(--ink); }
+  .maker p { font-size:18px; line-height:1.75; color:var(--sub); margin:12px 0 0; }
+  .maker p b { color:var(--ink); }
+  .nw { white-space:nowrap; }
+  .maker .sign { display:flex; align-items:center; gap:10px; margin-top:16px; padding-top:14px; border-top:1px solid var(--line); font-size:16px; font-weight:800; color:var(--olive); }
+  .maker .sign .logo { width:34px; height:34px; font-size:20px; border-radius:10px; }
+  .req { margin:18px 14px 6px; background:var(--navy2); border:2.5px solid var(--lime); border-radius:22px; padding:20px 18px; color:#fff; }
+  .req-top { display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; }
+  .soon { background:#FDE047; color:#412402; font-size:15px; font-weight:900; padding:4px 10px; border-radius:8px; }
+  .first { color:var(--lime-l); font-size:15px; font-weight:800; }
+  .req h2 { font-size:25px; line-height:1.35; margin:12px 0 0; font-weight:900; display:flex; gap:8px; }
+  .req h2 svg { color:var(--lime); font-size:28px; margin-top:3px; }
+  .nofee { display:flex; align-items:center; gap:8px; margin-top:12px; background:var(--lime); color:#1A2E05; border-radius:12px; padding:11px 14px; font-size:19px; font-weight:900; }
+  .req > p { color:var(--muted); font-size:16.5px; margin:12px 0 4px; }
+  .step { display:flex; align-items:center; gap:12px; background:rgba(255,255,255,0.08); border-radius:12px; padding:12px 14px; margin-top:8px; font-size:17.5px; font-weight:800; }
+  .step small { color:#94A3B8; font-size:14.5px; font-weight:600; }
+  .num { width:30px; height:30px; border-radius:50%; background:var(--lime); color:#1A2E05; font-size:16px; font-weight:900; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+
+  section.s { padding:26px 16px 6px; }
+  .s h2 { font-size:24px; margin:0 0 14px; font-weight:900; display:flex; align-items:center; gap:8px; }
+  .card { display:flex; gap:14px; align-items:flex-start; background:#fff; border:1.5px solid var(--line); border-radius:18px; padding:16px; margin-bottom:10px; }
+  .card.hl { border-color:var(--lime); border-width:2px; }
+  .ic { width:50px; height:50px; border-radius:14px; background:var(--lime-bg); color:var(--olive); display:flex; align-items:center; justify-content:center; font-size:27px; flex-shrink:0; }
+  .card h3 { font-size:19px; margin:2px 0 0; font-weight:900; }
+  .card p { color:var(--sub); font-size:16px; margin:3px 0 0; }
+
+  .trust-h svg { color:var(--olive); font-size:30px; }
+  .trust { display:flex; gap:14px; align-items:center; background:#fff; border:2px solid var(--lime); border-radius:18px; padding:16px; margin-bottom:10px; }
+  .tic { width:52px; height:52px; border-radius:50%; background:var(--olive); color:#fff; display:flex; align-items:center; justify-content:center; font-size:27px; flex-shrink:0; }
+  .trust h3 { font-size:19px; margin:0; font-weight:900; }
+  .trust p { color:var(--sub); font-size:16px; margin:3px 0 0; }
+
+  .how { background:#fff; border:1.5px solid var(--line); border-radius:18px; padding:8px 16px; }
+  .how div { display:flex; align-items:center; gap:12px; padding:12px 0; font-size:18px; font-weight:800; }
+  .how div + div { border-top:1px solid var(--line); }
+  .how small { display:block; color:var(--sub); font-size:15px; font-weight:600; }
+
+  .end { background:var(--navy); color:#fff; text-align:center; padding:30px 20px 34px; margin-top:28px; }
+  .end h2 { font-size:25px; margin:0; font-weight:900; }
+  .end p { color:var(--muted); margin:8px 0 0; font-size:16.5px; }
+  footer { background:var(--navy); color:#94A3B8; text-align:center; font-size:14.5px; padding:0 20px 34px; }
+  footer a { color:var(--muted); }
+</style>
+</head>
+<body>
+<!-- 🌱 [패치 #29] 조경노트 PRO 소개 페이지 (네이버 검색·가입 유도용) -->
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></symbol>
+  <symbol id="i-brief" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></symbol>
+  <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/><path d="m5 5 14 14"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="m9 16 2 2 4-4"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z"/><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"/></symbol>
+  <symbol id="i-scan" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 12h10"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-id" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M15 8h2M15 12h2M7 16h10"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/><path d="m9 14 2 2 4-4"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+</svg>
+
+<div class="hero"><div class="wrap">
+  <div class="brand"><span class="logo"><svg class="i"><use href="#i-leaf"/></svg></span>조경노트 <b>PRO</b></div>
+  <span class="badge">지금 가입하면 무료 체험</span>
+  <h1>조경 대표님의<br>현장 일이 쉬워집니다</h1>
+  <p>작업일지 한 번 쓰면 고객님께 사진 리포트가 가고,<br><em>일정과 장부는 자동 저장</em>, <em>스마트한 AI 기능</em>까지.</p>
+  <a class="btn btn-main" href="/?signup=1">무료로 시작하기 <svg class="i"><use href="#i-arrow"/></svg></a>
+  <a class="btn btn-line" href="/">이미 회원이면 로그인</a>
+</div></div>
+
+<div class="wrap">
+  <!-- 🌱 [패치 #30] 만든 사람 소개 (20년 현장 경력) -->
+  <div class="maker">
+    <span class="q">&ldquo;</span>
+    <h2>20년 조경 현장 대표가<br>직접 만들었습니다</h2>
+    <p><b><span class="nw">예초기 메고,</span> <span class="nw">사다리 타고,</span> <span class="nw">전지가위 들고,</span></b><br><span class="nw">비 오는 날 걱정하며</span> <span class="nw">해 왔던 사람이 만들었습니다.</span></p>
+    <p>책상 앞에서 만든 앱이 아니라, 20년 동안 현장에서 <b>"이런 게 있었으면"</b> 했던 것들을 하나씩 담았습니다.</p>
+    <div class="sign"><span class="logo"><svg class="i"><use href="#i-leaf"/></svg></span>신화 조경노트 PRO 대표</div>
+  </div>
+  <div class="req">
+    <div class="req-top"><span class="soon">오픈 예정</span><span class="first">가입 대표님께 먼저 열립니다</span></div>
+    <h2><svg class="i"><use href="#i-brief"/></svg><span>고객 작업 의뢰,<br>이제 앱으로 바로 받으세요</span></h2>
+    <div class="nofee"><svg class="i"><use href="#i-coin"/></svg>건당 수수료 없이 일을 받으세요</div>
+    <p>내 활동 지역 고객의 조경 의뢰가 들어오면, 상담부터 리포트까지 앱 하나로 끝냅니다.</p>
+    <div class="step"><span class="num">1</span><span>고객 의뢰 접수 <small>(사진·주소·내용)</small></span></div>
+    <div class="step"><span class="num">2</span><span>고객과 1:1 상담</span></div>
+    <div class="step"><span class="num">3</span><span>견적서 바로 발송</span></div>
+    <div class="step"><span class="num">4</span><span>작업 후 사진 리포트까지 원스톱</span></div>
+  </div>
+
+  <section class="s">
+    <h2>이런 일을 해드립니다</h2>
+    <div class="card"><span class="ic"><svg class="i"><use href="#i-send"/></svg></span><div><h3>고객 사진 리포트</h3><p>작업 전·후 사진을 카카오톡·문자 링크로 바로 보내드립니다.</p></div></div>
+    <div class="card"><span class="ic"><svg class="i"><use href="#i-cal"/></svg></span><div><h3>일정 · 장부 자동 저장</h3><p>일지의 작업 날짜는 일정표로, 수입·지출은 월 순수익까지 자동 계산됩니다.</p></div></div>
+    <div class="card hl"><span class="ic"><svg class="i"><use href="#i-chat"/></svg></span><div><h3>대표님 소통방</h3><p>전국 조경 대표님들과 인력·장비·일감을 나눕니다.</p></div></div>
+    <div class="card"><span class="ic"><svg class="i"><use href="#i-scan"/></svg></span><div><h3>스마트한 AI 기능</h3><p>사진 한 장으로 수목·병해충을 확인하고, 현장 비서에게 바로 물어보세요.</p></div></div>
+  </section>
+
+  <section class="s">
+    <h2 class="trust-h"><svg class="i"><use href="#i-shield"/></svg>믿고 쓰실 수 있습니다</h2>
+    <div class="trust"><span class="tic"><svg class="i"><use href="#i-id"/></svg></span><div><h3>사업자 인증 업체만 가입</h3><p>사업자등록증을 확인한 뒤 운영팀이 직접 승인합니다.</p></div></div>
+    <div class="trust"><span class="tic"><svg class="i"><use href="#i-lock"/></svg></span><div><h3>고객 정보 철저 보호</h3><p>고객 이름·주소·사진은 검색에 노출되지 않습니다.</p></div></div>
+    <div class="trust"><span class="tic"><svg class="i"><use href="#i-cloud"/></svg></span><div><h3>자료는 안전하게 자동 보관</h3><p>휴대폰을 바꿔도 로그인만 하면 그대로입니다.</p></div></div>
+  </section>
+
+  <section class="s">
+    <h2>시작은 3단계면 끝</h2>
+    <div class="how">
+      <div><span class="num">1</span><span>가입 신청<small>사업자등록증 사진을 첨부해 주세요</small></span></div>
+      <div><span class="num">2</span><span>운영팀 승인<small>확인 후 바로 이용할 수 있게 열어드립니다</small></span></div>
+      <div><span class="num">3</span><span>홈 화면에 설치하고 사용<small>앱처럼 아이콘을 눌러 바로 여세요</small></span></div>
+    </div>
+  </section>
+</div>
+
+<div class="end"><div class="wrap">
+  <h2>지금 무료로 시작해 보세요</h2>
+  <p>조경 대표님을 위해 만든 현장 관리 앱</p>
+  <a class="btn btn-main" href="/?signup=1">무료로 시작하기 <svg class="i"><use href="#i-arrow"/></svg></a>
+</div></div>
+<footer>
+  <a href="/privacy.html">개인정보처리방침</a> · © 조경노트 PRO
+</footer>
+</body>
+</html>
