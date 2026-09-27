@@ -40,6 +40,7 @@
     body.has-bnav #swipeContainer { padding-bottom: 104px !important; }
     .bnav-btn.is-active { color: #84CC16 !important; }
     .bnav-btn.is-active .bnav-bar { opacity: 1 !important; }
+    .bnav-btn.bnav-center.is-active { color: #FDE047 !important; }
     #mainCategoryWrapper nav button {
       padding-top: 22px !important;
       padding-bottom: 22px !important;
@@ -314,7 +315,7 @@
                 </button>
             </nav>
 
-            <div class="menu-sec flex items-center gap-2 mb-2.5 mt-5 ml-1"><span class="w-1.5 h-5 rounded-full" style="background:#E3B341"></span><span class="text-[16px] font-black tracking-tight" style="color:#E3B341 !important;">대표님 전용</span><span class="text-[13px] font-bold text-white/60">장부·라운지·AI비서</span></div>
+            <div class="menu-sec flex items-center gap-2 mb-2.5 mt-5 ml-1"><span class="w-1.5 h-5 rounded-full" style="background:#E3B341"></span><span class="text-[16px] font-black tracking-tight" style="color:#E3B341 !important;">대표님 전용</span><span class="text-[13px] font-bold text-white/60">장부·소통방·AI비서</span></div>
             <nav class="grid grid-cols-3 gap-3">
                 <button id="tabLedger" onclick="checkLedgerPin()" class="w-full relative overflow-hidden hover:brightness-110 transition-all flex flex-col items-center justify-center gap-2.5" style="background: linear-gradient(145deg, #1E293B 0%, #273449 60%, #1E293B 100%) !important; border: 1.5px solid #E3B341 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important;">
                     <div class="flex items-center gap-1.5">
@@ -328,7 +329,7 @@
                         <i data-lucide="messages-square" class="w-5 h-5 stroke-[2.3]" style="color: #E3B341 !important;"></i>
                         <small style="font-size: 11.5px !important; line-height: 1.1 !important; background-color: #E3B341 !important; color: #151E2D !important; padding: 3px 6px !important; border-radius: 6px !important; font-weight: 900 !important;">소통</small>
                     </div>
-                    <span class="btn-title font-black" style="color: #FFFFFF !important;">대표님 라운지</span>
+                    <span class="btn-title font-black" style="color: #FFFFFF !important;">대표님 소통방</span>
                 </button>
                 <button id="tabAiChat" onclick="switchView('aiChat')" class="w-full relative overflow-hidden hover:brightness-110 transition-all flex flex-col items-center justify-center gap-2" style="background: linear-gradient(145deg, #1E293B 0%, #273449 60%, #1E293B 100%) !important; border: 1.5px solid #E3B341 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important;">
                     <div class="flex items-center gap-1.5">
@@ -381,7 +382,7 @@
               <span id="loungeMyCompanyName" class="block text-[22px] font-black text-white tracking-tight leading-tight truncate">대표님</span>
               <div class="mt-1.5 flex items-center justify-between gap-1.5">
                 <span id="loungeMyGradeBadge" class="text-[13px] bg-[#84CC16] text-[#151E2D] font-black px-2.5 py-1 rounded-lg shadow-sm whitespace-nowrap">🌿 파트너 대표님</span>
-                <button onclick="alert('💎 [대표님 라운지 포인트 적립 안내]\n\n• 신규 가입 기본 축하금: 1,000 P\n• 매일 라운지 출석체크: +50 P\n• 소통방 게시글·질문·정보 작성: +100 P\n\n[등급 기준]\n🌿 파트너 대표님 (1,000P~)\n🌲 명장 대표님 (2,000P~)\n👑 마스터 대표님 (5,000P~)')" class="py-1 px-2.5 rounded-lg bg-white/15 hover:bg-white/25 border border-[#FDE047]/60 text-[#FDE047] font-black text-[12.5px] flex items-center gap-1 shrink-0 whitespace-nowrap">
+                <button onclick="alert('💎 [대표님 소통방 포인트 적립 안내]\n\n• 신규 가입 기본 축하금: 1,000 P\n• 매일 소통방 출석체크: +50 P\n• 소통방 게시글·질문·정보 작성: +100 P\n\n[등급 기준]\n🌿 파트너 대표님 (1,000P~)\n🌲 명장 대표님 (2,000P~)\n👑 마스터 대표님 (5,000P~)')" class="py-1 px-2.5 rounded-lg bg-white/15 hover:bg-white/25 border border-[#FDE047]/60 text-[#FDE047] font-black text-[12.5px] flex items-center gap-1 shrink-0 whitespace-nowrap">
                   <i data-lucide="help-circle" class="w-3.5 h-3.5 text-[#FDE047]"></i> 혜택안내
                 </button>
               </div>
@@ -3388,9 +3389,12 @@
       const temp = document.getElementById('weatherMainTemp')?.innerText || '';
       const tip = document.getElementById('weatherSmartTip')?.innerText || '';
       let loc = ''; try { const c = JSON.parse(localStorage.getItem('shinhwa_last_loc') || 'null'); if (c && c.name) loc = c.name; } catch(e) {}
-      const card = 'bg-white rounded-[24px] p-5 luxury-shadow';
-      const head = (icon, title, extra) => `<div class="flex items-center justify-between mb-3"><h3 class="text-[19px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="${icon}" class="w-6 h-6 text-[#65A30D]"></i>${title}</h3>${extra || ''}</div>`;
-      const moreBtn = (fn, label) => `<button onclick="${fn}" class="text-[14.5px] font-black text-[#3F6212] bg-[#F4FBEA] border border-[#84CC16]/60 px-3 py-1.5 rounded-full flex items-center gap-0.5">${label}<i data-lucide="chevron-right" class="w-4 h-4"></i></button>`;
+      // 🎨 [패치 #18] 카드마다 색 띠 제목(22px) + 밝은 인사 카드 + 소통방 강조
+      const card = 'bg-white rounded-[24px] overflow-hidden luxury-shadow';
+      const band = (icon, title, bg, fg, extra) => `<div class="flex items-center justify-between gap-2 px-5 py-3.5" style="background:${bg};"><h3 class="text-[22px] font-black flex items-center gap-2 tracking-tight" style="color:${fg};"><i data-lucide="${icon}" class="w-7 h-7"></i>${title}</h3>${extra || ''}</div>`;
+      const moreBtn = (fn, label, fg) => `<button onclick="${fn}" class="text-[15px] font-black bg-white/90 px-3.5 py-2 rounded-full flex items-center gap-0.5 shadow-sm shrink-0" style="color:${fg};">${label}<i data-lucide="chevron-right" class="w-4 h-4"></i></button>`;
+      const cname = (typeof myCompanyProfile !== 'undefined' && myCompanyProfile && myCompanyProfile.name) ? myCompanyProfile.name : '';
+      const chips = [['현장 협력·지원','🤝 인력·장비 지원'],['일감 패스·공사 양도','💼 일감 넘기기'],['장비·자재 직거래','🛒 장비·자재'],['실전 견적·단가 자문','📊 단가 물어보기']];
 
       const schedHtml = todays.length ? todays.slice(0, 4).map(x => `<button onclick="switchView('calendar')" class="w-full text-left flex items-center gap-3 bg-[#F8FAFC] border-l-[5px] border-[#84CC16] rounded-[12px] px-4 py-3"><span class="text-[16.5px] font-black text-[#151E2D] break-keep flex-1">${esc(x.title || '제목 없음')}</span>${x.tag ? `<span class="text-[12.5px] font-black text-[#3F6212] bg-lime-100 px-2 py-0.5 rounded-md shrink-0">${esc(x.tag)}</span>` : ''}</button>`).join('') + (todays.length > 4 ? `<p class="text-[14px] font-bold text-[#64748B] text-center">외 ${todays.length - 4}건 더 있음</p>` : '')
         : `<div class="text-center py-3"><p class="text-[16px] font-bold text-[#475569] mb-3">오늘 등록된 일정이 없습니다.</p><button onclick="switchView('calendar')" class="bg-[#151E2D] text-[#84CC16] text-[15.5px] font-black px-5 py-3 rounded-[14px] inline-flex items-center gap-1.5"><i data-lucide="plus" class="w-5 h-5"></i> 일정 등록하기</button></div>`;
@@ -3399,25 +3403,39 @@
         : `<div class="text-center py-3"><p class="text-[16px] font-bold text-[#475569] mb-3">아직 보낸 리포트가 없습니다.</p><button onclick="switchView('admin')" class="bg-[#84CC16] text-[#151E2D] text-[15.5px] font-black px-5 py-3 rounded-[14px] inline-flex items-center gap-1.5"><i data-lucide="pen-tool" class="w-5 h-5"></i> 첫 작업일지 쓰기</button></div>`;
 
       box.innerHTML = `
-        <div class="rounded-[24px] p-5 border border-[#84CC16]/30" style="background: linear-gradient(135deg, #151E2D 0%, #1E2B3F 100%);">
-          <p class="text-[15px] font-bold text-[#CBD5E1]">${now.getMonth() + 1}월 ${now.getDate()}일 (${days[now.getDay()]})</p>
-          <h2 class="text-[23px] font-black text-white mt-1 leading-snug break-keep">${esc(ceo)}대표님, ${hello}</h2>
-          <p class="text-[15.5px] font-bold text-[#D9F99D] mt-2">오늘 일정 <b class="text-[#84CC16] text-[18px]">${todays.length}</b>건</p>
+        <div class="rounded-[24px] p-5 shadow-[0_10px_30px_rgba(132,204,22,0.35)]" style="background: linear-gradient(135deg, #BEF264 0%, #84CC16 100%);">
+          <p class="text-[16px] font-black text-[#365314]">${now.getMonth() + 1}월 ${now.getDate()}일 (${days[now.getDay()]})</p>
+          <h2 class="text-[24px] font-black text-[#0F172A] mt-1 leading-snug break-keep">${esc(cname)} 대표님,<br>${hello}</h2>
+          <div class="mt-3 inline-flex items-center gap-2 bg-[#0F172A] text-white rounded-full px-4 py-2 text-[16px] font-black"><i data-lucide="calendar-check" class="w-5 h-5 text-[#BEF264]"></i>오늘 일정 <b class="text-[#BEF264] text-[19px]">${todays.length}</b>건</div>
         </div>
-        <button onclick="openWeatherModal()" class="w-full text-left ${card} flex items-center gap-4">
-          <div class="w-14 h-14 rounded-[16px] bg-[#FEF9C3] flex items-center justify-center shrink-0"><i data-lucide="sun" class="w-8 h-8 text-[#D97706]"></i></div>
+        <button onclick="openWeatherModal()" class="w-full text-left rounded-[24px] p-5 flex items-center gap-4 border-2 border-[#7DD3FC] shadow-md" style="background: linear-gradient(135deg, #E0F2FE 0%, #F0F9FF 100%);">
+          <div class="w-16 h-16 rounded-[18px] bg-white flex items-center justify-center shrink-0 shadow-sm"><i data-lucide="sun" class="w-9 h-9 text-[#F59E0B]"></i></div>
           <div class="min-w-0 flex-1">
-            <div class="text-[14px] font-black text-[#64748B] flex items-center gap-1"><i data-lucide="map-pin" class="w-4 h-4 text-[#65A30D]"></i>${esc(loc || '현재 위치')}</div>
-            <div class="text-[22px] font-black text-[#151E2D] leading-tight mt-0.5">${esc(temp || '날씨 불러오는 중...')}</div>
-            ${tip ? `<div class="text-[14.5px] font-bold text-[#475569] mt-1 break-keep line-clamp-2">${esc(tip)}</div>` : ''}
+            <div class="text-[15px] font-black text-[#0369A1] flex items-center gap-1"><i data-lucide="map-pin" class="w-4 h-4"></i>${esc(loc || '현재 위치')}</div>
+            <div class="text-[24px] font-black text-[#0C4A6E] leading-tight mt-0.5">${esc(temp || '날씨 불러오는 중...')}</div>
+            ${tip ? `<div class="text-[15px] font-bold text-[#334155] mt-1 break-keep line-clamp-2">${esc(tip)}</div>` : ''}
           </div>
-          <i data-lucide="chevron-right" class="w-6 h-6 text-[#94A3B8] shrink-0"></i>
+          <i data-lucide="chevron-right" class="w-6 h-6 text-[#0369A1] shrink-0"></i>
         </button>
-        <div class="${card}">${head('calendar-check', '오늘 일정', moreBtn("switchView('calendar')", '일정표'))}<div class="space-y-2">${schedHtml}</div></div>
-        <div class="${card}">${head('send', '최근 보낸 리포트', reports.length ? moreBtn('openAllLogsModal()', '전체') : '')}<div class="space-y-2">${repHtml}</div></div>
-        <div class="${card}">${head('messages-square', '라운지 새 글', moreBtn("switchView('lounge')", '라운지'))}<div id="homeLoungeList" class="space-y-2"><p class="text-[15px] font-bold text-[#64748B] py-2">불러오는 중...</p></div></div>`;
+        <div class="rounded-[26px] p-5 border-2 border-[#E3B341] shadow-[0_12px_30px_rgba(0,0,0,0.45)]" style="background: linear-gradient(135deg, #141A23 0%, #1E293B 100%);">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <h3 class="text-[24px] font-black text-[#FDE047] flex items-center gap-2 tracking-tight"><i data-lucide="messages-square" class="w-7 h-7"></i>대표님 소통방</h3>
+              <p class="text-[15.5px] font-bold text-[#E2E8F0] mt-1 break-keep">전국 조경 대표님들과 일감·인력·장비를 나눠보세요</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2 mt-4">${chips.map(c => `<button onclick="homeOpenBoard('${c[0]}')" class="bg-white/10 hover:bg-white/15 border border-[#E3B341]/50 text-white rounded-[14px] px-3 py-3 text-[15.5px] font-black text-left break-keep active:scale-95 transition-all">${c[1]}</button>`).join('')}</div>
+          <div class="mt-4 pt-3 border-t border-white/10"><div class="text-[15px] font-black text-[#FDE047] mb-2 flex items-center gap-1.5"><i data-lucide="sparkles" class="w-4 h-4"></i>방금 올라온 글</div><div id="homeLoungeList" class="space-y-2"><p class="text-[15px] font-bold text-[#CBD5E1] py-2">불러오는 중...</p></div></div>
+          <button onclick="switchView('lounge')" class="w-full mt-4 h-[56px] rounded-[16px] text-[18px] font-black text-[#151E2D] flex items-center justify-center gap-2 shadow-md active:scale-95 transition-all" style="background: linear-gradient(135deg, #F7D774 0%, #E3B341 100%);">소통방 들어가기 <i data-lucide="arrow-right" class="w-5 h-5"></i></button>
+        </div>
+        <div class="${card}">${band('calendar-check', '오늘 일정', '#ECFCCB', '#365314', moreBtn("switchView('calendar')", '일정표', '#365314'))}<div class="p-4 space-y-2">${schedHtml}</div></div>
+        <div class="${card}">${band('send', '최근 보낸 리포트', '#E0F2FE', '#0C4A6E', reports.length ? moreBtn('openAllLogsModal()', '전체', '#0C4A6E') : '')}<div class="p-4 space-y-2">${repHtml}</div></div>`;
       if (typeof lucide !== 'undefined') lucide.createIcons();
       loadHomeLounge();
+    }
+    function homeOpenBoard(title) { // 🧭 [패치 #18] 홈에서 소통방 게시판 바로 열기
+      switchView('lounge');
+      setTimeout(() => { if (typeof loadCommunityPosts === 'function') loadCommunityPosts(); openBoard(title); }, 120);
     }
     function homeOpenReport(id) {
       const r = (records || []).find(x => x && String(x.id) === String(id));
@@ -3434,10 +3452,10 @@
           homeLoungeAt = Date.now();
         }
         const cur = document.getElementById('homeLoungeList'); if (!cur) return;
-        cur.innerHTML = homeLoungeCache.length ? homeLoungeCache.map(p => `<button onclick="switchView('lounge')" class="w-full text-left bg-[#F8FAFC] rounded-[12px] px-4 py-3 border border-[#E2E8F0]"><div class="text-[16px] font-black text-[#151E2D] truncate ${p.status === 'closed' ? 'line-through text-[#94A3B8]' : ''}">${esc(p.title)}</div><div class="text-[13.5px] font-bold text-[#64748B] mt-0.5 truncate">${p.isOfficial ? '📌 조경노트 운영팀' : esc((p.authorRegion ? p.authorRegion + ' ' : '') + (p.authorName || ''))} · ${esc(p.dateStr || '')}</div></button>`).join('')
-          : '<p class="text-[15px] font-bold text-[#64748B] py-2">아직 올라온 글이 없습니다.</p>';
+        cur.innerHTML = homeLoungeCache.length ? homeLoungeCache.map(p => `<button onclick="switchView('lounge')" class="w-full text-left bg-white rounded-[12px] px-4 py-3"><div class="text-[16.5px] font-black truncate ${p.status === 'closed' ? 'line-through text-[#94A3B8]' : 'text-[#151E2D]'}">${esc(p.title)}</div><div class="text-[13.5px] font-bold text-[#64748B] mt-0.5 truncate">${p.isOfficial ? '📌 조경노트 운영팀' : esc((p.authorRegion ? p.authorRegion + ' ' : '') + (p.authorName || ''))} · ${esc(p.dateStr || '')}</div></button>`).join('')
+          : '<p class="text-[15px] font-bold text-[#CBD5E1] py-2">아직 올라온 글이 없습니다. 첫 글을 남겨보세요!</p>';
       } catch (e) {
-        const cur = document.getElementById('homeLoungeList'); if (cur) cur.innerHTML = '<p class="text-[15px] font-bold text-[#64748B] py-2">새 글을 불러오지 못했습니다.</p>';
+        const cur = document.getElementById('homeLoungeList'); if (cur) cur.innerHTML = '<p class="text-[15px] font-bold text-[#CBD5E1] py-2">새 글을 불러오지 못했습니다.</p>';
       }
     }
 
@@ -5094,7 +5112,7 @@
           }
           localStorage.setItem(storageKey, todayKey);
           await addLoungePoints(50);
-          alert('🎉 오늘의 라운지 출석체크 완료! +50 P가 적립되었습니다.');
+          alert('🎉 오늘의 소통방 출석체크 완료! +50 P가 적립되었습니다.');
       }
 
       function filterBoard(category, btnElement) {
@@ -5492,12 +5510,12 @@
   </script>
   <!-- 🧭 [패치 #17] 하단 고정 메뉴 (로그인한 업체 화면에서만 표시, 고객 리포트 화면에는 표시 안 됨) -->
   <nav id="bottomNav" class="no-print fixed bottom-0 inset-x-0 z-40 shadow-[0_-6px_20px_rgba(0,0,0,0.35)]" style="display: none; background: #0F1722; border-top: 1px solid rgba(255,255,255,0.14); padding-bottom: env(safe-area-inset-bottom);">
-   <div class="max-w-md mx-auto grid grid-cols-5">
+   <div class="max-w-md mx-auto grid grid-cols-5"><!-- 🧭 [패치 #18] 소통방 가운데 강조 -->
     <button data-nav="home" onclick="switchView('home')" class="bnav-btn relative flex flex-col items-center justify-center gap-1 h-[68px] text-[#CBD5E1] active:scale-95 transition-all"><span class="bnav-bar absolute top-0 left-1/2 -translate-x-1/2 w-10 h-[3px] rounded-b-full bg-[#84CC16] opacity-0"></span><i data-lucide="home" class="w-7 h-7 stroke-[2.2]"></i><span class="text-[13.5px] font-black tracking-tight">홈</span></button>
     <button data-nav="calendar" onclick="switchView('calendar')" class="bnav-btn relative flex flex-col items-center justify-center gap-1 h-[68px] text-[#CBD5E1] active:scale-95 transition-all"><span class="bnav-bar absolute top-0 left-1/2 -translate-x-1/2 w-10 h-[3px] rounded-b-full bg-[#84CC16] opacity-0"></span><i data-lucide="calendar-days" class="w-7 h-7 stroke-[2.2]"></i><span class="text-[13.5px] font-black tracking-tight">일정</span></button>
+    <button data-nav="lounge" onclick="switchView('lounge')" class="bnav-btn bnav-center relative flex flex-col items-center justify-end gap-1 h-[68px] pb-1.5 text-[#E3B341] active:scale-95 transition-all"><span class="absolute -top-6 left-1/2 -translate-x-1/2 w-[62px] h-[62px] rounded-full flex items-center justify-center border-4 border-[#0F1722] shadow-[0_6px_18px_rgba(227,179,65,0.45)]" style="background: linear-gradient(135deg, #F7D774 0%, #E3B341 100%);"><i data-lucide="messages-square" class="w-8 h-8 text-[#151E2D] stroke-[2.4]"></i></span><span class="text-[14px] font-black tracking-tight">소통방</span></button>
     <button data-nav="admin" onclick="switchView('admin')" class="bnav-btn relative flex flex-col items-center justify-center gap-1 h-[68px] text-[#CBD5E1] active:scale-95 transition-all"><span class="bnav-bar absolute top-0 left-1/2 -translate-x-1/2 w-10 h-[3px] rounded-b-full bg-[#84CC16] opacity-0"></span><i data-lucide="pen-tool" class="w-7 h-7 stroke-[2.2]"></i><span class="text-[13.5px] font-black tracking-tight">일지</span></button>
     <button data-nav="quote" onclick="switchView('quote')" class="bnav-btn relative flex flex-col items-center justify-center gap-1 h-[68px] text-[#CBD5E1] active:scale-95 transition-all"><span class="bnav-bar absolute top-0 left-1/2 -translate-x-1/2 w-10 h-[3px] rounded-b-full bg-[#84CC16] opacity-0"></span><i data-lucide="calculator" class="w-7 h-7 stroke-[2.2]"></i><span class="text-[13.5px] font-black tracking-tight">견적</span></button>
-    <button data-nav="lounge" onclick="switchView('lounge')" class="bnav-btn relative flex flex-col items-center justify-center gap-1 h-[68px] text-[#CBD5E1] active:scale-95 transition-all"><span class="bnav-bar absolute top-0 left-1/2 -translate-x-1/2 w-10 h-[3px] rounded-b-full bg-[#84CC16] opacity-0"></span><i data-lucide="messages-square" class="w-7 h-7 stroke-[2.2]"></i><span class="text-[13.5px] font-black tracking-tight">라운지</span></button>
    </div>
   </nav>
 </body>
