@@ -328,6 +328,11 @@
                 <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="folder-open" class="w-6 h-6"></i><span class="btn-title">견적 보관함</span></button>
                 <button id="tabContacts" onclick="switchView('contacts')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="users" class="w-6 h-6"></i><span class="btn-title">연락처</span></button>
             </nav>
+            <!-- 📝 [패치 #46] AI 메모장 (업무 관리 아래 넓은 버튼) -->
+            <button type="button" id="tabMemo" onclick="openMemoView()" class="w-full mt-3 text-left rounded-[22px] px-4 py-3.5 flex items-center gap-3.5 active:scale-[0.98] transition-all" style="background:#84CC16; box-shadow: 0 8px 20px rgba(132,204,22,0.3);">
+                <span class="w-[50px] h-[50px] rounded-[16px] bg-[#151E2D] flex items-center justify-center shrink-0"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#BEF264" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6M8 13h8M8 17h5"></path></svg></span>
+                <span class="flex flex-col gap-0.5"><span class="text-[21px] font-black tracking-tight leading-tight" style="color:#1A2E05 !important;">AI 메모장</span><span class="text-[15px] font-bold leading-snug break-keep" style="color:#1A2E05 !important;">현장에서 말로 메모 · AI가 줄로 정리</span></span>
+            </button>
 
             <div class="menu-sec flex items-center gap-2 mb-2.5 mt-5 ml-1"><span class="w-1.5 h-5 rounded-full" style="background:#F8FAFC"></span><span class="text-[16px] font-black tracking-tight" style="color:#F8FAFC !important;">현장 도구</span><span class="text-[14.5px] font-bold text-white/60">식물·AI렌즈·날씨</span></div>
             <nav class="grid grid-cols-3 gap-3">
@@ -616,6 +621,8 @@
           <span class="flex flex-col gap-1"><span class="text-[24px] font-black text-[#1A2E05] tracking-tight leading-none">말로 견적 쓰기</span><span class="text-[16px] font-bold text-[#1A2E05] leading-snug">항목과 금액을 말하면<br>AI가 견적서 칸에 채워 드립니다.</span></span>
         </button>
         <div class="bg-[#84CC16]/10 border-[1.5px] border-[#84CC16]/50 rounded-[14px] px-3.5 py-3 text-[15px] font-bold text-[#D9F99D] leading-relaxed break-keep">예) "용인 수지 박영희 고객님 단독주택, 소나무 전지 다섯 주 칠십오만 원, 소독 십오만 원, 폐기물 처리 십만 원"</div>
+        <!-- 📝 [패치 #46] 메모장 참고하기 -->
+        <button type="button" onclick="openMemoSheet()" class="w-full h-[58px] rounded-[18px] bg-[#151E2D] border-2 border-[#84CC16] flex items-center justify-center gap-2.5 text-[18px] font-black text-[#BEF264] active:scale-[0.98] transition-all"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#BEF264" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6M8 13h8M8 17h5"></path></svg>메모장 참고하기</button>
       </div>
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5 relative overflow-hidden">
         <div class="flex items-center justify-between pb-4 border-b-2 border-[#F1F5F9] relative z-10">
@@ -891,6 +898,12 @@
                 <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-[#84CC16] group-hover:bg-[#84CC16] group-hover:text-[#151E2D] transition-colors shrink-0">
                     <i data-lucide="plus" class="w-6 h-6 stroke-[3]"></i>
                 </div>
+            </button>
+
+            <!-- 🎤 [패치 #44] 달력 화면에서 바로 말로 일정 등록 -->
+            <button type="button" onclick="startScheduleVoiceFromCalendar()" class="w-full text-left bg-[#84CC16] rounded-[24px] px-[18px] py-4 flex items-center gap-3.5 shadow-[0_10px_24px_rgba(132,204,22,0.35)] active:scale-[0.99] transition-all">
+                <span class="w-[52px] h-[52px] rounded-full bg-[#151E2D] flex items-center justify-center shrink-0"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#BEF264" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10v1a7 7 0 0 0 14 0v-1"></path><path d="M12 18v4"></path></svg></span>
+                <span class="flex flex-col gap-0.5"><span class="text-[21px] font-black text-[#1A2E05] tracking-tight leading-tight">말로 일정 등록</span><span class="text-[15.5px] font-bold text-[#1A2E05] leading-snug break-keep">"다음 주 화요일 영통 소나무 전지"</span></span>
             </button>
 
             <!-- 등록된 일정 카드 리스트 -->
@@ -5883,7 +5896,7 @@
           <span id="voiceChip" class="text-[15px] font-black text-[#151E2D] bg-[#84CC16] px-3 py-1 rounded-full whitespace-nowrap"></span>
         </div>
         <div class="flex flex-col items-center gap-3 pt-1">
-          <div class="w-[132px] h-[132px] rounded-full bg-[#84CC16]/20 flex items-center justify-center">
+          <div id="voiceMicWrap" class="w-[132px] h-[132px] rounded-full bg-[#84CC16]/20 flex items-center justify-center">
             <div id="voiceMicDot" class="w-[104px] h-[104px] rounded-full bg-[#84CC16] flex items-center justify-center shadow-[0_0_40px_rgba(132,204,22,0.55)]">
               <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#151E2D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10v1a7 7 0 0 0 14 0v-1"></path><path d="M12 18v4"></path></svg>
             </div>
@@ -5891,7 +5904,9 @@
           <div id="voiceStatus" class="text-[24px] font-black text-[#BEF264]">듣고 있어요 · 0:00</div>
           <div id="voiceGuide" class="text-[16px] font-bold text-[#E2E8F0] text-center leading-relaxed break-keep">천천히, 생각나는 대로 말씀하세요.<br>잠깐 멈춰도 끊기지 않습니다.</div>
         </div>
-        <div class="flex-1 min-h-[180px] bg-white rounded-[20px] p-[18px] flex flex-col gap-2.5">
+        <!-- 🎤 [패치 #45] A안: 말할 순서 안내판 -->
+        <div id="voiceGuideBoard" class="hidden bg-white rounded-[20px] px-4 py-3.5 flex flex-col gap-2.5"></div>
+        <div id="voiceTextBox" class="flex-1 min-h-[180px] bg-white rounded-[20px] p-[18px] flex flex-col gap-2.5">
           <label for="voiceText" id="voiceTextLabel" class="text-[15px] font-black text-[#3F6212]">받아 적는 중</label>
           <textarea id="voiceText" readonly class="flex-1 min-h-[140px] w-full resize-none border-none outline-none bg-transparent text-[19px] font-bold text-[#151E2D] leading-[1.6] placeholder:text-[#94A3B8] placeholder:text-[17px]" placeholder="말씀하시면 여기에 글자가 나타납니다"></textarea>
         </div>
@@ -6008,6 +6023,7 @@
       document.getElementById('voiceTextLabel').innerText = '여기를 눌러 입력하세요';
       document.getElementById('voiceStatus').innerText = '키보드 마이크로 말씀하세요';
       document.getElementById('voiceGuide').innerText = msg || '이 화면에서는 바로 듣기가 안 됩니다.\n아래 흰 칸을 누르고, 키보드의 마이크 버튼을 눌러 말씀하세요.';
+      document.getElementById('voiceGuide').classList.remove('hidden'); // 🎤 [패치 #45] 안내판 모드에서도 안내 문구는 보이게
       document.getElementById('voiceMicDot').classList.remove('animate-pulse');
       setTimeout(() => { try { ta.focus(); } catch (e) {} }, 200);
     }
@@ -6028,12 +6044,46 @@
       document.getElementById('voiceTitle').innerText = opts.title || '말로 쓰기';
       const chip = document.getElementById('voiceChip'); chip.innerText = opts.chip || ''; chip.classList.toggle('hidden', !opts.chip);
       document.getElementById('voiceHints').innerHTML = (opts.hints || []).map(h => `<span class="text-[15px] font-extrabold text-[#E2E8F0] border-[1.5px] border-[#475569] rounded-full px-3 py-1.5">${escHtml(h)}</span>`).join('');
+      voiceSetGuide(opts.guide); // 🎤 [패치 #45]
       document.getElementById('voiceListenPane').classList.remove('hidden');
       document.getElementById('voiceThinkPane').classList.add('hidden');
       document.getElementById('voiceOverlay').classList.remove('hidden');
       if (history.state && (history.state.aiPreviewOpen || history.state.formPreviewOpen)) history.replaceState({ voiceOpen: true }, '', ''); // 확인 화면 → 다시 말하기: 뒤로가기 한 칸 유지
       else if (!(history.state && history.state.voiceOpen)) history.pushState({ voiceOpen: true }, '', '');
       voiceBegin();
+    }
+    // 🎤 [패치 #45] A안: "이 순서로 말해 보세요" 안내판 (guide: [[제목, 예시], ...])
+    function voiceSetGuide(guide) {
+      const on = Array.isArray(guide) && guide.length > 0;
+      const board = document.getElementById('voiceGuideBoard');
+      board.classList.toggle('hidden', !on);
+      document.getElementById('voiceMicWrap').classList.toggle('hidden', on);
+      document.getElementById('voiceGuide').classList.toggle('hidden', on);
+      document.getElementById('voiceHints').classList.toggle('hidden', on);
+      document.getElementById('voiceTextBox').classList.toggle('min-h-[180px]', !on);
+      document.getElementById('voiceTextBox').classList.toggle('min-h-[130px]', on);
+      document.getElementById('voiceText').classList.toggle('min-h-[140px]', !on);
+      document.getElementById('voiceText').classList.toggle('min-h-[84px]', on);
+      if (!on) { board.innerHTML = ''; return; }
+      board.innerHTML = '<span class="text-[18px] font-black text-[#151E2D]">이 순서로 말해 보세요</span>'
+        + guide.map((g, i) => `<div class="flex gap-2.5 items-start"><span class="w-[30px] h-[30px] rounded-full bg-[#151E2D] text-[#BEF264] text-[16px] font-black flex items-center justify-center shrink-0">${i + 1}</span><span class="flex flex-col min-w-0"><span class="text-[18px] font-black text-[#151E2D] leading-snug break-keep">${escHtml(g[0])}</span>${g[1] ? `<span class="text-[15px] font-bold text-[#475569] leading-snug break-keep">${escHtml(g[1])}</span>` : ''}</span></div>`).join('')
+        + '<div class="bg-[#F4FBEA] rounded-[12px] px-3 py-2.5 text-[15.5px] font-extrabold text-[#3F6212] leading-relaxed break-keep">순서가 달라도, 말을 더듬어도, 단어를 틀려도 괜찮아요. AI가 알아서 정리합니다.</div>';
+    }
+    const VOICE_GUIDES = {
+      schedule: [['언제', '"다음 주 화요일 아침 8시"'], ['어디 · 누구 댁', '"영통 김사장님 댁"'], ['무슨 작업', '"소나무 전지"'], ['금액 (있으면)', '"50만 원 받고 인건비 20만 원"'], ['메모 (있으면)', '"사다리 챙기기"']],
+      log: [['어느 고객님 댁', '"영통 김철수 고객님 댁"'], ['언제', '"오늘" · "어제" (안 하시면 오늘)'], ['무슨 작업을 했는지', '"소나무 전지하고 방제했어요"'], ['특이사항 (있으면)', '"응애가 보여서 다음 달 한 번 더"']],
+      quote: [['어느 고객님 · 현장', '"수지 박영희 고객님 단독주택"'], ['작업 항목 · 수량', '"소나무 전지 다섯 주"'], ['항목별 금액', '"칠십오만 원" (항목이 여럿이면 2~3번 반복)'], ['특이사항 (있으면)', '"부가세 별도"']],
+      memo: [['어디 · 누구 현장', '"영통 김철수 댁 앞마당"'], ['치수 · 수량', '"가로 12미터 세로 8미터, 소나무 세 그루"'], ['할 일 · 특이사항', '"잔디 절반 고사, 10월 중순 전 희망"']],
+      trade: [['무엇을', '"1톤 집게차" · "소나무 H3.0"'], ['규격 · 수량 · 날짜', '"다섯 주, 이번 주 토요일"'], ['가격 · 조건 (있으면)', '"하루 이십만 원"'], ['지역', '"용인 수지"'], ['연락 방법 (있으면)', '"문자 주세요"']],
+      ask: [['무엇이 궁금한지', '"소나무 전지 단가가 궁금해요"'], ['현장 · 규격 · 수량', '"H3.0 다섯 주, 단독주택"'], ['지역 (있으면)', '"수원"']],
+      talk: [['하고 싶은 이야기를 편하게', '"오늘 비가 와서 현장 쉬었어요"']],
+      warn: [['어떤 일이 있었는지', '"공사 끝났는데 잔금을 안 줘요"'], ['언제 · 어느 지역', '"지난달, 화성"'], ['주의할 점', '"계약금 먼저 받으세요" (실명·상호는 AI가 뺍니다)']]
+    };
+    function boardGuideFor(cat) {
+      if (cat === '현장협력' || cat === '일감양도' || cat === '장비자재') return VOICE_GUIDES.trade;
+      if (cat === '견적단가' || cat === '정보교환') return VOICE_GUIDES.ask;
+      if (cat === '불량거래처') return VOICE_GUIDES.warn;
+      return VOICE_GUIDES.talk;
     }
     function voiceHide(fromPopstate) {
       voiceStopRec();
@@ -6113,7 +6163,7 @@
     function boardCatLabel(k) { const f = (typeof PUSH_BOARDS !== 'undefined' ? PUSH_BOARDS : []).find(x => x[0] === k); return f ? f[1] : k; }
     function startBoardVoiceWrite() {
       const cur = document.getElementById('bwCategory').value;
-      voiceOpen({ title: '말로 쓰기', chip: boardCatLabel(cur), hints: ['무엇을', '규격·수량', '가격', '지역', '연락처'], onDone: runBoardAi });
+      voiceOpen({ title: '말로 쓰기', chip: boardCatLabel(cur), hints: ['무엇을', '규격·수량', '가격', '지역', '연락처'], guide: boardGuideFor(cur), onDone: runBoardAi }); // 🎤 [패치 #45] guide
     }
     function buildBoardAiPrompt(curCat) {
       const cats = Object.keys(BOARD_AI_GUIDE).map(k => `- "${k}": ${BOARD_AI_GUIDE[k]}`).join('\n');
@@ -6323,7 +6373,9 @@ ${cats}
     const SCHEDULE_COLORS = { green: 'border-[#84CC16]', blue: 'border-[#0284C7]', gold: 'border-[#D97706]', coral: 'border-[#E11D48]' };
     const SCHEDULE_COLOR_NAMES = { green: '녹색 (기본)', blue: '블루 (견적)', gold: '골드 (중요)', coral: '코랄 (긴급)' };
     let aiSchedDraft = null;
-    function startScheduleVoice() { voiceOpen({ title: '말로 일정 등록', chip: '작업 일정', hints: ['언제', '어디·누구', '무슨 작업', '받을 돈·나갈 돈', '메모'], onDone: runScheduleAi }); }
+    function startScheduleVoice() { voiceOpen({ title: '말로 일정 등록', chip: '작업 일정', hints: ['언제', '어디·누구', '무슨 작업', '받을 돈·나갈 돈', '메모'], guide: VOICE_GUIDES.schedule, onDone: runScheduleAi }); } // 🎤 [패치 #45] guide
+    // 🎤 [패치 #44] 달력 화면 버튼: 일정 창을 열고 바로 듣기 시작
+    function startScheduleVoiceFromCalendar() { openScheduleModal(); setTimeout(startScheduleVoice, 150); }
     async function runScheduleAi(text) {
       voiceShowThinking(['날짜 계산하기', '현장·작업 정리', '금액·메모 정리']);
       const baseDate = document.getElementById('scheduleDate').value || getTodayStr();
@@ -6384,7 +6436,7 @@ ${AI_COMMON_RULES}
     // ---------------- 작업일지 ----------------
     let aiLogDraft = null;
     function logCategoryList() { return Array.from(document.querySelectorAll('#categoryContainer .cat-btn')).map(b => b.getAttribute('data-val')); }
-    function startLogVoice() { voiceOpen({ title: '말로 일지 쓰기', chip: '작업일지', hints: ['고객·현장', '언제', '무슨 작업', '특이사항', '연락처·주소'], onDone: runLogAi }); }
+    function startLogVoice() { voiceOpen({ title: '말로 일지 쓰기', chip: '작업일지', hints: ['고객·현장', '언제', '무슨 작업', '특이사항', '연락처·주소'], guide: VOICE_GUIDES.log, onDone: runLogAi }); } // 🎤 [패치 #45] guide
     async function runLogAi(text) {
       voiceShowThinking(['고객·날짜 찾기', '작업 내역 고르기', '특이사항·코멘트 다듬기']);
       const cats = logCategoryList();
@@ -6466,7 +6518,7 @@ ${AI_COMMON_RULES}
     // ---------------- 견적서 ----------------
     const QUOTE_TPL_NAMES = { single: '단건 의뢰', residential: '개인주택 (월별)', commercial: '상업/빌딩 (월별)', construction: '조경공사' };
     let aiQuoteDraft = null;
-    function startQuoteVoice() { voiceOpen({ title: '말로 견적 쓰기', chip: '견적서', hints: ['고객·현장', '작업 항목', '수량·규격', '금액', '특이사항'], onDone: runQuoteAi }); }
+    function startQuoteVoice() { voiceOpen({ title: '말로 견적 쓰기', chip: '견적서', hints: ['고객·현장', '작업 항목', '수량·규격', '금액', '특이사항'], guide: VOICE_GUIDES.quote, onDone: runQuoteAi }); } // 🎤 [패치 #45] guide
     async function runQuoteAi(text) {
       voiceShowThinking(['고객 찾기', '견적 종류 고르기', '항목·금액 정리']);
       const prompt = `너는 조경 사업자 대표님의 견적서 작성 도우미다. 대표님이 말로 한 견적 내용을 견적서 칸에 맞게 정리한다.
@@ -6581,6 +6633,321 @@ ${AI_COMMON_RULES}
       </div>
     </div>
   </div>
+  <!-- 📝 [패치 #46] AI 메모장 (현장에서 말로 메모 → AI가 줄로 정리 → 견적서 작성 때 참고) -->
+  <div id="memoView" class="hidden fixed inset-0 z-[9400] bg-[#0F1722] flex justify-center overflow-y-auto">
+    <div class="w-full max-w-md px-4 pt-5 pb-8 flex flex-col gap-3">
+      <!-- 목록 -->
+      <div id="memoListPane" class="flex flex-col gap-3">
+        <div class="flex items-center gap-2.5">
+          <button type="button" onclick="closeMemoView()" aria-label="뒤로" class="w-11 h-11 rounded-[12px] bg-[#1E293B] text-white flex items-center justify-center active:scale-95"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg></button>
+          <span class="text-[22px] font-black text-white">AI 메모장</span>
+        </div>
+        <button type="button" onclick="startMemoVoice()" class="w-full text-left bg-[#84CC16] rounded-[22px] px-[18px] py-4 flex items-center gap-3.5 shadow-[0_10px_24px_rgba(132,204,22,0.3)] active:scale-[0.98] transition-all">
+          <span class="w-[54px] h-[54px] rounded-full bg-[#151E2D] flex items-center justify-center shrink-0"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#BEF264" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10v1a7 7 0 0 0 14 0v-1"></path><path d="M12 18v4"></path></svg></span>
+          <span class="flex flex-col gap-0.5"><span class="text-[21px] font-black text-[#1A2E05] leading-tight">말로 메모하기</span><span class="text-[15px] font-bold text-[#1A2E05] leading-snug break-keep">"앞마당 가로 12미터 세로 8미터…"</span></span>
+        </button>
+        <span id="memoCount" class="text-[15px] font-black text-[#BEF264] mt-1"></span>
+        <div id="memoList" class="flex flex-col gap-2.5"></div>
+        <button type="button" onclick="openMemoNewByHand()" class="h-[52px] rounded-[16px] border-[1.5px] border-[#64748B] text-white text-[16.5px] font-extrabold active:scale-95 transition-all">손으로 새 메모 쓰기</button>
+      </div>
+      <!-- 메모 보기 / 고치기 -->
+      <div id="memoEditPane" class="hidden flex flex-col gap-3">
+        <div class="flex items-center justify-between gap-2">
+          <span id="memoEditHead" class="text-[20px] font-black text-white">메모</span>
+          <span class="text-[14.5px] font-black bg-[#84CC16] text-[#151E2D] px-2.5 py-1 rounded-full">AI 메모장</span>
+        </div>
+        <div id="memoRawBox" class="hidden bg-white/[0.07] border-[1.5px] border-dashed border-[#475569] rounded-[16px] px-3 py-2.5 flex flex-col gap-1">
+          <span class="text-[14px] font-black text-[#94A3B8]">내가 말한 그대로</span>
+          <span id="memoRawText" class="text-[15px] font-semibold text-[#CBD5E1] leading-relaxed break-keep"></span>
+        </div>
+        <div class="bg-white border-2 border-[#D4AF37] rounded-[20px] px-4 py-3.5 flex flex-col gap-1.5">
+          <label for="memoTitleInput" class="text-[14px] font-black text-[#3F6212]">제목</label>
+          <input id="memoTitleInput" maxlength="40" placeholder="예) 영통 김철수 댁 앞마당" class="h-[48px] rounded-[12px] border-[1.5px] border-[#CBD5E1] px-3 text-[19px] font-black text-[#151E2D] placeholder:text-[15px] placeholder:font-bold placeholder:text-[#94A3B8]">
+          <div id="memoLinesView" class="flex flex-col mt-1"></div>
+          <label for="memoLinesInput" id="memoLinesLabel" class="hidden text-[14px] font-black text-[#3F6212] mt-1">내용 (한 줄에 하나씩)</label>
+          <textarea id="memoLinesInput" rows="8" class="hidden w-full rounded-[12px] border-[1.5px] border-[#CBD5E1] p-3 text-[17px] font-bold text-[#151E2D] leading-[1.6]"></textarea>
+        </div>
+        <div class="bg-[#FEF9C3] border-[1.5px] border-[#EAB308] rounded-[14px] px-3 py-2.5 text-[15px] font-extrabold text-[#713F12] leading-relaxed break-keep">숫자·치수는 말한 그대로 적어요. AI가 지어내지 않아요.</div>
+        <button type="button" id="memoSaveBtn" onclick="saveMemo()" class="h-[62px] rounded-[20px] bg-[#84CC16] text-[#1A2E05] text-[21px] font-black shadow-[0_10px_24px_rgba(132,204,22,0.3)] active:scale-[0.98] transition-all">이대로 메모 저장</button>
+        <div class="grid grid-cols-2 gap-2.5">
+          <button type="button" id="memoEditToggleBtn" onclick="memoToggleEdit()" class="h-[52px] rounded-[16px] border-[1.5px] border-[#64748B] text-white text-[16.5px] font-extrabold active:scale-95 transition-all">글자 고치기</button>
+          <button type="button" onclick="startMemoVoiceMore()" class="h-[52px] rounded-[16px] border-[1.5px] border-[#64748B] text-white text-[16.5px] font-extrabold active:scale-95 transition-all">이어서 더 말하기</button>
+        </div>
+        <button type="button" id="memoDeleteBtn" onclick="deleteMemo()" class="h-[48px] rounded-[16px] text-[#FCA5A5] text-[16px] font-extrabold active:scale-95">이 메모 지우기</button>
+      </div>
+    </div>
+  </div>
+  <!-- 📝 [패치 #46] 견적서 → 메모장 참고하기 (아래에서 올라오는 창) -->
+  <div id="memoSheet" class="hidden fixed inset-0 z-[9450] bg-black/70 flex items-end justify-center" onclick="if(event.target===this) closeMemoSheet()">
+    <div class="w-full max-w-md bg-white rounded-t-[28px] px-4 pt-3 pb-5 flex flex-col gap-3 max-h-[88vh]">
+      <span class="self-center w-12 h-[5px] rounded-full bg-[#CBD5E1]"></span>
+      <div class="flex items-center justify-between"><span class="text-[19px] font-black text-[#151E2D]">어떤 메모를 볼까요?</span><button type="button" onclick="closeMemoSheet()" class="h-10 px-3 rounded-[10px] text-[15px] font-extrabold text-[#475569] bg-[#F1F5F9]">닫기</button></div>
+      <div id="memoSheetChips" class="flex gap-2 overflow-x-auto pb-1 shrink-0"></div>
+      <div id="memoSheetBody" class="bg-[#F8FAFC] border-[1.5px] border-[#D4AF37] rounded-[16px] px-3.5 py-3 flex flex-col gap-0.5 overflow-y-auto min-h-[90px]"></div>
+      <button type="button" id="memoSheetFillBtn" onclick="memoFillQuote()" class="h-[60px] rounded-[18px] bg-[#84CC16] text-[#1A2E05] text-[19px] font-black active:scale-[0.98] shrink-0">이 메모로 견적 채우기 (AI)</button>
+      <button type="button" id="memoSheetFloatBtn" onclick="memoShowFloat()" class="h-[52px] rounded-[16px] border-[1.5px] border-[#151E2D] text-[#151E2D] text-[17px] font-black active:scale-[0.98] shrink-0">작게 띄워놓고 보면서 쓰기</button>
+    </div>
+  </div>
+  <!-- 📝 [패치 #46] 견적서 쓰는 동안 작게 띄워 두는 메모 -->
+  <div id="memoFloat" class="hidden fixed inset-x-0 bottom-[84px] z-[8000] px-3 flex justify-center pointer-events-none">
+    <div class="w-full max-w-md bg-[#151E2D] border-2 border-[#84CC16] rounded-[18px] shadow-[0_10px_30px_rgba(0,0,0,0.5)] pointer-events-auto">
+      <div class="flex items-center gap-2 px-3 py-2">
+        <span id="memoFloatTitle" class="flex-1 min-w-0 truncate text-[16px] font-black text-[#BEF264]"></span>
+        <button type="button" onclick="memoFloatFold()" id="memoFloatFoldBtn" class="h-9 px-2.5 rounded-[10px] bg-white/10 text-white text-[14px] font-extrabold shrink-0">접기</button>
+        <button type="button" onclick="memoHideFloat()" class="h-9 px-2.5 rounded-[10px] bg-white/10 text-white text-[14px] font-extrabold shrink-0">닫기</button>
+      </div>
+      <div id="memoFloatBody" class="max-h-[30vh] overflow-y-auto px-3 pb-3 flex flex-col gap-0.5"></div>
+    </div>
+  </div>
+  <script>
+    // =====================================================================
+    // 📝 [패치 #46] AI 메모장
+    //  - 저장 위치: 내 계정 data/memos/{메모번호} (기존 데이터와 따로, 기존 저장 코드는 건드리지 않음)
+    //  - 메모장을 열 때만 따로 불러옴 (syncWithCloud 수정 없음)
+    // =====================================================================
+    let aiMemos = [];          // [{id,title,lines[],raw,createdAt,updatedAt}]
+    let memoCur = null;        // 지금 보고 있는 메모 (새 메모면 id 없음 → 저장 때 만듦)
+    let memoEditing = false;
+    let memoSheetIdx = 0;
+    const MEMO_MAX_LINES = 60, MEMO_LINE_MAX = 200, MEMO_RAW_MAX = 3000;
+    function memoUrl(id) { const base = `${DB_BASE_URL}/${getSafeKey(currentUserId)}/data/memos`; return getAuthUrl(id ? `${base}/${id}.json` : `${base}.json`); }
+    function memoClean(m, id) {
+      if (!m || typeof m !== 'object') return null;
+      const lines = (Array.isArray(m.lines) ? m.lines : (m.lines && typeof m.lines === 'object' ? Object.values(m.lines) : [])).map(x => String(x == null ? '' : x).trim().slice(0, MEMO_LINE_MAX)).filter(Boolean).slice(0, MEMO_MAX_LINES);
+      return { id: String(id), title: String(m.title || '').trim().slice(0, 40), lines, raw: String(m.raw || '').slice(0, MEMO_RAW_MAX), createdAt: Number(m.createdAt) || 0, updatedAt: Number(m.updatedAt) || Number(m.createdAt) || 0 };
+    }
+    async function loadMemos() {
+      const res = await fetch(memoUrl());
+      if (!res.ok) throw new Error('불러오기 실패');
+      const data = await res.json();
+      aiMemos = Object.keys(data && typeof data === 'object' ? data : {}).filter(k => /^[A-Za-z0-9_-]{1,40}$/.test(k)).map(k => memoClean(data[k], k)).filter(Boolean).sort((a, b) => b.updatedAt - a.updatedAt);
+      return aiMemos;
+    }
+    function memoDateLabel(ts) {
+      if (!ts) return ''; const d = new Date(ts); const now = new Date();
+      const hm = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+      if (d.toDateString() === now.toDateString()) return '오늘 ' + hm;
+      return `${d.getMonth() + 1}월 ${d.getDate()}일`;
+    }
+    function memoLinesHtml(lines, dark) {
+      if (!lines || !lines.length) return `<span class="text-[15px] font-bold ${dark ? 'text-[#94A3B8]' : 'text-[#64748B]'}">내용이 없습니다.</span>`;
+      return lines.map((l, i) => `<div class="flex gap-2.5 items-start py-1.5 ${dark ? '' : 'border-b border-[#F1F5F9]'}"><span class="w-[26px] h-[26px] rounded-full ${dark ? 'bg-[#84CC16] text-[#151E2D]' : 'bg-[#151E2D] text-[#BEF264]'} text-[14px] font-black flex items-center justify-center shrink-0">${i + 1}</span><span class="text-[17px] font-extrabold ${dark ? 'text-white' : 'text-[#151E2D]'} leading-snug break-keep min-w-0" style="overflow-wrap:anywhere">${escHtml(l)}</span></div>`).join('');
+    }
+
+    // ---------- 메모장 화면 열기 / 닫기 ----------
+    async function openMemoView() {
+      document.getElementById('memoListPane').classList.remove('hidden');
+      document.getElementById('memoEditPane').classList.add('hidden');
+      document.getElementById('memoView').classList.remove('hidden');
+      document.getElementById('memoView').scrollTop = 0;
+      history.pushState({ memoOpen: true }, '', '');
+      renderMemoList(true);
+      try { await loadMemos(); renderMemoList(); }
+      catch (e) { document.getElementById('memoCount').innerText = '메모를 불러오지 못했습니다. 인터넷 연결을 확인해 주세요.'; }
+    }
+    function renderMemoList(loading) {
+      const cnt = document.getElementById('memoCount'); const box = document.getElementById('memoList');
+      if (loading) { cnt.innerText = '불러오는 중…'; box.innerHTML = ''; return; }
+      cnt.innerText = aiMemos.length ? `저장된 메모 ${aiMemos.length}개 · 최근 순` : '';
+      box.innerHTML = aiMemos.length ? aiMemos.map((m, i) => `<button type="button" onclick="openMemoDetail(${i})" class="w-full text-left bg-white border-[1.5px] border-[#D4AF37] rounded-[18px] px-4 py-3 flex flex-col gap-1 active:scale-[0.99] transition-all">
+          <span class="flex justify-between items-center gap-2"><span class="text-[18.5px] font-black text-[#151E2D] truncate">${escHtml(m.title || '제목 없는 메모')}</span><span class="text-[14px] font-extrabold text-[#64748B] shrink-0">${escHtml(memoDateLabel(m.updatedAt))}</span></span>
+          ${m.lines.slice(0, 3).map(l => `<span class="text-[16px] font-bold text-[#334155] truncate">· ${escHtml(l)}</span>`).join('')}${m.lines.length > 3 ? `<span class="text-[14px] font-extrabold text-[#3F6212]">외 ${m.lines.length - 3}줄 더 보기</span>` : ''}
+        </button>`).join('')
+        : '<div class="bg-white/[0.06] border-[1.5px] border-dashed border-[#475569] rounded-[18px] px-4 py-6 text-center text-[16px] font-bold text-[#CBD5E1] leading-relaxed break-keep">아직 메모가 없습니다.<br>현장에서 [말로 메모하기]를 눌러 보세요.</div>';
+    }
+    function closeMemoView() {
+      const v = document.getElementById('memoView'); if (v.classList.contains('hidden')) return;
+      v.classList.add('hidden');
+      if (history.state && (history.state.memoOpen || history.state.memoEdit)) { VX.ignorePop = true; history.go(history.state.memoEdit ? -2 : -1); }
+    }
+    let memoSnap = '';
+    function memoSnapOf(m) { return JSON.stringify([m.title || '', m.lines || []]); }
+    function memoShowEdit(m, opts) {
+      opts = opts || {};
+      memoCur = m; memoSnap = opts.unsaved ? '' : memoSnapOf(m); // 새로 정리된 메모는 저장 전까지 '안 저장됨'
+      document.getElementById('memoEditHead').innerText = opts.head || (m.id ? '메모 보기' : 'AI가 정리했어요');
+      document.getElementById('memoTitleInput').value = m.title || '';
+      document.getElementById('memoRawText').innerText = m.raw || '';
+      document.getElementById('memoRawBox').classList.toggle('hidden', !opts.showRaw || !m.raw);
+      document.getElementById('memoDeleteBtn').classList.toggle('hidden', !m.id);
+      memoSetEditing(!!opts.editing);
+      document.getElementById('memoListPane').classList.add('hidden');
+      document.getElementById('memoEditPane').classList.remove('hidden');
+      document.getElementById('memoView').scrollTop = 0;
+    }
+    function memoSetEditing(on) {
+      memoEditing = on;
+      const ta = document.getElementById('memoLinesInput');
+      if (on) ta.value = memoCur.lines.join('\n');
+      else document.getElementById('memoLinesView').innerHTML = memoLinesHtml(memoCur.lines, false);
+      ta.classList.toggle('hidden', !on);
+      document.getElementById('memoLinesLabel').classList.toggle('hidden', !on);
+      document.getElementById('memoLinesView').classList.toggle('hidden', on);
+      document.getElementById('memoEditToggleBtn').innerText = on ? '고친 글 보기' : '글자 고치기';
+      if (on) setTimeout(() => { try { ta.focus(); } catch (e) {} }, 100);
+    }
+    function memoReadEditor() { // 화면에 적힌 내용을 memoCur에 반영
+      if (!memoCur) return;
+      memoCur.title = document.getElementById('memoTitleInput').value.trim().slice(0, 40);
+      if (memoEditing) memoCur.lines = document.getElementById('memoLinesInput').value.split('\n').map(x => x.trim().slice(0, MEMO_LINE_MAX)).filter(Boolean).slice(0, MEMO_MAX_LINES);
+    }
+    function memoToggleEdit() { memoReadEditor(); memoSetEditing(!memoEditing); }
+    function openMemoDetail(i) {
+      const m = aiMemos[i]; if (!m) return;
+      memoShowEdit(JSON.parse(JSON.stringify(m)), { showRaw: false });
+      history.pushState({ memoEdit: true }, '', '');
+    }
+    function openMemoNewByHand() {
+      memoShowEdit({ id: '', title: '', lines: [], raw: '', createdAt: 0 }, { head: '새 메모', editing: true, unsaved: true });
+      history.pushState({ memoEdit: true }, '', '');
+    }
+    function memoBackToList(fromPopstate) {
+      // 휴대폰 뒤로가기로 나갈 때 저장 안 한 내용이 있으면 물어보고 저장 (말로 한 메모를 잃지 않게)
+      if (fromPopstate && memoCur) {
+        memoReadEditor();
+        const has = memoCur.title || memoCur.lines.length;
+        if (has && memoSnapOf(memoCur) !== memoSnap && confirm('저장하지 않은 메모가 있습니다.\n저장할까요?')) memoPersist(memoCur).then(() => renderMemoList()).catch(() => alert('저장하지 못했습니다. 인터넷 연결을 확인해 주세요.'));
+      }
+      document.getElementById('memoEditPane').classList.add('hidden');
+      document.getElementById('memoListPane').classList.remove('hidden');
+      memoCur = null; renderMemoList();
+      if (!fromPopstate && history.state && history.state.memoEdit) { VX.ignorePop = true; history.back(); }
+    }
+    async function saveMemo() {
+      if (!memoCur) return;
+      memoReadEditor();
+      if (!memoCur.title && !memoCur.lines.length) { alert('적힌 내용이 없습니다.'); return; }
+      const btn = document.getElementById('memoSaveBtn'); btn.disabled = true; btn.innerText = '저장하는 중…';
+      try {
+        await memoPersist(memoCur);
+        memoBackToList(false);
+        if (typeof showToast === 'function') showToast('메모를 저장했습니다.');
+      } catch (e) { alert('저장하지 못했습니다. 인터넷 연결을 확인하고 다시 눌러 주세요.\n(적은 내용은 화면에 그대로 있습니다)'); }
+      finally { btn.disabled = false; btn.innerText = '이대로 메모 저장'; }
+    }
+    async function memoPersist(m) { // 메모 한 개만 저장 (다른 메모·기존 자료는 건드리지 않음)
+      if (!m.title) m.title = (m.lines[0] || '메모').slice(0, 20);
+      const now = Date.now();
+      const id = m.id || ('m' + now + '_' + Math.random().toString(36).slice(2, 8));
+      const body = { title: m.title, lines: m.lines, raw: m.raw || '', createdAt: m.createdAt || now, updatedAt: now };
+      const res = await fetch(memoUrl(id), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      if (!res.ok) throw new Error('저장 실패');
+      m.id = id; m.createdAt = body.createdAt; m.updatedAt = now;
+      aiMemos = [memoClean(body, id)].concat(aiMemos.filter(x => x.id !== id));
+    }
+    async function deleteMemo() {
+      if (!memoCur || !memoCur.id) return;
+      if (!confirm('이 메모를 지울까요?\n지우면 되살릴 수 없습니다.')) return;
+      try {
+        const res = await fetch(memoUrl(memoCur.id), { method: 'DELETE' });
+        if (!res.ok) throw new Error('삭제 실패');
+        const id = memoCur.id; aiMemos = aiMemos.filter(x => x.id !== id);
+        memoBackToList(false);
+      } catch (e) { alert('지우지 못했습니다. 인터넷 연결을 확인해 주세요.'); }
+    }
+
+    // ---------- 말로 메모하기 ----------
+    const MEMO_AI_PROMPT = `너는 조경 사업자 대표님의 현장 메모 정리 도우미다. 대표님이 현장에서 말로 남긴 메모를 나중에 견적서를 쓸 때 보기 좋게 정리한다.
+- title: 어느 현장 메모인지 알 수 있는 짧은 제목(20자 이내, 예: "영통 김철수 댁 앞마당"). 알 수 없으면 "".
+- lines: 한 줄에 한 가지 내용만 담은 배열. 말한 순서를 지키고, 문장은 짧게 끝낸다(예: "소나무 3그루 — 전지 필요").
+- 치수·수량은 숫자와 단위로 바꾼다("가로 한 십이 미터 세로 팔 미터"→"가로 12m × 세로 8m"). 가로·세로가 모두 있으면 뒤에 면적을 괄호로 붙여도 된다(예: "(약 96㎡)").
+- 고객이 원하는 것은 "고객님: …"으로 적는다.
+- 말하지 않은 숫자·가격·전화번호·사실을 절대 보태지 않는다. 뜻이 애매한 부분은 들은 그대로 적는다.
+${AI_COMMON_RULES}
+{"title":"","lines":[]}`;
+    let memoVoiceMode = 'new';
+    function startMemoVoice() { memoVoiceMode = 'new'; voiceOpen({ title: '말로 메모하기', chip: 'AI 메모장', hints: ['현장', '치수·수량', '할 일'], guide: VOICE_GUIDES.memo, onDone: runMemoAi }); }
+    function startMemoVoiceMore() { if (!memoCur) return; memoReadEditor(); memoVoiceMode = 'more'; voiceOpen({ title: '이어서 더 말하기', chip: 'AI 메모장', hints: ['치수·수량', '할 일'], guide: VOICE_GUIDES.memo, onDone: runMemoAi }); }
+    async function runMemoAi(text) {
+      voiceShowThinking(['군말 · 발음 실수 고치기', '치수 · 숫자 정리', '줄별로 나누기']);
+      let title = '', lines = [], failed = false;
+      try {
+        const j = await voiceAskAiJson(MEMO_AI_PROMPT, text);
+        title = String(j.title || '').trim().slice(0, 40);
+        lines = (Array.isArray(j.lines) ? j.lines : []).map(x => String(x == null ? '' : x).trim().slice(0, MEMO_LINE_MAX)).filter(Boolean).slice(0, MEMO_MAX_LINES);
+        if (!lines.length) throw new Error('정리된 줄이 없음');
+      } catch (e) { failed = true; lines = [text.slice(0, MEMO_LINE_MAX * 5)]; }
+      if (memoVoiceMode === 'more' && memoCur) {
+        memoCur.lines = memoCur.lines.concat(lines).slice(0, MEMO_MAX_LINES);
+        memoCur.raw = ((memoCur.raw ? memoCur.raw + '\n' : '') + text).slice(0, MEMO_RAW_MAX);
+        if (!memoCur.title && title) memoCur.title = title;
+        voiceHide(false); // 메모 보기 화면으로 한 칸 돌아감
+        const keepSnap = memoSnap; memoShowEdit(memoCur, { head: '덧붙여 정리했어요', showRaw: true }); memoSnap = keepSnap; // 덧붙인 내용은 저장 전까지 '안 저장됨'
+      } else {
+        voiceHide(true);
+        memoShowEdit({ id: '', title, lines, raw: text.slice(0, MEMO_RAW_MAX), createdAt: 0 }, { showRaw: true, unsaved: true });
+        history.replaceState({ memoEdit: true }, '', ''); // 음성 화면 자리를 메모 보기 화면으로 바꿈
+      }
+      if (failed) alert('AI 정리에 실패해서 말씀하신 그대로 넣어 두었습니다.\n[글자 고치기]로 다듬거나 그대로 저장하셔도 됩니다.');
+    }
+
+    // ---------- 견적서: 메모장 참고하기 ----------
+    async function openMemoSheet() {
+      memoSheetIdx = 0;
+      document.getElementById('memoSheetChips').innerHTML = '';
+      document.getElementById('memoSheetBody').innerHTML = '<span class="text-[15px] font-bold text-[#64748B]">불러오는 중…</span>';
+      memoSheetButtons(false);
+      document.getElementById('memoSheet').classList.remove('hidden');
+      history.pushState({ memoSheet: true }, '', '');
+      try { await loadMemos(); renderMemoSheet(); }
+      catch (e) { document.getElementById('memoSheetBody').innerHTML = '<span class="text-[15px] font-bold text-[#B91C1C]">메모를 불러오지 못했습니다. 인터넷 연결을 확인해 주세요.</span>'; }
+    }
+    function memoSheetButtons(on) { ['memoSheetFillBtn', 'memoSheetFloatBtn'].forEach(id => { const b = document.getElementById(id); b.disabled = !on; b.classList.toggle('opacity-40', !on); }); }
+    function renderMemoSheet() {
+      const chips = document.getElementById('memoSheetChips'); const body = document.getElementById('memoSheetBody');
+      if (!aiMemos.length) { chips.innerHTML = ''; body.innerHTML = '<span class="text-[15.5px] font-bold text-[#475569] leading-relaxed break-keep">저장된 메모가 없습니다.<br>메인 화면 [AI 메모장]에서 현장 메모를 먼저 남겨 주세요.</span>'; memoSheetButtons(false); return; }
+      chips.innerHTML = aiMemos.slice(0, 20).map((m, i) => `<button type="button" onclick="memoSheetPick(${i})" class="shrink-0 max-w-[62%] text-left rounded-[14px] px-3 py-2 ${i === memoSheetIdx ? 'bg-[#151E2D] text-[#BEF264]' : 'bg-[#F1F5F9] text-[#334155]'}"><span class="block text-[15px] font-black truncate">${escHtml(m.title || '제목 없는 메모')}</span><span class="block text-[13px] font-bold text-[#94A3B8]">${escHtml(memoDateLabel(m.updatedAt))}</span></button>`).join('');
+      body.innerHTML = memoLinesHtml(aiMemos[memoSheetIdx].lines, false);
+      memoSheetButtons(true);
+    }
+    function memoSheetPick(i) { if (!aiMemos[i]) return; memoSheetIdx = i; renderMemoSheet(); }
+    function closeMemoSheet(fromPopstate) {
+      const s = document.getElementById('memoSheet'); if (s.classList.contains('hidden')) return;
+      s.classList.add('hidden');
+      if (!fromPopstate && history.state && history.state.memoSheet) { VX.ignorePop = true; history.back(); }
+    }
+    function memoText(m) { return (m.title ? '[현장 메모] ' + m.title + '\n' : '') + m.lines.map((l, i) => `${i + 1}. ${l}`).join('\n'); }
+    function memoFillQuote() {
+      const m = aiMemos[memoSheetIdx]; if (!m) return;
+      // 시트 자리를 음성 화면(정리 중 표시)으로 바꿔서, 기존 [말로 견적 쓰기] 정리 과정을 그대로 사용
+      document.getElementById('memoSheet').classList.add('hidden');
+      if (history.state && history.state.memoSheet) history.replaceState({ voiceOpen: true }, '', ''); else history.pushState({ voiceOpen: true }, '', '');
+      VX.onDone = null; VX.busy = true;
+      document.getElementById('voiceTitle').innerText = '메모로 견적 채우기';
+      document.getElementById('voiceOverlay').classList.remove('hidden');
+      runQuoteAi(memoText(m));
+    }
+    let memoFloatFolded = false;
+    function memoShowFloat() {
+      const m = aiMemos[memoSheetIdx]; if (!m) return;
+      closeMemoSheet(false);
+      document.getElementById('memoFloatTitle').innerText = '메모 · ' + (m.title || '제목 없는 메모');
+      document.getElementById('memoFloatBody').innerHTML = memoLinesHtml(m.lines, true);
+      memoFloatFolded = false; memoFloatApplyFold();
+      document.getElementById('memoFloat').classList.remove('hidden');
+    }
+    function memoFloatFold() { memoFloatFolded = !memoFloatFolded; memoFloatApplyFold(); }
+    function memoFloatApplyFold() { document.getElementById('memoFloatBody').classList.toggle('hidden', memoFloatFolded); document.getElementById('memoFloatFoldBtn').innerText = memoFloatFolded ? '펼치기' : '접기'; }
+    function memoHideFloat() { document.getElementById('memoFloat').classList.add('hidden'); }
+    // 견적서 화면을 떠나면 띄워 둔 메모도 자동으로 닫힘
+    (function () {
+      const q = document.getElementById('quoteAdminView'); if (!q || typeof MutationObserver === 'undefined') return;
+      new MutationObserver(() => { if (q.classList.contains('hidden')) memoHideFloat(); }).observe(q, { attributes: true, attributeFilter: ['class'] });
+    })();
+
+    // 뒤로가기(휴대폰 버튼): 음성 화면 처리(패치 #38) 다음에 메모 화면 처리
+    window.addEventListener('popstate', (e) => {
+      const ov = document.getElementById('voiceOverlay'); if (ov && !ov.classList.contains('hidden')) return;
+      const sh = document.getElementById('memoSheet');
+      if (sh && !sh.classList.contains('hidden')) { closeMemoSheet(true); e.stopImmediatePropagation(); return; }
+      const mv = document.getElementById('memoView');
+      if (mv && !mv.classList.contains('hidden')) {
+        if (!document.getElementById('memoEditPane').classList.contains('hidden') && history.state && history.state.memoOpen) memoBackToList(true);
+        else mv.classList.add('hidden');
+        e.stopImmediatePropagation();
+      }
+    }, true);
+  </script>
   <!-- 🧭 [패치 #17] 하단 고정 메뉴 (로그인한 업체 화면에서만 표시, 고객 리포트 화면에는 표시 안 됨) -->
   <nav id="bottomNav" class="no-print fixed bottom-0 inset-x-0 z-40 shadow-[0_-6px_20px_rgba(0,0,0,0.35)]" style="display: none; background: #0F1722; border-top: 1px solid rgba(255,255,255,0.14); padding-bottom: env(safe-area-inset-bottom);">
    <div class="max-w-md mx-auto grid grid-cols-5"><!-- 🧭 [패치 #18] 소통방 가운데 강조 -->
