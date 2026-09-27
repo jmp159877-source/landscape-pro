@@ -1,0 +1,17 @@
+{
+  "name": "조경노트 PRO",
+  "short_name": "조경노트",
+  "description": "조경 사업자 대표님을 위한 현장 관리 앱 - 일정, 작업일지, 고객 리포트, 견적, 대표님 소통방",
+  "lang": "ko",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#151E2D",
+  "theme_color": "#151E2D",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
