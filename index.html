@@ -1364,15 +1364,19 @@
             <div class="bg-gradient-to-br from-[#141A23] to-[#1E293B] rounded-[24px] p-5 shadow-lg border-[1.5px] border-[#D4AF37]/70">
                 <div class="text-[15px] font-black text-[#FDE047] mb-1">이번 달 순수익</div>
                 <div id="ledgerMonthNet" class="font-black text-[#FEE500] tracking-tighter whitespace-nowrap truncate leading-tight">0원</div>
-                <div class="grid grid-cols-3 gap-2 mt-4 pt-3.5 border-t border-[#D4AF37]/30">
-                    <div class="min-w-0"><div class="text-[13.5px] font-bold text-[#CBD5E1]">수입</div><div id="ledgerMonthIncome" class="text-[15.5px] font-black text-[#4ADE80] tracking-tighter truncate">0원</div></div>
-                    <div class="min-w-0 border-x border-white/10 px-2"><div class="text-[13.5px] font-bold text-[#CBD5E1]">지출</div><div id="ledgerMonthExpense" class="text-[15.5px] font-black text-white tracking-tighter truncate">0원</div></div>
-                    <div class="min-w-0 pl-1"><div class="text-[13.5px] font-bold text-[#CBD5E1]">부가세</div><div id="ledgerMonthVat" class="text-[15.5px] font-black text-[#CBD5E1] tracking-tighter truncate">0원</div></div>
+                <div class="mt-4 pt-3 border-t border-[#D4AF37]/30 space-y-2"><!-- 🎨 [패치 #16] 한 줄에 하나씩: 억 단위도 잘리지 않음 -->
+                    <div class="flex items-center justify-between gap-3"><span class="text-[16px] font-bold text-[#CBD5E1] shrink-0">수입</span><span id="ledgerMonthIncome" class="text-[18px] font-black text-[#4ADE80] tracking-tight whitespace-nowrap text-right">0원</span></div>
+                    <div class="flex items-center justify-between gap-3"><span class="text-[16px] font-bold text-[#CBD5E1] shrink-0">지출</span><span id="ledgerMonthExpense" class="text-[18px] font-black text-white tracking-tight whitespace-nowrap text-right">0원</span></div>
+                    <div class="flex items-center justify-between gap-3"><span class="text-[16px] font-bold text-[#CBD5E1] shrink-0">부가세</span><span id="ledgerMonthVat" class="text-[18px] font-black text-[#CBD5E1] tracking-tight whitespace-nowrap text-right">0원</span></div>
                 </div>
             </div>
             <div class="bg-gradient-to-r from-[#064E3B] to-[#0F2922] rounded-[20px] px-5 py-3.5 shadow-md border border-[#D4AF37]/50">
                 <div class="flex items-center justify-between gap-2"><span class="text-[14.5px] font-black text-[#D1FAE5] shrink-0">올해 누적 순수익</span><span id="ledgerYearNet" class="font-black text-[#FEE500] tracking-tighter whitespace-nowrap truncate">0원</span></div>
-                <div class="flex justify-between gap-2 mt-1.5 text-[13px] font-bold text-[#A7F3D0]"><span class="truncate">수입 <b id="ledgerYearIncome" class="text-[#4ADE80]">0원</b></span><span class="truncate">지출 <b id="ledgerYearExpense" class="text-white">0원</b></span><span class="truncate">부가세 <b id="ledgerYearVat" class="text-[#D1FAE5]">0원</b></span></div>
+                <div class="mt-2 pt-2 border-t border-white/10 space-y-1 text-[15px] font-bold text-[#A7F3D0]"><!-- 🎨 [패치 #16] -->
+                    <div class="flex justify-between gap-3"><span>수입</span><b id="ledgerYearIncome" class="text-[#4ADE80] whitespace-nowrap">0원</b></div>
+                    <div class="flex justify-between gap-3"><span>지출</span><b id="ledgerYearExpense" class="text-white whitespace-nowrap">0원</b></div>
+                    <div class="flex justify-between gap-3"><span>부가세</span><b id="ledgerYearVat" class="text-[#D1FAE5] whitespace-nowrap">0원</b></div>
+                </div>
             </div>
         </div>
 
