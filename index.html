@@ -21,6 +21,10 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><!-- 📲 [패치 #25] -->
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="manifest" href="/manifest.json">
+  <link rel="canonical" href="https://www.jogyeongnote.com/"><!-- 🔎 [패치 #28] 네이버 검색: 대표 주소 하나로 -->
+  <script>/* 🔎 [패치 #28] 고객 리포트 링크(?id=, ?reportId=)는 검색에 수집되지 않게 (고객 이름·주소·사진 보호) */
+    (function(){ try { var q = new URLSearchParams(location.search); if (q.get('id') || q.get('reportId')) { var m = document.createElement('meta'); m.name = 'robots'; m.content = 'noindex, nofollow'; document.head.appendChild(m); } } catch(e) {} })();
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@1.47.0"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>

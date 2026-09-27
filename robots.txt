@@ -1,0 +1,9 @@
+# 조경노트 PRO - 검색 수집 안내 (🔎 패치 #28)
+User-agent: *
+Allow: /
+# 관리자 센터와 고객 리포트 링크는 수집하지 않음 (고객 개인정보 보호)
+Disallow: /master.html
+Disallow: /*?id=
+Disallow: /*?reportId=
+
+Sitemap: https://www.jogyeongnote.com/sitemap.xml
