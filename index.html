@@ -360,176 +360,54 @@
       <span id="weatherConditionBadge" class="hidden"></span>
       <i id="weatherBgIcon" class="hidden"></i>
              
-      <!-- 시안 B: 화이트 클린 배경 & 골드 테두리 라운지 (끝까지 안전하게 감싸는 구조) -->
-      <div class="bg-white rounded-[28px] p-4 sm:p-5 space-y-4 border-2 border-[#D4AF37] luxury-shadow">
-        
-        <!-- 1. VIP 멤버십 & 활동 포인트 카드 (글씨 겹침 & 버튼 잘림 100% 해결) -->
-        <style>
-          #loungeMyGradeBadge {
-            font-size: 13px !important;
-            padding: 4px 10px !important;
-            border-radius: 8px !important;
-          }
-        </style>
-        <div class="rounded-[24px] p-4 sm:p-5 border-2 border-[#FDE047] shadow-xl relative overflow-hidden space-y-3.5" style="background: linear-gradient(135deg, #141A23 0%, #1E293B 55%, #0F172A 100%);">
-          
-          <!-- 1단: 메달 아이콘 + 상호명(22px) + 등급배지 + [? 혜택안내] 버튼 -->
-          <div class="flex items-center gap-3">
-            <div class="w-14 h-14 rounded-[18px] bg-gradient-to-br from-[#D4AF37] to-[#F59E0B] flex items-center justify-center text-[#151E2D] shadow-lg border border-white/40 shrink-0">
-              <i data-lucide="award" class="w-8 h-8 stroke-[2.5]"></i>
-            </div>
-            <div class="min-w-0 flex-1">
-              <span id="loungeMyCompanyName" class="block text-[22px] font-black text-white tracking-tight leading-tight truncate">대표님</span>
-              <div class="mt-1.5 flex items-center justify-between gap-1.5">
-                <span id="loungeMyGradeBadge" class="text-[13px] bg-[#84CC16] text-[#151E2D] font-black px-2.5 py-1 rounded-lg shadow-sm whitespace-nowrap">🌿 파트너 대표님</span>
-                <button onclick="alert('💎 [대표님 소통방 포인트 적립 안내]\n\n• 신규 가입 기본 축하금: 1,000 P\n• 매일 소통방 출석체크: +50 P\n• 소통방 게시글·질문·정보 작성: +100 P\n\n[등급 기준]\n🌿 파트너 대표님 (1,000P~)\n🌲 명장 대표님 (2,000P~)\n👑 마스터 대표님 (5,000P~)')" class="py-1 px-2.5 rounded-lg bg-white/15 hover:bg-white/25 border border-[#FDE047]/60 text-[#FDE047] font-black text-[12.5px] flex items-center gap-1 shrink-0 whitespace-nowrap">
-                  <i data-lucide="help-circle" class="w-3.5 h-3.5 text-[#FDE047]"></i> 혜택안내
-                </button>
-              </div>
-            </div>
-          </div>
+      <!-- 💬 [패치 #20] 소통방 화면: 메인 전체 메뉴와 같은 남색 카드·연두 아이콘 규칙 -->
+      <h2 class="text-[23px] font-black text-white flex items-center gap-2 ml-1"><i data-lucide="messages-square" class="w-7 h-7 text-[#84CC16]"></i> 대표님 소통방</h2>
 
-          <!-- 2단: 보유 포인트 전광판 (윗줄: 제목+점수 / 아랫줄: 안내문구 분리로 겹침 0%) -->
-          <div class="bg-black/45 border border-[#D4AF37]/50 rounded-[18px] px-4 py-3 space-y-1.5">
-            <div class="flex items-center justify-between gap-2">
-              <span class="text-[16px] font-black text-[#FDE047] whitespace-nowrap">나의 보유 포인트</span>
-              <span id="loungeMyPoints" class="text-[26px] font-black text-[#84CC16] tracking-tight whitespace-nowrap drop-shadow leading-none">1,000 P</span>
-            </div>
-            <div class="pt-1.5 border-t border-white/10 text-[13px] font-bold text-[#CBD5E1] text-center whitespace-nowrap">
-              💡 소통·정보교환 활동 시 포인트 자동 적립
-            </div>
+      <!-- 1. 내 포인트 카드 -->
+      <div class="rounded-[24px] p-5 space-y-4" style="background:#1E293B; border:1.5px solid #475569;">
+        <div class="flex items-center justify-between gap-3">
+          <div class="min-w-0">
+            <span id="loungeMyCompanyName" class="block text-[20px] font-black text-white tracking-tight leading-tight truncate">대표님</span>
+            <span id="loungeMyGradeBadge" class="inline-block mt-1.5 text-[13.5px] bg-[#84CC16] text-[#1A2E05] font-black px-2.5 py-1 rounded-lg whitespace-nowrap">🌿 파트너 대표님</span>
           </div>
-
-          <!-- 3단: 가로 100% 전체 폭을 다 쓰는 출석체크 버튼 (절대 잘리지 않음!) -->
-          <button id="btnLoungeAttend" onclick="claimLoungeAttendance()" class="w-full py-3.5 px-4 rounded-[14px] font-black text-[16.5px] text-[#151E2D] flex items-center justify-center gap-2 shadow-md active:scale-95 transition-all whitespace-nowrap" style="background: linear-gradient(135deg, #FEF08A 0%, #FDE047 100%); border: 1.5px solid #FFFFFF;">
-            <i data-lucide="calendar-check" class="w-5 h-5 stroke-[2.5]"></i> 오늘 출석체크 (+50P 받기)
-          </button>
-        </div>
-
-        <!-- 2. 대표님 소통방 전체보기 메인 간판 -->
-        <div onclick="openBoard('전체')" class="rounded-[22px] p-5 flex items-center justify-between cursor-pointer hover:brightness-95 active:scale-[0.99] transition-all shadow-lg" style="background: linear-gradient(135deg, #B48327 0%, #D4AF37 45%, #F7E9A0 78%, #C59B27 100%); border: 1.5px solid #FEF08A;">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-[16px] bg-[#151E2D] flex items-center justify-center text-[#FDE047] shadow-md shrink-0">
-              <i data-lucide="messages-square" class="w-6 h-6 stroke-[2.4]"></i>
-            </div>
-            <div>
-              <h2 class="text-[21px] font-black text-[#151E2D] tracking-tight leading-none">대표님 소통방 전체보기</h2>
-              <p class="text-[13.5px] font-black text-[#151E2D]/80 mt-1.5">글 작성 시 +100P 즉시 적립 · 실시간 대화</p>
-            </div>
-          </div>
-          <div class="w-9 h-9 rounded-full bg-[#151E2D] flex items-center justify-center text-[#FDE047] shrink-0">
-            <i data-lucide="chevron-right" class="w-5 h-5 stroke-[3]"></i>
+          <div class="text-right shrink-0">
+            <div class="text-[14px] font-bold text-[#CBD5E1]">내 포인트</div>
+            <span id="loungeMyPoints" class="block text-[28px] font-black text-[#BEF264] tracking-tight whitespace-nowrap leading-tight">1,000 P</span>
           </div>
         </div>
-          
-        <!-- 3. 8대 카테고리 그리드 (시안 3: 노란 명찰 박스 적용) -->
-        <style>
-          .lounge-nameplate {
-            background: linear-gradient(135deg, #FEF08A 0%, #FDE047 100%);
-            border: 1.5px solid #FFFFFF;
-            border-radius: 12px;
-            padding: 8px 6px;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
-          }
-        </style>
-        <div class="grid grid-cols-2 gap-3">
-          <!-- 1: 자유 소통·일상방 -->
-          <button onclick="openBoard('자유 소통·일상방')" class="rounded-[20px] p-3.5 text-left flex flex-col gap-2.5 hover:border-[#FDE047] transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
-            <div class="flex items-center justify-between">
-              <div class="w-9 h-9 rounded-[10px] bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-[#FDE047]"><i data-lucide="coffee" class="w-5 h-5"></i></div>
-              <span class="text-[12.5px] font-black bg-[#FDE047] text-[#151E2D] px-2 py-0.5 rounded-md">일상·소통</span>
-            </div>
-            <div class="lounge-nameplate">
-              <h3 class="text-[16px] font-black text-[#151E2D] text-center leading-none tracking-tight whitespace-nowrap">자유 소통·일상방</h3>
-            </div>
-            <p class="text-[14.5px] text-[#F1F5F9] font-bold break-keep leading-[1.45] px-0.5">현장 일상, 오늘 점심, 세상 사는 이야기 편하게 나눠요</p>
-          </button>
-
-          <!-- 2: 정보 교환·업체 찾기 -->
-          <button onclick="openBoard('정보 교환·업체 찾기')" class="rounded-[20px] p-3.5 text-left flex flex-col gap-2.5 hover:border-[#84CC16] transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
-            <div class="flex items-center justify-between">
-              <div class="w-9 h-9 rounded-[10px] bg-lime-500/20 border border-lime-400/40 flex items-center justify-center text-[#84CC16]"><i data-lucide="compass" class="w-5 h-5"></i></div>
-              <span class="text-[12.5px] font-black bg-[#84CC16] text-[#151E2D] px-2 py-0.5 rounded-md">묻고 답하기</span>
-            </div>
-            <div class="lounge-nameplate">
-              <h3 class="text-[16px] font-black text-[#151E2D] text-center leading-none tracking-tight whitespace-nowrap">정보 교환·업체 찾기</h3>
-            </div>
-            <p class="text-[14.5px] text-[#F1F5F9] font-bold break-keep leading-[1.45] px-0.5">타지역 폐기물 처리, 인근 업체 찾기, 현장 정보 교환</p>
-          </button>
-
-          <!-- 3: 현장 협력·지원 -->
-          <button onclick="openBoard('현장 협력·지원')" class="rounded-[20px] p-3.5 text-left flex flex-col gap-2.5 hover:border-sky-400 transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
-            <div class="flex items-center justify-between">
-              <div class="w-9 h-9 rounded-[10px] bg-sky-500/20 border border-sky-400/40 flex items-center justify-center text-sky-300"><i data-lucide="handshake" class="w-5 h-5"></i></div>
-              <span class="text-[12.5px] font-black bg-sky-400/20 text-sky-300 border border-sky-400/40 px-2 py-0.5 rounded-md">협력해요</span>
-            </div>
-            <div class="lounge-nameplate">
-              <h3 class="text-[16px] font-black text-[#151E2D] text-center leading-none tracking-tight whitespace-nowrap">현장 협력·지원</h3>
-            </div>
-            <p class="text-[14.5px] text-[#F1F5F9] font-bold break-keep leading-[1.45] px-0.5">사장님 모십니다 / 인력·장비 현장 지원합니다</p>
-          </button>
-
-          <!-- 4: 장비·자재 직거래 -->
-          <button onclick="openBoard('장비·자재 직거래')" class="rounded-[20px] p-3.5 text-left flex flex-col gap-2.5 hover:border-[#84CC16] transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
-            <div class="flex items-center justify-between">
-              <div class="w-9 h-9 rounded-[10px] bg-[#84CC16]/20 border border-[#84CC16]/40 flex items-center justify-center text-[#84CC16]"><i data-lucide="shopping-cart" class="w-5 h-5"></i></div>
-              <span class="text-[12.5px] font-black bg-[#84CC16]/20 text-[#84CC16] border border-[#84CC16]/40 px-2 py-0.5 rounded-md">무료나눔</span>
-            </div>
-            <div class="lounge-nameplate">
-              <h3 class="text-[16px] font-black text-[#151E2D] text-center leading-none tracking-tight whitespace-nowrap">장비·자재 직거래</h3>
-            </div>
-            <p class="text-[14.5px] text-[#F1F5F9] font-bold break-keep leading-[1.45] px-0.5">중고 장비, 남은 수목·블럭·부자재 직거래 및 나눔</p>
-          </button>
-
-          <!-- 5: 일감 패스·공사 양도 -->
-          <button onclick="openBoard('일감 패스·공사 양도')" class="rounded-[20px] p-3.5 text-left flex flex-col gap-2.5 hover:border-purple-400 transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
-            <div class="flex items-center justify-between">
-              <div class="w-9 h-9 rounded-[10px] bg-purple-500/20 border border-purple-400/40 flex items-center justify-center text-purple-300"><i data-lucide="briefcase" class="w-5 h-5"></i></div>
-              <span class="text-[12.5px] font-black bg-purple-400/20 text-purple-300 border border-purple-400/40 px-2 py-0.5 rounded-md">확정오더</span>
-            </div>
-            <div class="lounge-nameplate">
-              <h3 class="text-[16px] font-black text-[#151E2D] text-center leading-none tracking-tight whitespace-nowrap">일감 패스·공사 양도</h3>
-            </div>
-            <p class="text-[14.5px] text-[#F1F5F9] font-bold break-keep leading-[1.45] px-0.5">일정 중복·타지역 확정 공사 양도 및 공동수급</p>
-          </button>
-
-          <!-- 6: 실전 견적·단가 자문 -->
-          <button onclick="openBoard('실전 견적·단가 자문')" class="rounded-[20px] p-3.5 text-left flex flex-col gap-2.5 hover:border-emerald-400 transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
-            <div class="flex items-center justify-between">
-              <div class="w-9 h-9 rounded-[10px] bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-emerald-300"><i data-lucide="calculator" class="w-5 h-5"></i></div>
-              <span class="text-[12.5px] font-black bg-emerald-400/20 text-emerald-300 border border-emerald-400/40 px-2 py-0.5 rounded-md">손해방지</span>
-            </div>
-            <div class="lounge-nameplate">
-              <h3 class="text-[16px] font-black text-[#151E2D] text-center leading-none tracking-tight whitespace-nowrap">실전 견적·단가 자문</h3>
-            </div>
-            <p class="text-[14.5px] text-[#F1F5F9] font-bold break-keep leading-[1.45] px-0.5">이 현장 얼마가 적당할까요? 적정 단가 상호 자문</p>
-          </button>
-
-          <!-- 7: 실무 노하우 공유 -->
-          <button onclick="openBoard('실무 노하우 공유')" class="rounded-[20px] p-3.5 text-left flex flex-col gap-2.5 hover:border-[#FEE500] transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
-            <div class="flex items-center justify-between">
-              <div class="w-9 h-9 rounded-[10px] bg-[#FEE500]/20 border border-[#FEE500]/40 flex items-center justify-center text-[#FEE500]"><i data-lucide="lightbulb" class="w-5 h-5"></i></div>
-              <span class="text-[12.5px] font-black bg-[#FEE500]/20 text-[#FEE500] border border-[#FEE500]/40 px-2 py-0.5 rounded-md">기술나눔</span>
-            </div>
-            <div class="lounge-nameplate">
-              <h3 class="text-[16px] font-black text-[#151E2D] text-center leading-none tracking-tight whitespace-nowrap">실무 노하우 공유</h3>
-            </div>
-            <p class="text-[14.5px] text-[#F1F5F9] font-bold break-keep leading-[1.45] px-0.5">전지 요령, 석재 시공 팁 등 베테랑 현장 기술 공유</p>
-          </button>
-
-          <!-- 8: 불량 거래처 경보 -->
-          <button onclick="openBoard('불량 거래처 경보')" class="rounded-[20px] p-3.5 text-left flex flex-col gap-2.5 hover:border-red-400 transition-all shadow-md" style="background: linear-gradient(145deg, #1E293B 0%, #0F172A 100%); border: 1.5px solid #CBD5E1;">
-            <div class="flex items-center justify-between">
-              <div class="w-9 h-9 rounded-[10px] bg-red-500/20 border border-red-400/40 flex items-center justify-center text-red-300"><i data-lucide="alert-triangle" class="w-5 h-5"></i></div>
-              <span class="text-[12.5px] font-black bg-red-500/20 text-red-300 border border-red-400/40 px-2 py-0.5 rounded-md">익명보호</span>
-            </div>
-            <div class="lounge-nameplate">
-              <h3 class="text-[16px] font-black text-[#151E2D] text-center leading-none tracking-tight whitespace-nowrap">불량 거래처 경보</h3>
-            </div>
-            <p class="text-[14.5px] text-[#F1F5F9] font-bold break-keep leading-[1.45] px-0.5">상습 미수금, 악성 클레임 주의 요망 현장 팩트 공유</p>
-          </button>
-        </div>
+        <button id="btnLoungeAttend" onclick="claimLoungeAttendance()" class="w-full h-[56px] rounded-[16px] font-black text-[17px] flex items-center justify-center gap-2 active:scale-95 transition-all whitespace-nowrap border-2" style="background:#84CC16; color:#1A2E05; border-color:#84CC16;">
+          <i data-lucide="calendar-check" class="w-5 h-5 stroke-[2.5]"></i> 오늘 출석체크 (+50P 받기)
+        </button>
+        <button onclick="alert('💎 [대표님 소통방 포인트 적립 안내]\n\n• 신규 가입 기본 축하금: 1,000 P\n• 매일 소통방 출석체크: +50 P\n• 소통방 게시글·질문·정보 작성: +100 P\n\n[등급 기준]\n🌿 파트너 대표님 (1,000P~)\n🌲 명장 대표님 (2,000P~)\n👑 마스터 대표님 (5,000P~)')" class="w-full text-center text-[14.5px] font-bold text-[#CBD5E1] flex items-center justify-center gap-1">
+          글쓰기 +100P · 포인트 혜택 안내 <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </button>
       </div>
+
+      <!-- 2. 전체 글 보기 -->
+      <button onclick="openBoard('전체')" class="w-full text-left bg-white rounded-[24px] p-5 luxury-shadow flex items-center gap-4 active:scale-[0.98] transition-all">
+        <div class="w-14 h-14 rounded-[16px] bg-[#ECFCCB] flex items-center justify-center shrink-0"><i data-lucide="list" class="w-8 h-8 text-[#3F6212]"></i></div>
+        <div class="min-w-0 flex-1">
+          <div class="text-[21px] font-black text-[#151E2D] leading-tight">전체 글 보기</div>
+          <div class="text-[15px] font-bold text-[#475569] mt-1">새 글 확인하고 글쓰기</div>
+        </div>
+        <i data-lucide="chevron-right" class="w-7 h-7 text-[#94A3B8] shrink-0"></i>
+      </button>
+
+      <!-- 3. 게시판 두 묶음 -->
+        <div class="flex items-center gap-2 mt-2 ml-1"><span class="w-1.5 h-5 rounded-full" style="background:#84CC16"></span><span class="text-[17px] font-black tracking-tight" style="color:#84CC16;">함께 일하기</span></div>
+        <div class="grid grid-cols-2 gap-3">
+          <button onclick="openBoard('현장 협력·지원')" class="lounge-cat text-left rounded-[20px] p-4 flex flex-col active:scale-95 transition-all" style="background:#1E293B; border:1.5px solid #475569;"><i data-lucide="users" class="w-7 h-7 stroke-[2.2]" style="color:#84CC16;"></i><span class="block text-[19px] font-black text-white leading-tight tracking-tight mt-2.5 break-keep">작업 지원·협력</span><span class="block text-[14.5px] font-bold text-[#94A3B8] leading-snug mt-2 pt-2 border-t border-[#334155] break-keep">인력·장비 협력해요</span></button>
+          <button onclick="openBoard('일감 패스·공사 양도')" class="lounge-cat text-left rounded-[20px] p-4 flex flex-col active:scale-95 transition-all" style="background:#1E293B; border:1.5px solid #475569;"><i data-lucide="briefcase" class="w-7 h-7 stroke-[2.2]" style="color:#84CC16;"></i><span class="block text-[19px] font-black text-white leading-tight tracking-tight mt-2.5 break-keep">작업 양도·양수</span><span class="block text-[14.5px] font-bold text-[#94A3B8] leading-snug mt-2 pt-2 border-t border-[#334155] break-keep">넘치는 일감 나누기</span></button>
+          <button onclick="openBoard('장비·자재 직거래')" class="lounge-cat text-left rounded-[20px] p-4 flex flex-col active:scale-95 transition-all" style="background:#1E293B; border:1.5px solid #475569;"><i data-lucide="shopping-cart" class="w-7 h-7 stroke-[2.2]" style="color:#84CC16;"></i><span class="block text-[19px] font-black text-white leading-tight tracking-tight mt-2.5 break-keep">장비·자재 직거래</span><span class="block text-[14.5px] font-bold text-[#94A3B8] leading-snug mt-2 pt-2 border-t border-[#334155] break-keep">중고 장비·남은 자재·무료 나눔</span></button>
+          <button onclick="openBoard('실전 견적·단가 자문')" class="lounge-cat text-left rounded-[20px] p-4 flex flex-col active:scale-95 transition-all" style="background:#1E293B; border:1.5px solid #475569;"><i data-lucide="calculator" class="w-7 h-7 stroke-[2.2]" style="color:#84CC16;"></i><span class="block text-[19px] font-black text-white leading-tight tracking-tight mt-2.5 break-keep">견적·단가 자문</span><span class="block text-[14.5px] font-bold text-[#94A3B8] leading-snug mt-2 pt-2 border-t border-[#334155] break-keep">적정 단가 묻기</span></button>
+        </div>
+        <div class="flex items-center gap-2 mt-2 ml-1"><span class="w-1.5 h-5 rounded-full" style="background:#F8FAFC"></span><span class="text-[17px] font-black tracking-tight" style="color:#F8FAFC;">정보 나누기</span></div>
+        <div class="grid grid-cols-2 gap-3">
+          <button onclick="openBoard('자유 소통·일상방')" class="lounge-cat text-left rounded-[20px] p-4 flex flex-col active:scale-95 transition-all" style="background:#1E293B; border:1.5px solid #475569;"><i data-lucide="coffee" class="w-7 h-7 stroke-[2.2]" style="color:#84CC16;"></i><span class="block text-[19px] font-black text-white leading-tight tracking-tight mt-2.5 break-keep">자유 소통</span><span class="block text-[14.5px] font-bold text-[#94A3B8] leading-snug mt-2 pt-2 border-t border-[#334155] break-keep">현장 일상 이야기</span></button>
+          <button onclick="openBoard('정보 교환·업체 찾기')" class="lounge-cat text-left rounded-[20px] p-4 flex flex-col active:scale-95 transition-all" style="background:#1E293B; border:1.5px solid #475569;"><i data-lucide="map" class="w-7 h-7 stroke-[2.2]" style="color:#84CC16;"></i><span class="block text-[19px] font-black text-white leading-tight tracking-tight mt-2.5 break-keep">정보 교환·업체 공유</span><span class="block text-[14.5px] font-bold text-[#94A3B8] leading-snug mt-2 pt-2 border-t border-[#334155] break-keep">현장 정보 교환</span></button>
+          <button onclick="openBoard('실무 노하우 공유')" class="lounge-cat text-left rounded-[20px] p-4 flex flex-col active:scale-95 transition-all" style="background:#1E293B; border:1.5px solid #475569;"><i data-lucide="lightbulb" class="w-7 h-7 stroke-[2.2]" style="color:#84CC16;"></i><span class="block text-[19px] font-black text-white leading-tight tracking-tight mt-2.5 break-keep">실무 노하우</span><span class="block text-[14.5px] font-bold text-[#94A3B8] leading-snug mt-2 pt-2 border-t border-[#334155] break-keep">전지·시공 기술</span></button>
+          <button onclick="openBoard('불량 거래처 경보')" class="lounge-cat text-left rounded-[20px] p-4 flex flex-col active:scale-95 transition-all" style="background:#1E293B; border:1.5px solid #7F1D1D;"><i data-lucide="alert-triangle" class="w-7 h-7 stroke-[2.2]" style="color:#F87171;"></i><span class="block text-[19px] font-black text-white leading-tight tracking-tight mt-2.5 break-keep">불량 거래처 경보</span><span class="block text-[14.5px] font-bold text-[#94A3B8] leading-snug mt-2 pt-2 border-t border-[#334155] break-keep">미수금 주의 · 익명</span></button>
+        </div>
     </section>
     <section id="adminView" class="hidden space-y-5">
         <!-- ✨ 전체 일지 보관함 진입 버튼 (타이틀 18px로 확대) ✨ -->
@@ -4907,10 +4785,10 @@
       <div class="flex gap-2 overflow-x-auto nav-scroll px-1 pb-2 mt-4" id="boardTabContainer">
           <button onclick="filterBoard('전체', this)" class="board-tab-btn px-5 py-3 bg-[#84CC16] text-[#151E2D] rounded-full text-[15px] font-black shrink-0 shadow-md border border-[#84CC16] transition-all">전체보기</button>
           <button onclick="filterBoard('자유소통', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">☕ 자유소통</button>
-          <button onclick="filterBoard('정보교환', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">📢 정보교환·업체찾기</button>
-          <button onclick="filterBoard('현장협력', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">🤝 현장협력</button>
+          <button onclick="filterBoard('정보교환', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">📢 정보교환·업체공유</button>
+          <button onclick="filterBoard('현장협력', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">🤝 작업지원·협력</button>
           <button onclick="filterBoard('장비자재', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">🛒 장비·자재</button>
-          <button onclick="filterBoard('일감양도', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">💼 일감양도</button>
+          <button onclick="filterBoard('일감양도', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">💼 작업양도·양수</button>
           <button onclick="filterBoard('견적단가', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">📊 견적·단가</button>
           <button onclick="filterBoard('노하우', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">💡 노하우</button>
           <button onclick="filterBoard('불량거래처', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">🚨 불량거래처</button>
@@ -4951,10 +4829,10 @@
                   <label class="block text-[17.5px] font-black text-[#151E2D] mb-2">1. 카테고리 선택</label>
                   <select id="bwCategory" class="w-full bg-[#F8FAFC] border-2 border-[#94A3B8] rounded-[16px] px-4 py-4 text-[18px] font-black text-[#151E2D] focus:outline-none focus:border-[#151E2D]">
                       <option value="자유소통">☕ 자유 소통·일상방</option>
-                      <option value="정보교환">📢 정보 교환·업체 찾기 (폐기물·업체·장비)</option>
-                      <option value="현장협력">🤝 현장 협력·지원</option>
+                      <option value="정보교환">📢 정보 교환·업체 공유</option>
+                      <option value="현장협력">🤝 작업 지원·협력</option>
                       <option value="장비자재">🛒 장비·자재 직거래</option>
-                      <option value="일감양도">💼 일감 패스·공사 양도</option>
+                      <option value="일감양도">💼 작업 양도·양수</option>
                       <option value="견적단가">📊 실전 견적·단가 자문</option>
                       <option value="노하우">💡 실무 노하우 공유</option>
                       <option value="불량거래처">🚨 불량 거래처 경보</option>
@@ -5016,12 +4894,12 @@
       const boardNotices = {
           '전체': '건강한 조경 문화를 위해 상호 존중과 매너를 지켜주세요. 소통방에 게시글이나 정보를 작성하시면 +100P가 즉시 적립됩니다.',
           '자유소통': '☕ <span class="text-amber-800 font-black">[자유 소통 · 일상방 안내]</span> 오늘 현장 날씨, 점심 메뉴, 작업 중 있었던 소소한 일상이나 조경인들의 이야기를 부담 없이 편하게 나누는 사랑방입니다.',
-          '정보교환': '📢 <span class="text-[#15803D] font-black">[정보 교환 · 업체 찾기 안내]</span> 타지역 현장에서 <strong>폐기물 처리할 곳, 인근 자재상·농원·중장비 업체</strong>를 급히 찾거나, <strong>수목 시세·신제품 장비 정보</strong>가 궁금할 때 편하게 묻고 답하는 공간입니다. 좋은 정보를 알고 계신 대표님들도 자유롭게 올려주세요!',
+          '정보교환': '📢 <span class="text-[#15803D] font-black">[정보 교환 · 업체 공유 안내]</span> 타지역 현장에서 <strong>폐기물 처리할 곳, 인근 자재상·농원·중장비 업체</strong>를 급히 찾거나, <strong>수목 시세·신제품 장비 정보</strong>가 궁금할 때 편하게 묻고 답하는 공간입니다. 좋은 정보를 알고 계신 대표님들도 자유롭게 올려주세요!',
           '불량거래처': '<span class="text-red-600 font-black">🚨 [주의] 반드시 객관적 사실에 근거하여 작성해 주세요.</span> 허위 사실 유포 및 악의적 비방 시 발생하는 법적 책임(명예훼손 등)은 작성자 본인에게 있으며, 운영진은 분쟁에 개입하거나 책임지지 않습니다.',
           '현장협력': '🤝 사업자 인증을 마친 검증된 대표님들의 공간입니다. 상호 간의 약속 이행과 매너를 부탁드립니다. (※ 당사자 간 분쟁 시 앱에서는 책임지지 않습니다.)',
           '장비자재': '🛒 장비 렌탈, 잉여 수목/자재 매매 및 <span class="text-blue-600 font-black">[무료 나눔]</span>을 위한 공간입니다. 거래 시 상태를 정확히 고지하고 안전 거래를 지향해 주세요.',
           '노하우': '💡 조경 기술, 수목 관리, 전지 요령 등 대표님만의 귀중한 현장 노하우를 자유롭게 나누는 공간입니다.',
-          '일감양도': '💼 <span class="text-purple-700 font-black">[일감 패스·공사 양도 주의사항]</span> 일정 중복·타지역 등으로 진행이 어려운 <strong>확정된 공사 및 관리 오더</strong>를 양도·협업하는 공간입니다. 사전 답사, 작업 범위, 정산 조건을 당사자 간 명확히 확인하시고, 양도 후 발생하는 모든 분쟁에 대해 본 플랫폼은 법적 책임을 지지 않습니다.',
+          '일감양도': '💼 <span class="text-purple-700 font-black">[작업 양도·양수 주의사항]</span> 일정 중복·타지역 등으로 진행이 어려운 <strong>확정된 공사 및 관리 오더</strong>를 양도·협업하는 공간입니다. 사전 답사, 작업 범위, 정산 조건을 당사자 간 명확히 확인하시고, 양도 후 발생하는 모든 분쟁에 대해 본 플랫폼은 법적 책임을 지지 않습니다.',
           '견적단가': '📊 <span class="text-emerald-800 font-black">[실전 견적·단가 자문 안내]</span> 현장 여건을 모른 채 너무 낮게 견적을 넣어 손해를 보거나 공사를 놓치는 피해를 방지하기 위해 <strong>검증된 대표님들끼리만 적정 실행 단가를 자문하고 공유하는 공간</strong>입니다.'
       };
 
@@ -5066,13 +4944,13 @@
           if (gradeEl) {
               if (pts >= 5000) {
                   gradeEl.innerText = '👑 마스터 대표님';
-                  gradeEl.className = 'text-[11px] bg-[#FDE047] text-[#151E2D] font-black px-2 py-0.5 rounded-md whitespace-nowrap';
+                  gradeEl.className = 'inline-block mt-1.5 text-[13.5px] bg-[#FDE047] text-[#151E2D] font-black px-2.5 py-1 rounded-lg whitespace-nowrap';
               } else if (pts >= 2000) {
                   gradeEl.innerText = '🌲 명장 대표님';
-                  gradeEl.className = 'text-[11px] bg-[#84CC16] text-[#151E2D] font-black px-2 py-0.5 rounded-md whitespace-nowrap';
+                  gradeEl.className = 'inline-block mt-1.5 text-[13.5px] bg-[#84CC16] text-[#151E2D] font-black px-2.5 py-1 rounded-lg whitespace-nowrap';
               } else {
                   gradeEl.innerText = '🌿 파트너 대표님';
-                  gradeEl.className = 'text-[11px] bg-[#84CC16] text-[#151E2D] font-black px-2 py-0.5 rounded-md whitespace-nowrap';
+                  gradeEl.className = 'inline-block mt-1.5 text-[13.5px] bg-[#84CC16] text-[#151E2D] font-black px-2.5 py-1 rounded-lg whitespace-nowrap';
               }
           }
 
@@ -5085,10 +4963,10 @@
                   attendBtn.style.color = '#84CC16';
                   attendBtn.style.borderColor = '#84CC16';
               } else {
-                  attendBtn.innerHTML = '<i data-lucide="calendar-check" class="w-4 h-4 stroke-[2.5]"></i> 오늘 출석체크 (+50P 받기)';
-                  attendBtn.style.background = 'linear-gradient(135deg, #FEF08A 0%, #FDE047 100%)';
-                  attendBtn.style.color = '#151E2D';
-                  attendBtn.style.borderColor = '#FFFFFF';
+                  attendBtn.innerHTML = '<i data-lucide="calendar-check" class="w-5 h-5 stroke-[2.5]"></i> 오늘 출석체크 (+50P 받기)';
+                  attendBtn.style.background = '#84CC16'; // 💬 [패치 #20]
+                  attendBtn.style.color = '#1A2E05';
+                  attendBtn.style.borderColor = '#84CC16';
               }
           }
           if (typeof lucide !== 'undefined') lucide.createIcons();
@@ -5118,12 +4996,12 @@
           const titleMap = {
               '전체': '대표님 소통방 전체보기',
               '자유소통': '자유 소통·일상방',
-              '정보교환': '정보 교환·업체 찾기',
+              '정보교환': '정보 교환·업체 공유',
               '불량거래처': '불량 거래처 경보',
-              '현장협력': '현장 협력·지원',
+              '현장협력': '작업 지원·협력',
               '장비자재': '장비·자재 직거래',
               '노하우': '실무 노하우 공유',
-              '일감양도': '일감 패스·공사 양도',
+              '일감양도': '작업 양도·양수',
               '견적단가': '실전 견적·단가 자문'
           };
           const titleEl = document.getElementById('boardMainTitle');
@@ -5170,7 +5048,7 @@
               if (targetCat === '전체') {
                   if (btn.innerText.includes('전체보기')) filterBoard(targetCat, btn);
               } else {
-                  if(btn.innerText.replace(/[^가-힣a-zA-Z]/g, '').includes(targetCat)) filterBoard(targetCat, btn);
+                  if((btn.getAttribute('onclick') || '').includes("'" + targetCat + "'")) filterBoard(targetCat, btn); // 💬 [패치 #20]
               }
           });
           
@@ -5232,12 +5110,12 @@
               posts.forEach(post => {
                   let badgeHtml = '';
                   if(post.category === '자유소통') badgeHtml = `<span class="bg-amber-50 text-amber-800 text-[13px] font-black px-3 py-1.5 rounded-md border border-amber-200">☕ 자유 소통·일상</span>`;
-                  else if(post.category === '정보교환') badgeHtml = `<span class="bg-lime-50 text-[#15803D] text-[13px] font-black px-3 py-1.5 rounded-md border border-lime-300">📢 정보 교환·업체 찾기</span>`;
+                  else if(post.category === '정보교환') badgeHtml = `<span class="bg-lime-50 text-[#15803D] text-[13px] font-black px-3 py-1.5 rounded-md border border-lime-300">📢 정보 교환·업체 공유</span>`;
                   else if(post.category === '불량거래처') badgeHtml = `<span class="bg-[#FEF2F2] text-[#EF4444] text-[13px] font-black px-3 py-1.5 rounded-md border border-[#FEE2E2]">🚨 불량거래처 경보</span>`;
-                  else if(post.category === '현장협력') badgeHtml = `<span class="bg-[#EFF6FF] text-blue-600 text-[13px] font-black px-3 py-1.5 rounded-md border border-[#DBEAFE]">🤝 현장 지원요청</span>`;
+                  else if(post.category === '현장협력') badgeHtml = `<span class="bg-[#EFF6FF] text-blue-600 text-[13px] font-black px-3 py-1.5 rounded-md border border-[#DBEAFE]">🤝 작업 지원·협력</span>`;
                   else if(post.category === '장비자재') badgeHtml = `<span class="bg-[#ECFCCB] text-[#4D7C0F] text-[13px] font-black px-3 py-1.5 rounded-md border border-[#84CC16]/40">🛒 장비·자재 직거래</span>`;
                   else if(post.category === '노하우') badgeHtml = `<span class="bg-[#F4F5F4] text-[#4E5968] text-[13px] font-black px-3 py-1.5 rounded-md border border-[#EAEBEA]">💡 실무 노하우 공유</span>`;
-                  else if(post.category === '일감양도') badgeHtml = `<span class="bg-purple-50 text-purple-700 text-[13px] font-black px-3 py-1.5 rounded-md border border-purple-200">💼 일감 패스·공사 양도</span>`;
+                  else if(post.category === '일감양도') badgeHtml = `<span class="bg-purple-50 text-purple-700 text-[13px] font-black px-3 py-1.5 rounded-md border border-purple-200">💼 작업 양도·양수</span>`;
                   else if(post.category === '견적단가') badgeHtml = `<span class="bg-emerald-50 text-emerald-700 text-[13px] font-black px-3 py-1.5 rounded-md border border-emerald-200">📊 실전 견적·단가 자문</span>`;     
 
                   // 📍 [패치 #10] 지역+상호 표시, 운영팀 예시글 구분, 글 내용 안전 처리
@@ -5456,16 +5334,9 @@
           
           const activeTab = document.querySelector('.board-tab-btn.bg-\\[\\#84CC16\\]');
           if (activeTab) {
-              const tabText = activeTab.innerText;
-              const catSelect = document.getElementById('bwCategory');
-              if (tabText.includes('자유')) catSelect.value = '자유소통';
-              else if (tabText.includes('정보') || tabText.includes('업체')) catSelect.value = '정보교환';
-              else if (tabText.includes('불량')) catSelect.value = '불량거래처';
-              else if (tabText.includes('장비') || tabText.includes('자재')) catSelect.value = '장비자재';
-              else if (tabText.includes('노하우')) catSelect.value = '노하우';
-              else if (tabText.includes('일감')) catSelect.value = '일감양도';
-              else if (tabText.includes('견적') || tabText.includes('단가')) catSelect.value = '견적단가';
-              else if (tabText.includes('현장')) catSelect.value = '현장협력';
+              const catSelect = document.getElementById('bwCategory'); // 💬 [패치 #20] 탭의 내부 분류값으로 선택
+              const m = (activeTab.getAttribute('onclick') || '').match(/filterBoard\('([^']+)'/);
+              if (m && m[1] !== '전체' && catSelect.querySelector(`option[value="${m[1]}"]`)) catSelect.value = m[1];
           }
 
           const modal = document.getElementById('boardWriteModal'); 
