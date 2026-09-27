@@ -356,7 +356,7 @@
                 </button>
             </nav>
 
-            <div class="menu-sec flex items-center gap-2 mb-2.5 mt-5 ml-1"><span class="w-1.5 h-5 rounded-full" style="background:#E3B341"></span><span class="text-[16px] font-black tracking-tight" style="color:#E3B341 !important;">대표님 전용</span><span class="text-[14.5px] font-bold text-white/60">장부·소통방·AI비서</span></div>
+            <div class="menu-sec flex items-center gap-2 mb-2.5 mt-5 ml-1"><span class="w-1.5 h-5 rounded-full" style="background:#E3B341"></span><span class="text-[16px] font-black tracking-tight" style="color:#E3B341 !important;">대표님 전용</span><span class="text-[14.5px] font-bold text-white/60">장부·재고·AI비서·소통방</span></div>
             <nav class="grid grid-cols-3 gap-3">
                 <button id="tabLedger" onclick="checkLedgerPin()" class="w-full relative overflow-hidden hover:brightness-110 transition-all flex flex-col items-center justify-center gap-2.5" style="background: linear-gradient(145deg, #1E293B 0%, #273449 60%, #1E293B 100%) !important; border: 1.5px solid #E3B341 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important;">
                     <div class="flex items-center gap-1.5">
@@ -365,12 +365,10 @@
                     </div>
                     <span class="btn-title font-black" style="color: #FFFFFF !important;">개인 장부함</span>
                 </button>
-                <button id="tabLounge" onclick="switchView('lounge')" class="w-full relative overflow-hidden hover:brightness-110 transition-all flex flex-col items-center justify-center gap-2.5" style="background: linear-gradient(145deg, #1E293B 0%, #273449 60%, #1E293B 100%) !important; border: 1.5px solid #E3B341 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important;">
-                    <div class="flex items-center gap-1.5">
-                        <i data-lucide="messages-square" class="w-5 h-5 stroke-[2.3]" style="color: #E3B341 !important;"></i>
-                        <small style="font-size: 11.5px !important; line-height: 1.1 !important; background-color: #E3B341 !important; color: #151E2D !important; padding: 3px 6px !important; border-radius: 6px !important; font-weight: 900 !important;">소통</small>
-                    </div>
-                    <span class="btn-title font-black" style="color: #FFFFFF !important;">대표님 소통방</span>
+                <!-- 📦 [패치 #49] 개인 재고함 -->
+                <button id="tabStock" type="button" onclick="openStockView()" class="w-full relative overflow-hidden hover:brightness-110 transition-all flex flex-col items-center justify-center gap-2.5" style="background: linear-gradient(145deg, #1E293B 0%, #273449 60%, #1E293B 100%) !important; border: 2px solid #E3B341 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E3B341" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><path d="m3.3 7 8.7 5 8.7-5M12 22V12"></path></svg>
+                    <span class="btn-title font-black" style="color: #FFFFFF !important;">개인 재고함</span>
                 </button>
                 <button id="tabAiChat" onclick="switchView('aiChat')" class="w-full relative overflow-hidden hover:brightness-110 transition-all flex flex-col items-center justify-center gap-2" style="background: linear-gradient(145deg, #1E293B 0%, #273449 60%, #1E293B 100%) !important; border: 1.5px solid #E3B341 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important;">
                     <div class="flex items-center gap-1.5">
@@ -379,7 +377,18 @@
                     </div>
                     <span class="btn-title font-black" style="color: #FFFFFF !important;">AI 현장 비서</span>
                 </button>
+                <!-- 🏷️ [패치 #48] 고객 의뢰 받기 (준비 중 자리) -->
+                <button id="tabClientRequest" type="button" onclick="openClientRequestSoon()" class="w-full relative overflow-hidden transition-all flex flex-col items-center justify-center gap-2" style="background: #1B2330 !important; border: 2px dashed #8A7433 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4) !important;">
+                    <small class="absolute top-2 right-2" style="font-size: 11.5px !important; line-height: 1.1 !important; background-color: #475569 !important; color: #FFFFFF !important; padding: 3px 6px !important; border-radius: 6px !important; font-weight: 900 !important;">준비 중</small>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B89A45" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"></path><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path></svg>
+                    <span class="btn-title font-black" style="color: #CBD5E1 !important;">고객 의뢰 받기</span>
+                </button>
             </nav>
+            <!-- 🏷️ [패치 #48] 대표님 소통방: 넓은 금색 버튼 (누르면 가는 곳은 예전과 같음) -->
+            <button type="button" id="tabLounge" onclick="switchView('lounge')" class="w-full mt-3 text-left rounded-[22px] px-4 py-3.5 flex items-center gap-3.5 active:scale-[0.98] transition-all" style="background:#E3B341 !important; border: 2px solid #E3B341 !important; box-shadow: 0 8px 20px rgba(227,179,65,0.3) !important;">
+                <span class="w-[50px] h-[50px] rounded-[16px] bg-[#151E2D] flex items-center justify-center shrink-0"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E3B341" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z"></path><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"></path></svg></span>
+                <span class="flex flex-col gap-0.5"><span class="text-[21px] font-black tracking-tight leading-tight" style="color:#151E2D !important;">대표님 소통방</span><span class="text-[15px] font-bold leading-snug break-keep" style="color:#3A2E0B !important;">일감·장비·노하우를 대표님들과 나눠요</span></span>
+            </button>
         </div>
                 
         <!-- 메뉴 접기 버튼 (골드&실버 입체 테두리 적용) -->
@@ -1616,7 +1625,7 @@
                     <i data-lucide="calendar-plus" class="w-6 h-6 stroke-[2.5]"></i>
                 </div>
                 <div>
-                    <h3 class="text-[20px] font-black text-white tracking-tight leading-none">작업 일정 등록</h3>
+                    <h3 id="scheduleModalTitle" class="text-[20px] font-black text-white tracking-tight leading-none">작업 일정 등록</h3>
                     <p class="text-[14px] font-bold text-[#84CC16] mt-1.5">상담 및 현장 일정을 큼직하게 기록하세요</p>
                 </div>
             </div>
@@ -1668,6 +1677,8 @@
 
             <!-- 예상 수입 / 지출 (두 줄 꺾임 100% 방지 & 깔끔한 1단 입력창) -->
             <div class="pt-1">
+                <!-- ✏️ [패치 #47] 일정 고칠 때 금액 안내 -->
+                <div id="scheduleEditMoneyNote" class="hidden bg-[#FEF9C3] border-[1.5px] border-[#EAB308] rounded-[14px] px-3.5 py-2.5 mb-3 text-[14.5px] font-bold text-[#713F12] leading-relaxed break-keep">처음 등록 때 적은 금액은 이미 개인 장부에 들어가 있어요. 금액을 고치려면 개인 장부에서 고쳐 주세요. 여기에 새로 적으면 장부에 한 줄 더 추가됩니다.</div>
                 <div class="flex items-center justify-between mb-2">
                     <label class="text-[16px] font-black text-[#151E2D]">예상 금액 메모</label>
                     <span class="text-[13.5px] font-bold text-[#64748B]">입력 시 개인장부 자동 연동</span>
@@ -1702,7 +1713,7 @@
             <button onclick="closeScheduleModal()" class="w-[35%] h-[58px] bg-white hover:bg-[#F1F5F9] border-[1.5px] border-[#CBD5E1] text-[#475569] font-black rounded-[18px] text-[17px] transition-all active:scale-95 flex items-center justify-center">
                 취소
             </button>
-            <button onclick="saveSchedule()" class="flex-1 h-[58px] bg-[#151E2D] hover:bg-black text-[#84CC16] font-black rounded-[18px] text-[18px] shadow-[0_8px_20px_rgba(21,30,45,0.25)] transition-all active:scale-95 flex items-center justify-center gap-2">
+            <button id="scheduleSaveBtn" onclick="saveSchedule()" class="flex-1 h-[58px] bg-[#151E2D] hover:bg-black text-[#84CC16] font-black rounded-[18px] text-[18px] shadow-[0_8px_20px_rgba(21,30,45,0.25)] transition-all active:scale-95 flex items-center justify-center gap-2">
                 <i data-lucide="check" class="w-6 h-6 stroke-[3]"></i> 일정 저장하기
             </button>
         </div>
@@ -3182,17 +3193,23 @@
         }
         
         daySchedules.forEach(s => {
-            const tagName = s.tag && s.tag.trim() !== '' ? s.tag : '현장 작업';
+            const tagName = escHtml(s.tag && String(s.tag).trim() !== '' ? s.tag : '현장 작업'); // ✏️ [패치 #47] 글자 안전 처리
+            const sid = escHtml(JSON.stringify(String(s.id)));
             list.innerHTML += `
                 <div class="border-l-[6px] rounded-[20px] p-5 shadow-md bg-white border border-[#CBD5E1] ${s.color || 'border-[#84CC16]'} transition-all">
                     <div class="flex justify-between items-center mb-2">
                         <span class="bg-[#151E2D] text-[#84CC16] text-[14px] font-black px-3 py-1 rounded-full">${tagName}</span>
-                        <button onclick="deleteSchedule(${s.id})" class="text-[#64748B] hover:text-red-600 bg-[#F1F5F9] px-2.5 py-1.5 rounded-[10px] text-[13.5px] font-black flex items-center gap-1 transition-colors">
+                        <span class="flex items-center gap-1.5">
+                        <button onclick="openScheduleEdit(${sid})" class="text-[#1A2E05] bg-[#D9F99D] border border-[#84CC16] px-3 py-1.5 rounded-[10px] text-[14px] font-black flex items-center gap-1 active:scale-95 transition-all">
+                            <i data-lucide="pencil" class="w-4 h-4"></i> 수정
+                        </button>
+                        <button onclick="deleteSchedule(${sid})" class="text-[#64748B] hover:text-red-600 bg-[#F1F5F9] px-2.5 py-1.5 rounded-[10px] text-[13.5px] font-black flex items-center gap-1 transition-colors">
                             <i data-lucide="trash-2" class="w-4 h-4"></i> 삭제
                         </button>
+                        </span>
                     </div>
-                    <h4 class="font-black text-[18px] text-[#151E2D] leading-snug break-keep mt-1">${s.title}</h4>
-                    ${s.memo ? `<div class="text-[15px] text-[#334155] font-bold bg-[#F8FAFC] border border-[#E2E8F0] px-4 py-3 rounded-[14px] mt-3 leading-relaxed break-keep">${s.memo.replace(/\n/g, '<br>')}</div>` : ''}
+                    <h4 class="font-black text-[18px] text-[#151E2D] leading-snug break-keep mt-1">${escHtml(s.title)}</h4>
+                    ${s.memo ? `<div class="text-[15px] text-[#334155] font-bold bg-[#F8FAFC] border border-[#E2E8F0] px-4 py-3 rounded-[14px] mt-3 leading-relaxed break-keep">${escHtml(s.memo).replace(/\n/g, '<br>')}</div>` : ''}
                 </div>
             `;
         });
@@ -3208,6 +3225,7 @@
         if(document.getElementById('scheduleIncome')) document.getElementById('scheduleIncome').value = '';
         if(document.getElementById('scheduleExpense')) document.getElementById('scheduleExpense').value = '';
         document.getElementById('scheduleMemo').value = '';
+        scheduleEditMode(false); // ✏️ [패치 #47] 새 일정은 '등록' 화면으로
         
         const modal = document.getElementById('scheduleModal');
         const box = document.getElementById('scheduleBox');
@@ -3238,7 +3256,8 @@
             memo: document.getElementById('scheduleMemo').value
         };
         
-        schedules.push(newSchedule);
+        const editIdx = schedules.findIndex(s => String(s.id) === String(id)); // ✏️ [패치 #47] 고친 일정은 같은 자리에서 바꿔 끼움 (새 일정은 영향 없음)
+        if (editIdx >= 0) schedules[editIdx] = newSchedule; else schedules.push(newSchedule);
         
         // 🔥 로컬 저장소 대신 파이어베이스 클라우드로 쏘기!
         updateData('schedules', schedules);
@@ -3274,6 +3293,27 @@
             renderCalendar(); renderScheduleList();
         }
         closeScheduleModal();
+    }
+
+    // ✏️ [패치 #47] 일정 수정: 같은 등록 창을 열고 기존 내용을 채움 → [고친 내용 저장]은 기존 saveSchedule 그대로
+    function scheduleEditMode(on) {
+        document.getElementById('scheduleModalTitle').innerText = on ? '작업 일정 수정' : '작업 일정 등록';
+        document.getElementById('scheduleEditMoneyNote').classList.toggle('hidden', !on);
+        const btn = document.getElementById('scheduleSaveBtn');
+        btn.innerHTML = `<i data-lucide="check" class="w-6 h-6 stroke-[3]"></i> ${on ? '고친 내용 저장' : '일정 저장하기'}`;
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+    function openScheduleEdit(id) {
+        const s = schedules.find(x => String(x.id) === String(id)); if (!s) return;
+        openScheduleModal();
+        document.getElementById('scheduleId').value = s.id;
+        document.getElementById('scheduleDate').value = s.date || '';
+        document.getElementById('scheduleTitle').value = s.title || '';
+        document.getElementById('scheduleTagText').value = s.tag || '';
+        document.getElementById('scheduleMemo').value = s.memo || '';
+        const col = document.getElementById('scheduleColor');
+        if (s.color && [...col.options].some(o => o.value === s.color)) col.value = s.color;
+        scheduleEditMode(true);
     }
 
     function deleteSchedule(id) {
@@ -6948,12 +6988,319 @@ ${AI_COMMON_RULES}
       }
     }, true);
   </script>
+  <!-- 🏷️ [패치 #48] 고객 의뢰 받기 '준비 중' 안내 -->
+  <div id="clientRequestSoon" class="hidden fixed inset-0 z-[6600] bg-black/85 flex items-center justify-center p-4" onclick="if(event.target===this) closeClientRequestSoon()">
+    <div class="bg-white w-full max-w-sm rounded-[28px] px-6 pt-7 pb-5 flex flex-col items-center gap-3.5 text-center">
+      <span class="w-16 h-16 rounded-[20px] bg-[#FEF3C7] flex items-center justify-center"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#B45309" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"></path><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path></svg></span>
+      <span class="text-[15px] font-black bg-[#475569] text-white px-2.5 py-0.5 rounded-full">준비 중</span>
+      <h2 class="text-[24px] font-black text-[#0F172A] leading-tight">고객 의뢰 받기</h2>
+      <p class="text-[17px] font-bold text-[#334155] leading-relaxed break-keep">내 업체 전용 주소를 고객에게 보내면, 고객이 사진과 함께 작업을 의뢰하고 견적을 요청할 수 있게 됩니다.</p>
+      <p class="w-full text-[16px] font-extrabold text-[#3F6212] bg-[#F4FBEA] rounded-[12px] px-3 py-2.5 leading-relaxed break-keep">새 의뢰가 오면 알림으로 바로 알려 드려요.</p>
+      <p class="text-[15px] font-bold text-[#64748B]">곧 열립니다. 조금만 기다려 주세요.</p>
+      <button type="button" onclick="closeClientRequestSoon()" class="w-full h-[56px] rounded-[16px] bg-[#151E2D] text-[#BEF264] text-[19px] font-black mt-1 active:scale-95 transition-all">확인</button>
+    </div>
+  </div>
+  <script>
+    // 🏷️ [패치 #48] 고객 의뢰 받기: 기능 완성 전까지 안내창만 (휴대폰 뒤로가기로도 닫힘)
+    function openClientRequestSoon() { document.getElementById('clientRequestSoon').classList.remove('hidden'); history.pushState({ clientReqSoon: true }, '', ''); }
+    function closeClientRequestSoon(fromPopstate) {
+      const el = document.getElementById('clientRequestSoon'); if (el.classList.contains('hidden')) return;
+      el.classList.add('hidden');
+      if (!fromPopstate && history.state && history.state.clientReqSoon) { VX.ignorePop = true; history.back(); }
+    }
+    window.addEventListener('popstate', (e) => {
+      const el = document.getElementById('clientRequestSoon');
+      if (el && !el.classList.contains('hidden')) { closeClientRequestSoon(true); e.stopImmediatePropagation(); }
+    }, true);
+  </script>
+  <!-- 📦 [패치 #49] 개인 재고함 (비품·자재 / 수목·식물 / 차계부) -->
+  <div id="stockView" class="hidden fixed inset-0 z-[9400] bg-[#0F1722] flex justify-center overflow-y-auto">
+    <div class="w-full max-w-md px-3.5 pt-5 pb-10 flex flex-col gap-3">
+      <div class="flex items-center gap-2.5">
+        <button type="button" onclick="closeStockView()" aria-label="뒤로" class="w-11 h-11 rounded-[12px] bg-[#1E293B] text-white flex items-center justify-center active:scale-95"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg></button>
+        <span class="text-[22px] font-black text-white">개인 재고함</span>
+      </div>
+      <div class="grid grid-cols-3 gap-1.5 bg-[#1E293B] p-[5px] rounded-[16px]">
+        <button type="button" data-stock-tab="supply" onclick="stockSetCat('supply')" class="stock-tab h-[46px] rounded-[12px] text-[16px] font-black">비품·자재</button>
+        <button type="button" data-stock-tab="plant" onclick="stockSetCat('plant')" class="stock-tab h-[46px] rounded-[12px] text-[16px] font-black">수목·식물</button>
+        <button type="button" data-stock-tab="car" onclick="stockSetCat('car')" class="stock-tab h-[46px] rounded-[12px] text-[16px] font-black">차계부</button>
+      </div>
+      <button type="button" onclick="startStockVoice()" class="w-full text-left bg-[#84CC16] rounded-[20px] px-4 py-3 flex items-center gap-3 shadow-[0_10px_24px_rgba(132,204,22,0.3)] active:scale-[0.98] transition-all">
+        <span class="w-[48px] h-[48px] rounded-full bg-[#151E2D] flex items-center justify-center shrink-0"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="#BEF264" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10v1a7 7 0 0 0 14 0v-1"></path><path d="M12 18v4"></path></svg></span>
+        <span class="flex flex-col gap-0.5"><span class="text-[20px] font-black text-[#1A2E05] leading-tight">말로 입력</span><span id="stockVoiceEx" class="text-[14.5px] font-bold text-[#1A2E05] leading-snug break-keep"></span></span>
+      </button>
+      <div class="flex gap-2">
+        <label for="stockSearch" class="sr-only">품목·내용 찾기</label>
+        <input id="stockSearch" oninput="renderStockList()" placeholder="품목·내용 찾기" class="flex-1 min-w-0 h-[48px] rounded-[14px] bg-white px-3 text-[16px] font-bold text-[#0F172A] placeholder:text-[#94A3B8]">
+        <button type="button" onclick="openStockSheet(-1)" class="h-[48px] px-3.5 rounded-[14px] border-[1.5px] border-[#64748B] text-white text-[16px] font-extrabold shrink-0 active:scale-95">+ 손으로</button>
+      </div>
+      <div id="stockCarSum" class="hidden bg-[#1E293B] border-[1.5px] border-[#E3B341] rounded-[16px] px-3.5 py-2.5 flex justify-between items-center"></div>
+      <div id="stockTable" class="bg-white rounded-[18px] overflow-hidden flex flex-col"></div>
+      <span id="stockHint" class="text-[14.5px] font-bold text-[#94A3B8] text-center">줄을 누르면 수정 · 삭제할 수 있어요</span>
+    </div>
+  </div>
+  <!-- 📦 [패치 #49] 재고함 한 줄 쓰기·고치기 창 -->
+  <div id="stockSheet" class="hidden fixed inset-0 z-[9450] bg-black/70 flex items-end justify-center" onclick="if(event.target===this) closeStockSheet()">
+    <div class="w-full max-w-md bg-white rounded-t-[28px] px-4 pt-3 pb-5 flex flex-col gap-2.5 max-h-[92vh] overflow-y-auto">
+      <span class="self-center w-12 h-[5px] rounded-full bg-[#CBD5E1] shrink-0"></span>
+      <div class="flex justify-between items-center"><span id="stockSheetTitle" class="text-[20px] font-black text-[#151E2D]">한 줄 고치기</span><span id="stockSheetBadge" class="text-[14px] font-black bg-[#E3B341] text-[#151E2D] px-2.5 py-1 rounded-full"></span></div>
+      <div class="grid grid-cols-2 gap-2.5">
+        <label class="flex flex-col gap-1 text-[15px] font-black text-[#151E2D]">날짜<input id="stkDate" type="date" class="h-[50px] rounded-[14px] border-[1.5px] border-[#CBD5E1] bg-[#F8FAFC] px-2 text-[16px] font-extrabold text-[#0F172A]"></label>
+        <label class="flex flex-col gap-1 text-[15px] font-black text-[#151E2D]"><span id="stkQtyLabel">수량</span><input id="stkQty" maxlength="20" class="h-[50px] rounded-[14px] border-[1.5px] border-[#CBD5E1] bg-[#F8FAFC] px-3 text-[17px] font-black text-[#0F172A]"></label>
+      </div>
+      <label class="flex flex-col gap-1 text-[15px] font-black text-[#151E2D]">품목<textarea id="stkItem" rows="1" maxlength="60" oninput="stockGrow(this)" class="stock-ta rounded-[14px] border-[1.5px] border-[#CBD5E1] bg-[#F8FAFC] px-3 py-3 text-[18px] font-black text-[#0F172A] leading-snug resize-none"></textarea></label>
+      <label class="flex flex-col gap-1 text-[15px] font-black text-[#151E2D]">내용<textarea id="stkContent" rows="1" maxlength="300" oninput="stockGrow(this)" class="stock-ta rounded-[14px] border-[1.5px] border-[#CBD5E1] bg-[#F8FAFC] px-3 py-3 text-[17px] font-extrabold text-[#0F172A] leading-snug resize-none"></textarea></label>
+      <label class="flex flex-col gap-1 text-[15px] font-black text-[#151E2D]">기타<textarea id="stkEtc" rows="1" maxlength="300" oninput="stockGrow(this)" class="stock-ta rounded-[14px] border-[1.5px] border-[#CBD5E1] bg-[#F8FAFC] px-3 py-3 text-[17px] font-extrabold text-[#0F172A] leading-snug resize-none"></textarea></label>
+      <button type="button" id="stkSaveBtn" onclick="saveStockSheet()" class="h-[60px] rounded-[18px] bg-[#151E2D] text-[#84CC16] text-[20px] font-black mt-1 active:scale-[0.98] shrink-0">고친 내용 저장</button>
+      <div class="grid grid-cols-2 gap-2 shrink-0">
+        <button type="button" id="stkDelBtn" onclick="deleteStockRow()" class="h-[50px] rounded-[14px] border-[1.5px] border-[#FCA5A5] bg-[#FEF2F2] text-[#B91C1C] text-[16px] font-black active:scale-95">이 줄 삭제</button>
+        <button type="button" onclick="closeStockSheet()" class="h-[50px] rounded-[14px] border-[1.5px] border-[#CBD5E1] bg-white text-[#475569] text-[16px] font-extrabold active:scale-95">닫기</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    // =====================================================================
+    // 📦 [패치 #49] 개인 재고함
+    //  - 저장 위치: 내 계정 data/stock/{supply|plant|car}/{줄번호} (기존 자료와 따로, 기존 저장 코드 수정 없음)
+    //  - 재고함을 열 때만 따로 불러옴 / 비밀번호 없음 / 차계부는 개인 장부와 연동하지 않음 (대표님 결정)
+    // =====================================================================
+    const STOCK_CATS = {
+      supply: { name: '비품·자재', qtyLabel: '수량', ex: '"오늘 예초기 날 다섯 개 샀어"' },
+      plant: { name: '수목·식물', qtyLabel: '수량', ex: '"소나무 H3.0 다섯 주 들어왔어"' },
+      car: { name: '차계부', qtyLabel: '금액 (원)', ex: '"1톤 트럭 주유 칠만 원"' }
+    };
+    const STOCK_GUIDES = {
+      supply: [['언제 (안 하시면 오늘)', '"어제"'], ['무엇을 · 몇 개', '"예초기 날 다섯 개"'], ['샀는지 · 썼는지', '"샀어" · "영통 현장에서 썼어"'], ['기타 (있으면)', '"수원 농기계에서"']],
+      plant: [['언제 (안 하시면 오늘)', '"오늘"'], ['수종 · 규격 · 몇 주', '"소나무 H3.0 다섯 주"'], ['들어왔는지 · 심었는지', '"농장에서 들어왔어" · "영통에 심었어"'], ['기타 (있으면)', '"가식장 왼쪽"']],
+      car: [['언제 (안 하시면 오늘)', '"어제"'], ['어느 차', '"1톤 트럭"'], ['무엇에 얼마', '"주유 칠만 원"'], ['기타 (있으면)', '"주행거리 8만 2천"']]
+    };
+    const STK = { cat: 'supply', data: { supply: [], plant: [], car: [] }, view: [], editIdx: -1, loaded: false };
+    function stockUrl(cat, id) { const base = `${DB_BASE_URL}/${getSafeKey(currentUserId)}/data/stock`; return getAuthUrl(cat ? (id ? `${base}/${cat}/${id}.json` : `${base}/${cat}.json`) : `${base}.json`); }
+    function stockClean(r, id) {
+      if (!r || typeof r !== 'object') return null;
+      const date = /^\d{4}-\d{2}-\d{2}$/.test(String(r.date || '')) ? String(r.date) : '';
+      return { id: String(id), date, item: String(r.item || '').trim().slice(0, 60), qty: String(r.qty == null ? '' : r.qty).trim().slice(0, 20), amount: cleanMoney(r.amount),
+        content: String(r.content || '').trim().slice(0, 300), etc: String(r.etc || '').trim().slice(0, 300), createdAt: Number(r.createdAt) || 0 };
+    }
+    function stockSort(a, b) { return (b.date || '').localeCompare(a.date || '') || (b.createdAt - a.createdAt); }
+    async function loadStock() {
+      const res = await fetch(stockUrl()); if (!res.ok) throw new Error('불러오기 실패');
+      const d = await res.json() || {};
+      Object.keys(STOCK_CATS).forEach(c => {
+        const o = d[c] && typeof d[c] === 'object' ? d[c] : {};
+        STK.data[c] = Object.keys(o).filter(k => /^[A-Za-z0-9_-]{1,40}$/.test(k)).map(k => stockClean(o[k], k)).filter(Boolean).sort(stockSort);
+      });
+      STK.loaded = true;
+    }
+    function stockDateLabel(ymd) { if (!ymd) return '-'; const [y, m, d] = ymd.split('-'); return (y === String(new Date().getFullYear()) ? '' : y.slice(2) + '.') + m + '.' + d; }
+    function stockGrow(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight + 2, 260) + 'px'; }
+
+    async function openStockView() {
+      document.getElementById('stockView').classList.remove('hidden');
+      document.getElementById('stockView').scrollTop = 0;
+      history.pushState({ stockOpen: true }, '', '');
+      document.getElementById('stockSearch').value = '';
+      stockSetCat(STK.cat, true);
+      try { await loadStock(); renderStockList(); }
+      catch (e) { document.getElementById('stockTable').innerHTML = '<div class="p-5 text-center text-[16px] font-bold text-[#B91C1C] break-keep">재고함을 불러오지 못했습니다. 인터넷 연결을 확인해 주세요.</div>'; }
+    }
+    function closeStockView() {
+      const v = document.getElementById('stockView'); if (v.classList.contains('hidden')) return;
+      v.classList.add('hidden');
+      if (history.state && history.state.stockOpen) { VX.ignorePop = true; history.back(); }
+    }
+    function stockSetCat(cat, loading) {
+      if (!STOCK_CATS[cat]) return; STK.cat = cat;
+      document.querySelectorAll('.stock-tab').forEach(b => { const on = b.getAttribute('data-stock-tab') === cat; b.style.background = on ? '#E3B341' : 'transparent'; b.style.color = on ? '#151E2D' : '#CBD5E1'; });
+      document.getElementById('stockVoiceEx').innerText = STOCK_CATS[cat].ex;
+      if (loading) { document.getElementById('stockTable').innerHTML = '<div class="p-5 text-center text-[16px] font-bold text-[#64748B]">불러오는 중…</div>'; document.getElementById('stockCarSum').classList.add('hidden'); return; }
+      renderStockList();
+    }
+    function renderStockList() {
+      if (!STK.loaded) return;
+      const cat = STK.cat, isCar = cat === 'car';
+      const q = document.getElementById('stockSearch').value.trim().toLowerCase();
+      STK.view = STK.data[cat].filter(r => !q || (r.item + ' ' + r.content + ' ' + r.etc + ' ' + r.qty).toLowerCase().includes(q));
+      const cols = `grid-template-columns: 50px minmax(0,1.15fr) ${isCar ? '74px' : '60px'} minmax(0,1.45fr)`;
+      const wrap = 'overflow-wrap:anywhere;word-break:keep-all';
+      const head = `<div class="grid gap-1.5 bg-[#151E2D] text-[#E3B341] text-[14.5px] font-black px-2.5 py-2.5" style="${cols}"><span>날짜</span><span>품목</span><span>${isCar ? '금액' : '수량'}</span><span>내용 · 기타</span></div>`;
+      const rows = STK.view.map((r, i) => {
+        const qv = isCar ? (r.amount ? r.amount.toLocaleString('ko-KR') : '-') : (r.qty || '-');
+        const qc = isCar ? 'text-[#0F172A]' : (/^\+/.test(r.qty) ? 'text-[#15803D]' : /^-/.test(r.qty) ? 'text-[#B91C1C]' : 'text-[#0F172A]');
+        return `<button type="button" onclick="openStockSheet(${i})" class="grid gap-1.5 px-2.5 py-2.5 text-left items-start border-b border-[#E2E8F0] ${i % 2 ? 'bg-[#F8FAFC]' : 'bg-white'} active:bg-[#ECFCCB]" style="${cols}">
+          <span class="text-[14.5px] font-extrabold text-[#475569]">${escHtml(stockDateLabel(r.date))}</span>
+          <span class="text-[16px] font-black text-[#0F172A] leading-snug min-w-0" style="${wrap}">${escHtml(r.item || '-')}</span>
+          <span class="text-[15.5px] font-black ${qc} leading-snug min-w-0" style="${wrap}">${escHtml(qv)}</span>
+          <span class="flex flex-col min-w-0"><span class="text-[15px] font-bold text-[#334155] leading-snug" style="${wrap}">${escHtml(r.content)}</span>${r.etc ? `<span class="text-[13.5px] font-bold text-[#64748B] leading-snug" style="${wrap}">${escHtml(r.etc)}</span>` : ''}</span>
+        </button>`;
+      }).join('');
+      const empty = `<div class="p-6 text-center text-[16px] font-bold text-[#64748B] leading-relaxed break-keep">${q ? '찾는 내용이 없습니다.' : '아직 적은 내용이 없습니다.<br>[말로 입력]을 눌러 말해 보세요.'}</div>`;
+      document.getElementById('stockTable').innerHTML = head + (rows || empty);
+      document.getElementById('stockHint').classList.toggle('hidden', !STK.view.length);
+      const sumBox = document.getElementById('stockCarSum');
+      if (isCar) {
+        const now = new Date(); const ym = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+        const sum = STK.data.car.filter(r => (r.date || '').startsWith(ym)).reduce((a, r) => a + (r.amount || 0), 0);
+        sumBox.innerHTML = `<span class="text-[16px] font-extrabold text-[#E2E8F0]">${now.getMonth() + 1}월 자동차 비용</span><span class="text-[21px] font-black text-[#E3B341]">${sum.toLocaleString('ko-KR')}원</span>`;
+      }
+      sumBox.classList.toggle('hidden', !isCar);
+    }
+
+    // ---------- 한 줄 쓰기 / 고치기 / 삭제 ----------
+    function openStockSheet(i) {
+      const isCar = STK.cat === 'car'; const r = i >= 0 ? STK.view[i] : null;
+      if (i >= 0 && !r) return;
+      STK.editIdx = i;
+      document.getElementById('stockSheetTitle').innerText = r ? '한 줄 고치기' : '새로 적기';
+      document.getElementById('stockSheetBadge').innerText = STOCK_CATS[STK.cat].name;
+      document.getElementById('stkQtyLabel').innerText = STOCK_CATS[STK.cat].qtyLabel;
+      const q = document.getElementById('stkQty'); q.inputMode = isCar ? 'numeric' : 'text';
+      q.oninput = isCar ? function () { formatNumberInput(this); } : null;
+      document.getElementById('stkDate').value = r ? (r.date || getTodayStr()) : getTodayStr();
+      q.value = r ? (isCar ? (r.amount ? r.amount.toLocaleString('ko-KR') : '') : r.qty) : '';
+      q.placeholder = isCar ? '예) 70,000' : '예) +5개';
+      document.getElementById('stkItem').value = r ? r.item : '';
+      document.getElementById('stkContent').value = r ? r.content : '';
+      document.getElementById('stkEtc').value = r ? r.etc : '';
+      document.getElementById('stkSaveBtn').innerText = r ? '고친 내용 저장' : '저장하기';
+      document.getElementById('stkDelBtn').classList.toggle('invisible', !r);
+      document.getElementById('stockSheet').classList.remove('hidden');
+      document.querySelectorAll('#stockSheet .stock-ta').forEach(stockGrow);
+      history.pushState({ stockSheet: true }, '', '');
+    }
+    function closeStockSheet(fromPopstate) {
+      const s = document.getElementById('stockSheet'); if (s.classList.contains('hidden')) return;
+      s.classList.add('hidden');
+      if (!fromPopstate && history.state && history.state.stockSheet) { VX.ignorePop = true; history.back(); }
+    }
+    function stockRowBody(src, isCar, createdAt) {
+      const b = { date: /^\d{4}-\d{2}-\d{2}$/.test(src.date || '') ? src.date : getTodayStr(), item: String(src.item || '').trim().slice(0, 60),
+        content: String(src.content || '').trim().slice(0, 300), etc: String(src.etc || '').trim().slice(0, 300), createdAt: createdAt || Date.now(), updatedAt: Date.now() };
+      if (isCar) b.amount = cleanMoney(src.amount); else b.qty = String(src.qty || '').trim().slice(0, 20);
+      return b;
+    }
+    function stockNewId(k) { return 's' + Date.now() + '_' + (k || 0) + Math.random().toString(36).slice(2, 7); }
+    async function saveStockSheet() {
+      const isCar = STK.cat === 'car'; const r = STK.editIdx >= 0 ? STK.view[STK.editIdx] : null;
+      const qv = document.getElementById('stkQty').value;
+      const src = { date: document.getElementById('stkDate').value, item: document.getElementById('stkItem').value, content: document.getElementById('stkContent').value, etc: document.getElementById('stkEtc').value, qty: qv, amount: qv };
+      if (!src.item.trim()) { alert('품목을 적어 주세요.'); return; }
+      const id = r ? r.id : stockNewId();
+      const body = stockRowBody(src, isCar, r ? r.createdAt : 0);
+      const btn = document.getElementById('stkSaveBtn'); btn.disabled = true;
+      try {
+        const res = await fetch(stockUrl(STK.cat, id), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+        if (!res.ok) throw new Error('저장 실패');
+        STK.data[STK.cat] = STK.data[STK.cat].filter(x => x.id !== id).concat([stockClean(body, id)]).sort(stockSort);
+        closeStockSheet(false); renderStockList();
+      } catch (e) { alert('저장하지 못했습니다. 인터넷 연결을 확인하고 다시 눌러 주세요.'); }
+      finally { btn.disabled = false; }
+    }
+    async function deleteStockRow() {
+      const r = STK.editIdx >= 0 ? STK.view[STK.editIdx] : null; if (!r) return;
+      if (!confirm('이 줄을 삭제할까요?\n삭제하면 되살릴 수 없습니다.')) return;
+      try {
+        const res = await fetch(stockUrl(STK.cat, r.id), { method: 'DELETE' }); if (!res.ok) throw new Error('삭제 실패');
+        STK.data[STK.cat] = STK.data[STK.cat].filter(x => x.id !== r.id);
+        closeStockSheet(false); renderStockList();
+      } catch (e) { alert('삭제하지 못했습니다. 인터넷 연결을 확인해 주세요.'); }
+    }
+
+    // ---------- 말로 입력 ----------
+    let aiStockRows = [];
+    function startStockVoice() { const c = STK.cat; voiceOpen({ title: '말로 입력', chip: STOCK_CATS[c].name, hints: [], guide: STOCK_GUIDES[c], onDone: runStockAi }); }
+    function stockPrompt(cat) {
+      const car = cat === 'car';
+      return `너는 조경 사업자 대표님의 ${car ? '차계부(자동차 비용 기록)' : (cat === 'plant' ? '수목·식물 재고 기록' : '비품·자재 재고 기록')} 도우미다. 대표님이 말한 내용을 표의 줄로 나눈다.
+오늘: ${todayInfo()}
+- rows: ${car ? '한 번의 지출마다' : '물건 한 가지마다'} 한 줄. 여러 가지를 말하면 여러 줄.
+- date: "YYYY-MM-DD". "어제", "그저께", "지난 월요일"은 오늘 기준으로 계산. 날짜를 말하지 않았으면 오늘.
+${car ? `- item: 무엇에 쓴 돈인지 짧게(주유, 엔진오일, 타이어, 수리, 보험, 세차, 통행료, 주차 등).
+- amount: 금액(원 단위 숫자). 말 안 했으면 0.
+- content: 어느 차인지(예: "1톤 트럭") + 짧은 설명.
+- etc: 주행거리, 주유소·정비소 이름 등 나머지. 없으면 "".` : `- item: 품목 이름을 짧게(${cat === 'plant' ? '수종과 규격, 예: "소나무 H3.0"' : '예: "예초기 날", "복합비료"'}).
+- qty: 수량과 단위(예: "5개", "10포", "3주"). 들어오거나 산 것은 앞에 "+", 쓰거나 심거나 판 것은 "-", 지금 남은 수를 말한 것은 기호 없이. 말 안 했으면 "".
+- content: 무엇을 했는지 짧게(구입, 입고, 현장 사용, 식재, 판매, 반납 등, 현장 이름이 있으면 포함).
+- etc: 거래처·보관 장소·메모 등 나머지. 없으면 "".`}
+${AI_COMMON_RULES}
+{"rows":[{"date":"","item":"",${car ? '"amount":0' : '"qty":""'},"content":"","etc":""}]}`;
+    }
+    async function runStockAi(text) {
+      const cat = STK.cat, isCar = cat === 'car';
+      voiceShowThinking(['군말 · 발음 실수 고치기', '날짜 · 숫자 정리', '줄별로 나누기']);
+      try {
+        const j = await voiceAskAiJson(stockPrompt(cat), text);
+        aiStockRows = (Array.isArray(j.rows) ? j.rows : []).filter(r => r && r.item).slice(0, 20).map(r => stockRowBody(r, isCar, 0));
+        if (!aiStockRows.length) throw new Error('적을 내용을 알아듣지 못했습니다.');
+        voiceHide(true); showStockPreview(text);
+      } catch (e) {
+        voiceHide(false);
+        alert('AI 정리에 실패했습니다. (' + (e && e.message ? e.message : '통신 오류') + ')\n다시 말씀하시거나 [+ 손으로]로 적어 주세요.');
+      }
+    }
+    function showStockPreview(text) {
+      const isCar = STK.cat === 'car';
+      const inp = (id, v, cls, extra) => `<input id="${id}" value="${escHtml(v)}" ${extra || ''} class="w-full min-w-0 h-[46px] rounded-[10px] border-[1.5px] border-[#EAB308] bg-white px-2.5 ${cls}">`;
+      const ta = (id, v, ph, max) => `<textarea id="${id}" rows="1" maxlength="${max}" oninput="stockGrow(this)" placeholder="${ph}" class="stock-ta w-full rounded-[10px] border-[1.5px] border-[#EAB308] bg-white px-2.5 py-2.5 text-[16px] font-bold text-[#0F172A] leading-snug resize-none placeholder:text-[#94A3B8]">${escHtml(v)}</textarea>`;
+      const rows = aiStockRows.map((r, i) => `<div id="fpStkRow${i}" class="bg-[#FEF9C3] border-2 border-[#EAB308] rounded-[16px] p-3 flex flex-col gap-2">
+          <div class="flex justify-between items-center"><span class="text-[14.5px] font-black text-[#854D0E]">${i + 1}줄</span><button type="button" onclick="stockPreviewToggle(${i})" id="fpStkDel${i}" class="h-9 px-3 rounded-[10px] bg-white border border-[#FCA5A5] text-[14px] font-extrabold text-[#B91C1C]">빼기</button></div>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="flex flex-col gap-1 text-[13.5px] font-black text-[#854D0E]">날짜${inp('fpStkDate' + i, r.date, 'text-[15px] font-extrabold text-[#0F172A]', 'type="date"')}</label>
+            <label class="flex flex-col gap-1 text-[13.5px] font-black text-[#854D0E]">${isCar ? '금액 (원)' : '수량'}${inp('fpStkQty' + i, isCar ? (r.amount ? r.amount.toLocaleString('ko-KR') : '') : r.qty, 'text-[17px] font-black text-[#0F172A] placeholder:text-[13px] placeholder:font-bold', (isCar ? 'inputmode="numeric" oninput="formatNumberInput(this)"' : 'maxlength="20"') + ' placeholder="말씀 안 하셨어요"')}</label>
+          </div>
+          <label class="flex flex-col gap-1 text-[13.5px] font-black text-[#854D0E]">품목${ta('fpStkItem' + i, r.item, '', 60)}</label>
+          <label class="flex flex-col gap-1 text-[13.5px] font-black text-[#854D0E]">내용${ta('fpStkContent' + i, r.content, '없음', 300)}</label>
+          <label class="flex flex-col gap-1 text-[13.5px] font-black text-[#854D0E]">기타${ta('fpStkEtc' + i, r.etc, '없음', 300)}</label>
+        </div>`).join('');
+      const body = `<div class="bg-[#0F172A]/5 border-[1.5px] border-dashed border-[#94A3B8] rounded-[14px] px-3 py-2.5 flex flex-col gap-1"><span class="text-[13.5px] font-black text-[#64748B]">내가 말한 그대로</span><span class="text-[15px] font-semibold text-[#334155] leading-relaxed break-keep" style="overflow-wrap:anywhere">${escHtml(text)}</span></div>
+        <span class="text-[15px] font-black text-[#3F6212]">${aiStockRows.length}줄로 정리했어요 · 칸을 눌러 고칠 수 있어요</span>${rows}
+        <span class="text-[14.5px] font-bold text-[#475569] leading-relaxed">숫자는 말씀하신 그대로만 넣었어요. AI가 지어내지 않아요.</span>`;
+      formPreviewShow({ badge: STOCK_CATS[STK.cat].name, title: '이렇게 넣을까요?', bodyHtml: body, primaryLabel: `${aiStockRows.length}줄 저장하기`, secondaryLabel: '취소', onPrimary: () => { saveStockAiRows(); return false; }, onSecondary: () => {}, onRetry: startStockVoice });
+      document.querySelectorAll('#fpBody .stock-ta').forEach(stockGrow);
+    }
+    function stockPreviewToggle(i) {
+      const r = aiStockRows[i]; if (!r) return; r._off = !r._off;
+      const box = document.getElementById('fpStkRow' + i); box.style.opacity = r._off ? '0.35' : '1';
+      document.getElementById('fpStkDel' + i).innerText = r._off ? '다시 넣기' : '빼기';
+      const n = aiStockRows.filter(x => !x._off).length; document.getElementById('fpPrimary').innerText = n ? `${n}줄 저장하기` : '저장할 줄이 없어요';
+    }
+    async function saveStockAiRows() {
+      const isCar = STK.cat === 'car', cat = STK.cat; const patch = {}; const saved = [];
+      aiStockRows.forEach((r, i) => {
+        if (r._off) return;
+        const g = (k) => (document.getElementById(k + i) || {}).value || '';
+        const qv = g('fpStkQty');
+        const b = stockRowBody({ date: g('fpStkDate'), item: g('fpStkItem'), content: g('fpStkContent'), etc: g('fpStkEtc'), qty: qv, amount: qv }, isCar, Date.now() + i);
+        if (!b.item) return;
+        const id = stockNewId(i); patch[id] = b; saved.push(stockClean(b, id));
+      });
+      if (!saved.length) { alert('저장할 줄이 없습니다. (품목이 비어 있으면 저장되지 않아요)'); return; }
+      const btn = document.getElementById('fpPrimary'); btn.disabled = true;
+      try {
+        const res = await fetch(stockUrl(cat), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(patch) });
+        if (!res.ok) throw new Error('저장 실패');
+        STK.data[cat] = STK.data[cat].concat(saved).sort(stockSort);
+        formPreviewHide(false); renderStockList();
+      } catch (e) { alert('저장하지 못했습니다. 인터넷 연결을 확인하고 다시 눌러 주세요.\n(적은 내용은 화면에 그대로 있습니다)'); }
+      finally { btn.disabled = false; }
+    }
+
+    // 뒤로가기(휴대폰 버튼): 재고함 창 → 재고함 화면 순서로 닫힘
+    window.addEventListener('popstate', (e) => {
+      const ov = document.getElementById('voiceOverlay'); if (ov && !ov.classList.contains('hidden')) return;
+      const fp = document.getElementById('formAiPreview'); if (fp && !fp.classList.contains('hidden')) return;
+      const sh = document.getElementById('stockSheet');
+      if (sh && !sh.classList.contains('hidden')) { closeStockSheet(true); e.stopImmediatePropagation(); return; }
+      const v = document.getElementById('stockView');
+      if (v && !v.classList.contains('hidden')) { v.classList.add('hidden'); e.stopImmediatePropagation(); }
+    }, true);
+  </script>
   <!-- 🧭 [패치 #17] 하단 고정 메뉴 (로그인한 업체 화면에서만 표시, 고객 리포트 화면에는 표시 안 됨) -->
   <nav id="bottomNav" class="no-print fixed bottom-0 inset-x-0 z-40 shadow-[0_-6px_20px_rgba(0,0,0,0.35)]" style="display: none; background: #0F1722; border-top: 1px solid rgba(255,255,255,0.14); padding-bottom: env(safe-area-inset-bottom);">
    <div class="max-w-md mx-auto grid grid-cols-5"><!-- 🧭 [패치 #18] 소통방 가운데 강조 -->
     <button data-nav="home" onclick="switchView('home')" class="bnav-btn relative flex flex-col items-center justify-center gap-1 h-[68px] text-[#CBD5E1] active:scale-95 transition-all"><span class="bnav-bar absolute top-0 left-1/2 -translate-x-1/2 w-10 h-[3px] rounded-b-full bg-[#84CC16] opacity-0"></span><i data-lucide="home" class="w-7 h-7 stroke-[2.2]"></i><span class="text-[15px] font-black tracking-tight">홈</span></button>
     <button data-nav="calendar" onclick="switchView('calendar')" class="bnav-btn relative flex flex-col items-center justify-center gap-1 h-[68px] text-[#CBD5E1] active:scale-95 transition-all"><span class="bnav-bar absolute top-0 left-1/2 -translate-x-1/2 w-10 h-[3px] rounded-b-full bg-[#84CC16] opacity-0"></span><i data-lucide="calendar-days" class="w-7 h-7 stroke-[2.2]"></i><span class="text-[15px] font-black tracking-tight">일정</span></button>
-    <button data-nav="lounge" onclick="switchView('lounge')" class="bnav-btn bnav-center relative flex flex-col items-center justify-end h-[68px] pb-1.5 text-[#84CC16] active:scale-95 transition-all"><!-- 🏠 [패치 #19] --><span class="absolute -top-4 left-1/2 -translate-x-1/2 w-[52px] h-[52px] rounded-full bg-[#84CC16] flex items-center justify-center border-4 border-[#0F1722] shadow-[0_4px_14px_rgba(132,204,22,0.4)]"><i data-lucide="messages-square" class="w-7 h-7 text-[#1A2E05] stroke-[2.4]"></i></span><span class="text-[14.5px] font-black tracking-tight leading-[1.15] text-center">대표님<br>소통방</span></button>
+    <button data-nav="lounge" onclick="switchView('lounge')" class="bnav-btn bnav-center relative flex flex-col items-center justify-center gap-0.5 h-[68px] text-[#84CC16] active:scale-95 transition-all"><!-- 🏠 [패치 #19] → [패치 #50] 글자를 가리던 위로 튀어나온 동그라미 아이콘 제거, 다른 칸과 같은 모양 --><span class="bnav-bar absolute top-0 left-1/2 -translate-x-1/2 w-10 h-[3px] rounded-b-full bg-[#84CC16] opacity-0"></span><i data-lucide="messages-square" class="w-6 h-6 stroke-[2.3]"></i><span class="text-[14px] font-black tracking-tight leading-[1.15] text-center">대표님<br>소통방</span></button>
     <button data-nav="admin" onclick="switchView('admin')" class="bnav-btn relative flex flex-col items-center justify-center gap-1 h-[68px] text-[#CBD5E1] active:scale-95 transition-all"><span class="bnav-bar absolute top-0 left-1/2 -translate-x-1/2 w-10 h-[3px] rounded-b-full bg-[#84CC16] opacity-0"></span><i data-lucide="pen-tool" class="w-7 h-7 stroke-[2.2]"></i><span class="text-[15px] font-black tracking-tight">일지</span></button>
     <button data-nav="quote" onclick="switchView('quote')" class="bnav-btn relative flex flex-col items-center justify-center gap-1 h-[68px] text-[#CBD5E1] active:scale-95 transition-all"><span class="bnav-bar absolute top-0 left-1/2 -translate-x-1/2 w-10 h-[3px] rounded-b-full bg-[#84CC16] opacity-0"></span><i data-lucide="calculator" class="w-7 h-7 stroke-[2.2]"></i><span class="text-[15px] font-black tracking-tight">견적</span></button>
    </div>
