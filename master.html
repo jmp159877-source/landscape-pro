@@ -235,6 +235,13 @@
             <button onclick="deleteOfficialPosts()" class="w-full py-3 bg-white/5 text-[#94A3B8] font-bold rounded-[12px] hover:bg-white/10 border border-white/10 text-[13px]">예시글 전체 삭제 (회원 글은 유지)</button>
         </div>
 
+        <div class="glass-panel rounded-[24px] p-6 space-y-4 border-red-500/30"><!-- 🔐 [패치 #37] 고객 리포트 주인 표시 (1회) -->
+            <h3 class="text-white font-black text-[16px] flex items-center gap-2 mb-2"><i data-lucide="shield-check" class="w-5 h-5 text-red-300"></i> 고객 리포트 보안 (1회 실행)</h3>
+            <p class="text-[#94A3B8] text-[12px] leading-relaxed">예전에 발행한 고객 리포트 링크마다 '어느 업체 것인지' 표시를 붙입니다. 이 작업을 끝낸 뒤 보안 규칙 v5를 게시하면, 다른 업체가 남의 리포트를 고칠 수 없게 됩니다. 여러 번 눌러도 문제없습니다.</p>
+            <button id="btnStampOwners" onclick="stampReportOwners()" class="w-full py-3.5 bg-red-500/20 text-red-200 font-black rounded-[12px] hover:bg-red-500/30 border border-red-500/40">🔐 고객 리포트 주인 표시 실행</button>
+            <p id="stampOwnersResult" class="text-[#CBD5E1] text-[13px] font-bold"></p>
+        </div>
+
         <div class="glass-panel rounded-[24px] p-6 space-y-4 opacity-70">
             <h3 class="text-white font-black text-[16px] flex items-center gap-2 mb-2"><i data-lucide="credit-card" class="w-5 h-5 text-purple-400"></i> 요금제 및 구독 통제 (상용화 대비용)</h3>
             <div class="bg-[#0F172A] p-4 rounded-[12px] border border-white/5 space-y-4">
@@ -681,14 +688,16 @@
     // 📋 [패치 #11] 라운지 게시글 관리 (관리자 전용: 삭제 · 마감 처리)
     const PM_CAT = { '자유소통': '☕ 자유 소통', '정보교환': '📢 정보 교환·업체 공유', '현장협력': '🤝 작업 지원·협력', '장비자재': '🛒 장비·자재', '일감양도': '💼 작업 양도·양수', '견적단가': '📊 견적·단가', '노하우': '💡 노하우', '불량거래처': '🚨 불량 거래처' };
     const PM_STATUS = { '현장협력': '마감', '장비자재': '거래완료', '일감양도': '마감' };
-    let pmPosts = [];
+    let pmPosts = []; let pmComments = {}; const pmCmtOpen = new Set(); // 💬 [패치 #40] 댓글 관리
     function pmEsc(v) { return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+    function jsArg(v) { return pmEsc(JSON.stringify(String(v == null ? '' : v))); } // 🔐 [패치 #37] 버튼에 넘기는 값을 안전하게 (따옴표 장난 방지)
     function openPostManager() { document.getElementById('postManagerModal').classList.remove('hidden'); loadPostManager(); }
     function closePostManager() { document.getElementById('postManagerModal').classList.add('hidden'); }
     async function loadPostManager() {
         document.getElementById('pmList').innerHTML = '<div class="text-center text-[#94A3B8] py-10 font-bold">불러오는 중...</div>';
         try {
             const res = await fetch(getAuthUrl(`${COMMUNITY_URL}.json?t=${Date.now()}`)); const data = await res.json();
+            try { const cr = await fetch(getAuthUrl(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_comments.json?t=${Date.now()}`)); pmComments = (cr.ok ? await cr.json() : null) || {}; } catch (e) { pmComments = {}; } // 💬 [패치 #40]
             pmPosts = data ? Object.entries(data).filter(([k, p]) => p && typeof p === 'object').map(([k, p]) => Object.assign({ _key: k }, p)).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)) : [];
             renderPostManager();
         } catch (e) { document.getElementById('pmList').innerHTML = '<div class="text-center text-red-400 py-10 font-bold">불러오기 실패</div>'; }
@@ -707,18 +716,67 @@
                 <div class="text-[#E2E8F0] text-[14px] leading-relaxed mb-2 max-h-[66px] overflow-hidden">${pmEsc(p.content).replace(/\n/g, '<br>')}</div>
                 ${imgs.length ? `<div class="flex gap-1.5 overflow-x-auto mb-2">${imgs.map(u => `<a href="${pmEsc(u)}" target="_blank" rel="noopener"><img src="${pmEsc(u)}" loading="lazy" class="w-14 h-14 object-cover rounded-[8px] border border-white/10"></a>`).join('')}</div>` : ''}
                 <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-white/5"><span class="text-[#94A3B8] text-[12px] font-bold flex-1">${pmEsc(who)}</span>
-                ${PM_STATUS[p.category] ? `<button onclick="adminTogglePostStatus('${p._key}')" class="px-3 py-1.5 bg-white/10 text-white rounded-[8px] text-[12px] font-bold hover:bg-white/20">${closed ? '진행 중으로' : PM_STATUS[p.category] + ' 처리'}</button>` : ''}
-                <button onclick="adminDeletePost('${p._key}')" class="px-3 py-1.5 bg-red-500/20 text-red-300 border border-red-500/30 rounded-[8px] text-[12px] font-bold hover:bg-red-500/30">삭제</button></div>
+                ${PM_STATUS[p.category] ? `<button onclick="adminTogglePostStatus(${jsArg(p._key)})" class="px-3 py-1.5 bg-white/10 text-white rounded-[8px] text-[12px] font-bold hover:bg-white/20">${closed ? '진행 중으로' : PM_STATUS[p.category] + ' 처리'}</button>` : ''}
+                ${pmCmtButton(p._key)}
+                <button onclick="adminDeletePost(${jsArg(p._key)})" class="px-3 py-1.5 bg-red-500/20 text-red-300 border border-red-500/30 rounded-[8px] text-[12px] font-bold hover:bg-red-500/30">삭제</button></div>
+                ${pmCmtList(p._key)}
             </div>`; }).join('');
+    }
+    // 💬 [패치 #40] 댓글 보기·삭제 (관리자만)
+    function pmCmtEntries(key) { const o = pmComments[key] || {}; return Object.entries(o).filter(([k, c]) => c && typeof c === 'object').sort((a, b) => (a[1].timestamp || 0) - (b[1].timestamp || 0)); }
+    function pmCmtButton(key) { const n = pmCmtEntries(key).length; return n ? `<button onclick="pmToggleCmt(${jsArg(key)})" class="px-3 py-1.5 bg-white/10 text-white rounded-[8px] text-[12px] font-bold hover:bg-white/20">댓글 ${n}${pmCmtOpen.has(key) ? ' 접기' : ' 보기'}</button>` : ''; }
+    function pmCmtList(key) {
+        if (!pmCmtOpen.has(key)) return '';
+        return `<div class="mt-3 space-y-2">` + pmCmtEntries(key).map(([ck, c]) => `<div class="bg-black/30 border border-white/10 rounded-[10px] p-3"><div class="flex justify-between gap-2 text-[11px] text-[#94A3B8] font-bold mb-1"><span>${pmEsc((c.authorRegion ? '[' + c.authorRegion + '] ' : '') + (c.authorName || '') + ' · ' + (c.authorId || ''))}</span><span>${pmEsc(c.dateStr || '')}</span></div><div class="text-[#E2E8F0] text-[13px] whitespace-pre-wrap break-keep">${pmEsc(c.text)}</div><div class="text-right mt-2"><button onclick="adminDeleteComment(${jsArg(key)}, ${jsArg(ck)})" class="px-3 py-1 bg-red-500/20 text-red-300 border border-red-500/30 rounded-[8px] text-[12px] font-bold hover:bg-red-500/30">댓글 삭제</button></div></div>`).join('') + `</div>`;
+    }
+    function pmToggleCmt(key) { if (pmCmtOpen.has(key)) pmCmtOpen.delete(key); else pmCmtOpen.add(key); renderPostManager(); }
+    async function adminDeleteComment(key, ck) {
+        if (!/^[A-Za-z0-9_-]+$/.test(key) || !/^[A-Za-z0-9_-]+$/.test(ck)) return;
+        if (!confirm('이 댓글을 삭제하시겠습니까? 복구할 수 없습니다.')) return;
+        try { const r = await fetch(getAuthUrl(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_comments/${key}/${ck}.json`), { method: 'DELETE' }); if (!r.ok) throw new Error(); if (pmComments[key]) delete pmComments[key][ck]; renderPostManager(); } catch (e) { alert('댓글 삭제 중 오류가 발생했습니다.'); }
     }
     async function adminDeletePost(key) {
         const p = pmPosts.find(x => x._key === key); if (!p) return;
         if (!confirm(`[${p.title}]\n이 게시글을 삭제하시겠습니까? 복구할 수 없습니다.`)) return;
-        try { const r = await fetch(getAuthUrl(`${COMMUNITY_URL}/${key}.json`), { method: 'DELETE' }); if (!r.ok) throw new Error(); pmPosts = pmPosts.filter(x => x._key !== key); renderPostManager(); } catch (e) { alert('삭제 중 오류가 발생했습니다.'); }
+        try { const r = await fetch(getAuthUrl(`${COMMUNITY_URL}/${key}.json`), { method: 'DELETE' }); if (!r.ok) throw new Error(); fetch(getAuthUrl(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_comments/${key}.json`), { method: 'DELETE' }).catch(() => {}); /* 💬 [패치 #40] 글의 댓글도 삭제 */ delete pmComments[key]; pmPosts = pmPosts.filter(x => x._key !== key); renderPostManager(); } catch (e) { alert('삭제 중 오류가 발생했습니다.'); }
     }
     async function adminTogglePostStatus(key) {
         const p = pmPosts.find(x => x._key === key); if (!p) return; const next = p.status === 'closed' ? 'open' : 'closed';
         try { const r = await fetch(getAuthUrl(`${COMMUNITY_URL}/${key}/status.json`), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(next) }); if (!r.ok) throw new Error(); p.status = next; renderPostManager(); } catch (e) { alert('상태 변경 중 오류가 발생했습니다.'); }
+    }
+
+    // 🔐 [패치 #37] 예전 고객 리포트에 주인(업체 아이디) 표시 붙이기 — 규칙 v5 게시 전에 1회 실행
+    async function stampReportOwners() {
+        if (!confirm("모든 업체의 예전 고객 리포트에 '주인 표시'를 붙입니다.\n(리포트 내용은 바뀌지 않습니다) 진행할까요?")) return;
+        const btn = document.getElementById('btnStampOwners'); const out = document.getElementById('stampOwnersResult');
+        btn.disabled = true; out.innerText = '업체 목록을 불러오는 중...';
+        const DOCS_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_shared_docs";
+        try {
+            const res = await fetch(getAuthUrl(`${DB_BASE_URL}.json`)); const all = await res.json();
+            const jobs = [];
+            Object.keys(all || {}).forEach(accKey => {
+                const recs = normalizeData(all[accKey] && all[accKey].data && all[accKey].data.records);
+                recs.forEach(r => { if (r && typeof r.id === 'string' && /^[A-Za-z0-9_-]+$/.test(r.id)) jobs.push({ id: r.id, owner: accKey }); });
+            });
+            let done = 0, stamped = 0, already = 0, missing = 0, conflict = 0, failed = 0;
+            for (let i = 0; i < jobs.length; i += 5) {
+                await Promise.all(jobs.slice(i, i + 5).map(async j => {
+                    try {
+                        const r = await fetch(`${DOCS_URL}/${j.id}/ownerId.json`); // 읽기는 누구나 가능한 경로
+                        const cur = await r.json();
+                        const ex = await (await fetch(`${DOCS_URL}/${j.id}/c.json`)).json();
+                        if (cur === j.owner) already++;
+                        else if (cur) conflict++;
+                        else if (ex === null) missing++;
+                        else { const w = await fetch(getAuthUrl(`${DOCS_URL}/${j.id}/ownerId.json`), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(j.owner) }); if (w.ok) stamped++; else failed++; }
+                    } catch (e) { failed++; }
+                    done++;
+                }));
+                out.innerText = `진행 중... ${done} / ${jobs.length}`;
+            }
+            out.innerText = `✅ 완료: 새로 표시 ${stamped}건 · 이미 표시됨 ${already}건 · 링크 없음 ${missing}건` + (conflict ? ` · ⚠️ 주인 불일치 ${conflict}건` : '') + (failed ? ` · ❌ 실패 ${failed}건 (다시 눌러주세요)` : '');
+        } catch (e) { out.innerText = '❌ 오류가 발생했습니다. 잠시 후 다시 눌러주세요.'; }
+        finally { btn.disabled = false; }
     }
 
     async function saveTermsText() {
@@ -809,7 +867,7 @@
                 <div class="text-[11px] font-black text-[#84CC16] uppercase mb-0.5">New Request</div>
                 <div class="text-[14px] font-black text-[#1A1D1A] mb-1">신규 가입 신청 도착!</div>
                 <div class="text-[12px] font-medium text-[#4E5968] leading-snug">
-                    <strong class="text-[#1A1D1A]">${companyName}</strong> (${ceoName} 대표)
+                    <strong class="text-[#1A1D1A]">${pmEsc(companyName)}</strong> (${pmEsc(ceoName)} 대표)
                 </div>
             </div>
             <button onclick="this.parentElement.remove()" class="text-[#A3A8A3] hover:text-[#1A1D1A] p-1"><i data-lucide="x" class="w-4 h-4"></i></button>
@@ -849,10 +907,10 @@
         pendingAccounts.forEach(acc => {
             const div = document.createElement('div');
             div.className = "glass-panel rounded-[24px] p-6 space-y-4 shadow-lg border-blue-500/20";
-            let safeImg = acc.license ? acc.license.replace(/"/g, '&quot;') : '';
+            let safeImg = acc.license || ''; // 🔐 [패치 #37] 따옴표 처리는 jsArg가 담당
             
             // ✨ [추가] DB에 저장된 약관 동의 시간 데이터를 예쁘게 출력
-            const agreedText = acc.termsAgreedAt ? `<span class="text-[#84CC16] font-black">${acc.termsAgreedAt} 동의완료</span>` : '<span class="text-red-400 font-bold">기록 없음 (구버전 가입)</span>';
+            const agreedText = acc.termsAgreedAt ? `<span class="text-[#84CC16] font-black">${pmEsc(acc.termsAgreedAt)} 동의완료</span>` : '<span class="text-red-400 font-bold">기록 없음 (구버전 가입)</span>';
 
             div.innerHTML = `
                 <div class="flex justify-between items-start border-b border-white/10 pb-4">
@@ -860,14 +918,14 @@
                     <div class="flex items-center gap-2 mb-1">
                         <span class="bg-yellow-500/20 text-yellow-500 px-2 py-0.5 rounded text-[10px] font-black uppercase flex items-center gap-1"><div class="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse"></div> 심사 대기</span>
                     </div>
-                    <h3 class="text-[20px] font-black text-white">${acc.region ? `<span class="text-[#84CC16] text-[15px] mr-1.5">[${acc.region}]</span>` : ''}${acc.name}</h3>
+                    <h3 class="text-[20px] font-black text-white">${acc.region ? `<span class="text-[#84CC16] text-[15px] mr-1.5">[${pmEsc(acc.region)}]</span>` : ''}${pmEsc(acc.name)}</h3>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-y-3 gap-x-2 text-[13px] bg-black/20 p-4 rounded-[16px]">
-                    <div><span class="text-[#94A3B8] block text-[11px] mb-0.5">접속 아이디</span><strong class="text-white">${acc.id}</strong></div>
-                    <div><span class="text-[#94A3B8] block text-[11px] mb-0.5">대표자명</span><strong class="text-white">${acc.ceo}</strong></div>
-                    <div class="col-span-2"><span class="text-[#94A3B8] block text-[11px] mb-0.5">사업자번호</span><strong class="text-[#3B82F6] tracking-wide">${acc.bizNum}</strong></div>
-                    <div class="col-span-2"><span class="text-[#94A3B8] block text-[11px] mb-0.5">대표 연락처</span><strong class="text-white">${acc.phone}</strong></div>
+                    <div><span class="text-[#94A3B8] block text-[11px] mb-0.5">접속 아이디</span><strong class="text-white">${pmEsc(acc.id)}</strong></div>
+                    <div><span class="text-[#94A3B8] block text-[11px] mb-0.5">대표자명</span><strong class="text-white">${pmEsc(acc.ceo)}</strong></div>
+                    <div class="col-span-2"><span class="text-[#94A3B8] block text-[11px] mb-0.5">사업자번호</span><strong class="text-[#3B82F6] tracking-wide">${pmEsc(acc.bizNum)}</strong></div>
+                    <div class="col-span-2"><span class="text-[#94A3B8] block text-[11px] mb-0.5">대표 연락처</span><strong class="text-white">${pmEsc(acc.phone)}</strong></div>
                     
                     <!-- ✨ 법적 증빙: 승인 전 동의 일시를 확인하는 영역 -->
                     <div class="col-span-2 pt-2 border-t border-white/5 mt-1">
@@ -875,12 +933,12 @@
                         <strong class="text-[13px] tracking-wide">${agreedText}</strong>
                     </div>
                 </div>
-                <button onclick="openLicenseModal('${safeImg}')" class="w-full py-3.5 bg-white/5 border border-white/10 rounded-[14px] text-[13px] font-bold hover:bg-white/10 flex items-center justify-center gap-2 transition-colors text-blue-300">
+                <button onclick="openLicenseModal(${jsArg(safeImg)})" class="w-full py-3.5 bg-white/5 border border-white/10 rounded-[14px] text-[13px] font-bold hover:bg-white/10 flex items-center justify-center gap-2 transition-colors text-blue-300">
                     <i data-lucide="file-image" class="w-4 h-4"></i> 사업자등록증 원본 확인
                 </button>
                 <div class="flex gap-2 pt-2 border-t border-white/10">
-                    <button onclick="approveAccount('${acc.id}')" class="flex-1 py-4 bg-[#84CC16] text-[#12261E] rounded-[16px] font-black text-[15px] hover:bg-[#9BE32D] shadow-[0_4px_15px_rgba(132,204,22,0.3)] transition-all">사용 승인 허가</button>
-                    <button onclick="deleteAccount('${acc.id}', '가입 거절')" class="px-5 py-4 bg-red-500/10 text-red-400 border border-red-500/20 rounded-[16px] font-bold text-[14px] hover:bg-red-500/20 transition-all">반려 및 삭제</button>
+                    <button onclick="approveAccount(${jsArg(acc.id)})" class="flex-1 py-4 bg-[#84CC16] text-[#12261E] rounded-[16px] font-black text-[15px] hover:bg-[#9BE32D] shadow-[0_4px_15px_rgba(132,204,22,0.3)] transition-all">사용 승인 허가</button>
+                    <button onclick="deleteAccount(${jsArg(acc.id)}, '가입 거절')" class="px-5 py-4 bg-red-500/10 text-red-400 border border-red-500/20 rounded-[16px] font-bold text-[14px] hover:bg-red-500/20 transition-all">반려 및 삭제</button>
                 </div>
             `;
             container.appendChild(div);
@@ -929,27 +987,27 @@
 
             tr.innerHTML = `
                 <td class="p-4 pl-6 text-center">
-                    <input type="checkbox" class="company-check w-4 h-4 cursor-pointer accent-[#F59E0B]" value="${acc.id}" onchange="handleCompanyCheck(this, '${acc.id}')" ${isChecked}>
+                    <input type="checkbox" class="company-check w-4 h-4 cursor-pointer accent-[#F59E0B]" value="${pmEsc(acc.id)}" onchange="handleCompanyCheck(this, ${jsArg(acc.id)})" ${isChecked}>
                 </td>
                 <td class="p-4">${statusHtml}</td>
-                <td class="p-4 font-black ${textStyle} text-[15px]">${acc.withdrawRequestedAt ? `<span class="block w-fit mb-1 bg-red-500/20 text-red-300 border border-red-500/40 text-[12px] font-black px-2 py-0.5 rounded">🚪 탈퇴 요청 ${acc.withdrawRequestedAt.slice(0,10)} · ${Math.max(0, 30 - Math.floor((Date.now() - new Date(acc.withdrawRequestedAt)) / 86400000))}일 후 삭제 대상</span>` : ''}${acc.region ? `<span class="text-[#84CC16] text-[12px] mr-1">[${acc.region}]</span>` : ''}${acc.name}</td>
-                <td class="p-4 ${idStyle} font-bold tracking-wide">${acc.id}</td>
-                <td class="p-4 ${textStyle}">${acc.ceo}</td>
-                <td class="p-4 ${textStyle}">${acc.phone}</td>
+                <td class="p-4 font-black ${textStyle} text-[15px]">${acc.withdrawRequestedAt ? `<span class="block w-fit mb-1 bg-red-500/20 text-red-300 border border-red-500/40 text-[12px] font-black px-2 py-0.5 rounded">🚪 탈퇴 요청 ${pmEsc(acc.withdrawRequestedAt.slice(0,10))} · ${Math.max(0, 30 - Math.floor((Date.now() - new Date(acc.withdrawRequestedAt)) / 86400000))}일 후 삭제 대상</span>` : ''}${acc.region ? `<span class="text-[#84CC16] text-[12px] mr-1">[${pmEsc(acc.region)}]</span>` : ''}${pmEsc(acc.name)}</td>
+                <td class="p-4 ${idStyle} font-bold tracking-wide">${pmEsc(acc.id)}</td>
+                <td class="p-4 ${textStyle}">${pmEsc(acc.ceo)}</td>
+                <td class="p-4 ${textStyle}">${pmEsc(acc.phone)}</td>
                 <td class="p-4 pr-6 text-right space-x-1.5 flex justify-end items-center">
-                    <button onclick="openCompanyDataModal('${acc.id}', '${acc.name}')" class="px-3 py-2 bg-[#3B82F6]/20 text-blue-300 border border-blue-500/30 rounded-[8px] text-[11px] font-bold hover:bg-[#3B82F6]/30 transition-all flex items-center gap-1.5 mr-1">
+                    <button onclick="openCompanyDataModal(${jsArg(acc.id)}, ${jsArg(acc.name)})" class="px-3 py-2 bg-[#3B82F6]/20 text-blue-300 border border-blue-500/30 rounded-[8px] text-[11px] font-bold hover:bg-[#3B82F6]/30 transition-all flex items-center gap-1.5 mr-1">
                         <i data-lucide="database" class="w-3.5 h-3.5 inline"></i> 데이터 열람
                     </button>
-                    <button onclick="openEditCompanyModal('${acc.id}')" class="px-3 py-2 bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20 rounded-[8px] text-[11px] font-bold hover:bg-[#F59E0B]/20 transition-all mr-1">
+                    <button onclick="openEditCompanyModal(${jsArg(acc.id)})" class="px-3 py-2 bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20 rounded-[8px] text-[11px] font-bold hover:bg-[#F59E0B]/20 transition-all mr-1">
                         <i data-lucide="edit-3" class="w-3.5 h-3.5 inline"></i> 수정
                     </button>
                     ${isSuspended 
-                        ? `<button onclick="updateAccountStatus('${acc.id}', 'active')" class="px-3 py-2 bg-green-500/10 text-green-400 border border-green-500/20 rounded-[8px] text-[11px] font-bold hover:bg-green-500/20 transition-all">정지 해제</button>`
-                        : `<button onclick="updateAccountStatus('${acc.id}', 'suspended')" class="px-3 py-2 bg-orange-500/10 text-orange-400 border border-orange-500/20 rounded-[8px] text-[11px] font-bold hover:bg-orange-500/20 transition-all">이용 정지</button>`
+                        ? `<button onclick="updateAccountStatus(${jsArg(acc.id)}, 'active')" class="px-3 py-2 bg-green-500/10 text-green-400 border border-green-500/20 rounded-[8px] text-[11px] font-bold hover:bg-green-500/20 transition-all">정지 해제</button>`
+                        : `<button onclick="updateAccountStatus(${jsArg(acc.id)}, 'suspended')" class="px-3 py-2 bg-orange-500/10 text-orange-400 border border-orange-500/20 rounded-[8px] text-[11px] font-bold hover:bg-orange-500/20 transition-all">이용 정지</button>`
                     }
-                    <button onclick="resetPassword('${acc.id}')" class="px-3 py-2 bg-white/10 text-white border border-white/20 rounded-[8px] text-[11px] font-bold hover:bg-white/20 transition-all" title="앱 접속 비번을 임시 비밀번호로 초기화"><i data-lucide="key" class="w-3.5 h-3.5 inline"></i> 앱 비번</button>
-                    <button onclick="resetLedgerPin('${acc.id}')" class="px-3 py-2 bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 rounded-[8px] text-[11px] font-bold hover:bg-yellow-500/20 transition-all" title="장부 비밀번호 리셋"><i data-lucide="unlock" class="w-3.5 h-3.5 inline"></i> 장부 비번</button>
-                    <button onclick="deleteAccount('${acc.id}', '영구 강제 탈퇴')" class="px-3 py-2 bg-red-500/10 text-red-500 border border-red-500/20 rounded-[8px] text-[11px] font-bold hover:bg-red-500/20 transition-all"><i data-lucide="trash-2" class="w-3.5 h-3.5 inline"></i></button>
+                    <button onclick="resetPassword(${jsArg(acc.id)})" class="px-3 py-2 bg-white/10 text-white border border-white/20 rounded-[8px] text-[11px] font-bold hover:bg-white/20 transition-all" title="앱 접속 비번을 임시 비밀번호로 초기화"><i data-lucide="key" class="w-3.5 h-3.5 inline"></i> 앱 비번</button>
+                    <button onclick="resetLedgerPin(${jsArg(acc.id)})" class="px-3 py-2 bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 rounded-[8px] text-[11px] font-bold hover:bg-yellow-500/20 transition-all" title="장부 비밀번호 리셋"><i data-lucide="unlock" class="w-3.5 h-3.5 inline"></i> 장부 비번</button>
+                    <button onclick="deleteAccount(${jsArg(acc.id)}, '영구 강제 탈퇴')" class="px-3 py-2 bg-red-500/10 text-red-500 border border-red-500/20 rounded-[8px] text-[11px] font-bold hover:bg-red-500/20 transition-all"><i data-lucide="trash-2" class="w-3.5 h-3.5 inline"></i></button>
                 </td>
             `;
             tbody.appendChild(tr);
@@ -1299,7 +1357,7 @@
             const items = normalizeData(data.schedules).sort((a,b) => new Date(b.date) - new Date(a.date));
             if(items.length===0) html = '<div class="p-8 text-center text-[#94A3B8] font-bold bg-white/5 rounded-[16px] border border-white/10">등록된 일정이 없습니다.</div>';
             items.forEach(s => {
-                html += `<div class="bg-[#1E293B] p-5 rounded-[16px] border border-white/5 shadow-sm"><div class="text-[#3B82F6] text-[12px] font-black mb-1.5">${s.date}</div><div class="text-white text-[15px] font-black mb-1">${s.title}</div><div class="text-[#94A3B8] text-[13px] break-keep leading-relaxed">${s.memo || '상세 내용 없음'}</div></div>`;
+                html += `<div class="bg-[#1E293B] p-5 rounded-[16px] border border-white/5 shadow-sm"><div class="text-[#3B82F6] text-[12px] font-black mb-1.5">${pmEsc(s.date)}</div><div class="text-white text-[15px] font-black mb-1">${pmEsc(s.title)}</div><div class="text-[#94A3B8] text-[13px] break-keep leading-relaxed">${pmEsc(s.memo || '상세 내용 없음')}</div></div>`;
             });
         }
         else if (type === 'reports') {
@@ -1307,7 +1365,7 @@
             const items = records.filter(r => r.type !== 'quote');
             if(items.length===0) html = '<div class="p-8 text-center text-[#94A3B8] font-bold bg-white/5 rounded-[16px] border border-white/10">작성된 일지가 없습니다.</div>';
             items.forEach(r => {
-                html += `<div class="flex items-center justify-between p-4 bg-[#1E293B] border border-white/5 rounded-[16px] hover:border-[#84CC16]/50 transition-colors shadow-sm"><div class="flex items-center gap-3 w-full pr-4"><span class="bg-[#84CC16]/20 text-[#84CC16] px-2.5 py-1 rounded-md text-[10px] font-black shrink-0 border border-[#84CC16]/30">일지</span><div class="min-w-0"><div class="text-white text-[15px] font-black truncate">${r.clientName}</div><div class="text-[#94A3B8] text-[12px] font-bold truncate mt-1">${r.date} | ${r.round}</div></div></div><button onclick="openDocumentPreview('${r.id}')" class="shrink-0 px-4 py-2 bg-[#84CC16] text-[#12261E] rounded-[10px] text-[12px] font-black hover:bg-[#9BE32D] transition-all flex items-center gap-1.5 shadow-md"><i data-lucide="file-search" class="w-3.5 h-3.5"></i> 상세 열람</button></div>`;
+                html += `<div class="flex items-center justify-between p-4 bg-[#1E293B] border border-white/5 rounded-[16px] hover:border-[#84CC16]/50 transition-colors shadow-sm"><div class="flex items-center gap-3 w-full pr-4"><span class="bg-[#84CC16]/20 text-[#84CC16] px-2.5 py-1 rounded-md text-[10px] font-black shrink-0 border border-[#84CC16]/30">일지</span><div class="min-w-0"><div class="text-white text-[15px] font-black truncate">${pmEsc(r.clientName)}</div><div class="text-[#94A3B8] text-[12px] font-bold truncate mt-1">${pmEsc(r.date)} | ${pmEsc(r.round)}</div></div></div><button onclick="openDocumentPreview(${jsArg(r.id)})" class="shrink-0 px-4 py-2 bg-[#84CC16] text-[#12261E] rounded-[10px] text-[12px] font-black hover:bg-[#9BE32D] transition-all flex items-center gap-1.5 shadow-md"><i data-lucide="file-search" class="w-3.5 h-3.5"></i> 상세 열람</button></div>`;
             });
         }
         else if (type === 'quotes') {
@@ -1315,7 +1373,7 @@
             const items = records.filter(r => r.type === 'quote');
             if(items.length===0) html = '<div class="p-8 text-center text-[#94A3B8] font-bold bg-white/5 rounded-[16px] border border-white/10">발행된 견적서가 없습니다.</div>';
             items.forEach(r => {
-                html += `<div class="flex items-center justify-between p-4 bg-[#1E293B] border border-white/5 rounded-[16px] hover:border-[#3B82F6]/50 transition-colors shadow-sm"><div class="flex items-center gap-3 w-full pr-4"><span class="bg-[#3B82F6]/20 text-[#3B82F6] px-2.5 py-1 rounded-md text-[10px] font-black shrink-0 border border-[#3B82F6]/30">견적</span><div class="min-w-0"><div class="text-white text-[15px] font-black truncate">${r.clientName}</div><div class="text-[#94A3B8] text-[12px] font-bold truncate mt-1">${r.date} | ${r.round}</div></div></div><button onclick="openDocumentPreview('${r.id}')" class="shrink-0 px-4 py-2 bg-[#3B82F6] text-white rounded-[10px] text-[12px] font-black hover:bg-blue-500 transition-all flex items-center gap-1.5 shadow-md"><i data-lucide="file-search" class="w-3.5 h-3.5"></i> 상세 열람</button></div>`;
+                html += `<div class="flex items-center justify-between p-4 bg-[#1E293B] border border-white/5 rounded-[16px] hover:border-[#3B82F6]/50 transition-colors shadow-sm"><div class="flex items-center gap-3 w-full pr-4"><span class="bg-[#3B82F6]/20 text-[#3B82F6] px-2.5 py-1 rounded-md text-[10px] font-black shrink-0 border border-[#3B82F6]/30">견적</span><div class="min-w-0"><div class="text-white text-[15px] font-black truncate">${pmEsc(r.clientName)}</div><div class="text-[#94A3B8] text-[12px] font-bold truncate mt-1">${pmEsc(r.date)} | ${pmEsc(r.round)}</div></div></div><button onclick="openDocumentPreview(${jsArg(r.id)})" class="shrink-0 px-4 py-2 bg-[#3B82F6] text-white rounded-[10px] text-[12px] font-black hover:bg-blue-500 transition-all flex items-center gap-1.5 shadow-md"><i data-lucide="file-search" class="w-3.5 h-3.5"></i> 상세 열람</button></div>`;
             });
         }
         else if (type === 'clients') {
@@ -1326,11 +1384,11 @@
                 // 💡 [핵심 연동] 거래처 리스트 우측에 대표님이 원하신 '과거 기록 열람' 다이렉트 버튼 탑재!
                 html += `<div class="flex items-center justify-between p-5 bg-[#1E293B] border border-white/5 rounded-[16px] shadow-sm hover:border-white/20 transition-all group">
                     <div class="flex-1 min-w-0 pr-4">
-                        <div class="text-white text-[15px] font-black mb-2 flex items-center gap-2">${c.name} <span class="text-[10px] bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30 px-1.5 py-0.5 rounded">${c.type||'정기 관리'}</span></div>
-                        <div class="text-[#94A3B8] text-[13px] font-bold mb-1 truncate"><i data-lucide="phone" class="w-3.5 h-3.5 inline text-blue-400"></i> ${c.phone || '연락처 미등록'}</div>
-                        <div class="text-[#94A3B8] text-[13px] font-medium truncate"><i data-lucide="map-pin" class="w-3.5 h-3.5 inline"></i> ${c.address || '주소 미등록'}</div>
+                        <div class="text-white text-[15px] font-black mb-2 flex items-center gap-2">${pmEsc(c.name)} <span class="text-[10px] bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30 px-1.5 py-0.5 rounded">${pmEsc(c.type||'정기 관리')}</span></div>
+                        <div class="text-[#94A3B8] text-[13px] font-bold mb-1 truncate"><i data-lucide="phone" class="w-3.5 h-3.5 inline text-blue-400"></i> ${pmEsc(c.phone || '연락처 미등록')}</div>
+                        <div class="text-[#94A3B8] text-[13px] font-medium truncate"><i data-lucide="map-pin" class="w-3.5 h-3.5 inline"></i> ${pmEsc(c.address || '주소 미등록')}</div>
                     </div>
-                    <button onclick="viewClientLogs('${c.name}')" class="shrink-0 px-4 py-3 bg-white/5 text-[#94A3B8] border border-white/10 rounded-[12px] text-[12px] font-black hover:bg-[#84CC16] hover:text-[#12261E] hover:border-[#84CC16] transition-all flex items-center gap-1.5 shadow-sm group-hover:bg-[#84CC16]/10 group-hover:border-[#84CC16]/30 group-hover:text-[#84CC16]"><i data-lucide="folder-clock" class="w-4 h-4"></i> 과거 기록 열람</button>
+                    <button onclick="viewClientLogs(${jsArg(c.name)})" class="shrink-0 px-4 py-3 bg-white/5 text-[#94A3B8] border border-white/10 rounded-[12px] text-[12px] font-black hover:bg-[#84CC16] hover:text-[#12261E] hover:border-[#84CC16] transition-all flex items-center gap-1.5 shadow-sm group-hover:bg-[#84CC16]/10 group-hover:border-[#84CC16]/30 group-hover:text-[#84CC16]"><i data-lucide="folder-clock" class="w-4 h-4"></i> 과거 기록 열람</button>
                 </div>`;
             });
         }
@@ -1340,7 +1398,7 @@
             if(data.contacts) { cList = [...normalizeData(data.contacts.clients), ...normalizeData(data.contacts.labors)]; }
             if(cList.length===0) html = '<div class="p-8 text-center text-[#94A3B8] font-bold bg-white/5 rounded-[16px] border border-white/10">등록된 연락처가 없습니다.</div>';
             cList.forEach(c => {
-                html += `<div class="p-5 bg-[#1E293B] border border-white/5 rounded-[16px] flex justify-between items-center shadow-sm"><div><div class="text-white text-[15px] font-black mb-1">${c.name}</div><div class="text-[#3B82F6] text-[14px] font-bold">${c.phone}</div></div><div class="text-[#94A3B8] text-[12px] font-medium bg-black/30 px-3 py-1.5 rounded-lg border border-white/5">${c.memo||'메모 없음'}</div></div>`;
+                html += `<div class="p-5 bg-[#1E293B] border border-white/5 rounded-[16px] flex justify-between items-center shadow-sm"><div><div class="text-white text-[15px] font-black mb-1">${pmEsc(c.name)}</div><div class="text-[#3B82F6] text-[14px] font-bold">${pmEsc(c.phone)}</div></div><div class="text-[#94A3B8] text-[12px] font-medium bg-black/30 px-3 py-1.5 rounded-lg border border-white/5">${pmEsc(c.memo||'메모 없음')}</div></div>`;
             });
         }
         else if (type === 'materials') {
@@ -1350,7 +1408,7 @@
             items.forEach(m => {
                 let pText = m.price ? m.price.replace(/[^0-9]/g,'') : '';
                 let pFormat = pText ? Number(pText).toLocaleString() + '원' : '-';
-                html += `<div class="p-5 bg-[#1E293B] border border-white/5 rounded-[16px] shadow-sm"><div class="flex justify-between items-start mb-2"><div class="text-white text-[15px] font-black">${m.item || '-'}</div><div class="text-[#84CC16] text-[15px] font-black">${pFormat}</div></div><div class="text-[#94A3B8] text-[13px] font-bold mb-1">규격/단위: ${m.spec || '-'}</div><div class="text-[#94A3B8] text-[13px] font-bold">공급처: ${m.contact || '-'}</div></div>`;
+                html += `<div class="p-5 bg-[#1E293B] border border-white/5 rounded-[16px] shadow-sm"><div class="flex justify-between items-start mb-2"><div class="text-white text-[15px] font-black">${pmEsc(m.item || '-')}</div><div class="text-[#84CC16] text-[15px] font-black">${pFormat}</div></div><div class="text-[#94A3B8] text-[13px] font-bold mb-1">규격/단위: ${pmEsc(m.spec || '-')}</div><div class="text-[#94A3B8] text-[13px] font-bold">공급처: ${pmEsc(m.contact || '-')}</div></div>`;
             });
         }
 
@@ -1370,7 +1428,7 @@
         const items = records.filter(r => r.type !== 'quote' && (r.clientName === clientName || (r.payload && r.payload.c === clientName)));
         
         let html = '';
-        if(items.length === 0) html = `<div class="p-8 text-center text-[#94A3B8] font-bold bg-white/5 rounded-[16px] border border-white/10">['${clientName}'] 등록된 과거 일지 기록이 없습니다.</div>`;
+        if(items.length === 0) html = `<div class="p-8 text-center text-[#94A3B8] font-bold bg-white/5 rounded-[16px] border border-white/10">['${pmEsc(clientName)}'] 등록된 과거 일지 기록이 없습니다.</div>`;
         
         items.forEach(r => {
             const possibleTitles = [
@@ -1385,16 +1443,16 @@
                 <div class="flex items-center gap-3 w-full pr-4">
                     <span class="bg-[#84CC16]/20 text-[#84CC16] px-2.5 py-1 rounded-md text-[10px] font-black shrink-0 border border-[#84CC16]/30">일지</span>
                     <div class="min-w-0">
-                        <div class="text-white text-[15px] font-black truncate">${docTitle}</div>
-                        <div class="text-[#94A3B8] text-[12px] font-bold truncate mt-1">${r.date} | ${r.clientName}</div>
+                        <div class="text-white text-[15px] font-black truncate">${pmEsc(docTitle)}</div>
+                        <div class="text-[#94A3B8] text-[12px] font-bold truncate mt-1">${pmEsc(r.date)} | ${pmEsc(r.clientName)}</div>
                     </div>
                 </div>
-                <button onclick="openDocumentPreview('${r.id}')" class="shrink-0 px-4 py-2 bg-[#84CC16] text-[#12261E] rounded-[10px] text-[12px] font-black hover:bg-[#9BE32D] transition-all flex items-center gap-1.5 shadow-md"><i data-lucide="file-search" class="w-3.5 h-3.5"></i> 상세 열람</button>
+                <button onclick="openDocumentPreview(${jsArg(r.id)})" class="shrink-0 px-4 py-2 bg-[#84CC16] text-[#12261E] rounded-[10px] text-[12px] font-black hover:bg-[#9BE32D] transition-all flex items-center gap-1.5 shadow-md"><i data-lucide="file-search" class="w-3.5 h-3.5"></i> 상세 열람</button>
             </div>`;
         });
         
         document.getElementById('modalTitleIcon').setAttribute('data-lucide', 'folder-clock');
-        document.getElementById('modalCurrentCategoryName').innerText = `${clientName} 과거 기록 열람`;
+        document.getElementById('modalCurrentCategoryName').innerText = `${pmEsc(clientName)} 과거 기록 열람`;
         listContainer.innerHTML = html;
         lucide.createIcons();
     }
@@ -1465,7 +1523,7 @@
                     const name = item.m || '-'; 
                     const desc = item.d || '-'; 
                     const price = item.p || 0;  
-                    itemsHtml += `<tr class="border-b border-white/5 last:border-0"><td class="py-3 text-white text-[13px] font-bold w-[15%]">${name}</td><td class="py-3 text-left text-[#94A3B8] text-[12px] break-keep leading-snug">${desc}</td><td class="py-3 text-right text-[#3B82F6] font-bold text-[13px] w-[25%] whitespace-nowrap">${Number(price).toLocaleString()}원</td></tr>`;
+                    itemsHtml += `<tr class="border-b border-white/5 last:border-0"><td class="py-3 text-white text-[13px] font-bold w-[15%]">${pmEsc(name)}</td><td class="py-3 text-left text-[#94A3B8] text-[12px] break-keep leading-snug">${pmEsc(desc)}</td><td class="py-3 text-right text-[#3B82F6] font-bold text-[13px] w-[25%] whitespace-nowrap">${Number(price).toLocaleString()}원</td></tr>`;
                 });
             } else {
                 itemsHtml = `<tr><td colspan="3" class="py-6 text-center text-[#94A3B8] text-[13px]">세부 품목 데이터가 등록되지 않았습니다.</td></tr>`;
@@ -1479,22 +1537,22 @@
                     <div class="flex justify-between items-center bg-[#1E293B] p-4 rounded-[16px] border border-white/5">
                         <div>
                             <div class="text-[11px] font-bold text-[#94A3B8] mb-1">문서 종류</div>
-                            <div class="text-white font-black text-[15px] flex items-center gap-1.5"><span class="bg-[#3B82F6]/20 text-[#3B82F6] px-2 py-0.5 rounded text-[10px]">견적서</span> ${clientName}</div>
+                            <div class="text-white font-black text-[15px] flex items-center gap-1.5"><span class="bg-[#3B82F6]/20 text-[#3B82F6] px-2 py-0.5 rounded text-[10px]">견적서</span> ${pmEsc(clientName)}</div>
                         </div>
                         <div class="text-right">
                             <div class="text-[11px] font-bold text-[#94A3B8] mb-1">작성일자</div>
-                            <div class="text-white font-bold text-[13px]">${docDate}</div>
+                            <div class="text-white font-bold text-[13px]">${pmEsc(docDate)}</div>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-3 bg-black/20 p-4 rounded-[16px] border border-white/5">
                         <div>
                             <div class="text-[11px] font-bold text-[#94A3B8] mb-1">공급자 (보내는 분)</div>
-                            <div class="text-white font-bold text-[14px]">${supplier}</div>
+                            <div class="text-white font-bold text-[14px]">${pmEsc(supplier)}</div>
                         </div>
                         <div class="text-right">
                             <div class="text-[11px] font-bold text-[#94A3B8] mb-1">수신자 (받는 분)</div>
-                            <div class="text-white font-black text-[14px]">${receiver}</div>
+                            <div class="text-white font-black text-[14px]">${pmEsc(receiver)}</div>
                         </div>
                     </div>
 
@@ -1510,7 +1568,7 @@
                             <span class="text-[#3B82F6] font-black text-[22px]">${Number(totalPrice).toLocaleString()}원</span>
                         </div>
                     </div>
-                    ${memo ? `<div class="bg-black/20 p-4 rounded-[16px] border border-white/5"><div class="text-[11px] font-bold text-[#94A3B8] mb-1.5">특이사항/메모</div><div class="text-white text-[13px] break-keep leading-relaxed">${memo}</div></div>` : ''}
+                    ${memo ? `<div class="bg-black/20 p-4 rounded-[16px] border border-white/5"><div class="text-[11px] font-bold text-[#94A3B8] mb-1.5">특이사항/메모</div><div class="text-white text-[13px] break-keep leading-relaxed">${pmEsc(memo)}</div></div>` : ''}
                 </div>
             `;
         } else {
@@ -1532,7 +1590,7 @@
             if(tags.length > 0) {
                 tagsHtml = `<div class="mt-8 mb-3 text-[15px] font-black flex items-center gap-2"><i data-lucide="check-square" class="w-5 h-5 text-[#84CC16]"></i> 작업 목록</div>
                             <div class="flex flex-wrap gap-x-4 gap-y-3 mb-8">` + 
-                           tags.map(c => `<span class="text-[#84CC16] text-[13px] font-bold">${c}</span>`).join('') + 
+                           tags.map(c => `<span class="text-[#84CC16] text-[13px] font-bold">${pmEsc(c)}</span>`).join('') + 
                            `</div>`;
             }
 
@@ -1543,7 +1601,7 @@
                 let gridHtml = `<div class="mt-8 mb-4"><div class="text-[17px] font-black mb-3 flex items-center gap-2">${title} <span class="text-[12px] font-normal text-gray-400">(사진 터치시 확대)</span></div><div class="grid grid-cols-2 gap-3">`;
                 imgs.forEach(img => {
                     if(img.startsWith('http')) {
-                        gridHtml += `<div class="relative"><img src="${img}" class="w-full h-44 rounded-[16px] object-cover shadow-sm cursor-pointer hover:opacity-80 transition-opacity" onclick="window.open('${img}', '_blank')"><div class="absolute bottom-2 right-2 w-6 h-6 bg-white rounded-full shadow-md flex items-center justify-center"><i data-lucide="search" class="w-3 h-3 text-gray-400"></i></div></div>`;
+                        gridHtml += `<div class="relative"><img src="${pmEsc(img)}" class="w-full h-44 rounded-[16px] object-cover shadow-sm cursor-pointer hover:opacity-80 transition-opacity" onclick="window.open(${jsArg(img)}, '_blank')"><div class="absolute bottom-2 right-2 w-6 h-6 bg-white rounded-full shadow-md flex items-center justify-center"><i data-lucide="search" class="w-3 h-3 text-gray-400"></i></div></div>`;
                     }
                 });
                 gridHtml += `</div></div>`;
@@ -1559,12 +1617,12 @@
             if (rawIssue || issueImgs.length > 0) {
                 let iPhotos = '';
                 if (issueImgs.length > 0) {
-                    iPhotos = `<div class="grid grid-cols-2 gap-3 pt-3">` + issueImgs.filter(img => img.startsWith('http')).map(img => `<div class="relative"><img src="${img}" class="w-full h-44 rounded-[16px] object-cover shadow-sm cursor-pointer hover:opacity-80 transition-opacity" onclick="window.open('${img}', '_blank')"></div>`).join('') + `</div>`;
+                    iPhotos = `<div class="grid grid-cols-2 gap-3 pt-3">` + issueImgs.filter(img => img.startsWith('http')).map(img => `<div class="relative"><img src="${pmEsc(img)}" class="w-full h-44 rounded-[16px] object-cover shadow-sm cursor-pointer hover:opacity-80 transition-opacity" onclick="window.open(${jsArg(img)}, '_blank')"></div>`).join('') + `</div>`;
                 }
                 issueSectionHtml = `
                     <div class="mt-8 bg-[#FFFDF9] p-5 rounded-[16px] border border-[#C5A880]/40 shadow-sm space-y-2">
                         <div class="text-[15px] font-black flex items-center gap-1.5 text-[#111827]"><i data-lucide="alert-circle" class="w-5 h-5 text-[#C5A880]"></i> 특이사항</div>
-                        ${rawIssue ? `<div class="text-[14px] text-[#111827] font-bold break-keep whitespace-pre-wrap leading-relaxed">${rawIssue}</div>` : ''}
+                        ${rawIssue ? `<div class="text-[14px] text-[#111827] font-bold break-keep whitespace-pre-wrap leading-relaxed">${pmEsc(rawIssue)}</div>` : ''}
                         ${iPhotos}
                     </div>`;
             }
@@ -1592,24 +1650,24 @@
                         <div class="text-[#84CC16] font-black text-[13px]">완료</div>
                     </div>
                     
-                    <h1 class="text-[24px] font-black mb-6 text-[#111827] tracking-tight">${docTitle}</h1>
+                    <h1 class="text-[24px] font-black mb-6 text-[#111827] tracking-tight">${pmEsc(docTitle)}</h1>
                     
                     <div class="border border-gray-200 rounded-[16px] p-5 mb-5 shadow-sm">
                         <div class="flex justify-between items-start mb-3">
-                            <div class="text-[15px] font-black text-[#111827] leading-snug">수신: ${clientName} 귀하</div>
-                            <div class="text-[12px] text-gray-500 font-bold shrink-0 ml-2 mt-0.5">발행일: ${docDate.replace(/-/g, '. ')}</div>
+                            <div class="text-[15px] font-black text-[#111827] leading-snug">수신: ${pmEsc(clientName)} 귀하</div>
+                            <div class="text-[12px] text-gray-500 font-bold shrink-0 ml-2 mt-0.5">발행일: ${pmEsc(docDate.replace(/-/g, '. '))}</div>
                         </div>
-                        <div class="text-[13px] text-gray-600 mb-1.5 flex items-center gap-1.5"><i data-lucide="phone" class="w-4 h-4"></i> ${phone}</div>
-                        <div class="text-[13px] text-gray-600 flex items-start gap-1.5 break-keep"><i data-lucide="map-pin" class="w-4 h-4 mt-0.5 shrink-0"></i> ${address}</div>
+                        <div class="text-[13px] text-gray-600 mb-1.5 flex items-center gap-1.5"><i data-lucide="phone" class="w-4 h-4"></i> ${pmEsc(phone)}</div>
+                        <div class="text-[13px] text-gray-600 flex items-start gap-1.5 break-keep"><i data-lucide="map-pin" class="w-4 h-4 mt-0.5 shrink-0"></i> ${pmEsc(address)}</div>
                     </div>
 
                     <div class="border border-[#3B82F6]/30 rounded-[16px] p-5 mb-8 shadow-sm">
                         <div class="text-[#3B82F6] text-[14px] font-black mb-3">공급자 (Supplier)</div>
                         <div class="grid grid-cols-2 gap-y-2.5 text-[13px]">
-                            <div class="flex gap-2"><span class="text-[#3B82F6] font-bold w-14 shrink-0">상호명</span> <strong class="text-[#111827] truncate">${supName}</strong></div>
-                            <div class="flex gap-2"><span class="text-[#3B82F6] font-bold w-12 shrink-0">대표자</span> <strong class="text-[#111827] truncate">${supCeo}</strong></div>
-                            <div class="flex gap-2 col-span-2"><span class="text-[#3B82F6] font-bold w-16 shrink-0">등록번호</span> <strong class="text-[#111827]">${supBiz}</strong></div>
-                            <div class="flex gap-2 col-span-2"><span class="text-[#3B82F6] font-bold w-16 shrink-0">연락처</span> <strong class="text-[#111827]">${supPhone}</strong></div>
+                            <div class="flex gap-2"><span class="text-[#3B82F6] font-bold w-14 shrink-0">상호명</span> <strong class="text-[#111827] truncate">${pmEsc(supName)}</strong></div>
+                            <div class="flex gap-2"><span class="text-[#3B82F6] font-bold w-12 shrink-0">대표자</span> <strong class="text-[#111827] truncate">${pmEsc(supCeo)}</strong></div>
+                            <div class="flex gap-2 col-span-2"><span class="text-[#3B82F6] font-bold w-16 shrink-0">등록번호</span> <strong class="text-[#111827]">${pmEsc(supBiz)}</strong></div>
+                            <div class="flex gap-2 col-span-2"><span class="text-[#3B82F6] font-bold w-16 shrink-0">연락처</span> <strong class="text-[#111827]">${pmEsc(supPhone)}</strong></div>
                         </div>
                     </div>
 
@@ -1620,7 +1678,7 @@
 
                     <div class="mt-8">
                         <div class="text-[15px] font-black mb-3 flex items-center gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-[#84CC16]"></i> 현장 작업자 코멘트</div>
-                        <div class="border border-gray-200 rounded-[16px] p-5 text-[14px] text-[#111827] font-bold break-keep whitespace-pre-wrap leading-relaxed shadow-sm">${reportContent}</div>
+                        <div class="border border-gray-200 rounded-[16px] p-5 text-[14px] text-[#111827] font-bold break-keep whitespace-pre-wrap leading-relaxed shadow-sm">${pmEsc(reportContent)}</div>
                     </div>
                     
                     <div class="mt-10 pt-5 border-t border-gray-100 flex justify-between items-center">
@@ -1631,7 +1689,7 @@
                                 <div class="text-[13px] font-black text-[#84CC16]">신화 조경노트</div>
                             </div>
                         </div>
-                        <div class="text-[15px] font-black text-[#111827]">${supName} 드림</div>
+                        <div class="text-[15px] font-black text-[#111827]">${pmEsc(supName)} 드림</div>
                     </div>
                 </div>
             `;
@@ -1720,20 +1778,20 @@
                     <div class="flex justify-between items-center mb-3">
                         <div class="flex items-center gap-2">
                             ${statusBadge}
-                            <span class="text-white text-[14px] font-black">${inq.companyName}</span>
-                            <span class="text-[#94A3B8] text-[11px] font-medium">${inq.date}</span>
+                            <span class="text-white text-[14px] font-black">${pmEsc(inq.companyName)}</span>
+                            <span class="text-[#94A3B8] text-[11px] font-medium">${pmEsc(inq.date)}</span>
                         </div>
                     </div>
-                    <div class="text-[#F8FAFC] text-[14px] font-bold bg-black/20 p-4 rounded-[12px] break-keep whitespace-pre-wrap mb-3 border border-white/5">${inq.text}</div>
+                    <div class="text-[#F8FAFC] text-[14px] font-bold bg-black/20 p-4 rounded-[12px] break-keep whitespace-pre-wrap mb-3 border border-white/5">${pmEsc(inq.text)}</div>
                     
                     ${isWaiting ? `
                         <div class="flex gap-2 mt-2">
-                            <textarea id="reply_${inq.accId}_${inq.idx}" rows="1" placeholder="답변을 입력해 주세요." class="flex-1 bg-[#0F172A] border border-white/10 rounded-[12px] p-3 text-white text-[13px] font-bold focus:outline-none focus:border-[#84CC16] resize-none"></textarea>
-                            <button onclick="sendReply('${inq.accId}',${inq.idx})" class="px-5 bg-[#84CC16] text-[#12261E] rounded-[12px] font-black text-[13px] hover:bg-[#9BE32D] transition-colors shrink-0 shadow-sm">답변 전송</button>
+                            <textarea id="reply_${pmEsc(inq.accId)}_${inq.idx}" rows="1" placeholder="답변을 입력해 주세요." class="flex-1 bg-[#0F172A] border border-white/10 rounded-[12px] p-3 text-white text-[13px] font-bold focus:outline-none focus:border-[#84CC16] resize-none"></textarea>
+                            <button onclick="sendReply(${jsArg(inq.accId)},${inq.idx})" class="px-5 bg-[#84CC16] text-[#12261E] rounded-[12px] font-black text-[13px] hover:bg-[#9BE32D] transition-colors shrink-0 shadow-sm">답변 전송</button>
                         </div>
                     ` : `
                         <div class="mt-2 text-[11px] font-black text-[#84CC16] mb-1 flex items-center gap-1"><i data-lucide="corner-down-right" class="w-3.5 h-3.5"></i> 운영본부 답변</div>
-                        <div class="text-[#94A3B8] text-[13px] font-bold bg-[#0F172A] p-4 rounded-[12px] break-keep whitespace-pre-wrap border border-white/5">${inq.reply}</div>
+                        <div class="text-[#94A3B8] text-[13px] font-bold bg-[#0F172A] p-4 rounded-[12px] break-keep whitespace-pre-wrap border border-white/5">${pmEsc(inq.reply)}</div>
                     `}
                 </div>
             `;

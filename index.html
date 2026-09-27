@@ -459,6 +459,14 @@
             </div>
             <i data-lucide="chevron-right" class="w-6 h-6 text-[#151E2D] transition-colors"></i>
         </div>
+        <!-- 🎤 [패치 #41] 말로 일지 쓰기 -->
+        <div class="space-y-3 mb-1">
+        <button type="button" onclick="startLogVoice()" class="w-full text-left bg-[#84CC16] rounded-[22px] px-[18px] py-[18px] flex items-center gap-4 shadow-[0_10px_24px_rgba(132,204,22,0.35)] active:scale-[0.98] transition-all">
+          <span class="w-16 h-16 rounded-full bg-[#151E2D] flex items-center justify-center shrink-0"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#BEF264" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10v1a7 7 0 0 0 14 0v-1"></path><path d="M12 18v4"></path></svg></span>
+          <span class="flex flex-col gap-1"><span class="text-[24px] font-black text-[#1A2E05] tracking-tight leading-none">말로 일지 쓰기</span><span class="text-[16px] font-bold text-[#1A2E05] leading-snug">오늘 한 일을 말하면<br>AI가 칸마다 채워 드립니다.</span></span>
+        </button>
+        <div class="bg-[#84CC16]/10 border-[1.5px] border-[#84CC16]/50 rounded-[14px] px-3.5 py-3 text-[15px] font-bold text-[#D9F99D] leading-relaxed break-keep">예) "오늘 영통 김철수 고객님 댁 소나무 전지하고 방제했어요. 응애가 좀 보여서 다음 달에 한 번 더 쳐야 돼요."</div>
+        </div>
 
       <!-- 1. 현장 기본 정보 (타이틀 특대 확대 & 항목명 17px 굵게 & 안내문구 13.5px 작게) -->
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5 relative overflow-hidden">
@@ -601,6 +609,14 @@
     </section>
     <!-- ================= [2. 견적서 작성 화면] ================= -->
     <section id="quoteAdminView" class="hidden space-y-5">
+      <!-- 🎤 [패치 #41] 말로 견적 쓰기 -->
+      <div class="space-y-3">
+        <button type="button" onclick="startQuoteVoice()" class="w-full text-left bg-[#84CC16] rounded-[22px] px-[18px] py-[18px] flex items-center gap-4 shadow-[0_10px_24px_rgba(132,204,22,0.35)] active:scale-[0.98] transition-all">
+          <span class="w-16 h-16 rounded-full bg-[#151E2D] flex items-center justify-center shrink-0"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#BEF264" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10v1a7 7 0 0 0 14 0v-1"></path><path d="M12 18v4"></path></svg></span>
+          <span class="flex flex-col gap-1"><span class="text-[24px] font-black text-[#1A2E05] tracking-tight leading-none">말로 견적 쓰기</span><span class="text-[16px] font-bold text-[#1A2E05] leading-snug">항목과 금액을 말하면<br>AI가 견적서 칸에 채워 드립니다.</span></span>
+        </button>
+        <div class="bg-[#84CC16]/10 border-[1.5px] border-[#84CC16]/50 rounded-[14px] px-3.5 py-3 text-[15px] font-bold text-[#D9F99D] leading-relaxed break-keep">예) "용인 수지 박영희 고객님 단독주택, 소나무 전지 다섯 주 칠십오만 원, 소독 십오만 원, 폐기물 처리 십만 원"</div>
+      </div>
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-5 relative overflow-hidden">
         <div class="flex items-center justify-between pb-4 border-b-2 border-[#F1F5F9] relative z-10">
           <h2 class="text-[22px] font-black text-[#151E2D] flex items-center gap-2 tracking-tight">
@@ -735,8 +751,11 @@
         <div class="space-y-3.5 pt-2 mt-4">
           <div class="relative mb-3">
               <div class="absolute inset-y-0 left-3.5 flex items-center pointer-events-none"><i data-lucide="search" class="w-5 h-5 text-[#64748B]"></i></div>
-              <input type="text" id="clientSearchInput" oninput="renderClientsList()" placeholder="고객명, 연락처, 주소로 빠른 검색" class="w-full bg-[#F4F5F4] border-[1.5px] border-[#CBD5E1] rounded-[14px] pl-11 pr-4 py-3.5 text-[16.5px] font-black text-[#151E2D] placeholder:text-[#64748B] placeholder:font-bold placeholder:text-[14px] focus:outline-none focus:border-[#84CC16]">
+              <input type="text" id="clientSearchInput" oninput="renderClientsList()" placeholder="고객명, 연락처, 주소로 수기 검색" class="w-full bg-[#F4F5F4] border-[1.5px] border-[#CBD5E1] rounded-[14px] pl-11 pr-4 py-3.5 text-[16.5px] font-black text-[#151E2D] placeholder:text-[#64748B] placeholder:font-bold placeholder:text-[14px] focus:outline-none focus:border-[#84CC16]">
           </div>
+          <!-- 🎤 [패치 #43] 말로 거래처 찾기 (정기·개별 전체에서 찾음) -->
+          <button type="button" id="clientMicBtn" onclick="toggleClientVoice()" class="w-full h-[56px] mb-3 rounded-[14px] bg-[#84CC16] text-[#1A2E05] text-[17.5px] font-black flex items-center justify-center gap-2.5 shadow-sm active:scale-[0.98] transition-all"><span class="w-9 h-9 rounded-full bg-[#151E2D] flex items-center justify-center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#BEF264" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10v1a7 7 0 0 0 14 0v-1"></path><path d="M12 18v4"></path></svg></span><span id="clientMicText">말로 거래처 찾기</span></button>
+          <div id="clientVoiceBanner" class="hidden mb-3 bg-[#F4FBEA] border-[1.5px] border-[#84CC16] rounded-[14px] px-3.5 py-3 flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-[#84CC16] shrink-0 animate-pulse"></span><span class="text-[16px] font-extrabold text-[#3F6212] leading-snug">듣고 있어요 · 고객 이름, 전화번호, 동네 중 하나를 말씀하세요</span></div>
           <div class="flex bg-[#F1F5F9] p-1.5 rounded-[16px] border border-[#CBD5E1]">
             <button id="btnFilterRegular" onclick="setClientFilter('정기 관리')" class="flex-1 py-3.5 rounded-[12px] bg-white shadow-sm text-[#151E2D] font-black text-[16.5px] transition-all border border-[#CBD5E1]">정기 관리처</button>
             <button id="btnFilterSingle" onclick="setClientFilter('개별 고객')" class="flex-1 py-3.5 rounded-[12px] text-[#4E5968] font-black text-[16.5px] hover:text-[#151E2D] transition-all border border-transparent">개별 고객처</button>
@@ -1231,9 +1250,14 @@
         <div class="bg-[#F2FBEC] rounded-[18px] p-4 border-[1.5px] border-[#84CC16]/60 mb-2">
             <p class="text-[15px] text-[#2E7D32] font-black leading-relaxed break-keep">💡 식물명을 검색하면 AI가 조경 전문가의 시각(월동, 전지방법, 특성)에 맞춰 맞춤형 데이터를 요약해 줍니다.</p>
         </div>
-        <div class="relative">
+        <!-- 🎤 [패치 #42] 식물 검색 말로 입력 (말이 끝나면 바로 검색) -->
+        <div id="plantVoiceBanner" class="hidden bg-[#F4FBEA] border-[1.5px] border-[#84CC16] rounded-[14px] px-3.5 py-3 flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-[#84CC16] shrink-0 animate-pulse"></span><span class="text-[16px] font-extrabold text-[#3F6212] leading-snug">듣고 있어요 · 식물 이름을 말씀하세요<br>말이 끝나면 바로 검색합니다</span></div>
+        <div class="flex gap-2 items-center">
+        <button type="button" id="plantMicBtn" onclick="togglePlantVoice()" aria-label="말로 검색" class="w-14 h-14 rounded-full bg-[#84CC16] border-[3px] border-transparent flex items-center justify-center shrink-0 active:scale-95 transition-all"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#151E2D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10v1a7 7 0 0 0 14 0v-1"></path><path d="M12 18v4"></path></svg></button>
+        <div class="relative flex-1 min-w-0">
             <input type="text" id="plantSearchInput" onkeypress="if(event.key==='Enter') searchPlant()" placeholder="식물명 검색 (여기를 터치하고 입력하세요)" class="w-full bg-[#F9F9F8] border-2 border-[#CBD5E1] rounded-[18px] px-4 py-4 pr-16 text-[17px] font-black text-[#151E2D] placeholder:text-[#4E5968] placeholder:font-extrabold placeholder:text-[15.5px] focus:outline-none focus:border-[#84CC16] focus:bg-white transition-colors">
             <button onclick="searchPlant()" class="absolute right-2.5 top-1/2 -translate-y-1/2 bg-[#151E2D] text-[#84CC16] p-3 rounded-[14px] shadow-md hover:bg-black transition-colors"><i data-lucide="search" class="w-6 h-6 stroke-[2.5]"></i></button>
+        </div>
         </div>
         <div id="encyclopediaResult" class="hidden bg-[#F9F9F8] rounded-[20px] p-5 border-[1.5px] border-[#CBD5E1] space-y-4 mt-2">
             <!-- 검색 결과가 여기에 뜹니다 -->
@@ -1591,6 +1615,12 @@
         <!-- 2. 모달 본문 (이중·삼중 박스 제거 -> 여백이 살아있는 고급 단일 폼) -->
         <div class="p-6 space-y-5 max-h-[68vh] overflow-y-auto bg-white nav-scroll">
             <input type="hidden" id="scheduleId">
+            <!-- 🎤 [패치 #41] 말로 일정 등록 -->
+            <button type="button" onclick="startScheduleVoice()" class="w-full text-left bg-[#84CC16] rounded-[22px] px-[18px] py-[18px] flex items-center gap-4 shadow-[0_10px_24px_rgba(132,204,22,0.35)] active:scale-[0.98] transition-all">
+          <span class="w-16 h-16 rounded-full bg-[#151E2D] flex items-center justify-center shrink-0"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#BEF264" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10v1a7 7 0 0 0 14 0v-1"></path><path d="M12 18v4"></path></svg></span>
+          <span class="flex flex-col gap-1"><span class="text-[24px] font-black text-[#1A2E05] tracking-tight leading-none">말로 일정 등록</span><span class="text-[16px] font-bold text-[#1A2E05] leading-snug">날짜와 현장을 말하면<br>AI가 일정을 만들어 드립니다.</span></span>
+        </button>
+        <div class="bg-[#F4FBEA] rounded-[14px] px-3.5 py-3 text-[15px] font-bold text-[#3F6212] leading-relaxed break-keep">예) "다음 주 화요일 수원 영통 김사장님 댁 소나무 전지, 오십만 원 받기로 했고 인건비 이십만 원, 아침 여덟 시 도착"</div>
             
             <!-- 작업 날짜 (상단 잘림 현상 완벽 해결) -->
             <div>
@@ -2114,15 +2144,15 @@
     }
 
     function deleteContact(tab, index) { if(confirm("삭제하시겠습니까?")) { contactsData[tab].splice(index, 1); updateData('contacts', contactsData); if(editingContactIndex === index) cancelContactEdit(); renderContactsList(); } }
-    function formatPhoneToLink(text) { if(!text) return ""; const phoneRegex = /(0\d{1,2}[-\s]?\d{3,4}[-\s]?\d{4})/g; return text.replace(phoneRegex, '<a href="tel:$1" onclick="event.stopPropagation();" class="text-blue-600 font-black underline hover:text-blue-800">$1</a>'); }
+    function formatPhoneToLink(text) { if(!text) return ""; text = escHtml(text); /* 🔐 [패치 #37] */ const phoneRegex = /(0\d{1,2}[-\s]?\d{3,4}[-\s]?\d{4})/g; return text.replace(phoneRegex, '<a href="tel:$1" onclick="event.stopPropagation();" class="text-blue-600 font-black underline hover:text-blue-800">$1</a>'); }
 
     function renderContactsList() {
         const container = document.getElementById('contactsListContainer'); const list = contactsData[currentContactTab] || []; document.getElementById('contactCountBadge').innerText = `${list.length}건`; container.innerHTML = '';
         if(list.length === 0) { container.innerHTML = emptyStateHtml('users', '아직 등록된 연락처가 없습니다', '위 입력칸에 이름과 전화번호를 넣고 저장하면, 여기서 바로 전화할 수 있어요.'); /* 🗂 [패치 #23] */ return; }
         list.forEach((item, idx) => {
             const div = document.createElement('div'); div.className = "bg-white p-5 rounded-[20px] border-[1.5px] border-[#CBD5E1] shadow-sm flex justify-between items-center transition-all hover:border-[#84CC16]";
-            let memoHtml = item.memo ? `<div class="text-[14px] text-[#334155] mt-2 bg-[#F1F5F9] px-3 py-1.5 rounded-xl inline-block font-extrabold">${item.memo}</div>` : '';
-            div.innerHTML = `<div><div class="font-black text-[#151E2D] text-[18px] flex items-center gap-2"><i data-lucide="${currentContactTab === 'clients' ? 'building' : 'user'}" class="w-5 h-5 text-[#65A30D]"></i> ${item.name}</div><div class="text-[17px] mt-1.5 font-black"><i data-lucide="phone" class="w-4 h-4 inline-block text-blue-600 mr-1"></i> ${formatPhoneToLink(item.phone)}</div>${memoHtml}</div><div class="flex gap-2 shrink-0"><button onclick="editContact('${currentContactTab}', ${idx})" class="p-3 text-[#4E5968] hover:text-[#151E2D] bg-[#F1F5F9] rounded-xl transition-all"><i data-lucide="edit-2" class="w-5 h-5"></i></button><button onclick="deleteContact('${currentContactTab}', ${idx})" class="p-3 text-[#4E5968] hover:text-red-600 hover:bg-red-50 bg-[#F1F5F9] rounded-xl transition-all"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div>`;
+            let memoHtml = item.memo ? `<div class="text-[14px] text-[#334155] mt-2 bg-[#F1F5F9] px-3 py-1.5 rounded-xl inline-block font-extrabold">${escHtml(item.memo)}</div>` : ''; /* 🔐 [패치 #37] 글자 안전 처리 */
+            div.innerHTML = `<div><div class="font-black text-[#151E2D] text-[18px] flex items-center gap-2"><i data-lucide="${currentContactTab === 'clients' ? 'building' : 'user'}" class="w-5 h-5 text-[#65A30D]"></i> ${escHtml(item.name)}</div><div class="text-[17px] mt-1.5 font-black"><i data-lucide="phone" class="w-4 h-4 inline-block text-blue-600 mr-1"></i> ${formatPhoneToLink(item.phone)}</div>${memoHtml}</div><div class="flex gap-2 shrink-0"><button onclick="editContact('${currentContactTab}', ${idx})" class="p-3 text-[#4E5968] hover:text-[#151E2D] bg-[#F1F5F9] rounded-xl transition-all"><i data-lucide="edit-2" class="w-5 h-5"></i></button><button onclick="deleteContact('${currentContactTab}', ${idx})" class="p-3 text-[#4E5968] hover:text-red-600 hover:bg-red-50 bg-[#F1F5F9] rounded-xl transition-all"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div>`;
             container.appendChild(div);
         }); lucide.createIcons();
     }
@@ -2346,11 +2376,12 @@
 
     async function createShortCloudLink(payload, existingId = null) {
         let clean = JSON.parse(JSON.stringify(payload));
-        let shortCloudId = existingId || ("doc_" + Date.now()); 
+        clean.ownerId = String(currentUserId || ''); // 🔐 [패치 #37] 리포트 주인 표시 (다른 업체가 덮어쓰지 못하게)
+        let shortCloudId = existingId || ("doc_" + Date.now() + "_" + Array.from(crypto.getRandomValues(new Uint8Array(8)), b => (b % 36).toString(36)).join('')); // 🔐 [패치 #37] 새 링크는 추측할 수 없게
         try {
             const uploadRes = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_shared_docs/${shortCloudId}.json?auth=${currentIdToken}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(clean) });
-            if (!uploadRes.ok) return null;
-        } catch(e) { return null; }
+            if (!uploadRes.ok) { alert("리포트 저장에 실패했습니다. 잠시 후 다시 시도해 주세요.\n(계속 안 되면 [1:1 문의]로 알려주세요)"); return null; } // 🔐 [패치 #37] 실패를 알려드림
+        } catch(e) { alert("인터넷 연결이 불안정해 리포트를 저장하지 못했습니다. 다시 시도해 주세요."); return null; }
 
         let savedRecords = [];
         if (Array.isArray(records)) {
@@ -2696,13 +2727,15 @@
         const quotePhotoContainer = document.getElementById('viewQuotePhotosBlock'); const photoGrid = document.getElementById('viewQuotePhotoGrid');
         if (data.imgs && viewMode !== 'client_shared') {
           quotePhotoContainer.classList.remove('hidden'); const imgUrls = data.imgs.split(','); currentGalleryQ = imgUrls; photoGrid.innerHTML = '';
-          imgUrls.forEach((src, idx) => { if(!src) return; photoGrid.innerHTML += `<div class="h-40 rounded-[20px] overflow-hidden bg-white/80 border border-[#EAEBEA] cursor-pointer shadow-sm relative group"><img src="${src}" onerror="this.parentElement.style.display='none'" onclick="openModal('q', ${idx})" class="w-full h-full object-cover transition-transform hover:scale-105 duration-700"><div class="absolute bottom-2 right-2 bg-black/60 text-white p-1.5 rounded-full pointer-events-none"><i data-lucide="zoom-in" class="w-3 h-3"></i></div></div>`; });
+          imgUrls.forEach((src, idx) => { if(!src) return; photoGrid.innerHTML += `<div class="h-40 rounded-[20px] overflow-hidden bg-white/80 border border-[#EAEBEA] cursor-pointer shadow-sm relative group"><img src="${escHtml(src)}" onerror="this.parentElement.style.display='none'" onclick="openModal('q', ${idx})" class="w-full h-full object-cover transition-transform hover:scale-105 duration-700"><div class="absolute bottom-2 right-2 bg-black/60 text-white p-1.5 rounded-full pointer-events-none"><i data-lucide="zoom-in" class="w-3 h-3"></i></div></div>`; });
         } else { quotePhotoContainer.classList.add('hidden'); }
 
         let mHtml = "";
-        (data.m || []).forEach(item => {
+        (Array.isArray(data.m) ? data.m : []).forEach(rawItem => { /* 🔐 [패치 #37] 고객 리포트 글자 안전 처리 */
+          if (!rawItem || typeof rawItem !== 'object') return;
+          const item = { m: escHtml(rawItem.m), d: escHtml(rawItem.d), p: Number(rawItem.p) || 0 };
           let descHtml = `<div class="text-[14.5px] font-black text-[#151E2D] bg-[#F2FBEC] border border-[#84CC16]/30 px-3 py-2 rounded-[10px] break-keep whitespace-pre-wrap leading-snug w-full shadow-sm">${item.d}</div>`;
-          if (item.m === '01' && data.r.includes('단건')) {
+          if (item.m === '01' && String(data.r || '').includes('단건')) {
              let tags = item.d.split(', ').filter(t => t.trim() !== ''); if (tags.length > 0) { descHtml = `<div class="flex flex-wrap gap-1.5 mt-0.5">` + tags.map(tag => `<span class="px-2.5 py-1.5 bg-[#F2FBEC] border border-[#84CC16]/40 text-[#65A30D] text-[13.5px] font-black rounded-[8px] shadow-sm">${tag.trim()}</span>`).join('') + `</div>`; }
           } else {
              if (item.d.startsWith('[')) {
@@ -2720,7 +2753,7 @@
           mHtml += `<div class="flex justify-between items-center bg-white p-3 rounded-[14px] border border-[#EAEBEA] shadow-sm mb-2"><div class="flex items-center gap-3 w-[72%]"><span class="w-10 text-center font-black text-[14.5px] bg-[#151E2D] text-white py-1.5 rounded-[8px] flex-shrink-0">${item.m}</span><div class="flex-1 w-full">${descHtml}</div></div><span class="text-[15px] font-black text-[#1A1D1A] flex-shrink-0 whitespace-nowrap text-right">${item.p.toLocaleString('ko-KR')}원</span></div>`;
         });
         document.getElementById('viewQuoteMonths').innerHTML = mHtml; document.getElementById('viewQuoteSubtotal').className = "text-[15px] text-[#1A1D1A] font-black"; document.getElementById('viewQuoteSubtotal').innerText = (data.s || 0).toLocaleString('ko-KR') + "원"; document.getElementById('viewQuoteVatLabel').innerText = "부가가치세"; document.getElementById('viewQuoteVat').innerHTML = '<span class="text-[#3B82F6] font-black">부가세 별도(요청시)</span>'; document.getElementById('viewQuoteGrandTotal').innerText = (data.s || 0).toLocaleString('ko-KR') + "원";
-        if(data.memo && data.memo.trim() !== '') { document.getElementById('viewQuoteMemoBlock').innerHTML = `<div class="mt-4 bg-[#FFFDF9] p-5 rounded-[20px] border border-[#C5A880]/30 shadow-sm text-left"><h2 class="text-[15px] font-black text-[#151E2D] flex items-center gap-1.5 mb-2"><i data-lucide="info" class="w-5 h-5 text-[#C5A880]"></i> 참고 및 특이사항</h2><p class="text-[15px] leading-[1.8] text-[#151E2D] font-black whitespace-pre-wrap">${data.memo}</p></div>`; } else { document.getElementById('viewQuoteMemoBlock').innerHTML = ''; }
+        if(data.memo && String(data.memo).trim() !== '') { document.getElementById('viewQuoteMemoBlock').innerHTML = `<div class="mt-4 bg-[#FFFDF9] p-5 rounded-[20px] border border-[#C5A880]/30 shadow-sm text-left"><h2 class="text-[15px] font-black text-[#151E2D] flex items-center gap-1.5 mb-2"><i data-lucide="info" class="w-5 h-5 text-[#C5A880]"></i> 참고 및 특이사항</h2><p class="text-[15px] leading-[1.8] text-[#151E2D] font-black whitespace-pre-wrap">${escHtml(data.memo)}</p></div>`; } else { document.getElementById('viewQuoteMemoBlock').innerHTML = ''; }
       } else {
         // 💡 일지일 경우: 일지 박스는 켜고, 견적 박스는 숨김
         document.getElementById('quoteContentBlock').classList.add('hidden');
@@ -2730,17 +2763,17 @@
         const issueBlock = document.getElementById('viewIssueBlock'); const issueTextEl = document.getElementById('viewIssue'); const issueGallery = document.getElementById('viewIssueGallery');
         if (data.issue && typeof data.issue === 'string' && data.issue.trim() !== '') {
           issueBlock.classList.remove('hidden'); issueTextEl.innerText = data.issue; issueGallery.innerHTML = ''; const iArr = data.imgsIssue ? data.imgsIssue.split(',') : []; currentGalleryI = iArr;
-          if (iArr.length > 0 && iArr[0] !== '') { issueGallery.classList.remove('hidden'); iArr.forEach((src, idx) => { if(!src) return; issueGallery.innerHTML += `<div class="h-40 rounded-[20px] overflow-hidden bg-white/80 border border-[#C5A880]/40 cursor-pointer shadow-sm relative group"><img src="${src}" onerror="this.parentElement.style.display='none'" onclick="openModal('i', ${idx})" class="w-full h-full object-cover transition-transform hover:scale-105 duration-700"><div class="absolute bottom-2 right-2 bg-black/60 text-white p-1.5 rounded-full pointer-events-none"><i data-lucide="zoom-in" class="w-3 h-3"></i></div></div>`; }); } else { issueGallery.classList.add('hidden'); }
+          if (iArr.length > 0 && iArr[0] !== '') { issueGallery.classList.remove('hidden'); iArr.forEach((src, idx) => { if(!src) return; issueGallery.innerHTML += `<div class="h-40 rounded-[20px] overflow-hidden bg-white/80 border border-[#C5A880]/40 cursor-pointer shadow-sm relative group"><img src="${escHtml(src)}" onerror="this.parentElement.style.display='none'" onclick="openModal('i', ${idx})" class="w-full h-full object-cover transition-transform hover:scale-105 duration-700"><div class="absolute bottom-2 right-2 bg-black/60 text-white p-1.5 rounded-full pointer-events-none"><i data-lucide="zoom-in" class="w-3 h-3"></i></div></div>`; }); } else { issueGallery.classList.add('hidden'); }
         } else { issueBlock.classList.add('hidden'); }
         document.getElementById('viewDiagnosis').innerText = data.d || '-'; document.getElementById('viewCategories').innerHTML = '';
-       if(data.cat) data.cat.split(',').forEach(cat => { document.getElementById('viewCategories').insertAdjacentHTML('beforeend', `<span class="text-[13.5px] bg-[#151E2D] text-[#84CC16] px-3 py-1.5 rounded-[10px] font-black inline-block whitespace-nowrap">${cat}</span>`); });
+       if(data.cat) data.cat.split(',').forEach(cat => { document.getElementById('viewCategories').insertAdjacentHTML('beforeend', `<span class="text-[13.5px] bg-[#151E2D] text-[#84CC16] px-3 py-1.5 rounded-[10px] font-black inline-block whitespace-nowrap">${escHtml(cat)}</span>`); }); /* 🔐 [패치 #37] */
        const renderGallery = (containerId, urls, typeCode) => {
           const container = document.getElementById(containerId); container.innerHTML = ''; 
           const arr = Array.isArray(urls) ? urls : (typeof urls === 'string' && urls ? urls.split(',') : []);
           const cleanArr = arr.filter(src => src && src.trim() !== '');
           if(typeCode === 'b') currentGalleryB = cleanArr; else if(typeCode === 'dur') currentGalleryD = cleanArr; else currentGalleryA = cleanArr;
           if (cleanArr.length === 0) { container.innerHTML = `<div class="col-span-2 text-[13.5px] text-[#4E5968] font-bold py-3 text-center bg-white/50 rounded-[16px] border border-dashed border-[#EAEBEA]">등록된 사진 없음</div>`; } 
-          else { cleanArr.forEach((src, idx) => { let bd = 'border-[#EAEBEA]'; if(typeCode === 'dur') bd = 'border-[#3B82F6]/40'; else if(typeCode === 'a') bd = 'border-[#84CC16]/40'; const imgDiv = document.createElement('div'); imgDiv.className = `h-40 rounded-[20px] overflow-hidden bg-white/80 border ${bd} cursor-pointer shadow-sm relative group`; imgDiv.innerHTML = `<img src="${src}" onerror="this.parentElement.style.display='none'" onclick="openModal('${typeCode}', ${idx})" class="w-full h-full object-cover transition-transform hover:scale-105 duration-700"><div class="absolute bottom-2 right-2 bg-black/60 text-white p-1.5 rounded-full pointer-events-none"><i data-lucide="zoom-in" class="w-3 h-3"></i></div>`; container.appendChild(imgDiv); }); }
+          else { cleanArr.forEach((src, idx) => { let bd = 'border-[#EAEBEA]'; if(typeCode === 'dur') bd = 'border-[#3B82F6]/40'; else if(typeCode === 'a') bd = 'border-[#84CC16]/40'; const imgDiv = document.createElement('div'); imgDiv.className = `h-40 rounded-[20px] overflow-hidden bg-white/80 border ${bd} cursor-pointer shadow-sm relative group`; imgDiv.innerHTML = `<img src="${escHtml(src)}" onerror="this.parentElement.style.display='none'" onclick="openModal('${typeCode}', ${idx})" class="w-full h-full object-cover transition-transform hover:scale-105 duration-700"><div class="absolute bottom-2 right-2 bg-black/60 text-white p-1.5 rounded-full pointer-events-none"><i data-lucide="zoom-in" class="w-3 h-3"></i></div>`; container.appendChild(imgDiv); }); }
         };
         renderGallery('viewBeforeGallery', data.b, 'b'); 
         renderGallery('viewDuringGallery', data.dur, 'dur'); 
@@ -2876,12 +2909,47 @@
       renderClientsList();
     }
 
+    // 🎤 [패치 #43] 말로 거래처 찾기: 한 번 말하면 검색칸에 넣고 바로 찾음 (정기·개별 전체)
+    const CLV = { rec: null, active: false };
+    function clientVoiceUI() {
+      const btn = document.getElementById('clientMicBtn'); const ban = document.getElementById('clientVoiceBanner'); const t = document.getElementById('clientMicText');
+      if (btn) btn.classList.toggle('animate-pulse', CLV.active);
+      if (t) t.innerText = CLV.active ? '듣는 중 · 누르면 멈춤' : '말로 거래처 찾기';
+      if (ban) ban.classList.toggle('hidden', !CLV.active);
+    }
+    function clientVoiceStop() { CLV.active = false; const r = CLV.rec; CLV.rec = null; if (r) { try { r.stop(); } catch (e) {} } clientVoiceUI(); }
+    function toggleClientVoice() {
+      if (CLV.active) return clientVoiceStop();
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition; const inp = document.getElementById('clientSearchInput');
+      if (!SR) { alert('이 화면에서는 바로 듣기가 안 됩니다.\n검색칸을 누르고 키보드의 마이크 버튼을 눌러 말씀하세요.'); if (inp) inp.focus(); return; }
+      const r = new SR(); r.lang = 'ko-KR'; r.interimResults = true; r.continuous = false; r.maxAlternatives = 1;
+      let finalText = '';
+      r.onresult = (e) => { let t = ''; for (let i = 0; i < e.results.length; i++) { t += (e.results[i][0] && e.results[i][0].transcript || ''); if (e.results[i].isFinal) finalText = t; } inp.value = t.trim(); };
+      r.onerror = (e) => { if (e.error === 'not-allowed' || e.error === 'service-not-allowed') alert('마이크 사용이 막혀 있습니다. 휴대폰 설정에서 마이크를 [허용]해 주세요.\n지금은 키보드의 마이크 버튼으로 말씀하셔도 됩니다.'); };
+      r.onend = () => {
+        if (CLV.rec !== r) return;
+        clientVoiceStop();
+        // "김철수 고객님 찾아줘", "영통 사는 분" 같은 말꼬리·존칭은 떼고 검색
+        let q = (finalText || inp.value || '').trim()
+          .replace(/\s*(찾아\s*줘|찾아\s*주세요|검색\s*해?\s*줘|검색해\s*주세요|검색|보여\s*줘|알려\s*줘)\s*[.!?]?$/, '')
+          .replace(/\s*(고객님|사장님|대표님|선생님|님)?\s*(댁|네|집)?\s*$/, '').trim();
+        if (/^[\d\s-]+$/.test(q)) q = q.replace(/[\s-]/g, ''); // 전화번호는 숫자만
+        inp.value = q; renderClientsList();
+      };
+      CLV.rec = r; CLV.active = true; inp.value = ''; clientVoiceUI();
+      try { r.start(); } catch (e) { clientVoiceStop(); }
+    }
+
     function renderClientsList() {
       const container = document.getElementById('clientsListContainer'); container.innerHTML = '';
       const query = (document.getElementById('clientSearchInput')?.value || '').toLowerCase().trim();
-      let filtered = clients.filter(c => c.type === currentClientFilter);
-      if(query) { filtered = filtered.filter(c => (c.name&&c.name.toLowerCase().includes(query)) || (c.phone&&c.phone.replace(/-/g, '').includes(query.replace(/-/g, ''))) || (c.address&&c.address.toLowerCase().includes(query))); }
+      let filtered = query ? clients.slice() : clients.filter(c => c.type === currentClientFilter); // 🔎 [패치 #43] 검색할 때는 정기·개별 전체에서 찾음
+      if(query) { const qDigits = query.replace(/[-\s]/g, ''); filtered = filtered.filter(c => (c.name&&c.name.toLowerCase().includes(query)) || (c.name&&c.name.toLowerCase().replace(/\s/g, '').includes(query.replace(/\s/g, ''))) || (c.phone&&/^\d+$/.test(qDigits)&&c.phone.replace(/[-\s]/g, '').includes(qDigits)) || (c.phone&&c.phone.replace(/-/g, '').includes(query.replace(/-/g, ''))) || (c.address&&c.address.toLowerCase().includes(query))); }
       document.getElementById('clientCountBadge').innerText = `${filtered.length}건`;
+      if (query) { // 🔎 [패치 #43]
+        if (filtered.length === 0) { container.innerHTML = emptyStateHtml('search', '찾는 거래처가 없습니다', '정기 관리처·개별 고객처 전체에서 찾아봤어요. 이름이나 번호를 다시 확인해 주세요.'); return; }
+        container.insertAdjacentHTML('beforeend', `<div class="text-[15.5px] font-extrabold text-[#3F6212] bg-[#F4FBEA] border border-[#84CC16]/50 rounded-[12px] px-3.5 py-2.5">정기·개별 전체에서 찾은 결과 ${filtered.length}건</div>`);
+      }
       if (filtered.length === 0) { container.innerHTML = emptyStateHtml('building-2', '거래처가 없습니다', '작업일지에서 새 고객명을 입력해 리포트를 보내면 거래처로 자동 등록됩니다.', '작업일지 쓰기', "switchView('admin')"); /* 🗂 [패치 #23] */ return; }
       
       filtered.forEach((c) => {
@@ -2893,7 +2961,7 @@
             <div class="cursor-pointer flex-1 min-w-0" onclick="showHistory('${c.name}')">
               <div class="font-black text-[#151E2D] text-[18px] flex items-center gap-1.5">
                 <i data-lucide="building" class="w-5 h-5 text-[#65A30D] shrink-0"></i> 
-                <span class="truncate">${c.name}</span>
+                <span class="truncate">${escHtml(c.name)}</span>${query ? `<span class="shrink-0 text-[13px] font-black px-2 py-0.5 rounded-md ${c.type === '개별 고객' ? 'bg-[#E2E8F0] text-[#334155]' : 'bg-[#ECFCCB] text-[#3F6212]'}">${c.type === '개별 고객' ? '개별' : '정기'}</span>` : ''}
               </div>
               <div class="text-[14.5px] font-bold text-[#4E5968] mt-1.5 break-keep truncate">
                 <i data-lucide="map-pin" class="w-4 h-4 inline-block mr-1 text-[#64748B]"></i> ${c.address || '주소 미등록'}
@@ -3505,7 +3573,7 @@
     const FIREBASE_WEB_CONFIG = { apiKey: "AIzaSyC_1KaOSychXSNF-Z-vnVONLB_-aAGghhk", authDomain: "shinhwa-landnote.firebaseapp.com", databaseURL: "https://shinhwa-landnote-default-rtdb.firebaseio.com", projectId: "shinhwa-landnote", storageBucket: "shinhwa-landnote.firebasestorage.app", messagingSenderId: "623461445108", appId: "1:623461445108:web:351eea30e03d278725dda1" };
     const FCM_VAPID_KEY = "BJrrESIaNMTvCe98leRovFlWDT09OOGMSTW6Y7vZ7uwVNLzpb9X9aCGDstxiMr455nnIgG3Qm1sS7xjMfsWY7MU";          // 예: "BKxxxx...(웹 푸시 인증서 키 쌍)"
     const PUSH_BOARDS = [['현장협력', '작업 지원·협력'], ['일감양도', '작업 양도·양수'], ['장비자재', '장비·자재 직거래'], ['견적단가', '견적·단가 자문'], ['자유소통', '자유 소통'], ['정보교환', '정보 교환·업체 공유'], ['노하우', '실무 노하우'], ['불량거래처', '불량 거래처 경보']];
-    const PUSH_DEFAULT_PREFS = { chat: true, notice: true, boards: { '현장협력': true, '일감양도': true, '장비자재': true, '견적단가': false, '자유소통': false, '정보교환': false, '노하우': false, '불량거래처': true } };
+    const PUSH_DEFAULT_PREFS = { chat: true, comment: true, notice: true, boards: { '현장협력': true, '일감양도': true, '장비자재': true, '견적단가': false, '자유소통': false, '정보교환': false, '노하우': false, '불량거래처': true } };
     const PUSH_BOARD_TITLES = { '현장협력': '현장 협력·지원', '일감양도': '일감 패스·공사 양도', '장비자재': '장비·자재 직거래', '견적단가': '실전 견적·단가 자문', '자유소통': '자유 소통·일상방', '정보교환': '정보 교환·업체 찾기', '노하우': '실무 노하우 공유', '불량거래처': '불량 거래처 경보' }; // openBoard() 내부 키
     let pushPrefsCache = null;
     function pushConfigured() { return !!(FIREBASE_WEB_CONFIG && FIREBASE_WEB_CONFIG.messagingSenderId && FCM_VAPID_KEY); }
@@ -3547,6 +3615,7 @@
       const row = (id, label, checked, sub2) => `<label class="flex items-center justify-between gap-3 bg-black/30 rounded-[12px] px-4 py-3 cursor-pointer"><span class="text-[16px] font-black text-white">${label}${sub2 ? `<span class="block text-[13.5px] font-bold text-[#CBD5E1]">${sub2}</span>` : ''}</span><input type="checkbox" data-push="${id}" ${checked ? 'checked' : ''} class="w-7 h-7 accent-[#84CC16] shrink-0"></label>`;
       document.getElementById('pushPrefsList').innerHTML =
         row('chat', '💬 1:1 대화 새 메시지', pushPrefsCache.chat !== false) +
+        row('comment', '💬 내 글에 새 댓글', pushPrefsCache.comment !== false) + /* 💬 [패치 #40] */
         row('notice', '📢 관리자 공지', pushPrefsCache.notice !== false) +
         '<div class="text-[14.5px] font-black text-[#BEF264] pt-2 ml-1">소통방 게시판 새 글</div>' +
         PUSH_BOARDS.map(([k, t]) => row('b_' + k, t, !!pushPrefsCache.boards[k])).join('');
@@ -3565,7 +3634,7 @@
       refreshPushPanel();
     }
     async function savePushPrefs() {
-      const prefs = { chat: false, notice: false, boards: {} };
+      const prefs = { chat: false, comment: false, notice: false, boards: {} };
       document.querySelectorAll('#pushPrefsList [data-push]').forEach(el => { const k = el.dataset.push; if (k.startsWith('b_')) prefs.boards[k.slice(2)] = el.checked; else prefs[k] = el.checked; });
       try {
         const r = await fetch(`${pushSubUrl(currentUserId)}/prefs.json?auth=${currentIdToken}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(prefs) });
@@ -4250,6 +4319,35 @@
       </div>
   </div>
 <script>
+    // 🎤 [패치 #42] 식물 검색 말로 입력: 한 번 말하면 받아 적고 바로 검색 (AI 검색이 발음 오류도 알아서 해석)
+    const PV = { rec: null, active: false };
+    function plantVoiceUI() {
+        const btn = document.getElementById('plantMicBtn'); const ban = document.getElementById('plantVoiceBanner');
+        if (btn) { btn.classList.toggle('animate-pulse', PV.active); btn.classList.toggle('border-[#151E2D]', PV.active); btn.setAttribute('aria-label', PV.active ? '말로 검색 멈추기' : '말로 검색'); }
+        if (ban) ban.classList.toggle('hidden', !PV.active);
+    }
+    function plantVoiceStop() { PV.active = false; const r = PV.rec; PV.rec = null; if (r) { try { r.stop(); } catch (e) {} } plantVoiceUI(); }
+    function togglePlantVoice() {
+        if (PV.active) return plantVoiceStop();
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const inp = document.getElementById('plantSearchInput');
+        if (!SR) { alert('이 화면에서는 바로 듣기가 안 됩니다.\n검색칸을 누르고 키보드의 마이크 버튼을 눌러 말씀하세요.'); if (inp) inp.focus(); return; }
+        const r = new SR(); r.lang = 'ko-KR'; r.interimResults = true; r.continuous = false; r.maxAlternatives = 1;
+        let finalText = '';
+        r.onresult = (e) => { let t = ''; for (let i = 0; i < e.results.length; i++) { t += (e.results[i][0] && e.results[i][0].transcript || ''); if (e.results[i].isFinal) finalText = t; } inp.value = t.trim(); };
+        r.onerror = (e) => { if (e.error === 'not-allowed' || e.error === 'service-not-allowed') alert('마이크 사용이 막혀 있습니다. 휴대폰 설정에서 마이크를 [허용]해 주세요.\n지금은 키보드의 마이크 버튼으로 말씀하셔도 됩니다.'); };
+        r.onend = () => {
+            if (PV.rec !== r) return;
+            const wasActive = PV.active; plantVoiceStop();
+            // "소나무 검색해줘", "주목 알려줘" 같은 말꼬리는 떼고 검색
+            const q = (finalText || inp.value || '').replace(/\s*(에 대해|에대해)?\s*(검색\s*해?\s*줘|검색해\s*주세요|검색|찾아\s*줘|찾아\s*주세요|알려\s*줘|알려\s*주세요)\s*[.!?]?$/, '').trim();
+            inp.value = q;
+            if (wasActive && q) searchPlant();
+        };
+        PV.rec = r; PV.active = true; inp.value = ''; plantVoiceUI();
+        try { r.start(); } catch (e) { plantVoiceStop(); }
+    }
+
     async function searchPlant() {
         const query = document.getElementById('plantSearchInput').value.trim();
         if(!query) return alert("검색할 수목/식물명을 입력해주세요.");
@@ -4500,10 +4598,10 @@
                         <div class="flex flex-col gap-2 mb-5">
                             <div class="self-end max-w-[85%]">
                                 <div class="flex items-end gap-1.5 justify-end mb-1.5">
-                                    <span class="text-[11.5px] text-[#4E5968] font-bold">${inq.date}</span>
+                                    <span class="text-[11.5px] text-[#4E5968] font-bold">${escHtml(inq.date)}</span>
                                     ${statusBadge}
                                 </div>
-                                <div class="bg-[#84CC16] text-[#12261E] text-[14.5px] font-bold p-3.5 rounded-[16px] rounded-tr-[4px] shadow-sm break-keep whitespace-pre-wrap">${inq.text}</div>
+                                <div class="bg-[#84CC16] text-[#12261E] text-[14.5px] font-bold p-3.5 rounded-[16px] rounded-tr-[4px] shadow-sm break-keep whitespace-pre-wrap">${escHtml(inq.text)}</div><!-- 🔐 [패치 #37] -->
                             </div>
                             
                             ${inq.reply ? `
@@ -4511,7 +4609,7 @@
                                 <div class="flex items-center gap-1.5 mb-1 text-[12.5px] font-black text-[#A3A8A3]">
                                     <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#3B82F6]"></i> 운영본부 답변
                                 </div>
-                                <div class="bg-white/10 text-white text-[14.5px] font-bold p-3.5 rounded-[16px] rounded-tl-[4px] border border-white/10 shadow-sm break-keep whitespace-pre-wrap">${inq.reply}</div>
+                                <div class="bg-white/10 text-white text-[14.5px] font-bold p-3.5 rounded-[16px] rounded-tl-[4px] border border-white/10 shadow-sm break-keep whitespace-pre-wrap">${escHtml(inq.reply)}</div>
                             </div>
                             ` : ''}
                         </div>
@@ -5068,7 +5166,7 @@
       </div>
 
       <!-- 피드 리스트 -->
-      <div class="space-y-5 mt-3" id="boardFeedContainer"></div>
+      <div class="space-y-5 mt-3 pb-24" id="boardFeedContainer"></div><!-- 💬 [패치 #40] 떠 있는 글쓰기 버튼이 마지막 댓글 등록 버튼을 가리지 않게 -->
 
       <!-- 우측 하단 글쓰기 플로팅 버튼 -->
       <button onclick="openBoardWrite()" class="fixed bottom-6 right-4 px-6 h-14 bg-[#84CC16] text-[#151E2D] rounded-full shadow-[0_4px_20px_rgba(132,204,22,0.4)] flex items-center justify-center gap-2 hover:scale-105 transition-transform z-50">
@@ -5090,9 +5188,16 @@
 
           <!-- 본문 입력창 (항목명 17.5px & 직접 타이핑하는 글씨 19px~19.5px 확대) -->
           <div class="p-5 space-y-4 max-h-[75vh] overflow-y-auto bg-white nav-scroll">
+              <!-- 🎤 [패치 #38] 말로 쓰기 (AI가 글로 정리) -->
+              <button type="button" onclick="startBoardVoiceWrite()" class="w-full text-left bg-[#84CC16] rounded-[22px] px-[18px] py-5 flex items-center gap-4 shadow-[0_10px_24px_rgba(132,204,22,0.35)] active:scale-[0.98] transition-all">
+                  <span class="w-[68px] h-[68px] rounded-full bg-[#151E2D] flex items-center justify-center shrink-0"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#BEF264" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10v1a7 7 0 0 0 14 0v-1"></path><path d="M12 18v4"></path></svg></span>
+                  <span class="flex flex-col gap-1"><span class="text-[25px] font-black text-[#1A2E05] tracking-tight leading-none">말로 쓰기</span><span class="text-[16px] font-bold text-[#1A2E05] leading-snug">누르고 편하게 말씀하세요.<br>AI가 글로 정리해 드립니다.</span></span>
+              </button>
+              <div class="bg-[#F4FBEA] rounded-[14px] px-3.5 py-3 text-[15px] font-bold text-[#3F6212] leading-relaxed break-keep">예) "남은 소나무 세 그루 팔아요. 수고 3미터, 그루당 30만 원, 수원 영통, 연락은 010…"</div>
+              <div class="flex items-center gap-2.5"><div class="flex-1 h-px bg-[#CBD5E1]"></div><span class="text-[15px] font-extrabold text-[#475569]">또는 손으로 입력</span><div class="flex-1 h-px bg-[#CBD5E1]"></div></div>
               <div>
                   <label class="block text-[17.5px] font-black text-[#151E2D] mb-2">1. 카테고리 선택</label>
-                  <select id="bwCategory" class="w-full bg-[#F8FAFC] border-2 border-[#94A3B8] rounded-[16px] px-4 py-4 text-[18px] font-black text-[#151E2D] focus:outline-none focus:border-[#151E2D]">
+                  <select id="bwCategory" onchange="boardPrefillPhone()" class="w-full bg-[#F8FAFC] border-2 border-[#94A3B8] rounded-[16px] px-4 py-4 text-[18px] font-black text-[#151E2D] focus:outline-none focus:border-[#151E2D]">
                       <option value="자유소통">☕ 자유 소통·일상방</option>
                       <option value="정보교환">📢 정보 교환·업체 공유</option>
                       <option value="현장협력">🤝 작업 지원·협력</option>
@@ -5144,9 +5249,12 @@
           </div>
           <div class="flex-1 overflow-y-auto p-5 space-y-4 bg-[#151E2D] nav-scroll" id="boardChatMessages"></div>
           <div class="p-3 bg-[#0F1722] border-t border-white/10 shrink-0">
+              <!-- 🎤 [패치 #40] 1:1 대화 말로 입력 (말한 그대로 받아 적기, AI 없음) -->
+              <div id="chatVoiceBanner" class="hidden mb-2.5 bg-[#84CC16]/15 border-[1.5px] border-[#84CC16] rounded-[14px] px-3 py-2.5 flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-[#84CC16] shrink-0 animate-pulse"></span><span class="text-[15.5px] font-extrabold text-[#D9F99D] leading-snug">듣고 있어요 · 말한 그대로 적힙니다<br>다 말하면 마이크 버튼을 한 번 더 누르세요</span></div>
               <div class="flex gap-2">
-                  <input type="text" id="chatInputText" onkeypress="if(event.key==='Enter') sendRealChatMessage()" placeholder="메시지를 입력하세요..." class="flex-1 bg-black/40 border border-white/10 rounded-full px-5 text-white text-[14px] font-bold focus:outline-none focus:border-[#84CC16]">
-                  <button onclick="sendRealChatMessage()" class="w-12 h-12 bg-[#84CC16] text-[#151E2D] rounded-full flex items-center justify-center hover:bg-[#9BE32D] transition-colors shrink-0"><i data-lucide="send" class="w-5 h-5 ml-1"></i></button>
+                  <button type="button" id="chatMicBtn" onclick="toggleChatVoice()" aria-label="말로 입력" class="w-14 h-14 rounded-full bg-[#84CC16] border-[3px] border-transparent flex items-center justify-center shrink-0 active:scale-95 transition-all"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#151E2D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10v1a7 7 0 0 0 14 0v-1"></path><path d="M12 18v4"></path></svg></button>
+                  <input type="text" id="chatInputText" onkeypress="if(event.key==='Enter') sendRealChatMessage()" placeholder="메시지를 입력하세요..." class="flex-1 min-w-0 h-14 bg-black/40 border border-white/10 rounded-full px-5 text-white text-[16px] font-bold focus:outline-none focus:border-[#84CC16]">
+                  <button onclick="sendRealChatMessage()" aria-label="전송" class="w-14 h-14 bg-[#84CC16] text-[#151E2D] rounded-full flex items-center justify-center hover:bg-[#9BE32D] transition-colors shrink-0"><i data-lucide="send" class="w-5 h-5 ml-1"></i></button>
               </div>
           </div>
       </div>
@@ -5387,9 +5495,10 @@
                   return;
               }
 
+              try { const cr = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_comments.json?auth=${currentIdToken}`); boardCommentsCache = (cr.ok ? await cr.json() : null) || {}; } catch (e) { boardCommentsCache = {}; } // 💬 [패치 #40] 댓글
               container.innerHTML = ''; 
               boardPostCache = {}; // 📷 [패치 #11] 게시글 키 보존 (마감 처리·사진 보기용)
-              const posts = Object.entries(data).filter(([k, p]) => p && typeof p === 'object').map(([k, p]) => { p._key = k; boardPostCache[k] = p; return p; }).sort((a,b) => b.timestamp - a.timestamp);
+              const posts = Object.entries(data).filter(([k, p]) => p && typeof p === 'object' && /^[A-Za-z0-9_-]{1,64}$/.test(k)) /* 🔐 [패치 #40] 이상한 키 차단 */.map(([k, p]) => { p._key = k; boardPostCache[k] = p; return p; }).sort((a,b) => b.timestamp - a.timestamp);
 
               posts.forEach(post => {
                   let badgeHtml = '';
@@ -5408,7 +5517,7 @@
                   const imgsHtml = (Array.isArray(post.imgs) && post.imgs.length) ? `<div class="flex gap-2 overflow-x-auto nav-scroll mt-4 pb-1">${post.imgs.map((u, ii) => `<button onclick="openPostImage('${post._key}', ${ii})" class="relative flex-shrink-0 w-24 h-24 rounded-[14px] overflow-hidden border border-[#EAEBEA]"><img src="${escHtml(u)}" loading="lazy" class="w-full h-full object-cover">${ii === 0 && post.imgs.length > 1 ? `<span class="absolute bottom-1 right-1 bg-black/70 text-white text-[12.5px] font-black px-1.5 py-0.5 rounded">${post.imgs.length}장</span>` : ''}</button>`).join('')}</div>` : '';
                   const safeName = escHtml(displayName); const jsName = escHtml(displayName.replace(/\\/g, '\\\\').replace(/'/g, "\\'")); const jsId = escHtml(String(post.authorId || '').replace(/'/g, ''));
                   let buttonsHtml = '';
-                  if(post.category !== '불량거래처' && !post.isOfficial) {
+                  if(post.category !== '불량거래처' && post.category !== '자유소통' && !post.isOfficial) { // 💬 [패치 #40] 자유 소통은 댓글만
                       const isMyPost = (post.authorId === currentUserId);
                       buttonsHtml = `
                       <div class="mt-5 flex gap-2.5">
@@ -5437,6 +5546,7 @@
                       ${imgsHtml}
                       ${buttonsHtml}
                       ${authorHtml}
+                      <div id="cmt_${escHtml(post._key)}" class="mt-4">${commentSectionHtml(post._key)}</div>
                   </div>`;
                   
                   container.insertAdjacentHTML('beforeend', cardHtml);
@@ -5449,6 +5559,97 @@
       const BOARD_MAX_IMAGES = 10;
       const BOARD_STATUS_LABEL = { '현장협력': '마감', '장비자재': '거래완료', '일감양도': '마감' };
       let boardWriteImages = []; let boardPostCache = {};
+      // =====================================================================
+      // 💬 [패치 #40] 게시글 댓글 (모든 게시판 · 포인트 없음 · 삭제는 관리자만 · 불량 거래처는 익명)
+      //   DB: pro_comments/{게시글키}/{댓글키} = { authorId, authorName, authorRegion, text, timestamp, dateStr }
+      // =====================================================================
+      const COMMENT_MAX = 500;
+      let boardCommentsCache = {}; const commentOpen = new Set();
+      function commentList(key) {
+          const obj = boardCommentsCache[key] || {};
+          return Object.entries(obj).filter(([k, c]) => c && typeof c === 'object' && typeof c.text === 'string').map(([k, c]) => Object.assign({ _key: k }, c)).sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+      }
+      function commentSectionHtml(key) {
+          const post = boardPostCache[key] || {}; const list = commentList(key); const n = list.length;
+          const ICON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3F6212" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>';
+          if (!commentOpen.has(key)) {
+              return `<button type="button" onclick="toggleComments('${escHtml(key)}')" class="w-full h-[54px] rounded-[16px] border-2 border-[#84CC16] bg-[#F7FEE7] text-[#3F6212] text-[17px] font-black flex items-center justify-center gap-2 active:scale-[0.98] transition-all">${ICON}${n ? `댓글 ${n}개 보기 · 댓글 쓰기` : '댓글 쓰기'}</button>`;
+          }
+          const anon = post.category === '불량거래처';
+          const anonNo = {}; let anonSeq = 0;
+          const rows = list.map(c => {
+              const isPostAuthor = post.authorId && String(c.authorId || '').toLowerCase() === String(post.authorId).toLowerCase();
+              let who;
+              if (anon) { const id = String(c.authorId || '').toLowerCase(); if (!anonNo[id]) anonNo[id] = ++anonSeq; who = `<span class="text-[#64748B]">${isPostAuthor ? '글쓴이 (익명)' : '익명 대표님 ' + anonNo[id]}</span>`; }
+              else who = `${c.authorRegion ? `<span class="text-[#15803D]">[${escHtml(c.authorRegion)}]</span> ` : ''}${escHtml(c.authorName || '')}${isPostAuthor ? ' <span class="text-[12.5px] bg-[#151E2D] text-[#84CC16] px-1.5 py-0.5 rounded-[5px] align-middle">글쓴이</span>' : ''}`;
+              return `<div class="flex flex-col gap-1 pb-2.5 border-b border-[#E2E8F0] last:border-b-0 last:pb-0"><div class="flex justify-between items-center gap-2"><span class="text-[15px] font-black text-[#151E2D] min-w-0 break-keep">${who}</span><span class="text-[13.5px] font-bold text-[#64748B] shrink-0">${escHtml(c.dateStr || '')}</span></div><p class="m-0 text-[16px] font-bold text-[#334155] leading-[1.55] whitespace-pre-wrap break-keep">${escHtml(c.text)}</p></div>`;
+          }).join('');
+          return `<div class="bg-[#F8FAFC] border-[1.5px] border-[#E2E8F0] rounded-[18px] p-3.5 flex flex-col gap-3">
+              <div class="flex items-center justify-between gap-2"><span class="text-[17px] font-black text-[#151E2D]">댓글 ${n}</span>${anon ? '<span class="text-[14px] font-extrabold text-[#B91C1C]">이 게시판 댓글은 익명</span>' : ''}<button type="button" onclick="toggleComments('${escHtml(key)}')" class="h-10 px-3 rounded-[10px] border-[1.5px] border-[#CBD5E1] bg-white text-[14.5px] font-extrabold text-[#475569] shrink-0">접기</button></div>
+              ${n ? `<div class="flex flex-col gap-2.5">${rows}</div>` : '<p class="m-0 text-[15.5px] font-bold text-[#64748B]">아직 댓글이 없습니다. 첫 댓글을 남겨 보세요.</p>'}
+              <div class="flex gap-2 items-stretch"><label for="cin_${escHtml(key)}" class="sr-only">댓글 입력</label><textarea id="cin_${escHtml(key)}" rows="2" maxlength="${COMMENT_MAX}" placeholder="댓글을 입력하세요" class="flex-1 min-w-0 border-2 border-[#94A3B8] rounded-[14px] px-3 py-2.5 text-[16.5px] font-bold text-[#151E2D] resize-none focus:outline-none focus:border-[#84CC16] placeholder:text-[#64748B]"></textarea><button type="button" id="cbtn_${escHtml(key)}" onclick="submitComment('${escHtml(key)}')" class="w-[70px] rounded-[14px] bg-[#151E2D] text-[#84CC16] text-[17px] font-black shrink-0 active:scale-95 transition-all">등록</button></div>
+          </div>`;
+      }
+      function renderCommentSection(key) { const el = document.getElementById('cmt_' + key); if (el) el.innerHTML = commentSectionHtml(key); }
+      async function refreshComments(key) {
+          try { const r = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_comments/${key}.json?auth=${currentIdToken}`); if (r.ok) boardCommentsCache[key] = (await r.json()) || {}; } catch (e) {}
+      }
+      async function toggleComments(key) {
+          if (!/^[A-Za-z0-9_-]{1,64}$/.test(key)) return;
+          if (commentOpen.has(key)) { commentOpen.delete(key); renderCommentSection(key); return; }
+          commentOpen.add(key); renderCommentSection(key);
+          await refreshComments(key); renderCommentSection(key); // 최신 댓글로 다시 그림
+      }
+      async function submitComment(key) {
+          if (!/^[A-Za-z0-9_-]{1,64}$/.test(key)) return;
+          const ta = document.getElementById('cin_' + key); const text = (ta ? ta.value : '').trim();
+          if (!text) return alert('댓글 내용을 입력해 주세요.');
+          if (text.length > COMMENT_MAX) return alert(`댓글은 ${COMMENT_MAX}자까지 쓸 수 있습니다.`);
+          if (!currentUserId) return alert('세션이 만료되었습니다. 앱을 다시 실행해 주세요.');
+          const myRegion = myCompanyProfile && myCompanyProfile.region ? myCompanyProfile.region : '';
+          if (!myRegion) { alert("댓글을 쓰기 전에 [활동 지역]을 먼저 설정해 주세요."); openSettings(); return; }
+          const btn = document.getElementById('cbtn_' + key); if (btn) btn.disabled = true;
+          const now = new Date();
+          const data = { authorId: currentUserId, authorName: (myCompanyProfile && myCompanyProfile.name) || '', authorRegion: myRegion, text: text,
+              timestamp: now.getTime(), dateStr: now.toLocaleString('ko-KR', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) };
+          try {
+              const r = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_comments/${key}.json?auth=${currentIdToken}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+              if (!r.ok) throw new Error('fail');
+              try { const ck = (await r.json()).name; if (ck) requestPush({ action: 'push_comment', postKey: key, commentKey: ck }); } catch (e) {} // 🔔 글쓴이에게 알림
+              await refreshComments(key); renderCommentSection(key);
+          } catch (e) { alert('댓글 등록에 실패했습니다. 잠시 후 다시 시도해 주세요.'); if (btn) btn.disabled = false; }
+      }
+
+      // =====================================================================
+      // 🎤 [패치 #40] 1:1 대화 말로 입력 — 말한 그대로 입력칸에 적음 (AI 정리 없음, 전송은 대표님이 직접)
+      // =====================================================================
+      const CV = { rec: null, active: false, base: '', finals: '', interim: '' };
+      function chatVoiceUI() {
+          const btn = document.getElementById('chatMicBtn'); const ban = document.getElementById('chatVoiceBanner');
+          if (btn) { btn.classList.toggle('animate-pulse', CV.active); btn.classList.toggle('border-[#BEF264]', CV.active); btn.setAttribute('aria-label', CV.active ? '말로 입력 멈추기' : '말로 입력'); }
+          if (ban) ban.classList.toggle('hidden', !CV.active);
+      }
+      function chatVoiceWrite() {
+          const inp = document.getElementById('chatInputText'); if (!inp) return;
+          inp.value = [CV.base, CV.finals, CV.interim].filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
+          inp.scrollLeft = inp.scrollWidth;
+      }
+      function chatVoiceStartRec() {
+          const SR = window.SpeechRecognition || window.webkitSpeechRecognition; if (!SR) return;
+          const r = new SR(); r.lang = 'ko-KR'; r.interimResults = true; r.continuous = false; r.maxAlternatives = 1;
+          r.onresult = (e) => { let im = ''; for (let i = e.resultIndex; i < e.results.length; i++) { const t = (e.results[i][0] && e.results[i][0].transcript || '').trim(); if (!t) continue; if (e.results[i].isFinal) CV.finals = (CV.finals ? CV.finals + ' ' : '') + t; else im += (im ? ' ' : '') + t; } CV.interim = im; chatVoiceWrite(); };
+          r.onerror = (e) => { if (e.error === 'not-allowed' || e.error === 'service-not-allowed') { chatVoiceStop(); alert('마이크 사용이 막혀 있습니다. 휴대폰 설정에서 마이크를 [허용]해 주세요.\n지금은 키보드의 마이크 버튼으로 말씀하셔도 됩니다.'); } };
+          r.onend = () => { if (CV.interim) { CV.finals = (CV.finals ? CV.finals + ' ' : '') + CV.interim; CV.interim = ''; chatVoiceWrite(); } if (CV.active && CV.rec === r) setTimeout(() => { if (CV.active && CV.rec === r) chatVoiceStartRec(); }, 120); };
+          CV.rec = r; try { r.start(); } catch (e) { chatVoiceStop(); }
+      }
+      function chatVoiceStop() { CV.active = false; const r = CV.rec; CV.rec = null; if (r) { try { r.stop(); } catch (e) {} } chatVoiceUI(); }
+      function toggleChatVoice() {
+          if (CV.active) return chatVoiceStop();
+          if (!(window.SpeechRecognition || window.webkitSpeechRecognition)) { alert('이 화면에서는 바로 듣기가 안 됩니다.\n입력칸을 누르고 키보드의 마이크 버튼을 눌러 말씀하세요.'); const i = document.getElementById('chatInputText'); if (i) i.focus(); return; }
+          CV.base = (document.getElementById('chatInputText').value || '').trim(); CV.finals = ''; CV.interim = ''; CV.active = true;
+          chatVoiceUI(); chatVoiceStartRec();
+      }
+
       function handleBoardImages(event) {
           const files = Array.from(event.target.files || []); event.target.value = '';
           const room = BOARD_MAX_IMAGES - boardWriteImages.length;
@@ -5461,6 +5662,7 @@
           const list = document.getElementById('bwImgList'); const cnt = document.getElementById('bwImgCount'); if (!list) return;
           list.innerHTML = boardWriteImages.map((src, idx) => `<div class="relative flex-shrink-0 w-20 h-20 rounded-[14px] overflow-hidden border border-[#CBD5E1]"><img src="${src}" class="w-full h-full object-cover"><button type="button" onclick="removeBoardImage(${idx})" class="absolute top-1 right-1 bg-black/70 text-white w-6 h-6 rounded-full text-[13.5px] font-black">✕</button></div>`).join('');
           if (cnt) cnt.innerText = boardWriteImages.length ? `${boardWriteImages.length}/${BOARD_MAX_IMAGES}` : '';
+          if (typeof aiPreviewRenderThumbs === 'function') aiPreviewRenderThumbs(); // 🎤 [패치 #38] 확인 화면에도 사진 표시
       }
       function openPostImage(key, idx) {
           const post = boardPostCache[key]; if (!post || !Array.isArray(post.imgs) || !post.imgs.length) return;
@@ -5561,6 +5763,7 @@
       }
 
       function closeBoardChat() {
+          if (typeof CV !== 'undefined' && CV.active) chatVoiceStop(); // 🎤 [패치 #40]
           if(chatRefreshTimer) clearInterval(chatRefreshTimer);
           const modal = document.getElementById('boardChatModal');
           const box = document.getElementById('boardChatBox');
@@ -5569,6 +5772,7 @@
       }
 
       async function sendRealChatMessage() {
+          if (typeof CV !== 'undefined' && CV.active) chatVoiceStop(); // 🎤 [패치 #40]
           const inputEl = document.getElementById('chatInputText');
           const text = inputEl.value.trim();
           if(!text || !currentChatRoom) return;
@@ -5598,7 +5802,7 @@
                   container.innerHTML = '<div class="text-center text-[#A3A8A3] text-[13.5px] font-bold py-5">채팅방이 생성되었습니다. 첫 메시지를 보내보세요.</div>';
                   return;
               }
-              const msgs = Object.values(data).sort((a,b) => a.timestamp - b.timestamp);
+              const msgs = Object.values(data).filter(m => m && typeof m === 'object').sort((a,b) => (a.timestamp||0) - (b.timestamp||0)); /* 🔐 [패치 #37] 이상한 값 걸러냄 */
               if(msgs.length === lastMessageCount && !forceScroll) return; 
               lastMessageCount = msgs.length;
 
@@ -5606,9 +5810,9 @@
               msgs.forEach(msg => {
                   const isMe = (msg.senderId === currentUserId);
                   if(isMe) {
-                      html += `<div class="flex justify-end mb-3"><div class="flex items-end gap-1.5"><span class="text-[11.5px] font-bold text-[#4E5968] mb-0.5">${msg.timeStr}</span><div class="bg-[#84CC16] text-[#12261E] text-[14px] font-black p-3.5 rounded-[16px] rounded-tr-[4px] shadow-sm max-w-xs break-keep whitespace-pre-wrap">${msg.text}</div></div></div>`;
+                      html += `<div class="flex justify-end mb-3"><div class="flex items-end gap-1.5"><span class="text-[11.5px] font-bold text-[#4E5968] mb-0.5">${escHtml(msg.timeStr)}</span><div class="bg-[#84CC16] text-[#12261E] text-[14px] font-black p-3.5 rounded-[16px] rounded-tr-[4px] shadow-sm max-w-xs break-keep whitespace-pre-wrap">${escHtml(msg.text)}</div></div></div>`;
                   } else {
-                      html += `<div class="flex justify-start mb-3"><div class="flex items-end gap-1.5"><div class="bg-white text-[#151E2D] text-[14px] font-black p-3.5 rounded-[16px] rounded-tl-[4px] shadow-sm max-w-xs break-keep whitespace-pre-wrap">${msg.text}</div><span class="text-[11.5px] font-bold text-[#4E5968] mb-0.5">${msg.timeStr}</span></div></div>`;
+                      html += `<div class="flex justify-start mb-3"><div class="flex items-end gap-1.5"><div class="bg-white text-[#151E2D] text-[14px] font-black p-3.5 rounded-[16px] rounded-tl-[4px] shadow-sm max-w-xs break-keep whitespace-pre-wrap">${escHtml(msg.text)}</div><span class="text-[11.5px] font-bold text-[#4E5968] mb-0.5">${escHtml(msg.timeStr)}</span></div></div>`;
                   }
               });
               container.innerHTML = html;
@@ -5616,6 +5820,15 @@
           } catch(e) {}
       }
 
+      // 📞 [패치 #39] 작업 지원·협력 / 작업 양도·양수 / 장비·자재 직거래는 전화 연결이 중요 → 가입 때 등록한 대표 연락처를 미리 채움 (지우거나 바꿀 수 있음)
+      const BOARD_PHONE_PREFILL = ['현장협력', '일감양도', '장비자재'];
+      function myProfilePhone() { return (myCompanyProfile && myCompanyProfile.phone) ? String(myCompanyProfile.phone).trim() : ''; }
+      function boardPrefillPhone() {
+          const cat = document.getElementById('bwCategory').value; const ph = document.getElementById('bwPhone');
+          if (!ph) return;
+          if (BOARD_PHONE_PREFILL.includes(cat)) { if (!ph.value.trim()) ph.value = myProfilePhone(); }
+          else if (ph.value.trim() === myProfilePhone()) ph.value = ''; // 다른 게시판으로 바꾸면 자동으로 넣은 번호는 빼 줌
+      }
       function openBoardWrite() {
           document.getElementById('bwTitle').value = ''; 
           document.getElementById('bwPhone').value = ''; 
@@ -5628,6 +5841,7 @@
               const m = (activeTab.getAttribute('onclick') || '').match(/filterBoard\('([^']+)'/);
               if (m && m[1] !== '전체' && catSelect.querySelector(`option[value="${m[1]}"]`)) catSelect.value = m[1];
           }
+          boardPrefillPhone(); // 📞 [패치 #39] 함께 일하기 게시판은 대표 연락처 미리 채우기
 
           const modal = document.getElementById('boardWriteModal'); 
           const box = document.getElementById('boardWriteBox');
@@ -5659,6 +5873,685 @@
           }
       });
   </script>
+  <!-- 🎤 [패치 #38] 공통 음성 엔진 화면 (듣는 중 → AI 정리 중) — 앞으로 일정·일지·견적에도 같은 화면을 씀 -->
+  <div id="voiceOverlay" class="hidden fixed inset-0 z-[9700] bg-[#0F1722] flex justify-center overflow-y-auto">
+    <div class="w-full max-w-md px-[18px] pt-6 pb-5 flex flex-col gap-[18px] min-h-full">
+      <!-- 듣는 중 -->
+      <div id="voiceListenPane" class="flex flex-col gap-[18px] flex-1">
+        <div class="flex items-center justify-between gap-2">
+          <span id="voiceTitle" class="text-[20px] font-black text-white">말로 쓰기</span>
+          <span id="voiceChip" class="text-[15px] font-black text-[#151E2D] bg-[#84CC16] px-3 py-1 rounded-full whitespace-nowrap"></span>
+        </div>
+        <div class="flex flex-col items-center gap-3 pt-1">
+          <div class="w-[132px] h-[132px] rounded-full bg-[#84CC16]/20 flex items-center justify-center">
+            <div id="voiceMicDot" class="w-[104px] h-[104px] rounded-full bg-[#84CC16] flex items-center justify-center shadow-[0_0_40px_rgba(132,204,22,0.55)]">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#151E2D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10v1a7 7 0 0 0 14 0v-1"></path><path d="M12 18v4"></path></svg>
+            </div>
+          </div>
+          <div id="voiceStatus" class="text-[24px] font-black text-[#BEF264]">듣고 있어요 · 0:00</div>
+          <div id="voiceGuide" class="text-[16px] font-bold text-[#E2E8F0] text-center leading-relaxed break-keep">천천히, 생각나는 대로 말씀하세요.<br>잠깐 멈춰도 끊기지 않습니다.</div>
+        </div>
+        <div class="flex-1 min-h-[180px] bg-white rounded-[20px] p-[18px] flex flex-col gap-2.5">
+          <label for="voiceText" id="voiceTextLabel" class="text-[15px] font-black text-[#3F6212]">받아 적는 중</label>
+          <textarea id="voiceText" readonly class="flex-1 min-h-[140px] w-full resize-none border-none outline-none bg-transparent text-[19px] font-bold text-[#151E2D] leading-[1.6] placeholder:text-[#94A3B8] placeholder:text-[17px]" placeholder="말씀하시면 여기에 글자가 나타납니다"></textarea>
+        </div>
+        <div id="voiceHints" class="flex flex-wrap gap-2"></div>
+        <button type="button" onclick="voiceFinish()" class="h-[68px] rounded-[20px] bg-[#84CC16] text-[#1A2E05] text-[22px] font-black shadow-[0_10px_24px_rgba(132,204,22,0.35)] active:scale-[0.98] transition-all">말하기 끝 · 정리하기</button>
+        <div class="grid grid-cols-2 gap-2.5">
+          <button type="button" onclick="voiceRestart()" class="h-[54px] rounded-[16px] border-[1.5px] border-[#64748B] text-white text-[17px] font-extrabold active:scale-95 transition-all">처음부터 다시</button>
+          <button type="button" onclick="voiceCancel()" class="h-[54px] rounded-[16px] border-[1.5px] border-[#64748B] text-white text-[17px] font-extrabold active:scale-95 transition-all">취소</button>
+        </div>
+      </div>
+      <!-- AI 정리 중 -->
+      <div id="voiceThinkPane" class="hidden flex-1 flex flex-col justify-center items-center gap-[26px] py-10">
+        <div class="w-24 h-24 rounded-full border-8 border-[#84CC16]/25 border-t-[#84CC16] animate-spin"></div>
+        <div class="flex flex-col items-center gap-2.5">
+          <div class="text-[25px] font-black text-white text-center leading-snug">대표님 말씀을<br>글로 정리하고 있습니다</div>
+          <div class="text-[17px] font-bold text-[#CBD5E1]">보통 3~5초 걸립니다</div>
+        </div>
+        <div id="voiceSteps" class="w-full bg-[#1E293B] border-[1.5px] border-[#475569] rounded-[20px] p-[18px] flex flex-col gap-3.5"></div>
+        <div class="text-[15px] font-bold text-[#94A3B8] text-center leading-relaxed">말씀하지 않은 가격이나 번호는<br>AI가 절대 지어내지 않습니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🎤 [패치 #38] 소통방 AI 글 확인 화면 -->
+  <div id="boardAiPreview" class="hidden fixed inset-0 z-[9650] bg-[#0B1512] flex justify-center overflow-y-auto px-3 pt-6 pb-3">
+    <div class="w-full max-w-md bg-white rounded-[28px] border-2 border-[#D4AF37] overflow-hidden flex flex-col self-start">
+      <div class="bg-[#151E2D] px-[18px] py-[15px] flex items-center gap-2.5">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#84CC16" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+        <span class="text-[20px] font-black text-white">이렇게 올릴까요?</span>
+      </div>
+      <div class="p-4 flex flex-col gap-3">
+        <div class="flex items-center justify-between gap-2">
+          <label for="aipCategory" class="text-[15px] font-extrabold text-[#475569] shrink-0">게시판</label>
+          <select id="aipCategory" onchange="aiPreviewCategoryChanged()" class="flex-1 min-w-0 h-[48px] rounded-[12px] border-[1.5px] border-[#84CC16] bg-[#ECFCCB] px-3 text-[16px] font-black text-[#3F6212]">
+            <option value="현장협력">작업 지원·협력</option><option value="일감양도">작업 양도·양수</option><option value="장비자재">장비·자재 직거래</option><option value="견적단가">견적·단가 자문</option>
+            <option value="자유소통">자유 소통</option><option value="정보교환">정보 교환·업체 공유</option><option value="노하우">실무 노하우</option><option value="불량거래처">불량 거래처 경보</option>
+          </select>
+          <span class="text-[14px] font-bold text-[#64748B] shrink-0">눌러서 바꾸기</span>
+        </div>
+        <div id="aipAnonNotice" class="hidden bg-[#FEF2F2] border-[1.5px] border-[#FCA5A5] rounded-[14px] px-3.5 py-3 text-[15px] font-bold text-[#B91C1C] leading-relaxed break-keep">익명으로 올라갑니다. 상호·실명·전화번호는 AI가 빼고 정리했습니다. 사실만 적혀 있는지 한 번 더 확인해 주세요.</div>
+        <div id="aipTitle" class="bg-[#F4FBEA] border-l-[7px] border-[#84CC16] rounded-[14px] px-3.5 py-3 text-[20px] font-black text-[#0F172A] leading-snug break-keep"></div>
+        <p id="aipBody" class="m-0 px-1 text-[17px] font-bold text-[#334155] leading-[1.65] whitespace-pre-wrap break-keep"></p>
+        <div id="aipCheckBox" class="bg-[#FEF9C3] border-2 border-[#EAB308] rounded-[16px] px-3.5 py-3 flex flex-col gap-2.5">
+          <span class="text-[15px] font-black text-[#854D0E]">꼭 확인하세요 · 잘못 들었으면 바로 고치세요</span>
+          <div id="aipPriceRow" class="flex flex-col gap-1">
+            <label for="aipPrice" class="text-[16px] font-extrabold text-[#334155]">가격</label>
+            <input id="aipPrice" type="text" autocomplete="off" placeholder="말씀 안 하셨어요 (비워 둬도 됩니다)" class="h-[52px] rounded-[12px] border-[1.5px] border-[#EAB308] bg-white px-3 text-[20px] font-black text-[#0F172A] placeholder:text-[15px] placeholder:font-bold placeholder:text-[#94A3B8]">
+          </div>
+          <div id="aipPhoneRow" class="flex flex-col gap-1">
+            <label for="aipPhone" class="text-[16px] font-extrabold text-[#334155]">전화번호 <span id="aipPhoneWarn" class="hidden text-[14px] font-black text-[#B91C1C]">· 잘못 들었을 수 있어요</span></label>
+            <input id="aipPhone" type="tel" autocomplete="off" oninput="autoHyphen(this)" placeholder="말씀 안 하셨어요 (비워 둬도 됩니다)" class="h-[52px] rounded-[12px] border-[1.5px] border-[#EAB308] bg-white px-3 text-[20px] font-black text-[#1D4ED8] placeholder:text-[15px] placeholder:font-bold placeholder:text-[#94A3B8]">
+          </div>
+        </div>
+        <div id="aipMissing" class="hidden text-[15px] font-bold text-[#475569] leading-relaxed break-keep px-1"></div>
+        <button type="button" onclick="document.getElementById('bwImgInput').click()" class="h-[56px] rounded-[16px] border-2 border-dashed border-[#94A3B8] bg-[#F8FAFC] flex items-center justify-center gap-2 text-[17px] font-black text-[#151E2D] active:scale-[0.98] transition-all">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#65A30D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>
+          사진 추가 (선택 · 최대 10장) <span id="aipImgCount" class="text-[#15803D]"></span>
+        </button>
+        <div id="aipImgList" class="flex gap-2 overflow-x-auto nav-scroll empty:hidden"></div>
+      </div>
+      <div class="px-4 pt-3 pb-3.5 bg-[#F8FAFC] border-t border-[#E2E8F0] flex flex-col gap-2.5">
+        <button type="button" onclick="aiPreviewSubmit()" class="h-[60px] rounded-[16px] bg-[#151E2D] text-[#84CC16] text-[19px] font-black active:scale-[0.98] transition-all">이대로 올리기 (+100P)</button>
+        <div class="grid grid-cols-2 gap-2.5">
+          <button type="button" onclick="aiPreviewEdit()" class="h-[52px] rounded-[14px] border-2 border-[#CBD5E1] bg-white text-[17px] font-black text-[#151E2D] active:scale-95 transition-all">직접 고치기</button>
+          <button type="button" onclick="aiPreviewRetry()" class="h-[52px] rounded-[14px] border-2 border-[#CBD5E1] bg-white text-[17px] font-black text-[#151E2D] active:scale-95 transition-all">다시 말하기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =====================================================================
+    // 🎤 [패치 #38] 공통 음성 엔진: 말하기 → 글자로 받아 적기 → (화면마다) AI 정리
+    //   voiceOpen({ title, chip, hints, onDone(text) })  ← 일정·일지·견적 화면도 이것 하나를 불러 쓰면 됨
+    //   휴대폰은 잠깐 멈추면 음성 인식이 끝나 버리므로, 대표님이 [말하기 끝]을 누를 때까지 자동으로 다시 켭니다.
+    //   음성 인식이 안 되는 곳(카카오톡 안 화면 등)은 글자 칸을 열어 키보드 마이크로 말하게 안내합니다.
+    // =====================================================================
+    const VOICE_MAX_SEC = 180, VOICE_MAX_CHARS = 2000;
+    const VX = { rec: null, active: false, finals: '', interim: '', startAt: 0, timer: null, onDone: null, fallback: false, ignorePop: false, busy: false };
+    function voiceSupported() { return !!(window.SpeechRecognition || window.webkitSpeechRecognition); }
+    function voiceText() { return (VX.finals + (VX.interim ? ' ' + VX.interim : '')).replace(/\s+/g, ' ').trim(); }
+    function voiceRender() {
+      const ta = document.getElementById('voiceText');
+      if (!VX.fallback) { ta.value = voiceText(); ta.scrollTop = ta.scrollHeight; }
+      if (VX.active) { const sec = Math.floor((Date.now() - VX.startAt) / 1000); document.getElementById('voiceStatus').innerText = `듣고 있어요 · ${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`; }
+    }
+    function voiceStartRec() {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition; if (!SR) return voiceUseFallback();
+      const r = new SR(); r.lang = 'ko-KR'; r.interimResults = true; r.continuous = false; r.maxAlternatives = 1;
+      r.onresult = (e) => {
+        let interim = '';
+        for (let i = e.resultIndex; i < e.results.length; i++) {
+          const t = (e.results[i][0] && e.results[i][0].transcript || '').trim(); if (!t) continue;
+          if (e.results[i].isFinal) VX.finals = (VX.finals ? VX.finals + ' ' : '') + t; else interim += (interim ? ' ' : '') + t;
+        }
+        VX.interim = interim;
+        if (VX.finals.length > VOICE_MAX_CHARS) { VX.finals = VX.finals.slice(0, VOICE_MAX_CHARS); voiceFinish(); }
+        voiceRender();
+      };
+      r.onerror = (e) => {
+        if (e.error === 'not-allowed' || e.error === 'service-not-allowed') { VX.active = false; voiceUseFallback('마이크 사용이 막혀 있습니다. 주소창 옆 자물쇠(또는 휴대폰 설정)에서 마이크를 [허용]해 주세요.\n지금은 키보드의 마이크 버튼을 누르고 말씀하셔도 됩니다.'); }
+      };
+      r.onend = () => {
+        if (VX.interim) { VX.finals = (VX.finals ? VX.finals + ' ' : '') + VX.interim; VX.interim = ''; voiceRender(); }
+        if (VX.active && VX.rec === r) setTimeout(() => { if (VX.active && VX.rec === r) voiceStartRec(); }, 120); // 멈춰도 계속 듣기
+      };
+      VX.rec = r;
+      try { r.start(); } catch (e) { voiceUseFallback(); }
+    }
+    function voiceStopRec() { VX.active = false; clearInterval(VX.timer); const r = VX.rec; VX.rec = null; if (r) { try { r.stop(); } catch (e) {} } }
+    function voiceUseFallback(msg) {
+      voiceStopRec(); VX.fallback = true;
+      const ta = document.getElementById('voiceText'); ta.readOnly = false; ta.value = voiceText();
+      document.getElementById('voiceTextLabel').innerText = '여기를 눌러 입력하세요';
+      document.getElementById('voiceStatus').innerText = '키보드 마이크로 말씀하세요';
+      document.getElementById('voiceGuide').innerText = msg || '이 화면에서는 바로 듣기가 안 됩니다.\n아래 흰 칸을 누르고, 키보드의 마이크 버튼을 눌러 말씀하세요.';
+      document.getElementById('voiceMicDot').classList.remove('animate-pulse');
+      setTimeout(() => { try { ta.focus(); } catch (e) {} }, 200);
+    }
+    function voiceBegin() {
+      VX.finals = ''; VX.interim = ''; VX.fallback = false;
+      const ta = document.getElementById('voiceText'); ta.value = ''; ta.readOnly = true;
+      document.getElementById('voiceTextLabel').innerText = '받아 적는 중';
+      document.getElementById('voiceGuide').innerText = '천천히, 생각나는 대로 말씀하세요.\n잠깐 멈춰도 끊기지 않습니다.';
+      if (!voiceSupported()) return voiceUseFallback();
+      VX.active = true; VX.startAt = Date.now();
+      document.getElementById('voiceMicDot').classList.add('animate-pulse');
+      clearInterval(VX.timer); VX.timer = setInterval(() => { voiceRender(); if (VX.active && Date.now() - VX.startAt > VOICE_MAX_SEC * 1000) voiceFinish(); }, 500);
+      voiceRender(); voiceStartRec();
+    }
+    function voiceOpen(opts) {
+      opts = opts || {};
+      VX.onDone = opts.onDone || null; VX.busy = false;
+      document.getElementById('voiceTitle').innerText = opts.title || '말로 쓰기';
+      const chip = document.getElementById('voiceChip'); chip.innerText = opts.chip || ''; chip.classList.toggle('hidden', !opts.chip);
+      document.getElementById('voiceHints').innerHTML = (opts.hints || []).map(h => `<span class="text-[15px] font-extrabold text-[#E2E8F0] border-[1.5px] border-[#475569] rounded-full px-3 py-1.5">${escHtml(h)}</span>`).join('');
+      document.getElementById('voiceListenPane').classList.remove('hidden');
+      document.getElementById('voiceThinkPane').classList.add('hidden');
+      document.getElementById('voiceOverlay').classList.remove('hidden');
+      if (history.state && (history.state.aiPreviewOpen || history.state.formPreviewOpen)) history.replaceState({ voiceOpen: true }, '', ''); // 확인 화면 → 다시 말하기: 뒤로가기 한 칸 유지
+      else if (!(history.state && history.state.voiceOpen)) history.pushState({ voiceOpen: true }, '', '');
+      voiceBegin();
+    }
+    function voiceHide(fromPopstate) {
+      voiceStopRec();
+      const ov = document.getElementById('voiceOverlay'); if (ov.classList.contains('hidden')) return;
+      ov.classList.add('hidden');
+      if (!fromPopstate && history.state && history.state.voiceOpen) { VX.ignorePop = true; history.back(); }
+    }
+    function voiceRestart() { voiceStopRec(); setTimeout(voiceBegin, 250); }
+    function voiceCancel() { VX.onDone = null; voiceHide(false); }
+    function voiceFinish() {
+      if (VX.busy) return;
+      const wasActive = VX.active; voiceStopRec();
+      setTimeout(() => { // 마지막 말이 글자로 바뀔 시간을 잠깐 기다림
+        const text = (VX.fallback ? document.getElementById('voiceText').value : voiceText()).trim().slice(0, VOICE_MAX_CHARS);
+        if (text.length < 4) {
+          alert('말씀이 잘 들리지 않았어요.\n휴대폰을 입 가까이 대고 다시 말씀해 주세요.');
+          if (!VX.fallback) voiceBegin();
+          return;
+        }
+        VX.busy = true;
+        const cb = VX.onDone;
+        if (typeof cb === 'function') cb(text); else voiceHide(false);
+      }, wasActive ? 700 : 0);
+    }
+    // AI 정리 중 화면 (단계별 표시)
+    let voiceStepTimers = [];
+    function voiceShowThinking(steps) {
+      document.getElementById('voiceListenPane').classList.add('hidden');
+      document.getElementById('voiceThinkPane').classList.remove('hidden');
+      const box = document.getElementById('voiceSteps');
+      const CHECK = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#84CC16" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>';
+      const RING = '<span class="w-[22px] h-[22px] rounded-full border-[3px] border-[#84CC16] box-border inline-block"></span>';
+      const draw = (doneCount) => { box.innerHTML = steps.map((t, i) => `<div class="flex items-center gap-2.5 text-[17px] font-extrabold ${i < doneCount ? 'text-[#BEF264]' : 'text-white'}">${i < doneCount ? CHECK : RING}${escHtml(t)}</div>`).join(''); };
+      voiceStepTimers.forEach(clearTimeout); voiceStepTimers = [];
+      draw(0);
+      for (let i = 1; i < steps.length; i++) voiceStepTimers.push(setTimeout(() => draw(i), i * 900));
+    }
+    // 뒤로가기(휴대폰 버튼): 음성 화면만 닫고, 아래 글쓰기 창은 그대로 둠
+    window.addEventListener('popstate', (e) => {
+      if (VX.ignorePop) { VX.ignorePop = false; e.stopImmediatePropagation(); return; }
+      const ov = document.getElementById('voiceOverlay');
+      if (ov && !ov.classList.contains('hidden')) { VX.onDone = null; voiceHide(true); e.stopImmediatePropagation(); return; }
+      const pv = document.getElementById('boardAiPreview');
+      if (pv && !pv.classList.contains('hidden')) { aiPreviewHide(true); e.stopImmediatePropagation(); return; }
+      const fp = document.getElementById('formAiPreview'); // 🎤 [패치 #41]
+      if (fp && !fp.classList.contains('hidden')) { formPreviewHide(true); e.stopImmediatePropagation(); }
+    }, true);
+
+    // AI에게 정리 부탁 (기존 AI 서버 그대로 사용, 답은 JSON 한 덩어리로 받음)
+    async function voiceAskAiJson(systemPrompt, userText) {
+      const res = await fetch(GOOGLE_PROXY_URL_PUSH, {
+        redirect: 'follow', method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ idToken: currentIdToken, userId: currentUserId, model: 'gpt-4o',
+          messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userText }], max_tokens: 800, temperature: 0.2 })
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error.message || 'AI 오류');
+      const raw = String(data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content || '');
+      const m = raw.match(/\{[\s\S]*\}/); if (!m) throw new Error('AI 답을 읽지 못했습니다.');
+      return JSON.parse(m[0]);
+    }
+
+    // =====================================================================
+    // 🎤 [패치 #38] 소통방 AI 글쓰기
+    // =====================================================================
+    const BOARD_AI_GUIDE = {
+      '현장협력': '인력·장비 지원 요청이나 협력 제안. 제목 머리말 [인력 구함]/[장비 구함]/[협력 제안] 중 알맞은 것',
+      '일감양도': '일정이 겹치거나 멀어서 확정된 공사·관리 일감을 넘기거나 받는 글. 머리말 [양도]/[양수]',
+      '장비자재': '장비·수목·자재 사고팔기, 임대, 무료 나눔. 머리말 [판매]/[구매]/[임대]/[나눔]',
+      '견적단가': '적정 견적·단가를 묻거나 조언하는 글. 머리말 [단가 문의]',
+      '자유소통': '일상 이야기, 현장 소식',
+      '정보교환': '폐기물 처리장·자재상·농원·장비업체 찾기, 시세·신제품 정보. 머리말 [찾아요]/[정보]',
+      '노하우': '전지·방제·시공 등 기술과 요령 공유',
+      '불량거래처': '대금 미지급 등 주의할 거래 유형 경보(익명)'
+    };
+    let aiBoardDraft = null;
+    function boardCatLabel(k) { const f = (typeof PUSH_BOARDS !== 'undefined' ? PUSH_BOARDS : []).find(x => x[0] === k); return f ? f[1] : k; }
+    function startBoardVoiceWrite() {
+      const cur = document.getElementById('bwCategory').value;
+      voiceOpen({ title: '말로 쓰기', chip: boardCatLabel(cur), hints: ['무엇을', '규격·수량', '가격', '지역', '연락처'], onDone: runBoardAi });
+    }
+    function buildBoardAiPrompt(curCat) {
+      const cats = Object.keys(BOARD_AI_GUIDE).map(k => `- "${k}": ${BOARD_AI_GUIDE[k]}`).join('\n');
+      return `너는 '조경노트 PRO' 대표님 소통방(조경 사업자끼리 쓰는 게시판)의 글 정리 도우미다.
+대표님이 휴대폰에 말로 두서없이 한 이야기(음성 인식이라 오타·띄어쓰기 틀림이 있음)를 게시판 글로 깔끔하게 정리한다.
+
+[게시판 목록 - category에는 아래 따옴표 안의 값 중 하나만]
+${cats}
+대표님이 지금 보고 있던 게시판: "${curCat}" (내용과 맞으면 이것을 유지, 확실히 다를 때만 바꿈)
+
+[말 다듬기 - 가장 중요]
+- 음성 인식이라 "어", "음", "그러니까" 같은 군말, 같은 말 반복, 말 더듬음, 잘못 알아들은 단어가 섞여 있다. 군말·반복은 빼고, 앞뒤 뜻으로 원래 하려던 말을 되살린다.
+- 조경 현장 말로 바로잡는다. 예: "전기 작업"→(가지치기 이야기면) "전지 작업", "수관 폭"→"수관폭", "근원 직경"→"근원직경", "에이치 3"→"H3.0", "스카이차"→"고소작업차(스카이)", 수목·약제 이름도 맞는 이름으로.
+- 뜻을 바꾸거나 없는 내용을 보태지 않는다. 무슨 말인지 확실하지 않으면 들은 그대로 둔다.
+- 대표님 말투(친근함, 사투리 느낌)는 살리되 읽기 좋게 문장을 정리한다.
+
+[게시판별 글 모양]
+- 거래·요청 글("현장협력","일감양도","장비자재","견적단가","정보교환"): 첫 줄 한 문장 요약 + 아래 "• 항목: 내용" 줄 정리.
+- 이야기·노하우 글("자유소통","노하우"): 머리말·"•" 목록 없이 자연스러운 문단 글. 노하우는 순서가 있으면 "1. 2. 3."으로. price와 missing은 비워 둔다.
+- "불량거래처": 사실을 차분한 문단으로.
+
+[절대 규칙]
+1. 말하지 않은 사실(가격, 전화번호, 수량, 규격, 날짜, 지역)을 절대 지어내지 않는다. 없으면 빈 칸("").
+2. 숫자는 들은 그대로 옮기되 보기 좋게: "30만 원"→"300,000원", "3미터"→"3m", 전화번호는 010-0000-0000 모양.
+3. 가격(price)과 전화번호(phone)는 본문(body)에 쓰지 말고 각 칸에만 넣는다. price 예: "그루당 300,000원", "협의".
+4. 제목(title): 40자 이내. 거래·요청 글은 알맞은 머리말 + 핵심(무엇·규격·지역), 이야기·노하우 글은 머리말 없이 내용을 잘 나타내는 한 줄. 예: "[판매] 소나무 3주 · 수고 3m · 수원 영통"
+5. 본문(body): 존댓말. 거래·요청 글은 "• 규격: …", "• 수량: …", "• 지역: …", "• 일정: …", "• 조건: …" 중 말한 것만 줄바꿈으로. 과장·광고 문구 금지.
+6. category가 "불량거래처"이면: 상호·사람 이름·전화번호·자세한 주소(동 이하)를 모두 빼고 "경기 남부 상가 발주처"처럼 유형으로만, 사실만 담담하게. phone은 반드시 "".
+7. 욕설·비방은 빼고 정중하게 바꾼다.
+8. missing: 이 게시판 글에 중요한데 대표님이 말하지 않은 항목 이름 (예: ["가격","연락처"]), 최대 3개.
+
+[답 형식] 설명 없이 JSON 하나만:
+{"category":"","title":"","body":"","price":"","phone":"","missing":[]}`;
+    }
+    async function runBoardAi(text) {
+      const curCat = document.getElementById('bwCategory').value;
+      voiceShowThinking(['알맞은 게시판 고르기', '제목 만들기', '규격·가격·연락처 정리']);
+      try {
+        const j = await voiceAskAiJson(buildBoardAiPrompt(curCat), text);
+        const cat = BOARD_AI_GUIDE[j.category] ? j.category : (BOARD_AI_GUIDE[curCat] ? curCat : '자유소통');
+        const digits = String(j.phone || '').replace(/[^0-9]/g, '');
+        aiBoardDraft = {
+          transcript: text, category: cat,
+          title: String(j.title || '').trim().slice(0, 60),
+          body: String(j.body || '').trim().slice(0, 2000),
+          price: String(j.price || '').trim().slice(0, 60),
+          phone: cat === '불량거래처' ? '' : (digits.length >= 9 && digits.length <= 11 ? digits : ''),
+          phoneUnsure: false,
+          missing: Array.isArray(j.missing) ? j.missing.map(String).slice(0, 3) : []
+        };
+        // 전화번호 숫자가 대표님이 말씀하신 글자에 없으면 "잘못 들었을 수 있어요" 표시 (AI가 지어낸 번호 방지)
+        if (aiBoardDraft.phone && !text.replace(/[^0-9]/g, '').includes(aiBoardDraft.phone)) aiBoardDraft.phoneUnsure = true;
+        if (!aiBoardDraft.title || !aiBoardDraft.body) throw new Error('정리 결과가 비어 있습니다.');
+        voiceHide(true); // 뒤로가기 칸은 확인 화면이 이어받음
+        aiPreviewShow();
+      } catch (e) {
+        voiceHide(false);
+        // 실패해도 말씀하신 내용은 잃지 않게 내용 칸에 넣어 둠
+        const ct = document.getElementById('bwContent'); if (ct && !ct.value.trim()) ct.value = text;
+        alert('AI 정리에 실패했습니다. (' + (e && e.message ? e.message : '통신 오류') + ')\n말씀하신 내용은 [상세 내용] 칸에 그대로 넣어 두었습니다. 제목만 적고 올리셔도 됩니다.');
+      }
+    }
+    function aiPreviewShow() {
+      const d = aiBoardDraft; if (!d) return;
+      document.getElementById('aipCategory').value = d.category;
+      document.getElementById('aipTitle').textContent = d.title;
+      document.getElementById('aipBody').textContent = d.body;
+      document.getElementById('aipPrice').value = d.price;
+      const ph = document.getElementById('aipPhone'); ph.value = d.phone; if (d.phone) autoHyphen(ph);
+      if (!d.phone && BOARD_PHONE_PREFILL.includes(d.category)) ph.value = myProfilePhone(); // 📞 [패치 #39]
+      document.getElementById('aipPhoneWarn').classList.toggle('hidden', !d.phoneUnsure);
+      const miss = document.getElementById('aipMissing');
+      miss.textContent = d.missing.length ? '말씀 안 하신 것: ' + d.missing.join(', ') + ' (필요하면 [직접 고치기]로 넣어 주세요)' : '';
+      miss.classList.toggle('hidden', !d.missing.length);
+      aiPreviewCategoryChanged(); aiPreviewRenderThumbs();
+      document.getElementById('boardAiPreview').classList.remove('hidden');
+      document.getElementById('boardAiPreview').scrollTop = 0;
+      if (history.state && history.state.voiceOpen) history.replaceState({ aiPreviewOpen: true }, '', ''); else history.pushState({ aiPreviewOpen: true }, '', '');
+    }
+    function aiPreviewHide(fromPopstate) {
+      const pv = document.getElementById('boardAiPreview'); if (pv.classList.contains('hidden')) return;
+      pv.classList.add('hidden');
+      if (!fromPopstate && history.state && history.state.aiPreviewOpen) { VX.ignorePop = true; history.back(); }
+    }
+    const AI_TALK_BOARDS = ['자유소통', '노하우']; // 이야기 글: 가격 칸 없음
+    function aiPreviewCategoryChanged() {
+      const cat = document.getElementById('aipCategory').value;
+      const anon = cat === '불량거래처', talk = AI_TALK_BOARDS.includes(cat);
+      document.getElementById('aipAnonNotice').classList.toggle('hidden', !anon);
+      if (anon) document.getElementById('aipPhone').value = '';
+      else if (BOARD_PHONE_PREFILL.includes(cat) && !document.getElementById('aipPhone').value.trim()) document.getElementById('aipPhone').value = myProfilePhone(); // 📞 [패치 #39]
+      const hasPrice = !!document.getElementById('aipPrice').value.trim(), hasPhone = !!document.getElementById('aipPhone').value.trim();
+      const showPrice = !anon && (!talk || hasPrice);   // 이야기 글은 가격을 말한 경우에만
+      const showPhone = !anon && (!talk || hasPhone);   // 이야기 글은 번호를 말한 경우에만
+      document.getElementById('aipPriceRow').classList.toggle('hidden', !showPrice);
+      document.getElementById('aipPhoneRow').classList.toggle('hidden', !showPhone);
+      document.getElementById('aipCheckBox').classList.toggle('hidden', !showPrice && !showPhone);
+    }
+    function aiPreviewRenderThumbs() {
+      const list = document.getElementById('aipImgList'); const cnt = document.getElementById('aipImgCount'); if (!list) return;
+      list.innerHTML = boardWriteImages.map((src, idx) => `<div class="relative flex-shrink-0 w-20 h-20 rounded-[14px] overflow-hidden border border-[#CBD5E1]"><img src="${escHtml(src)}" class="w-full h-full object-cover"><button type="button" aria-label="사진 빼기" onclick="removeBoardImage(${idx})" class="absolute top-1 right-1 bg-black/70 text-white w-7 h-7 rounded-full text-[14px] font-black">✕</button></div>`).join('');
+      if (cnt) cnt.innerText = boardWriteImages.length ? `${boardWriteImages.length}장` : '';
+    }
+    // 확인 화면의 내용을 기존 글쓰기 칸에 채움 (등록은 기존 [등록하기]와 똑같은 과정 → 보안 규칙·포인트·알림 그대로)
+    function aiPreviewFillForm() {
+      const d = aiBoardDraft || {};
+      const cat = document.getElementById('aipCategory').value;
+      const price = document.getElementById('aipPrice').value.trim();
+      let body = d.body || '';
+      if (price) body += (body ? '\n' : '') + '• 가격: ' + price;
+      document.getElementById('bwCategory').value = cat;
+      document.getElementById('bwTitle').value = d.title || '';
+      document.getElementById('bwPhone').value = cat === '불량거래처' ? '' : document.getElementById('aipPhone').value.trim();
+      document.getElementById('bwContent').value = body;
+    }
+    function aiPreviewSubmit() {
+      const ph = document.getElementById('aipPhone').value.replace(/[^0-9]/g, '');
+      if (ph && (ph.length < 9 || ph.length > 11)) return alert('전화번호 자리 수가 맞지 않습니다. 확인해 주세요.');
+      aiPreviewFillForm(); aiPreviewHide(false);
+      setTimeout(() => submitBoardPost(), 80);
+    }
+    function aiPreviewEdit() {
+      aiPreviewFillForm(); aiPreviewHide(false);
+      setTimeout(() => { const t = document.getElementById('bwTitle'); if (t) t.scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 120);
+    }
+    function aiPreviewRetry() { aiPreviewHide(true); startBoardVoiceWrite(); }
+  </script>
+
+  <!-- 🎤 [패치 #41] 일정·일지·견적 공통 확인 화면 -->
+  <div id="formAiPreview" class="hidden fixed inset-0 z-[9650] bg-[#0B1512] flex justify-center overflow-y-auto px-3 pt-6 pb-3">
+    <div class="w-full max-w-md bg-white rounded-[28px] border-2 border-[#D4AF37] overflow-hidden flex flex-col self-start">
+      <div class="bg-[#151E2D] px-[18px] py-[15px] flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2.5"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#84CC16" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg><span id="fpTitle" class="text-[20px] font-black text-white">이렇게 채울까요?</span></span>
+        <span id="fpBadge" class="text-[14px] font-black bg-[#84CC16] text-[#151E2D] px-2.5 py-1 rounded-lg"></span>
+      </div>
+      <div id="fpBody" class="p-4 flex flex-col gap-3"></div>
+      <div class="px-4 pt-3 pb-3.5 bg-[#F8FAFC] border-t border-[#E2E8F0] flex flex-col gap-2.5">
+        <button type="button" id="fpPrimary" onclick="formPreviewAction('primary')" class="h-[60px] rounded-[16px] bg-[#151E2D] text-[#84CC16] text-[19px] font-black active:scale-[0.98] transition-all"></button>
+        <div id="fpSecondRow" class="grid grid-cols-2 gap-2.5">
+          <button type="button" id="fpSecondary" onclick="formPreviewAction('secondary')" class="h-[52px] rounded-[14px] border-2 border-[#CBD5E1] bg-white text-[17px] font-black text-[#151E2D] active:scale-95 transition-all"></button>
+          <button type="button" onclick="formPreviewAction('retry')" class="h-[52px] rounded-[14px] border-2 border-[#CBD5E1] bg-white text-[17px] font-black text-[#151E2D] active:scale-95 transition-all">다시 말하기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =====================================================================
+    // 🎤 [패치 #41] 일정 등록 · 작업일지 · 견적서 '말로 입력'
+    //   공통 음성 엔진(#38) → AI가 칸별로 정리 → 확인 화면 → 기존 입력칸에 채움 (저장·발행은 지금 기능 그대로)
+    //   원칙: 말하지 않은 날짜·금액·번호는 지어내지 않음 / 날짜·금액·번호는 노란 상자에서 크게 확인
+    // =====================================================================
+    const FP = { onPrimary: null, onSecondary: null, onRetry: null };
+    const FP_CHECK_TITLE = '<span class="text-[15px] font-black text-[#854D0E]">꼭 확인하세요 · 잘못 들었으면 바로 고치세요</span>';
+    function fpInputRow(id, label, value, opts) {
+      opts = opts || {};
+      return `<div class="flex flex-col gap-1"><label for="${id}" class="text-[16px] font-extrabold text-[#334155]">${escHtml(label)}${opts.warn ? ' <span class="text-[14px] font-black text-[#B91C1C]">· 잘못 들었을 수 있어요</span>' : ''}</label><input id="${id}" type="${opts.type || 'text'}" ${opts.inputmode ? `inputmode="${opts.inputmode}"` : ''} ${opts.oninput ? `oninput="${opts.oninput}"` : ''} autocomplete="off" value="${escHtml(value)}" placeholder="${escHtml(opts.placeholder || '말씀 안 하셨어요')}" class="h-[52px] rounded-[12px] border-[1.5px] border-[#EAB308] bg-white px-3 text-[19px] font-black ${opts.color || 'text-[#0F172A]'} placeholder:text-[15px] placeholder:font-bold placeholder:text-[#94A3B8]"></div>`;
+    }
+    function fpField(label, valueHtml) { return `<div class="flex flex-col gap-1"><span class="text-[15px] font-extrabold text-[#64748B]">${escHtml(label)}</span>${valueHtml}</div>`; }
+    function fpText(v, placeholder) { return v ? `<span class="text-[16.5px] font-bold text-[#334155] bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-[12px] px-3 py-2.5 leading-relaxed whitespace-pre-wrap break-keep">${escHtml(v)}</span>` : `<span class="text-[15px] font-bold text-[#94A3B8] px-1">${escHtml(placeholder || '말씀 안 하셨어요')}</span>`; }
+    function fpTitleBox(v) { return `<div class="bg-[#F4FBEA] border-l-[7px] border-[#84CC16] rounded-[14px] px-3.5 py-2.5 text-[19px] font-black text-[#0F172A] leading-snug break-keep">${escHtml(v || '-')}</div>`; }
+    function formPreviewShow(cfg) {
+      FP.onPrimary = cfg.onPrimary; FP.onSecondary = cfg.onSecondary || null; FP.onRetry = cfg.onRetry;
+      document.getElementById('fpTitle').innerText = cfg.title || '이렇게 채울까요?';
+      document.getElementById('fpBadge').innerText = cfg.badge || '';
+      document.getElementById('fpBody').innerHTML = cfg.bodyHtml;
+      document.getElementById('fpPrimary').innerText = cfg.primaryLabel;
+      const sec = document.getElementById('fpSecondary');
+      sec.innerText = cfg.secondaryLabel || ''; sec.classList.toggle('hidden', !cfg.secondaryLabel);
+      document.getElementById('fpSecondRow').className = cfg.secondaryLabel ? 'grid grid-cols-2 gap-2.5' : 'grid grid-cols-1 gap-2.5';
+      const el = document.getElementById('formAiPreview'); el.classList.remove('hidden'); el.scrollTop = 0;
+      if (history.state && history.state.voiceOpen) history.replaceState({ formPreviewOpen: true }, '', ''); else history.pushState({ formPreviewOpen: true }, '', '');
+    }
+    function formPreviewHide(fromPopstate) {
+      const el = document.getElementById('formAiPreview'); if (el.classList.contains('hidden')) return;
+      el.classList.add('hidden');
+      if (!fromPopstate && history.state && history.state.formPreviewOpen) { VX.ignorePop = true; history.back(); }
+    }
+    function formPreviewAction(kind) {
+      if (kind === 'retry') { const cb = FP.onRetry; formPreviewHide(true); if (cb) cb(); return; }
+      const cb = kind === 'primary' ? FP.onPrimary : FP.onSecondary;
+      if (cb && cb() === false) return; // 확인 실패(예: 날짜 틀림)면 화면 유지
+      formPreviewHide(false);
+    }
+    function voiceFailKeep(text, targetId) {
+      voiceHide(false);
+      const el = document.getElementById(targetId); if (el && !el.value.trim()) el.value = text;
+      return '말씀하신 내용은 [' + (targetId === 'scheduleMemo' ? '상세 메모' : targetId === 'inputDiagnosis' ? '작업자 코멘트' : '참고 및 특이사항') + '] 칸에 그대로 넣어 두었습니다.';
+    }
+    function todayInfo() { const d = new Date(); const w = ['일', '월', '화', '수', '목', '금', '토'][d.getDay()]; return `${getTodayStr()} (${w}요일)`; }
+    function ymdLabel(ymd) { if (!/^\d{4}-\d{2}-\d{2}$/.test(ymd || '')) return ''; const d = new Date(ymd + 'T00:00:00'); const w = ['일', '월', '화', '수', '목', '금', '토'][d.getDay()]; return `${d.getMonth() + 1}월 ${d.getDate()}일 (${w})`; }
+    function cleanMoney(v) { const n = Math.round(Number(String(v == null ? '' : v).replace(/[^0-9.]/g, ''))); return (isFinite(n) && n > 0 && n < 1e11) ? n : 0; }
+    function cleanPhone(v) { const d = String(v || '').replace(/[^0-9]/g, ''); return (d.length >= 9 && d.length <= 11) ? d : ''; }
+    function phoneHeard(phoneDigits, text) { return !phoneDigits || String(text).replace(/[^0-9]/g, '').includes(phoneDigits); }
+    function fmtPhone(d) { if (!d) return ''; const t = { value: d }; autoHyphen(t); return t.value; }
+    function findClientByName(name) {
+      const n = String(name || '').replace(/\s+/g, ''); if (!n) return null;
+      return (clients || []).find(c => c && String(c.name || '').replace(/\s+/g, '') === n) || null;
+    }
+    const AI_COMMON_RULES = `[말 다듬기]
+- 음성 인식이라 군말("어", "음"), 반복, 잘못 알아들은 단어가 섞여 있다. 앞뒤 뜻으로 원래 하려던 말을 되살리고, 조경 용어는 바르게 고친다(예: 가지치기 이야기인데 "전기"→"전지", "에이치 3"→"H3.0").
+- 말하지 않은 사실(날짜, 금액, 전화번호, 주소, 수량)을 절대 지어내지 않는다. 없으면 빈 값("" 또는 0).
+- 금액은 원 단위 숫자로("오십만 원"→500000). 전화번호는 숫자만.
+[답 형식] 설명 없이 JSON 하나만.`;
+
+    // ---------------- 일정 등록 ----------------
+    const SCHEDULE_COLORS = { green: 'border-[#84CC16]', blue: 'border-[#0284C7]', gold: 'border-[#D97706]', coral: 'border-[#E11D48]' };
+    const SCHEDULE_COLOR_NAMES = { green: '녹색 (기본)', blue: '블루 (견적)', gold: '골드 (중요)', coral: '코랄 (긴급)' };
+    let aiSchedDraft = null;
+    function startScheduleVoice() { voiceOpen({ title: '말로 일정 등록', chip: '작업 일정', hints: ['언제', '어디·누구', '무슨 작업', '받을 돈·나갈 돈', '메모'], onDone: runScheduleAi }); }
+    async function runScheduleAi(text) {
+      voiceShowThinking(['날짜 계산하기', '현장·작업 정리', '금액·메모 정리']);
+      const baseDate = document.getElementById('scheduleDate').value || getTodayStr();
+      const prompt = `너는 조경 사업자 대표님의 작업 일정 등록 도우미다. 대표님이 말로 한 내용을 일정 칸에 맞게 정리한다.
+오늘: ${todayInfo()} / 대표님이 달력에서 골라 둔 날짜: ${baseDate}
+- date: 말한 날짜 표현("내일", "다음 주 화요일", "10월 3일")을 오늘 기준 실제 날짜 YYYY-MM-DD로. 날짜를 말하지 않았으면 "${baseDate}".
+- title: "지역 + 고객 + 작업" 한 줄(40자 이내). 예: "수원 영통 김사장님 댁 소나무 전지"
+- tag: 작업 분류 짧게(예: 전지작업, 방제, 견적방문, 잔디관리). 모르면 "".
+- color: 견적·상담 방문이면 "blue", 중요하다고 하면 "gold", 급하다고 하면 "coral", 그 밖에는 "green".
+- income: 받을 돈(작업비) 숫자, expense: 나갈 돈(인건비·자재비) 숫자. 말 안 했으면 0.
+- memo: 도착 시간, 준비물 등 나머지 내용(짧게). 없으면 "".
+${AI_COMMON_RULES}
+{"date":"","title":"","tag":"","color":"green","income":0,"expense":0,"memo":""}`;
+      try {
+        const j = await voiceAskAiJson(prompt, text);
+        aiSchedDraft = {
+          date: /^\d{4}-\d{2}-\d{2}$/.test(j.date || '') ? j.date : baseDate,
+          title: String(j.title || '').trim().slice(0, 80), tag: String(j.tag || '').trim().slice(0, 20),
+          color: SCHEDULE_COLORS[j.color] ? j.color : 'green',
+          income: cleanMoney(j.income), expense: cleanMoney(j.expense), memo: String(j.memo || '').trim().slice(0, 500)
+        };
+        if (!aiSchedDraft.title) throw new Error('현장·작업 내용을 알아듣지 못했습니다.');
+        voiceHide(true); showSchedulePreview();
+      } catch (e) {
+        const keep = voiceFailKeep(text, 'scheduleMemo');
+        alert('AI 정리에 실패했습니다. (' + (e && e.message ? e.message : '통신 오류') + ')\n' + keep);
+      }
+    }
+    function showSchedulePreview() {
+      const d = aiSchedDraft;
+      const body = `<div class="bg-[#FEF9C3] border-2 border-[#EAB308] rounded-[16px] px-3.5 py-3 flex flex-col gap-2.5">${FP_CHECK_TITLE}
+          ${fpInputRow('fpSchedDate', '날짜  ' + ymdLabel(d.date), d.date, { type: 'date' })}
+          ${fpInputRow('fpSchedIncome', '받을 돈 (원)', d.income ? d.income.toLocaleString('ko-KR') : '', { inputmode: 'numeric', oninput: 'formatNumberInput(this)', color: 'text-[#15803D]', placeholder: '말씀 안 하셨어요 (비워 둬도 됩니다)' })}
+          ${fpInputRow('fpSchedExpense', '나갈 돈 (원)', d.expense ? d.expense.toLocaleString('ko-KR') : '', { inputmode: 'numeric', oninput: 'formatNumberInput(this)', placeholder: '말씀 안 하셨어요 (비워 둬도 됩니다)' })}
+          <span class="text-[14px] font-bold text-[#854D0E]">금액을 넣으면 개인 장부에도 자동으로 기록됩니다</span></div>
+        ${fpField('현장명 · 작업 내용', fpTitleBox(d.title))}
+        <div class="grid grid-cols-2 gap-2.5">${fpField('작업 분류', fpText(d.tag, '없음'))}${fpField('라벨 색상', fpText(SCHEDULE_COLOR_NAMES[d.color]))}</div>
+        ${fpField('메모', fpText(d.memo, '없음'))}`;
+      formPreviewShow({ badge: '작업 일정', title: '이렇게 등록할까요?', bodyHtml: body, primaryLabel: '이대로 일정 저장', secondaryLabel: '칸에서 고치기',
+        onPrimary: () => { if (!scheduleFillForm()) return false; setTimeout(() => saveSchedule(), 150); },
+        onSecondary: () => { scheduleFillForm(); },
+        onRetry: startScheduleVoice });
+    }
+    function scheduleFillForm() {
+      const d = aiSchedDraft; if (!d) return false;
+      const date = document.getElementById('fpSchedDate').value;
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) { alert('날짜를 확인해 주세요.'); return false; }
+      document.getElementById('scheduleDate').value = date;
+      document.getElementById('scheduleTitle').value = d.title;
+      document.getElementById('scheduleTagText').value = d.tag;
+      document.getElementById('scheduleColor').value = SCHEDULE_COLORS[d.color];
+      document.getElementById('scheduleIncome').value = document.getElementById('fpSchedIncome').value;
+      document.getElementById('scheduleExpense').value = document.getElementById('fpSchedExpense').value;
+      document.getElementById('scheduleMemo').value = d.memo;
+      return true;
+    }
+
+    // ---------------- 작업일지 ----------------
+    let aiLogDraft = null;
+    function logCategoryList() { return Array.from(document.querySelectorAll('#categoryContainer .cat-btn')).map(b => b.getAttribute('data-val')); }
+    function startLogVoice() { voiceOpen({ title: '말로 일지 쓰기', chip: '작업일지', hints: ['고객·현장', '언제', '무슨 작업', '특이사항', '연락처·주소'], onDone: runLogAi }); }
+    async function runLogAi(text) {
+      voiceShowThinking(['고객·날짜 찾기', '작업 내역 고르기', '특이사항·코멘트 다듬기']);
+      const cats = logCategoryList();
+      const prompt = `너는 조경 사업자 대표님의 작업일지 작성 도우미다. 대표님이 말로 한 오늘 작업 이야기를 일지 칸에 맞게 정리한다.
+오늘: ${todayInfo()}
+- clientName: 고객명 또는 현장명(예: "김철수", "영통 푸른아파트"). 존칭(고객님, 사장님, 댁)은 뺀다.
+- phone, address: 말한 경우만.
+- workDate: 작업 날짜 YYYY-MM-DD (말 안 했으면 오늘).
+- round: 작업 제목 한 줄(예: "9월 소나무 전지·방제").
+- cats: 아래 작업 버튼 중 해당하는 것만 정확히 같은 글자로 골라 배열에: ${JSON.stringify(cats)}
+- treePruning: 소나무가 아닌 다른 나무 가지치기를 했으면 나무 이름(예: "느티나무 3주"), 아니면 "".
+- extra: 위 버튼에 없는 다른 작업이 있으면 짧게, 없으면 "".
+- issue: 특이사항(병해충 발견, 고사, 추가 작업 필요 등). 없으면 "".
+- diagnosis: 고객님께 보이는 '현장 작업자 코멘트'. 정중한 존댓말 2~3문장으로 한 작업과 다음 계획을 설명. 없는 사실은 쓰지 않는다.
+${AI_COMMON_RULES}
+{"clientName":"","phone":"","address":"","workDate":"","round":"","cats":[],"treePruning":"","extra":"","issue":"","diagnosis":""}`;
+      try {
+        const j = await voiceAskAiJson(prompt, text);
+        const name = String(j.clientName || '').trim().slice(0, 40);
+        const found = findClientByName(name);
+        const spokenPhone = cleanPhone(j.phone);
+        aiLogDraft = {
+          clientName: found ? found.name : name, found: !!found,
+          phone: spokenPhone || (found ? String(found.phone || '').replace(/[^0-9]/g, '') : ''),
+          phoneWarn: !!spokenPhone && !phoneHeard(spokenPhone, text),
+          address: String(j.address || '').trim().slice(0, 100) || (found ? (found.address || '') : ''),
+          workDate: /^\d{4}-\d{2}-\d{2}$/.test(j.workDate || '') ? j.workDate : getTodayStr(),
+          round: String(j.round || '').trim().slice(0, 60),
+          cats: (Array.isArray(j.cats) ? j.cats : []).map(String).filter(c => cats.includes(c)),
+          treePruning: String(j.treePruning || '').trim().slice(0, 60), extra: String(j.extra || '').trim().slice(0, 60),
+          issue: String(j.issue || '').trim().slice(0, 1000), diagnosis: String(j.diagnosis || '').trim().slice(0, 1500)
+        };
+        if (!aiLogDraft.clientName && !aiLogDraft.diagnosis) throw new Error('작업 내용을 알아듣지 못했습니다.');
+        voiceHide(true); showLogPreview();
+      } catch (e) {
+        const keep = voiceFailKeep(text, 'inputDiagnosis');
+        alert('AI 정리에 실패했습니다. (' + (e && e.message ? e.message : '통신 오류') + ')\n' + keep);
+      }
+    }
+    function showLogPreview() {
+      const d = aiLogDraft;
+      const chips = d.cats.concat(d.treePruning ? ['수목가지치기 (' + d.treePruning + ')'] : [], d.extra ? [d.extra] : []);
+      const body = `${fpField('고객명 / 현장명', `<div class="flex items-center justify-between gap-2 bg-[#F4FBEA] border-l-[7px] border-[#84CC16] rounded-[14px] px-3 py-2.5"><span class="text-[19px] font-black text-[#0F172A] break-keep">${escHtml(d.clientName || '(말씀 안 하셨어요)')}</span>${d.found ? '<span class="text-[13.5px] font-black text-[#3F6212] bg-[#D9F99D] px-2 py-0.5 rounded-md shrink-0">기존 거래처</span>' : (d.clientName ? '<span class="text-[13.5px] font-black text-[#475569] bg-[#E2E8F0] px-2 py-0.5 rounded-md shrink-0">새 고객</span>' : '')}</div>`)}
+        <div class="bg-[#FEF9C3] border-2 border-[#EAB308] rounded-[16px] px-3.5 py-3 flex flex-col gap-2.5">${FP_CHECK_TITLE}
+          ${fpInputRow('fpLogDate', '작업 날짜  ' + ymdLabel(d.workDate), d.workDate, { type: 'date' })}
+          ${fpInputRow('fpLogPhone', '연락처', fmtPhone(d.phone), { type: 'tel', oninput: 'autoHyphen(this)', color: 'text-[#1D4ED8]', warn: d.phoneWarn, placeholder: '말씀 안 하셨어요 (비워 둬도 됩니다)' })}</div>
+        ${fpField('작업 제목', fpText(d.round, '없음'))}
+        ${d.address ? fpField('현장 주소', fpText(d.address)) : ''}
+        ${fpField('당일 작업 내역', chips.length ? `<div class="flex flex-wrap gap-1.5">${chips.map(c => `<span class="text-[15px] font-black bg-[#151E2D] text-[#84CC16] px-3 py-1.5 rounded-[10px]">${escHtml(c)}</span>`).join('')}</div>` : fpText('', '고른 작업이 없어요 (칸에서 눌러 주세요)'))}
+        ${fpField('특이사항', fpText(d.issue, '없음'))}
+        ${fpField('현장 작업자 코멘트 (고객님께 보이는 글)', fpText(d.diagnosis, '없음'))}
+        <span class="text-[14.5px] font-bold text-[#475569] leading-relaxed">사진은 칸에 채운 뒤 직접 넣어 주세요.</span>`;
+      formPreviewShow({ badge: '작업일지', title: '이렇게 채울까요?', bodyHtml: body, primaryLabel: '칸에 채우고 사진 넣으러 가기', onPrimary: logFillForm, onRetry: startLogVoice });
+    }
+    function logFillForm() {
+      const d = aiLogDraft; if (!d) return false;
+      const date = document.getElementById('fpLogDate').value;
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) { alert('작업 날짜를 확인해 주세요.'); return false; }
+      const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+      if (d.clientName) set('clientSelect', d.clientName);
+      set('inputClientPhone', document.getElementById('fpLogPhone').value.trim());
+      if (d.address) set('inputClientAddress', d.address);
+      if (d.round) set('inputRound', d.round);
+      set('inputWorkDate', date);
+      if (d.issue) set('inputIssue', d.issue);
+      if (d.diagnosis) set('inputDiagnosis', d.diagnosis);
+      if (d.treePruning) set('inputTreePruning', d.treePruning);
+      if (d.extra) set('inputExtraCategory', d.extra);
+      // 작업 내역 버튼: 기존 toggleBadge 그대로 사용해서 켜고 끔
+      document.querySelectorAll('#categoryContainer .cat-btn').forEach(btn => {
+        const want = d.cats.includes(btn.getAttribute('data-val')); const on = btn.classList.contains('bg-[#151E2D]');
+        if (want !== on) toggleBadge(btn);
+      });
+      const found = findClientByName(d.clientName);
+      if (found) { const r = document.querySelector(`input[name="newClientTypeReport"][value="${found.type === '개별 고객' ? '개별 고객' : '정기 관리'}"]`); if (r) r.checked = true; }
+      setTimeout(() => { const t = document.getElementById('beforeThumbRow'); if (t) t.scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 200);
+    }
+
+    // ---------------- 견적서 ----------------
+    const QUOTE_TPL_NAMES = { single: '단건 의뢰', residential: '개인주택 (월별)', commercial: '상업/빌딩 (월별)', construction: '조경공사' };
+    let aiQuoteDraft = null;
+    function startQuoteVoice() { voiceOpen({ title: '말로 견적 쓰기', chip: '견적서', hints: ['고객·현장', '작업 항목', '수량·규격', '금액', '특이사항'], onDone: runQuoteAi }); }
+    async function runQuoteAi(text) {
+      voiceShowThinking(['고객 찾기', '견적 종류 고르기', '항목·금액 정리']);
+      const prompt = `너는 조경 사업자 대표님의 견적서 작성 도우미다. 대표님이 말로 한 견적 내용을 견적서 칸에 맞게 정리한다.
+- clientName: 고객명/현장명(존칭 뺌). phone, address: 말한 경우만.
+- template: 한 번 하는 작업이면 "single", 개인주택 연간(월별) 관리면 "residential", 상가·빌딩 연간 관리면 "commercial", 식재·시공 공사면 "construction".
+- title: 견적 제목. 특별히 말 안 했으면 "".
+- items: 항목 배열 [{"label":"","desc":"","price":0}]. residential/commercial(월별)이면 label은 "3월"처럼 월, 나머지는 "01","02"… 순서 번호.
+  desc: 작업 내용(수량·규격 포함, 예: "소나무 전지 5주"). price: 대표님이 말한 금액만 숫자로, 말 안 했으면 0 (절대 단가를 추측하지 말 것).
+- memo: 참고 및 특이사항(부가세, 추가 비용 조건 등). 없으면 "".
+${AI_COMMON_RULES}
+{"clientName":"","phone":"","address":"","template":"single","title":"","items":[],"memo":""}`;
+      try {
+        const j = await voiceAskAiJson(prompt, text);
+        const name = String(j.clientName || '').trim().slice(0, 40);
+        const found = findClientByName(name);
+        const spokenPhone = cleanPhone(j.phone);
+        const tpl = QUOTE_TPL_NAMES[j.template] ? j.template : 'single';
+        aiQuoteDraft = {
+          clientName: found ? found.name : name, found: !!found,
+          phone: spokenPhone || (found ? String(found.phone || '').replace(/[^0-9]/g, '') : ''),
+          phoneWarn: !!spokenPhone && !phoneHeard(spokenPhone, text),
+          address: String(j.address || '').trim().slice(0, 100) || (found ? (found.address || '') : ''),
+          template: tpl, title: String(j.title || '').trim().slice(0, 60),
+          items: (Array.isArray(j.items) ? j.items : []).filter(it => it && (it.desc || it.price)).slice(0, 30)
+            .map((it, i) => ({ label: String(it.label || String(i + 1).padStart(2, '0')).trim().slice(0, 6), desc: String(it.desc || '').trim().slice(0, 200), price: cleanMoney(it.price) })),
+          memo: String(j.memo || '').trim().slice(0, 1000)
+        };
+        if (!aiQuoteDraft.items.length) throw new Error('견적 항목을 알아듣지 못했습니다.');
+        voiceHide(true); showQuotePreview();
+      } catch (e) {
+        const keep = voiceFailKeep(text, 'quoteInputMemo');
+        alert('AI 정리에 실패했습니다. (' + (e && e.message ? e.message : '통신 오류') + ')\n' + keep);
+      }
+    }
+    function showQuotePreview() {
+      const d = aiQuoteDraft;
+      const tplOpts = Object.keys(QUOTE_TPL_NAMES).map(k => `<option value="${k}" ${k === d.template ? 'selected' : ''}>${QUOTE_TPL_NAMES[k]}</option>`).join('');
+      const rows = d.items.map((it, i) => `<div class="flex flex-col gap-1.5 pb-2 border-b border-[#EAB308]/40"><div class="flex items-center gap-2"><span class="text-[13px] font-black bg-[#151E2D] text-white px-1.5 py-0.5 rounded-[5px] shrink-0">${escHtml(it.label)}</span><span class="text-[16px] font-extrabold text-[#334155] break-keep">${escHtml(it.desc || '-')}</span></div><div class="flex items-center gap-1.5"><label for="fpQPrice${i}" class="sr-only">${escHtml(it.label)} 금액</label><input id="fpQPrice${i}" inputmode="numeric" oninput="formatNumberInput(this); fpQuoteSum()" value="${it.price ? it.price.toLocaleString('ko-KR') : ''}" placeholder="금액 말씀 안 하셨어요" class="flex-1 min-w-0 h-[46px] rounded-[10px] border-[1.5px] border-[#EAB308] bg-white px-3 text-right text-[18px] font-black text-[#0F172A] placeholder:text-[14px] placeholder:font-bold placeholder:text-[#94A3B8]"><span class="text-[15px] font-black text-[#475569]">원</span></div></div>`).join('');
+      const body = `${fpField('고객명 / 현장명', `<div class="flex items-center justify-between gap-2 bg-[#F4FBEA] border-l-[7px] border-[#84CC16] rounded-[14px] px-3 py-2.5"><span class="text-[19px] font-black text-[#0F172A] break-keep">${escHtml(d.clientName || '(말씀 안 하셨어요)')}</span>${d.found ? '<span class="text-[13.5px] font-black text-[#3F6212] bg-[#D9F99D] px-2 py-0.5 rounded-md shrink-0">기존 거래처</span>' : ''}</div>`)}
+        <div class="flex items-center gap-2"><label for="fpQTpl" class="text-[15px] font-extrabold text-[#475569] shrink-0">견적 종류</label><select id="fpQTpl" class="flex-1 min-w-0 h-[48px] rounded-[12px] border-[1.5px] border-[#84CC16] bg-[#ECFCCB] px-3 text-[16px] font-black text-[#3F6212]">${tplOpts}</select></div>
+        <div class="bg-[#FEF9C3] border-2 border-[#EAB308] rounded-[16px] px-3.5 py-3 flex flex-col gap-2.5"><span class="text-[15px] font-black text-[#854D0E]">견적 항목 · 금액 꼭 확인하세요</span>${rows}
+          <div class="flex justify-between items-baseline"><span class="text-[17px] font-black text-[#151E2D]">합계</span><span id="fpQSum" class="text-[21px] font-black text-[#15803D]"></span></div></div>
+        ${fpInputRow('fpQPhone', '연락처', fmtPhone(d.phone), { type: 'tel', oninput: 'autoHyphen(this)', color: 'text-[#1D4ED8]', warn: d.phoneWarn, placeholder: '말씀 안 하셨어요 (비워 둬도 됩니다)' })}
+        ${fpField('참고 및 특이사항', fpText(d.memo, '없음'))}
+        <span class="text-[14.5px] font-bold text-[#475569] leading-relaxed">금액은 대표님이 말씀하신 것만 넣었습니다. 빈 곳은 직접 넣어 주세요.</span>`;
+      formPreviewShow({ badge: '견적서', title: '이렇게 채울까요?', bodyHtml: body, primaryLabel: '견적서 칸에 채우기', onPrimary: quoteFillForm, onRetry: startQuoteVoice });
+      fpQuoteSum();
+    }
+    function fpQuoteSum() {
+      let sum = 0; (aiQuoteDraft ? aiQuoteDraft.items : []).forEach((it, i) => { const el = document.getElementById('fpQPrice' + i); if (el) sum += Number(el.value.replace(/[^0-9]/g, '')) || 0; });
+      const s = document.getElementById('fpQSum'); if (s) s.innerText = sum.toLocaleString('ko-KR') + '원';
+    }
+    function quoteFillForm() {
+      const d = aiQuoteDraft; if (!d) return false;
+      const tpl = document.getElementById('fpQTpl').value;
+      // 기존 템플릿 기능 그대로: 템플릿을 불러오고 선택 표시
+      loadQuoteTemplate(tpl); markQuoteTemplate(document.querySelector(`.quote-tpl[data-tpl="${tpl}"]`));
+      // 템플릿 기본 줄은 모두 꺼 두고, 말씀하신 항목만 켜서 채움
+      for (let i = 1; i <= currentQuoteRowCount; i++) {
+        const desc = document.getElementById(`quoteDesc_${i}`); const price = document.getElementById(`quotePrice_${i}`); if (!desc || !price) continue;
+        const b = desc.parentElement.querySelector('.quote-month-btn'); if (b && b.classList.contains('bg-[#151E2D]')) toggleQuoteMonth(b);
+        desc.value = ''; price.value = '';
+      }
+      const used = new Set();
+      d.items.forEach((it, k) => {
+        const priceVal = (document.getElementById('fpQPrice' + k) || {}).value || '';
+        let rowIdx = null;
+        for (let i = 1; i <= currentQuoteRowCount; i++) { const desc = document.getElementById(`quoteDesc_${i}`); if (!desc || used.has(i)) continue; const b = desc.parentElement.querySelector('.quote-month-btn'); if (b && b.innerText.trim() === it.label) { rowIdx = i; break; } }
+        if (rowIdx === null) { for (let i = 1; i <= currentQuoteRowCount; i++) { if (!used.has(i) && document.getElementById(`quoteDesc_${i}`) && !/월$/.test(it.label) && tpl !== 'residential' && tpl !== 'commercial') { rowIdx = i; break; } } }
+        if (rowIdx === null) { addQuoteRow(); rowIdx = currentQuoteRowCount; const b = document.getElementById(`quoteDesc_${rowIdx}`).parentElement.querySelector('.quote-month-btn'); if (b) { b.innerText = it.label; b.setAttribute('data-month', it.label); } }
+        used.add(rowIdx);
+        const desc = document.getElementById(`quoteDesc_${rowIdx}`); const price = document.getElementById(`quotePrice_${rowIdx}`);
+        desc.value = it.desc; price.value = priceVal;
+        const b = desc.parentElement.querySelector('.quote-month-btn'); if (b && !b.classList.contains('bg-[#151E2D]')) toggleQuoteMonth(b);
+      });
+      if (d.clientName) document.getElementById('quoteClientSelect').value = d.clientName;
+      document.getElementById('quoteInputClientPhone').value = document.getElementById('fpQPhone').value.trim();
+      if (d.address && document.getElementById('quoteInputClientAddress')) document.getElementById('quoteInputClientAddress').value = d.address;
+      if (d.title) document.getElementById('quoteInputRound').value = d.title;
+      if (d.memo && document.getElementById('quoteInputMemo')) document.getElementById('quoteInputMemo').value = d.memo;
+      calculateQuoteTotal();
+      setTimeout(() => { const t = document.getElementById('quoteItemsContainer'); if (t) t.scrollIntoView({ block: 'start', behavior: 'smooth' }); }, 200);
+    }
+  </script>
+
   <!-- 🚪 [패치 #26] 회원 탈퇴 -->
   <div id="withdrawModal" class="hidden fixed inset-0 z-[6600] bg-black/85 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-[26px] p-6 shadow-2xl">
