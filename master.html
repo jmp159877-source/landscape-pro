@@ -496,35 +496,41 @@
         }
     }
 
-    async function loginMaster() {
-        const id = document.getElementById('masterId').value.trim();
-        const pw = document.getElementById('masterPw').value.trim();
+    async function loginMaster(session) { // 🔐 [패치 #35] session = 저장된 로그인 열쇠 (비밀번호 저장 안 함)
+        if (session && !session.idToken) session = null;
+        const id = session ? session.id : document.getElementById('masterId').value.trim();
+        const pw = session ? '' : document.getElementById('masterPw').value.trim();
         
-        if (id.length < 2 || pw.length < 6) return alert("정보를 정확히 입력해 주십시오.");
+        if (!session && (id.length < 2 || pw.length < 6)) return alert("정보를 정확히 입력해 주십시오.");
 
         const masterEmail = `${id}_master@jogyeongnote.com`; 
 
         try {
+            let authData;
+            if (session) authData = { idToken: session.idToken, refreshToken: session.refreshToken };
+            else {
             const authRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`, {
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: masterEmail, password: pw, returnSecureToken: true })
             });
-            const authData = await authRes.json();
+            authData = await authRes.json();
 
             if (authData.error) return alert("계정 정보가 일치하지 않습니다.");
+            }
 
             currentIdToken = authData.idToken; startTokenAutoRefresh(authData.refreshToken); // 🔐 [패치 #3]
             currentMasterUserId = id + '_master'; // 🔔 [패치 #33]
             
-            if(document.getElementById('masterAutoLoginCheck').checked) {
+            localStorage.removeItem('shinhwa_master_pw'); // 🔐 [패치 #35] 비밀번호 대신 로그인 열쇠만 저장
+            if(session || document.getElementById('masterAutoLoginCheck').checked) {
                 localStorage.setItem('shinhwa_master_id', id);
-                localStorage.setItem('shinhwa_master_pw', pw);
                 localStorage.setItem('shinhwa_master_auto', 'true');
+                if (authData.refreshToken) localStorage.setItem('shinhwa_master_session', authData.refreshToken);
             } else {
                 localStorage.removeItem('shinhwa_master_id');
-                localStorage.removeItem('shinhwa_master_pw');
                 localStorage.removeItem('shinhwa_master_auto');
+                localStorage.removeItem('shinhwa_master_session');
             }
 
             document.getElementById('masterLoginView').classList.add('hidden');
@@ -544,8 +550,14 @@
         const savedId = localStorage.getItem('shinhwa_master_id');
         const savedPw = localStorage.getItem('shinhwa_master_pw');
         const isAuto = localStorage.getItem('shinhwa_master_auto');
-        
-        if (savedId && savedPw && isAuto === 'true') {
+        const savedSession = localStorage.getItem('shinhwa_master_session'); // 🔐 [패치 #35]
+        if (savedId && savedSession && isAuto === 'true') {
+            document.getElementById('masterId').value = savedId;
+            document.getElementById('masterAutoLoginCheck').checked = true;
+            fetch(`https://securetoken.googleapis.com/v1/token?key=${API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: `grant_type=refresh_token&refresh_token=${encodeURIComponent(savedSession)}` })
+                .then(r => r.json()).then(d => { if (d.id_token) loginMaster({ id: savedId, idToken: d.id_token, refreshToken: d.refresh_token || savedSession }); else if (d.error) localStorage.removeItem('shinhwa_master_session'); })
+                .catch(() => {});
+        } else if (savedId && savedPw && isAuto === 'true') {
             document.getElementById('masterId').value = savedId;
             document.getElementById('masterPw').value = savedPw;
             document.getElementById('masterAutoLoginCheck').checked = true;
@@ -576,6 +588,7 @@
         localStorage.removeItem('shinhwa_master_id');
         localStorage.removeItem('shinhwa_master_pw');
         localStorage.removeItem('shinhwa_master_auto');
+        localStorage.removeItem('shinhwa_master_session'); // 🔐 [패치 #35]
         location.reload();
       }
     }
@@ -934,7 +947,7 @@
                         ? `<button onclick="updateAccountStatus('${acc.id}', 'active')" class="px-3 py-2 bg-green-500/10 text-green-400 border border-green-500/20 rounded-[8px] text-[11px] font-bold hover:bg-green-500/20 transition-all">정지 해제</button>`
                         : `<button onclick="updateAccountStatus('${acc.id}', 'suspended')" class="px-3 py-2 bg-orange-500/10 text-orange-400 border border-orange-500/20 rounded-[8px] text-[11px] font-bold hover:bg-orange-500/20 transition-all">이용 정지</button>`
                     }
-                    <button onclick="resetPassword('${acc.id}')" class="px-3 py-2 bg-white/10 text-white border border-white/20 rounded-[8px] text-[11px] font-bold hover:bg-white/20 transition-all" title="앱 접속 비번 123456으로 초기화"><i data-lucide="key" class="w-3.5 h-3.5 inline"></i> 앱 비번</button>
+                    <button onclick="resetPassword('${acc.id}')" class="px-3 py-2 bg-white/10 text-white border border-white/20 rounded-[8px] text-[11px] font-bold hover:bg-white/20 transition-all" title="앱 접속 비번을 임시 비밀번호로 초기화"><i data-lucide="key" class="w-3.5 h-3.5 inline"></i> 앱 비번</button>
                     <button onclick="resetLedgerPin('${acc.id}')" class="px-3 py-2 bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 rounded-[8px] text-[11px] font-bold hover:bg-yellow-500/20 transition-all" title="장부 비밀번호 리셋"><i data-lucide="unlock" class="w-3.5 h-3.5 inline"></i> 장부 비번</button>
                     <button onclick="deleteAccount('${acc.id}', '영구 강제 탈퇴')" class="px-3 py-2 bg-red-500/10 text-red-500 border border-red-500/20 rounded-[8px] text-[11px] font-bold hover:bg-red-500/20 transition-all"><i data-lucide="trash-2" class="w-3.5 h-3.5 inline"></i></button>
                 </td>
@@ -1073,26 +1086,14 @@
     }
 
     async function resetPassword(id) {
-        // 🔧 [패치 #1] 로그인 서버(Firebase Auth)의 비밀번호까지 실제로 바꾸도록 수정 (Firebase 규정상 6자리 이상)
-        const TEMP_PW = '123456';
-        if(!confirm(`해당 업체의 앱 접속 비밀번호를 '${TEMP_PW}'(으)로 초기화 하시겠습니까?`)) return;
+        // 🔐 [패치 #35] 저장된 비밀번호 없이, 서버(구글 스크립트)가 관리자 권한으로 직접 임시 비밀번호를 설정
+        //    임시 비밀번호는 매번 새로 만든 무작위 6자리 숫자 (모두 같은 123456을 쓰지 않음)
+        const TEMP_PW = String(100000 + (crypto.getRandomValues(new Uint32Array(1))[0] % 900000));
+        if(!confirm(`[${id}] 업체의 앱 접속 비밀번호를 임시 비밀번호로 초기화 하시겠습니까?`)) return;
         try {
-            const pRes = await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(id)}/profile.json`));
-            const profile = await pRes.json();
-            if (!profile || !profile.pw) return alert("❌ 이 업체는 저장된 비밀번호 정보가 없어 자동 초기화가 불가합니다.\nFirebase 콘솔 > Authentication 에서 직접 변경해 주세요.");
-            const email = `${profile.id || id}@jogyeongnote.com`;
-            const loginRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email, password: profile.pw, returnSecureToken: true }) });
-            const loginData = await loginRes.json();
-            if (loginData.error) return alert("❌ 저장된 비밀번호가 실제 로그인 정보와 달라 자동 초기화가 불가합니다.\nFirebase 콘솔 > Authentication 에서 직접 변경해 주세요.");
-            const updRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:update?key=${API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken: loginData.idToken, password: TEMP_PW, returnSecureToken: false }) });
-            const updData = await updRes.json();
-            if (updData.error) return alert("❌ 초기화 실패: " + updData.error.message);
-            await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(id)}/profile.json`), {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ pw: TEMP_PW })
-            });
-            alert(`✅ 초기화되었습니다.\n임시 비밀번호: ${TEMP_PW}\n\n업체 대표님께 안내하고, 앱 [설정]에서 새 비밀번호로 바꾸시도록 해주세요.`);
+            const r = await adminPush({ action: 'admin_reset_pw', targetId: id, newPw: TEMP_PW });
+            if (!r || !r.ok) return alert("❌ 초기화 실패" + (r && r.msg ? ` (${r.msg})` : '') + "\n구글 스크립트가 최신 버전으로 배포되었는지 확인해 주세요.");
+            alert(`✅ 초기화되었습니다.\n\n임시 비밀번호: ${TEMP_PW}\n\n업체 대표님께 안내하고, 앱 [설정]에서 새 비밀번호로 바꾸시도록 해주세요.`);
         } catch(e) { alert("통신 오류가 발생했습니다."); }
     }
 
