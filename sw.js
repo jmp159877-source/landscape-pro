@@ -2,7 +2,7 @@
 // 원칙: 화면은 항상 인터넷에서 최신 버전을 먼저 받는다 (옛 화면에 갇히는 문제 방지).
 //       인터넷이 끊겼을 때만 마지막으로 저장해 둔 화면을 보여준다.
 //       Firebase·AI·날씨 등 외부 서버 요청은 절대 가로채지 않는다.
-const CACHE = 'jogyeongnote-v1';
+const CACHE = 'jogyeongnote-v2'; // 🔔 패치 #33: 알림 기능 추가로 버전 올림
 const SHELL = ['/', '/manifest.json', '/icon-192.png', '/icon-512.png'];
 
 self.addEventListener('install', (e) => {
@@ -43,4 +43,39 @@ self.addEventListener('fetch', (e) => {
   if (SHELL.includes(url.pathname)) {
     e.respondWith(caches.match(req).then((r) => r || fetch(req)));
   }
+});
+
+// 🔔 [패치 #33] 푸시 알림 받기 (앱을 닫아 두어도 휴대폰 위쪽에 표시)
+self.addEventListener('push', (e) => {
+  let p = {};
+  try { p = e.data ? e.data.json() : {}; } catch (err) { p = { data: { body: e.data ? e.data.text() : '' } }; }
+  const d = p.data || p;
+  const n = p.notification || {};
+  const title = d.title || n.title || '조경노트';
+  const opts = {
+    body: d.body || n.body || '',
+    icon: '/icon-192.png',
+    badge: '/icon-192.png',
+    data: { url: d.url || '/' },
+    tag: d.tag || undefined,
+    renotify: !!d.tag,
+    vibrate: [120, 60, 120]
+  };
+  e.waitUntil(self.registration.showNotification(title, opts));
+});
+
+// 알림을 누르면 해당 화면으로 이동 (이미 열린 앱이 있으면 그 창을 사용)
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close();
+  const url = (e.notification.data && e.notification.data.url) || '/';
+  e.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+      for (const c of list) {
+        if (new URL(c.url).origin === self.location.origin && 'focus' in c) {
+          return c.navigate(url).then((w) => (w || c).focus()).catch(() => c.focus());
+        }
+      }
+      return self.clients.openWindow(url);
+    })
+  );
 });

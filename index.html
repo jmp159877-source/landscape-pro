@@ -167,18 +167,18 @@
       <p class="text-[#FEE500] text-[14.5px] font-black mb-5 text-center leading-relaxed shrink-0">입력하신 정보는 고객에게 발송되는<br>모든 리포트와 견적서에 자동 입력됩니다.</p>
       <div class="w-full space-y-4 mb-5"><!-- 👀 [패치 #13] 칸마다 이름표 -->
         <div class="bg-black/40 p-4 rounded-[18px] border border-white/10 mb-2 space-y-3 shadow-inner">
-          <div><label for="obId" class="block text-[15px] font-black text-[#D9F99D] mb-1.5 ml-1">아이디 <span class="text-[14px] font-bold text-white/60">(영문·숫자)</span></label>
-            <input type="text" id="obId" placeholder="예: jogyeong01" autocomplete="off" class="w-full bg-[#0F1722] border border-[#84CC16]/50 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white/35 placeholder:font-medium placeholder:text-[15px]">
+          <div><label for="obId" class="block text-[15px] font-black text-[#D9F99D] mb-1.5 ml-1">아이디 <span class="text-[14px] font-bold text-white/60">(영문·숫자 조합)</span></label>
+            <input type="text" id="obId" placeholder="예: abc1234" autocomplete="off" class="w-full bg-[#0F1722] border border-[#84CC16]/50 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white/35 placeholder:font-medium placeholder:text-[15px]">
           </div>
           <div><label for="obPw" class="block text-[15px] font-black text-[#D9F99D] mb-1.5 ml-1">비밀번호 <span class="text-[14px] font-bold text-white/60">(숫자 6자리 이상)</span></label>
             <input type="password" id="obPw" placeholder="숫자 6자리 이상 입력" inputmode="numeric" pattern="[0-9]*" autocomplete="off" class="w-full bg-[#0F1722] border border-[#84CC16]/50 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white/35 placeholder:font-medium placeholder:text-[15px]">
           </div>
         </div>
         <div><label for="obCompanyName" class="block text-[15px] font-black text-[#D9F99D] mb-1.5 ml-1">상호명</label>
-          <input type="text" id="obCompanyName" placeholder="예: 마카롱조경" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white/35 placeholder:font-medium placeholder:text-[15px]">
+          <input type="text" id="obCompanyName" placeholder="예: 늘푸른조경" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white/35 placeholder:font-medium placeholder:text-[15px]">
         </div>
         <div><label for="obCompanyRegion" class="block text-[15px] font-black text-[#D9F99D] mb-1.5 ml-1">활동 지역 <span class="text-[14px] font-bold text-white/60">(게시판 이름 앞에 표시)</span></label>
-          <input type="text" id="obCompanyRegion" placeholder="예: 수원, 남양주, 대전" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white/35 placeholder:font-medium placeholder:text-[15px]">
+          <input type="text" id="obCompanyRegion" placeholder="예: 서울 강남, 경기 수원, 충남 천안" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white/35 placeholder:font-medium placeholder:text-[15px]">
         </div><!-- 📍 [패치 #10] -->
         <div><label for="obCompanyCeo" class="block text-[15px] font-black text-[#D9F99D] mb-1.5 ml-1">대표자명</label>
           <input type="text" id="obCompanyCeo" placeholder="예: 홍길동" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white/35 placeholder:font-medium placeholder:text-[15px]">
@@ -231,11 +231,21 @@
           <div><label class="block text-[13.5px] font-black text-[#A3A8A3] ml-1 mb-1">연락처</label><input type="tel" id="setCompanyPhone" oninput="autoHyphen(this)" readonly class="w-full bg-white/5 border border-white/10 rounded-[12px] px-4 py-3 text-white/50 text-[15px] font-black outline-none cursor-not-allowed"></div>
           <div><label class="block text-[13.5px] font-black text-[#A3A8A3] ml-1 mb-1">사업자등록번호</label><input type="text" id="setCompanyBizNum" readonly class="w-full bg-white/5 border border-white/10 rounded-[12px] px-4 py-3 text-white/50 text-[15px] font-black outline-none cursor-not-allowed"></div>
         </div>
+        <!-- 🔔 [패치 #33] 알림 설정 -->
+        <div id="pushPanel" class="rounded-[18px] border-2 border-[#84CC16]/60 bg-[#84CC16]/10 p-4 space-y-3">
+          <div class="flex items-center gap-2"><i data-lucide="bell-ring" class="w-6 h-6 text-[#BEF264]"></i><span class="text-[18px] font-black text-white">알림 설정</span></div>
+          <p id="pushStatusText" class="text-[15px] font-bold text-[#E2E8F0] leading-relaxed break-keep">휴대폰 알림을 켜면 앱을 닫아도 새 소식을 바로 받습니다.</p>
+          <button id="pushEnableBtn" onclick="enablePush()" class="w-full h-[54px] rounded-[14px] bg-[#84CC16] text-[#1A2E05] text-[17px] font-black flex items-center justify-center gap-2 active:scale-95 transition-all"><i data-lucide="bell" class="w-5 h-5"></i> 알림 켜기</button>
+          <div id="pushPrefsBox" class="hidden space-y-2">
+            <div id="pushPrefsList" class="space-y-2"></div>
+            <button onclick="savePushPrefs()" class="w-full h-[52px] rounded-[14px] bg-white text-[#151E2D] text-[16.5px] font-black active:scale-95 transition-all">알림 설정 저장</button>
+          </div>
+        </div>
         <button id="installAppBtn" onclick="installApp()" class="w-full h-[56px] rounded-[14px] bg-[#84CC16] text-[#1A2E05] text-[17px] font-black flex items-center justify-center gap-2 active:scale-95 transition-all"><i data-lucide="smartphone" class="w-5 h-5"></i> 홈 화면에 앱 설치하기</button><!-- 📲 [패치 #25] -->
         <button onclick="document.getElementById('settingsModal').classList.add('hidden'); openGuide();" class="w-full h-[52px] rounded-[14px] bg-white/10 border border-white/20 text-white text-[16px] font-black flex items-center justify-center gap-2"><i data-lucide="book-open" class="w-5 h-5 text-[#84CC16]"></i> 앱 사용법 다시 보기</button><!-- 📖 [패치 #23] -->
         <div class="pt-4 border-t border-white/10 space-y-2"><!-- 📍 [패치 #10] 활동 지역 -->
           <label class="block text-[14.5px] font-black text-[#84CC16] ml-1"><i data-lucide="map-pin" class="w-4 h-4 inline-block -mt-0.5"></i> 활동 지역 <span class="text-[#A3A8A3] font-bold">(게시판 이름 앞에 표시)</span></label>
-          <div class="flex gap-2"><input type="text" id="setCompanyRegion" placeholder="예: 수원, 남양주, 대전" class="flex-1 min-w-0 bg-black/40 border border-[#84CC16]/50 rounded-[14px] px-4 py-3.5 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16]"><button onclick="saveRegion()" class="shrink-0 px-4 bg-[#84CC16]/20 text-[#84CC16] border border-[#84CC16]/40 rounded-[14px] text-[14px] font-black hover:bg-[#84CC16]/30">지역 저장</button></div>
+          <div class="flex gap-2"><input type="text" id="setCompanyRegion" placeholder="예: 서울 강남, 경기 수원, 충남 천안" class="flex-1 min-w-0 bg-black/40 border border-[#84CC16]/50 rounded-[14px] px-4 py-3.5 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16]"><button onclick="saveRegion()" class="shrink-0 px-4 bg-[#84CC16]/20 text-[#84CC16] border border-[#84CC16]/40 rounded-[14px] text-[14px] font-black hover:bg-[#84CC16]/30">지역 저장</button></div>
         </div>
         <div class="pt-4 border-t border-white/10 space-y-3">
           <label class="block text-[14.5px] font-black text-[#84CC16] ml-1"><i data-lucide="key" class="w-4 h-4 inline-block -mt-0.5"></i> 새로운 비밀번호 설정</label>
@@ -1697,8 +1707,9 @@
 
     function getAuthUrl(url) { if (!currentIdToken) return url; const sep = url.includes('?') ? '&' : '?'; return `${url}${sep}auth=${currentIdToken}`; }
     // 📍 [패치 #10] 활동 지역 도우미 (예: '수원시' → '수원', '서울특별시' → '서울')
-    function normalizeRegion(v) { let r = (v || '').replace(/\s/g, ''); r = r.replace(/(특별자치시|특별자치도|특별시|광역시)$/, ''); if (r.length >= 3) r = r.replace(/(시|군)$/, ''); return r.slice(0, 10); }
-    function isValidRegion(r) { return /^[가-힣]{2,10}$/.test(r); }
+    // ✏️ [패치 #32] 띄어쓰기 한 칸 허용: '서울 강남', '경기 수원시' → '경기 수원' (단어마다 특별시·광역시·시·군·구 정리)
+    function normalizeRegion(v) { return (v || '').replace(/[,·]/g, ' ').trim().split(/\s+/).filter(Boolean).slice(0, 2).map(w => { w = w.replace(/(특별자치시|특별자치도|특별시|광역시)$/, ''); if (w.length >= 3) w = w.replace(/(시|군|구)$/, ''); return w; }).join(' ').slice(0, 12); }
+    function isValidRegion(r) { return /^[가-힣]{2,8}( [가-힣]{2,8})?$/.test(r); }
     function escHtml(v) { return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
     // 📅 [패치 #9] 작업 날짜 도우미
     function getTodayStr() { const t = new Date(); return `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`; }
@@ -1789,7 +1800,7 @@
 
     async function saveOnboarding() {
         const id = document.getElementById('obId').value.trim(); const pw = document.getElementById('obPw').value.trim();
-        const name = document.getElementById('obCompanyName').value.trim(); const ceo = document.getElementById('obCompanyCeo').value.trim(); const region = normalizeRegion(document.getElementById('obCompanyRegion') ? document.getElementById('obCompanyRegion').value : ''); if (!isValidRegion(region)) return alert("활동 지역을 한글로 입력해 주세요. (예: 수원, 남양주, 대전)"); // 📍 [패치 #10]
+        const name = document.getElementById('obCompanyName').value.trim(); const ceo = document.getElementById('obCompanyCeo').value.trim(); const region = normalizeRegion(document.getElementById('obCompanyRegion') ? document.getElementById('obCompanyRegion').value : ''); if (!isValidRegion(region)) return alert("활동 지역을 한글로 입력해 주세요. (예: 서울 강남, 경기 수원, 충남 천안)"); // 📍 [패치 #10]
         const phone = document.getElementById('obCompanyPhone').value.trim(); const bizNum = document.getElementById('obCompanyBizNum').value.trim();
         if (!id || !pw || !name || !ceo || !phone || !bizNum) return alert("항목을 모두 입력해 주세요.");
         if (/[^a-zA-Z0-9]/.test(id)) return alert("아이디는 영문과 숫자만 사용해 주세요."); if (id.length < 2) return alert("아이디는 2글자 이상 입력해 주세요."); if (pw.length < 6) return alert("비밀번호는 6자리 이상 입력해 주세요.");
@@ -1814,7 +1825,12 @@
             
             const profileData = { id, pw, name, ceo, phone, bizNum, region, license: licenseUrl, status: 'pending', termsAgreedAt: agreedTime }; // 📍 [패치 #10] region 추가
             await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(profileData) });
-            alert("가입이 완료되었습니다. 관리자 승인을 기다려주세요."); currentIdToken = ""; showLogin();
+            alert("가입이 완료되었습니다. 관리자 승인을 기다려주세요.");
+            // 🔔 [패치 #33] 승인되면 휴대폰 알림으로 알려드리기
+            if (pushConfigured() && pushBrowserOk() && !pushIsIphoneBrowser() && confirm('관리자가 승인하면 휴대폰 알림으로 바로 알려드릴까요?\n(다음 화면에서 [허용]을 눌러주세요)')) {
+                try { if (await Notification.requestPermission() === 'granted') await savePushToken(id, currentIdToken, true); } catch (e) {}
+            }
+            currentIdToken = ""; showLogin();
         } catch(e) { alert("서버 오류"); } finally { document.getElementById('loadingOverlay')?.remove(); }
     }
 
@@ -1876,6 +1892,7 @@
                 loadRealWeather(); 
                 history.replaceState({ view: 'home' }, "", ""); 
                 switchView('home', false); 
+                setTimeout(() => { handlePushOpen(); silentPushRefresh(); }, 700); // 🔔 [패치 #33]
                 // 앱 진입 1초 후 최초 팝업 확인
                 setTimeout(() => {
                     checkAppNotices(); // 📖 [패치 #24] 로그인 시 사용법 자동 표시 제거 (설정 > '앱 사용법 다시 보기'로만)
@@ -1961,7 +1978,7 @@
     function openSettings() {
         if(!myCompanyProfile) return;
         document.getElementById('setCompanyName').value = myCompanyProfile.name || ''; document.getElementById('setCompanyCeo').value = myCompanyProfile.ceo || '';
-        document.getElementById('setCompanyPhone').value = myCompanyProfile.phone || ''; document.getElementById('setCompanyBizNum').value = myCompanyProfile.bizNum || ''; document.getElementById('setCompanyPw').value = ''; if (document.getElementById('setCompanyRegion')) document.getElementById('setCompanyRegion').value = myCompanyProfile.region || ''; /* 📍 [패치 #10] */ 
+        document.getElementById('setCompanyPhone').value = myCompanyProfile.phone || ''; document.getElementById('setCompanyBizNum').value = myCompanyProfile.bizNum || ''; document.getElementById('setCompanyPw').value = ''; if (document.getElementById('setCompanyRegion')) document.getElementById('setCompanyRegion').value = myCompanyProfile.region || ''; /* 📍 [패치 #10] */ refreshPushPanel(); /* 🔔 [패치 #33] */ 
         const modal = document.getElementById('settingsModal'); const box = document.getElementById('settingsBox');
         modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10); history.pushState({ modalOpen: true }, "", "");
     }
@@ -1973,7 +1990,7 @@
     // 📍 [패치 #10] 활동 지역 저장
     async function saveRegion() {
         const region = normalizeRegion(document.getElementById('setCompanyRegion').value);
-        if (!isValidRegion(region)) return alert("활동 지역을 한글로 입력해 주세요. (예: 수원, 남양주, 대전)");
+        if (!isValidRegion(region)) return alert("활동 지역을 한글로 입력해 주세요. (예: 서울 강남, 경기 수원, 충남 천안)");
         showLoadingOverlay("저장 중...");
         try {
             const res = await fetch(getAuthUrl(`${DB_BASE_URL}/${getSafeKey(currentUserId)}/profile.json`), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ region: region }) });
@@ -3442,6 +3459,98 @@
         document.getElementById('loadingOverlay')?.remove();
         alert('탈퇴 처리 중 문제가 생겼습니다. 잠시 후 다시 시도하시거나 [1:1 문의]로 알려주세요.');
       }
+    }
+
+    // 🔔 [패치 #33] 푸시 알림 (Firebase 알림 + Apps Script 발송)
+    // ▼ Firebase 콘솔에서 받은 값을 넣는 곳 (값이 없으면 알림 기능은 '준비 중'으로만 표시되고 앱은 정상 작동)
+    const FIREBASE_WEB_CONFIG = { apiKey: "AIzaSyC_1KaOSychXSNF-Z-vnVONLB_-aAGghhk", authDomain: "shinhwa-landnote.firebaseapp.com", databaseURL: "https://shinhwa-landnote-default-rtdb.firebaseio.com", projectId: "shinhwa-landnote", storageBucket: "shinhwa-landnote.firebasestorage.app", messagingSenderId: "623461445108", appId: "1:623461445108:web:351eea30e03d278725dda1" };
+    const FCM_VAPID_KEY = "BJrrESIaNMTvCe98leRovFlWDT09OOGMSTW6Y7vZ7uwVNLzpb9X9aCGDstxiMr455nnIgG3Qm1sS7xjMfsWY7MU";          // 예: "BKxxxx...(웹 푸시 인증서 키 쌍)"
+    const PUSH_BOARDS = [['현장협력', '작업 지원·협력'], ['일감양도', '작업 양도·양수'], ['장비자재', '장비·자재 직거래'], ['견적단가', '견적·단가 자문'], ['자유소통', '자유 소통'], ['정보교환', '정보 교환·업체 공유'], ['노하우', '실무 노하우'], ['불량거래처', '불량 거래처 경보']];
+    const PUSH_DEFAULT_PREFS = { chat: true, notice: true, boards: { '현장협력': true, '일감양도': true, '장비자재': true, '견적단가': false, '자유소통': false, '정보교환': false, '노하우': false, '불량거래처': true } };
+    const PUSH_BOARD_TITLES = { '현장협력': '현장 협력·지원', '일감양도': '일감 패스·공사 양도', '장비자재': '장비·자재 직거래', '견적단가': '실전 견적·단가 자문', '자유소통': '자유 소통·일상방', '정보교환': '정보 교환·업체 찾기', '노하우': '실무 노하우 공유', '불량거래처': '불량 거래처 경보' }; // openBoard() 내부 키
+    let pushPrefsCache = null;
+    function pushConfigured() { return !!(FIREBASE_WEB_CONFIG && FIREBASE_WEB_CONFIG.messagingSenderId && FCM_VAPID_KEY); }
+    function pushBrowserOk() { return ('serviceWorker' in navigator) && ('PushManager' in window) && ('Notification' in window) && location.protocol === 'https:'; }
+    function pushIsIphoneBrowser() { return /iPhone|iPad|iPod/i.test(navigator.userAgent) && !isStandaloneApp(); }
+    function pushSubUrl(uid) { return `https://shinhwa-landnote-default-rtdb.firebaseio.com/push_subs/${getSafeKey(uid)}`; }
+    function pushHash(t) { let h = 5381; for (let i = 0; i < t.length; i++) h = ((h << 5) + h + t.charCodeAt(i)) >>> 0; return 't' + h.toString(36); }
+    function loadScriptOnce(src) { return new Promise((ok, fail) => { if (document.querySelector(`script[src="${src}"]`)) return ok(); const el = document.createElement('script'); el.src = src; el.onload = ok; el.onerror = fail; document.head.appendChild(el); }); }
+    async function getFcmToken() {
+      await loadScriptOnce('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js');
+      await loadScriptOnce('https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js');
+      if (!firebase.apps.length) firebase.initializeApp(FIREBASE_WEB_CONFIG);
+      const reg = await navigator.serviceWorker.register('/sw.js'); await navigator.serviceWorker.ready;
+      return await firebase.messaging().getToken({ vapidKey: FCM_VAPID_KEY, serviceWorkerRegistration: reg });
+    }
+    async function savePushToken(uid, idToken, withDefaults) {
+      const token = await getFcmToken(); if (!token) throw new Error('no token');
+      const body = {}; body['tokens/' + pushHash(token)] = { t: token, at: Date.now(), ua: navigator.userAgent.slice(0, 120) };
+      if (withDefaults) body['prefs'] = PUSH_DEFAULT_PREFS;
+      const r = await fetch(`${pushSubUrl(uid)}.json?auth=${idToken}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      if (!r.ok) throw new Error('save fail');
+      return token;
+    }
+    async function loadPushPrefs() {
+      try { const r = await fetch(`${pushSubUrl(currentUserId)}.json?auth=${currentIdToken}`); const d = r.ok ? await r.json() : null; return d; } catch (e) { return null; }
+    }
+    async function refreshPushPanel() {
+      const st = document.getElementById('pushStatusText'), btn = document.getElementById('pushEnableBtn'), box = document.getElementById('pushPrefsBox');
+      if (!st) return;
+      if (!pushConfigured()) { st.innerText = '알림 기능은 준비 중입니다. 곧 사용하실 수 있어요.'; btn.classList.add('hidden'); box.classList.add('hidden'); return; }
+      if (pushIsIphoneBrowser()) { st.innerText = '아이폰은 [홈 화면에 앱 설치하기]로 설치한 앱에서만 알림을 받을 수 있습니다. 설치 후 앱에서 알림을 켜주세요.'; btn.classList.add('hidden'); box.classList.add('hidden'); return; }
+      if (!pushBrowserOk()) { st.innerText = '이 화면에서는 알림을 켤 수 없습니다. 크롬이나 삼성 인터넷, 또는 설치한 앱에서 열어주세요.'; btn.classList.add('hidden'); box.classList.add('hidden'); return; }
+      const sub = await loadPushPrefs();
+      const on = Notification.permission === 'granted' && sub && sub.tokens;
+      pushPrefsCache = Object.assign({}, PUSH_DEFAULT_PREFS, (sub && sub.prefs) || {}); pushPrefsCache.boards = Object.assign({}, PUSH_DEFAULT_PREFS.boards, ((sub && sub.prefs) || {}).boards || {});
+      if (Notification.permission === 'denied') { st.innerText = '휴대폰에서 알림이 막혀 있습니다. 휴대폰 [설정 → 애플리케이션(앱) → 크롬 또는 조경노트 → 알림]에서 허용해 주세요.'; btn.classList.add('hidden'); box.classList.add('hidden'); return; }
+      if (!on) { st.innerText = '휴대폰 알림을 켜면 앱을 닫아도 새 소식을 바로 받습니다.'; btn.classList.remove('hidden'); box.classList.add('hidden'); return; }
+      st.innerText = '✅ 알림이 켜져 있습니다. 받고 싶은 알림을 골라주세요.'; btn.classList.add('hidden'); box.classList.remove('hidden');
+      const row = (id, label, checked, sub2) => `<label class="flex items-center justify-between gap-3 bg-black/30 rounded-[12px] px-4 py-3 cursor-pointer"><span class="text-[16px] font-black text-white">${label}${sub2 ? `<span class="block text-[13.5px] font-bold text-[#CBD5E1]">${sub2}</span>` : ''}</span><input type="checkbox" data-push="${id}" ${checked ? 'checked' : ''} class="w-7 h-7 accent-[#84CC16] shrink-0"></label>`;
+      document.getElementById('pushPrefsList').innerHTML =
+        row('chat', '💬 1:1 대화 새 메시지', pushPrefsCache.chat !== false) +
+        row('notice', '📢 관리자 공지', pushPrefsCache.notice !== false) +
+        '<div class="text-[14.5px] font-black text-[#BEF264] pt-2 ml-1">소통방 게시판 새 글</div>' +
+        PUSH_BOARDS.map(([k, t]) => row('b_' + k, t, !!pushPrefsCache.boards[k])).join('');
+    }
+    async function enablePush() {
+      if (!pushConfigured() || !pushBrowserOk()) return refreshPushPanel();
+      try {
+        const perm = await Notification.requestPermission();
+        if (perm !== 'granted') { alert('알림이 허용되지 않았습니다.\n휴대폰 [설정 → 애플리케이션 → 크롬(또는 조경노트) → 알림]에서 허용하신 뒤 다시 눌러주세요.'); return refreshPushPanel(); }
+        showLoadingOverlay('알림 연결 중...');
+        const sub = await loadPushPrefs();
+        await savePushToken(currentUserId, currentIdToken, !(sub && sub.prefs));
+        document.getElementById('loadingOverlay')?.remove();
+        alert('🔔 알림이 켜졌습니다.\n받고 싶은 게시판을 골라 [알림 설정 저장]을 눌러주세요.');
+      } catch (e) { document.getElementById('loadingOverlay')?.remove(); alert('알림 연결에 실패했습니다. 잠시 후 다시 시도해 주세요.'); }
+      refreshPushPanel();
+    }
+    async function savePushPrefs() {
+      const prefs = { chat: false, notice: false, boards: {} };
+      document.querySelectorAll('#pushPrefsList [data-push]').forEach(el => { const k = el.dataset.push; if (k.startsWith('b_')) prefs.boards[k.slice(2)] = el.checked; else prefs[k] = el.checked; });
+      try {
+        const r = await fetch(`${pushSubUrl(currentUserId)}/prefs.json?auth=${currentIdToken}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(prefs) });
+        if (!r.ok) throw new Error();
+        alert('✅ 알림 설정이 저장되었습니다.');
+      } catch (e) { alert('저장에 실패했습니다. 잠시 후 다시 시도해 주세요.'); }
+    }
+    // 로그인할 때마다 조용히 알림 연결을 새로 고침 (휴대폰이 알림 주소를 바꾸는 경우 대비)
+    async function silentPushRefresh() {
+      try { if (!pushConfigured() || !pushBrowserOk() || Notification.permission !== 'granted' || !currentUserId) return; const sub = await loadPushPrefs(); if (!sub || !sub.tokens) return; await savePushToken(currentUserId, currentIdToken, false); } catch (e) {}
+    }
+    // 서버(Apps Script)에 알림 발송 요청 (실패해도 앱 동작에는 영향 없음)
+    function requestPush(payload) {
+      try { fetch(GOOGLE_PROXY_URL_PUSH, { method: 'POST', body: JSON.stringify(Object.assign({ idToken: currentIdToken, userId: currentUserId }, payload)) }).catch(() => {}); } catch (e) {}
+    }
+    const GOOGLE_PROXY_URL_PUSH = "https://script.google.com/macros/s/AKfycbysZFaBJt9Iu964hP9rJVjmYHDMMo_TQAocjih4h8q0_im414WA6-23LS6Wm4xQvTJRQw/exec";
+    // 알림을 눌러서 들어왔을 때 해당 화면 열기
+    function handlePushOpen() {
+      try {
+        const q = new URLSearchParams(location.search); const open = q.get('open'); if (!open) return;
+        history.replaceState({ view: 'home' }, '', location.pathname);
+        if (open === 'board') { switchView('lounge'); setTimeout(() => { loadCommunityPosts(); openBoard(PUSH_BOARD_TITLES[q.get('cat')] || '전체'); }, 150); }
+        else if (open === 'chat' && q.get('with')) { switchView('lounge'); setTimeout(() => openBoardChat(q.get('with'), q.get('name') || '대표님'), 150); }
+      } catch (e) {}
     }
 
     function switchView(mode, pushHistory = true) {
@@ -5353,6 +5462,7 @@
                   body: JSON.stringify(postData)
               });
               if (!postRes.ok) throw new Error('post fail');
+              try { const pk = (await postRes.clone().json()).name; if (pk) requestPush({ action: 'push_post', postKey: pk }); } catch (e) {} // 🔔 [패치 #33]
               boardWriteImages = [];
               await addLoungePoints(100);
               alert("🎉 게시글이 등록되어 활동 포인트 +100 P가 적립되었습니다!");
@@ -5361,7 +5471,7 @@
               
               const tabs = document.querySelectorAll('.board-tab-btn');
               tabs.forEach(btn => { 
-                  if(btn.innerText.replace(/[^가-힣]/g, '').includes(category.substring(0,2))) filterBoard(category, btn); 
+                  if((btn.getAttribute('onclick') || '').includes("'" + category + "'")) filterBoard(category, btn); // 🔔 [패치 #33] 이름 변경 후에도 정확히 
               });
           } catch(e) { alert("통신 오류가 발생했습니다."); } 
           finally { document.getElementById('loadingOverlay')?.remove(); }
@@ -5406,9 +5516,10 @@
               timeStr: new Date().toLocaleString('ko-KR', {hour: '2-digit', minute:'2-digit'})
           };
           try {
-              await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_chats/${currentChatRoom}.json?auth=${currentIdToken}`, {
+              const chatRes = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_chats/${currentChatRoom}.json?auth=${currentIdToken}`, {
                   method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(msgData)
               });
+              if (chatRes.ok && chatTargetId) requestPush({ action: 'push_chat', room: currentChatRoom, targetId: chatTargetId, text: text.slice(0, 80) }); // 🔔 [패치 #33]
               loadChatMessages(true);
           } catch(e) { alert("메시지 전송 실패"); }
       }
