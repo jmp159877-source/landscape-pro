@@ -36,6 +36,10 @@
     .glass-nav { background: linear-gradient(180deg, rgba(11, 21, 18, 0.96) 0%, rgba(21, 38, 32, 0.96) 100%) !important; backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.12); }
 
     /* 💡 [공통] 12개 버튼 크기 확대 & 야외 초고시인성 텍스트 확대 */
+    /* 🧭 [패치 #17] 하단 메뉴가 내용을 가리지 않도록 여백 */
+    body.has-bnav #swipeContainer { padding-bottom: 104px !important; }
+    .bnav-btn.is-active { color: #84CC16 !important; }
+    .bnav-btn.is-active .bnav-bar { opacity: 1 !important; }
     #mainCategoryWrapper nav button {
       padding-top: 22px !important;
       padding-bottom: 22px !important;
@@ -227,59 +231,54 @@
   <datalist id="clientDatalist"></datalist>
 
   <!-- 🔥 메인 헤더 레이아웃 🔥 -->
-  <header id="mainHeader" class="no-print sticky top-0 z-40 glass-nav px-5 py-4 shadow-md" style="display: none;">
+  <header id="mainHeader" class="no-print sticky top-0 z-40 glass-nav px-4 py-2.5 shadow-md" style="display: none;"><!-- 🧭 [패치 #17] 한 줄 헤더 -->
     <div class="max-w-md mx-auto flex items-center justify-between gap-2">
       <!-- 좌측: 로고 및 3단 중앙 타이틀 블록 (시안 A: 황금비율 확대) -->
       <style>
-        #company-name-header span:first-child { font-size: 26px !important; }
-        #company-name-header span:last-child { font-size: 25px !important; }
+        #company-name-header span:first-child { font-size: 21px !important; }
+        #company-name-header span:last-child { font-size: 20px !important; }
       </style>
-      <div class="flex items-center gap-3.5 min-w-0">
-        <!-- 로고 크기 확대 (54px -> 64px) 및 은은한 테두리 광택 추가 -->
-        <div class="w-[64px] h-[64px] rounded-[20px] bg-[#84CC16] flex items-center justify-center shadow-[0_6px_20px_rgba(132,204,22,0.35)] border border-white/40 shrink-0">
-          <i data-lucide="leaf" class="w-8 h-8 text-[#151E2D] stroke-[2.6]"></i>
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div class="w-[42px] h-[42px] rounded-[13px] bg-[#84CC16] flex items-center justify-center shadow-[0_4px_14px_rgba(132,204,22,0.35)] shrink-0">
+          <i data-lucide="leaf" class="w-6 h-6 text-[#151E2D] stroke-[2.6]"></i>
         </div>
-
         <div class="flex flex-col min-w-0">
-          <!-- 1줄: 상호명 + 조경 (26px / 25px 확대) -->
-          <div id="company-name-header" class="font-black text-white tracking-tight flex items-baseline gap-1.5 flex-wrap leading-none">
+          <div id="company-name-header" class="font-black text-white tracking-tight flex items-baseline gap-1 flex-wrap leading-none">
             업체명
           </div>
-
-          <!-- 2줄: PRO 마크 & 보안 연동됨 마크 (12px 확대) -->
-          <div class="flex items-center gap-1.5 mt-2">
-            <span class="text-[12px] bg-[#84CC16]/25 text-[#84CC16] font-black px-2.5 py-0.5 rounded-md uppercase tracking-widest border border-[#84CC16]/50 whitespace-nowrap">PRO</span>
-            <span id="cloudStatusBadge" class="text-[12px] bg-sky-500/20 text-sky-300 font-black px-2.5 py-0.5 rounded-md uppercase tracking-widest border border-sky-400/40 flex items-center gap-1 whitespace-nowrap">
-              <i data-lucide="cloud" class="w-3.5 h-3.5"></i> 보안 연동됨
-            </span>
+          <div class="flex items-center gap-1.5 mt-1">
+            <span class="text-[11px] bg-[#84CC16]/25 text-[#84CC16] font-black px-2 py-0.5 rounded-md tracking-widest border border-[#84CC16]/50 whitespace-nowrap">PRO</span>
+            <span class="text-[13px] font-extrabold text-[#CBD5E1] whitespace-nowrap">조경노트</span>
+            <span id="cloudStatusBadge" class="hidden"><i data-lucide="cloud" class="w-3.5 h-3.5"></i> 보안 연동됨</span>
           </div>
-
-          <!-- 3줄: 스마트 솔루션 조경노트 PRO (👀 [패치 #13] 모든 업체 공통 문구) -->
-          <span class="text-[15px] font-extrabold text-[#CBD5E1] tracking-tight mt-1.5 whitespace-nowrap">
-            스마트 솔루션 <strong class="text-[#84CC16] font-black">조경노트 PRO</strong>
-          </span>
         </div>
       </div>
 
-      <!-- 우측: 설정 / 로그아웃 (40px 원형 + 13px 글씨) + [1:1 문의하기] 확대 -->
-      <div class="flex flex-col items-stretch w-[112px] gap-2.5 shrink-0">
-        <div class="flex items-start justify-between w-full px-1">
-          <button onclick="openSettings()" class="flex flex-col items-center gap-1 group">
-            <div class="w-10 h-10 bg-white/12 group-hover:bg-white/20 rounded-full flex items-center justify-center transition-all border border-white/30 shadow-sm"><i data-lucide="settings" class="w-5 h-5 text-white"></i></div>
-            <span class="text-[13px] font-black text-white tracking-wide whitespace-nowrap">설정</span>
-          </button>
-          <button onclick="logoutAdmin()" class="flex flex-col items-center gap-1 group">
-            <div class="w-10 h-10 bg-red-500/15 group-hover:bg-red-500/25 rounded-full flex items-center justify-center transition-all border border-red-400/40 shadow-sm"><i data-lucide="power" class="w-5 h-5 text-red-400"></i></div>
-            <span class="text-[13px] font-black text-white tracking-wide whitespace-nowrap">로그아웃</span>
-          </button>
-        </div>
-        <button id="tabInquiry" onclick="openInquiryModal()" class="w-full py-2 rounded-full bg-white/12 hover:bg-white/20 border-[1.5px] border-[#FDE047]/70 text-white text-[12.5px] font-black flex items-center justify-center gap-1 shadow-md active:scale-95 transition-all whitespace-nowrap">
-          <i data-lucide="headphones" class="w-3.5 h-3.5 text-[#FDE047] shrink-0"></i> 1:1 문의하기
+      <div class="flex items-center gap-1 shrink-0">
+        <button id="tabInquiry" onclick="openInquiryModal()" class="flex flex-col items-center gap-0.5 w-[50px] group" title="1:1 문의">
+          <div class="w-10 h-10 rounded-full bg-white/10 group-hover:bg-white/20 border border-[#FDE047]/60 flex items-center justify-center"><i data-lucide="headphones" class="w-5 h-5 text-[#FDE047]"></i></div>
+          <span class="text-[12.5px] font-black text-white whitespace-nowrap">문의</span>
+        </button>
+        <button onclick="openSettings()" class="flex flex-col items-center gap-0.5 w-[50px] group" title="설정">
+          <div class="w-10 h-10 rounded-full bg-white/10 group-hover:bg-white/20 border border-white/30 flex items-center justify-center"><i data-lucide="settings" class="w-5 h-5 text-white"></i></div>
+          <span class="text-[12.5px] font-black text-white whitespace-nowrap">설정</span>
+        </button>
+        <button onclick="logoutAdmin()" class="flex flex-col items-center gap-0.5 w-[50px] group" title="로그아웃">
+          <div class="w-10 h-10 rounded-full bg-red-500/15 group-hover:bg-red-500/25 border border-red-400/40 flex items-center justify-center"><i data-lucide="power" class="w-5 h-5 text-red-400"></i></div>
+          <span class="text-[12.5px] font-black text-white whitespace-nowrap">로그아웃</span>
         </button>
       </div>
     </div>
     
-    <div class="max-w-md mx-auto mt-4">
+  </header>
+
+  <div id="swipeContainer" class="max-w-md mx-auto p-4 space-y-5">
+    <!-- 🧭 [패치 #17] 홈 화면: 오늘의 현황 + 전체 메뉴 -->
+    <section id="homeView" class="hidden space-y-4">
+      <div id="homeDashboard" class="space-y-4"></div>
+      <div class="rounded-[28px] px-4 pt-5 pb-6 border border-white/10" style="background: rgba(255,255,255,0.03);">
+        <h2 class="text-[20px] font-black text-white flex items-center gap-2 mb-1 ml-1"><i data-lucide="layout-grid" class="w-6 h-6 text-[#84CC16]"></i> 전체 메뉴</h2>
+      <div class="max-w-md mx-auto">
         <!-- 접기/펼치기 영역 시작 (1:1 문의하기 제외 후 11개 버튼 완벽 정렬) -->
         <div id="mainCategoryWrapper" class="max-w-md mx-auto" style="margin-top: 22px !important; padding-top: 22px !important; border-top: 1px solid rgba(255, 255, 255, 0.12) !important;">
             <!-- 🎨 [패치 #15] 메뉴 C안: 업무 관리 / 현장 도구 / 대표님 전용 3묶음 -->
@@ -342,7 +341,7 @@
         </div>
                 
         <!-- 메뉴 접기 버튼 (골드&실버 입체 테두리 적용) -->
-            <div class="flex justify-center mt-5 relative">
+            <div class="hidden flex justify-center mt-5 relative"><!-- 🧭 [패치 #17] 접기 버튼 숨김(기능 코드 보존) -->
                 <button onclick="toggleMainCategory()" class="flex items-center gap-2.5 text-[17.5px] font-black text-[#151E2D] tracking-tight hover:brightness-95 active:scale-95 transition-all px-8 py-3.5 rounded-full" style="font-family: 'Pretendard', sans-serif !important; background: linear-gradient(135deg, #FFFFFF 0%, #E2E8F0 100%) !important; border: 2px solid #D4AF37 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px #FFFFFF !important;">
                     <span id="toggleCategoryText" class="font-black text-[#151E2D] tracking-tight" style="font-family: 'Pretendard', sans-serif !important; font-size: 17.5px !important;">메뉴 접기</span>
                     <div class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#84CC16] border border-[#151E2D]/25 shadow-sm shrink-0">
@@ -352,9 +351,9 @@
                 <div class="absolute top-1/2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent -z-10"></div>
             </div>
     </div>
-  </header>
+      </div>
+    </section>
 
-  <div id="swipeContainer" class="max-w-md mx-auto p-4 space-y-5">
     <!-- ================= [신규: 조경 사장님 라운지 화면] ================= -->
     <section id="loungeView" class="hidden space-y-5">
       <span id="weatherConditionBadge" class="hidden"></span>
@@ -3363,8 +3362,87 @@
         }
         if(typeof lucide !== 'undefined') lucide.createIcons();
     }
+    // 🧭 [패치 #17] 하단 메뉴 표시/선택 상태
+    function updateBottomNav(mode) {
+      const nav = document.getElementById('bottomNav'); const hdr = document.getElementById('mainHeader');
+      if (!nav || !hdr) return;
+      const show = hdr.style.display !== 'none' && mode !== 'client_shared';
+      nav.style.display = show ? 'block' : 'none';
+      document.body.classList.toggle('has-bnav', show);
+      const map = { home: 'home', calendar: 'calendar', admin: 'admin', history: 'admin', quote: 'quote', quoteList: 'quote', lounge: 'lounge' };
+      nav.querySelectorAll('.bnav-btn').forEach(b => b.classList.toggle('is-active', b.dataset.nav === map[mode]));
+    }
+
+    // 🧭 [패치 #17] 홈 대시보드 (오늘 일정 · 날씨 · 최근 리포트 · 라운지 새 글)
+    let homeLoungeCache = null, homeLoungeAt = 0;
+    function renderHomeDashboard() {
+      const box = document.getElementById('homeDashboard'); if (!box) return;
+      const esc = (typeof escHtml === 'function') ? escHtml : (v => String(v == null ? '' : v));
+      const now = new Date(); const h = now.getHours();
+      const hello = h < 11 ? '좋은 아침입니다' : h < 17 ? '오늘도 수고 많으십니다' : '오늘 하루 고생 많으셨습니다';
+      const days = ['일','월','화','수','목','금','토'];
+      const ceo = (typeof myCompanyProfile !== 'undefined' && myCompanyProfile && myCompanyProfile.ceo) ? myCompanyProfile.ceo + ' ' : '';
+      const today = getTodayStr();
+      const todays = (Array.isArray(schedules) ? schedules : []).filter(x => x && x.date === today);
+      const reports = (Array.isArray(records) ? records : []).filter(r => r && r.type !== 'quote' && r.clientName).slice(-3).reverse();
+      const temp = document.getElementById('weatherMainTemp')?.innerText || '';
+      const tip = document.getElementById('weatherSmartTip')?.innerText || '';
+      let loc = ''; try { const c = JSON.parse(localStorage.getItem('shinhwa_last_loc') || 'null'); if (c && c.name) loc = c.name; } catch(e) {}
+      const card = 'bg-white rounded-[24px] p-5 luxury-shadow';
+      const head = (icon, title, extra) => `<div class="flex items-center justify-between mb-3"><h3 class="text-[19px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="${icon}" class="w-6 h-6 text-[#65A30D]"></i>${title}</h3>${extra || ''}</div>`;
+      const moreBtn = (fn, label) => `<button onclick="${fn}" class="text-[14.5px] font-black text-[#3F6212] bg-[#F4FBEA] border border-[#84CC16]/60 px-3 py-1.5 rounded-full flex items-center gap-0.5">${label}<i data-lucide="chevron-right" class="w-4 h-4"></i></button>`;
+
+      const schedHtml = todays.length ? todays.slice(0, 4).map(x => `<button onclick="switchView('calendar')" class="w-full text-left flex items-center gap-3 bg-[#F8FAFC] border-l-[5px] border-[#84CC16] rounded-[12px] px-4 py-3"><span class="text-[16.5px] font-black text-[#151E2D] break-keep flex-1">${esc(x.title || '제목 없음')}</span>${x.tag ? `<span class="text-[12.5px] font-black text-[#3F6212] bg-lime-100 px-2 py-0.5 rounded-md shrink-0">${esc(x.tag)}</span>` : ''}</button>`).join('') + (todays.length > 4 ? `<p class="text-[14px] font-bold text-[#64748B] text-center">외 ${todays.length - 4}건 더 있음</p>` : '')
+        : `<div class="text-center py-3"><p class="text-[16px] font-bold text-[#475569] mb-3">오늘 등록된 일정이 없습니다.</p><button onclick="switchView('calendar')" class="bg-[#151E2D] text-[#84CC16] text-[15.5px] font-black px-5 py-3 rounded-[14px] inline-flex items-center gap-1.5"><i data-lucide="plus" class="w-5 h-5"></i> 일정 등록하기</button></div>`;
+
+      const repHtml = reports.length ? reports.map(r => `<button onclick="homeOpenReport('${esc(String(r.id).replace(/'/g, ''))}')" class="w-full text-left flex items-center justify-between gap-3 bg-[#F8FAFC] rounded-[12px] px-4 py-3 border border-[#E2E8F0]"><div class="min-w-0"><div class="text-[16.5px] font-black text-[#151E2D] truncate">${esc(r.clientName)}${r.round ? ' · ' + esc(r.round) : ''}</div><div class="text-[13.5px] font-bold text-[#64748B] mt-0.5">${esc(r.date || '')}</div></div><i data-lucide="chevron-right" class="w-5 h-5 text-[#94A3B8] shrink-0"></i></button>`).join('')
+        : `<div class="text-center py-3"><p class="text-[16px] font-bold text-[#475569] mb-3">아직 보낸 리포트가 없습니다.</p><button onclick="switchView('admin')" class="bg-[#84CC16] text-[#151E2D] text-[15.5px] font-black px-5 py-3 rounded-[14px] inline-flex items-center gap-1.5"><i data-lucide="pen-tool" class="w-5 h-5"></i> 첫 작업일지 쓰기</button></div>`;
+
+      box.innerHTML = `
+        <div class="rounded-[24px] p-5 border border-[#84CC16]/30" style="background: linear-gradient(135deg, #151E2D 0%, #1E2B3F 100%);">
+          <p class="text-[15px] font-bold text-[#CBD5E1]">${now.getMonth() + 1}월 ${now.getDate()}일 (${days[now.getDay()]})</p>
+          <h2 class="text-[23px] font-black text-white mt-1 leading-snug break-keep">${esc(ceo)}대표님, ${hello}</h2>
+          <p class="text-[15.5px] font-bold text-[#D9F99D] mt-2">오늘 일정 <b class="text-[#84CC16] text-[18px]">${todays.length}</b>건</p>
+        </div>
+        <button onclick="openWeatherModal()" class="w-full text-left ${card} flex items-center gap-4">
+          <div class="w-14 h-14 rounded-[16px] bg-[#FEF9C3] flex items-center justify-center shrink-0"><i data-lucide="sun" class="w-8 h-8 text-[#D97706]"></i></div>
+          <div class="min-w-0 flex-1">
+            <div class="text-[14px] font-black text-[#64748B] flex items-center gap-1"><i data-lucide="map-pin" class="w-4 h-4 text-[#65A30D]"></i>${esc(loc || '현재 위치')}</div>
+            <div class="text-[22px] font-black text-[#151E2D] leading-tight mt-0.5">${esc(temp || '날씨 불러오는 중...')}</div>
+            ${tip ? `<div class="text-[14.5px] font-bold text-[#475569] mt-1 break-keep line-clamp-2">${esc(tip)}</div>` : ''}
+          </div>
+          <i data-lucide="chevron-right" class="w-6 h-6 text-[#94A3B8] shrink-0"></i>
+        </button>
+        <div class="${card}">${head('calendar-check', '오늘 일정', moreBtn("switchView('calendar')", '일정표'))}<div class="space-y-2">${schedHtml}</div></div>
+        <div class="${card}">${head('send', '최근 보낸 리포트', reports.length ? moreBtn('openAllLogsModal()', '전체') : '')}<div class="space-y-2">${repHtml}</div></div>
+        <div class="${card}">${head('messages-square', '라운지 새 글', moreBtn("switchView('lounge')", '라운지'))}<div id="homeLoungeList" class="space-y-2"><p class="text-[15px] font-bold text-[#64748B] py-2">불러오는 중...</p></div></div>`;
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+      loadHomeLounge();
+    }
+    function homeOpenReport(id) {
+      const r = (records || []).find(x => x && String(x.id) === String(id));
+      if (r) loadHistoryRecord(r.id, false, r);
+    }
+    async function loadHomeLounge() {
+      const el = document.getElementById('homeLoungeList'); if (!el) return;
+      const esc = (typeof escHtml === 'function') ? escHtml : (v => String(v == null ? '' : v));
+      try {
+        if (!homeLoungeCache || Date.now() - homeLoungeAt > 60000) {
+          const res = await fetch(getAuthUrl(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_community.json?orderBy=%22%24key%22&limitToLast=6`));
+          const data = res.ok ? await res.json() : null;
+          homeLoungeCache = data ? Object.values(data).filter(p => p && p.title).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)).slice(0, 3) : [];
+          homeLoungeAt = Date.now();
+        }
+        const cur = document.getElementById('homeLoungeList'); if (!cur) return;
+        cur.innerHTML = homeLoungeCache.length ? homeLoungeCache.map(p => `<button onclick="switchView('lounge')" class="w-full text-left bg-[#F8FAFC] rounded-[12px] px-4 py-3 border border-[#E2E8F0]"><div class="text-[16px] font-black text-[#151E2D] truncate ${p.status === 'closed' ? 'line-through text-[#94A3B8]' : ''}">${esc(p.title)}</div><div class="text-[13.5px] font-bold text-[#64748B] mt-0.5 truncate">${p.isOfficial ? '📌 조경노트 운영팀' : esc((p.authorRegion ? p.authorRegion + ' ' : '') + (p.authorName || ''))} · ${esc(p.dateStr || '')}</div></button>`).join('')
+          : '<p class="text-[15px] font-bold text-[#64748B] py-2">아직 올라온 글이 없습니다.</p>';
+      } catch (e) {
+        const cur = document.getElementById('homeLoungeList'); if (cur) cur.innerHTML = '<p class="text-[15px] font-bold text-[#64748B] py-2">새 글을 불러오지 못했습니다.</p>';
+      }
+    }
+
     function switchView(mode, pushHistory = true) {
-      const views = ['adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView', 'calendarView', 'ledgerView', 'encyclopediaView', 'loungeView', 'aiChatView'];
+      const views = ['homeView', 'adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView', 'calendarView', 'ledgerView', 'encyclopediaView', 'loungeView', 'aiChatView'];
       views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
       
       const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient', 'tabContacts', 'tabCalendar'];
@@ -3398,7 +3476,7 @@
       else if (mode === 'encyclopedia') { document.getElementById('encyclopediaView').classList.remove('hidden'); activeTabId = 'tabEncyclopedia'; }
       else if (mode === 'lounge') { document.getElementById('loungeView').classList.remove('hidden'); activeTabId = 'tabLounge'; }
       else if (mode === 'aiChat') { document.getElementById('aiChatView').classList.remove('hidden'); activeTabId = 'tabAiChat'; initAiChatView(); }
-      else if (mode === 'home') { activeTabId = ''; }
+      else if (mode === 'home') { activeTabId = ''; document.getElementById('homeView').classList.remove('hidden'); renderHomeDashboard(); } // 🧭 [패치 #17]
       else { document.getElementById('clientView').classList.remove('hidden'); activeTabId = currentIsQuote ? 'tabQuoteList' : 'tabClient'; }
 
       if(activeTabId) {
@@ -3417,6 +3495,7 @@
           setTimeout(() => toggleMainCategory('collapse'), 100);
       }
 
+      updateBottomNav(mode); // 🧭 [패치 #17]
       if(typeof lucide !== 'undefined') lucide.createIcons(); window.scrollTo(0, 0); 
       if (pushHistory && mode !== 'client_shared') history.pushState({ view: mode }, "", "");
     }
@@ -4691,7 +4770,7 @@
                     </div>
                 `;
             }
-            lucide.createIcons(); weatherIsLoaded = true;
+            lucide.createIcons(); weatherIsLoaded = true; if (typeof renderHomeDashboard === 'function' && !document.getElementById('homeView').classList.contains('hidden')) renderHomeDashboard(); // 🧭 [패치 #17]
         } catch(error) {
             document.getElementById('weatherMainTemp').innerText = "날씨 오류";
             document.getElementById('weatherSmartTip').innerText = "통신 지연으로 정보를 불러오지 못했습니다.";
@@ -5411,5 +5490,15 @@
           }
       });
   </script>
+  <!-- 🧭 [패치 #17] 하단 고정 메뉴 (로그인한 업체 화면에서만 표시, 고객 리포트 화면에는 표시 안 됨) -->
+  <nav id="bottomNav" class="no-print fixed bottom-0 inset-x-0 z-40 shadow-[0_-6px_20px_rgba(0,0,0,0.35)]" style="display: none; background: #0F1722; border-top: 1px solid rgba(255,255,255,0.14); padding-bottom: env(safe-area-inset-bottom);">
+   <div class="max-w-md mx-auto grid grid-cols-5">
+    <button data-nav="home" onclick="switchView('home')" class="bnav-btn relative flex flex-col items-center justify-center gap-1 h-[68px] text-[#CBD5E1] active:scale-95 transition-all"><span class="bnav-bar absolute top-0 left-1/2 -translate-x-1/2 w-10 h-[3px] rounded-b-full bg-[#84CC16] opacity-0"></span><i data-lucide="home" class="w-7 h-7 stroke-[2.2]"></i><span class="text-[13.5px] font-black tracking-tight">홈</span></button>
+    <button data-nav="calendar" onclick="switchView('calendar')" class="bnav-btn relative flex flex-col items-center justify-center gap-1 h-[68px] text-[#CBD5E1] active:scale-95 transition-all"><span class="bnav-bar absolute top-0 left-1/2 -translate-x-1/2 w-10 h-[3px] rounded-b-full bg-[#84CC16] opacity-0"></span><i data-lucide="calendar-days" class="w-7 h-7 stroke-[2.2]"></i><span class="text-[13.5px] font-black tracking-tight">일정</span></button>
+    <button data-nav="admin" onclick="switchView('admin')" class="bnav-btn relative flex flex-col items-center justify-center gap-1 h-[68px] text-[#CBD5E1] active:scale-95 transition-all"><span class="bnav-bar absolute top-0 left-1/2 -translate-x-1/2 w-10 h-[3px] rounded-b-full bg-[#84CC16] opacity-0"></span><i data-lucide="pen-tool" class="w-7 h-7 stroke-[2.2]"></i><span class="text-[13.5px] font-black tracking-tight">일지</span></button>
+    <button data-nav="quote" onclick="switchView('quote')" class="bnav-btn relative flex flex-col items-center justify-center gap-1 h-[68px] text-[#CBD5E1] active:scale-95 transition-all"><span class="bnav-bar absolute top-0 left-1/2 -translate-x-1/2 w-10 h-[3px] rounded-b-full bg-[#84CC16] opacity-0"></span><i data-lucide="calculator" class="w-7 h-7 stroke-[2.2]"></i><span class="text-[13.5px] font-black tracking-tight">견적</span></button>
+    <button data-nav="lounge" onclick="switchView('lounge')" class="bnav-btn relative flex flex-col items-center justify-center gap-1 h-[68px] text-[#CBD5E1] active:scale-95 transition-all"><span class="bnav-bar absolute top-0 left-1/2 -translate-x-1/2 w-10 h-[3px] rounded-b-full bg-[#84CC16] opacity-0"></span><i data-lucide="messages-square" class="w-7 h-7 stroke-[2.2]"></i><span class="text-[13.5px] font-black tracking-tight">라운지</span></button>
+   </div>
+  </nav>
 </body>
 </html>
