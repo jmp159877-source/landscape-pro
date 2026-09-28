@@ -8145,7 +8145,7 @@ ${AI_COMMON_RULES}
       lines.push('━━━━━━━━━━━━━━━━');
       if (blogName()) lines.push(blogName() + ' 견적·상담');
       if (blogPhone()) lines.push('전화 ' + blogPhone());
-      if (currentUserId) lines.push('사진으로 견적 신청: ' + reqMyLink());
+      if (currentUserId) lines.push('사진으로 상담 문의 (무료)', blogReqLink());
       lines.push('━━━━━━━━━━━━━━━━');
       return lines;
     }
@@ -8157,6 +8157,8 @@ ${AI_COMMON_RULES}
       return '━'.repeat(Math.max(4, Math.round(w)));
     }
     function blogPhotoLine(g) { return '▼ ' + g.label + ' 사진'; }
+    // 블로그 맨 아래 주소: 배너 카드가 나오는 연결 페이지(request.html) → 누르면 이 업체 고객 의뢰함(/?req=)으로
+    function blogReqLink() { const origin = (location.protocol === 'https:' && location.hostname) ? location.origin : 'https://www.jogyeongnote.com'; return origin + '/request.html?c=' + encodeURIComponent(currentUserId || ''); }
     function blogTags() { return ((BL.draft && BL.draft.tags) || []).map(t => '#' + t).join(' '); }
     // 복사되는 본문 (제목 없음 · 소제목 아래 한 줄 비워 둠 → 거기에 사진 넣기)
     function blogBodyText() {
@@ -8256,7 +8258,7 @@ ${AI_COMMON_RULES}
             <div class="border-y-2 border-[#14261E] py-2.5 px-0.5 flex flex-col gap-0.5 text-[15.5px] font-bold">
               ${blogName() ? `<span class="font-black">${escHtml(blogName())} 견적·상담</span>` : ''}
               ${blogPhone() ? `<span>전화 ${escHtml(blogPhone())}</span>` : ''}
-              ${currentUserId ? `<span class="break-all">사진으로 견적 신청: ${escHtml(reqMyLink())}</span>` : ''}
+              ${currentUserId ? `<span>사진으로 상담 문의 (무료)</span><span class="break-all text-[#3F6212]">${escHtml(blogReqLink())}</span>` : ''}
             </div>
             <span class="text-[15.5px] font-bold text-[#3F6212] break-all">${escHtml(blogTags())}</span>
           </div>
