@@ -6016,6 +6016,26 @@
     const VOICE_MAX_SEC = 180, VOICE_MAX_CHARS = 2000;
     const VX = { rec: null, active: false, finals: '', interim: '', startAt: 0, timer: null, onDone: null, fallback: false, ignorePop: false, busy: false };
     function voiceSupported() { return !!(window.SpeechRecognition || window.webkitSpeechRecognition); }
+    // 🎤 [패치 #53] 카카오톡·네이버 앱 등 '앱 안의 브라우저'는 마이크 허용을 기억하지 못해서, 말을 멈출 때마다(듣기 재시작)
+    //   "마이크를 사용하시겠습니까?" 창이 계속 뜸 → 이런 곳에서는 바로 듣기 대신 키보드 마이크로 받아 적기 + [인터넷 앱으로 열기] 안내
+    function inAppBrowserName() {
+      const ua = navigator.userAgent || '';
+      if (/KAKAOTALK/i.test(ua)) return '카카오톡';
+      if (/NAVER\(inapp|NAVER/.test(ua) && !/Whale/i.test(ua)) return '네이버 앱';
+      if (/DaumApps|DaumDevice/i.test(ua)) return '다음 앱';
+      if (/Instagram/i.test(ua)) return '인스타그램';
+      if (/FBAN|FBAV|FB_IAB/i.test(ua)) return '페이스북';
+      if (/\bLine\//i.test(ua)) return '라인';
+      if (/BAND\//i.test(ua)) return '밴드';
+      if (/; wv\)/.test(ua)) return '앱';
+      return '';
+    }
+    function openInRealBrowser() {
+      const url = location.href, ua = navigator.userAgent || '';
+      if (/KAKAOTALK/i.test(ua)) { location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(url); return; }
+      if (/Android/i.test(ua)) { location.href = 'intent://' + location.host + location.pathname + location.search + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(url) + ';end'; return; }
+      alert('오른쪽 아래(또는 위) [⋯] 메뉴에서 [Safari로 열기]를 눌러 주세요.');
+    }
     function voiceText() { return (VX.finals + (VX.interim ? ' ' + VX.interim : '')).replace(/\s+/g, ' ').trim(); }
     function voiceRender() {
       const ta = document.getElementById('voiceText');
@@ -6062,6 +6082,8 @@
       document.getElementById('voiceTextLabel').innerText = '받아 적는 중';
       document.getElementById('voiceGuide').innerText = '천천히, 생각나는 대로 말씀하세요.\n잠깐 멈춰도 끊기지 않습니다.';
       if (!voiceSupported()) return voiceUseFallback();
+      const iab = inAppBrowserName(); // 🎤 [패치 #53]
+      if (iab) return voiceUseFallback(`${iab} 안에서 열려 있어 마이크 허용 창이 계속 뜰 수 있어요.\n아래 흰 칸을 누르고, 키보드의 마이크 버튼을 누른 뒤 말씀하세요.`);
       VX.active = true; VX.startAt = Date.now();
       document.getElementById('voiceMicDot').classList.add('animate-pulse');
       clearInterval(VX.timer); VX.timer = setInterval(() => { voiceRender(); if (VX.active && Date.now() - VX.startAt > VOICE_MAX_SEC * 1000) voiceFinish(); }, 500);
@@ -7357,6 +7379,55 @@ ${AI_COMMON_RULES}
         <p class="text-[21px] font-black">신청서를 열 수 없습니다</p>
         <p id="rqpErrorText" class="text-[16px] font-bold text-[#475569] leading-relaxed break-keep">주소가 잘못되었거나, 지금은 신청을 받지 않는 업체입니다.</p>
       </div>
+      <!-- 🌿 [패치 #55] 고객이 링크를 열면 먼저 보이는 소개 화면 (조경노트 로고·색 + 업체 소개 + 큰 버튼 3개) -->
+      <div id="rqpIntro" class="hidden flex-1 flex flex-col bg-[#F6F8F4]">
+        <div class="bg-[#14261E] px-5 pt-6 pb-8 flex flex-col gap-5 text-white rounded-b-[32px]">
+          <div class="flex items-center gap-3">
+            <span class="w-[56px] h-[56px] rounded-[16px] bg-white flex items-center justify-center shrink-0"><svg width="44" height="44" viewBox="5.5 10.5 86 86" aria-hidden="true"><rect x="10" y="20" width="50" height="70" rx="4" fill="none" stroke="#12261E" stroke-width="3"></rect><rect x="16" y="26" width="38" height="58" rx="2" fill="none" stroke="#12261E" stroke-width="1.2"></rect><line x1="21" y1="40" x2="49" y2="40" stroke="#A3A8A3" stroke-width="2" stroke-dasharray="2,3"></line><line x1="21" y1="53" x2="49" y2="53" stroke="#A3A8A3" stroke-width="2" stroke-dasharray="2,3"></line><line x1="21" y1="66" x2="49" y2="66" stroke="#A3A8A3" stroke-width="2" stroke-dasharray="2,3"></line><g transform="translate(10, 11) scale(0.8)"><path d="M 40 53 C 32 35, 60 10, 96 6 C 90 35, 60 57, 40 53 Z" fill="#84CC16"></path><path d="M 40 53 L 89 12" fill="none" stroke="#ffffff" stroke-width="2"></path><g transform="translate(40, 53) rotate(225)"><path d="M -7,8 L 0,-15 L 7,8 C 5,12 -5,12 -7,8 Z" fill="#12261E"></path><line x1="0" y1="-14" x2="0" y2="1" stroke="#ffffff" stroke-width="1.5"></line><circle cx="0" cy="2.5" r="1.5" fill="#ffffff"></circle></g></g></svg></span>
+            <span class="flex flex-col gap-1"><span class="text-[24px] font-black leading-none tracking-tight">조경노트</span><span class="text-[12.5px] font-black text-[#84CC16] tracking-[0.3em] leading-none">LANDSCAPE NOTE</span></span>
+          </div>
+          <div class="flex flex-col gap-2">
+            <span class="text-[15px] font-black text-[#BEF264]">우리 동네 조경 전문 업체</span>
+            <h1 id="rqpIntroName" class="m-0 text-[32px] font-black leading-tight tracking-tight break-keep"></h1>
+            <span id="rqpIntroSub" class="text-[16.5px] font-bold text-[#D9F99D] break-keep"></span>
+          </div>
+          <div class="bg-white/[0.07] border border-white/15 rounded-[20px] p-4 flex flex-col gap-2.5">
+            <span class="flex items-center gap-2.5 text-[17px] font-extrabold"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#BEF264" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M20 6 9 17l-5-5"></path></svg>조경노트가 사업자등록증을 확인한 업체</span>
+            <span class="flex items-center gap-2.5 text-[17px] font-extrabold"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#BEF264" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M20 6 9 17l-5-5"></path></svg>조경 관리·시공 전문</span>
+            <span class="flex items-center gap-2.5 text-[17px] font-extrabold"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#BEF264" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M20 6 9 17l-5-5"></path></svg>상담 무료 · 가입 필요 없음</span>
+          </div>
+          <p class="m-0 text-[17.5px] font-bold leading-relaxed text-white/90 break-keep">나무 한 그루부터 정원 전체까지,<br>현장을 직접 보고 꼼꼼하게 상담해 드립니다.<br><b class="text-white">믿고 맡겨 주세요.</b></p>
+        </div>
+
+        <div class="px-4 pt-6 pb-4 flex flex-col gap-3">
+          <span class="text-[20px] font-black text-[#0F172A]">이렇게 신청하세요</span>
+          <div class="bg-white rounded-[20px] p-4 flex flex-col gap-3.5 shadow-[0_6px_20px_rgba(15,23,42,0.08)]">
+            <div class="flex gap-3 items-start"><span class="w-9 h-9 rounded-full bg-[#14261E] text-[#BEF264] text-[18px] font-black flex items-center justify-center shrink-0">1</span><span class="flex flex-col"><span class="text-[18px] font-black text-[#0F172A]">말로 편하게, 또는 직접 적기</span><span class="text-[15.5px] font-bold text-[#475569] break-keep">어떤 작업인지 말씀만 하시면 칸이 자동으로 채워져요</span></span></div>
+            <div class="flex gap-3 items-start"><span class="w-9 h-9 rounded-full bg-[#14261E] text-[#BEF264] text-[18px] font-black flex items-center justify-center shrink-0">2</span><span class="flex flex-col"><span class="text-[18px] font-black text-[#0F172A]">현장 사진 올리기 (있으면)</span><span class="text-[15.5px] font-bold text-[#475569] break-keep">사진이 있으면 더 정확하게 견적을 드려요</span></span></div>
+            <div class="flex gap-3 items-start"><span class="w-9 h-9 rounded-full bg-[#14261E] text-[#BEF264] text-[18px] font-black flex items-center justify-center shrink-0">3</span><span class="flex flex-col"><span class="text-[18px] font-black text-[#0F172A]">[보내기] 누르면 끝</span><span class="text-[15.5px] font-bold text-[#475569] break-keep">대표님이 확인하고 바로 연락드립니다</span></span></div>
+          </div>
+        </div>
+
+        <div id="rqpIntroBtns" class="px-4 pb-8 flex flex-col gap-3 scroll-mt-4">
+          <button type="button" onclick="rqpGo('voice')" class="text-left rounded-[24px] bg-[#84CC16] px-4 py-5 flex items-center gap-4 shadow-[0_10px_24px_rgba(132,204,22,0.35)] active:scale-[0.98] transition-all">
+            <span class="w-[64px] h-[64px] rounded-full bg-[#14261E] flex items-center justify-center shrink-0"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#BEF264" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10v1a7 7 0 0 0 14 0v-1"></path><path d="M12 18v4"></path></svg></span>
+            <span class="flex flex-col gap-1"><span class="text-[24px] font-black text-[#14261E] leading-tight">말로 편하게 의뢰하기</span><span class="text-[16px] font-bold text-[#1A2E05] leading-snug">가장 쉬워요 · 말씀만 하시면 됩니다</span></span>
+          </button>
+          <button type="button" onclick="rqpGo('form')" class="text-left rounded-[24px] bg-[#14261E] px-4 py-5 flex items-center gap-4 active:scale-[0.98] transition-all">
+            <span class="w-[64px] h-[64px] rounded-full bg-[#84CC16] flex items-center justify-center shrink-0"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#14261E" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg></span>
+            <span class="flex flex-col gap-1"><span class="text-[24px] font-black text-white leading-tight">직접 적어서 의뢰하기</span><span class="text-[16px] font-bold text-[#D9F99D] leading-snug">버튼을 눌러 고르고 적으시면 돼요</span></span>
+          </button>
+          <a id="rqpIntroCall" href="#" class="rounded-[24px] bg-white border-2 border-[#14261E] px-4 py-4 flex items-center gap-4 active:scale-[0.98] transition-all" style="text-decoration:none">
+            <span class="w-[56px] h-[56px] rounded-full bg-[#ECFCCB] flex items-center justify-center shrink-0"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#14261E" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.1 9.9a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></span>
+            <span class="flex flex-col gap-0.5"><span class="text-[21px] font-black text-[#14261E] leading-tight">전화로 바로 문의하기</span><span id="rqpIntroPhone" class="text-[17px] font-black text-[#1D4ED8]"></span></span>
+          </a>
+          <p class="m-0 mt-2 text-center text-[14.5px] font-bold text-[#475569] leading-relaxed">가입이나 수수료 없이 대표님께 바로 전달됩니다.<br>조경노트 PRO · 조경 사업자 전용 앱</p>
+        </div>
+        <!-- 🌿 [패치 #55] 첫 화면에서 큰 버튼이 안 보일 때만 아래에 떠 있는 안내 버튼 -->
+        <div id="rqpIntroFloat" class="sticky bottom-0 px-4 pb-4 pt-2 bg-gradient-to-t from-[#F6F8F4] via-[#F6F8F4] to-transparent">
+          <button type="button" onclick="document.getElementById('rqpIntroBtns').scrollIntoView({ block: 'start', behavior: 'smooth' })" class="w-full h-[60px] rounded-[18px] bg-[#84CC16] text-[#14261E] text-[20px] font-black shadow-[0_8px_20px_rgba(20,38,30,0.25)] flex items-center justify-center gap-2 active:scale-[0.98]">의뢰하러 가기<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></button>
+        </div>
+      </div>
       <div id="rqpForm" class="hidden flex flex-col">
         <div class="bg-[#14261E] px-[18px] pt-[22px] pb-5 flex flex-col gap-3 text-white">
           <div class="flex items-center gap-3">
@@ -7371,7 +7442,12 @@ ${AI_COMMON_RULES}
           <a id="rqpCall" href="#" class="h-[52px] rounded-[14px] bg-white text-[#14261E] text-[17px] font-black flex items-center justify-center gap-2" style="text-decoration:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#14261E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.1 9.9a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>급하시면 바로 전화하기</a>
         </div>
         <div class="px-4 pt-[22px] pb-8 flex flex-col gap-5">
+          <button type="button" onclick="history.back()" class="-mb-2 self-start min-h-[44px] flex items-center gap-1 text-[16px] font-black text-[#3F6212]"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>처음 화면으로</button><!-- 🌿 [패치 #55] -->
           <div class="flex flex-col gap-1.5"><h1 class="m-0 text-[26px] font-black tracking-tight">견적·상담 신청</h1><p class="m-0 text-[16px] font-bold text-[#475569] leading-relaxed break-keep">사진과 내용을 남겨 주시면 대표님이 직접 확인하고 연락드립니다.</p></div>
+          <div id="rqpInApp" class="hidden bg-[#FFF7ED] border-2 border-[#FB923C] rounded-[16px] px-3.5 py-3 flex flex-col gap-2.5"><!-- 🎤 [패치 #53] -->
+            <span id="rqpInAppText" class="text-[15.5px] font-extrabold text-[#9A3412] leading-relaxed break-keep"></span>
+            <button type="button" onclick="openInRealBrowser()" class="h-[50px] rounded-[12px] bg-[#9A3412] text-white text-[16px] font-black active:scale-95">인터넷(크롬) 앱으로 열기</button>
+          </div>
           <button type="button" onclick="startReqVoice()" class="text-left rounded-[22px] bg-[#84CC16] px-4 py-[18px] flex items-center gap-3.5 shadow-[0_10px_24px_rgba(132,204,22,0.35)] active:scale-[0.98] transition-all">
             <span class="w-[62px] h-[62px] rounded-full bg-[#14261E] flex items-center justify-center shrink-0"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#BEF264" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10v1a7 7 0 0 0 14 0v-1"></path><path d="M12 18v4"></path></svg></span>
             <span class="flex flex-col gap-1"><span class="text-[23px] font-black text-[#14261E] leading-tight">말로 신청하기</span><span class="text-[15.5px] font-bold text-[#1A2E05] leading-snug break-keep">편하게 길게 말씀하셔도 AI가 알아서 칸을 채워 드려요. 확인하고 보내기만 누르세요.</span></span>
@@ -7380,36 +7456,38 @@ ${AI_COMMON_RULES}
           <div id="rqpAiNote" class="hidden bg-[#FEF9C3] border-2 border-[#EAB308] rounded-[14px] px-3.5 py-3 text-[16px] font-extrabold text-[#713F12] leading-relaxed break-keep">AI가 칸을 채웠어요. 틀린 곳이 없는지 확인하시고, 맨 아래 [의뢰 보내기]를 눌러 주세요.</div>
           <div class="flex items-center gap-2.5"><span class="flex-1 h-px bg-[#CBD5E1]"></span><span class="text-[15px] font-extrabold text-[#475569]">또는 직접 입력</span><span class="flex-1 h-px bg-[#CBD5E1]"></span></div>
 
-          <div class="flex flex-col gap-2.5"><span class="text-[18px] font-black">1. 어떤 작업이 필요하세요? <span class="text-[14px] text-[#64748B]">(여러 개 선택)</span></span>
+          <!-- 👵 [패치 #54] 시니어 고객용 정리: 칸마다 [필수]/[선택] 표시, 글씨·칸 크게, 사진은 '바로 찍기'와 '저장된 사진' 버튼 2개, 연락처는 한 줄씩 -->
+          <div id="rqpStepWork" class="flex flex-col gap-2.5 scroll-mt-4"><span class="text-[19px] font-black flex items-center gap-2 flex-wrap">1. 어떤 작업이 필요하세요? <span class="text-[14px] font-black bg-[#DC2626] text-white rounded-md px-1.5 py-0.5 align-middle">필수</span></span><span class="-mt-1.5 text-[15px] font-bold text-[#475569]">여러 개 골라도 됩니다</span>
             <div id="rqpWorks" class="grid grid-cols-2 gap-2"></div></div>
 
-          <div class="flex flex-col gap-2.5"><span class="text-[18px] font-black">2. 현장 사진 <span class="text-[14px] text-[#64748B]">(있으면 더 정확해요 · 최대 5장)</span></span>
-            <div class="flex gap-2 flex-wrap"><div id="rqpThumbs" class="contents"></div>
-              <label id="rqpAddPhoto" class="w-[84px] h-[84px] rounded-[14px] border-2 border-dashed border-[#94A3B8] bg-white text-[14px] font-black flex flex-col items-center justify-center gap-1 cursor-pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#65A30D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>추가<input type="file" accept="image/*" multiple class="hidden" onchange="rqpAddPhotos(event)"></label>
+          <div class="flex flex-col gap-2.5"><span class="text-[19px] font-black flex items-center gap-2 flex-wrap">2. 현장 사진 <span class="text-[14px] font-black bg-[#E2E8F0] text-[#334155] rounded-md px-1.5 py-0.5 align-middle">선택</span></span><span class="-mt-1.5 text-[15px] font-bold text-[#475569]">있으면 더 정확한 견적이 가능해요 · <b id="rqpPhotoCount" class="text-[#0F172A]">0</b>/5장</span>
+            <div id="rqpThumbs" class="flex gap-2 flex-wrap empty:hidden"></div>
+            <div id="rqpPhotoBtns" class="grid grid-cols-2 gap-2">
+              <label class="min-h-[64px] rounded-[16px] bg-[#14261E] text-white text-[17px] font-black flex items-center justify-center gap-2 px-2 cursor-pointer active:scale-[0.98] transition-all text-center leading-tight"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#BEF264" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>바로 찍어<br>올리기<input type="file" accept="image/*" capture="environment" class="hidden" onchange="rqpAddPhotos(event)"></label>
+              <label class="min-h-[64px] rounded-[16px] bg-white border-2 border-[#14261E] text-[#14261E] text-[17px] font-black flex items-center justify-center gap-2 px-2 cursor-pointer active:scale-[0.98] transition-all text-center leading-tight"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#14261E" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"></path></svg>저장된 사진<br>올리기<input type="file" accept="image/*" multiple class="hidden" onchange="rqpAddPhotos(event)"></label>
             </div></div>
 
-          <label class="flex flex-col gap-2 text-[18px] font-black">3. 현장 주소
-            <input id="rqpAddr" maxlength="150" autocomplete="street-address" placeholder="예) 수원시 영통구 영통동 ○○아파트" class="h-[54px] rounded-[14px] border-[1.5px] border-[#CBD5E1] bg-white px-3.5 text-[16.5px] font-bold text-[#0F172A] placeholder:text-[#94A3B8] placeholder:text-[15px] focus:outline-none focus:border-[#84CC16]"></label>
+          <label id="rqpStepAddr" class="flex flex-col gap-2 scroll-mt-4"><span class="text-[19px] font-black flex items-center gap-2 flex-wrap">3. 현장 주소 <span class="text-[14px] font-black bg-[#DC2626] text-white rounded-md px-1.5 py-0.5 align-middle">필수</span></span><span class="-mt-1 text-[15px] font-bold text-[#475569]">동네 이름까지만 적으셔도 됩니다</span>
+            <input id="rqpAddr" maxlength="150" autocomplete="street-address" placeholder="예) 수원시 영통동 ○○아파트" class="h-[58px] rounded-[14px] border-2 border-[#CBD5E1] bg-white px-4 text-[18px] font-bold text-[#0F172A] placeholder:text-[#64748B] placeholder:text-[16px] focus:outline-none focus:border-[#65A30D]"></label>
 
-          <div class="flex flex-col gap-2.5"><span class="text-[18px] font-black">4. 언제쯤 원하세요?</span>
-            <div id="rqpWhens" class="grid grid-cols-4 gap-1.5"></div></div>
+          <div class="flex flex-col gap-2.5"><span class="text-[19px] font-black flex items-center gap-2 flex-wrap">4. 언제쯤 원하세요? <span class="text-[14px] font-black bg-[#E2E8F0] text-[#334155] rounded-md px-1.5 py-0.5 align-middle">선택</span></span>
+            <div id="rqpWhens" class="grid grid-cols-2 gap-2"></div></div>
 
-          <label class="flex flex-col gap-2 text-[18px] font-black">5. 자세한 내용
-            <textarea id="rqpText" rows="4" maxlength="1000" placeholder="나무 종류, 크기, 그루 수, 궁금한 점 등을 편하게 적어 주세요." class="rounded-[14px] border-[1.5px] border-[#CBD5E1] bg-white px-3.5 py-3 text-[16.5px] font-bold text-[#0F172A] leading-relaxed resize-none placeholder:text-[#94A3B8] placeholder:text-[15px] focus:outline-none focus:border-[#84CC16]"></textarea></label>
+          <label class="flex flex-col gap-2"><span class="text-[19px] font-black flex items-center gap-2 flex-wrap">5. 자세한 내용 <span class="text-[14px] font-black bg-[#E2E8F0] text-[#334155] rounded-md px-1.5 py-0.5 align-middle">선택</span></span>
+            <textarea id="rqpText" rows="4" maxlength="1000" placeholder="나무 종류, 크기, 그루 수, 궁금한 점 등을 편하게 적어 주세요." class="rounded-[14px] border-2 border-[#CBD5E1] bg-white px-4 py-3 text-[18px] font-bold text-[#0F172A] leading-relaxed resize-none placeholder:text-[#64748B] placeholder:text-[16px] focus:outline-none focus:border-[#65A30D]"></textarea></label>
 
-          <div class="grid grid-cols-2 gap-2.5">
-            <label class="flex flex-col gap-2 text-[18px] font-black min-w-0">성함
-              <input id="rqpCName" maxlength="20" autocomplete="name" placeholder="예) 김철수" class="h-[54px] min-w-0 rounded-[14px] border-[1.5px] border-[#CBD5E1] bg-white px-3.5 text-[16.5px] font-bold text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:border-[#84CC16]"></label>
-            <label class="flex flex-col gap-2 text-[18px] font-black min-w-0">연락처
-              <input id="rqpPhone" type="tel" maxlength="13" autocomplete="tel" oninput="autoHyphen(this)" placeholder="010-0000-0000" class="h-[54px] min-w-0 rounded-[14px] border-[1.5px] border-[#CBD5E1] bg-white px-3 text-[16.5px] font-bold text-[#1D4ED8] placeholder:text-[#94A3B8] focus:outline-none focus:border-[#84CC16]"></label>
-          </div>
+          <label id="rqpStepPhone" class="flex flex-col gap-2 scroll-mt-4"><span class="text-[19px] font-black flex items-center gap-2 flex-wrap">6. 연락받으실 전화번호 <span class="text-[14px] font-black bg-[#DC2626] text-white rounded-md px-1.5 py-0.5 align-middle">필수</span></span>
+            <input id="rqpPhone" type="tel" inputmode="numeric" maxlength="13" autocomplete="tel" oninput="autoHyphen(this)" placeholder="010-0000-0000" class="h-[58px] rounded-[14px] border-2 border-[#CBD5E1] bg-white px-4 text-[18px] font-bold text-[#0F172A] placeholder:text-[#64748B] placeholder:text-[16px] focus:outline-none focus:border-[#65A30D] !text-[#1D4ED8] !text-[20px] tracking-wide"></label>
+
+          <label class="flex flex-col gap-2"><span class="text-[19px] font-black flex items-center gap-2 flex-wrap">7. 성함 <span class="text-[14px] font-black bg-[#E2E8F0] text-[#334155] rounded-md px-1.5 py-0.5 align-middle">선택</span></span>
+            <input id="rqpCName" maxlength="20" autocomplete="name" placeholder="예) 김철수 (안 적으셔도 됩니다)" class="h-[58px] rounded-[14px] border-2 border-[#CBD5E1] bg-white px-4 text-[18px] font-bold text-[#0F172A] placeholder:text-[#64748B] placeholder:text-[16px] focus:outline-none focus:border-[#65A30D]"></label>
           <input id="rqpHp" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" class="hidden">
 
-          <div class="flex items-start gap-2.5 bg-white border-[1.5px] border-[#CBD5E1] rounded-[14px] p-3 text-[15px] font-bold text-[#334155] leading-relaxed">
-            <input id="rqpAgree" type="checkbox" class="w-[22px] h-[22px] mt-0.5 shrink-0 accent-[#65A30D]">
-            <label for="rqpAgree" class="break-keep">[필수] 상담을 위해 이름·연락처·주소·사진을 <b id="rqpAgreeName">업체</b>에 전달하는 데 동의합니다.</label>
-          </div>
-          <button type="button" onclick="rqpPrivacy()" class="-mt-3 self-start text-[15px] font-black text-[#1D4ED8] underline underline-offset-2 min-h-[44px]">개인정보 처리 내용 자세히 보기</button>
+          <label id="rqpAgreeBox" for="rqpAgree" class="flex items-start gap-3 bg-white border-2 border-[#CBD5E1] rounded-[16px] p-4 text-[16.5px] font-bold text-[#334155] leading-relaxed cursor-pointer scroll-mt-4">
+            <input id="rqpAgree" type="checkbox" onchange="document.getElementById('rqpAgreeBox').classList.remove('!border-[#DC2626]')" class="w-7 h-7 mt-0.5 shrink-0 accent-[#65A30D]">
+            <span class="break-keep"><b class="text-[#DC2626]">[필수]</b> 상담을 위해 연락처·주소·사진을 <b id="rqpAgreeName">업체</b>에 전달하는 데 동의합니다.</span>
+          </label>
+          <button type="button" onclick="rqpPrivacy()" class="-mt-3 self-start text-[15.5px] font-black text-[#1D4ED8] underline underline-offset-2 min-h-[44px]">개인정보 처리 내용 자세히 보기</button>
 
           <button type="button" id="rqpSendBtn" onclick="submitPublicRequest()" class="h-16 rounded-[18px] bg-[#84CC16] text-[#14261E] text-[21px] font-black shadow-[0_10px_24px_rgba(132,204,22,0.35)] active:scale-[0.98] transition-all disabled:opacity-60">의뢰 보내기</button>
           <p class="m-0 text-center text-[14.5px] font-bold text-[#475569] leading-relaxed">가입이나 수수료 없이 대표님께 바로 전달됩니다.<br>조경노트 PRO로 보내는 신청서입니다.</p>
@@ -7438,8 +7516,12 @@ ${AI_COMMON_RULES}
           <span class="text-[16px] font-black text-[#BEF264]">내 의뢰 받는 주소</span>
           <span class="text-[15px] font-bold text-[#E2E8F0] leading-relaxed break-keep">이 주소를 받은 고객은 가입 없이 사진과 함께 의뢰할 수 있어요. 블로그·카톡 프로필·명함에 넣어 두세요.</span>
           <div id="reqMyLink" class="bg-[#0F1722] rounded-[10px] px-3 py-2.5 text-[15px] font-bold text-white break-all"></div>
-          <div class="grid grid-cols-3 gap-2">
+          <label class="flex flex-col gap-1.5"><span class="text-[15px] font-black text-[#E2E8F0]">문자 받을 분 번호 <span class="text-[#94A3B8] font-bold">(넣으면 바로 그 번호로 보내져요)</span></span><!-- 📋 [패치 #54] -->
+            <span class="flex gap-2"><input id="reqSmsTo" type="tel" inputmode="numeric" maxlength="13" oninput="autoHyphen(this)" placeholder="010-0000-0000" class="flex-1 min-w-0 h-[50px] rounded-[12px] bg-white px-3 text-[18px] font-black text-[#1D4ED8] placeholder:text-[#64748B] placeholder:text-[16px] focus:outline-none">
+            <button type="button" id="reqPickContact" onclick="reqPickContact()" class="hidden shrink-0 h-[50px] px-3 rounded-[12px] border-[1.5px] border-[#64748B] text-white text-[14.5px] font-black leading-tight">전화번호부<br>에서 고르기</button></span></label>
+          <div class="grid grid-cols-2 gap-2"><!-- 📋 [패치 #53] 문자 보내기 추가 → 2칸 2줄 -->
             <button type="button" onclick="reqShareLink()" class="h-[50px] rounded-[12px] bg-[#FEE500] text-[#3C1E1E] text-[15px] font-black active:scale-95">카톡 보내기</button>
+            <button type="button" onclick="reqSmsLink()" class="h-[50px] rounded-[12px] bg-white text-[#151E2D] text-[15px] font-black active:scale-95">문자 보내기</button>
             <button type="button" onclick="reqCopyLink()" class="h-[50px] rounded-[12px] bg-[#84CC16] text-[#1A2E05] text-[15px] font-black active:scale-95">주소 복사</button>
             <button type="button" onclick="reqShowQr()" class="h-[50px] rounded-[12px] border-[1.5px] border-[#64748B] text-white text-[15px] font-black active:scale-95">QR 보기</button>
           </div>
@@ -7496,21 +7578,46 @@ ${AI_COMMON_RULES}
       document.getElementById('rqpDoneName').innerText = I.name;
       ['rqpCall', 'rqpDoneCall'].forEach(id => { const a = document.getElementById(id); if (I.phone) a.href = 'tel:' + I.phone.replace(/[^0-9]/g, ''); else a.classList.add('hidden'); });
       rqpRenderChips(); rqpRenderThumbs();
+      const iab = inAppBrowserName(); // 🎤 [패치 #53] 카톡 등에서 열었으면 안내
+      if (iab) { document.getElementById('rqpInAppText').innerText = `지금 ${iab} 안에서 열려 있어요. 말로 신청할 때 마이크 허용 창이 계속 뜨면, 아래 버튼으로 인터넷 앱에서 열어 주세요. (그냥 써도 신청은 됩니다)`; document.getElementById('rqpInApp').classList.remove('hidden'); }
+      document.getElementById('rqpIntroName').innerText = I.name; // 🌿 [패치 #55] 소개 화면 먼저
+      document.getElementById('rqpIntroSub').innerText = [I.region, I.ceo ? '대표 ' + I.ceo : ''].filter(Boolean).join(' · ');
+      const ic = document.getElementById('rqpIntroCall');
+      if (I.phone) { ic.href = 'tel:' + I.phone.replace(/[^0-9]/g, ''); document.getElementById('rqpIntroPhone').innerText = reqPhoneFmt(I.phone); } else ic.classList.add('hidden');
       document.getElementById('rqpLoading').classList.add('hidden');
-      document.getElementById('rqpForm').classList.remove('hidden');
+      document.getElementById('rqpIntro').classList.remove('hidden');
+      try { // 큰 버튼이 화면에 보이면 떠 있는 안내 버튼은 숨김
+        new IntersectionObserver((es) => { document.getElementById('rqpIntroFloat').classList.toggle('hidden', es.some(e => e.isIntersecting)); }, { root: document.getElementById('reqPublic'), rootMargin: '0px 0px -160px 0px' }).observe(document.getElementById('rqpIntroBtns'));
+      } catch (e) {}
     }
+    // 🌿 [패치 #55] 소개 화면 → 신청서 (휴대폰 뒤로가기 = 소개 화면으로)
+    function rqpGo(mode) {
+      document.getElementById('rqpIntro').classList.add('hidden');
+      document.getElementById('rqpForm').classList.remove('hidden');
+      document.getElementById('reqPublic').scrollTop = 0;
+      history.pushState({ rqpForm: true }, '', '');
+      if (mode === 'voice') setTimeout(startReqVoice, 200);
+    }
+    window.addEventListener('popstate', () => {
+      const pub = document.getElementById('reqPublic'); if (!pub || pub.classList.contains('hidden')) return;
+      const ov = document.getElementById('voiceOverlay'); if (ov && !ov.classList.contains('hidden')) return;
+      const fp = document.getElementById('formAiPreview'); if (fp && !fp.classList.contains('hidden')) return;
+      if (history.state && history.state.rqpForm) return;
+      const form = document.getElementById('rqpForm');
+      if (!form.classList.contains('hidden')) { form.classList.add('hidden'); document.getElementById('rqpIntro').classList.remove('hidden'); pub.scrollTop = 0; }
+    });
     function rqpShowError(msg) {
       document.getElementById('rqpLoading').classList.add('hidden');
       if (msg) document.getElementById('rqpErrorText').innerText = msg;
       document.getElementById('rqpError').classList.remove('hidden');
     }
-    function rqpChipClass(on) { return on ? 'border-2 border-[#14261E] bg-[#14261E] text-[#BEF264]' : 'border-[1.5px] border-[#CBD5E1] bg-white text-[#0F172A]'; }
+    function rqpChipClass(on) { return on ? 'border-2 border-[#14261E] bg-[#14261E] text-[#BEF264]' : 'border-2 border-[#CBD5E1] bg-white text-[#0F172A]'; }
     function rqpRenderChips() {
       document.getElementById('rqpWorks').innerHTML = REQ_WORKS.map(([w, sub], i) => {
         const on = RQ.works.has(w); const last = i === REQ_WORKS.length - 1 && REQ_WORKS.length % 2 === 1;
-        return `<button type="button" onclick="rqpToggleWork(${i})" aria-pressed="${on}" class="${last ? 'col-span-2 ' : ''}min-h-[52px] rounded-[14px] px-1 py-1.5 text-[16px] font-black leading-tight flex flex-col items-center justify-center gap-0.5 ${rqpChipClass(on)}">${on ? '✓ ' : ''}${escHtml(w)}${sub ? `<span class="text-[13px] font-bold ${on ? 'text-[#D9F99D]' : 'text-[#475569]'}">${escHtml(sub)}</span>` : ''}</button>`;
+        return `<button type="button" onclick="rqpToggleWork(${i})" aria-pressed="${on}" class="${last ? 'col-span-2 ' : ''}min-h-[56px] rounded-[14px] px-1 py-1.5 text-[17px] font-black leading-tight flex flex-col items-center justify-center gap-0.5 ${rqpChipClass(on)}">${on ? '✓ ' : ''}${escHtml(w)}${sub ? `<span class="text-[13px] font-bold ${on ? 'text-[#D9F99D]' : 'text-[#475569]'}">${escHtml(sub)}</span>` : ''}</button>`;
       }).join('');
-      document.getElementById('rqpWhens').innerHTML = REQ_WHENS.map((w, i) => `<button type="button" onclick="rqpSetWhen(${i})" aria-pressed="${RQ.when === w}" class="h-[50px] rounded-[12px] text-[15px] font-black ${rqpChipClass(RQ.when === w)}">${escHtml(w)}</button>`).join('');
+      document.getElementById('rqpWhens').innerHTML = REQ_WHENS.map((w, i) => `<button type="button" onclick="rqpSetWhen(${i})" aria-pressed="${RQ.when === w}" class="h-[56px] rounded-[14px] text-[17px] font-black ${rqpChipClass(RQ.when === w)}">${escHtml(w)}</button>`).join('');
     }
     function rqpToggleWork(i) { const w = REQ_WORKS[i][0]; if (RQ.works.has(w)) RQ.works.delete(w); else RQ.works.add(w); rqpRenderChips(); }
     function rqpSetWhen(i) { RQ.when = RQ.when === REQ_WHENS[i] ? '' : REQ_WHENS[i]; rqpRenderChips(); }
@@ -7523,8 +7630,9 @@ ${AI_COMMON_RULES}
     }
     function rqpRemovePhoto(i) { RQ.imgs.splice(i, 1); rqpRenderThumbs(); }
     function rqpRenderThumbs() {
-      document.getElementById('rqpThumbs').innerHTML = RQ.imgs.map((src, i) => `<div class="relative w-[84px] h-[84px] rounded-[14px] overflow-hidden border border-[#CBD5E1]"><img src="${escHtml(src)}" alt="" class="w-full h-full object-cover"><button type="button" aria-label="사진 빼기" onclick="rqpRemovePhoto(${i})" class="absolute top-1 right-1 w-7 h-7 rounded-full bg-black/70 text-white text-[14px] font-black">✕</button></div>`).join('');
-      document.getElementById('rqpAddPhoto').classList.toggle('hidden', RQ.imgs.length >= REQ_MAX_IMGS);
+      document.getElementById('rqpThumbs').innerHTML = RQ.imgs.map((src, i) => `<div class="relative w-[96px] h-[96px] rounded-[14px] overflow-hidden border border-[#CBD5E1]"><img src="${escHtml(src)}" alt="" class="w-full h-full object-cover"><button type="button" aria-label="사진 빼기" onclick="rqpRemovePhoto(${i})" class="absolute top-1 right-1 w-9 h-9 rounded-full bg-black/75 text-white text-[16px] font-black">✕</button></div>`).join('');
+      document.getElementById('rqpPhotoBtns').classList.toggle('hidden', RQ.imgs.length >= REQ_MAX_IMGS); // 👵 [패치 #54]
+      document.getElementById('rqpPhotoCount').innerText = RQ.imgs.length;
     }
     function rqpPrivacy() {
       const n = RQ.info ? RQ.info.name : '업체';
@@ -7557,15 +7665,21 @@ ${AI_COMMON_RULES}
         alert('지금은 AI 정리가 잠시 안 됩니다.\n말씀하신 내용은 [자세한 내용] 칸에 넣어 두었어요. 나머지 칸만 채워서 보내 주세요.');
       }
     }
+    function rqpFlag(stepId, focusId, msg) { // 👵 [패치 #54] 빠진 칸으로 화면 이동 + 빨간 테두리
+      alert(msg);
+      const st = document.getElementById(stepId); if (st) st.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      const f = document.getElementById(focusId);
+      if (f) { f.classList.add('!border-[#DC2626]'); setTimeout(() => { try { f.focus({ preventScroll: true }); } catch (e) {} }, 400); f.addEventListener('input', () => f.classList.remove('!border-[#DC2626]'), { once: true }); }
+    }
     async function submitPublicRequest() {
       if (RQ.sending || !RQ.info) return;
       const addr = document.getElementById('rqpAddr').value.trim(), name = document.getElementById('rqpCName').value.trim();
       const phone = document.getElementById('rqpPhone').value.replace(/[^0-9]/g, ''), text = document.getElementById('rqpText').value.trim();
-      if (!RQ.works.size && !text) return alert('어떤 작업이 필요한지 골라 주시거나, [자세한 내용]에 적어 주세요.');
-      if (addr.length < 2) { alert('현장 주소를 적어 주세요. (동네까지만 적으셔도 됩니다)'); return document.getElementById('rqpAddr').focus(); }
-      if (!name) { alert('성함을 적어 주세요.'); return document.getElementById('rqpCName').focus(); }
-      if (phone.length < 9 || phone.length > 11) { alert('연락받으실 전화번호를 확인해 주세요.'); return document.getElementById('rqpPhone').focus(); }
-      if (!document.getElementById('rqpAgree').checked) return alert('개인정보 전달 동의에 체크해 주세요.');
+      if (!RQ.works.size && !text) return rqpFlag('rqpStepWork', '', '1번에서 필요한 작업을 골라 주세요.\n(맞는 게 없으면 [기타]를 누르세요)');
+      if (addr.length < 2) return rqpFlag('rqpStepAddr', 'rqpAddr', '3번 현장 주소를 적어 주세요.\n(동네 이름까지만 적으셔도 됩니다)');
+      // 📋 [패치 #53] 성함은 선택: 비우면 의뢰함에서 주소로 표시
+      if (phone.length < 9 || phone.length > 11) return rqpFlag('rqpStepPhone', 'rqpPhone', '6번 연락받으실 전화번호를 확인해 주세요.');
+      if (!document.getElementById('rqpAgree').checked) { document.getElementById('rqpAgreeBox').classList.add('!border-[#DC2626]'); return rqpFlag('rqpAgreeBox', '', '맨 아래 [동의] 네모 칸을 눌러 체크해 주세요.'); }
       const btn = document.getElementById('rqpSendBtn'); RQ.sending = true; btn.disabled = true; btn.innerText = RQ.imgs.length ? '사진과 함께 보내는 중…' : '보내는 중…';
       try {
         const r = await reqApi({ action: 'req_submit', cid: RQ.cid, name, phone, addr, text, when: RQ.when, works: Array.from(RQ.works), imgs: RQ.imgs, via: RQ.via, agree: true, hp: document.getElementById('rqpHp').value });
@@ -7600,7 +7714,8 @@ ${AI_COMMON_RULES}
     function reqClean(r, id) {
       if (!r || typeof r !== 'object') return null;
       const arr = v => (Array.isArray(v) ? v : (v && typeof v === 'object' ? Object.values(v) : [])).map(x => String(x == null ? '' : x));
-      return { id: String(id), name: String(r.name || '').slice(0, 20), phone: String(r.phone || '').replace(/[^0-9]/g, '').slice(0, 11), addr: String(r.addr || '').slice(0, 150),
+      const nm = String(r.name || '').trim().slice(0, 20); // 📋 [패치 #53] 성함이 없으면 주소를 고객명으로 사용
+      return { id: String(id), name: nm || String(r.addr || '').trim().slice(0, 40) || '고객', noName: !nm, phone: String(r.phone || '').replace(/[^0-9]/g, '').slice(0, 11), addr: String(r.addr || '').slice(0, 150),
         text: String(r.text || '').slice(0, 1000), when: String(r.when || '').slice(0, 10), works: arr(r.works).slice(0, 12), imgs: arr(r.imgs).filter(u => /^https:\/\/firebasestorage\.googleapis\.com\//.test(u)).slice(0, 5),
         status: ['new', 'talk', 'done'].includes(r.status) ? r.status : 'new', createdAt: Number(r.createdAt) || 0, seenAt: Number(r.seenAt) || 0, via: r.via === 'voice' ? 'voice' : 'form' };
     }
@@ -7631,6 +7746,7 @@ ${AI_COMMON_RULES}
     async function openReqView(rid) {
       if (!currentUserId) return;
       document.getElementById('reqMyLink').innerText = reqMyLink();
+      document.getElementById('reqPickContact').classList.toggle('hidden', !(navigator.contacts && navigator.contacts.select)); // 📋 [패치 #54]
       document.getElementById('reqQrBox').classList.add('hidden');
       document.getElementById('reqListPane').classList.remove('hidden');
       document.getElementById('reqDetailPane').classList.add('hidden');
@@ -7653,7 +7769,7 @@ ${AI_COMMON_RULES}
       document.getElementById('reqList').innerHTML = RV.view.length ? RV.view.map((r, i) => `<button type="button" onclick="reqOpenDetail(RV.view[${i}].id)" class="text-left bg-white rounded-[20px] p-3.5 flex flex-col gap-2 text-[#0F172A] active:scale-[0.99] transition-all">
           <span class="flex justify-between items-center w-full gap-2">${!r.seenAt && r.status === 'new' ? '<span class="text-[13.5px] font-black bg-[#DC2626] text-white rounded-md px-2 py-0.5">NEW</span>' : '<span></span>'}<span class="text-[14px] font-bold text-[#64748B]">${escHtml(reqWhen(r.createdAt))}</span></span>
           <span class="text-[19px] font-black leading-snug break-keep">${escHtml(r.works.join(' · ') || '작업 내용은 글로 적음')}</span>
-          <span class="text-[16px] font-bold text-[#334155] break-keep">${escHtml(r.name)} 고객님 · ${escHtml(reqArea(r.addr))}</span>
+          <span class="text-[16px] font-bold text-[#334155] break-keep">${r.noName ? escHtml(r.addr) + ' · 성함 없음' : escHtml(r.name) + ' 고객님 · ' + escHtml(reqArea(r.addr))}</span>
           <span class="flex gap-1.5 items-center w-full">${r.imgs.slice(0, 3).map(u => `<img src="${escHtml(u)}" alt="" loading="lazy" class="w-12 h-12 rounded-[10px] object-cover bg-[#D9E4D0]">`).join('') || '<span class="text-[14.5px] font-bold text-[#64748B]">사진 없음</span>'}<span class="ml-auto">${reqWhenChip(r.when)}</span></span>
         </button>`).join('') : `<div class="bg-white/[0.06] border-[1.5px] border-dashed border-[#475569] rounded-[18px] px-4 py-6 text-center text-[16px] font-bold text-[#CBD5E1] leading-relaxed break-keep">${empty}</div>`;
     }
@@ -7677,10 +7793,10 @@ ${AI_COMMON_RULES}
       document.getElementById('reqDetailPane').innerHTML = `
         <div class="flex items-center gap-2.5"><button type="button" onclick="history.back()" aria-label="뒤로" class="w-11 h-11 rounded-[12px] bg-[#1E293B] text-white flex items-center justify-center active:scale-95"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg></button><span class="text-[22px] font-black flex-1">의뢰 자세히</span><span class="text-[14.5px] font-black rounded-full px-2.5 py-1 ${st[1]}">${st[0]}</span></div>
         <div class="bg-white rounded-[22px] p-4 flex flex-col gap-3.5 text-[#0F172A]">
-          <div class="flex flex-col gap-1"><span class="text-[14px] font-bold text-[#64748B]">${escHtml(reqWhen(r.createdAt))} 접수${r.via === 'voice' ? ' · 말로 신청' : ''}</span><span class="text-[24px] font-black break-keep">${escHtml(r.name)} 고객님</span><span class="text-[20px] font-black text-[#1D4ED8]">${escHtml(ph)}</span></div>
+          <div class="flex flex-col gap-1"><span class="text-[14px] font-bold text-[#64748B]">${escHtml(reqWhen(r.createdAt))} 접수${r.via === 'voice' ? ' · 말로 신청' : ''}</span><span class="text-[24px] font-black break-keep">${escHtml(r.name)} 고객님</span>${r.noName ? '<span class="text-[14.5px] font-bold text-[#64748B]">성함을 안 남기셔서 주소로 표시합니다</span>' : ''}<span class="text-[20px] font-black text-[#1D4ED8]">${escHtml(ph)}</span></div>
           <div class="grid grid-cols-2 gap-2">
             <a href="tel:${escHtml(tel)}" class="h-14 rounded-[16px] bg-[#1D4ED8] text-white text-[18px] font-black flex items-center justify-center" style="text-decoration:none">전화하기</a>
-            <a href="sms:${escHtml(tel)}" class="h-14 rounded-[16px] bg-[#84CC16] text-[#1A2E05] text-[18px] font-black flex items-center justify-center" style="text-decoration:none">문자하기</a>
+            <a href="${escHtml(reqSmsHref(tel, reqReplyText(r)))}" class="h-14 rounded-[16px] bg-[#84CC16] text-[#1A2E05] text-[18px] font-black flex items-center justify-center" style="text-decoration:none">문자하기</a>
           </div>
           <div class="h-px bg-[#E2E8F0]"></div>
           ${sec('현장 주소', `<span class="text-[17px] font-bold leading-relaxed break-keep">${escHtml(r.addr)}</span><a href="https://map.naver.com/p/search/${encodeURIComponent(r.addr)}" target="_blank" rel="noopener" class="self-start text-[15px] font-black text-[#1D4ED8] underline underline-offset-2 min-h-[36px] flex items-center">지도에서 보기</a>`)}
@@ -7758,6 +7874,30 @@ ${AI_COMMON_RULES}
       const msg = reqShareText();
       if (navigator.share) navigator.share({ title: '견적·상담 신청', text: msg }).catch(() => {});
       else navigator.clipboard.writeText(msg).then(() => alert('안내 문구와 주소를 복사했습니다. 카톡 대화창에 붙여 넣으세요.'));
+    }
+    // 📋 [패치 #53·#54] 문자: 받는 번호(있으면)와 내용을 미리 채워서 문자 앱 열기
+    function reqSmsHref(to, text) {
+      const num = String(to || '').replace(/[^0-9]/g, ''), ios = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      return 'sms:' + num + (ios ? '&' : '?') + 'body=' + encodeURIComponent(text || '');
+    }
+    function reqSmsLink() {
+      const to = (document.getElementById('reqSmsTo') || {}).value || '';
+      const d = String(to).replace(/[^0-9]/g, '');
+      if (d && (d.length < 9 || d.length > 11)) return alert('받을 분 전화번호를 확인해 주세요.\n(비워 두면 문자 앱에서 직접 고를 수 있어요)');
+      location.href = reqSmsHref(d, reqShareText());
+    }
+    async function reqPickContact() { // 안드로이드 크롬: 휴대폰 전화번호부에서 고르기
+      try {
+        const got = await navigator.contacts.select(['tel'], { multiple: false });
+        const t = got && got[0] && got[0].tel && got[0].tel[0];
+        if (t) { const el = document.getElementById('reqSmsTo'); el.value = String(t).replace(/[^0-9]/g, ''); autoHyphen(el); }
+      } catch (e) {}
+    }
+    function reqReplyText(r) { // 의뢰 고객에게 보내는 첫 문자 (대표님이 고쳐서 보내면 됨)
+      const n = (myCompanyProfile && myCompanyProfile.name) || '';
+      const who = r && !r.noName ? r.name + ' 고객님, ' : '고객님, ';
+      const w = r && r.works && r.works.length ? r.works.join(', ') : '작업';
+      return `${who}안녕하세요. ${n ? n + '입니다. ' : ''}보내 주신 ${w} 의뢰 잘 받았습니다. `;
     }
     function reqCopyLink() { navigator.clipboard.writeText(reqMyLink()).then(() => alert('주소를 복사했습니다.\n블로그 글이나 카톡 프로필에 붙여 넣으세요.')).catch(() => alert(reqMyLink())); }
     async function reqShowQr() {
