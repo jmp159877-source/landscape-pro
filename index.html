@@ -8149,6 +8149,13 @@ ${AI_COMMON_RULES}
       lines.push('━━━━━━━━━━━━━━━━');
       return lines;
     }
+    // 소제목 위아래 선 (글자만 넘어가서 굵게·크게 대신 선으로 구분) · 소제목 글자 폭에 맞춘 길이
+    //   한글·■·━ = 1칸, 숫자 0.55칸, 띄어쓰기·마침표 0.3칸으로 셈
+    function blogLineFor(text) {
+      let w = 0;
+      for (const ch of String(text)) w += /[가-힣■━▼]/.test(ch) ? 1 : /[0-9A-Za-z]/.test(ch) ? 0.55 : 0.3;
+      return '━'.repeat(Math.max(4, Math.round(w)));
+    }
     function blogPhotoLine(g) { return '▼ ' + g.label + ' 사진'; }
     function blogTags() { return ((BL.draft && BL.draft.tags) || []).map(t => '#' + t).join(' '); }
     // 복사되는 본문 (제목 없음 · 소제목 아래 한 줄 비워 둠 → 거기에 사진 넣기)
@@ -8156,7 +8163,7 @@ ${AI_COMMON_RULES}
       const d = BL.draft || {}, out = [];
       if (d.intro && d.intro.trim()) out.push(d.intro.trim(), '');
       // 사진이 있는 소제목은 '▼ 작업 전 사진' 줄 + 빈 줄 하나 (그 빈 줄을 톡 → 카메라로 사진 넣기)
-      blogShownSecs().forEach(g => { out.push(blogHead(g)); if (g.imgs.length) out.push(blogPhotoLine(g)); out.push(''); if (g.text && g.text.trim()) out.push(g.text.trim()); out.push(''); });
+      blogShownSecs().forEach(g => { const h = blogHead(g), ln = blogLineFor(h); out.push(ln, h, ln); if (g.imgs.length) out.push(blogPhotoLine(g)); out.push(''); if (g.text && g.text.trim()) out.push(g.text.trim()); out.push(''); });
       if (d.outro && d.outro.trim()) out.push(d.outro.trim(), '');
       blogFooterLines().forEach(l => out.push(l));
       if (blogTags()) out.push('', blogTags());
@@ -8232,7 +8239,7 @@ ${AI_COMMON_RULES}
         const box = g.noPhoto ? '' : g.imgs.length
           ? `<div class="bg-[#FEF9C3] border-2 border-dashed border-[#EAB308] rounded-[14px] p-2.5 flex flex-col gap-2"><span class="text-[15px] font-black text-[#854D0E]">여기에 넣을 사진 · ${g.label} ${g.imgs.length}장 (사진첩 원본으로)</span>${blogThumbs(g)}</div>`
           : `<div class="bg-[#F1F5F9] border-2 border-dashed border-[#CBD5E1] rounded-[14px] px-3 py-2.5 text-[15px] font-bold text-[#475569]">일지에 ${g.label} 사진이 없어요 · 있으면 여기에 넣으세요</div>`;
-        return `<span class="text-[18px] font-black text-[#0F172A]">${blogHead(g)}</span>${g.imgs.length ? `<span class="text-[16.5px] font-bold text-[#1E293B] -mt-1.5">${blogPhotoLine(g)}</span>` : ''}${box}${ta(`blogSetSec(${gi}, this.value)`, g.text)}`; }).join('');
+        return `<span class="self-start mt-1 border-y-[3px] border-[#0F172A] py-1.5 text-[18px] font-black text-[#0F172A] leading-snug">${blogHead(g)}</span>${g.imgs.length ? `<span class="text-[16.5px] font-bold text-[#1E293B] -mt-1.5">${blogPhotoLine(g)}</span>` : ''}${box}${ta(`blogSetSec(${gi}, this.value)`, g.text)}`; }).join('');
       return `<div class="flex flex-col gap-2"><span class="text-[18px] font-black">말투 <span class="text-[15px] font-bold text-[#475569]">(누르면 AI가 다시 써요)</span></span>${blogChipsHtml()}</div>
         <div class="bg-[#F4FBEA] border-2 border-[#84CC16] rounded-[18px] p-3.5 flex flex-col gap-2.5">
           <span class="text-[16px] font-black text-[#3F6212]">제목 <span class="text-[15px] font-bold text-[#475569]">(AI가 추천한 제목 · 고쳐 쓰셔도 돼요)</span></span>
@@ -8386,7 +8393,7 @@ ${AI_COMMON_RULES}
       const step = (n, head, sub) => `<div class="flex gap-3 items-start"><span class="w-9 h-9 rounded-full bg-[#151E2D] text-[#BEF264] text-[17px] font-black flex items-center justify-center shrink-0">${n}</span><div class="flex flex-col gap-1.5 min-w-0"><span class="text-[18px] font-black leading-snug">${head}</span>${sub}</div></div>`;
       const txt = t => `<span class="text-[16px] font-bold text-[#334155] leading-relaxed">${t}</span>`;
       const first = blogShownSecs()[0], n1 = first ? first.imgs.length : 0, pc = blogIsPC();
-      const eg = first ? `<div class="bg-[#F1F5F9] rounded-[14px] px-3 py-2.5 flex flex-col gap-1.5 text-[15px] font-bold text-[#334155]"><span class="font-black text-[#0F172A]">${blogHead(first)}</span>${n1 ? `<span>${blogPhotoLine(first)}</span>` : ''}<span class="flex items-center gap-1.5"><span class="w-[3px] h-5 bg-[#03C75A] shrink-0"></span><span class="text-[#03C75A] font-black">바로 아래 빈 줄을 톡 → 맨 아래 카메라 버튼 → ${n1 ? n1 + '장 고르기' : '사진 고르기'}</span></span></div>` : '';
+      const eg = first ? `<div class="bg-[#F1F5F9] rounded-[14px] px-3 py-2.5 flex flex-col gap-1.5 text-[15px] font-bold text-[#334155]"><span class="self-start border-y-2 border-[#0F172A] py-1 font-black text-[#0F172A]">${blogHead(first)}</span>${n1 ? `<span>${blogPhotoLine(first)}</span>` : ''}<span class="flex items-center gap-1.5"><span class="w-[3px] h-5 bg-[#03C75A] shrink-0"></span><span class="text-[#03C75A] font-black">바로 아래 빈 줄을 톡 → 맨 아래 카메라 버튼 → ${n1 ? n1 + '장 고르기' : '사진 고르기'}</span></span></div>` : '';
       const photoStep = n => step(n, '▼ 사진 줄 아래에 사진 넣기', eg + txt('카메라 버튼은 화면 <b>맨 아래 왼쪽</b>에 있어요. 사진첩 <b>원본</b>을 여러 장 한 번에 골라도 돼요. 작업 중·작업 후도 똑같이.'));
       const steps = pc
         ? step(1, '블로그 글쓰기에서 본문 붙여넣기', txt('본문을 한 번 클릭하고 <b>Ctrl + V</b> (본문은 복사돼 있어요)'))
@@ -8394,7 +8401,7 @@ ${AI_COMMON_RULES}
           + photoStep(3) + step(4, '[발행] 누르면 끝', '')
         : step(1, '보내기 창에서 [블로그] 누르기', txt('<b>본문이 들어간</b> 글쓰기 화면이 열려요.'))
           + step(2, '제목 바꾸기', `<div class="bg-[#F1F5F9] rounded-[14px] px-3 py-2.5 text-[15px] font-bold text-[#334155] leading-relaxed">제목이 <b>[공유] …</b>로 길게 들어가 있어요 (네이버 앱이 자동으로 넣는 거예요)</div>` + txt('제목을 <b>꾹</b> 누르기 → <b>[모두 선택]</b> → <b>[붙여넣기]</b><br>제목은 복사돼 있어요.'))
-          + photoStep(3) + step(4, '[등록] 누르면 끝', '');
+          + photoStep(3) + step(4, '[등록] 누르면 끝', txt('소제목을 더 크게 꾸미고 싶으면: 소제목 줄을 톡 → 맨 아래 <b>T</b> 버튼 → 크기·굵기 (선택)'));
       document.getElementById('blogGuideBody').innerHTML = `
         <div class="flex flex-col items-center gap-2 text-center">
           <span class="text-[24px] font-black">${pc ? (copied ? '본문이 복사됐어요' : '복사가 안 됐을 수 있어요') : '블로그로 보내기'}</span>
