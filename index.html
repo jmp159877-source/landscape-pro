@@ -18,6 +18,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#151E2D">
+  <script>/* ☀️ [패치 #57] 야외 모드(밝은 화면) 기억 */ try { var q0 = location.search; if (!/[?&](req|id|reportId)=/.test(q0) && localStorage.getItem('jn_outdoor') === '1') document.documentElement.classList.add('outdoor'); } catch (e) {}</script>
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><!-- 📲 [패치 #25] -->
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="manifest" href="/manifest.json">
@@ -106,6 +107,105 @@
     .nav-scroll::-webkit-scrollbar { display: none; }
     .nav-scroll { -ms-overflow-style: none; scrollbar-width: none; }
     #splashScreen { transition: opacity 0.8s ease-out, visibility 0.8s ease-out; }
+
+    /* ☀️ [패치 #57] 메인 메뉴 색을 한곳에 모음 (어두운 기본 모습은 예전과 똑같음 → 야외 모드에서 바꿀 수 있게) */
+    .sec-title.sec-lime { color: #84CC16 !important; } .sec-bar.sec-lime { background: #84CC16; }
+    .sec-title.sec-white { color: #F8FAFC !important; } .sec-bar.sec-white { background: #F8FAFC; }
+    .sec-title.sec-gold { color: #E3B341 !important; } .sec-bar.sec-gold { background: #E3B341; }
+    #tabEncyclopedia, #tabLens, #tabWeather { background: linear-gradient(160deg, #FFFFFF 0%, #EEF2F6 100%) !important; border: 1.5px solid #84CC16 !important; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35) !important; }
+    #tabLedger, #tabAiChat { background: linear-gradient(145deg, #1E293B 0%, #273449 60%, #1E293B 100%) !important; border: 1.5px solid #E3B341 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important; }
+    #tabStock { background: linear-gradient(145deg, #1E293B 0%, #273449 60%, #1E293B 100%) !important; border: 2px solid #E3B341 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important; }
+    .own-t { color: #FFFFFF !important; } .own-i { color: #E3B341 !important; }
+    #screenModeBar { background: #1E293B; border: 1.5px solid rgba(255,255,255,0.28); }
+    #screenModeBar .smb-label { color: #FFFFFF; }
+    #screenModeBar .smb-btn { background: rgba(255,255,255,0.08); color: #E2E8F0; border: 1.5px solid rgba(255,255,255,0.18); }
+    #screenModeBar .smb-btn[aria-pressed="true"] { background: #84CC16; color: #14261E; border-color: #84CC16; }
+    html.outdoor #screenModeBar { background: #FFFFFF !important; border-color: #C9D2C2 !important; box-shadow: 0 3px 10px rgba(20,38,30,0.08); }
+    html.outdoor #screenModeBar .smb-label { color: #14261E !important; }
+    html.outdoor #screenModeBar .smb-btn { background: #F1F4EE !important; color: #4B5A52 !important; border-color: #E0E5DB !important; }
+    html.outdoor #screenModeBar .smb-btn[aria-pressed="true"] { background: #FDE047 !important; color: #14261E !important; border-color: #EAB308 !important; }
+
+    /* ☀️ [패치 #57] 야외 모드: html에 outdoor가 붙으면 모든 화면을 밝은 바탕용 색으로 (배치·기능은 그대로) */
+/* ☀️ 야외 모드(밝은 화면) — 배치는 그대로, 색만 밝은 바탕용으로 */
+    html.outdoor body { background: #F2F4EF !important; color: #14261E; }
+    html.outdoor .glass-nav { background: rgba(255,255,255,0.97) !important; border-bottom: 1px solid #DCE2D6 !important; box-shadow: 0 2px 10px rgba(20,38,30,0.06) !important; }
+    html.outdoor #company-name-header, html.outdoor #company-name-header * { color: #14261E !important; }
+    html.outdoor #company-name-header span + span { color: #3F6212 !important; }
+    html.outdoor #ledgerMonthNet, html.outdoor #ledgerYearNet { color: #3F6212 !important; } html.outdoor #ledgerMonthNet.neg, html.outdoor #ledgerYearNet.neg { color: #DC2626 !important; }
+    html.outdoor #mainHeader .text-\[\#CBD5E1\] { color: #4B5A52 !important; }
+    html.outdoor #mainHeader span.bg-\[\#84CC16\]\/25 { background: #ECFCCB !important; color: #3F6212 !important; border-color: #84CC16 !important; }
+    html.outdoor #mainHeader button > span { color: #14261E !important; }
+    html.outdoor #mainHeader button > div { background: #F1F4EE !important; }
+    html.outdoor #tabInquiry > div { border-color: #D97706 !important; } html.outdoor #tabInquiry svg { color: #B45309 !important; }
+    html.outdoor #mainHeader button[title="설정"] svg { color: #14261E !important; }
+    html.outdoor #mainHeader button[title="로그아웃"] > div { background: #FEF2F2 !important; border-color: #FCA5A5 !important; } html.outdoor #mainHeader button[title="로그아웃"] svg { color: #DC2626 !important; }
+    
+    html.outdoor #homeDashboard > div:first-child { box-shadow: 0 6px 18px rgba(63,98,18,0.18) !important; }
+    html.outdoor #homeDashboard > button { border: 1px solid #DCE2D6; box-shadow: 0 4px 14px rgba(20,38,30,0.06) !important; }
+    html.outdoor #homeView > div.rounded-\[28px\] { background: #FFFFFF !important; border: 1px solid #DCE2D6 !important; box-shadow: 0 4px 14px rgba(20,38,30,0.06); }
+    html.outdoor #homeView h2 { color: #14261E !important; }
+    html.outdoor #mainCategoryWrapper { border-top-color: #E6EAE2 !important; }
+    html.outdoor .menu-sec .sec-title { color: #14261E !important; }
+    html.outdoor .menu-sec span.text-white\/60 { color: #4B5A52 !important; }
+    html.outdoor .sec-bar.sec-lime { background: #65A30D !important; }
+    html.outdoor .sec-bar.sec-white { background: #14261E !important; }
+    html.outdoor .sec-bar.sec-gold { background: #D97706 !important; }
+    
+    html.outdoor #tabCalendar, html.outdoor #tabAdmin, html.outdoor #tabClient, html.outdoor #tabQuote, html.outdoor #tabQuoteList, html.outdoor #tabContacts {
+      background: #FFFFFF !important; border: 1.5px solid #C9D2C2 !important; box-shadow: 0 3px 8px rgba(20,38,30,0.08) !important; }
+    html.outdoor #tabCalendar span, html.outdoor #tabAdmin span, html.outdoor #tabClient span, html.outdoor #tabQuote span, html.outdoor #tabQuoteList span, html.outdoor #tabContacts span { color: #14261E !important; text-shadow: none !important; }
+    html.outdoor #tabCalendar svg, html.outdoor #tabAdmin svg, html.outdoor #tabClient svg, html.outdoor #tabQuote svg, html.outdoor #tabQuoteList svg, html.outdoor #tabContacts svg { color: #3F6212 !important; filter: none !important; }
+    
+    html.outdoor #tabEncyclopedia, html.outdoor #tabLens, html.outdoor #tabWeather { background: #F4FBEA !important; border: 1.5px solid #A3D65C !important; box-shadow: 0 3px 8px rgba(20,38,30,0.08) !important; }
+    
+    html.outdoor #tabLedger, html.outdoor #tabStock, html.outdoor #tabAiChat { background: #FFF8E6 !important; border: 1.5px solid #E3B341 !important; box-shadow: 0 3px 8px rgba(20,38,30,0.08) !important; }
+    html.outdoor .own-t { color: #14261E !important; }
+    html.outdoor .own-i { color: #B45309 !important; }
+    
+    html.outdoor #tabMemo, html.outdoor #tabClientRequest { box-shadow: 0 4px 12px rgba(63,98,18,0.22) !important; }
+    html.outdoor #tabLounge { box-shadow: 0 4px 12px rgba(180,120,20,0.22) !important; }
+    
+    html.outdoor #bottomNav { background: #FFFFFF !important; border-top: 1px solid #DCE2D6 !important; box-shadow: 0 -4px 14px rgba(20,38,30,0.08) !important; }
+    html.outdoor .bnav-btn:not(.is-active):not(.bnav-center) { color: #4B5A52 !important; }
+    html.outdoor .bnav-btn.is-active, html.outdoor .bnav-btn.bnav-center, html.outdoor .bnav-btn.bnav-center.is-active { color: #3F6212 !important; }
+    html.outdoor #bottomNav .bnav-btn.is-active, html.outdoor #bottomNav .bnav-btn.is-active span { color: #3F6212 !important; }
+    
+    /* ===== 안쪽 화면 공통 (S = 밝게 바꿀 영역, DK = 그대로 어둡게 둘 작은 버튼·배지) ===== */
+    html.outdoor .luxury-shadow { box-shadow: 0 4px 16px rgba(20,38,30,0.08) !important; outline: 1px solid #DCE2D6; }
+    html.outdoor :is(#boardView, #reqView, #stockView, #memoView, #formAiPreview) { background: #F2F4EF !important; }
+    html.outdoor #loungeView h2, html.outdoor #ledgerView h2.text-white, html.outdoor #ledgerView h3.text-white { color: #14261E !important; }
+    
+    html.outdoor :is(#swipeContainer, #boardView, #reqView, #stockView, #memoView, #formAiPreview, #settingsModal, #inquiryModal, #ledgerPinModal, #boardWriteModal, #memoSheet, #stockSheet)
+      :is(div, section, nav, form, header, label, ul, li, button[class*="bg-[#1E293B]"]):is([class*="bg-[#1E293B]"], [class*="bg-[#151E2D]"], [class*="bg-[#0F1722]"], [class*="bg-[#141A23]"], [class*="bg-[#0F141C]"], [class*="bg-white/5"], [class*="bg-white/10"], [class*="bg-white/[0.0"], [class*="bg-black/40"], [class*="bg-black/20"], [class*="bg-black/30"], [style*="background:#1E293B"], [style*="background: #1E293B"], [style*="background:#0F1722"])
+      { background: #FFFFFF !important; border-color: #D5DBCF !important; }
+    html.outdoor :is(#swipeContainer, #boardView, #reqView, #stockView, #memoView, #formAiPreview, #settingsModal, #inquiryModal, #ledgerPinModal, #boardWriteModal, #memoSheet, #stockSheet)
+      :is(input, textarea, select):is([class*="bg-black"], [class*="bg-white/"], [class*="bg-[#0F1722]"], [class*="bg-[#151E2D]"], [class*="bg-[#1E293B]"])
+      { background: #FFFFFF !important; color: #14261E !important; border-color: #C9D2C2 !important; }
+    
+    /* 글씨: 밝은 곳 위의 흰·회색 글씨 → 진한 색 (어두운 작은 버튼 안은 제외) */
+    html.outdoor :is(#swipeContainer, #boardView, #reqView, #stockView, #memoView, #formAiPreview, #settingsModal, #inquiryModal, #ledgerPinModal, #boardWriteModal, #memoSheet, #stockSheet)
+      :is(.text-white, [class*="text-white/"], [class*="text-[#F1F5F9]"], [class*="text-[#F8FAFC]"], [class*="text-[#E2E8F0]"]):not(:is(button, a, span, small, b):is([class*="bg-[#151E2D]"], [class*="bg-[#14261E]"], [class*="bg-[#0F172A]"], [class*="bg-[#DC2626]"], [class*="bg-[#1D4ED8]"], [class*="bg-[#9A3412]"], [class*="bg-[#475569]"], [class*="bg-red-"], [class*="bg-blue-"], [class*="bg-black"], [class*="bg-[#3F6212]"], [class*="bg-[#65A30D]"]), :is(button, a, span, small, b):is([class*="bg-[#151E2D]"], [class*="bg-[#14261E]"], [class*="bg-[#0F172A]"], [class*="bg-[#DC2626]"], [class*="bg-[#1D4ED8]"], [class*="bg-[#9A3412]"], [class*="bg-[#475569]"], [class*="bg-red-"], [class*="bg-blue-"], [class*="bg-black"], [class*="bg-[#3F6212]"], [class*="bg-[#65A30D]"]) *)
+      { color: #14261E !important; }
+    html.outdoor :is(#swipeContainer, #boardView, #reqView, #stockView, #memoView, #formAiPreview, #settingsModal, #inquiryModal, #ledgerPinModal, #boardWriteModal, #memoSheet, #stockSheet)
+      :is([class*="text-[#CBD5E1]"], [class*="text-[#94A3B8]"], [class*="text-[#A3A8A3]"], [class*="text-[#D1FAE5]"], [class*="text-[#A7F3D0]"], [class*="text-[#B6C2BC]"]):not(:is(button, a, span)[class*="bg-[#151E2D]"], :is(button, a, span)[class*="bg-[#151E2D]"] *, :is(button, a, span)[class*="bg-[#0F172A]"] *)
+      { color: #4B5A52 !important; }
+    /* 연두 글씨(어두운 바탕용) → 흰 바탕에선 진한 연두 */
+    html.outdoor :is(#swipeContainer, #boardView, #reqView, #stockView, #memoView, #formAiPreview, #settingsModal, #inquiryModal, #ledgerPinModal, #boardWriteModal, #memoSheet, #stockSheet)
+      :is([class*="text-[#84CC16]"], [class*="text-[#BEF264]"], [class*="text-[#D9F99D]"], [class*="text-[#FDE047]"], [class*="text-[#E3B341]"], [class*="text-[#4ADE80]"]):not(:is(button, a, span, b, small):is([class*="bg-[#151E2D]"], [class*="bg-[#14261E]"], [class*="bg-[#0F172A]"], [class*="bg-black"]), :is(button, a, span, b, small):is([class*="bg-[#151E2D]"], [class*="bg-[#14261E]"], [class*="bg-[#0F172A]"], [class*="bg-black"]) *)
+      { color: #3F6212 !important; }
+    html.outdoor :is(#swipeContainer, #boardView, #reqView, #stockView, #memoView, #settingsModal, #inquiryModal, #ledgerPinModal) :is([class*="border-white/"], [class*="border-[#475569]"], [class*="border-[#64748B]"], [class*="border-[#2B3B35]"]) { border-color: #D5DBCF !important; }
+    
+    /* 화면별 보정 */
+    html.outdoor .lounge-cat { background: #FFFFFF !important; border-color: #D5DBCF !important; box-shadow: 0 3px 10px rgba(20,38,30,0.06); }
+    html.outdoor .lounge-cat[style*="7F1D1D"] { background: #FEF2F2 !important; border-color: #DC2626 !important; }
+    html.outdoor .lounge-cat span:last-child { border-top-color: #E6EAE2 !important; }
+    html.outdoor #aiChatView .bg-gradient-to-r[class*="from-[#0F172A]"] { background: #FFFFFF !important; border-bottom-color: #DCE2D6 !important; }
+    html.outdoor .req-tab[style*="transparent"], html.outdoor .stock-tab[style*="transparent"] { color: #4B5A52 !important; }
+    html.outdoor :is(#reqView, #stockView) .grid[class*="bg-[#1E293B]"] { background: #E6EBE1 !important; }
+    html.outdoor #loungeView span[style*="color:#84CC16"], html.outdoor #loungeView span[style*="color:#F8FAFC"], html.outdoor #loungeView span[style*="color:#E3B341"] { color: #14261E !important; }
+    html.outdoor #loungeView span.rounded-full[style*="background:#F8FAFC"] { background: #14261E !important; }
+    html.outdoor #loungeView span.rounded-full[style*="background:#84CC16"] { background: #65A30D !important; }
+    
   </style>
 </head>
 <body class="text-white antialiased min-h-screen pb-24 selection:bg-[#84CC16] selection:text-white">
@@ -274,6 +374,8 @@
       <style>
         #company-name-header span:first-child { font-size: 21px !important; }
         #company-name-header span:last-child { font-size: 20px !important; }
+        #company-name-header { flex-wrap: nowrap !important; overflow: hidden; }
+        #company-name-header span { white-space: nowrap !important; overflow: hidden; text-overflow: ellipsis; }
       </style>
       <div class="flex items-center gap-2.5 min-w-0">
         <div class="w-[42px] h-[42px] rounded-[13px] bg-[#84CC16] flex items-center justify-center shadow-[0_4px_14px_rgba(132,204,22,0.35)] shrink-0">
@@ -312,6 +414,14 @@
   <div id="swipeContainer" class="max-w-md mx-auto p-4 space-y-5">
     <!-- 🧭 [패치 #17] 홈 화면: 오늘의 현황 + 전체 메뉴 -->
     <section id="homeView" class="hidden space-y-4">
+      <!-- ☀️ [패치 #57] 화면 바꾸기: 야외용(밝게) / 실내용(어둡게) — 누르면 모든 화면 색이 한 번에 바뀜 -->
+      <div id="screenModeBar" class="flex items-center gap-2 rounded-[18px] p-1.5 pl-3.5">
+        <span class="smb-label text-[16px] font-black whitespace-nowrap flex items-center gap-1.5"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"></rect><path d="M12 18h.01"></path></svg>화면 바꾸기</span>
+        <div class="flex-1 grid grid-cols-2 gap-1.5">
+          <button type="button" id="smbOut" onclick="setOutdoor(true)" aria-pressed="false" class="smb-btn h-[48px] rounded-[14px] text-[17px] font-black flex items-center justify-center gap-1.5 active:scale-95 transition-all"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg>야외용</button>
+          <button type="button" id="smbIn" onclick="setOutdoor(false)" aria-pressed="true" class="smb-btn h-[48px] rounded-[14px] text-[17px] font-black flex items-center justify-center gap-1.5 active:scale-95 transition-all"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>실내용</button>
+        </div>
+      </div>
       <div id="homeDashboard" class="space-y-4"></div>
       <div class="rounded-[28px] px-4 pt-5 pb-6 border border-white/10" style="background: rgba(255,255,255,0.03);">
         <h2 class="text-[20px] font-black text-white flex items-center gap-2 mb-1 ml-1"><i data-lucide="layout-grid" class="w-6 h-6 text-[#84CC16]"></i> 전체 메뉴</h2>
@@ -319,7 +429,7 @@
         <!-- 접기/펼치기 영역 시작 (1:1 문의하기 제외 후 11개 버튼 완벽 정렬) -->
         <div id="mainCategoryWrapper" class="max-w-md mx-auto" style="margin-top: 22px !important; padding-top: 22px !important; border-top: 1px solid rgba(255, 255, 255, 0.12) !important;">
             <!-- 🎨 [패치 #15] 메뉴 C안: 업무 관리 / 현장 도구 / 대표님 전용 3묶음 -->
-            <div class="menu-sec flex items-center gap-2 mb-2.5 mt-0 ml-1"><span class="w-1.5 h-5 rounded-full" style="background:#84CC16"></span><span class="text-[16px] font-black tracking-tight" style="color:#84CC16 !important;">업무 관리</span><span class="text-[14.5px] font-bold text-white/60"></span></div>
+            <div class="menu-sec flex items-center gap-2 mb-2.5 mt-0 ml-1"><span class="sec-bar sec-lime w-1.5 h-5 rounded-full"></span><span class="sec-title sec-lime text-[16px] font-black tracking-tight">업무 관리</span><span class="text-[14.5px] font-bold text-white/60"></span></div>
             <nav class="grid grid-cols-3 gap-3">
                 <button id="tabCalendar" onclick="switchView('calendar')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="calendar-days" class="w-6 h-6"></i><span class="btn-title">작업 일정표</span></button>
                 <button id="tabAdmin" onclick="switchView('admin')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="pen-tool" class="w-6 h-6"></i><span class="btn-title">작업 일지 작성</span></button>
@@ -334,17 +444,17 @@
                 <span class="flex flex-col gap-0.5"><span class="text-[21px] font-black tracking-tight leading-tight" style="color:#1A2E05 !important;">AI 메모장</span><span class="text-[15px] font-bold leading-snug break-keep" style="color:#1A2E05 !important;">현장에서 말로 메모 · AI가 줄로 정리</span></span>
             </button>
 
-            <div class="menu-sec flex items-center gap-2 mb-2.5 mt-5 ml-1"><span class="w-1.5 h-5 rounded-full" style="background:#F8FAFC"></span><span class="text-[16px] font-black tracking-tight" style="color:#F8FAFC !important;">현장 도구</span><span class="text-[14.5px] font-bold text-white/60">식물·AI렌즈·날씨</span></div>
+            <div class="menu-sec flex items-center gap-2 mb-2.5 mt-5 ml-1"><span class="sec-bar sec-white w-1.5 h-5 rounded-full"></span><span class="sec-title sec-white text-[16px] font-black tracking-tight">현장 도구</span><span class="text-[14.5px] font-bold text-white/60">식물·AI렌즈·날씨</span></div>
             <nav class="grid grid-cols-3 gap-3">
-                <button id="tabEncyclopedia" onclick="switchView('encyclopedia')" class="w-full hover:brightness-95 transition-all flex flex-col items-center justify-center gap-2.5" style="background: linear-gradient(160deg, #FFFFFF 0%, #EEF2F6 100%) !important; border: 1.5px solid #84CC16 !important; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35) !important;">
+                <button id="tabEncyclopedia" onclick="switchView('encyclopedia')" class="w-full hover:brightness-95 transition-all flex flex-col items-center justify-center gap-2.5">
                     <i data-lucide="book-open" class="w-6 h-6 stroke-[2.5]" style="color: #3F6212 !important;"></i>
                     <span class="btn-title font-black" style="color: #0F172A !important;">식물 검색</span>
                 </button>
-                <button id="tabLens" onclick="switchView('lens')" class="w-full hover:brightness-95 transition-all flex flex-col items-center justify-center gap-2.5" style="background: linear-gradient(160deg, #FFFFFF 0%, #EEF2F6 100%) !important; border: 1.5px solid #84CC16 !important; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35) !important;">
+                <button id="tabLens" onclick="switchView('lens')" class="w-full hover:brightness-95 transition-all flex flex-col items-center justify-center gap-2.5">
                     <i data-lucide="scan-line" class="w-6 h-6 stroke-[2.5]" style="color: #3F6212 !important;"></i>
                     <span class="btn-title-long font-black" style="color: #0F172A !important;">AI 수목검색 렌즈</span>
                 </button>
-                <button id="tabWeather" onclick="openWeatherModal()" class="w-full relative overflow-hidden group hover:brightness-95 transition-all flex flex-col items-center justify-center gap-2" style="background: linear-gradient(160deg, #FFFFFF 0%, #EEF2F6 100%) !important; border: 1.5px solid #84CC16 !important; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35) !important;">
+                <button id="tabWeather" onclick="openWeatherModal()" class="w-full relative overflow-hidden group hover:brightness-95 transition-all flex flex-col items-center justify-center gap-2">
                     <div class="flex items-center gap-1 z-10">
                         <svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none">
                             <path d="M12 1L14.2 4.2L18 2.8L18.2 6.8L22.2 7.5L20.3 11L23 14L19.5 16L20.2 20L16.3 19.8L14.8 23.5L12 20.8L9.2 23.5L7.7 19.8L3.8 20L4.5 16L1 14L3.7 11L1.8 7.5L5.8 6.8L6 2.8L9.8 4.2L12 1Z" fill="#FFB800" stroke="#B45309" stroke-width="1"/>
@@ -356,26 +466,26 @@
                 </button>
             </nav>
 
-            <div class="menu-sec flex items-center gap-2 mb-2.5 mt-5 ml-1"><span class="w-1.5 h-5 rounded-full" style="background:#E3B341"></span><span class="text-[16px] font-black tracking-tight" style="color:#E3B341 !important;">대표님 전용</span><span class="text-[14.5px] font-bold text-white/60">장부·재고·AI비서·의뢰함</span></div>
+            <div class="menu-sec flex items-center gap-2 mb-2.5 mt-5 ml-1"><span class="sec-bar sec-gold w-1.5 h-5 rounded-full"></span><span class="sec-title sec-gold text-[16px] font-black tracking-tight">대표님 전용</span><span class="text-[14.5px] font-bold text-white/60">장부·재고·AI비서·의뢰함</span></div>
             <nav class="grid grid-cols-3 gap-3">
-                <button id="tabLedger" onclick="checkLedgerPin()" class="w-full relative overflow-hidden hover:brightness-110 transition-all flex flex-col items-center justify-center gap-2.5" style="background: linear-gradient(145deg, #1E293B 0%, #273449 60%, #1E293B 100%) !important; border: 1.5px solid #E3B341 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important;">
+                <button id="tabLedger" onclick="checkLedgerPin()" class="w-full relative overflow-hidden hover:brightness-110 transition-all flex flex-col items-center justify-center gap-2.5">
                     <div class="flex items-center gap-1.5">
-                        <i data-lucide="wallet" class="w-6 h-6 stroke-[2.3]" style="color: #E3B341 !important;"></i>
-                        <i data-lucide="lock" class="w-4 h-4 stroke-[2.5]" style="color: #E3B341 !important;"></i>
+                        <i data-lucide="wallet" class="own-i w-6 h-6 stroke-[2.3]"></i>
+                        <i data-lucide="lock" class="own-i w-4 h-4 stroke-[2.5]"></i>
                     </div>
-                    <span class="btn-title font-black" style="color: #FFFFFF !important;">개인 장부함</span>
+                    <span class="btn-title font-black own-t">개인 장부함</span>
                 </button>
                 <!-- 📦 [패치 #49] 개인 재고함 -->
-                <button id="tabStock" type="button" onclick="openStockView()" class="w-full relative overflow-hidden hover:brightness-110 transition-all flex flex-col items-center justify-center gap-2.5" style="background: linear-gradient(145deg, #1E293B 0%, #273449 60%, #1E293B 100%) !important; border: 2px solid #E3B341 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important;">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E3B341" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><path d="m3.3 7 8.7 5 8.7-5M12 22V12"></path></svg>
-                    <span class="btn-title font-black" style="color: #FFFFFF !important;">개인 재고함</span>
+                <button id="tabStock" type="button" onclick="openStockView()" class="w-full relative overflow-hidden hover:brightness-110 transition-all flex flex-col items-center justify-center gap-2.5">
+                    <svg class="own-i" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><path d="m3.3 7 8.7 5 8.7-5M12 22V12"></path></svg>
+                    <span class="btn-title font-black own-t">개인 재고함</span>
                 </button>
-                <button id="tabAiChat" onclick="switchView('aiChat')" class="w-full relative overflow-hidden hover:brightness-110 transition-all flex flex-col items-center justify-center gap-2" style="background: linear-gradient(145deg, #1E293B 0%, #273449 60%, #1E293B 100%) !important; border: 1.5px solid #E3B341 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important;">
+                <button id="tabAiChat" onclick="switchView('aiChat')" class="w-full relative overflow-hidden hover:brightness-110 transition-all flex flex-col items-center justify-center gap-2">
                     <div class="flex items-center gap-1.5">
-                        <i data-lucide="bot" class="w-6 h-6 stroke-[2.5]" style="color: #E3B341 !important;"></i>
+                        <i data-lucide="bot" class="own-i w-6 h-6 stroke-[2.5]"></i>
                         <small style="font-size: 11.5px !important; line-height: 1.1 !important; background-color: #E3B341 !important; color: #151E2D !important; padding: 3px 6px !important; border-radius: 6px !important; font-weight: 900 !important;">질문</small>
                     </div>
-                    <span class="btn-title font-black" style="color: #FFFFFF !important;">AI 현장 비서</span>
+                    <span class="btn-title font-black own-t">AI 현장 비서</span>
                 </button>
                 <!-- 📋 [패치 #51] '고객 의뢰 받기(준비 중)' 칸은 아래 넓은 [고객 의뢰함] 버튼으로 옮김 -->
             </nav>
@@ -7073,6 +7183,21 @@ ${AI_COMMON_RULES}
   </div>
   <script>
     // 🏷️ [패치 #48] 고객 의뢰 받기: 기능 완성 전까지 안내창만 (휴대폰 뒤로가기로도 닫힘)
+    // ☀️ [패치 #57] 야외 모드: 버튼 한 번 = 모든 화면 밝게 / 한 번 더 = 원래 어두운 화면. 휴대폰이 선택을 기억함.
+    function paintOutdoorBtn() { // 지금 켜진 쪽(야외용/실내용)을 색칠
+      const on = document.documentElement.classList.contains('outdoor');
+      const o = document.getElementById('smbOut'), i = document.getElementById('smbIn');
+      if (o) o.setAttribute('aria-pressed', on ? 'true' : 'false');
+      if (i) i.setAttribute('aria-pressed', on ? 'false' : 'true');
+      const m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', on ? '#FFFFFF' : '#151E2D');
+    }
+    function setOutdoor(on) {
+      document.documentElement.classList.toggle('outdoor', !!on);
+      try { localStorage.setItem('jn_outdoor', on ? '1' : '0'); } catch (e) {}
+      paintOutdoorBtn();
+    }
+    function toggleOutdoor() { setOutdoor(!document.documentElement.classList.contains('outdoor')); }
+    paintOutdoorBtn();
     function openClientRequestSoon() { document.getElementById('clientRequestSoon').classList.remove('hidden'); history.pushState({ clientReqSoon: true }, '', ''); }
     function closeClientRequestSoon(fromPopstate) {
       const el = document.getElementById('clientRequestSoon'); if (el.classList.contains('hidden')) return;
