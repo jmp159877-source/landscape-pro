@@ -23,7 +23,7 @@
   <link rel="manifest" href="/manifest.json">
   <link rel="canonical" href="https://www.jogyeongnote.com/"><!-- 🔎 [패치 #28] 네이버 검색: 대표 주소 하나로 -->
   <script>/* 🔎 [패치 #28] 고객 리포트 링크(?id=, ?reportId=)는 검색에 수집되지 않게 (고객 이름·주소·사진 보호) */
-    (function(){ try { var q = new URLSearchParams(location.search); if (q.get('id') || q.get('reportId')) { var m = document.createElement('meta'); m.name = 'robots'; m.content = 'noindex, nofollow'; document.head.appendChild(m); } } catch(e) {} })();
+    (function(){ try { var q = new URLSearchParams(location.search); if (q.get('id') || q.get('reportId') || q.get('req')) { /* 📋 [패치 #51] 고객 신청 페이지도 검색 수집 금지 */ var m = document.createElement('meta'); m.name = 'robots'; m.content = 'noindex, nofollow'; document.head.appendChild(m); } } catch(e) {} })();
   </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@1.47.0"></script>
@@ -356,7 +356,7 @@
                 </button>
             </nav>
 
-            <div class="menu-sec flex items-center gap-2 mb-2.5 mt-5 ml-1"><span class="w-1.5 h-5 rounded-full" style="background:#E3B341"></span><span class="text-[16px] font-black tracking-tight" style="color:#E3B341 !important;">대표님 전용</span><span class="text-[14.5px] font-bold text-white/60">장부·재고·AI비서·소통방</span></div>
+            <div class="menu-sec flex items-center gap-2 mb-2.5 mt-5 ml-1"><span class="w-1.5 h-5 rounded-full" style="background:#E3B341"></span><span class="text-[16px] font-black tracking-tight" style="color:#E3B341 !important;">대표님 전용</span><span class="text-[14.5px] font-bold text-white/60">장부·재고·AI비서·의뢰함</span></div>
             <nav class="grid grid-cols-3 gap-3">
                 <button id="tabLedger" onclick="checkLedgerPin()" class="w-full relative overflow-hidden hover:brightness-110 transition-all flex flex-col items-center justify-center gap-2.5" style="background: linear-gradient(145deg, #1E293B 0%, #273449 60%, #1E293B 100%) !important; border: 1.5px solid #E3B341 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important;">
                     <div class="flex items-center gap-1.5">
@@ -377,13 +377,14 @@
                     </div>
                     <span class="btn-title font-black" style="color: #FFFFFF !important;">AI 현장 비서</span>
                 </button>
-                <!-- 🏷️ [패치 #48] 고객 의뢰 받기 (준비 중 자리) -->
-                <button id="tabClientRequest" type="button" onclick="openClientRequestSoon()" class="w-full relative overflow-hidden transition-all flex flex-col items-center justify-center gap-2" style="background: #1B2330 !important; border: 2px dashed #8A7433 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4) !important;">
-                    <small class="absolute top-2 right-2" style="font-size: 11.5px !important; line-height: 1.1 !important; background-color: #475569 !important; color: #FFFFFF !important; padding: 3px 6px !important; border-radius: 6px !important; font-weight: 900 !important;">준비 중</small>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B89A45" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"></path><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path></svg>
-                    <span class="btn-title font-black" style="color: #CBD5E1 !important;">고객 의뢰 받기</span>
-                </button>
+                <!-- 📋 [패치 #51] '고객 의뢰 받기(준비 중)' 칸은 아래 넓은 [고객 의뢰함] 버튼으로 옮김 -->
             </nav>
+            <!-- 📋 [패치 #51] 고객 의뢰함: 고객이 보낸 견적·상담 신청 (새 의뢰 수 빨간 숫자) -->
+            <button type="button" id="tabClientRequest" onclick="openReqView()" class="w-full mt-3 text-left rounded-[22px] px-4 py-3.5 flex items-center gap-3.5 active:scale-[0.98] transition-all" style="background:#84CC16 !important; border: 2px solid #84CC16 !important; box-shadow: 0 8px 20px rgba(132,204,22,0.3) !important;">
+                <span class="w-[50px] h-[50px] rounded-[16px] bg-[#151E2D] flex items-center justify-center shrink-0"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#BEF264" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"></path><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path></svg></span>
+                <span class="flex flex-col gap-0.5 flex-1 min-w-0"><span class="text-[21px] font-black tracking-tight leading-tight" style="color:#1A2E05 !important;">고객 의뢰함</span><span class="text-[15px] font-bold leading-snug break-keep" style="color:#1A2E05 !important;">고객이 보낸 견적·상담 신청</span></span>
+                <span id="reqBadge" class="hidden shrink-0 bg-[#DC2626] text-white text-[16px] font-black rounded-full px-3 py-1">새 0</span>
+            </button>
             <!-- 🏷️ [패치 #48] 대표님 소통방: 넓은 금색 버튼 (누르면 가는 곳은 예전과 같음) -->
             <button type="button" id="tabLounge" onclick="switchView('lounge')" class="w-full mt-3 text-left rounded-[22px] px-4 py-3.5 flex items-center gap-3.5 active:scale-[0.98] transition-all" style="background:#E3B341 !important; border: 2px solid #E3B341 !important; box-shadow: 0 8px 20px rgba(227,179,65,0.3) !important;">
                 <span class="w-[50px] h-[50px] rounded-[16px] bg-[#151E2D] flex items-center justify-center shrink-0"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E3B341" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z"></path><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"></path></svg></span>
@@ -891,22 +892,11 @@
             <div id="calendarGrid" class="grid grid-cols-7 gap-1.5 text-center"></div>
         </div>
 
-        <!-- 3. 하단 초대형 2줄 배너형 [새 작업 일정 등록하기] 탭 & 일정 리스트 -->
-        <div class="pt-3 border-t-2 border-[#F1F5F9] space-y-4">
-            <!-- 큼직한 2줄 구성의 프리미엄 등록 배너 버튼 (절대 찌그러지지 않는 패딩 적용) -->
-            <button onclick="openScheduleModal()" class="w-full bg-[#151E2D] hover:bg-black active:scale-[0.99] rounded-[24px] p-5 shadow-[0_10px_25px_rgba(21,30,45,0.25)] transition-all flex items-center justify-between group">
-                <div class="flex items-center gap-3.5 text-left">
-                    <div class="w-13 h-13 w-[52px] h-[52px] rounded-[18px] bg-[#84CC16] flex items-center justify-center text-[#151E2D] shadow-md shrink-0">
-                        <i data-lucide="calendar-plus" class="w-7 h-7 stroke-[2.5]"></i>
-                    </div>
-                    <div>
-                        <div id="selectedDateText" class="text-[15px] font-extrabold text-[#84CC16] tracking-tight mb-0.5">9월 25일 (금) 선택됨</div>
-                        <div class="text-[19px] font-black text-white tracking-tight leading-snug">새 작업 일정 등록하기</div>
-                    </div>
-                </div>
-                <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-[#84CC16] group-hover:bg-[#84CC16] group-hover:text-[#151E2D] transition-colors shrink-0">
-                    <i data-lucide="plus" class="w-6 h-6 stroke-[3]"></i>
-                </div>
+        <!-- 3. 일정 등록 버튼 2개 & 일정 리스트 (🎨 [패치 #52] '새 작업 일정 등록' 버튼을 말로 등록 버튼과 같은 모양으로 정돈) -->
+        <div class="pt-3 border-t-2 border-[#F1F5F9] space-y-3">
+            <button type="button" onclick="openScheduleModal()" class="w-full text-left bg-[#151E2D] rounded-[24px] px-[18px] py-4 flex items-center gap-3.5 shadow-[0_10px_24px_rgba(21,30,45,0.22)] active:scale-[0.99] transition-all">
+                <span class="w-[52px] h-[52px] rounded-full bg-[#84CC16] flex items-center justify-center shrink-0"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#151E2D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18M12 14v4M10 16h4"></path></svg></span>
+                <span class="flex flex-col gap-0.5 min-w-0"><span class="text-[21px] font-black text-white tracking-tight leading-tight">새 작업 일정 등록</span><span id="selectedDateText" class="text-[15.5px] font-bold text-[#BEF264] leading-snug break-keep">날짜를 고르고 칸에 직접 적기</span></span>
             </button>
 
             <!-- 🎤 [패치 #44] 달력 화면에서 바로 말로 일정 등록 -->
@@ -1286,85 +1276,74 @@
         </div>
       </div>
     </section>
-    <!-- ================= [스마트 개인 장부 - VIP 프라이빗 골드 금고(Vault) 에디션] ================= -->
+    <!-- ================= [개인 장부함] 🎨 [패치 #52] 소통방과 같은 남색 카드·연두 규칙으로 교체 (금색 금고 디자인 → 앱 통일) ================= -->
     <section id="ledgerView" class="hidden space-y-4">
-      <!-- 💡 순수익 글씨 크기 1단계 축소(16.5px) 및 억 단위 입력 시에도 절대 깨지지 않도록 고정 -->
       <style>
-        /* 🎨 [패치 #14] 순수익을 크게 보여주는 요약 카드 */
-        #ledgerMonthNet { font-size: var(--net-fs, 30px) !important; /* 🔠 [패치 #22] 칸에 맞게 자동 축소 */ text-align: left !important; display: block; padding-left: 0 !important; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; }
+        /* 🎨 [패치 #14·#22·#52] 이번 달 순수익: 크게, 칸에 맞게 자동 축소, 적자는 붉은색 */
+        #ledgerMonthNet { font-size: var(--net-fs, 30px) !important; text-align: left !important; display: block; padding-left: 0 !important; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; }
         #ledgerYearNet { font-size: 19px !important; }
-        #ledgerMonthNet, #ledgerYearNet {
-          color: #FEE500 !important;
-          font-weight: 900 !important;
-          letter-spacing: -0.04em !important;
-          text-shadow: 0 2px 8px rgba(254, 229, 0, 0.2) !important;
-        }
+        #ledgerMonthNet, #ledgerYearNet { color: #BEF264 !important; font-weight: 900 !important; letter-spacing: -0.04em !important; }
+        #ledgerMonthNet.neg, #ledgerYearNet.neg { color: #FCA5A5 !important; }
       </style>
 
-      <div class="bg-[#FCFAF5] rounded-[32px] p-5 sm:p-6 shadow-[0_25px_60px_rgba(0,0,0,0.6),0_0_25px_rgba(212,175,55,0.2)] space-y-5 border-2 border-[#D4AF37] relative overflow-hidden">
-        
-        <!-- 1. 금고 상단 헤더 (다크 오닉스 & 24K 골드 금테 네비게이션) -->
-        <div class="flex items-center justify-between bg-gradient-to-r from-[#0F141C] via-[#1B2432] to-[#0F141C] px-4 py-4 rounded-[22px] border border-[#D4AF37]/60 shadow-lg">
-            <button onclick="changeLedgerMonth(-1)" class="w-11 h-11 bg-white/5 hover:bg-[#D4AF37]/20 active:scale-95 rounded-[14px] flex items-center justify-center transition-all border border-[#D4AF37]/40">
-                <i data-lucide="chevron-left" class="w-6 h-6 text-[#FDE047] stroke-[2.5]"></i>
-            </button>
-            <div class="flex flex-col items-center">
-                <span class="text-[14.5px] font-black text-[#D4AF37] tracking-tight flex items-center gap-1">
-                    <i data-lucide="lock" class="w-3.5 h-3.5 text-[#FDE047]"></i> 나만 보는 개인 장부
-                </span>
-                <h2 id="ledgerMonthText" class="text-[23px] font-black text-white tracking-tight mt-0.5"></h2>
-            </div>
-            <button onclick="changeLedgerMonth(1)" class="w-11 h-11 bg-white/5 hover:bg-[#D4AF37]/20 active:scale-95 rounded-[14px] flex items-center justify-center transition-all border border-[#D4AF37]/40">
-                <i data-lucide="chevron-right" class="w-6 h-6 text-[#FDE047] stroke-[2.5]"></i>
-            </button>
+      <div class="flex items-center justify-between gap-2 ml-1">
+        <h2 class="text-[23px] font-black text-white flex items-center gap-2"><i data-lucide="wallet" class="w-7 h-7 text-[#84CC16]"></i> 개인 장부함</h2>
+        <span class="text-[14px] font-black text-[#BEF264] bg-[#84CC16]/15 border border-[#84CC16]/60 rounded-full px-2.5 py-1 flex items-center gap-1 shrink-0"><i data-lucide="lock" class="w-3.5 h-3.5"></i> 나만 보는 장부</span>
+      </div>
+
+      <!-- 1. 달 넘기기 + 이번 달 요약 -->
+      <div class="rounded-[24px] p-5 space-y-4" style="background:#1E293B; border:1.5px solid #475569;">
+        <div class="flex items-center justify-between">
+          <button onclick="changeLedgerMonth(-1)" aria-label="지난달" class="w-11 h-11 rounded-[14px] bg-[#0F172A] border border-[#475569] flex items-center justify-center active:scale-95 transition-all"><i data-lucide="chevron-left" class="w-6 h-6 text-[#BEF264] stroke-[2.5]"></i></button>
+          <h2 id="ledgerMonthText" class="text-[23px] font-black text-white tracking-tight"></h2>
+          <button onclick="changeLedgerMonth(1)" aria-label="다음 달" class="w-11 h-11 rounded-[14px] bg-[#0F172A] border border-[#475569] flex items-center justify-center active:scale-95 transition-all"><i data-lucide="chevron-right" class="w-6 h-6 text-[#BEF264] stroke-[2.5]"></i></button>
         </div>
-
-        <!-- 2. 🎨 [패치 #14] 요약: 이번 달 순수익을 크게, 연간은 한 줄 요약 -->
-        <div class="relative z-10 space-y-2.5">
-            <div class="bg-gradient-to-br from-[#141A23] to-[#1E293B] rounded-[24px] p-5 shadow-lg border-[1.5px] border-[#D4AF37]/70">
-                <div class="text-[15px] font-black text-[#FDE047] mb-1">이번 달 순수익</div>
-                <div id="ledgerMonthNet" class="font-black text-[#FEE500] tracking-tighter whitespace-nowrap truncate leading-tight">0원</div>
-                <div class="mt-4 pt-3 border-t border-[#D4AF37]/30 space-y-2"><!-- 🎨 [패치 #16] 한 줄에 하나씩: 억 단위도 잘리지 않음 -->
-                    <div class="flex items-center justify-between gap-3"><span class="text-[16px] font-bold text-[#CBD5E1] shrink-0">수입</span><span id="ledgerMonthIncome" class="text-[18px] font-black text-[#4ADE80] tracking-tight whitespace-nowrap text-right">0원</span></div>
-                    <div class="flex items-center justify-between gap-3"><span class="text-[16px] font-bold text-[#CBD5E1] shrink-0">지출</span><span id="ledgerMonthExpense" class="text-[18px] font-black text-white tracking-tight whitespace-nowrap text-right">0원</span></div>
-                    <div class="flex items-center justify-between gap-3"><span class="text-[16px] font-bold text-[#CBD5E1] shrink-0">부가세</span><span id="ledgerMonthVat" class="text-[18px] font-black text-[#CBD5E1] tracking-tight whitespace-nowrap text-right">0원</span></div>
-                </div>
-            </div>
-            <div class="bg-gradient-to-r from-[#064E3B] to-[#0F2922] rounded-[20px] px-5 py-3.5 shadow-md border border-[#D4AF37]/50">
-                <div class="flex items-center justify-between gap-2"><span class="text-[14.5px] font-black text-[#D1FAE5] shrink-0">올해 누적 순수익</span><span id="ledgerYearNet" class="font-black text-[#FEE500] tracking-tighter whitespace-nowrap truncate">0원</span></div>
-                <div class="mt-2 pt-2 border-t border-white/10 space-y-1 text-[15px] font-bold text-[#A7F3D0]"><!-- 🎨 [패치 #16] -->
-                    <div class="flex justify-between gap-3"><span>수입</span><b id="ledgerYearIncome" class="text-[#4ADE80] whitespace-nowrap">0원</b></div>
-                    <div class="flex justify-between gap-3"><span>지출</span><b id="ledgerYearExpense" class="text-white whitespace-nowrap">0원</b></div>
-                    <div class="flex justify-between gap-3"><span>부가세</span><b id="ledgerYearVat" class="text-[#D1FAE5] whitespace-nowrap">0원</b></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 3. 프라이빗 금고 달력 -->
-        <div class="w-full bg-white p-3.5 rounded-[24px] border-[1.5px] border-[#E5DCC5] shadow-inner">
-            <div class="grid grid-cols-7 gap-1.5 text-center text-[14px] font-black text-[#57534E] mb-2.5 pb-2 border-b border-[#E5DCC5]">
-                <div class="text-[#B91C1C]">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div class="text-[#0369A1]">토</div>
-            </div>
-            <div id="ledgerGrid" class="grid grid-cols-7 gap-1.5 text-center"></div>
-        </div>
-
-        <!-- 4. 하단 컨트롤 바 & 입출금 내역 카드 리스트 (가로 스크롤 없이 수정/삭제 버튼 즉시 노출) -->
-        <div class="pt-2 space-y-3.5">
-            <div class="bg-[#141A23] px-4 py-4 rounded-[20px] border border-[#D4AF37]/50 shadow-md space-y-3"><!-- 🎨 [패치 #14] -->
-                <h3 id="selectedLedgerDateText" class="font-black text-[#FDE047] text-[18px] flex items-center gap-1.5">
-                    <i data-lucide="calendar-check" class="w-5 h-5 text-[#84CC16]"></i> 선택된 날짜
-                </h3>
-                <div class="grid grid-cols-[1.4fr_1fr_auto] gap-2">
-                    <button onclick="openLedgerModal()" class="bg-gradient-to-r from-[#D4AF37] to-[#F59E0B] text-[#0F141C] h-[52px] rounded-[14px] text-[16px] font-black shadow-md hover:brightness-105 flex items-center justify-center gap-1.5"><i data-lucide="plus" class="w-5 h-5 stroke-[3]"></i> 내역 추가</button>
-                    <button onclick="openLedgerListModal()" class="bg-white/10 text-[#FDE047] border border-[#D4AF37]/50 h-[52px] rounded-[14px] text-[15px] font-black hover:bg-white/20 flex items-center justify-center gap-1.5"><i data-lucide="list" class="w-5 h-5"></i> 월별 보기</button>
-                    <button onclick="openCalculator()" class="bg-white/10 text-[#FDE047] border border-[#D4AF37]/50 h-[52px] w-[52px] rounded-[14px] hover:bg-white/20 flex items-center justify-center" title="계산기"><i data-lucide="calculator" class="w-6 h-6"></i></button>
-                </div>
-            </div>
-
-            <!-- 선택된 날짜의 내역 카드 컨테이너 (수정/삭제 버튼 100% 한눈에 표시) -->
-            <div id="ledgerList" class="space-y-3"></div>
+        <div class="pt-3 border-t border-[#475569]">
+          <div class="text-[15px] font-black text-[#CBD5E1] mb-1">이번 달 순수익</div>
+          <div id="ledgerMonthNet" class="font-black tracking-tighter whitespace-nowrap truncate leading-tight">0원</div>
+          <div class="mt-3.5 space-y-2">
+            <div class="flex items-center justify-between gap-3"><span class="text-[16px] font-bold text-[#CBD5E1] shrink-0">수입</span><span id="ledgerMonthIncome" class="text-[18px] font-black text-[#4ADE80] tracking-tight whitespace-nowrap text-right">0원</span></div>
+            <div class="flex items-center justify-between gap-3"><span class="text-[16px] font-bold text-[#CBD5E1] shrink-0">지출</span><span id="ledgerMonthExpense" class="text-[18px] font-black text-white tracking-tight whitespace-nowrap text-right">0원</span></div>
+            <div class="flex items-center justify-between gap-3"><span class="text-[16px] font-bold text-[#CBD5E1] shrink-0">부가세</span><span id="ledgerMonthVat" class="text-[18px] font-black text-[#CBD5E1] tracking-tight whitespace-nowrap text-right">0원</span></div>
+          </div>
         </div>
       </div>
+
+      <!-- 2. 올해 누적 -->
+      <div class="rounded-[20px] px-5 py-3.5" style="background:rgba(132,204,22,0.10); border:1.5px solid rgba(132,204,22,0.45);">
+        <div class="flex items-center justify-between gap-2"><span class="text-[15px] font-black text-[#D9F99D] shrink-0">올해 누적 순수익</span><span id="ledgerYearNet" class="font-black tracking-tighter whitespace-nowrap truncate">0원</span></div>
+        <div class="mt-2 pt-2 border-t border-white/10 space-y-1 text-[15px] font-bold text-[#CBD5E1]">
+          <div class="flex justify-between gap-3"><span>수입</span><b id="ledgerYearIncome" class="text-[#4ADE80] whitespace-nowrap">0원</b></div>
+          <div class="flex justify-between gap-3"><span>지출</span><b id="ledgerYearExpense" class="text-white whitespace-nowrap">0원</b></div>
+          <div class="flex justify-between gap-3"><span>부가세</span><b id="ledgerYearVat" class="text-[#E2E8F0] whitespace-nowrap">0원</b></div>
+        </div>
+      </div>
+
+      <!-- 3. 장부 달력 (흰 카드: 소통방 목록 카드와 같은 모양) -->
+      <div class="w-full bg-white p-3.5 rounded-[24px] luxury-shadow">
+        <div class="grid grid-cols-7 gap-1.5 text-center text-[14px] font-black text-[#475569] mb-2.5 pb-2 border-b border-[#E2E8F0]">
+          <div class="text-[#DC2626]">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div class="text-[#0369A1]">토</div>
+        </div>
+        <div id="ledgerGrid" class="grid grid-cols-7 gap-1.5 text-center"></div>
+        <div class="flex items-center justify-center gap-4 mt-2 pt-2 border-t border-[#F1F5F9] text-[13.5px] font-bold text-[#475569]"><span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span>수입 있는 날</span><span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-red-500"></span>지출 있는 날</span></div>
+      </div>
+
+      <!-- 4. 🎤 [패치 #52] 말로 장부 쓰기 + 직접 입력 · 월별 보기 · 계산기 -->
+      <div class="space-y-2.5">
+        <h3 id="selectedLedgerDateText" class="font-black text-white text-[18px] flex items-center gap-1.5 ml-1"><i data-lucide="calendar-check" class="w-5 h-5 text-[#84CC16]"></i> 선택된 날짜</h3>
+        <button type="button" onclick="startLedgerVoice()" class="w-full text-left bg-[#84CC16] rounded-[24px] px-[18px] py-4 flex items-center gap-3.5 shadow-[0_10px_24px_rgba(132,204,22,0.35)] active:scale-[0.99] transition-all">
+          <span class="w-[52px] h-[52px] rounded-full bg-[#151E2D] flex items-center justify-center shrink-0"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#BEF264" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10v1a7 7 0 0 0 14 0v-1"></path><path d="M12 18v4"></path></svg></span>
+          <span class="flex flex-col gap-0.5"><span class="text-[21px] font-black text-[#1A2E05] tracking-tight leading-tight">말로 장부 쓰기</span><span class="text-[15.5px] font-bold text-[#1A2E05] leading-snug break-keep">"영통 전지 오십만 원 받고 인건비 이십만 원"</span></span>
+        </button>
+        <div class="grid grid-cols-[1.4fr_1fr_auto] gap-2">
+          <button onclick="openLedgerModal()" class="h-[52px] rounded-[14px] bg-white text-[#151E2D] text-[16px] font-black flex items-center justify-center gap-1.5 active:scale-95 transition-all"><i data-lucide="plus" class="w-5 h-5 stroke-[3] text-[#65A30D]"></i> 직접 입력</button>
+          <button onclick="openLedgerListModal()" class="h-[52px] rounded-[14px] text-white text-[15px] font-black flex items-center justify-center gap-1.5 active:scale-95 transition-all" style="background:#1E293B; border:1.5px solid #475569;"><i data-lucide="list" class="w-5 h-5 text-[#BEF264]"></i> 월별 보기</button>
+          <button onclick="openCalculator()" aria-label="계산기" class="h-[52px] w-[52px] rounded-[14px] flex items-center justify-center active:scale-95 transition-all" style="background:#1E293B; border:1.5px solid #475569;" title="계산기"><i data-lucide="calculator" class="w-6 h-6 text-[#BEF264]"></i></button>
+        </div>
+      </div>
+
+      <!-- 선택한 날짜의 내역 카드 -->
+      <div id="ledgerList" class="space-y-3"></div>
     </section>
     <!-- 공통 뷰어 -->
     <section id="clientView" class="hidden space-y-5">
@@ -1475,6 +1454,11 @@
             <button onclick="sendSMS()" class="py-4 bg-[#84CC16] text-[#151E2D] rounded-[14px] font-black text-[14px] flex items-center justify-center gap-1.5 shadow-sm hover:bg-[#9BE32D] transition-all"><i data-lucide="smartphone" class="w-5 h-5"></i> 문자로 전달</button>
           </div>
           <button onclick="window.print()" class="w-full py-4 bg-white border border-[#EAEBEA] hover:bg-[#F9F9F8] text-[#151E2D] rounded-[14px] font-black text-[14px] flex items-center justify-center gap-1.5 transition-colors shadow-sm mt-2"><i data-lucide="printer" class="w-5 h-5"></i> PDF 문서로 저장 및 인쇄</button>
+        </div>
+        <!-- 📋 [패치 #51] 고객이 받은 리포트 맨 아래: 같은 업체에 다음 작업 신청 -->
+        <div id="reqNextBox" class="hidden no-print pt-5 relative z-10">
+          <a id="reqNextLink" href="#" class="w-full min-h-[60px] rounded-[16px] bg-[#84CC16] text-[#14261E] text-[18px] font-black flex items-center justify-center gap-2 px-3 text-center" style="text-decoration:none">다음 관리·다른 작업도 신청하기</a>
+          <p class="text-center text-[14px] font-bold text-[#4E5968] mt-2">사진과 함께 편하게 남기시면 대표님이 연락드립니다</p>
         </div>
         <div id="backToAdminBtnBox" class="no-print pt-3 relative z-10">
           <button id="btnBackFromReport" onclick="switchView('admin')" class="w-full py-4 text-[#4E5968] font-bold text-[14px] hover:text-[#151E2D]">작업 화면으로 돌아가기</button>
@@ -1959,7 +1943,7 @@
                 loadRealWeather(); 
                 history.replaceState({ view: 'home' }, "", ""); 
                 switchView('home', false); 
-                setTimeout(() => { handlePushOpen(); silentPushRefresh(); }, 700); // 🔔 [패치 #33]
+                setTimeout(() => { handlePushOpen(); silentPushRefresh(); refreshReqBadge(); /* 📋 [패치 #51] */ }, 700); // 🔔 [패치 #33]
                 // 앱 진입 1초 후 최초 팝업 확인
                 setTimeout(() => {
                     checkAppNotices(); // 📖 [패치 #24] 로그인 시 사용법 자동 표시 제거 (설정 > '앱 사용법 다시 보기'로만)
@@ -2809,6 +2793,7 @@
       if (viewMode === 'client_shared') { document.getElementById('mainHeader').style.display = 'none'; document.getElementById('adminControlsPanel').style.display = 'none'; document.getElementById('backToAdminBtnBox').style.display = 'none'; if(editQBtn) editQBtn.style.display = 'none'; if(editRBtn) editRBtn.style.display = 'none'; } 
       else if (viewMode === 'admin_history') { backBtn.innerText = '목록으로 돌아가기'; backBtn.onclick = () => switchView(data.isQuote ? 'quoteList' : 'history'); if(editQBtn) editQBtn.style.display = data.isQuote ? 'flex' : 'none'; if(editRBtn) editRBtn.style.display = !data.isQuote ? 'flex' : 'none'; } 
       else { backBtn.innerText = '작업 화면으로 돌아가기'; backBtn.onclick = () => switchView(data.isQuote ? 'quote' : 'admin'); if(editQBtn) editQBtn.style.display = 'none'; if(editRBtn) editRBtn.style.display = 'none'; }
+      reqNextSetup(data, viewMode); // 📋 [패치 #51] 고객 리포트 아래 '다음 작업도 신청하기'
       switchView('client');
     }
 
@@ -3115,7 +3100,7 @@
         const days = ['일', '월', '화', '수', '목', '금', '토'];
         const selEl = document.getElementById('selectedDateText');
         if (selEl) {
-            selEl.innerText = `📍 ${selectedDate.getMonth() + 1}월 ${selectedDate.getDate()}일 (${days[selectedDate.getDay()]}) 현장 일정 추가`;
+            selEl.innerText = `${selectedDate.getMonth() + 1}월 ${selectedDate.getDate()}일 (${days[selectedDate.getDay()]}) · 칸에 직접 적기`; // 🎨 [패치 #52]
         }
 
         const firstDay = new Date(year, month, 1).getDay();
@@ -3626,7 +3611,7 @@
     const FIREBASE_WEB_CONFIG = { apiKey: "AIzaSyC_1KaOSychXSNF-Z-vnVONLB_-aAGghhk", authDomain: "shinhwa-landnote.firebaseapp.com", databaseURL: "https://shinhwa-landnote-default-rtdb.firebaseio.com", projectId: "shinhwa-landnote", storageBucket: "shinhwa-landnote.firebasestorage.app", messagingSenderId: "623461445108", appId: "1:623461445108:web:351eea30e03d278725dda1" };
     const FCM_VAPID_KEY = "BJrrESIaNMTvCe98leRovFlWDT09OOGMSTW6Y7vZ7uwVNLzpb9X9aCGDstxiMr455nnIgG3Qm1sS7xjMfsWY7MU";          // 예: "BKxxxx...(웹 푸시 인증서 키 쌍)"
     const PUSH_BOARDS = [['현장협력', '작업 지원·협력'], ['일감양도', '작업 양도·양수'], ['장비자재', '장비·자재 직거래'], ['견적단가', '견적·단가 자문'], ['자유소통', '자유 소통'], ['정보교환', '정보 교환·업체 공유'], ['노하우', '실무 노하우'], ['불량거래처', '불량 거래처 경보']];
-    const PUSH_DEFAULT_PREFS = { chat: true, comment: true, notice: true, boards: { '현장협력': true, '일감양도': true, '장비자재': true, '견적단가': false, '자유소통': false, '정보교환': false, '노하우': false, '불량거래처': true } };
+    const PUSH_DEFAULT_PREFS = { chat: true, comment: true, request: true /* 📋 [패치 #51] */, notice: true, boards: { '현장협력': true, '일감양도': true, '장비자재': true, '견적단가': false, '자유소통': false, '정보교환': false, '노하우': false, '불량거래처': true } };
     const PUSH_BOARD_TITLES = { '현장협력': '현장 협력·지원', '일감양도': '일감 패스·공사 양도', '장비자재': '장비·자재 직거래', '견적단가': '실전 견적·단가 자문', '자유소통': '자유 소통·일상방', '정보교환': '정보 교환·업체 찾기', '노하우': '실무 노하우 공유', '불량거래처': '불량 거래처 경보' }; // openBoard() 내부 키
     let pushPrefsCache = null;
     function pushConfigured() { return !!(FIREBASE_WEB_CONFIG && FIREBASE_WEB_CONFIG.messagingSenderId && FCM_VAPID_KEY); }
@@ -3667,6 +3652,7 @@
       st.innerText = '✅ 알림이 켜져 있습니다. 받고 싶은 알림을 골라주세요.'; btn.classList.add('hidden'); box.classList.remove('hidden');
       const row = (id, label, checked, sub2) => `<label class="flex items-center justify-between gap-3 bg-black/30 rounded-[12px] px-4 py-3 cursor-pointer"><span class="text-[16px] font-black text-white">${label}${sub2 ? `<span class="block text-[13.5px] font-bold text-[#CBD5E1]">${sub2}</span>` : ''}</span><input type="checkbox" data-push="${id}" ${checked ? 'checked' : ''} class="w-7 h-7 accent-[#84CC16] shrink-0"></label>`;
       document.getElementById('pushPrefsList').innerHTML =
+        row('request', '📋 새 고객 의뢰', pushPrefsCache.request !== false) + /* 📋 [패치 #51] */
         row('chat', '💬 1:1 대화 새 메시지', pushPrefsCache.chat !== false) +
         row('comment', '💬 내 글에 새 댓글', pushPrefsCache.comment !== false) + /* 💬 [패치 #40] */
         row('notice', '📢 관리자 공지', pushPrefsCache.notice !== false) +
@@ -3710,6 +3696,7 @@
         const q = new URLSearchParams(location.search); const open = q.get('open'); if (!open) return;
         history.replaceState({ view: 'home' }, '', location.pathname);
         if (open === 'board') { switchView('lounge'); setTimeout(() => { loadCommunityPosts(); openBoard(PUSH_BOARD_TITLES[q.get('cat')] || '전체'); }, 150); }
+        else if (open === 'req') { const rid = String(q.get('rid') || ''); setTimeout(() => openReqView(/^[A-Za-z0-9_-]{1,60}$/.test(rid) ? rid : ''), 150); } // 📋 [패치 #51]
         else if (open === 'chat' && q.get('with')) { switchView('lounge'); setTimeout(() => openBoardChat(q.get('with'), q.get('name') || '대표님'), 150); }
       } catch (e) {}
     }
@@ -3821,7 +3808,8 @@
       setTimeout(() => { const splash = document.getElementById('splashScreen'); if(splash) { splash.style.opacity = '0'; setTimeout(() => splash.remove(), 600); } }, 2000);
       
       const params = new URLSearchParams(window.location.search);
-      if (params.has('id') || params.has('blob') || params.has('data')) {
+      if (params.get('req')) { openPublicRequest(params.get('req')); } // 📋 [패치 #51] 고객 견적·상담 신청 페이지 (로그인 없이)
+      else if (params.has('id') || params.has('blob') || params.has('data')) {
         const reportId = params.get('id') || params.get('blob'); const encodedData = params.get('data');
         history.replaceState({ view: 'client_shared' }, "", "");
         const overlay = document.createElement('div'); overlay.id = 'loadingOverlay'; overlay.className = 'fixed inset-0 z-[200] bg-[#151E2D] flex flex-col items-center justify-center'; overlay.innerHTML = `<div class="w-12 h-12 border-4 border-[#84CC16]/30 border-t-[#84CC16] rounded-full animate-spin mb-4"></div><div class="text-white font-bold text-[15px]">프리미엄 문서를 불러오는 중...</div>`; document.body.appendChild(overlay);
@@ -3895,7 +3883,7 @@
             
             const isToday = new Date().toDateString() === new Date(year, month, i).toDateString();
             const isSelected = selectedLedgerDate.toDateString() === new Date(year, month, i).toDateString();
-            const selectedClass = isSelected && !isToday ? 'border-2 border-[#12261E] rounded-full' : '';
+            const selectedClass = isSelected ? 'ring-2 ring-[#151E2D] rounded-full' : ''; // 🎨 [패치 #52] 오늘 날짜를 골라도 표시
 
             const isSunday = new Date(year, month, i).getDay() === 0;
             const isHoliday = isKoreanHoliday(year, month + 1, i);
@@ -3925,7 +3913,7 @@
         const mNet = monthInc - monthExp;
         if(mNetEl) {
             mNetEl.innerText = mNet.toLocaleString('ko-KR') + "원";
-            mNetEl.className = mNet >= 0 ? "text-[15px] font-black text-[#1E3A8A] tracking-tighter whitespace-nowrap pl-1 text-right" : "text-[15px] font-black text-[#BE123C] tracking-tighter whitespace-nowrap pl-1 text-right";
+            mNetEl.className = mNet >= 0 ? "text-[15px] font-black tracking-tighter whitespace-nowrap pl-1 text-right" : "neg text-[15px] font-black tracking-tighter whitespace-nowrap pl-1 text-right"; // 🎨 [패치 #52]
         }
         fitLedgerNet(); // 🔠 [패치 #22]
 
@@ -3939,7 +3927,7 @@
         const yNet = yearInc - yearExp;
         if(yNetEl) {
             yNetEl.innerText = yNet.toLocaleString('ko-KR') + "원";
-            yNetEl.className = yNet >= 0 ? "text-[15px] font-black text-[#3F6212] tracking-tighter whitespace-nowrap pl-1 text-right" : "text-[15px] font-black text-[#BE123C] tracking-tighter whitespace-nowrap pl-1 text-right";
+            yNetEl.className = yNet >= 0 ? "text-[15px] font-black tracking-tighter whitespace-nowrap pl-1 text-right" : "neg text-[15px] font-black tracking-tighter whitespace-nowrap pl-1 text-right"; // 🎨 [패치 #52]
         }
     }
 
@@ -3979,18 +3967,18 @@
             const exp = L.expense || 0;
             const vat = L.vat || 0;
             return `
-            <div class="bg-white rounded-[20px] p-4 border-[1.5px] border-[#D4AF37]/60 shadow-sm space-y-3">
+            <div class="bg-white rounded-[20px] p-4 luxury-shadow space-y-3"><!-- 🎨 [패치 #52] -->
                 <!-- 상단: 현장명 및 수정/삭제 버튼 -->
-                <div class="flex justify-between items-start gap-2 border-b border-[#F1EDE2] pb-3">
+                <div class="flex justify-between items-start gap-2 border-b border-[#F1F5F9] pb-3">
                     <div class="min-w-0 flex-1">
-                        <h4 class="text-[17px] font-black text-[#151E2D] break-keep leading-snug">${L.title}</h4>
-                        ${L.memo ? `<p class="text-[15px] font-bold text-[#57534E] mt-1 bg-[#FAF8F5] px-3 py-1.5 rounded-lg border border-[#E5DCC5] break-keep">${L.memo}</p>` : ''}
+                        <h4 class="text-[17px] font-black text-[#151E2D] break-keep leading-snug">${escHtml(L.title)}</h4>
+                        ${L.memo ? `<p class="text-[15px] font-bold text-[#475569] mt-1 bg-[#F8FAFC] px-3 py-1.5 rounded-lg border border-[#E2E8F0] break-keep whitespace-pre-wrap">${escHtml(L.memo)}</p>` : ''}
                     </div>
                     <div class="flex items-center gap-1.5 shrink-0">
-                        <button onclick="editLedger(${L.id})" class="px-3 py-2 bg-[#141A23] text-[#FDE047] border border-[#D4AF37]/60 rounded-[10px] text-[14.5px] font-black flex items-center gap-1 shadow-sm active:scale-95 transition-all">
+                        <button onclick="editLedger('${escHtml(String(L.id))}')" class="min-h-[44px] px-3 bg-[#151E2D] text-[#BEF264] rounded-[10px] text-[14.5px] font-black flex items-center gap-1 active:scale-95 transition-all">
                             <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> 수정
                         </button>
-                        <button onclick="deleteLedger(${L.id})" class="px-2.5 py-2 bg-[#F1F5F9] text-[#475569] hover:bg-red-600 hover:text-white rounded-[10px] text-[14.5px] font-black flex items-center gap-1 transition-all">
+                        <button onclick="deleteLedger('${escHtml(String(L.id))}')" class="min-h-[44px] px-2.5 bg-[#F1F5F9] text-[#475569] hover:bg-red-600 hover:text-white rounded-[10px] text-[14.5px] font-black flex items-center gap-1 transition-all">
                             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> 삭제
                         </button>
                     </div>
@@ -3999,7 +3987,7 @@
                 <div class="space-y-1.5 pt-0.5">
                     <div class="flex items-center justify-between gap-3 bg-[#ECFDF5] border border-[#6EE7B7] rounded-[12px] px-3.5 py-2.5"><span class="text-[15px] font-extrabold text-[#047857] shrink-0">＋ 수입(매출)</span><span class="text-[17px] font-black text-[#065F46] tracking-tight whitespace-nowrap">${inc > 0 ? inc.toLocaleString() + '원' : '0원'}</span></div>
                     <div class="flex items-center justify-between gap-3 bg-[#F1F5F9] border border-[#CBD5E1] rounded-[12px] px-3.5 py-2.5"><span class="text-[15px] font-extrabold text-[#475569] shrink-0">－ 지출(비용)</span><span class="text-[17px] font-black text-[#1E293B] tracking-tight whitespace-nowrap">${exp > 0 ? exp.toLocaleString() + '원' : '0원'}</span></div>
-                    <div class="flex items-center justify-between gap-3 bg-[#FAF8F5] border border-[#E5DCC5] rounded-[12px] px-3.5 py-2.5"><span class="text-[15px] font-extrabold text-[#78716C] shrink-0">부가세</span><span class="text-[16px] font-black text-[#57534E] tracking-tight whitespace-nowrap">${vat > 0 ? vat.toLocaleString() + '원' : '0원'}</span></div>
+                    <div class="flex items-center justify-between gap-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[12px] px-3.5 py-2.5"><span class="text-[15px] font-extrabold text-[#64748B] shrink-0">부가세</span><span class="text-[16px] font-black text-[#475569] tracking-tight whitespace-nowrap">${vat > 0 ? vat.toLocaleString() + '원' : '0원'}</span></div>
                 </div>
             </div>`;
         }).join('');
@@ -4285,6 +4273,7 @@
       <div id="ledgerBox" class="bg-white w-full max-w-sm rounded-[24px] overflow-hidden shadow-2xl flex flex-col scale-95 transition-transform duration-200 border border-[#EAEBEA]" onclick="event.stopPropagation()">
           <div class="p-5 border-b border-[#F4F5F4] flex justify-between items-center bg-[#F9F9F8]">
               <h3 class="text-[16px] font-black text-[#151E2D] flex items-center gap-2"><i data-lucide="wallet" class="w-5 h-5 text-[#84CC16]"></i> 장부 내역 입력</h3>
+              <button type="button" onclick="voiceOpen({ title: '말로 장부 쓰기', chip: '개인 장부', hints: [], guide: VOICE_GUIDES.ledger, onDone: runLedgerAi })" class="ml-auto mr-2 h-10 px-3 rounded-full bg-[#84CC16] text-[#1A2E05] text-[14.5px] font-black flex items-center gap-1 active:scale-95"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1A2E05" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10v1a7 7 0 0 0 14 0v-1"></path><path d="M12 18v4"></path></svg>말로 채우기</button><!-- 🎤 [패치 #52] -->
               <button onclick="closeLedgerModal()" class="text-[#A3A8A3] hover:text-[#151E2D] p-1"><i data-lucide="x" class="w-6 h-6"></i></button>
           </div>
           <div class="p-5 space-y-4 max-h-[70vh] overflow-y-auto bg-white nav-scroll">
@@ -6117,6 +6106,7 @@
       trade: [['무엇을', '"1톤 집게차" · "소나무 H3.0"'], ['규격 · 수량 · 날짜', '"다섯 주, 이번 주 토요일"'], ['가격 · 조건 (있으면)', '"하루 이십만 원"'], ['지역', '"용인 수지"'], ['연락 방법 (있으면)', '"문자 주세요"']],
       ask: [['무엇이 궁금한지', '"소나무 전지 단가가 궁금해요"'], ['현장 · 규격 · 수량', '"H3.0 다섯 주, 단독주택"'], ['지역 (있으면)', '"수원"']],
       talk: [['하고 싶은 이야기를 편하게', '"오늘 비가 와서 현장 쉬었어요"']],
+      ledger: [['언제 (안 하시면 고른 날짜)', '"어제" · "10월 3일"'], ['어디서 무슨 일', '"영통 김사장님 댁 소나무 전지"'], ['받은 돈 · 나간 돈', '"오십만 원 받고, 인건비 이십만 원"'], ['부가세 · 적요 (있으면)', '"부가세 오만 원, 식대 삼만 원"']], // 🎤 [패치 #52]
       warn: [['어떤 일이 있었는지', '"공사 끝났는데 잔금을 안 줘요"'], ['언제 · 어느 지역', '"지난달, 화성"'], ['주의할 점', '"계약금 먼저 받으세요" (실명·상호는 AI가 뺍니다)']]
     };
     function boardGuideFor(cat) {
@@ -6470,6 +6460,65 @@ ${AI_COMMON_RULES}
       document.getElementById('scheduleIncome').value = document.getElementById('fpSchedIncome').value;
       document.getElementById('scheduleExpense').value = document.getElementById('fpSchedExpense').value;
       document.getElementById('scheduleMemo').value = d.memo;
+      return true;
+    }
+
+    // ---------------- 🎤 [패치 #52] 개인 장부 말로 쓰기 ----------------
+    let aiLedgerDraft = null;
+    function startLedgerVoice() { openLedgerModal(); setTimeout(() => voiceOpen({ title: '말로 장부 쓰기', chip: '개인 장부', hints: [], guide: VOICE_GUIDES.ledger, onDone: runLedgerAi }), 150); }
+    async function runLedgerAi(text) {
+      voiceShowThinking(['날짜 계산하기', '받은 돈 · 나간 돈 나누기', '적요 정리']);
+      const baseDate = document.getElementById('ledgerDate').value || getTodayStr();
+      const prompt = `너는 조경 사업자 대표님의 개인 장부(수입·지출) 기록 도우미다. 대표님이 말로 한 돈 이야기를 장부 칸에 맞게 정리한다.
+오늘: ${todayInfo()} / 대표님이 장부 달력에서 골라 둔 날짜: ${baseDate}
+- date: 말한 날짜 표현("어제", "지난주 금요일", "10월 3일")을 오늘 기준 실제 날짜 YYYY-MM-DD로. 날짜를 말하지 않았으면 "${baseDate}".
+- title: 어디서 무슨 일인지 한 줄(40자 이내). 예: "영통 김사장님 댁 소나무 전지". 돈 이야기만 했으면 그 내용 요약(예: "장비 기름값").
+- income: 받은 돈(매출·작업비·잔금) 합계 숫자. expense: 나간 돈(인건비·자재비·식대·기름값·장비 대여 등) 합계 숫자. 말 안 했으면 0.
+- vat: 부가세를 금액으로 말하면 그 숫자. "부가세 10%"처럼 비율만 말하면 income의 10%. 말 안 했으면 0.
+- memo: 적요. 나간 돈의 항목별 내역을 "인건비 2명 40만, 식대 3만"처럼 짧게. 받은 돈 설명(예: "잔금")도 넣어도 된다. 없으면 "".
+${AI_COMMON_RULES}
+{"date":"","title":"","income":0,"expense":0,"vat":0,"memo":""}`;
+      try {
+        const j = await voiceAskAiJson(prompt, text);
+        aiLedgerDraft = {
+          date: /^\d{4}-\d{2}-\d{2}$/.test(j.date || '') ? j.date : baseDate,
+          title: String(j.title || '').trim().slice(0, 80),
+          income: cleanMoney(j.income), expense: cleanMoney(j.expense), vat: cleanMoney(j.vat),
+          memo: String(j.memo || '').trim().slice(0, 500)
+        };
+        if (!aiLedgerDraft.title && !aiLedgerDraft.income && !aiLedgerDraft.expense) throw new Error('현장이나 금액을 알아듣지 못했습니다.');
+        if (!aiLedgerDraft.title) aiLedgerDraft.title = '장부 기록';
+        voiceHide(true); showLedgerPreview();
+      } catch (e) {
+        const keep = voiceFailKeep(text, 'ledgerMemo');
+        alert('AI 정리에 실패했습니다. (' + (e && e.message ? e.message : '통신 오류') + ')\n' + keep.replace('[참고 및 특이사항]', '[적요]'));
+      }
+    }
+    function showLedgerPreview() {
+      const d = aiLedgerDraft;
+      const money = (id, label, v, color) => fpInputRow(id, label, v ? v.toLocaleString('ko-KR') : '', { inputmode: 'numeric', oninput: 'formatNumberInput(this)', color: color || '', placeholder: '말씀 안 하셨어요 (비워 둬도 됩니다)' });
+      const body = `<div class="bg-[#FEF9C3] border-2 border-[#EAB308] rounded-[16px] px-3.5 py-3 flex flex-col gap-2.5">${FP_CHECK_TITLE}
+          ${fpInputRow('fpLedgerDate', '날짜  ' + ymdLabel(d.date), d.date, { type: 'date' })}
+          ${money('fpLedgerIncome', '받은 돈 · 수입 (원)', d.income, 'text-[#15803D]')}
+          ${money('fpLedgerExpense', '나간 돈 · 지출 (원)', d.expense)}
+          ${money('fpLedgerVat', '부가세 (원)', d.vat)}</div>
+        ${fpField('어디에서 뭘 했는지', fpTitleBox(d.title))}
+        ${fpField('적요', fpText(d.memo, '없음'))}`;
+      formPreviewShow({ badge: '개인 장부', title: '이렇게 기록할까요?', bodyHtml: body, primaryLabel: '이대로 장부 저장', secondaryLabel: '칸에서 고치기',
+        onPrimary: () => { if (!ledgerFillForm()) return false; setTimeout(() => saveLedger(), 150); },
+        onSecondary: () => { ledgerFillForm(); },
+        onRetry: () => voiceOpen({ title: '말로 장부 쓰기', chip: '개인 장부', hints: [], guide: VOICE_GUIDES.ledger, onDone: runLedgerAi }) });
+    }
+    function ledgerFillForm() {
+      const d = aiLedgerDraft; if (!d) return false;
+      const date = document.getElementById('fpLedgerDate').value;
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) { alert('날짜를 확인해 주세요.'); return false; }
+      document.getElementById('ledgerDate').value = date;
+      document.getElementById('ledgerTitle').value = d.title;
+      document.getElementById('ledgerIncome').value = document.getElementById('fpLedgerIncome').value;
+      document.getElementById('ledgerExpense').value = document.getElementById('fpLedgerExpense').value;
+      document.getElementById('ledgerVat').value = document.getElementById('fpLedgerVat').value;
+      document.getElementById('ledgerMemo').value = d.memo;
       return true;
     }
 
@@ -7293,6 +7342,449 @@ ${AI_COMMON_RULES}
       if (sh && !sh.classList.contains('hidden')) { closeStockSheet(true); e.stopImmediatePropagation(); return; }
       const v = document.getElementById('stockView');
       if (v && !v.classList.contains('hidden')) { v.classList.add('hidden'); e.stopImmediatePropagation(); }
+    }, true);
+  </script>
+  <!-- ===================================================================== -->
+  <!-- 📋 [패치 #51] 고객 견적·상담 신청 페이지 (고객용, 로그인 없음 · 주소: /?req=업체아이디) -->
+  <!-- ===================================================================== -->
+  <section id="reqPublic" class="hidden fixed inset-0 z-[9600] bg-[#F6F8F4] overflow-y-auto">
+    <div class="w-full max-w-md mx-auto min-h-full flex flex-col text-[#0F172A]">
+      <div id="rqpLoading" class="flex-1 flex flex-col items-center justify-center gap-4 py-24">
+        <div class="w-14 h-14 rounded-full border-[6px] border-[#84CC16]/30 border-t-[#84CC16] animate-spin"></div>
+        <p class="text-[17px] font-bold text-[#475569]">신청서를 불러오는 중…</p>
+      </div>
+      <div id="rqpError" class="hidden flex-1 flex flex-col items-center justify-center gap-3 px-6 py-24 text-center">
+        <p class="text-[21px] font-black">신청서를 열 수 없습니다</p>
+        <p id="rqpErrorText" class="text-[16px] font-bold text-[#475569] leading-relaxed break-keep">주소가 잘못되었거나, 지금은 신청을 받지 않는 업체입니다.</p>
+      </div>
+      <div id="rqpForm" class="hidden flex flex-col">
+        <div class="bg-[#14261E] px-[18px] pt-[22px] pb-5 flex flex-col gap-3 text-white">
+          <div class="flex items-center gap-3">
+            <span class="w-[52px] h-[52px] rounded-[16px] bg-[#84CC16] flex items-center justify-center shrink-0"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#14261E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path></svg></span>
+            <span class="flex flex-col gap-0.5 min-w-0"><span id="rqpName" class="text-[23px] font-black break-keep"></span><span id="rqpSub" class="text-[15px] font-bold text-[#D9F99D] break-keep"></span></span>
+          </div>
+          <div class="flex gap-2 flex-wrap">
+            <span class="text-[14px] font-black bg-[#84CC16]/20 text-[#D9F99D] border border-[#84CC16] rounded-full px-2.5 py-1">사업자 확인 업체</span>
+            <span class="text-[14px] font-black bg-white/10 text-white rounded-full px-2.5 py-1">상담 무료</span>
+          </div>
+          <span class="text-[13px] font-bold text-[#CBD5E1] -mt-1">조경노트가 사업자등록증을 확인한 업체입니다</span>
+          <a id="rqpCall" href="#" class="h-[52px] rounded-[14px] bg-white text-[#14261E] text-[17px] font-black flex items-center justify-center gap-2" style="text-decoration:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#14261E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.1 9.9a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>급하시면 바로 전화하기</a>
+        </div>
+        <div class="px-4 pt-[22px] pb-8 flex flex-col gap-5">
+          <div class="flex flex-col gap-1.5"><h1 class="m-0 text-[26px] font-black tracking-tight">견적·상담 신청</h1><p class="m-0 text-[16px] font-bold text-[#475569] leading-relaxed break-keep">사진과 내용을 남겨 주시면 대표님이 직접 확인하고 연락드립니다.</p></div>
+          <button type="button" onclick="startReqVoice()" class="text-left rounded-[22px] bg-[#84CC16] px-4 py-[18px] flex items-center gap-3.5 shadow-[0_10px_24px_rgba(132,204,22,0.35)] active:scale-[0.98] transition-all">
+            <span class="w-[62px] h-[62px] rounded-full bg-[#14261E] flex items-center justify-center shrink-0"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#BEF264" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10v1a7 7 0 0 0 14 0v-1"></path><path d="M12 18v4"></path></svg></span>
+            <span class="flex flex-col gap-1"><span class="text-[23px] font-black text-[#14261E] leading-tight">말로 신청하기</span><span class="text-[15.5px] font-bold text-[#1A2E05] leading-snug break-keep">편하게 길게 말씀하셔도 AI가 알아서 칸을 채워 드려요. 확인하고 보내기만 누르세요.</span></span>
+          </button>
+          <div class="bg-[#ECFCCB] rounded-[14px] px-3.5 py-3 text-[15px] font-bold text-[#3F6212] leading-relaxed break-keep">예) "영통동 아파트 화단 소나무 세 그루 전지하고 싶어요. 잎이 누런 나무도 있고요. 이번 주 안에 와 주시면 좋겠어요. 김철수, 010…"</div>
+          <div id="rqpAiNote" class="hidden bg-[#FEF9C3] border-2 border-[#EAB308] rounded-[14px] px-3.5 py-3 text-[16px] font-extrabold text-[#713F12] leading-relaxed break-keep">AI가 칸을 채웠어요. 틀린 곳이 없는지 확인하시고, 맨 아래 [의뢰 보내기]를 눌러 주세요.</div>
+          <div class="flex items-center gap-2.5"><span class="flex-1 h-px bg-[#CBD5E1]"></span><span class="text-[15px] font-extrabold text-[#475569]">또는 직접 입력</span><span class="flex-1 h-px bg-[#CBD5E1]"></span></div>
+
+          <div class="flex flex-col gap-2.5"><span class="text-[18px] font-black">1. 어떤 작업이 필요하세요? <span class="text-[14px] text-[#64748B]">(여러 개 선택)</span></span>
+            <div id="rqpWorks" class="grid grid-cols-2 gap-2"></div></div>
+
+          <div class="flex flex-col gap-2.5"><span class="text-[18px] font-black">2. 현장 사진 <span class="text-[14px] text-[#64748B]">(있으면 더 정확해요 · 최대 5장)</span></span>
+            <div class="flex gap-2 flex-wrap"><div id="rqpThumbs" class="contents"></div>
+              <label id="rqpAddPhoto" class="w-[84px] h-[84px] rounded-[14px] border-2 border-dashed border-[#94A3B8] bg-white text-[14px] font-black flex flex-col items-center justify-center gap-1 cursor-pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#65A30D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>추가<input type="file" accept="image/*" multiple class="hidden" onchange="rqpAddPhotos(event)"></label>
+            </div></div>
+
+          <label class="flex flex-col gap-2 text-[18px] font-black">3. 현장 주소
+            <input id="rqpAddr" maxlength="150" autocomplete="street-address" placeholder="예) 수원시 영통구 영통동 ○○아파트" class="h-[54px] rounded-[14px] border-[1.5px] border-[#CBD5E1] bg-white px-3.5 text-[16.5px] font-bold text-[#0F172A] placeholder:text-[#94A3B8] placeholder:text-[15px] focus:outline-none focus:border-[#84CC16]"></label>
+
+          <div class="flex flex-col gap-2.5"><span class="text-[18px] font-black">4. 언제쯤 원하세요?</span>
+            <div id="rqpWhens" class="grid grid-cols-4 gap-1.5"></div></div>
+
+          <label class="flex flex-col gap-2 text-[18px] font-black">5. 자세한 내용
+            <textarea id="rqpText" rows="4" maxlength="1000" placeholder="나무 종류, 크기, 그루 수, 궁금한 점 등을 편하게 적어 주세요." class="rounded-[14px] border-[1.5px] border-[#CBD5E1] bg-white px-3.5 py-3 text-[16.5px] font-bold text-[#0F172A] leading-relaxed resize-none placeholder:text-[#94A3B8] placeholder:text-[15px] focus:outline-none focus:border-[#84CC16]"></textarea></label>
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <label class="flex flex-col gap-2 text-[18px] font-black min-w-0">성함
+              <input id="rqpCName" maxlength="20" autocomplete="name" placeholder="예) 김철수" class="h-[54px] min-w-0 rounded-[14px] border-[1.5px] border-[#CBD5E1] bg-white px-3.5 text-[16.5px] font-bold text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:border-[#84CC16]"></label>
+            <label class="flex flex-col gap-2 text-[18px] font-black min-w-0">연락처
+              <input id="rqpPhone" type="tel" maxlength="13" autocomplete="tel" oninput="autoHyphen(this)" placeholder="010-0000-0000" class="h-[54px] min-w-0 rounded-[14px] border-[1.5px] border-[#CBD5E1] bg-white px-3 text-[16.5px] font-bold text-[#1D4ED8] placeholder:text-[#94A3B8] focus:outline-none focus:border-[#84CC16]"></label>
+          </div>
+          <input id="rqpHp" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" class="hidden">
+
+          <div class="flex items-start gap-2.5 bg-white border-[1.5px] border-[#CBD5E1] rounded-[14px] p-3 text-[15px] font-bold text-[#334155] leading-relaxed">
+            <input id="rqpAgree" type="checkbox" class="w-[22px] h-[22px] mt-0.5 shrink-0 accent-[#65A30D]">
+            <label for="rqpAgree" class="break-keep">[필수] 상담을 위해 이름·연락처·주소·사진을 <b id="rqpAgreeName">업체</b>에 전달하는 데 동의합니다.</label>
+          </div>
+          <button type="button" onclick="rqpPrivacy()" class="-mt-3 self-start text-[15px] font-black text-[#1D4ED8] underline underline-offset-2 min-h-[44px]">개인정보 처리 내용 자세히 보기</button>
+
+          <button type="button" id="rqpSendBtn" onclick="submitPublicRequest()" class="h-16 rounded-[18px] bg-[#84CC16] text-[#14261E] text-[21px] font-black shadow-[0_10px_24px_rgba(132,204,22,0.35)] active:scale-[0.98] transition-all disabled:opacity-60">의뢰 보내기</button>
+          <p class="m-0 text-center text-[14.5px] font-bold text-[#475569] leading-relaxed">가입이나 수수료 없이 대표님께 바로 전달됩니다.<br>조경노트 PRO로 보내는 신청서입니다.</p>
+        </div>
+      </div>
+      <div id="rqpDone" class="hidden flex-1 flex flex-col items-center gap-[18px] px-[22px] pt-[80px] pb-10 text-center">
+        <span class="w-24 h-24 rounded-full bg-[#84CC16] flex items-center justify-center"><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#14261E" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
+        <h1 class="m-0 text-[27px] font-black leading-snug">의뢰가 전달되었습니다</h1>
+        <p class="m-0 text-[18px] font-bold text-[#334155] leading-relaxed break-keep"><b id="rqpDoneName" class="text-[#14261E]"></b> 대표님이 확인하고<br>남겨 주신 번호로 연락드립니다.</p>
+        <div id="rqpDoneSum" class="w-full bg-white border-[1.5px] border-[#D9E4D0] rounded-[18px] p-4 flex flex-col gap-2 text-left text-[16px] font-bold text-[#334155]"></div>
+        <a id="rqpDoneCall" href="#" class="w-full h-14 rounded-[16px] bg-[#14261E] text-white text-[18px] font-black flex items-center justify-center" style="text-decoration:none">급하시면 바로 전화하기</a>
+        <span class="mt-auto text-[14px] font-bold text-[#64748B]">조경노트 PRO · 조경 사업자 전용 앱</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 📋 [패치 #51] 앱: 고객 의뢰함 (목록 / 자세히) -->
+  <div id="reqView" class="hidden fixed inset-0 z-[9400] bg-[#0F1722] flex justify-center overflow-y-auto">
+    <div class="w-full max-w-md px-3.5 pt-5 pb-10 flex flex-col gap-3 text-white">
+      <div id="reqListPane" class="flex flex-col gap-3">
+        <div class="flex items-center gap-2.5">
+          <button type="button" onclick="closeReqView()" aria-label="뒤로" class="w-11 h-11 rounded-[12px] bg-[#1E293B] text-white flex items-center justify-center active:scale-95"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg></button>
+          <span class="text-[22px] font-black">고객 의뢰함</span>
+        </div>
+        <div class="bg-[#1E293B] border-[1.5px] border-[#84CC16] rounded-[18px] p-3.5 flex flex-col gap-2.5">
+          <span class="text-[16px] font-black text-[#BEF264]">내 의뢰 받는 주소</span>
+          <span class="text-[15px] font-bold text-[#E2E8F0] leading-relaxed break-keep">이 주소를 받은 고객은 가입 없이 사진과 함께 의뢰할 수 있어요. 블로그·카톡 프로필·명함에 넣어 두세요.</span>
+          <div id="reqMyLink" class="bg-[#0F1722] rounded-[10px] px-3 py-2.5 text-[15px] font-bold text-white break-all"></div>
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button" onclick="reqShareLink()" class="h-[50px] rounded-[12px] bg-[#FEE500] text-[#3C1E1E] text-[15px] font-black active:scale-95">카톡 보내기</button>
+            <button type="button" onclick="reqCopyLink()" class="h-[50px] rounded-[12px] bg-[#84CC16] text-[#1A2E05] text-[15px] font-black active:scale-95">주소 복사</button>
+            <button type="button" onclick="reqShowQr()" class="h-[50px] rounded-[12px] border-[1.5px] border-[#64748B] text-white text-[15px] font-black active:scale-95">QR 보기</button>
+          </div>
+          <div id="reqQrBox" class="hidden bg-white rounded-[14px] p-4 flex flex-col items-center gap-2.5">
+            <div id="reqQr" class="w-[220px] h-[220px] flex items-center justify-center text-[#475569] text-[15px] font-bold"></div>
+            <span class="text-[15px] font-bold text-[#334155] text-center leading-relaxed break-keep">휴대폰 카메라로 찍으면 신청서가 열려요.<br>화면을 캡처해서 명함·전단에 쓰세요.</span>
+            <button type="button" onclick="document.getElementById('reqQrBox').classList.add('hidden')" class="h-11 px-5 rounded-[10px] bg-[#F1F5F9] text-[#334155] text-[15px] font-extrabold">QR 닫기</button>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-1.5 bg-[#1E293B] p-[5px] rounded-[16px]">
+          <button type="button" data-req-tab="new" onclick="reqSetTab('new')" class="req-tab h-[46px] rounded-[12px] text-[16px] font-black">새 의뢰</button>
+          <button type="button" data-req-tab="talk" onclick="reqSetTab('talk')" class="req-tab h-[46px] rounded-[12px] text-[16px] font-black">상담 중</button>
+          <button type="button" data-req-tab="done" onclick="reqSetTab('done')" class="req-tab h-[46px] rounded-[12px] text-[16px] font-black">끝난 의뢰</button>
+        </div>
+        <div id="reqList" class="flex flex-col gap-2.5"></div>
+      </div>
+      <div id="reqDetailPane" class="hidden flex flex-col gap-3"></div>
+    </div>
+  </div>
+
+  <script>
+    // =====================================================================
+    // 📋 [패치 #51] 고객 의뢰 (고객 신청 페이지 + 앱 고객 의뢰함)
+    //  - 고객 신청은 Code.gs(req_info / req_ai / req_submit)가 받아서 확인·저장·알림 (고객은 로그인 없음, DB에 직접 쓰지 않음)
+    //  - 저장 위치: accounts/{업체아이디}/requests/{의뢰번호}  → 보안 규칙상 그 업체 본인(과 관리자)만 읽음
+    //  - 기존 저장·로그인 코드는 건드리지 않음
+    // =====================================================================
+    const REQ_WORKS = [['소나무 전지', ''], ['나무 가지치기', ''], ['잔디·잡초 관리', ''], ['병해충 방제', ''], ['정원 새로 만들기', ''], ['연간 관리 계약', ''], ['나무 심기·옮기기', ''], ['조경 공사', '잔디·판석·블럭 시공 등'], ['기타', '고사목 제거·벌초·조경석 쌓기 등']];
+    const REQ_WHENS = ['급해요', '이번 주', '이번 달', '상관없음'];
+    const REQ_MAX_IMGS = 5;
+    const RQ = { cid: '', info: null, works: new Set(), when: '', imgs: [], via: 'form', sending: false };
+    async function reqApi(payload) {
+      const r = await fetch(GOOGLE_PROXY_URL_PUSH, { redirect: 'follow', method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
+      return await r.json();
+    }
+    function reqPhoneFmt(d) { d = String(d || '').replace(/[^0-9]/g, ''); const t = { value: d }; autoHyphen(t); return t.value; }
+
+    // ---------------- 고객 신청 페이지 ----------------
+    async function openPublicRequest(cid) {
+      cid = String(cid || '').trim(); RQ.cid = cid;
+      document.getElementById('reqPublic').classList.remove('hidden');
+      document.title = '견적·상담 신청 - 조경노트 PRO';
+      if (!/^[A-Za-z0-9]{2,40}$/.test(cid)) return rqpShowError();
+      try {
+        const r = await reqApi({ action: 'req_info', cid });
+        if (!r || !r.ok) return rqpShowError(r && r.msg === 'busy' ? '지금 신청이 많습니다. 잠시 후 다시 열어 주세요.' : '');
+        RQ.info = { name: String(r.name || '').slice(0, 40), region: String(r.region || '').slice(0, 20), ceo: String(r.ceo || '').slice(0, 20), phone: String(r.phone || '').replace(/[^0-9-]/g, '') };
+      } catch (e) { return rqpShowError('인터넷 연결을 확인하고 다시 열어 주세요.'); }
+      const I = RQ.info;
+      document.title = I.name + ' 견적·상담 신청';
+      document.getElementById('rqpName').innerText = I.name;
+      document.getElementById('rqpSub').innerText = [I.region, I.ceo ? '대표 ' + I.ceo : ''].filter(Boolean).join(' · ');
+      document.getElementById('rqpAgreeName').innerText = I.name;
+      document.getElementById('rqpDoneName').innerText = I.name;
+      ['rqpCall', 'rqpDoneCall'].forEach(id => { const a = document.getElementById(id); if (I.phone) a.href = 'tel:' + I.phone.replace(/[^0-9]/g, ''); else a.classList.add('hidden'); });
+      rqpRenderChips(); rqpRenderThumbs();
+      document.getElementById('rqpLoading').classList.add('hidden');
+      document.getElementById('rqpForm').classList.remove('hidden');
+    }
+    function rqpShowError(msg) {
+      document.getElementById('rqpLoading').classList.add('hidden');
+      if (msg) document.getElementById('rqpErrorText').innerText = msg;
+      document.getElementById('rqpError').classList.remove('hidden');
+    }
+    function rqpChipClass(on) { return on ? 'border-2 border-[#14261E] bg-[#14261E] text-[#BEF264]' : 'border-[1.5px] border-[#CBD5E1] bg-white text-[#0F172A]'; }
+    function rqpRenderChips() {
+      document.getElementById('rqpWorks').innerHTML = REQ_WORKS.map(([w, sub], i) => {
+        const on = RQ.works.has(w); const last = i === REQ_WORKS.length - 1 && REQ_WORKS.length % 2 === 1;
+        return `<button type="button" onclick="rqpToggleWork(${i})" aria-pressed="${on}" class="${last ? 'col-span-2 ' : ''}min-h-[52px] rounded-[14px] px-1 py-1.5 text-[16px] font-black leading-tight flex flex-col items-center justify-center gap-0.5 ${rqpChipClass(on)}">${on ? '✓ ' : ''}${escHtml(w)}${sub ? `<span class="text-[13px] font-bold ${on ? 'text-[#D9F99D]' : 'text-[#475569]'}">${escHtml(sub)}</span>` : ''}</button>`;
+      }).join('');
+      document.getElementById('rqpWhens').innerHTML = REQ_WHENS.map((w, i) => `<button type="button" onclick="rqpSetWhen(${i})" aria-pressed="${RQ.when === w}" class="h-[50px] rounded-[12px] text-[15px] font-black ${rqpChipClass(RQ.when === w)}">${escHtml(w)}</button>`).join('');
+    }
+    function rqpToggleWork(i) { const w = REQ_WORKS[i][0]; if (RQ.works.has(w)) RQ.works.delete(w); else RQ.works.add(w); rqpRenderChips(); }
+    function rqpSetWhen(i) { RQ.when = RQ.when === REQ_WHENS[i] ? '' : REQ_WHENS[i]; rqpRenderChips(); }
+    function rqpAddPhotos(e) {
+      const files = Array.from(e.target.files || []).filter(f => f.type.startsWith('image/')); e.target.value = '';
+      const room = REQ_MAX_IMGS - RQ.imgs.length;
+      if (room <= 0) return alert(`사진은 ${REQ_MAX_IMGS}장까지 보낼 수 있어요.`);
+      if (files.length > room) alert(`사진은 ${REQ_MAX_IMGS}장까지라서 앞의 ${room}장만 넣었어요.`);
+      files.slice(0, room).forEach(f => compressImage(f, b64 => { if (RQ.imgs.length < REQ_MAX_IMGS) { RQ.imgs.push(b64); rqpRenderThumbs(); } }));
+    }
+    function rqpRemovePhoto(i) { RQ.imgs.splice(i, 1); rqpRenderThumbs(); }
+    function rqpRenderThumbs() {
+      document.getElementById('rqpThumbs').innerHTML = RQ.imgs.map((src, i) => `<div class="relative w-[84px] h-[84px] rounded-[14px] overflow-hidden border border-[#CBD5E1]"><img src="${escHtml(src)}" alt="" class="w-full h-full object-cover"><button type="button" aria-label="사진 빼기" onclick="rqpRemovePhoto(${i})" class="absolute top-1 right-1 w-7 h-7 rounded-full bg-black/70 text-white text-[14px] font-black">✕</button></div>`).join('');
+      document.getElementById('rqpAddPhoto').classList.toggle('hidden', RQ.imgs.length >= REQ_MAX_IMGS);
+    }
+    function rqpPrivacy() {
+      const n = RQ.info ? RQ.info.name : '업체';
+      alert(`개인정보 처리 안내\n\n• 받는 곳: ${n} (조경노트 PRO를 쓰는 조경 사업자)\n• 받는 정보: 성함, 연락처, 현장 주소, 사진, 적어 주신 내용\n• 쓰는 곳: 견적·상담 연락과 작업 진행에만 씁니다.\n• 보관: 상담·작업이 끝날 때까지 보관하며, 원하시면 업체에 말씀해 바로 지울 수 있습니다.\n• 동의하지 않으셔도 되지만, 그 경우 신청서를 보낼 수 없습니다. (전화로 문의해 주세요)\n\n※ 자세한 내용은 jogyeongnote.com/privacy.html 에서 보실 수 있습니다.`);
+    }
+    // 말로 신청하기 (공통 음성 엔진 #38 사용, AI 정리는 Code.gs가 대신 해 줌)
+    const REQ_VOICE_GUIDE = [['어떤 작업이 필요한지', '"소나무 세 그루 전지하고 싶어요"'], ['현장 주소', '"영통동 ○○아파트 화단"'], ['언제쯤', '"이번 주 안에"'], ['성함 · 연락처', '"김철수, 010…"']];
+    function startReqVoice() {
+      if (!RQ.info) return;
+      voiceOpen({ title: '말로 신청하기', chip: RQ.info.name, hints: [], guide: REQ_VOICE_GUIDE, onDone: runReqAi });
+    }
+    async function runReqAi(text) {
+      voiceShowThinking(['필요한 작업 고르기', '주소·시기 정리', '성함·연락처 확인']);
+      try {
+        const r = await reqApi({ action: 'req_ai', cid: RQ.cid, text });
+        if (!r || !r.ok || !r.draft) throw new Error(r && r.msg || 'fail');
+        const d = r.draft;
+        (Array.isArray(d.works) ? d.works : []).forEach(w => { if (REQ_WORKS.some(x => x[0] === w)) RQ.works.add(w); });
+        if (REQ_WHENS.includes(d.when)) RQ.when = d.when;
+        const set = (id, v) => { const el = document.getElementById(id); if (el && v && !el.value.trim()) el.value = String(v); };
+        set('rqpAddr', d.addr); set('rqpCName', d.name); set('rqpText', d.text);
+        if (d.phone && !document.getElementById('rqpPhone').value.trim()) document.getElementById('rqpPhone').value = reqPhoneFmt(d.phone);
+        RQ.via = 'voice'; rqpRenderChips();
+        voiceHide(false);
+        document.getElementById('rqpAiNote').classList.remove('hidden');
+        setTimeout(() => document.getElementById('rqpAiNote').scrollIntoView({ block: 'start', behavior: 'smooth' }), 150);
+      } catch (e) {
+        voiceHide(false);
+        const t = document.getElementById('rqpText'); if (!t.value.trim()) t.value = text.slice(0, 1000);
+        alert('지금은 AI 정리가 잠시 안 됩니다.\n말씀하신 내용은 [자세한 내용] 칸에 넣어 두었어요. 나머지 칸만 채워서 보내 주세요.');
+      }
+    }
+    async function submitPublicRequest() {
+      if (RQ.sending || !RQ.info) return;
+      const addr = document.getElementById('rqpAddr').value.trim(), name = document.getElementById('rqpCName').value.trim();
+      const phone = document.getElementById('rqpPhone').value.replace(/[^0-9]/g, ''), text = document.getElementById('rqpText').value.trim();
+      if (!RQ.works.size && !text) return alert('어떤 작업이 필요한지 골라 주시거나, [자세한 내용]에 적어 주세요.');
+      if (addr.length < 2) { alert('현장 주소를 적어 주세요. (동네까지만 적으셔도 됩니다)'); return document.getElementById('rqpAddr').focus(); }
+      if (!name) { alert('성함을 적어 주세요.'); return document.getElementById('rqpCName').focus(); }
+      if (phone.length < 9 || phone.length > 11) { alert('연락받으실 전화번호를 확인해 주세요.'); return document.getElementById('rqpPhone').focus(); }
+      if (!document.getElementById('rqpAgree').checked) return alert('개인정보 전달 동의에 체크해 주세요.');
+      const btn = document.getElementById('rqpSendBtn'); RQ.sending = true; btn.disabled = true; btn.innerText = RQ.imgs.length ? '사진과 함께 보내는 중…' : '보내는 중…';
+      try {
+        const r = await reqApi({ action: 'req_submit', cid: RQ.cid, name, phone, addr, text, when: RQ.when, works: Array.from(RQ.works), imgs: RQ.imgs, via: RQ.via, agree: true, hp: document.getElementById('rqpHp').value });
+        if (!r || !r.ok) {
+          const m = { limit: '오늘은 이 번호로 신청을 더 받을 수 없어요. 급하시면 전화로 연락해 주세요.', full: '오늘 이 업체의 신청이 많아 더 받을 수 없어요. 전화로 연락해 주세요.', busy: '지금 신청이 몰려 있어요. 잠시 후 다시 눌러 주세요.' }[r && r.msg] || '보내지 못했습니다. 잠시 후 다시 눌러 주세요.';
+          throw new Error(m);
+        }
+        const sum = [['작업', Array.from(RQ.works).join(', ') || '적어 주신 내용 참고'], ['시기', RQ.when || '정하지 않음'], ['사진', (r.imgCount != null ? r.imgCount : RQ.imgs.length) + '장']];
+        document.getElementById('rqpDoneSum').innerHTML = sum.map(([k, v]) => `<span><b class="text-[#0F172A]">${k}</b> · ${escHtml(v)}</span>`).join('');
+        document.getElementById('rqpForm').classList.add('hidden');
+        document.getElementById('rqpDone').classList.remove('hidden');
+        document.getElementById('reqPublic').scrollTop = 0;
+      } catch (e) {
+        alert(e && e.message && !/fetch|network/i.test(e.message) ? e.message : '인터넷 연결이 불안정해 보내지 못했어요. 다시 눌러 주세요.');
+        RQ.sending = false; btn.disabled = false; btn.innerText = '의뢰 보내기';
+      }
+    }
+
+    // 고객이 받은 리포트 맨 아래 '다음 작업도 신청하기' (리포트에 업체 표시(ownerId)가 있을 때만)
+    function reqNextSetup(data, viewMode) {
+      const box = document.getElementById('reqNextBox'); if (!box) return;
+      const owner = data && typeof data.ownerId === 'string' ? data.ownerId : '';
+      const show = viewMode === 'client_shared' && /^[A-Za-z0-9]{2,40}$/.test(owner);
+      box.classList.toggle('hidden', !show);
+      if (show) document.getElementById('reqNextLink').href = '/?req=' + encodeURIComponent(owner);
+    }
+
+    // ---------------- 앱: 고객 의뢰함 ----------------
+    const RV = { list: [], tab: 'new', view: [], cur: null, loaded: false };
+    function reqUrl(rid) { const base = `${DB_BASE_URL}/${getSafeKey(currentUserId)}/requests`; return getAuthUrl(rid ? `${base}/${rid}.json` : `${base}.json`); }
+    function reqMyLink() { const origin = (location.protocol === 'https:' && location.hostname) ? location.origin : 'https://www.jogyeongnote.com'; return origin + '/?req=' + encodeURIComponent(currentUserId || ''); }
+    function reqClean(r, id) {
+      if (!r || typeof r !== 'object') return null;
+      const arr = v => (Array.isArray(v) ? v : (v && typeof v === 'object' ? Object.values(v) : [])).map(x => String(x == null ? '' : x));
+      return { id: String(id), name: String(r.name || '').slice(0, 20), phone: String(r.phone || '').replace(/[^0-9]/g, '').slice(0, 11), addr: String(r.addr || '').slice(0, 150),
+        text: String(r.text || '').slice(0, 1000), when: String(r.when || '').slice(0, 10), works: arr(r.works).slice(0, 12), imgs: arr(r.imgs).filter(u => /^https:\/\/firebasestorage\.googleapis\.com\//.test(u)).slice(0, 5),
+        status: ['new', 'talk', 'done'].includes(r.status) ? r.status : 'new', createdAt: Number(r.createdAt) || 0, seenAt: Number(r.seenAt) || 0, via: r.via === 'voice' ? 'voice' : 'form' };
+    }
+    async function loadReqs() {
+      const res = await fetch(reqUrl()); if (!res.ok) throw new Error('불러오기 실패');
+      const d = await res.json() || {};
+      RV.list = Object.keys(d && typeof d === 'object' ? d : {}).filter(k => /^[A-Za-z0-9_-]{1,60}$/.test(k)).map(k => reqClean(d[k], k)).filter(Boolean).sort((a, b) => b.createdAt - a.createdAt);
+      RV.loaded = true; reqPaintBadge();
+    }
+    function reqPaintBadge() {
+      const n = RV.list.filter(r => r.status === 'new').length; const b = document.getElementById('reqBadge');
+      if (b) { b.innerText = '새 ' + n; b.classList.toggle('hidden', !n); }
+    }
+    async function refreshReqBadge() { try { if (currentUserId) await loadReqs(); } catch (e) {} }
+    function reqWhen(ts) {
+      if (!ts) return ''; const d = new Date(ts), now = new Date(), y = new Date(now); y.setDate(now.getDate() - 1);
+      const hm = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+      if (d.toDateString() === now.toDateString()) return '오늘 ' + hm;
+      if (d.toDateString() === y.toDateString()) return '어제 ' + hm;
+      return `${d.getMonth() + 1}월 ${d.getDate()}일 ${hm}`;
+    }
+    function reqArea(addr) { const m = String(addr || '').match(/[가-힣0-9]+(동|읍|면|리|가)(?=\s|$|\d)/); return m ? m[0] : String(addr || '').split(/\s+/).slice(0, 2).join(' '); }
+    function reqWhenChip(w) {
+      if (!w) return '';
+      const urgent = w === '급해요';
+      return `<span class="text-[14.5px] font-black rounded-full px-2.5 py-1 ${urgent ? 'bg-[#FFEDD5] text-[#9A3412]' : 'bg-[#ECFCCB] text-[#3F6212]'}">${escHtml(w === '급해요' ? w : w + ' 희망')}</span>`;
+    }
+    async function openReqView(rid) {
+      if (!currentUserId) return;
+      document.getElementById('reqMyLink').innerText = reqMyLink();
+      document.getElementById('reqQrBox').classList.add('hidden');
+      document.getElementById('reqListPane').classList.remove('hidden');
+      document.getElementById('reqDetailPane').classList.add('hidden');
+      document.getElementById('reqView').classList.remove('hidden');
+      document.getElementById('reqView').scrollTop = 0;
+      history.pushState({ reqOpen: true }, '', '');
+      if (!RV.loaded) document.getElementById('reqList').innerHTML = '<div class="p-6 text-center text-[16px] font-bold text-[#94A3B8]">불러오는 중…</div>';
+      else reqRenderList();
+      try { await loadReqs(); reqRenderList(); }
+      catch (e) { document.getElementById('reqList').innerHTML = '<div class="p-6 text-center text-[16px] font-bold text-[#FCA5A5] break-keep">의뢰를 불러오지 못했습니다. 인터넷 연결을 확인해 주세요.</div>'; return; }
+      if (rid) { const r = RV.list.find(x => x.id === rid); if (r) { RV.tab = r.status; reqRenderList(); reqOpenDetail(r.id); } }
+    }
+    function reqSetTab(t) { RV.tab = t; reqRenderList(); }
+    function reqRenderList() {
+      const cnt = { new: 0, talk: 0, done: 0 }; RV.list.forEach(r => cnt[r.status]++);
+      const names = { new: '새 의뢰', talk: '상담 중', done: '끝난 의뢰' };
+      document.querySelectorAll('.req-tab').forEach(b => { const k = b.getAttribute('data-req-tab'); const on = k === RV.tab; b.style.background = on ? '#84CC16' : 'transparent'; b.style.color = on ? '#1A2E05' : '#CBD5E1'; b.innerText = names[k] + (cnt[k] ? ' ' + cnt[k] : ''); });
+      RV.view = RV.list.filter(r => r.status === RV.tab);
+      const empty = { new: '새 의뢰가 없습니다.<br>위의 주소를 블로그·카톡에 올려 두면 이곳으로 들어와요.', talk: '상담 중인 의뢰가 없습니다.', done: '끝난 의뢰가 없습니다.' }[RV.tab];
+      document.getElementById('reqList').innerHTML = RV.view.length ? RV.view.map((r, i) => `<button type="button" onclick="reqOpenDetail(RV.view[${i}].id)" class="text-left bg-white rounded-[20px] p-3.5 flex flex-col gap-2 text-[#0F172A] active:scale-[0.99] transition-all">
+          <span class="flex justify-between items-center w-full gap-2">${!r.seenAt && r.status === 'new' ? '<span class="text-[13.5px] font-black bg-[#DC2626] text-white rounded-md px-2 py-0.5">NEW</span>' : '<span></span>'}<span class="text-[14px] font-bold text-[#64748B]">${escHtml(reqWhen(r.createdAt))}</span></span>
+          <span class="text-[19px] font-black leading-snug break-keep">${escHtml(r.works.join(' · ') || '작업 내용은 글로 적음')}</span>
+          <span class="text-[16px] font-bold text-[#334155] break-keep">${escHtml(r.name)} 고객님 · ${escHtml(reqArea(r.addr))}</span>
+          <span class="flex gap-1.5 items-center w-full">${r.imgs.slice(0, 3).map(u => `<img src="${escHtml(u)}" alt="" loading="lazy" class="w-12 h-12 rounded-[10px] object-cover bg-[#D9E4D0]">`).join('') || '<span class="text-[14.5px] font-bold text-[#64748B]">사진 없음</span>'}<span class="ml-auto">${reqWhenChip(r.when)}</span></span>
+        </button>`).join('') : `<div class="bg-white/[0.06] border-[1.5px] border-dashed border-[#475569] rounded-[18px] px-4 py-6 text-center text-[16px] font-bold text-[#CBD5E1] leading-relaxed break-keep">${empty}</div>`;
+    }
+    function reqOpenDetail(id) {
+      const r = RV.list.find(x => x.id === id); if (!r) return;
+      RV.cur = r;
+      if (!r.seenAt) { r.seenAt = Date.now(); fetch(reqUrl(r.id), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ seenAt: r.seenAt }) }).catch(() => {}); }
+      reqRenderDetail();
+      document.getElementById('reqListPane').classList.add('hidden');
+      document.getElementById('reqDetailPane').classList.remove('hidden');
+      document.getElementById('reqView').scrollTop = 0;
+      if (!(history.state && history.state.reqDetail)) history.pushState({ reqDetail: true }, '', '');
+    }
+    function reqRenderDetail() {
+      const r = RV.cur; if (!r) return;
+      const ph = reqPhoneFmt(r.phone), tel = r.phone;
+      const st = { new: ['새 의뢰', 'bg-[#DC2626] text-white'], talk: ['상담 중', 'bg-[#84CC16] text-[#1A2E05]'], done: ['끝난 의뢰', 'bg-[#475569] text-white'] }[r.status];
+      const chip = (t, dark) => `<span class="text-[15px] font-black rounded-[10px] px-2.5 py-1.5 ${dark ? 'bg-[#14261E] text-[#BEF264]' : 'bg-[#ECFCCB] text-[#3F6212]'}">${escHtml(t)}</span>`;
+      const sec = (t, body) => `<div class="flex flex-col gap-1.5"><span class="text-[15px] font-black text-[#3F6212]">${t}</span>${body}</div>`;
+      const btn = (fn, label, cls) => `<button type="button" onclick="${fn}" class="${cls} active:scale-[0.98] transition-all">${label}</button>`;
+      document.getElementById('reqDetailPane').innerHTML = `
+        <div class="flex items-center gap-2.5"><button type="button" onclick="history.back()" aria-label="뒤로" class="w-11 h-11 rounded-[12px] bg-[#1E293B] text-white flex items-center justify-center active:scale-95"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg></button><span class="text-[22px] font-black flex-1">의뢰 자세히</span><span class="text-[14.5px] font-black rounded-full px-2.5 py-1 ${st[1]}">${st[0]}</span></div>
+        <div class="bg-white rounded-[22px] p-4 flex flex-col gap-3.5 text-[#0F172A]">
+          <div class="flex flex-col gap-1"><span class="text-[14px] font-bold text-[#64748B]">${escHtml(reqWhen(r.createdAt))} 접수${r.via === 'voice' ? ' · 말로 신청' : ''}</span><span class="text-[24px] font-black break-keep">${escHtml(r.name)} 고객님</span><span class="text-[20px] font-black text-[#1D4ED8]">${escHtml(ph)}</span></div>
+          <div class="grid grid-cols-2 gap-2">
+            <a href="tel:${escHtml(tel)}" class="h-14 rounded-[16px] bg-[#1D4ED8] text-white text-[18px] font-black flex items-center justify-center" style="text-decoration:none">전화하기</a>
+            <a href="sms:${escHtml(tel)}" class="h-14 rounded-[16px] bg-[#84CC16] text-[#1A2E05] text-[18px] font-black flex items-center justify-center" style="text-decoration:none">문자하기</a>
+          </div>
+          <div class="h-px bg-[#E2E8F0]"></div>
+          ${sec('현장 주소', `<span class="text-[17px] font-bold leading-relaxed break-keep">${escHtml(r.addr)}</span><a href="https://map.naver.com/p/search/${encodeURIComponent(r.addr)}" target="_blank" rel="noopener" class="self-start text-[15px] font-black text-[#1D4ED8] underline underline-offset-2 min-h-[36px] flex items-center">지도에서 보기</a>`)}
+          ${sec('원하는 작업 · 시기', `<span class="flex flex-wrap gap-1.5">${r.works.map(w => chip(w, true)).join('')}${r.when ? chip(r.when === '급해요' ? r.when : r.when + ' 희망', false) : ''}${!r.works.length && !r.when ? '<span class="text-[15px] font-bold text-[#64748B]">고르지 않음</span>' : ''}</span>`)}
+          ${r.text ? sec('고객님이 남긴 말', `<span class="text-[17px] font-bold leading-relaxed bg-[#F8FAFC] rounded-[12px] p-3 whitespace-pre-wrap break-keep" style="overflow-wrap:anywhere">${escHtml(r.text)}</span>`) : ''}
+          ${r.imgs.length ? sec(`사진 ${r.imgs.length}장 · 누르면 크게`, `<span class="grid grid-cols-2 gap-2">${r.imgs.map((u, i) => `<button type="button" onclick="reqOpenPhoto(${i})" class="h-[130px] rounded-[14px] overflow-hidden bg-[#D9E4D0]"><img src="${escHtml(u)}" alt="현장 사진 ${i + 1}" loading="lazy" class="w-full h-full object-cover"></button>`).join('')}</span>`) : ''}
+        </div>
+        <span class="text-[17px] font-black text-[#BEF264] mt-1">이 의뢰로 바로 하기</span>
+        <div class="flex flex-col gap-2">
+          ${btn('reqToClient()', '거래처로 등록', 'h-14 rounded-[16px] bg-white text-[#0F172A] text-[17px] font-black')}
+          ${btn('reqToSchedule()', '방문 일정 잡기', 'h-14 rounded-[16px] bg-white text-[#0F172A] text-[17px] font-black')}
+          ${btn('reqToQuote()', '견적서 쓰기 (고객 정보 자동 입력)', 'h-14 rounded-[16px] bg-white text-[#0F172A] text-[17px] font-black')}
+        </div>
+        <div class="grid grid-cols-2 gap-2 mt-1">
+          ${r.status !== 'talk' ? btn("reqSetStatus('talk')", '상담 중으로', 'h-[52px] rounded-[14px] border-[1.5px] border-[#84CC16] text-[#BEF264] text-[16px] font-black') : btn("reqSetStatus('new')", '새 의뢰로', 'h-[52px] rounded-[14px] border-[1.5px] border-[#64748B] text-white text-[16px] font-black')}
+          ${r.status !== 'done' ? btn("reqSetStatus('done')", '끝난 의뢰로', 'h-[52px] rounded-[14px] border-[1.5px] border-[#64748B] text-white text-[16px] font-black') : btn("reqSetStatus('talk')", '다시 상담 중으로', 'h-[52px] rounded-[14px] border-[1.5px] border-[#84CC16] text-[#BEF264] text-[16px] font-black')}
+        </div>
+        ${btn('reqDelete()', '장난·스팸 의뢰 지우기', 'h-12 text-[#FCA5A5] text-[15.5px] font-black')}`;
+    }
+    function reqOpenPhoto(i) {
+      const r = RV.cur; if (!r || !r.imgs[i]) return;
+      modalImages = r.imgs; modalCurrentIdx = i; updateModalImage();
+      const m = document.getElementById('imageModal'); m.style.zIndex = '9500'; m.classList.remove('hidden'); history.pushState({ modalOpen: true }, '', '');
+    }
+    async function reqSetStatus(st) {
+      const r = RV.cur; if (!r) return;
+      try {
+        const res = await fetch(reqUrl(r.id), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: st, statusAt: Date.now() }) });
+        if (!res.ok) throw new Error();
+        r.status = st; RV.tab = st; reqPaintBadge(); reqRenderDetail(); reqRenderList();
+      } catch (e) { alert('바꾸지 못했습니다. 인터넷 연결을 확인해 주세요.'); }
+    }
+    async function reqDelete() {
+      const r = RV.cur; if (!r) return;
+      if (!confirm('이 의뢰를 지울까요?\n지우면 되살릴 수 없습니다.')) return;
+      try {
+        const res = await fetch(reqUrl(r.id), { method: 'DELETE' }); if (!res.ok) throw new Error();
+        RV.list = RV.list.filter(x => x.id !== r.id); RV.cur = null; reqPaintBadge(); reqRenderList(); history.back();
+      } catch (e) { alert('지우지 못했습니다. 인터넷 연결을 확인해 주세요.'); }
+    }
+    function reqToClient() {
+      const r = RV.cur; if (!r) return;
+      if (clients.find(c => c && c.name === r.name && String(c.phone || '').replace(/[^0-9]/g, '') === r.phone)) return alert('이미 거래처에 등록된 고객입니다.');
+      clients.push({ id: Date.now().toString(), name: r.name, phone: reqPhoneFmt(r.phone), address: r.addr, type: '개별 고객' });
+      updateData('clients', clients); renderClientSelect(); renderClientsList();
+      alert(`✅ [${r.name}] 고객님을 거래처(개별 고객처)에 등록했습니다.`);
+    }
+    function reqLeave(fn) { // 의뢰함을 닫고 다른 화면으로 이동 (뒤로가기 칸 정리)
+      document.getElementById('reqView').classList.add('hidden');
+      const n = history.state && history.state.reqDetail ? 2 : (history.state && history.state.reqOpen ? 1 : 0);
+      if (n) { VX.ignorePop = true; history.go(-n); }
+      setTimeout(fn, n ? 350 : 0);
+    }
+    function reqToSchedule() {
+      const r = RV.cur; if (!r) return;
+      reqLeave(() => {
+        switchView('calendar'); openScheduleModal();
+        document.getElementById('scheduleTitle').value = `${reqArea(r.addr)} ${r.name} 고객님 방문 상담${r.works.length ? ' (' + r.works.join(', ') + ')' : ''}`.slice(0, 80);
+        document.getElementById('scheduleTagText').value = '견적방문';
+        document.getElementById('scheduleColor').value = 'border-[#0284C7]';
+        document.getElementById('scheduleMemo').value = `연락처: ${reqPhoneFmt(r.phone)}\n주소: ${r.addr}${r.when ? '\n희망 시기: ' + r.when : ''}`;
+      });
+    }
+    function reqToQuote() {
+      const r = RV.cur; if (!r) return;
+      reqLeave(() => {
+        switchView('quote');
+        document.getElementById('quoteClientSelect').value = r.name;
+        document.getElementById('quoteInputClientPhone').value = reqPhoneFmt(r.phone);
+        if (document.getElementById('quoteInputClientAddress')) document.getElementById('quoteInputClientAddress').value = r.addr;
+      });
+    }
+    function reqShareText() { const n = (myCompanyProfile && myCompanyProfile.name) || '조경노트'; return `[${n}] 견적·상담 신청\n\n아래 주소를 누르시면 사진과 함께 편하게 작업을 의뢰하실 수 있습니다. (가입 없이, 무료 상담)\n\n${reqMyLink()}`; }
+    function reqShareLink() {
+      const msg = reqShareText();
+      if (navigator.share) navigator.share({ title: '견적·상담 신청', text: msg }).catch(() => {});
+      else navigator.clipboard.writeText(msg).then(() => alert('안내 문구와 주소를 복사했습니다. 카톡 대화창에 붙여 넣으세요.'));
+    }
+    function reqCopyLink() { navigator.clipboard.writeText(reqMyLink()).then(() => alert('주소를 복사했습니다.\n블로그 글이나 카톡 프로필에 붙여 넣으세요.')).catch(() => alert(reqMyLink())); }
+    async function reqShowQr() {
+      const box = document.getElementById('reqQrBox'), q = document.getElementById('reqQr');
+      box.classList.remove('hidden'); q.innerText = 'QR 만드는 중…';
+      try {
+        await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js');
+        q.innerHTML = ''; new QRCode(q, { text: reqMyLink(), width: 220, height: 220, colorDark: '#14261E', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+      } catch (e) { q.innerText = 'QR을 만들지 못했습니다. 인터넷 연결을 확인해 주세요.'; }
+    }
+    function closeReqView() {
+      const v = document.getElementById('reqView'); if (v.classList.contains('hidden')) return;
+      v.classList.add('hidden');
+      const n = history.state && history.state.reqDetail ? 2 : (history.state && history.state.reqOpen ? 1 : 0);
+      if (n) { VX.ignorePop = true; history.go(-n); }
+    }
+    // 뒤로가기(휴대폰 버튼): 사진 크게 보기 → 의뢰 자세히 → 의뢰 목록 → 닫기 순서
+    window.addEventListener('popstate', (e) => {
+      const ov = document.getElementById('voiceOverlay'); if (ov && !ov.classList.contains('hidden')) return;
+      const im = document.getElementById('imageModal'); if (im && !im.classList.contains('hidden')) return;
+      const v = document.getElementById('reqView');
+      if (v && !v.classList.contains('hidden')) {
+        if (!document.getElementById('reqDetailPane').classList.contains('hidden') && history.state && history.state.reqOpen) {
+          document.getElementById('reqDetailPane').classList.add('hidden'); document.getElementById('reqListPane').classList.remove('hidden'); RV.cur = null; reqRenderList();
+        } else v.classList.add('hidden');
+        e.stopImmediatePropagation();
+      }
     }, true);
   </script>
   <!-- 🧭 [패치 #17] 하단 고정 메뉴 (로그인한 업체 화면에서만 표시, 고객 리포트 화면에는 표시 안 됨) -->
