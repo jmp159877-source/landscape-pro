@@ -134,10 +134,11 @@
     $('support').innerHTML = s.join('');
   }
 
-  $('photos').addEventListener('change', function (e) {
+  $('photos').addEventListener('change', async function (e) {
     var picked = Array.prototype.slice.call(e.target.files || []).filter(function (f) { return /^image\//.test(f.type); });
     e.target.value = '';
-    files = files.concat(picked).slice(0, 20);
+    $('photoCount').textContent = '사진을 작게 줄이는 중…';
+    for (var k = 0; k < picked.length && files.length < 20; k++) files.push(await shrink(picked[k], files.length));
     var th = $('thumbs'); th.innerHTML = '';
     files.forEach(function (f, i) {
       var d = document.createElement('div');
@@ -145,10 +146,33 @@
       var n = document.createElement('span'); n.textContent = i + 1;
       d.appendChild(img); d.appendChild(n); th.appendChild(d);
     });
-    $('photoCount').textContent = files.length ? '고른 사진 ' + files.length + '장 (다시 누르면 더 추가돼요)' : '아직 고른 사진이 없어요';
+    var mb = files.reduce(function (s, f) { return s + f.size; }, 0) / 1048576;
+    $('photoCount').textContent = files.length ? '고른 사진 ' + files.length + '장 · 줄인 크기 ' + mb.toFixed(1) + 'MB (다시 누르면 더 추가돼요)' : '아직 고른 사진이 없어요';
   });
 
   function fullText() { return $('title').value.trim() + '\n\n' + $('body').value.trim(); }
+
+  // 크롬 제한(한 번에 10장, 약 50MB) 때문에 앱처럼 사진을 작게 줄이고 10장까지만 보냄
+  var MAX_SHARE = 10;
+  function shrink(file, i) {
+    return new Promise(function (ok) {
+      var img = new Image(); var url = URL.createObjectURL(file);
+      img.onload = function () {
+        var M = 1280, w = img.width, h = img.height;
+        if (w > h) { if (w > M) { h = Math.round(h * M / w); w = M; } } else { if (h > M) { w = Math.round(w * M / h); h = M; } }
+        var c = document.createElement('canvas'); c.width = w; c.height = h;
+        c.getContext('2d').drawImage(img, 0, 0, w, h);
+        c.toBlob(function (b) { URL.revokeObjectURL(url); ok(b ? new File([b], 'jogyeongnote_' + String(i + 1).padStart(2, '0') + '.jpg', { type: 'image/jpeg' }) : file); }, 'image/jpeg', 0.8);
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); ok(file); };
+      img.src = url;
+    });
+  }
+  function readyFiles(name) {
+    var out = files.slice(0, MAX_SHARE);
+    if (files.length > MAX_SHARE) log(name + ' · 사진이 ' + files.length + '장이라 앞의 ' + MAX_SHARE + '장만 보냅니다 (한 번에 10장까지)');
+    return out;
+  }
 
   async function doShare(name, data) {
     if (!navigator.share) { log(name + ' · 이 화면에서는 보내기 기능이 없어요'); return; }
@@ -166,11 +190,13 @@
 
   $('t1').addEventListener('click', function () {
     if (needPhotos('시험 1')) return;
-    doShare('시험 1 (사진 ' + files.length + '장 + 글)', { title: $('title').value.trim(), text: fullText(), files: files });
+    var fs = readyFiles('시험 1');
+    doShare('시험 1 (사진 ' + fs.length + '장 + 글)', { title: $('title').value.trim(), text: fullText(), files: fs });
   });
   $('t2').addEventListener('click', function () {
     if (needPhotos('시험 2')) return;
-    doShare('시험 2 (사진 ' + files.length + '장만)', { files: files });
+    var fs = readyFiles('시험 2');
+    doShare('시험 2 (사진 ' + fs.length + '장만)', { files: fs });
   });
   $('t3').addEventListener('click', function () {
     doShare('시험 3 (글만)', { title: $('title').value.trim(), text: fullText() });
@@ -180,7 +206,8 @@
     var copied = false;
     try { await navigator.clipboard.writeText(fullText()); copied = true; } catch (e) {}
     log('시험 4 · 글 복사 ' + (copied ? '됨 (블로그 본문 칸을 꾹 눌러 붙여넣기 해 보세요)' : '안 됨'));
-    doShare('시험 4 (사진 ' + files.length + '장)', { files: files });
+    var fs = readyFiles('시험 4');
+    doShare('시험 4 (사진 ' + fs.length + '장)', { files: fs });
   });
 
   supportText();
