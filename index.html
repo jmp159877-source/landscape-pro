@@ -3224,7 +3224,7 @@
         const box = document.getElementById('scheduleBox');
         if(modal) modal.classList.add('opacity-0');
         if(box) box.classList.add('scale-95');
-        setTimeout(() => { if(modal) modal.classList.add('hidden'); }, 200);
+        setTimeout(() => { if(modal) { modal.classList.add('hidden'); modal.style.zIndex = ''; } }, 200); // ↩️ [패치 #56] 의뢰함 위에 띄웠던 높이 원래대로
         if(!fromPopstate && history.state && history.state.modalOpen) history.back();
     }
 
@@ -7845,20 +7845,18 @@ ${AI_COMMON_RULES}
       alert(`✅ [${r.name}] 고객님을 거래처(개별 고객처)에 등록했습니다.`);
     }
     function reqLeave(fn) { // 의뢰함을 닫고 다른 화면으로 이동 (뒤로가기 칸 정리)
-      document.getElementById('reqView').classList.add('hidden');
-      const n = history.state && history.state.reqDetail ? 2 : (history.state && history.state.reqOpen ? 1 : 0);
-      if (n) { VX.ignorePop = true; history.go(-n); }
-      setTimeout(fn, n ? 350 : 0);
+      document.getElementById('reqView').classList.add('hidden'); // ↩️ [패치 #56] 되감지 않음: 견적서에서 뒤로가기 → 이 의뢰로 돌아옴
+      fn();
     }
     function reqToSchedule() {
       const r = RV.cur; if (!r) return;
-      reqLeave(() => {
-        switchView('calendar'); openScheduleModal();
+      { // ↩️ [패치 #56] 의뢰 화면 위에 일정 창만 띄움 → 저장·뒤로가기 모두 이 의뢰로 돌아옴
+        openScheduleModal(); document.getElementById('scheduleModal').style.zIndex = '9550';
         document.getElementById('scheduleTitle').value = `${reqArea(r.addr)} ${r.name} 고객님 방문 상담${r.works.length ? ' (' + r.works.join(', ') + ')' : ''}`.slice(0, 80);
         document.getElementById('scheduleTagText').value = '견적방문';
         document.getElementById('scheduleColor').value = 'border-[#0284C7]';
         document.getElementById('scheduleMemo').value = `연락처: ${reqPhoneFmt(r.phone)}\n주소: ${r.addr}${r.when ? '\n희망 시기: ' + r.when : ''}`;
-      });
+      }
     }
     function reqToQuote() {
       const r = RV.cur; if (!r) return;
@@ -7915,16 +7913,15 @@ ${AI_COMMON_RULES}
       if (n) { VX.ignorePop = true; history.go(-n); }
     }
     // 뒤로가기(휴대폰 버튼): 사진 크게 보기 → 의뢰 자세히 → 의뢰 목록 → 닫기 순서
-    window.addEventListener('popstate', (e) => {
+    // ↩️ [패치 #56] 뒤로가기 후 '지금 있어야 할 화면'을 기록(history.state)으로 정함 → 다른 뒤로가기 처리와 순서가 달라도 튕기지 않음
+    //   (사진·일정 창은 원래 코드가 닫고, 의뢰함은 그 아래에 그대로 남음)
+    window.addEventListener('popstate', () => {
       const ov = document.getElementById('voiceOverlay'); if (ov && !ov.classList.contains('hidden')) return;
-      const im = document.getElementById('imageModal'); if (im && !im.classList.contains('hidden')) return;
-      const v = document.getElementById('reqView');
-      if (v && !v.classList.contains('hidden')) {
-        if (!document.getElementById('reqDetailPane').classList.contains('hidden') && history.state && history.state.reqOpen) {
-          document.getElementById('reqDetailPane').classList.add('hidden'); document.getElementById('reqListPane').classList.remove('hidden'); RV.cur = null; reqRenderList();
-        } else v.classList.add('hidden');
-        e.stopImmediatePropagation();
-      }
+      const st = history.state || {}, v = document.getElementById('reqView');
+      const dp = document.getElementById('reqDetailPane'), lp = document.getElementById('reqListPane');
+      if (st.reqDetail && RV.cur) { v.classList.remove('hidden'); dp.classList.remove('hidden'); lp.classList.add('hidden'); }
+      else if (st.reqOpen) { v.classList.remove('hidden'); dp.classList.add('hidden'); lp.classList.remove('hidden'); RV.cur = null; reqRenderList(); }
+      else if (!v.classList.contains('hidden')) v.classList.add('hidden');
     }, true);
   </script>
   <!-- 🧭 [패치 #17] 하단 고정 메뉴 (로그인한 업체 화면에서만 표시, 고객 리포트 화면에는 표시 안 됨) -->
