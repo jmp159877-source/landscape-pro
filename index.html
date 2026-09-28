@@ -8083,7 +8083,8 @@ ${AI_COMMON_RULES}
     const BLOG_AI_URL = "https://script.google.com/macros/s/AKfycbysZFaBJt9Iu964hP9rJVjmYHDMMo_TQAocjih4h8q0_im414WA6-23LS6Wm4xQvTJRQw/exec"; // 기존 AI 서버와 같은 주소
     // 네이버 블로그 여는 주소 (시험 결과에 따라 여기만 바꾸면 됨)
     const BLOG_NAVER = {
-      androidApp: 'intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package=com.nhn.android.blog;S.browser_fallback_url=' + encodeURIComponent('https://m.blog.naver.com/') + ';end',
+      // [패치 #58] 첫 화면 바로 열기(LAUNCHER)는 크롬이 막음 → 블로그 주소를 블로그 앱으로 여는 방식. 앱이 없으면 인터넷 블로그로
+      androidApp: 'intent://m.blog.naver.com/#Intent;scheme=https;package=com.nhn.android.blog;S.browser_fallback_url=' + encodeURIComponent('https://m.blog.naver.com/') + ';end',
       mobileWeb: 'https://m.blog.naver.com/',
       pcWrite: 'https://blog.naver.com/GoBlogWrite.naver'
     };
@@ -8339,11 +8340,23 @@ ${AI_COMMON_RULES}
       blogShowGuide(ok);
     }
     // 네이버 블로그 열기 (버튼 누른 순간 바로 → 팝업 막힘 방지)
+    function blogGoLink(url, newTab) {
+      const a = document.createElement('a'); a.href = url; if (newTab) { a.target = '_blank'; a.rel = 'noopener'; }
+      a.style.display = 'none'; document.body.appendChild(a); a.click(); a.remove();
+    }
     function blogOpenNaver() {
       if (blogIsPC()) { window.open(BLOG_NAVER.pcWrite, '_blank'); return; }
-      if (blogIsAndroid()) { location.href = BLOG_NAVER.androidApp; return; }
-      window.open(BLOG_NAVER.mobileWeb, '_blank') || (location.href = BLOG_NAVER.mobileWeb);
+      if (blogIsAndroid()) {
+        blogGoLink(BLOG_NAVER.androidApp, false);
+        // 2초 뒤에도 이 화면이 그대로면 앱이 안 열린 것 → '인터넷으로 열기' 버튼 보여 줌
+        let left = false; const onHide = () => { if (document.hidden) left = true; };
+        document.addEventListener('visibilitychange', onHide);
+        setTimeout(() => { document.removeEventListener('visibilitychange', onHide); const f = document.getElementById('blogOpenFail'); if (f && !left && !document.hidden) f.classList.remove('hidden'); }, 2000);
+        return;
+      }
+      blogGoLink(BLOG_NAVER.mobileWeb, true);
     }
+    function blogOpenWeb() { blogGoLink(BLOG_NAVER.mobileWeb, true); }
 
     // ---------- 복사 후 안내 ----------
     function blogShowGuide(copied) {
@@ -8361,6 +8374,10 @@ ${AI_COMMON_RULES}
         ${step(2, '■ 소제목 바로 아래에 사진 넣기', eg + txt('사진첩에서 <b>여러 장을 한 번에</b> 골라도 돼요. 장수 제한 없어요. 다른 소제목도 똑같이.'))}
         ${step(3, '제목 넣고 [발행]', txt('조경노트로 돌아와 [제목만 복사] → 블로그 제목 칸에 붙여넣기. 직접 적어도 돼요.'))}
         <button type="button" onclick="blogOpenNaver()" class="h-[64px] rounded-[18px] bg-[#03C75A] text-white text-[20px] font-black active:scale-[0.98]">알겠어요 · 블로그 열기</button>
+        <div id="blogOpenFail" class="hidden bg-[#FEF9C3] border-2 border-[#EAB308] rounded-[16px] p-3.5 flex flex-col gap-2.5">
+          <span class="text-[16px] font-extrabold text-[#713F12] leading-relaxed">블로그 앱이 안 열렸나요? 인터넷 블로그로 열어도 똑같이 쓸 수 있어요.</span>
+          <button type="button" onclick="blogOpenWeb()" class="h-[54px] rounded-[14px] bg-[#03C75A] text-white text-[18px] font-black active:scale-[0.98]">인터넷으로 블로그 열기</button>
+        </div>
         <div class="grid grid-cols-2 gap-2">
           <button type="button" onclick="blogCopyBodyAgain(this)" class="h-[54px] rounded-[16px] bg-[#14261E] text-[#BEF264] text-[16.5px] font-black active:scale-95">본문 다시 복사</button>
           <button type="button" onclick="blogCopyTitle(this)" class="h-[54px] rounded-[16px] bg-[#14261E] text-[#BEF264] text-[16.5px] font-black active:scale-95">제목만 복사</button>
