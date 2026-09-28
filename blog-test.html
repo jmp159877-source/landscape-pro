@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="robots" content="noindex, nofollow">
+  <title>조경노트 PRO - AI 블로그 자동 완성 테스트</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@1.47.0"></script>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+    * { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body {
+      background: linear-gradient(180deg, #0B1512 0%, #152620 100%) fixed;
+      min-height: 100vh;
+      color: white;
+    }
+    .nav-scroll::-webkit-scrollbar { display: none; }
+    .nav-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="p-4 pb-20">
+
+  <div class="max-w-md mx-auto space-y-5">
+    <!-- 상단 테스트 안내 배너 -->
+    <div class="bg-[#1E293B] border-2 border-[#E3B341] rounded-[24px] p-5 shadow-xl space-y-2">
+      <div class="flex items-center justify-between">
+        <span class="text-[#FDE047] font-black text-[18px] flex items-center gap-2">
+          <i data-lucide="flask-conical" class="w-6 h-6"></i> 블로그 자동 완성 테스트
+        </span>
+        <span class="text-[13px] bg-[#84CC16] text-[#151E2D] px-2.5 py-1 rounded-full font-black">패치 #58 시연</span>
+      </div>
+      <p class="text-[#E2E8F0] text-[15.5px] font-bold leading-relaxed break-keep">
+        아래 작업일지 카드에서 <strong class="text-[#BEF264]">[블로그 홍보글 만들기]</strong> 버튼을 눌러 스마트폰에서 복사 및 블로그 연결을 직접 테스트해 보세요.
+      </p>
+    </div>
+
+    <!-- 시뮬레이션용 가상 작업 일지 카드 (입력값 변경 가능) -->
+    <div class="bg-white rounded-[28px] p-6 text-[#151E2D] shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b-2 border-[#F1F5F9] pb-3.5">
+        <div>
+          <span class="text-[14px] bg-[#151E2D] text-[#84CC16] px-3 py-1 rounded-lg font-black">작업 일지 원본</span>
+          <h2 class="text-[22px] font-black mt-2 tracking-tight">가을 정기 정원관리 및 방제</h2>
+        </div>
+        <span class="text-[15px] text-[#64748B] font-extrabold">2026. 09. 28</span>
+      </div>
+
+      <!-- 테스트용 일지 데이터 (수정하면서 테스트 가능) -->
+      <div class="space-y-3 bg-[#F8FAFC] p-4 rounded-[20px] border border-[#CBD5E1]">
+        <div class="text-[14px] font-black text-[#3F6212] mb-1">💡 아래 내용을 바꿔서 테스트해 보실 수 있습니다</div>
+        <div>
+          <label class="block text-[15px] font-black text-[#475569] mb-1">고객명 (실명은 블로그에서 자동 제외됨)</label>
+          <input id="simClient" type="text" value="김철수 고객님 (단독주택)" class="w-full bg-white border-[1.5px] border-[#CBD5E1] rounded-[12px] px-3.5 py-2.5 text-[17px] font-black text-[#151E2D]">
+        </div>
+        <div>
+          <label class="block text-[15px] font-black text-[#475569] mb-1">현장 주소 (상세 번지는 블로그에서 자동 제외됨)</label>
+          <input id="simAddr" type="text" value="경기도 용인시 수지구 고기동 123-45" class="w-full bg-white border-[1.5px] border-[#CBD5E1] rounded-[12px] px-3.5 py-2.5 text-[17px] font-black text-[#151E2D]">
+        </div>
+        <div>
+          <label class="block text-[15px] font-black text-[#475569] mb-1">당일 작업 내역</label>
+          <input id="simCat" type="text" value="소나무 전지작업, 병해충 방제 및 약제, 잔디깍기·잡초예초작업" class="w-full bg-white border-[1.5px] border-[#CBD5E1] rounded-[12px] px-3.5 py-2.5 text-[17px] font-black text-[#151E2D]">
+        </div>
+        <div>
+          <label class="block text-[15px] font-black text-[#475569] mb-1">특이사항</label>
+          <input id="simIssue" type="text" value="소나무 신초 부위에 응애 초기 발견하여 친환경 전용 약제 살포 완료" class="w-full bg-white border-[1.5px] border-[#CBD5E1] rounded-[12px] px-3.5 py-2.5 text-[17px] font-black text-[#151E2D]">
+        </div>
+        <div>
+          <label class="block text-[15px] font-black text-[#475569] mb-1">작업자 코멘트</label>
+          <input id="simComment" type="text" value="통풍과 채광이 잘 되도록 수형을 잡고, 예초 부산물까지 전량 수거했습니다." class="w-full bg-white border-[1.5px] border-[#CBD5E1] rounded-[12px] px-3.5 py-2.5 text-[17px] font-black text-[#151E2D]">
+        </div>
+        <div class="grid grid-cols-3 gap-2 pt-1">
+          <div class="bg-white border border-[#CBD5E1] rounded-[12px] p-2.5 text-center">
+            <span class="block text-[14px] font-bold text-[#64748B]">작업 전 사진</span>
+            <span class="text-[18px] font-black text-[#151E2D]">4장</span>
+          </div>
+          <div class="bg-white border border-[#CBD5E1] rounded-[12px] p-2.5 text-center">
+            <span class="block text-[14px] font-bold text-[#3B82F6]">작업 중 사진</span>
+            <span class="text-[18px] font-black text-[#151E2D]">6장</span>
+          </div>
+          <div class="bg-white border border-[#CBD5E1] rounded-[12px] p-2.5 text-center">
+            <span class="block text-[14px] font-bold text-[#65A30D]">작업 후 사진</span>
+            <span class="text-[18px] font-black text-[#151E2D]">5장</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 킬러 버튼: 블로그 홍보글 생성 진입 -->
+      <button onclick="openBlogModal()" class="w-full py-5 rounded-[20px] font-black text-[20px] text-[#151E2D] shadow-[0_10px_25px_rgba(132,204,22,0.4)] flex items-center justify-center gap-2.5 active:scale-[0.98] transition-all" style="background: linear-gradient(135deg, #FEF08A 0%, #84CC16 100%); border: 2px solid #151E2D;">
+        <i data-lucide="sparkles" class="w-6 h-6 stroke-[2.5]"></i>
+        <span>이 일지로 블로그 홍보글 만들기</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       [팝업 모달] AI 블로그 홍보글 자동 생성기 (시니어 큰 글씨 규격)
+  ========================================================= -->
+  <div id="blogModal" class="hidden fixed inset-0 z-[9000] bg-black/85 flex flex-col items-center justify-end sm:justify-center p-0 sm:p-4">
+    <div class="bg-white w-full max-w-md rounded-t-[32px] sm:rounded-[32px] overflow-hidden shadow-2xl flex flex-col max-h-[94vh] border-t-4 sm:border-2 border-[#D4AF37] text-[#151E2D]">
+      
+      <!-- 모달 헤더 -->
+      <div class="bg-[#151E2D] px-5 py-4 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-[14px] bg-[#84CC16] flex items-center justify-center text-[#151E2D] shrink-0">
+            <i data-lucide="file-text" class="w-6 h-6 stroke-[2.5]"></i>
+          </div>
+          <div>
+            <h3 class="text-[20px] font-black text-white leading-tight">AI 블로그 홍보글 완성</h3>
+            <p class="text-[14px] text-[#BEF264] font-bold mt-0.5">개인정보(실명·번지) 자동 보호 적용됨</p>
+          </div>
+        </div>
+        <button onclick="closeBlogModal()" class="w-10 h-10 rounded-full bg-white/15 text-white flex items-center justify-center hover:bg-white/25">
+          <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+      </div>
+
+      <!-- 모달 본문 스크롤 영역 -->
+      <div class="p-5 overflow-y-auto space-y-5 flex-1 nav-scroll">
+        
+        <!-- 1. 문체 선택 (4가지 스타일) -->
+        <div>
+          <label class="block text-[17px] font-black text-[#151E2D] mb-2.5 flex items-center justify-between">
+            <span class="flex items-center gap-1.5"><i data-lucide="palette" class="w-5 h-5 text-[#65A30D]"></i> 1. 글 말투 고르기</span>
+            <span class="text-[14px] font-bold text-[#64748B]">누르면 바로 바뀝니다</span>
+          </label>
+          <div class="grid grid-cols-2 gap-2.5">
+            <button type="button" onclick="selectStyle(0)" id="styleBtn0" class="style-btn h-[54px] px-3 rounded-[14px] text-[16px] font-black bg-[#151E2D] text-[#84CC16] border-2 border-[#151E2D] active:scale-95 transition-all">☕ 친근한 소장님체</button>
+            <button type="button" onclick="selectStyle(1)" id="styleBtn1" class="style-btn h-[54px] px-3 rounded-[14px] text-[16px] font-black bg-[#F8FAFC] text-[#334155] border-2 border-[#CBD5E1] active:scale-95 transition-all">🌲 30년 전문가체</button>
+            <button type="button" onclick="selectStyle(2)" id="styleBtn2" class="style-btn h-[54px] px-3 rounded-[14px] text-[16px] font-black bg-[#F8FAFC] text-[#334155] border-2 border-[#CBD5E1] active:scale-95 transition-all">📋 깔끔한 브리핑체</button>
+            <button type="button" onclick="selectStyle(3)" id="styleBtn3" class="style-btn h-[54px] px-3 rounded-[14px] text-[16px] font-black bg-[#F8FAFC] text-[#334155] border-2 border-[#CBD5E1] active:scale-95 transition-all">💌 고객 감사 일기체</button>
+          </div>
+        </div>
+
+        <!-- 2. 블로그 제목 + 제목만 복사 버튼 -->
+        <div class="bg-[#F4FBEA] border-2 border-[#84CC16] rounded-[20px] p-4 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <label for="blogTitleOutput" class="text-[17px] font-black text-[#1A2E05]">📌 블로그 제목 <span class="text-[14px] font-bold text-[#3F6212]">(터치해서 수정 가능)</span></label>
+          </div>
+          <textarea id="blogTitleOutput" rows="2" class="w-full bg-white border-[1.5px] border-[#84CC16] rounded-[14px] p-3.5 text-[18px] font-black text-[#151E2D] leading-snug resize-none focus:outline-none"></textarea>
+          <button type="button" onclick="copyTitleOnly()" id="btnCopyTitle" class="w-full h-[52px] bg-[#151E2D] text-[#BEF264] rounded-[14px] text-[17px] font-black flex items-center justify-center gap-2 active:scale-95 transition-all shadow-sm">
+            <i data-lucide="copy" class="w-5 h-5"></i> 1단계: 블로그 [제목]만 복사하기
+          </button>
+        </div>
+
+        <!-- 3. 블로그 본문 + 본문만 복사 버튼 -->
+        <div class="bg-[#F8FAFC] border-2 border-[#CBD5E1] rounded-[20px] p-4 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <label for="blogBodyOutput" class="text-[17px] font-black text-[#151E2D]">📝 블로그 본문 원고 <span class="text-[14px] font-bold text-[#64748B]">(수정 가능)</span></label>
+          </div>
+          <textarea id="blogBodyOutput" rows="10" class="w-full bg-white border-[1.5px] border-[#CBD5E1] rounded-[14px] p-3.5 text-[16.5px] font-bold text-[#1E293B] leading-[1.7] resize-none focus:outline-none focus:border-[#84CC16]"></textarea>
+          <button type="button" onclick="copyBodyOnly()" id="btnCopyBody" class="w-full h-[52px] bg-[#84CC16] text-[#1A2E05] rounded-[14px] text-[17px] font-black flex items-center justify-center gap-2 active:scale-95 transition-all shadow-sm">
+            <i data-lucide="file-check" class="w-5 h-5 stroke-[2.5]"></i> 2단계: 블로그 [본문]만 복사하기
+          </button>
+        </div>
+
+        <!-- 4. 사진 넣는 법 안내 박스 -->
+        <div class="bg-[#FEF9C3] border-2 border-[#EAB308] rounded-[18px] p-4 text-[15.5px] text-[#713F12] font-extrabold space-y-1.5 leading-relaxed break-keep">
+          <div class="text-[17px] font-black text-[#151E2D] flex items-center gap-1.5 mb-1">
+            <i data-lucide="camera" class="w-5 h-5 text-[#B45309]"></i> 네이버 블로그에 올리는 순서
+          </div>
+          <div>1️⃣ 위에서 <b>[제목 복사]</b> 후 블로그 제목 칸에 붙여넣기</div>
+          <div>2️⃣ <b>[본문 복사]</b> 후 블로그 본문 칸에 붙여넣기</div>
+          <div>3️⃣ 본문 중간의 <b>[📸 사진 넣는 자리]</b> 표시마다 휴대폰 사진첩의 현장 사진을 골라 넣으시면 <b>장수 제한 없이(15장 이상도 OK)</b> 고품질로 올라갑니다!</div>
+        </div>
+
+      </div>
+
+      <!-- 모달 하단 고정 버튼 -->
+      <div class="p-4 bg-[#F1F5F9] border-t border-[#CBD5E1] space-y-2.5 shrink-0">
+        <button onclick="copyAllAndOpenNaver()" class="w-full h-[60px] bg-[#03C75A] text-white font-black rounded-[18px] text-[19px] shadow-lg flex items-center justify-center gap-2 active:scale-[0.98] transition-all">
+          <span>본문 복사 & 네이버 블로그 열기</span>
+          <i data-lucide="external-link" class="w-5 h-5 stroke-[2.5]"></i>
+        </button>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="copyTitleAndBodyTogether()" class="h-[50px] bg-white border-[1.5px] border-[#94A3B8] text-[#151E2D] font-black rounded-[14px] text-[16px] active:scale-95">제목+본문 합쳐서 복사</button>
+          <button onclick="closeBlogModal()" class="h-[50px] bg-[#E2E8F0] text-[#475569] font-black rounded-[14px] text-[16px] active:scale-95">창 닫기</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 복사 완료 토스트 알림 -->
+  <div id="copyToast" class="hidden fixed bottom-28 left-1/2 -translate-x-1/2 z-[9500] bg-[#151E2D] border-2 border-[#84CC16] text-white px-5 py-3.5 rounded-2xl shadow-2xl text-[16px] font-black whitespace-nowrap">
+    ✅ 복사되었습니다!
+  </div>
+
+  <script>
+    window.addEventListener('load', () => {
+      if (window.lucide) lucide.createIcons();
+    });
+
+    let selectedStyleIdx = 0;
+
+    // 🔒 주소에서 상세 번지·호수를 빼고 '시·군·구·동/읍/면'까지만 안전하게 추출
+    function sanitizeAddressForBlog(rawAddr) {
+      if (!rawAddr) return '수도권 전원주택';
+      // 괄호 안 상세내용 및 번지수(숫자-숫자, 숫자번지, 동·호수) 제거
+      let clean = rawAddr.replace(/\(.*?\)/g, ' ').replace(/\d+(-\d+)?\s*(번지|호|동)?/g, ' ').replace(/\s+/g, ' ').trim();
+      const parts = clean.split(' ').filter(Boolean);
+      return parts.slice(0, 4).join(' ') || '단독주택 정원';
+    }
+
+    // 🔒 고객명에서 실명('김철수' 등)은 가리고 건물 유형('단독주택', '아파트' 등)만 추출
+    function sanitizePlaceType(rawClient) {
+      if (!rawClient) return '단독주택 정원';
+      const types = ['단독주택', '전원주택', '타운하우스', '아파트', '빌라', '상가', '사옥', '공장', '펜션', '카페', '유치원', '학교', '화단'];
+      for (const t of types) {
+        if (rawClient.includes(t)) return t + ' 정원';
+      }
+      return '고객님 댁 정원';
+    }
+
+    // 자동 해시태그 생성기
+    function makeHashtags(safeAddr, catStr) {
+      const addrTokens = safeAddr.split(' ').filter(w => w.length >= 2).map(w => w.replace(/(특별자치시|특별자치도|특별시|광역시|시|군|구)$/, '')).filter(Boolean);
+      const regionTag = addrTokens.slice(0, 2).join('') || '조경';
+      const dongTag = addrTokens[addrTokens.length - 1] || '정원관리';
+      const tags = [
+        `#${regionTag}조경`,
+        `#${dongTag}조경`,
+        `#${regionTag}정원관리`,
+        `#${regionTag}소나무전지`,
+        `#단독주택조경`,
+        `#조경관리업체`,
+        `#신화토탈조경`
+      ];
+      if (catStr.includes('방제') || catStr.includes('소독')) tags.push(`#수목병해충방제`);
+      if (catStr.includes('잔디') || catStr.includes('예초')) tags.push(`#잔디깎기예초`);
+      return [...new Set(tags)].join(' ');
+    }
+
+    function buildTemplates() {
+      const rawClient = document.getElementById('simClient').value.trim();
+      const rawAddr = document.getElementById('simAddr').value.trim();
+      const catStr = document.getElementById('simCat').value.trim() || '정원 수목 관리';
+      const issueStr = document.getElementById('simIssue').value.trim();
+      const commentStr = document.getElementById('simComment').value.trim();
+
+      const safeAddr = sanitizeAddressForBlog(rawAddr);
+      const placeType = sanitizePlaceType(rawClient);
+      const shortRegion = safeAddr.split(' ').slice(1, 3).join(' ') || safeAddr;
+      const mainWork = catStr.split(',')[0].trim();
+      const hashtags = makeHashtags(safeAddr, catStr);
+
+      // 실제 앱에서는 로그인한 대표님 프로필(myCompanyProfile)과 아이디(currentUserId)가 자동 연결됨
+      const companyName = '신화토탈조경';
+      const companyPhone = '010-0000-0000';
+      const reqUrl = 'https://www.jogyeongnote.com/?req=shinhwa';
+
+      const photoGuideBefore = `\n━━━━━━━━━━━━━━━━━━━━\n📸 [여기에 '작업 전' 현장 사진 4장을 넣어주세요]\n━━━━━━━━━━━━━━━━━━━━\n`;
+      const photoGuideDuring = `\n━━━━━━━━━━━━━━━━━━━━\n📸 [여기에 '작업 중' 현장 사진 6장을 넣어주세요]\n━━━━━━━━━━━━━━━━━━━━\n`;
+      const photoGuideAfter  = `\n━━━━━━━━━━━━━━━━━━━━\n📸 [여기에 '작업 후' 완료 사진 5장을 넣어주세요]\n━━━━━━━━━━━━━━━━━━━━\n`;
+
+      const footer = `\n━━━━━━━━━━━━━━━━━━━━\n🌿 ${companyName} 무료 견적·상담 안내\n📞 직통 전화: ${companyPhone}\n\n👇 아래 주소를 누르시면 가입 없이 사진과 함께 편하게 견적을 신청하실 수 있습니다.\n${reqUrl}\n━━━━━━━━━━━━━━━━━━━━\n\n${hashtags}`;
+
+      return [
+        // 0. 친근한 소장님체
+        {
+          title: `[${shortRegion} 조경] ${placeType} ${mainWork} 및 맞춤 정원관리 현장 이야기`,
+          body: `안녕하세요! 나무와 정원을 진심으로 아끼는 조경 파트너 ${companyName}입니다. 😊\n\n오늘은 아침 일찍 ${safeAddr}에 위치한 ${placeType} 현장에 다녀왔습니다.\n계절이 바뀌면서 정원 수목들도 깔끔한 정리가 꼭 필요한 시기였는데요, 오늘 진행한 생생한 현장 모습을 전해드립니다.\n${photoGuideBefore}\n오늘 현장의 핵심 작업은 [${catStr}] 이었습니다.\n먼저 수목 안쪽까지 햇살과 바람이 잘 통하도록 웃자란 가지와 얽힌 잔가지를 하나하나 정성껏 솎아내어 시원하게 수형을 잡아드렸습니다.\n\n${issueStr ? `특히 작업 중 수목 상태를 꼼꼼히 살펴보니, "${issueStr}" 사항이 확인되어 현장에서 즉시 맞춤 조치까지 완벽히 마쳤습니다.\n` : ''}${photoGuideDuring}\n${commentStr ? `${commentStr}\n` : ''}작업이 모두 끝난 뒤 환해진 정원을 보시며 고객님께서도 속이 다 시원하다고 말씀해 주셔서 땀 흘린 보람을 가득 느낀 하루였습니다!\n${photoGuideAfter}\n정원 관리나 수목 전지는 시기를 놓치지 않고 제대로 관리해 주는 것이 나무 건강의 핵심입니다.\n우리 집 정원이나 화단 관리가 고민되신다면 언제든 편하게 연락 주세요!${footer}`
+        },
+        // 1. 30년 전문가 칼럼체
+        {
+          title: `${shortRegion} ${mainWork} 핵심 요령과 ${placeType} 조경 관리 실무 기록`,
+          body: `현장 중심의 정밀 조경 관리를 실천하는 ${companyName}입니다.\n\n수목은 계절별 생육 주기에 맞춘 전정과 방제, 지피 관리가 병행되어야 고유의 수형과 건강한 수세를 오래 유지할 수 있습니다. 금일은 ${safeAddr} ${placeType}에서 진행한 조경 관리 실무 과정을 공유합니다.\n${photoGuideBefore}\n■ 금일 주요 시공 공종\n• 대상지: ${safeAddr} (${placeType})\n• 시공 내역: ${catStr}\n\n1. 수형 정돈 및 통풍·채광 확보\n수관 내부의 밀생지와 고사지를 제거하여 통풍과 일조량을 확보하고, 수목 본연의 수형이 살아나도록 정밀 전정을 실시하였습니다.\n\n2. 현장 진단 및 중점 조치\n${issueStr ? `현장 정밀 검수 과정에서 [${issueStr}] 조치를 병행하여 수목 피해를 사전에 차단하였습니다.` : `수목 전반의 생육 상태를 점검하고 계절별 맞춤 관리를 진행하였습니다.`}\n${photoGuideDuring}\n3. 주변 정돈 및 마감 브리핑\n${commentStr || '작업 후 발생한 부산물을 전량 수거하고 주변 정리까지 깔끔하게 마감하였습니다.'}\n${photoGuideAfter}\n조경수는 한 번 수형이 무너지거나 병해충이 번지면 회복에 많은 시간과 비용이 소요됩니다. 전문가의 정확한 진단과 정기 관리로 정원의 가치를 높여보시기 바랍니다.${footer}`
+        },
+        // 2. 깔끔한 실무 브리핑체
+        {
+          title: `[시공 리포트] ${safeAddr} ${placeType} ${mainWork} 완료 보고`,
+          body: `${companyName}의 현장 시공 완료 브리핑입니다.\n\n■ 현장 기본 개요\n• 현장 위치: ${safeAddr} (${placeType})\n• 주요 작업: ${catStr}\n${photoGuideBefore}\n■ 세부 작업 내역\n1) 중점 시공: ${catStr} 공정 표준 메뉴얼에 따라 순차 진행\n2) 특이 사항: ${issueStr || '특이 병해충 및 이상 징후 없음'}\n3) 현장 마감: ${commentStr || '작업 부산물 전량 수거 및 현장 청소 완료'}\n${photoGuideDuring}\n사전 현장 점검부터 안전 수칙 준수, 마무리 청소까지 당일 계획된 모든 공정을 오차 없이 완료하였습니다.\n${photoGuideAfter}\n단독주택 정원, 아파트·빌라 화단, 상가·사옥 조경 관리가 필요하신 경우 아래 직통 번호나 간편 신청 링크로 문의해 주시면 신속히 안내해 드리겠습니다.${footer}`
+        },
+        // 3. 고객 감사 일기체
+        {
+          title: `정원을 가꾸는 기쁨, ${shortRegion} ${placeType}에서 함께한 푸른 하루`,
+          body: `기분 좋은 바람이 불어오는 날, ${safeAddr}에 자리한 정겨운 ${placeType}을 찾아뵈었습니다.\n\n평소 정원을 얼마나 아끼시는지 마당에 들어서자마자 느껴지는 공간이었는데요, ${companyName}이 정성 어린 손길을 보태어 드렸습니다.\n${photoGuideBefore}\n오늘 함께한 작업은 [${catStr}] 입니다.\n무성하게 자란 가지들을 단정하게 다듬어 하늘빛이 마당 안까지 환하게 들어오도록 길을 내어드렸습니다.\n\n${issueStr ? `나무를 하나씩 살피던 중 "${issueStr}" 부분도 놓치지 않고 꼼꼼히 챙겨드렸지요.\n` : ''}${photoGuideDuring}\n${commentStr ? `${commentStr}\n` : ''}모든 작업을 마치고 나니 정원이 한결 넓고 포근해졌습니다. 깨끗해진 마당을 보며 기뻐하시는 모습 덕분에 저희도 참 행복한 하루였습니다.\n${photoGuideAfter}\n소중한 공간을 믿고 맡겨주셔서 진심으로 감사드리며, 사계절 내내 푸르고 건강한 정원이 되길 응원합니다!${footer}`
+        }
+      ];
+    }
+
+    function openBlogModal() {
+      document.getElementById('blogModal').classList.remove('hidden');
+      selectStyle(0);
+      history.pushState({ blogModal: true }, '', '');
+    }
+
+    function closeBlogModal(fromPop) {
+      const m = document.getElementById('blogModal');
+      if (m.classList.contains('hidden')) return;
+      m.classList.add('hidden');
+      if (!fromPop && history.state && history.state.blogModal) history.back();
+    }
+
+    window.addEventListener('popstate', () => {
+      const m = document.getElementById('blogModal');
+      if (m && !m.classList.contains('hidden')) closeBlogModal(true);
+    });
+
+    function selectStyle(idx) {
+      selectedStyleIdx = idx;
+      const btns = document.querySelectorAll('.style-btn');
+      btns.forEach((btn, i) => {
+        if (i === idx) {
+          btn.className = "style-btn h-[54px] px-3 rounded-[14px] text-[16px] font-black bg-[#151E2D] text-[#84CC16] border-2 border-[#151E2D] active:scale-95 transition-all";
+        } else {
+          btn.className = "style-btn h-[54px] px-3 rounded-[14px] text-[16px] font-black bg-[#F8FAFC] text-[#334155] border-2 border-[#CBD5E1] active:scale-95 transition-all";
+        }
+      });
+      const list = buildTemplates();
+      document.getElementById('blogTitleOutput').value = list[idx].title;
+      document.getElementById('blogBodyOutput').value = list[idx].body;
+    }
+
+    function showCopyToast(msg) {
+      const t = document.getElementById('copyToast');
+      t.innerText = msg;
+      t.classList.remove('hidden');
+      setTimeout(() => t.classList.add('hidden'), 2200);
+    }
+
+    function copyTitleOnly() {
+      const title = document.getElementById('blogTitleOutput').value;
+      navigator.clipboard.writeText(title).then(() => {
+        showCopyToast('✅ 1단계: [제목]이 복사되었습니다!');
+      });
+    }
+
+    function copyBodyOnly() {
+      const body = document.getElementById('blogBodyOutput').value;
+      navigator.clipboard.writeText(body).then(() => {
+        showCopyToast('✅ 2단계: [본문]이 복사되었습니다!');
+      });
+    }
+
+    function copyTitleAndBodyTogether() {
+      const title = document.getElementById('blogTitleOutput').value;
+      const body = document.getElementById('blogBodyOutput').value;
+      navigator.clipboard.writeText(title + '\n\n' + body).then(() => {
+        showCopyToast('✅ 제목+본문이 한 번에 복사되었습니다!');
+      });
+    }
+
+    function copyAllAndOpenNaver() {
+      const title = document.getElementById('blogTitleOutput').value;
+      const body = document.getElementById('blogBodyOutput').value;
+      // 본문 맨 윗줄에 제목을 함께 넣어두면, 블로그 본문에 붙여넣은 뒤 첫 줄만 잘라 제목 칸에 옮기기도 아주 편합니다.
+      const combined = `${title}\n\n${body}`;
+      navigator.clipboard.writeText(combined).then(() => {
+        alert("✅ 블로그 원고가 복사되었습니다!\n\n지금 열리는 네이버 블로그 글쓰기 창에서 [붙여넣기]를 누르시고, 사진 넣는 자리에 휴대폰 사진을 추가해 주세요.");
+        window.open('https://m.blog.naver.com/GoWriteForm.naver', '_blank');
+      });
+    }
+  </script>
+</body>
+</html>
