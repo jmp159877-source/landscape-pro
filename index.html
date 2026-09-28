@@ -8094,13 +8094,17 @@ ${AI_COMMON_RULES}
     };
     // 블로그 본문 소제목 (고정 · 사진은 이 소제목 바로 아래에 넣음)
     const BLOG_SECS = [
-      { key: 'b',     ai: 'before', head: '■ 1. 작업 전 현장 모습', label: '작업 전' },
-      { key: 'dur',   ai: 'during', head: '■ 2. 작업 진행 과정',   label: '작업 중' },
-      { key: 'a',     ai: 'after',  head: '■ 3. 작업 완료 후 모습', label: '작업 후' },
-      { key: 'issue', ai: 'issue',  head: '■ 4. 확인한 점',        label: '특이사항' }
+      { key: 'b',     ai: 'before', name: '작업 전 현장 모습', label: '작업 전' },
+      { key: 'dur',   ai: 'during', name: '작업 진행 과정',   label: '작업 중' },
+      { key: 'a',     ai: 'after',  name: '작업 완료 후 모습', label: '작업 후' },
+      { key: 'issue', ai: 'issue',  name: '확인한 점',        label: '특이사항' },
+      { key: 'tips',  ai: 'tips',   name: '알아두면 좋은 관리 정보', label: '', noPhoto: true } // AI가 쓰는 일반 관리 상식 (사진 칸 없음)
+    ];
+    // 대표님 한마디 버튼 (누르기만 하면 AI가 글에 살려 넣음 · 대표님이 고른 것만 사실로 씀)
+    const BLOG_MEMO_CHIPS = ['정기 관리 현장', '처음 맡은 현장', '고객님 요청 작업', '계절에 맞춘 작업', '다시 방문해 점검', '뒷정리까지 깔끔히', '수목 상태 점검', '다음 관리 일정 안내'
     ];
     const BLOG_PLACES = ['단독주택', '전원주택', '타운하우스', '아파트', '빌라', '상가', '사옥', '공장', '펜션', '카페', '유치원', '학교', '병원', '교회', '성당', '사찰', '공원', '호텔', '리조트', '오피스텔', '빌딩', '주택'];
-    const BL = { pending: null, src: null, style: 'story', depth: 0, loading: false, draft: null, secs: [], memo: '' };
+    const BL = { pending: null, src: null, style: 'story', depth: 0, loading: false, draft: null, secs: [], memo: '', chips: [] };
     const BLOG_MEMO_HINT = '블로그 품질을 높이려면 대표님 한마디를 직접 적어 주세요';
     const BLOG_MEMO_EX = '예) 오늘 현장은 3년째 관리하는 정원입니다 / 이번에는 소나무 수형을 중점으로 다듬었습니다';
 
@@ -8134,7 +8138,8 @@ ${AI_COMMON_RULES}
     function blogName() { return (myCompanyProfile && myCompanyProfile.name) ? String(myCompanyProfile.name).trim() : ''; }
     function blogAllImgs() { const all = []; BL.secs.forEach(g => g.imgs.forEach(u => all.push({ u, label: g.label }))); return all; }
     // 블로그에 보여 줄 소제목 (특이사항은 글이나 사진이 있을 때만)
-    function blogShownSecs() { return BL.secs.filter(g => g.key !== 'issue' || g.imgs.length || (g.text && g.text.trim())); }
+    function blogShownSecs() { return BL.secs.filter(g => (g.key !== 'issue' && g.key !== 'tips') || g.imgs.length || (g.text && g.text.trim())); }
+    function blogHead(g) { return '■ ' + (blogShownSecs().indexOf(g) + 1) + '. ' + g.name; }
     function blogFooterLines() {
       const lines = [];
       lines.push('━━━━━━━━━━━━━━━━');
@@ -8151,7 +8156,7 @@ ${AI_COMMON_RULES}
       const d = BL.draft || {}, out = [];
       if (d.intro && d.intro.trim()) out.push(d.intro.trim(), '');
       // 사진이 있는 소제목은 '▼ 작업 전 사진' 줄 + 빈 줄 하나 (그 빈 줄을 톡 → 카메라로 사진 넣기)
-      blogShownSecs().forEach(g => { out.push(g.head); if (g.imgs.length) out.push(blogPhotoLine(g)); out.push(''); if (g.text && g.text.trim()) out.push(g.text.trim()); out.push(''); });
+      blogShownSecs().forEach(g => { out.push(blogHead(g)); if (g.imgs.length) out.push(blogPhotoLine(g)); out.push(''); if (g.text && g.text.trim()) out.push(g.text.trim()); out.push(''); });
       if (d.outro && d.outro.trim()) out.push(d.outro.trim(), '');
       blogFooterLines().forEach(l => out.push(l));
       if (blogTags()) out.push('', blogTags());
@@ -8167,7 +8172,7 @@ ${AI_COMMON_RULES}
     }
     function openBlogMaker() {
       const src = BL.pending; if (!src) return;
-      BL.src = src; BL.depth = 0; BL.loading = false; BL.draft = null; BL.memo = '';
+      BL.src = src; BL.depth = 0; BL.loading = false; BL.draft = null; BL.memo = ''; BL.chips = [];
       BL.secs = BLOG_SECS.map(sc => Object.assign({}, sc, { imgs: blogSplitImgs(sc.key === 'issue' ? src.imgsIssue : src[sc.key]), text: '' }));
       document.getElementById('blogView').classList.remove('hidden');
       history.pushState({ blogView: 1 }, '', ''); BL.depth = 1;
@@ -8203,13 +8208,16 @@ ${AI_COMMON_RULES}
           <span class="text-[16px] font-bold text-[#475569] leading-relaxed">${escHtml(String(s.cat || '').split(',').filter(Boolean).join(', ') || '작업 내역 없음')} · 사진 ${n}장</span>
         </div>
         <div class="flex flex-col gap-2">
-          <span class="text-[18px] font-black">대표님 한마디 <span class="text-[15px] font-bold text-[#475569]">(선택 · 한두 줄)</span></span>
+          <span class="text-[18px] font-black">대표님 한마디 <span class="text-[15px] font-bold text-[#475569]">(누르기만 하면 돼요 · 여러 개 가능)</span></span>
+          <div class="flex flex-wrap gap-2">${BLOG_MEMO_CHIPS.map((c, i) => { const on = BL.chips.indexOf(c) !== -1;
+            return `<button type="button" onclick="blogToggleChip(${i})" aria-pressed="${on}" class="min-h-[52px] px-4 rounded-full text-[16.5px] font-black active:scale-95 transition-all ${on ? 'bg-[#84CC16] border-2 border-[#84CC16] text-[#14261E]' : 'bg-white border-2 border-[#CBD5E1] text-[#0F172A]'}">${on ? '✓ ' : ''}${c}</button>`; }).join('')}</div>
+          <span class="text-[15.5px] font-black text-[#475569] pt-1">직접 쓰고 싶으면 (선택)</span>
           <textarea id="blogMemo" data-grow rows="3" maxlength="300" placeholder="${BLOG_MEMO_HINT}" onfocus="this.placeholder = BLOG_MEMO_EX" onblur="this.placeholder = BLOG_MEMO_HINT" oninput="BL.memo = this.value; blogGrow(this)" class="w-full rounded-[16px] border-2 border-[#84CC16] bg-white p-3.5 text-[17px] font-semibold leading-relaxed resize-none placeholder:text-[#64748B] focus:outline-none focus:border-[#3F6212]">${escHtml(BL.memo)}</textarea>
-          <span class="text-[15px] font-bold text-[#475569] leading-relaxed">대표님이 직접 쓴 말이 들어가면 우리 업체만의 글이 돼요. AI가 이 말을 살려서 글에 넣어요.</span>
+          <span class="text-[15px] font-bold text-[#475569] leading-relaxed">고른 말과 직접 쓴 말은 AI가 살려서 글에 넣어요. 우리 업체만의 글이 돼요.</span>
         </div>
         <div class="flex flex-col gap-2"><span class="text-[18px] font-black">말투 고르기</span>${blogChipsHtml()}</div>
         <button type="button" onclick="blogGenerate()" class="h-[66px] rounded-[20px] bg-[#84CC16] text-[#14261E] text-[22px] font-black active:scale-[0.98] transition-all">이 말투로 글 만들기</button>
-        <span class="text-[15px] font-bold text-[#64748B] text-center leading-relaxed">일지와 대표님 한마디로만 써요<br>고객님 성함·전화·번지는 넣지 않아요</span>`;
+        <span class="text-[15px] font-bold text-[#64748B] text-center leading-relaxed">일지와 대표님이 고른 내용으로 써요<br>고객님 성함·전화·번지는 넣지 않아요</span>`;
     }
     function blogLoadingHtml() {
       return `<div class="flex flex-col items-center gap-5 py-16 text-center"><div class="w-20 h-20 rounded-full border-[7px] border-[#84CC16]/25 border-t-[#84CC16] animate-spin"></div><span class="text-[23px] font-black leading-snug">일지를 보고<br>블로그 글을 쓰고 있어요</span><span class="text-[16px] font-bold text-[#475569]">보통 5~10초 걸려요</span></div>`;
@@ -8221,15 +8229,16 @@ ${AI_COMMON_RULES}
       const d = BL.draft || {};
       const ta = (onin, val, cls) => `<textarea data-grow rows="2" oninput="${onin}; blogGrow(this)" class="w-full rounded-[10px] border-[1.5px] border-transparent bg-transparent p-1.5 -m-1.5 text-[16.5px] font-semibold leading-[1.75] text-[#1E293B] resize-none focus:outline-none focus:border-[#84CC16] focus:bg-[#F8FAFC] ${cls || ''}">${escHtml(val)}</textarea>`;
       const secs = blogShownSecs().map(g => { const gi = BL.secs.indexOf(g);
-        const box = g.imgs.length
+        const box = g.noPhoto ? '' : g.imgs.length
           ? `<div class="bg-[#FEF9C3] border-2 border-dashed border-[#EAB308] rounded-[14px] p-2.5 flex flex-col gap-2"><span class="text-[15px] font-black text-[#854D0E]">여기에 넣을 사진 · ${g.label} ${g.imgs.length}장 (사진첩 원본으로)</span>${blogThumbs(g)}</div>`
           : `<div class="bg-[#F1F5F9] border-2 border-dashed border-[#CBD5E1] rounded-[14px] px-3 py-2.5 text-[15px] font-bold text-[#475569]">일지에 ${g.label} 사진이 없어요 · 있으면 여기에 넣으세요</div>`;
-        return `<span class="text-[18px] font-black text-[#0F172A]">${g.head}</span>${g.imgs.length ? `<span class="text-[16.5px] font-bold text-[#1E293B] -mt-1.5">${blogPhotoLine(g)}</span>` : ''}${box}${ta(`blogSetSec(${gi}, this.value)`, g.text)}`; }).join('');
+        return `<span class="text-[18px] font-black text-[#0F172A]">${blogHead(g)}</span>${g.imgs.length ? `<span class="text-[16.5px] font-bold text-[#1E293B] -mt-1.5">${blogPhotoLine(g)}</span>` : ''}${box}${ta(`blogSetSec(${gi}, this.value)`, g.text)}`; }).join('');
       return `<div class="flex flex-col gap-2"><span class="text-[18px] font-black">말투 <span class="text-[15px] font-bold text-[#475569]">(누르면 AI가 다시 써요)</span></span>${blogChipsHtml()}</div>
         <div class="bg-[#F4FBEA] border-2 border-[#84CC16] rounded-[18px] p-3.5 flex flex-col gap-2.5">
-          <span class="text-[16px] font-black text-[#3F6212]">제목</span>
-          <textarea data-grow rows="1" maxlength="60" oninput="blogSet('title', this.value); blogGrow(this)" class="w-full rounded-[12px] border-[1.5px] border-[#D9F99D] bg-white p-2.5 text-[19px] font-black leading-snug resize-none focus:outline-none focus:border-[#84CC16]">${escHtml(d.title)}</textarea>
-          <button type="button" onclick="blogCopyTitle(this)" class="h-[52px] rounded-[14px] bg-[#14261E] text-[#BEF264] text-[17px] font-black active:scale-[0.98]">제목만 복사</button>
+          <span class="text-[16px] font-black text-[#3F6212]">제목 <span class="text-[15px] font-bold text-[#475569]">(AI가 추천한 제목 · 고쳐 쓰셔도 돼요)</span></span>
+          <textarea id="blogTitleBox" data-grow rows="1" maxlength="60" placeholder="예) 용인 수지 단독주택 소나무 전지" oninput="blogSet('title', this.value); blogGrow(this); blogTitleCount()" class="w-full rounded-[12px] border-2 border-[#D9F99D] bg-white p-2.5 text-[19px] font-black leading-snug resize-none placeholder:text-[#94A3B8] focus:outline-none focus:border-[#3F6212]">${escHtml(d.title)}</textarea>
+          <div class="flex items-center justify-between gap-2"><span class="text-[15px] font-bold text-[#475569] leading-snug">검색이 잘 되려면 <b>지역 + 작업 이름</b>을 넣어 주세요</span><span id="blogTitleCount" class="text-[15px] font-black text-[#3F6212] shrink-0">${(d.title || '').length}자</span></div>
+          <button type="button" onclick="blogEditTitle()" class="h-[52px] rounded-[14px] bg-[#14261E] text-[#BEF264] text-[17px] font-black active:scale-[0.98]">제목 직접 고치기</button>
         </div>
         <div class="flex flex-col gap-2">
           <span class="text-[18px] font-black">본문 <span class="text-[15px] font-bold text-[#475569]">(글자를 눌러 고칠 수 있어요)</span></span>
@@ -8248,8 +8257,16 @@ ${AI_COMMON_RULES}
           <div class="bg-[#14261E] rounded-[16px] px-3.5 py-3 flex flex-col gap-1"><span class="text-[16px] font-black text-[#BEF264]">사진은 휴대폰 사진첩의 원본으로</span><span class="text-[15px] font-bold text-[#E2E8F0] leading-relaxed">앱에 올린 일지 사진은 빠르게 보이도록 줄인 사진이에요. 블로그에는 사진첩에 있는 원본을 넣어야 화질이 좋아요.</span></div>
         </div>
         <div class="h-px bg-[#CBD5E1]"></div>
-        <button type="button" onclick="blogCopyBody()" class="min-h-[70px] py-2 rounded-[20px] bg-[#03C75A] text-white text-[21px] font-black leading-tight active:scale-[0.98] transition-all">본문 복사하고<br>네이버 블로그 열기</button>`;
+        <button type="button" onclick="blogCopyBody()" class="min-h-[70px] py-2 rounded-[20px] bg-[#03C75A] text-white text-[21px] font-black leading-tight active:scale-[0.98] transition-all">네이버 블로그로 보내기</button>`;
     }
+    function blogToggleChip(i) {
+      const c = BLOG_MEMO_CHIPS[i]; if (!c || BL.loading) return;
+      const at = BL.chips.indexOf(c); if (at === -1) BL.chips.push(c); else BL.chips.splice(at, 1);
+      const y = document.getElementById('blogView').scrollTop; blogRender(); document.getElementById('blogView').scrollTop = y;
+    }
+    // 제목 직접 고치기: 제목 칸에 커서를 두고 키보드를 올림
+    function blogEditTitle() { const t = document.getElementById('blogTitleBox'); if (!t) return; t.focus(); const n = t.value.length; t.setSelectionRange(n, n); t.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+    function blogTitleCount() { const t = document.getElementById('blogTitleBox'), c = document.getElementById('blogTitleCount'); if (t && c) c.innerText = t.value.length + '자'; }
     function blogSet(k, v) { if (BL.draft) BL.draft[k] = String(v); }
     function blogSetSec(gi, v) { if (BL.secs[gi]) BL.secs[gi].text = String(v); }
     function blogPickStyle(k) {
@@ -8274,11 +8291,12 @@ ${AI_COMMON_RULES}
         '한 작업: ' + String(s.cat || '').split(',').filter(Boolean).join(', '),
         '특이사항: ' + (blogStripName(s.issue, s) || '없음'),
         '작업자 코멘트: ' + (blogStripName(s.d, s) || '없음'),
+        '대표님이 고른 현장 특징: ' + (BL.chips.join(', ') || '없음'),
         '대표님 한마디: ' + (blogStripName(BL.memo, s).trim() || '없음'),
         '사진: 작업 전 ' + cnt('b') + '장, 작업 중 ' + cnt('dur') + '장, 작업 후 ' + cnt('a') + '장, 특이사항 ' + cnt('issue') + '장'
       ].join('\n').slice(0, 2500);
       const opens = ['이 현장에서 가장 눈에 띈 점', '이번 작업을 하게 된 이유', '현장의 모습', '이번 작업에서 가장 신경 쓴 부분', '대표님 한마디의 내용'];
-      const open = (BL.memo.trim() && Math.random() < 0.5) ? opens[4] : opens[Math.floor(Math.random() * 4)];
+      const open = ((BL.memo.trim() || BL.chips.length) && Math.random() < 0.5) ? opens[4] : opens[Math.floor(Math.random() * 4)];
       const sys = `너는 조경 업체 대표의 네이버 블로그 글을 대신 써 주는 도우미다. 아래 [작업 일지]에 적힌 사실만으로 블로그 글을 쓴다.
 [글 말투] ${BLOG_STYLES[BL.style].guide}
 [꼭 지킬 것]
@@ -8287,18 +8305,20 @@ ${AI_COMMON_RULES}
 3. "1위", "최저가", "보장", "완벽", "최고", "100%" 같은 과장·광고 문구와 이모지, 특수기호 장식을 쓰지 않는다.
 4. 존댓말, 짧은 문장. 조경 용어는 바르게(전지, 수형, 방제 등).
 5. 소제목, 전화번호, 신청 주소는 앱이 따로 붙이므로 쓰지 않는다.
-6. [대표님 한마디]가 있으면 대표가 직접 한 말이다. 뜻을 바꾸지 말고 글 안에 자연스럽게 살려 넣는다(가능하면 대표의 표현을 그대로). 한마디에 적힌 내용은 사실로 써도 된다.
+6. [대표님이 고른 현장 특징]과 [대표님 한마디]는 대표가 직접 알려 준 사실이다. 고른 특징은 문장으로 자연스럽게 풀어 쓰고, [대표님 한마디]가 있으면 뜻을 바꾸지 말고 글 안에 자연스럽게 살려 넣는다(가능하면 대표의 표현을 그대로). 여기 적힌 내용은 사실로 써도 된다.
+8. tips 칸은 이 현장 이야기가 아니라, 오늘 한 작업(한 작업 목록)에 대한 일반적인 조경 관리 상식이다. 왜 그 작업이 필요한지, 보통 언제 하는지, 집에서 살펴볼 점을 널리 알려진 내용으로만 쓴다. 약제 이름, 희석 배수, 정확한 수치, 효과 장담은 쓰지 않고, 확실하지 않은 내용은 뺀다. "이 댁", "이번 현장" 같은 말로 현장 이야기처럼 쓰지 않는다.
 7. 다른 글과 비슷해지지 않게, 흔한 인사말("안녕하세요, ○○입니다. 오늘은 ~에 다녀왔습니다")로 시작하지 않는다. 이번 글은 [${open}]로 첫 문장을 시작하고, 업체명은 intro 안에 한 번만 자연스럽게 넣는다. 문장 길이와 짜임을 섞는다.
 [칸 설명]
 - title: 검색에 잘 걸리게 현장 지역(시·구·동 중 1~2개) + 현장 유형 + 작업 이름이 들어간 제목, 35자 이내.
 - intro: 오늘 다녀온 현장을 소개하는 2~3문장 (위 7번대로 시작).
-- before: "작업 전 현장 모습" 사진 아래 들어갈 설명 1~3문장.
-- during: "작업 진행 과정" 사진 아래 들어갈 설명 1~3문장.
-- after: "작업 완료 후 모습" 사진 아래 들어갈 설명 1~3문장.
+- before: "작업 전 현장 모습" 사진 아래 들어갈 설명 2~3문장.
+- during: "작업 진행 과정" 사진 아래 들어갈 설명 2~4문장. 한 작업을 하나씩 짚어 무엇을 했는지 쓴다.
+- after: "작업 완료 후 모습" 사진 아래 들어갈 설명 2~3문장.
 - issue: 특이사항이 있을 때만 1~2문장, 없으면 "".
+- tips: 위 8번대로, 알아두면 좋은 관리 정보 3~5문장.
 - outro: 마무리 1~2문장(관리 시기 안내나 상담 권유 정도).
 - tags: 해시태그 5~8개, # 없이 단어만(예: "수지정원관리"). 지역+작업 조합.
-설명 없이 JSON 하나만: {"title":"","intro":"","before":"","during":"","after":"","issue":"","outro":"","tags":[]}`;
+설명 없이 JSON 하나만: {"title":"","intro":"","before":"","during":"","after":"","issue":"","tips":"","outro":"","tags":[]}`;
       BL.loading = true; blogRender(); document.getElementById('blogView').scrollTop = 0;
       try {
         const res = await fetch(BLOG_AI_URL, {
@@ -8337,51 +8357,58 @@ ${AI_COMMON_RULES}
       const ok = blogCopyNow(title);
       if (btn) { const old = btn.innerText; btn.innerText = ok ? '제목 복사됐어요' : '복사 안 됨 · 다시 눌러 주세요'; setTimeout(() => { btn.innerText = old; }, 2000); }
     }
+    // 메인 버튼: 휴대폰은 안내부터 (본문은 보내기 창으로 넘어가서 복사 필요 없음) · 컴퓨터는 본문 복사
     function blogCopyBody() {
-      const ok = blogCopyNow(blogBodyText());
-      blogShowGuide(ok);
+      if (blogIsPC()) { blogShowGuide(blogCopyNow(blogBodyText())); return; }
+      blogShowGuide(true);
     }
     // 네이버 블로그 열기 (버튼 누른 순간 바로 → 팝업 막힘 방지)
     function blogGoLink(url, newTab) {
       const a = document.createElement('a'); a.href = url; if (newTab) { a.target = '_blank'; a.rel = 'noopener'; }
       a.style.display = 'none'; document.body.appendChild(a); a.click(); a.remove();
     }
-    // [패치 #58] 휴대폰: 처음 시험 때처럼 '보내기' 창으로 블로그 앱 글쓰기 화면을 바로 엶 (블로그 아이디 필요 없음)
-    //   사진 없이 글만 넘김 → 블로그 앱이 글을 받으면 본문에 바로 들어가고, 안 받아도 본문은 이미 복사돼 있음
+    // [패치 #58] 휴대폰: '보내기' 창 → 블로그 앱 글쓰기 화면에 본문이 들어감 (블로그 아이디 필요 없음)
+    //   네이버 앱은 제목을 '[공유] 본문 앞부분'으로 자동으로 채움 → 누르는 순간 제목을 복사해 둠 → 블로그에서 [모두 선택]→[붙여넣기]
     async function blogOpenNaver() {
       if (blogIsPC()) { window.open(BLOG_NAVER.pcWrite, '_blank'); return; }
       const f = document.getElementById('blogOpenFail');
-      if (!navigator.share) { if (f) f.classList.remove('hidden'); return; }
-      // 제목도 같이 실어 보냄 (네이버 앱이 받으면 제목 칸에 들어감. 안 받으면 '[공유] 본문 앞부분'이 제목이 됨)
       const title = (BL.draft && BL.draft.title || '').trim();
-      try { await navigator.share(title ? { title, text: blogBodyText() } : { text: blogBodyText() }); }
+      if (title) blogCopyNow(title);
+      if (!navigator.share) { if (f) f.classList.remove('hidden'); return; }
+      try { await navigator.share({ text: blogBodyText() }); }
       catch (e) { if (!(e && e.name === 'AbortError') && f) f.classList.remove('hidden'); }
     }
-    function blogOpenWeb() { blogGoLink(BLOG_NAVER.mobileWeb, true); }
+    // 보내기 창이 안 될 때: 본문 복사 후 인터넷 블로그 열기
+    function blogOpenWeb() { blogCopyNow(blogBodyText()); blogGoLink(BLOG_NAVER.mobileWeb, true); }
 
-    // ---------- 복사 후 안내 ----------
+    // ---------- 블로그로 보내기 안내 ----------
     function blogShowGuide(copied) {
       const step = (n, head, sub) => `<div class="flex gap-3 items-start"><span class="w-9 h-9 rounded-full bg-[#151E2D] text-[#BEF264] text-[17px] font-black flex items-center justify-center shrink-0">${n}</span><div class="flex flex-col gap-1.5 min-w-0"><span class="text-[18px] font-black leading-snug">${head}</span>${sub}</div></div>`;
       const txt = t => `<span class="text-[16px] font-bold text-[#334155] leading-relaxed">${t}</span>`;
       const first = blogShownSecs()[0], n1 = first ? first.imgs.length : 0, pc = blogIsPC();
-      const eg = first ? `<div class="bg-[#F1F5F9] rounded-[14px] px-3 py-2.5 flex flex-col gap-1.5 text-[15px] font-bold text-[#334155]"><span class="font-black text-[#0F172A]">${first.head}</span>${n1 ? `<span>${blogPhotoLine(first)}</span>` : ''}<span class="flex items-center gap-1.5"><span class="w-[3px] h-5 bg-[#03C75A] shrink-0"></span><span class="text-[#03C75A] font-black">바로 아래 빈 줄을 톡 → 맨 아래 카메라 버튼 → ${n1 ? n1 + '장 고르기' : '사진 고르기'}</span></span></div>` : '';
+      const eg = first ? `<div class="bg-[#F1F5F9] rounded-[14px] px-3 py-2.5 flex flex-col gap-1.5 text-[15px] font-bold text-[#334155]"><span class="font-black text-[#0F172A]">${blogHead(first)}</span>${n1 ? `<span>${blogPhotoLine(first)}</span>` : ''}<span class="flex items-center gap-1.5"><span class="w-[3px] h-5 bg-[#03C75A] shrink-0"></span><span class="text-[#03C75A] font-black">바로 아래 빈 줄을 톡 → 맨 아래 카메라 버튼 → ${n1 ? n1 + '장 고르기' : '사진 고르기'}</span></span></div>` : '';
+      const photoStep = n => step(n, '▼ 사진 줄 아래에 사진 넣기', eg + txt('카메라 버튼은 화면 <b>맨 아래 왼쪽</b>에 있어요. 사진첩 <b>원본</b>을 여러 장 한 번에 골라도 돼요. 작업 중·작업 후도 똑같이.'));
+      const steps = pc
+        ? step(1, '블로그 글쓰기에서 본문 붙여넣기', txt('본문을 한 번 클릭하고 <b>Ctrl + V</b> (본문은 복사돼 있어요)'))
+          + step(2, '제목 넣기', txt('아래 [제목 다시 복사] → 제목 칸 클릭 → <b>Ctrl + V</b>'))
+          + photoStep(3) + step(4, '[발행] 누르면 끝', '')
+        : step(1, '보내기 창에서 [블로그] 누르기', txt('<b>본문이 들어간</b> 글쓰기 화면이 열려요.'))
+          + step(2, '제목 바꾸기', `<div class="bg-[#F1F5F9] rounded-[14px] px-3 py-2.5 text-[15px] font-bold text-[#334155] leading-relaxed">제목이 <b>[공유] …</b>로 길게 들어가 있어요 (네이버 앱이 자동으로 넣는 거예요)</div>` + txt('제목을 <b>꾹</b> 누르기 → <b>[모두 선택]</b> → <b>[붙여넣기]</b><br>제목은 복사돼 있어요.'))
+          + photoStep(3) + step(4, '[등록] 누르면 끝', '');
       document.getElementById('blogGuideBody').innerHTML = `
         <div class="flex flex-col items-center gap-2 text-center">
-          <span class="w-[60px] h-[60px] rounded-full ${copied ? 'bg-[#84CC16]' : 'bg-[#FCA5A5]'} flex items-center justify-center"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#14261E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${copied ? '<path d="M20 6 9 17l-5-5"></path>' : '<path d="M12 8v5M12 17h.01"></path>'}</svg></span>
-          <span class="text-[24px] font-black">${copied ? '본문이 복사됐어요' : '복사가 안 됐을 수 있어요'}</span>
-          <span class="text-[16px] font-bold text-[#475569]">${copied ? '블로그가 열리면 이 순서대로 하세요' : '[본문 다시 복사]를 한 번 더 눌러 주세요'}</span>
+          <span class="text-[24px] font-black">${pc ? (copied ? '본문이 복사됐어요' : '복사가 안 됐을 수 있어요') : '블로그로 보내기'}</span>
+          <span class="text-[16px] font-bold text-[#475569]">${pc && !copied ? '아래 [본문 복사]를 한 번 더 눌러 주세요' : '블로그가 열리면 이 순서대로 하세요'}</span>
         </div>
-        ${pc ? step(1, '블로그 글쓰기에서 본문 붙여넣기', txt('본문을 한 번 클릭하고 <b>Ctrl + V</b>')) : step(1, '보내기 창에서 [블로그] 누르기', txt('글쓰기 화면에 <b>본문이 들어가 있어요</b>. 제목이 \'[공유]…\'로 길게 들어가 있으면 제목을 지우고 [제목만 복사]한 제목을 붙여 넣으세요.'))}
-        ${step(2, '▼ 사진 줄 아래에 사진 넣기', eg + txt('카메라 버튼은 화면 <b>맨 아래 왼쪽</b>에 있어요. 사진첩 <b>원본</b>을 여러 장 한 번에 골라도 돼요. 작업 중·작업 후도 똑같이.'))}
-        ${step(3, '제목 확인하고 [등록]', txt('제목을 바꿀 때는 조경노트로 돌아와 [제목만 복사] → 블로그 제목 칸에 붙여넣기. 직접 적어도 돼요.'))}
+        ${steps}
         <button type="button" onclick="blogOpenNaver()" class="h-[64px] rounded-[18px] bg-[#03C75A] text-white text-[20px] font-black active:scale-[0.98]">알겠어요 · 블로그 열기</button>
         <div id="blogOpenFail" class="hidden bg-[#FEF9C3] border-2 border-[#EAB308] rounded-[16px] p-3.5 flex flex-col gap-2.5">
-          <span class="text-[16px] font-extrabold text-[#713F12] leading-relaxed">보내기 창이 안 떴나요? 인터넷 블로그로 열어도 똑같이 쓸 수 있어요.</span>
-          <button type="button" onclick="blogOpenWeb()" class="h-[54px] rounded-[14px] bg-[#03C75A] text-white text-[18px] font-black active:scale-[0.98]">인터넷으로 블로그 열기</button>
+          <span class="text-[16px] font-extrabold text-[#713F12] leading-relaxed">보내기 창이 안 떴나요? 본문을 복사해서 인터넷 블로그로 열어 드릴게요. 글쓰기를 누르고 본문에 붙여넣기 하세요.</span>
+          <button type="button" onclick="blogOpenWeb()" class="h-[54px] rounded-[14px] bg-[#03C75A] text-white text-[18px] font-black active:scale-[0.98]">본문 복사하고 인터넷으로 열기</button>
         </div>
         <div class="grid grid-cols-2 gap-2">
-          <button type="button" onclick="blogCopyBodyAgain(this)" class="h-[54px] rounded-[16px] bg-[#14261E] text-[#BEF264] text-[16.5px] font-black active:scale-95">본문 다시 복사</button>
-          <button type="button" onclick="blogCopyTitle(this)" class="h-[54px] rounded-[16px] bg-[#14261E] text-[#BEF264] text-[16.5px] font-black active:scale-95">제목만 복사</button>
+          <button type="button" onclick="blogCopyTitle(this)" class="h-[54px] rounded-[16px] bg-[#14261E] text-[#BEF264] text-[16.5px] font-black active:scale-95">제목 다시 복사</button>
+          <button type="button" onclick="blogCopyBodyAgain(this)" class="h-[54px] rounded-[16px] bg-[#14261E] text-[#BEF264] text-[16.5px] font-black active:scale-95">본문 복사</button>
         </div>
         <button type="button" onclick="blogCloseGuide()" class="h-[52px] rounded-[16px] border-2 border-[#CBD5E1] bg-white text-[17px] font-black active:scale-95">닫기</button>`;
       const g = document.getElementById('blogGuide');
