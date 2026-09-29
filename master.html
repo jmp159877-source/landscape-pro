@@ -2106,6 +2106,11 @@
         try { const r = await fetch(getAuthUrl(`${admPushUrl()}/tokens.json`)); const d = r.ok ? await r.json() : null; on = Notification.permission === 'granted' && !!d; } catch (e) {}
         t.textContent = on ? '알림이 켜져 있어요. (다른 휴대폰에서도 켜려면 그 휴대폰에서 한 번 더 눌러 주세요)' : '아직 이 휴대폰은 알림이 꺼져 있어요.';
         b.classList.remove('hidden'); b.textContent = on ? '이 휴대폰 알림 다시 연결하기' : '이 휴대폰에서 알림 켜기';
+        // 🖥️ [패치 #79] PC에서 열었을 때는 'PC' 기준 문구 (알림은 휴대폰에서 받으니 PC는 안 켜도 됨)
+        if (!/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)) {
+            t.textContent = on ? '이 PC에도 알림이 켜져 있어요.' : '지금은 PC 화면이에요. 알림은 휴대폰에서 켜 두셨다면 PC는 켜지 않아도 돼요.';
+            b.textContent = on ? '이 PC 알림 다시 연결하기' : '이 PC에서도 알림 받기';
+        }
     }
     async function admPushEnable() {
         if (!admPushOk()) return admPushStatus();
@@ -2216,6 +2221,49 @@
         alert(`지급 완료\n지금 쓸 수 있는 포인트: ${ptmNum(r.usable)}P`);
         fetchAccounts();
     }
+    // ==========================================
+    // ↩️ [패치 #78] 휴대폰 뒤로가기: 창 닫기 → 이전 탭 → 대시보드 → '한 번 더 누르면 닫혀요' (로그인·저장 코드는 건드리지 않음)
+    // ==========================================
+    const PMB = { armed: false, stack: [], cur: 'dashboard', fromPop: false, toastT: 0 };
+    function pmbLoggedIn() { const lv = document.getElementById('masterLoginView'); return !!lv && lv.classList.contains('hidden'); }
+    function pmbArm() { if (PMB.armed || !pmbLoggedIn()) return; try { history.pushState({ pmb: 1 }, ''); PMB.armed = true; } catch (e) {} }
+    function pmbOpen(id) { const e = document.getElementById(id); return !!e && !e.classList.contains('hidden') && !e.classList.contains('opacity-0'); }
+    function pmbCloseTop() {
+        if (pmbOpen('postManagerModal')) { closePostManager(); return true; }
+        if (pmbOpen('documentPreviewModal')) { closeDocumentPreview(); return true; }
+        if (pmbOpen('companyDataModal')) { const bb = document.getElementById('btnBackToDataMenu'); if (bb && !bb.classList.contains('hidden')) showDataMenu(); else closeCompanyDataModal(); return true; }
+        if (pmbOpen('licenseModal')) { closeLicenseModal(); return true; }
+        if (pmbOpen('targetNoticeModal')) { closeTargetNoticeModal(); return true; }
+        if (pmbOpen('editCompanyModal')) { closeEditCompanyModal(); return true; }
+        return false;
+    }
+    function pmbToast(msg) {
+        let t = document.getElementById('pmbToast');
+        if (!t) { t = document.createElement('div'); t.id = 'pmbToast'; t.style.cssText = 'position:fixed;left:16px;right:16px;bottom:120px;z-index:99999;background:#151E2D;color:#fff;border:2px solid #84CC16;border-radius:14px;padding:14px 16px;font-size:16px;font-weight:800;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.4)'; document.body.appendChild(t); }
+        t.textContent = msg; t.style.display = 'block';
+        clearTimeout(PMB.toastT); PMB.toastT = setTimeout(() => { t.style.display = 'none'; }, 2500);
+    }
+    function pmbGo(tabId) { PMB.fromPop = true; try { switchTab(tabId); } finally { PMB.fromPop = false; } try { window.scrollTo(0, 0); } catch (e) {} }
+    const pmbSwitchTab0 = switchTab;
+    switchTab = function (tabId) {
+        if (!PMB.fromPop && tabId !== PMB.cur) { PMB.stack.push(PMB.cur); if (PMB.stack.length > 20) PMB.stack.shift(); }
+        PMB.cur = tabId;
+        const r = pmbSwitchTab0.apply(this, arguments);
+        pmbArm();
+        return r;
+    };
+    // 로그인 후 화면을 한 번이라도 누르면 뒤로가기 준비 (휴대폰 크롬은 누른 적 있는 화면에서만 뒤로가기를 잡을 수 있음)
+    document.addEventListener('click', pmbArm, true);
+    try { const lv0 = document.getElementById('masterLoginView'); if (lv0) new MutationObserver(() => pmbArm()).observe(lv0, { attributes: true, attributeFilter: ['class'] }); } catch (e) {}
+    window.addEventListener('popstate', function () {
+        if (!PMB.armed) return;
+        PMB.armed = false;
+        if (!pmbLoggedIn()) return;
+        if (pmbCloseTop()) { pmbArm(); return; }
+        if (PMB.stack.length) { pmbGo(PMB.stack.pop()); return; }
+        if (PMB.cur !== 'dashboard') { pmbGo('dashboard'); return; }
+        pmbToast('뒤로가기를 한 번 더 누르면 관리자 화면이 닫혀요.');
+    });
   </script>
 </body>
 </html>
