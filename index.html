@@ -2314,7 +2314,7 @@
 
     function openTextEditor(inputId) { activeTextEditorId = inputId; const inputEl = document.getElementById(inputId); const modalInput = document.getElementById('modalTextInput'); modalInput.value = inputEl.value; const modal = document.getElementById('textEditorModal'); const box = document.getElementById('textEditorBox'); modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); modalInput.focus(); }, 10); history.pushState({ modalOpen: true }, "", ""); }
     function closeTextEditor(fromPopstate = false) { const modal = document.getElementById('textEditorModal'); const box = document.getElementById('textEditorBox'); if(modal) modal.classList.add('opacity-0'); if(box) box.classList.add('scale-95'); setTimeout(() => { if(modal) modal.classList.add('hidden'); activeTextEditorId = null; }, 200); if(!fromPopstate && history.state && history.state.modalOpen) history.back(); }
-    function saveTextEditor() { if(activeTextEditorId) { const val = document.getElementById('modalTextInput').value; document.getElementById(activeTextEditorId).value = val; } closeTextEditor(); }
+    function saveTextEditor() { if(activeTextEditorId) { const val = document.getElementById('modalTextInput').value; document.getElementById(activeTextEditorId).value = val; if (/^quoteDesc_/.test(activeTextEditorId) && typeof quoteDescFit === 'function') quoteDescFit(document.getElementById(activeTextEditorId)); } closeTextEditor(); } // 🧾 [패치 #60] 줄 수에 맞춰 칸 높이
 
     let currentLensImg = "";
     
@@ -2460,11 +2460,29 @@
       construction: { title: "조경공사 견적서", vat: 0, rows: [ {l: "01", d: ""}, {l: "02", d: ""}, {l: "03", d: ""}, {l: "04", d: ""}, {l: "05", d: ""}, {l: "06", d: ""}, {l: "07", d: ""}, {l: "08", d: ""}, {l: "09", d: ""}, {l: "10", d: ""} ], memo: "" }
     };
 
+    // 🧾 [패치 #60] 작업 버튼을 누르면 '· 작업' 한 줄씩, 누른 순서대로 목록에 추가 (다시 누르면 그 줄만 빠짐 · 직접 쓴 줄은 그대로)
+    const QUOTE_BULLET = '· ';
+    const QUOTE_TAG_OFF = "single-tag-btn min-h-[44px] px-3.5 text-[16px] rounded-full font-black bg-white border-[1.5px] border-[#CBD5E1] text-[#334155] transition-colors";
+    const QUOTE_TAG_ON = "single-tag-btn min-h-[44px] px-3.5 text-[16px] rounded-full font-black bg-[#151E2D] border-[1.5px] border-[#151E2D] text-[#BEF264] transition-colors";
+    function quoteDescLines(v) {
+        const t = String(v || '');
+        return (t.indexOf('\n') === -1 && t.indexOf(', ') !== -1 ? t.split(', ') : t.split('\n')).map(x => x.trim()).filter(Boolean);
+    }
+    function quoteLineKey(x) { return String(x).replace(/^[·•\-\s]+/, '').trim(); }
+    function quoteDescFit(el) {
+        if (!el) return; const n = String(el.value || '').split('\n').length; el.rows = Math.max(2, Math.min(n, 12));
+        el.style.height = ''; if (el.offsetParent && el.scrollHeight > el.clientHeight) el.style.height = (el.scrollHeight + 2) + 'px';
+        const card = el.closest('.flex-col'); if (!card) return; // 버튼 불 켜짐을 글과 맞춤 (수정하기로 불러왔을 때도)
+        const keys = quoteDescLines(el.value).map(quoteLineKey);
+        card.querySelectorAll('.single-tag-btn').forEach(b => { b.className = keys.indexOf(b.innerText.trim()) !== -1 ? QUOTE_TAG_ON : QUOTE_TAG_OFF; });
+    }
     function toggleSingleTag(btn, inputIdx) {
-        let inputEl = document.getElementById(`quoteDesc_${inputIdx}`);
-        if(btn.classList.contains('bg-[#151E2D]')) btn.className = "single-tag-btn px-2.5 py-1.5 text-[12.5px] rounded-[8px] font-black bg-white border border-[#EAEBEA] text-[#4E5968] transition-colors";
-        else btn.className = "single-tag-btn px-2.5 py-1.5 text-[12.5px] rounded-[8px] font-black bg-[#151E2D] text-[#84CC16] transition-colors";
-        let activeTags = []; btn.parentElement.querySelectorAll('.single-tag-btn.bg-\\[\\#151E2D\\]').forEach(t => activeTags.push(t.innerText)); inputEl.value = activeTags.join(', ');
+        let inputEl = document.getElementById(`quoteDesc_${inputIdx}`); if (!inputEl) return;
+        const tag = btn.innerText.trim(), on = quoteDescLines(inputEl.value).map(quoteLineKey).indexOf(tag) === -1;
+        let lines = quoteDescLines(inputEl.value).map(x => (/^[·•\-]/.test(x) ? x : QUOTE_BULLET + x));
+        lines = lines.filter(x => quoteLineKey(x) !== tag);
+        if (on) lines.push(QUOTE_BULLET + tag);
+        inputEl.value = lines.join('\n'); quoteDescFit(inputEl);
     }
 
     // 🎨 [패치 #14] 선택한 견적 템플릿 표시
@@ -2478,12 +2496,13 @@
       template.rows.forEach((row, idx) => {
         const i = idx + 1; let isActive = row.d !== "관리없음" && row.d !== "";
         let btnClass = isActive ? "quote-month-btn w-12 flex-shrink-0 text-center font-black text-[14.5px] bg-[#151E2D] text-[#84CC16] py-3 rounded-[10px] shadow-sm transition-all" : "quote-month-btn w-12 flex-shrink-0 text-center font-black text-[14.5px] bg-white text-[#4E5968] border border-[#EAEBEA] py-3 rounded-[10px] shadow-sm transition-all";
-        let descValue = isActive ? row.d : ""; let priceValue = row.p ? row.p.toLocaleString('ko-KR') : "";
+        let descValue = isActive ? row.d : ""; if (type === 'single' && row.l === '01' && descValue) descValue = QUOTE_BULLET + descValue; /* 🧾 [패치 #60] */ let priceValue = row.p ? row.p.toLocaleString('ko-KR') : "";
         let tagsHtml = '';
-        if(type === 'single' && row.l === '01') { tagsHtml = `<div class="flex flex-wrap gap-1.5 pb-2.5 mb-1 border-b border-[#EAEBEA] w-full"><button type="button" onclick="toggleSingleTag(this, ${i})" class="single-tag-btn px-2.5 py-1.5 text-[12.5px] rounded-[8px] font-black bg-[#151E2D] text-[#84CC16] transition-colors">소나무 전지</button><button type="button" onclick="toggleSingleTag(this, ${i})" class="single-tag-btn px-2.5 py-1.5 text-[12.5px] rounded-[8px] font-black bg-white border border-[#EAEBEA] text-[#4E5968] transition-colors">수목가지치기</button><button type="button" onclick="toggleSingleTag(this, ${i})" class="single-tag-btn px-2.5 py-1.5 text-[12.5px] rounded-[8px] font-black bg-white border border-[#EAEBEA] text-[#4E5968] transition-colors">관목(철쭉 등)전정작업</button><button type="button" onclick="toggleSingleTag(this, ${i})" class="single-tag-btn px-2.5 py-1.5 text-[12.5px] rounded-[8px] font-black bg-white border border-[#EAEBEA] text-[#4E5968] transition-colors">기계예초작업(잔디,잡초)</button><button type="button" onclick="toggleSingleTag(this, ${i})" class="single-tag-btn px-2.5 py-1.5 text-[12.5px] rounded-[8px] font-black bg-white border border-[#EAEBEA] text-[#4E5968] transition-colors">화단정돈(잡초,예초)</button></div>`; }
-        let itemHtml = `<div class="${tagsHtml ? 'flex flex-col bg-[#F9F9F8] p-3' : 'flex gap-2 items-center bg-[#F9F9F8] p-2'} rounded-[14px] border border-[#EAEBEA]">${tagsHtml}<div class="${tagsHtml ? 'flex gap-2 items-center w-full pt-1' : 'flex gap-2 items-center w-full'}"><button type="button" onclick="toggleQuoteMonth(this)" class="${btnClass}" data-month="${row.l}">${row.l}</button><textarea id="quoteDesc_${i}" readonly onclick="openTextEditor('quoteDesc_${i}')" placeholder="터치하여 상세 내역 입력" rows="2" class="flex-1 min-w-0 bg-transparent border-none text-[14.5px] font-black text-[#1A1D1A] focus:outline-none px-1 py-1 resize-none break-keep leading-snug cursor-pointer placeholder:text-[#4E5968] placeholder:font-bold">${descValue}</textarea><div class="flex items-center gap-1 bg-white px-2 rounded-[10px] border border-[#EAEBEA] focus-within:border-[#84CC16] flex-shrink-0"><input type="text" id="quotePrice_${i}" value="${priceValue}" placeholder="0" inputmode="numeric" oninput="formatNumberInput(this); calculateQuoteTotal()" class="w-24 text-right bg-transparent border-none text-[14px] font-black text-[#1A1D1A] focus:outline-none py-2 placeholder:text-[#4E5968] placeholder:font-bold"><span class="text-[13.5px] font-black text-[#4E5968]">원</span></div></div></div>`;
+        if(type === 'single' && row.l === '01') { tagsHtml = `<div class="flex flex-col gap-2 pb-3 mb-1 border-b border-[#EAEBEA] w-full"><span class="text-[15px] font-black text-[#475569]">누르면 아래 칸에 한 줄씩 들어가요</span><div class="flex flex-wrap gap-2"><button type="button" onclick="toggleSingleTag(this, ${i})" class="single-tag-btn min-h-[44px] px-3.5 text-[16px] rounded-full font-black bg-[#151E2D] border-[1.5px] border-[#151E2D] text-[#BEF264] transition-colors">소나무 전지</button><button type="button" onclick="toggleSingleTag(this, ${i})" class="single-tag-btn min-h-[44px] px-3.5 text-[16px] rounded-full font-black bg-white border-[1.5px] border-[#CBD5E1] text-[#334155] transition-colors">수목가지치기</button><button type="button" onclick="toggleSingleTag(this, ${i})" class="single-tag-btn min-h-[44px] px-3.5 text-[16px] rounded-full font-black bg-white border-[1.5px] border-[#CBD5E1] text-[#334155] transition-colors">관목(철쭉 등)전정작업</button><button type="button" onclick="toggleSingleTag(this, ${i})" class="single-tag-btn min-h-[44px] px-3.5 text-[16px] rounded-full font-black bg-white border-[1.5px] border-[#CBD5E1] text-[#334155] transition-colors">기계예초작업(잔디,잡초)</button><button type="button" onclick="toggleSingleTag(this, ${i})" class="single-tag-btn min-h-[44px] px-3.5 text-[16px] rounded-full font-black bg-white border-[1.5px] border-[#CBD5E1] text-[#334155] transition-colors">화단정돈(잡초,예초)</button></div></div>` /* 🧾 [패치 #60] 작업 버튼 크게 + 한 줄씩 목록으로 (원래: 작은 버튼, 쉼표로 한 줄에 이어 붙음) */; }
+        let itemHtml = `<div class="flex flex-col gap-2.5 bg-[#F9F9F8] p-3 rounded-[16px] border border-[#EAEBEA]">${tagsHtml}<div class="flex gap-2 items-start w-full"><button type="button" onclick="toggleQuoteMonth(this)" class="${btnClass}" data-month="${row.l}">${row.l}</button><textarea id="quoteDesc_${i}" readonly onclick="openTextEditor('quoteDesc_${i}')" placeholder="터치하여 상세 내역 입력" rows="2" class="flex-1 min-w-0 bg-white border-[1.5px] border-[#E2E8F0] rounded-[12px] text-[16px] font-black text-[#1A1D1A] focus:outline-none px-3 py-2.5 resize-none break-keep leading-[1.6] cursor-pointer placeholder:text-[#64748B] placeholder:font-bold">${descValue}</textarea></div><div class="flex items-center gap-1.5 self-end bg-white pl-3 pr-3 rounded-[12px] border-[1.5px] border-[#E2E8F0] focus-within:border-[#84CC16]"><span class="text-[15px] font-black text-[#64748B]">금액</span><input type="text" id="quotePrice_${i}" value="${priceValue}" placeholder="0" inputmode="numeric" oninput="formatNumberInput(this); calculateQuoteTotal()" class="w-32 h-[48px] text-right bg-transparent border-none text-[17px] font-black text-[#1A1D1A] focus:outline-none placeholder:text-[#94A3B8] placeholder:font-bold"><span class="text-[15px] font-black text-[#475569]">원</span></div></div>`; /* 🧾 [패치 #60] 내용 칸을 넓게(한 줄 전체), 금액은 아래 오른쪽 · 버튼·금액칸 찾는 구조는 그대로 */
         container.innerHTML += itemHtml;
       });
+      container.querySelectorAll('textarea[id^="quoteDesc_"]').forEach(quoteDescFit); // 🧾 [패치 #60]
       if (template.memo !== undefined && document.getElementById('quoteInputMemo')) document.getElementById('quoteInputMemo').value = template.memo; else if (document.getElementById('quoteInputMemo')) document.getElementById('quoteInputMemo').value = '';
       calculateQuoteTotal();
     }
@@ -2498,11 +2517,12 @@
       const i = currentQuoteRowCount;
       const l = String(i).padStart(2, '0');
       const container = document.getElementById('quoteItemsContainer');
-      const itemHtml = `<div class="flex gap-2 items-center bg-[#F9F9F8] p-2 rounded-[14px] border border-[#EAEBEA]"><div class="flex gap-2 items-center w-full"><button type="button" onclick="toggleQuoteMonth(this)" class="quote-month-btn w-12 flex-shrink-0 text-center font-black text-[14.5px] bg-[#151E2D] text-[#84CC16] py-3 rounded-[10px] shadow-sm transition-all" data-month="${l}">${l}</button><textarea id="quoteDesc_${i}" readonly onclick="openTextEditor('quoteDesc_${i}')" placeholder="터치하여 상세 내역 입력" rows="2" class="flex-1 min-w-0 bg-transparent border-none text-[14.5px] font-black text-[#1A1D1A] focus:outline-none px-1 py-1 resize-none break-keep leading-snug cursor-pointer placeholder:text-[#4E5968] placeholder:font-bold"></textarea><div class="flex items-center gap-1 bg-white px-2 rounded-[10px] border border-[#EAEBEA] focus-within:border-[#84CC16] flex-shrink-0"><input type="text" id="quotePrice_${i}" value="" placeholder="0" inputmode="numeric" oninput="formatNumberInput(this); calculateQuoteTotal()" class="w-24 text-right bg-transparent border-none text-[14px] font-black text-[#1A1D1A] focus:outline-none py-2 placeholder:text-[#4E5968] placeholder:font-bold"><span class="text-[13.5px] font-black text-[#4E5968]">원</span></div></div></div>`;
+      const itemHtml = `<div class="flex flex-col gap-2.5 bg-[#F9F9F8] p-3 rounded-[16px] border border-[#EAEBEA]"><div class="flex gap-2 items-start w-full"><button type="button" onclick="toggleQuoteMonth(this)" class="quote-month-btn w-12 flex-shrink-0 text-center font-black text-[14.5px] bg-[#151E2D] text-[#84CC16] py-3 rounded-[10px] shadow-sm transition-all" data-month="${l}">${l}</button><textarea id="quoteDesc_${i}" readonly onclick="openTextEditor('quoteDesc_${i}')" placeholder="터치하여 상세 내역 입력" rows="2" class="flex-1 min-w-0 bg-white border-[1.5px] border-[#E2E8F0] rounded-[12px] text-[16px] font-black text-[#1A1D1A] focus:outline-none px-3 py-2.5 resize-none break-keep leading-[1.6] cursor-pointer placeholder:text-[#64748B] placeholder:font-bold"></textarea></div><div class="flex items-center gap-1.5 self-end bg-white pl-3 pr-3 rounded-[12px] border-[1.5px] border-[#E2E8F0] focus-within:border-[#84CC16]"><span class="text-[15px] font-black text-[#64748B]">금액</span><input type="text" id="quotePrice_${i}" value="" placeholder="0" inputmode="numeric" oninput="formatNumberInput(this); calculateQuoteTotal()" class="w-32 h-[48px] text-right bg-transparent border-none text-[17px] font-black text-[#1A1D1A] focus:outline-none placeholder:text-[#94A3B8] placeholder:font-bold"><span class="text-[15px] font-black text-[#475569]">원</span></div></div>`; /* 🧾 [패치 #60] */
       container.insertAdjacentHTML('beforeend', itemHtml);
     }
 
     function calculateQuoteTotal() {
+      if (typeof quoteDescFit === 'function') document.querySelectorAll('textarea[id^="quoteDesc_"]').forEach(quoteDescFit); // 🧾 [패치 #60] 내용 줄 수에 맞춰 칸 높이 (AI로 채울 때 포함)
       let sum = 0;
       for(let i=1; i<=currentQuoteRowCount; i++) {
         let elPrice = document.getElementById(`quotePrice_${i}`);
@@ -2832,7 +2852,7 @@
       if(document.getElementById('quoteInputMemo')) { document.getElementById('quoteInputMemo').value = payload.memo || ''; }
       quoteImages = payload.imgs ? payload.imgs.split(',').filter(Boolean) : []; renderQuoteThumbList();
       editingRecordId = currentLoadedRecordId; let genBtn = document.getElementById('btnGenerateQuote'); if(genBtn) genBtn.innerHTML = '<i data-lucide="edit" class="w-6 h-6 stroke-[2.5]"></i> 견적서 수정 완료';
-      calculateQuoteTotal(); switchView('quote');
+      document.querySelectorAll('textarea[id^="quoteDesc_"]').forEach(quoteDescFit); /* 🧾 [패치 #60] */ calculateQuoteTotal(); switchView('quote');
     }
 
     function renderClientView(data, viewMode) {
@@ -2875,7 +2895,7 @@
           const item = { m: escHtml(rawItem.m), d: escHtml(rawItem.d), p: Number(rawItem.p) || 0 };
           let descHtml = `<div class="text-[14.5px] font-black text-[#151E2D] bg-[#F2FBEC] border border-[#84CC16]/30 px-3 py-2 rounded-[10px] break-keep whitespace-pre-wrap leading-snug w-full shadow-sm">${item.d}</div>`;
           if (item.m === '01' && String(data.r || '').includes('단건')) {
-             let tags = item.d.split(', ').filter(t => t.trim() !== ''); if (tags.length > 0) { descHtml = `<div class="flex flex-wrap gap-1.5 mt-0.5">` + tags.map(tag => `<span class="px-2.5 py-1.5 bg-[#F2FBEC] border border-[#84CC16]/40 text-[#65A30D] text-[13.5px] font-black rounded-[8px] shadow-sm">${tag.trim()}</span>`).join('') + `</div>`; }
+             let tags = item.d.split(/\n|, /).map(t => t.replace(/^[·•\-\s]+/, '').trim()).filter(t => t !== ''); if (tags.length > 0) { descHtml = `<div class="flex flex-wrap gap-1.5 mt-0.5">` + tags.map(tag => `<span class="px-2.5 py-1.5 bg-[#F2FBEC] border border-[#84CC16]/40 text-[#65A30D] text-[13.5px] font-black rounded-[8px] shadow-sm">${tag.trim()}</span>`).join('') + `</div>`; } // 🧾 [패치 #60] 줄바꿈 목록도 인식
           } else {
              if (item.d.startsWith('[')) {
                  let closeIdx = item.d.indexOf(']');
