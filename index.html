@@ -550,15 +550,18 @@
             <span id="loungeMyGradeBadge" class="inline-block mt-1.5 text-[15px] bg-[#84CC16] text-[#1A2E05] font-black px-2.5 py-1 rounded-lg whitespace-nowrap">🌿 파트너 대표님</span>
           </div>
           <div class="text-right shrink-0">
-            <div class="text-[14px] font-bold text-[#CBD5E1]">내 포인트</div>
+            <div class="text-[14px] font-bold text-[#CBD5E1]">활동 포인트</div><!-- 💰 [패치 #74] -->
             <span id="loungeMyPoints" class="block text-[28px] font-black text-[#BEF264] tracking-tight whitespace-nowrap leading-tight">1,000 P</span>
           </div>
         </div>
         <button id="btnLoungeAttend" onclick="claimLoungeAttendance()" class="w-full h-[56px] rounded-[16px] font-black text-[17px] flex items-center justify-center gap-2 active:scale-95 transition-all whitespace-nowrap border-2" style="background:#84CC16; color:#1A2E05; border-color:#84CC16;">
           <i data-lucide="calendar-check" class="w-5 h-5 stroke-[2.5]"></i> 오늘 출석체크 (+50P 받기)
         </button>
-        <button onclick="alert('💎 [대표님 소통방 포인트 적립 안내]\n\n• 신규 가입 기본 축하금: 1,000 P\n• 매일 소통방 출석체크: +50 P\n• 소통방 게시글·질문·정보 작성: +100 P\n\n[등급 기준]\n🌿 파트너 대표님 (1,000P~)\n🌲 명장 대표님 (2,000P~)\n👑 마스터 대표님 (5,000P~)')" class="w-full text-center text-[14.5px] font-bold text-[#CBD5E1] flex items-center justify-center gap-1">
-          글쓰기 +100P · 포인트 혜택 안내 <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        <!-- 💰 [패치 #74] 활동 포인트: 오늘 적립 · 3,000P부터 전환 -->
+        <div id="loungeActLine" style="color:#CBD5E1; font-size:15.5px; font-weight:800; line-height:1.5;">3,000P가 모이면 쓸 수 있는 포인트로 바꿀 수 있어요.</div>
+        <button type="button" id="btnActConvert" onclick="actConvert()" class="hidden w-full rounded-[16px] font-black text-[17px] active:scale-95 transition-all" style="min-height:56px; background:#84CC16; color:#14261E; border:0;">쓸 수 있는 포인트로 바꾸기</button>
+        <button onclick="alert('[소통방 활동 포인트 안내]\n\n- 매일 출석: 50P\n- 글쓰기: 100P\n- 정보 교환 · 실무 노하우 글: 200P\n- 하루 최대 300P까지 (불량 거래처 경보 글은 적립 없음)\n- 3,000P가 모이면 쓸 수 있는 포인트로 바꿀 수 있어요 (바꾼 포인트는 기한 없음 · 환불 없음)\n- 포인트를 받은 글이 삭제되면 그 포인트도 빠져요\n\n[등급 기준 · 지금까지 모은 활동 포인트]\n파트너 대표님 (처음부터)\n명장 대표님 (2,000P~)\n마스터 대표님 (5,000P~)')" class="w-full text-center text-[15px] font-bold text-[#CBD5E1] flex items-center justify-center gap-1">
+          글 100P · 정보 교환·노하우 200P · 포인트 안내 <i data-lucide="chevron-right" class="w-4 h-4"></i>
         </button>
       </div>
 
@@ -1228,6 +1231,7 @@
                   headers: { "Content-Type": "text/plain;charset=utf-8" },
                   body: JSON.stringify({
                       idToken: currentIdToken, userId: currentUserId, model: "gpt-4o", /* 🔐 [패치 #7] 로그인 확인용 */
+                      feature: "chat", /* 💰 [패치 #74] AI 비서 하루 30회 */
                       messages: [
                           { role: "system", content: systemPrompt },
                           ...aiChatHistory
@@ -1304,7 +1308,7 @@
                           <i data-lucide="alert-circle" class="w-5 h-5"></i>
                       </div>
                       <div class="bg-white border border-[#CBD5E1] text-[#151E2D] rounded-[20px] rounded-tl-[4px] p-4 text-[14px] font-black">
-                          일시적인 통신 지연이 발생했습니다. 다시 한번 전송을 눌러주세요.
+                          ${(e && /번 모두 쓰셨어요|오늘 AI 사용 횟수/.test(e.message || '')) ? escHtml(e.message) : '일시적인 통신 지연이 발생했습니다. 다시 한번 전송을 눌러주세요.'}
                       </div>
                   </div>
               `);
@@ -2394,6 +2398,7 @@
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({
                     idToken: currentIdToken, userId: currentUserId, model: "gpt-4o", /* 🔐 [패치 #7] 로그인 확인용 */ 
+                    feature: "lens", /* 💰 [패치 #74] AI 렌즈 하루 30회 */
                     messages: [
                         { role: "system", content: systemRole },
                         { role: "user", content: [ { type: "text", text: promptText }, { type: "image_url", image_url: { url: base64Image, detail: "high" } } ] }
@@ -5520,7 +5525,7 @@
       // 🏆 대표님 라운지 포인트 & 등급 시스템 + 8대 게시판 제어
       // ==========================================
       const boardNotices = {
-          '전체': '건강한 조경 문화를 위해 상호 존중과 매너를 지켜주세요. 소통방에 게시글이나 정보를 작성하시면 +100P가 즉시 적립됩니다.',
+          '전체': '건강한 조경 문화를 위해 상호 존중과 매너를 지켜주세요.',
           '자유소통': '☕ <span class="text-amber-800 font-black">[자유 소통 · 일상방 안내]</span> 오늘 현장 날씨, 점심 메뉴, 작업 중 있었던 소소한 일상이나 조경인들의 이야기를 부담 없이 편하게 나누는 사랑방입니다.',
           '정보교환': '📢 <span class="text-[#15803D] font-black">[정보 교환 · 업체 공유 안내]</span> 타지역 현장에서 <strong>폐기물 처리할 곳, 인근 자재상·농원·중장비 업체</strong>를 급히 찾거나, <strong>수목 시세·신제품 장비 정보</strong>가 궁금할 때 편하게 묻고 답하는 공간입니다. 좋은 정보를 알고 계신 대표님들도 자유롭게 올려주세요!',
           '불량거래처': '<span class="text-red-600 font-black">🚨 [주의] 반드시 객관적 사실에 근거하여 작성해 주세요.</span> 허위 사실 유포 및 악의적 비방 시 발생하는 법적 책임(명예훼손 등)은 작성자 본인에게 있으며, 운영진은 분쟁에 개입하거나 책임지지 않습니다.',
@@ -5531,7 +5536,9 @@
           '견적단가': '📊 <span class="text-emerald-800 font-black">[실전 견적·단가 자문 안내]</span> 현장 여건을 모른 채 너무 낮게 견적을 넣어 손해를 보거나 공사를 놓치는 피해를 방지하기 위해 <strong>검증된 대표님들끼리만 적정 실행 단가를 자문하고 공유하는 공간</strong>입니다.'
       };
 
+      let LOUNGE_ACT = null; // 💰 [패치 #74] 서버가 알려 준 활동 포인트 { act, actTotal, actToday, attended }
       function getLoungePoints() {
+          if (LOUNGE_ACT && typeof LOUNGE_ACT.act === 'number') return LOUNGE_ACT.act; // 💰 [패치 #74]
           if (myCompanyProfile && typeof myCompanyProfile.points === 'number') return myCompanyProfile.points;
           const saved = localStorage.getItem('shinhwa_pro_points_' + (currentUserId || 'guest'));
           return saved ? parseInt(saved) : 1000;
@@ -5568,12 +5575,13 @@
           }
           const pts = getLoungePoints();
           ptsEl.innerText = pts.toLocaleString('ko-KR') + ' P';
+          const gradePts = (LOUNGE_ACT && typeof LOUNGE_ACT.actTotal === 'number') ? LOUNGE_ACT.actTotal : pts; // 💰 [패치 #74] 등급은 지금까지 모은 합계로
 
           if (gradeEl) {
-              if (pts >= 5000) {
+              if (gradePts >= 5000) {
                   gradeEl.innerText = '👑 마스터 대표님';
                   gradeEl.className = 'inline-block mt-1.5 text-[15px] bg-[#FDE047] text-[#151E2D] font-black px-2.5 py-1 rounded-lg whitespace-nowrap';
-              } else if (pts >= 2000) {
+              } else if (gradePts >= 2000) {
                   gradeEl.innerText = '🌲 명장 대표님';
                   gradeEl.className = 'inline-block mt-1.5 text-[15px] bg-[#84CC16] text-[#151E2D] font-black px-2.5 py-1 rounded-lg whitespace-nowrap';
               } else {
@@ -5584,8 +5592,9 @@
 
           const todayKey = seoulToday(); // 🔐 [패치 #35] 한국 날짜 기준
           const lastAttend = localStorage.getItem('shinhwa_attend_' + (currentUserId || 'guest'));
+          if (typeof actRenderExtra === 'function') actRenderExtra(); // 💰 [패치 #74]
           if (attendBtn) {
-              if (lastAttend === todayKey) {
+              if (lastAttend === todayKey || (LOUNGE_ACT && LOUNGE_ACT.attended)) {
                   attendBtn.innerHTML = '✓ 오늘 출석 완료 (+50P 적립됨)';
                   attendBtn.style.background = '#334155';
                   attendBtn.style.color = '#84CC16';
@@ -5621,13 +5630,15 @@
               return alert('오늘은 이미 출석체크 포인트를 받으셨습니다! 내일 또 방문해 주세요.');
           }
           showLoadingOverlay("출석 확인 중...");
-          const r = await requestPoints({ action: 'pts_attend' });
+          let r = await requestPoints({ action: 'pts_act_attend' }); // 💰 [패치 #74] 활동 포인트로 적립
+          if (r && r.msg === 'unknown') r = await requestPoints({ action: 'pts_attend' }); // 서버가 예전 버전일 때
           document.getElementById('loadingOverlay')?.remove();
           if (!r || !r.ok) return alert('출석체크 중 오류가 발생했습니다. 잠시 후 다시 눌러주세요.');
           localStorage.setItem(storageKey, r.attend || todayKey);
-          applyServerPoints(r.points);
+          applyServerPoints(r.points); actApply(r);
           if (r.already) return alert('오늘은 이미 출석체크 포인트를 받으셨습니다! 내일 또 방문해 주세요.');
-          alert('🎉 오늘의 소통방 출석체크 완료! +50 P가 적립되었습니다.');
+          if (r.capped) return alert('출석체크 완료!\n오늘 적립 한도(300P)를 모두 채워서 이번에는 포인트가 쌓이지 않았어요.');
+          alert('오늘의 소통방 출석체크 완료! 활동 포인트 +' + (r.added || 50) + 'P가 적립되었습니다.');
       }
 
       function filterBoard(category, btnElement) {
@@ -5658,7 +5669,7 @@
 
           const noticeEl = document.getElementById('boardNoticeText');
           if(noticeEl && boardNotices[category]) {
-              noticeEl.innerHTML = boardNotices[category];
+              noticeEl.innerHTML = boardNotices[category] + actNoticeLine(category); // 💰 [패치 #74]
           }
 
           const items = document.querySelectorAll('.board-feed-item');
@@ -5982,11 +5993,12 @@
               let pk = null;
               try { pk = (await postRes.clone().json()).name; if (pk) requestPush({ action: 'push_post', postKey: pk }); } catch (e) {} // 🔔 [패치 #33]
               boardWriteImages = [];
-              const pr = pk ? await requestPoints({ action: 'pts_post', postKey: pk }) : null; // 🔐 [패치 #35] 서버가 확인 후 적립
-              if (pr && pr.ok) applyServerPoints(pr.points);
-              if (pr && pr.ok && pr.added) alert("🎉 게시글이 등록되어 활동 포인트 +100 P가 적립되었습니다!");
-              else if (pr && pr.ok && pr.capped) alert("✅ 게시글이 등록되었습니다.\n(글쓰기 포인트는 하루 5개 글까지 적립됩니다)");
-              else alert("✅ 게시글이 등록되었습니다.");
+              let pr = pk ? await requestPoints({ action: 'pts_act_post', postKey: pk }) : null; // 💰 [패치 #74] 활동 포인트 (100P · 정보 교환·노하우 200P · 하루 300P)
+              if (pr && pr.msg === 'unknown') pr = await requestPoints({ action: 'pts_post', postKey: pk }); // 서버가 예전 버전일 때
+              if (pr && pr.ok) { applyServerPoints(pr.points); actApply(pr); }
+              if (pr && pr.ok && pr.added) alert(`게시글이 등록되어 활동 포인트 +${pr.added}P가 적립되었습니다.` + (typeof pr.actToday === 'number' ? `\n(오늘 ${pr.actToday} / 300P · 글이 삭제되면 적립도 취소돼요)` : ''));
+              else if (pr && pr.ok && pr.capped) alert("게시글이 등록되었습니다.\n(오늘 적립 한도 300P를 모두 채워서 이번 글은 포인트가 쌓이지 않았어요)");
+              else alert("게시글이 등록되었습니다.");
               closeBoardWrite();
               await loadCommunityPosts();
               
@@ -8375,6 +8387,7 @@ ${AI_COMMON_RULES}
       const btn = document.getElementById('blogMakeBtn'); if (!btn) return;
       const ok = !!data && !data.isQuote && viewMode !== 'client_shared';
       BL.pending = ok ? data : null;
+      try { BL.docId = ok && generatedShareUrl ? (new URL(generatedShareUrl).searchParams.get('id') || '') : ''; } catch (e) { BL.docId = ''; } // 💰 [패치 #74]
       btn.classList.toggle('hidden', !ok); btn.style.display = ok ? 'flex' : '';
     }
     function openBlogMaker() {
@@ -8477,6 +8490,7 @@ ${AI_COMMON_RULES}
 
     async function blogGenerate() {
       if (BL.loading) return;
+      if (!(await ptBlogCharge())) return; // 💰 [패치 #74] 일지당 1번 1,000P (차감 꺼져 있으면 무료)
       const s = BL.src || {};
       const cnt = k => (BL.secs.find(g => g.key === k) || { imgs: [] }).imgs.length;
       const facts = [
@@ -8785,7 +8799,8 @@ ${AI_COMMON_RULES}
       const logs = d.logs || [];
       document.getElementById('ptLogList').innerHTML = logs.length ? logs.map(l => {
         const a = Number(l.amt) || 0;
-        return `<div class="pv-li"><div class="min-w-0"><div style="font-size:17px;font-weight:800;color:#0F172A;">${ptEsc(l.memo || '포인트')}</div><div class="pv-sub">${ptDate(l.at)}</div></div><b style="font-size:18px;font-weight:900;white-space:nowrap;color:${a > 0 ? '#3F6212' : '#0F172A'};">${a > 0 ? '+' : ''}${ptNum(a)}P</b></div>`;
+        const amtHtml = l.type === 'act' ? '<b style="font-size:15px;font-weight:900;white-space:nowrap;color:#64748B;">활동</b>' : `<b style="font-size:18px;font-weight:900;white-space:nowrap;color:${a > 0 ? '#3F6212' : '#0F172A'};">${a > 0 ? '+' : ''}${ptNum(a)}P</b>`; // 💰 [패치 #74]
+        return `<div class="pv-li"><div class="min-w-0"><div style="font-size:17px;font-weight:800;color:#0F172A;">${ptEsc(l.memo || '포인트')}</div><div class="pv-sub">${ptDate(l.at)}</div></div>${amtHtml}</div>`;
       }).join('') : '<div class="pv-sub" style="padding:10px 0;">아직 내역이 없어요.</div>';
     }
     function ptOpenCharge() {
@@ -8873,7 +8888,16 @@ ${AI_COMMON_RULES}
       try { const r = await fetch(getAuthUrl(`${SETTINGS_URL}/pointsLive.json?t=${Date.now()}`)); if (r.ok) { PT.live = (await r.json()) === true; PT.liveAt = Date.now(); } } catch (e) {}
       return PT.live;
     }
-    function ptBoot() { ptChipRender(); ptLiveGet().then(ptBtnCost); }
+    function ptBoot() {
+      ptChipRender(); ptLiveGet().then(ptBtnCost);
+      // 💰 [패치 #74] 로그인하면 지갑을 한 번 불러와 포인트 숫자 · 활동 포인트를 맞춤
+      requestPoints({ action: 'pts_wallet' }).then(r => {
+        if (!r || !r.ok) return;
+        if (myCompanyProfile) { myCompanyProfile.usable = r.usable; try { localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile)); } catch (e) {} }
+        if (typeof r.live === 'boolean') { PT.live = r.live; PT.liveAt = Date.now(); ptBtnCost(); }
+        ptChipRender(); if (r.actState) actApply(r.actState);
+      });
+    }
     function ptNameKey(v) { return String(v || '').replace(/\s+/g, '').toLowerCase(); }
     // 수정 발행: 고객 이름이 그대로면 무료, 바뀌면 새 발행 요금 (견적서·일지 같음)
     function ptPriceFor(isQuote, clientName) {
@@ -8963,6 +8987,110 @@ ${AI_COMMON_RULES}
       if (mode === 'relink') { alert(r && r.msg === 'no-record' ? '예전 문서라 고객용 링크를 새로 만들 수 없어요. 내용 보기는 그대로 할 수 있어요.' : '고객용 링크를 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'); return false; }
       const m = { 'not-owner': '다른 업체의 문서라 저장할 수 없어요.', inactive: '승인된 업체만 발행할 수 있어요.', 'save-fail': '저장에 실패했어요. 포인트는 빠지지 않았어요. 잠시 후 다시 눌러 주세요.', 'too-big': '내용이 너무 커서 저장하지 못했어요. 사진 수를 줄여 주세요.', busy: '서버가 바빠요. 잠시 후 다시 눌러 주세요.', login: '로그인이 풀렸어요. 앱을 다시 열어 주세요.' };
       alert(m[r && r.msg] || "인터넷 연결이 불안정해 저장하지 못했습니다. 다시 시도해 주세요.\n(계속 안 되면 [1:1 문의]로 알려주세요)");
+      return false;
+    }
+  </script>
+  <!-- 🔐 [패치 #74] 30분 잠금 화면 (앱을 켜 둔 채 30분 넘게 떠나 있다 돌아오면) · 화면을 새로 열지 않고 덮기만 → 쓰던 내용 그대로 -->
+  <div id="appLock" class="hidden fixed inset-0 z-[99990] flex items-start justify-center overflow-y-auto" style="background:#151E2D;">
+    <div class="w-full max-w-sm px-5 pt-16 pb-10 flex flex-col items-center gap-3.5 text-center" style="word-break:keep-all;">
+      <div style="width:72px;height:72px;border-radius:22px;background:#84CC16;display:flex;align-items:center;justify-content:center;"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#14261E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
+      <div style="color:#fff;font-size:23px;font-weight:900;">잠시 잠가 두었어요</div>
+      <div style="color:#CBD5E1;font-size:16.5px;font-weight:700;line-height:1.55;">30분 넘게 앱을 쓰지 않아서 잠갔어요.<br>쓰던 내용은 그대로 있어요.</div>
+      <div class="w-full text-left mt-2">
+        <div id="appLockWho" style="color:#94A3B8;font-size:16px;font-weight:800;margin:0 0 6px 4px;"></div>
+        <input type="password" id="appLockPw" autocomplete="current-password" placeholder="비밀번호" onkeydown="if(event.key==='Enter') appUnlock()" style="width:100%;height:58px;border-radius:14px;background:#fff;border:2px solid #84CC16;padding:0 16px;font-size:18px;font-weight:800;color:#0F172A;outline:none;">
+      </div>
+      <button type="button" id="appLockBtn" onclick="appUnlock()" style="width:100%;height:60px;border-radius:18px;background:#84CC16;color:#14261E;font-size:19px;font-weight:900;border:0;">잠금 풀기</button>
+      <button type="button" onclick="appLockOther()" style="min-height:48px;color:#E2E8F0;font-size:16px;font-weight:800;text-decoration:underline;background:transparent;border:0;">다른 아이디로 로그인</button>
+    </div>
+  </div>
+  <script>
+    // 🔐 [패치 #74] 30분 잠금
+    const APP_LOCK = { minutes: 30, hiddenAt: 0, busy: false };
+    function appLockActive() { const a = document.getElementById('authView'); return !!currentUserId && a && a.classList.contains('hidden'); }
+    function appLockShow() {
+      if (!appLockActive()) return;
+      try { if (document.activeElement) document.activeElement.blur(); } catch (e) {}
+      document.getElementById('appLockWho').textContent = ((myCompanyProfile && myCompanyProfile.name) ? myCompanyProfile.name + ' · ' : '') + currentUserId;
+      document.getElementById('appLockPw').value = '';
+      document.getElementById('appLock').classList.remove('hidden');
+    }
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) { if (appLockActive()) APP_LOCK.hiddenAt = Date.now(); return; }
+      if (APP_LOCK.hiddenAt && Date.now() - APP_LOCK.hiddenAt >= APP_LOCK.minutes * 60 * 1000) appLockShow();
+      APP_LOCK.hiddenAt = 0;
+    });
+    async function appUnlock() {
+      if (APP_LOCK.busy) return;
+      const pw = document.getElementById('appLockPw').value;
+      if (!pw) return alert('비밀번호를 입력해 주세요.');
+      const btn = document.getElementById('appLockBtn'); APP_LOCK.busy = true; btn.textContent = '확인 중...';
+      try {
+        const res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: currentUserId + '@jogyeongnote.com', password: pw, returnSecureToken: true }) });
+        const d = await res.json();
+        if (d.error || !d.idToken) { alert('비밀번호가 맞지 않아요. 다시 입력해 주세요.'); return; }
+        currentIdToken = d.idToken; startTokenAutoRefresh(d.refreshToken); // 새 로그인 열쇠로 계속 사용 (휴대폰에는 저장하지 않음)
+        document.getElementById('appLockPw').value = '';
+        document.getElementById('appLock').classList.add('hidden');
+      } catch (e) { alert('인터넷 연결을 확인하고 다시 눌러 주세요.'); }
+      finally { APP_LOCK.busy = false; btn.textContent = '잠금 풀기'; }
+    }
+    function appLockOther() {
+      if (!confirm('다른 아이디로 로그인할까요?\n저장하지 않은 내용은 사라져요.')) return;
+      ['shinhwa_pro_auto_login', 'shinhwa_pro_session', 'shinhwa_pro_logged_in_pw'].forEach(k => { try { localStorage.removeItem(k); } catch (e) {} });
+      location.reload();
+    }
+
+    // 💰 [패치 #74] 소통방 활동 포인트
+    function actApply(r) {
+      if (!r || typeof r.act !== 'number') return;
+      LOUNGE_ACT = { act: r.act, actTotal: typeof r.actTotal === 'number' ? r.actTotal : r.act, actToday: Number(r.actToday) || 0, attended: !!r.attended };
+      renderLoungePointCard();
+    }
+    function actRenderExtra() {
+      const line = document.getElementById('loungeActLine'), btn = document.getElementById('btnActConvert');
+      if (!line || !btn) return;
+      const a = LOUNGE_ACT;
+      if (!a) { line.textContent = '3,000P가 모이면 쓸 수 있는 포인트로 바꿀 수 있어요.'; btn.classList.add('hidden'); return; }
+      line.textContent = `오늘 적립 ${a.actToday.toLocaleString('ko-KR')} / 300P · ` + (a.act >= 3000 ? '지금 쓸 수 있는 포인트로 바꿀 수 있어요.' : `3,000P까지 ${(3000 - a.act).toLocaleString('ko-KR')}P 남았어요.`);
+      btn.classList.toggle('hidden', a.act < 3000);
+      btn.textContent = `쓸 수 있는 포인트로 바꾸기 (${a.act.toLocaleString('ko-KR')}P)`;
+    }
+    async function actConvert() {
+      const a = LOUNGE_ACT; if (!a || a.act < 3000) return;
+      if (!confirm(`활동 포인트 ${a.act.toLocaleString('ko-KR')}P를 쓸 수 있는 포인트로 바꿀까요?\n\n바꾼 포인트는 발행·블로그에 쓸 수 있고, 기한이 없어요. (환불은 되지 않아요)`)) return;
+      showLoadingOverlay('포인트 바꾸는 중...');
+      const r = await requestPoints({ action: 'pts_act_convert' });
+      document.getElementById('loadingOverlay')?.remove();
+      if (!r || !r.ok) return alert(r && r.msg === 'not-enough' ? '활동 포인트가 3,000P 이상일 때 바꿀 수 있어요.' : '바꾸지 못했어요. 잠시 후 다시 눌러 주세요.');
+      if (myCompanyProfile && typeof r.usable === 'number') { myCompanyProfile.usable = r.usable; try { localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile)); } catch (e) {} ptChipRender(); }
+      if (r.actState) actApply(r.actState);
+      alert(`${(r.converted || 0).toLocaleString('ko-KR')}P를 쓸 수 있는 포인트로 바꿨어요.\n지금 쓸 수 있는 포인트: ${(r.usable || 0).toLocaleString('ko-KR')}P`);
+    }
+    function actNoticeLine(cat) {
+      if (cat === '불량거래처') return '';
+      const t = cat === '전체' ? '글을 올리면 100P 적립 (정보 교환·실무 노하우는 200P) · 하루 최대 300P · 3,000P가 모이면 쓸 수 있는 포인트로 바꿀 수 있어요'
+        : (cat === '정보교환' || cat === '노하우') ? '이 게시판에 글을 올리면 200P 적립 · 하루 최대 300P · 3,000P가 모이면 쓸 수 있는 포인트로 바꿀 수 있어요'
+        : '글을 올리면 100P 적립 · 하루 최대 300P · 3,000P가 모이면 쓸 수 있는 포인트로 바꿀 수 있어요';
+      return `<span style="display:block;margin-top:8px;padding:8px 10px;border-left:4px solid #84CC16;background:#F4FBEA;border-radius:8px;color:#3F6212;font-weight:900;">${t}</span>`;
+    }
+
+    // 💰 [패치 #74] AI 블로그 글: 일지당 1번 1,000P (서버가 확인 · 차감 꺼져 있거나 이미 낸 일지면 창 없이 진행)
+    async function ptBlogCharge() {
+      const live = await ptLiveGet();
+      if (!live || !BL.docId) return true;
+      const c = await requestPoints({ action: 'pts_blog', docId: BL.docId, mode: 'check' });
+      if (c && !c.ok && c.msg === 'unknown') return true; // 서버가 예전 버전
+      if (!c || !c.ok) { alert('포인트를 확인하지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.'); return false; }
+      if (c.price === 0) return true;
+      if (c.usable < c.price) { ptShortSheet(c.price, c.usable); return false; }
+      const src = BL.src || {};
+      const ok = await ptSheetOpen({ title: 'AI 블로그 글을 만들까요?', sub: [src.c, src.r].filter(Boolean).join(' · '), rows: [['사용할 포인트', ptNum(c.price) + 'P'], ['지금 포인트', ptNum(c.usable) + 'P'], ['만든 뒤 남는 포인트', ptNum(c.usable - c.price) + 'P', '#3F6212']], ok: '만들기 (' + ptNum(c.price) + 'P)', no: '취소' });
+      if (!ok) return false;
+      const r = await requestPoints({ action: 'pts_blog', docId: BL.docId, mode: 'pay', label: String(src.c || '') });
+      if (r && r.ok) { if (myCompanyProfile && typeof r.usable === 'number') { myCompanyProfile.usable = r.usable; ptChipRender(); } return true; }
+      if (r && r.msg === 'short') { ptShortSheet(r.need, r.usable); return false; }
+      alert('포인트를 차감하지 못해서 블로그 글을 만들지 않았어요. 잠시 후 다시 눌러 주세요.');
       return false;
     }
   </script>

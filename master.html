@@ -781,6 +781,7 @@
     async function adminDeletePost(key) {
         const p = pmPosts.find(x => x._key === key); if (!p) return;
         if (!confirm(`[${p.title}]\n이 게시글을 삭제하시겠습니까? 복구할 수 없습니다.`)) return;
+        if (p.authorId) adminPush({ action: 'admin_act_revoke', authorId: p.authorId, postKey: key }); // 💰 [패치 #74] 이 글로 받은 활동 포인트 회수
         try { const r = await fetch(getAuthUrl(`${COMMUNITY_URL}/${key}.json`), { method: 'DELETE' }); if (!r.ok) throw new Error(); fetch(getAuthUrl(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_comments/${key}.json`), { method: 'DELETE' }).catch(() => {}); /* 💬 [패치 #40] 글의 댓글도 삭제 */ delete pmComments[key]; pmPosts = pmPosts.filter(x => x._key !== key); renderPostManager(); } catch (e) { alert('삭제 중 오류가 발생했습니다.'); }
     }
     async function adminTogglePostStatus(key) {
