@@ -1194,7 +1194,10 @@
 조경업체 대표님들이 현장에서 한눈에 파악하기 좋도록 군더더기 없이 핵심만 굵직하고 명확하게 답변하세요.
 - 식당/맛집이나 철물점/건재상/농약사 등 주변 장소를 물어보면 [${ctx.locName}] 인근 기준으로 추천해 주고, 하단의 '네이버 지도 바로가기 버튼'을 누르면 가장 가까운 매장의 위치와 전화번호가 바로 나온다고 안내하세요.
 - 날씨나 작업 가능 여부를 물어보면 현재 기상 상태([${ctx.tempText}])를 바탕으로 오후 작업(약제 살포, 시멘트/몰탈 양생, 전지 등) 조언을 해주세요.
-- 조경 수목, 병해충, 약제 희석 배수, 시공/단가 질문을 하면 30년 경력 조경 전문가 수준으로 정확히 답변하세요.`;
+- 조경 수목, 병해충, 시공/단가 질문에는 숙련된 조경 전문가처럼 정확하고 실용적으로 답하세요. 경력 연수를 스스로 내세우지 마세요.
+- (패치 #59 안전) 약제 희석 배수·혼용·살포량을 물으면 일반적인 예시만 들고, 반드시 "실제 희석 배수와 혼용 가능 여부는 제품 라벨(포장지)의 사용법을 따르시고, 애매하면 농약사나 농업기술센터에 확인하세요"라고 덧붙이세요. 확실하지 않은 수치는 지어내지 말고 모른다고 하세요.
+- (패치 #59 안전) 단가는 지역·현장마다 다르므로 참고용 범위라고 밝히세요.
+- (패치 #59) 이 앱은 사진을 직접 보여줄 수 없지만, 답 아래에 네이버 사진 검색 버튼을 붙여 줍니다. 사용자가 사진·이미지·생김새를 보여 달라고 하거나, 답의 중심이 특정 수목·병해충·자재·장비일 때는 "이미지를 지원하지 않는다"고 말하지 말고 "아래 [사진 보기] 버튼을 누르시면 사진을 보실 수 있습니다"라고 안내한 뒤, 답변 맨 마지막 줄에 [사진검색: 검색어] 형식으로 검색어 하나만 적으세요(예: [사진검색: 소나무 응애 피해]). 그 외에는 이 줄을 쓰지 마세요.`;
 
           aiChatHistory.push({ role: "user", content: msg });
           if (aiChatHistory.length > 6) aiChatHistory = aiChatHistory.slice(-6);
@@ -1218,6 +1221,9 @@
               const data = await response.json();
               if (data.error) throw new Error(data.error.message);
               let reply = data.choices[0].message.content;
+              // 📷 [패치 #59] AI가 붙인 [사진검색: 검색어] 줄을 떼어 내고 → 네이버 사진 검색 버튼으로 보여 줌
+              let aiImgQuery = '';
+              reply = String(reply || '').replace(/\[\s*사진\s*검색\s*[:：]\s*([^\]\n]{1,40})\]/g, (m, q) => { if (!aiImgQuery) aiImgQuery = q.trim(); return ''; }).trim();
               aiChatHistory.push({ role: "assistant", content: reply });
 
               let formattedReply = reply.replace(/\*\*(.*?)\*\*/g, '<strong class="text-[#151E2D] font-black underline decoration-[#84CC16] decoration-2 underline-offset-2">$1</strong>').replace(/\n/g, '<br>');
@@ -1243,6 +1249,15 @@
                   `;
               }
 
+              if (aiImgQuery) { // 📷 [패치 #59]
+                  mapButtonHtml += `
+                      <div class="mt-3.5 pt-3 border-t border-[#E2E8F0]">
+                          <a href="https://m.search.naver.com/search.naver?where=m_image&query=${encodeURIComponent(aiImgQuery)}" target="_blank" rel="noopener" class="w-full min-h-[52px] py-3 bg-[#84CC16] hover:bg-[#9BE32D] text-[#151E2D] rounded-[12px] text-[16px] font-black flex items-center justify-center gap-1.5 shadow-sm transition-colors">
+                              <i data-lucide="image" class="w-5 h-5"></i> 사진 보기 · ${escHtml(aiImgQuery)}
+                          </a>
+                      </div>
+                  `;
+              }
               const safeSpeechText = reply.replace(/[*#\-`]/g, '').replace(/'/g, '').replace(/"/g, '').replace(/\n/g, ' ');
 
               document.getElementById(loadingId)?.remove();
@@ -1300,22 +1315,25 @@
 
           aiSpeechRec = new SpeechRecognition();
           aiSpeechRec.lang = 'ko-KR';
-          aiSpeechRec.interimResults = false;
+          aiSpeechRec.interimResults = true; // 🎙️ [패치 #59] 말하는 동안 글자가 바로 보이게 (원래 false: 말이 끝나야 글자가 나옴)
+          let aiVoiceSent = false; // [패치 #59] 한 번만 전송
           aiSpeechRec.maxAlternatives = 1;
 
           aiSpeechRec.onstart = () => {
               isAiListening = true;
               btn.className = "w-[60px] h-[56px] bg-[#84CC16] text-[#151E2D] rounded-[18px] font-black shadow-md animate-pulse shrink-0 flex flex-col items-center justify-center gap-0.5";
               textEl.innerText = "듣는중..";
+              input.value = ''; // [패치 #59]
               input.placeholder = "지금 말씀하세요 (말씀이 끝나면 자동 전송됩니다)";
           };
 
           aiSpeechRec.onresult = (event) => {
-              const transcript = event.results[0][0].transcript;
-              if (transcript && transcript.trim() !== '') {
-                  input.value = transcript.trim();
-                  setTimeout(() => sendAiChatMessage(), 200);
-              }
+              // 🎙️ [패치 #59] 들리는 대로 입력칸에 바로 보여 주고, 말이 끝나면(isFinal) 자동 전송
+              let text = '', done = false;
+              for (let i = 0; i < event.results.length; i++) { text += event.results[i][0].transcript; if (event.results[i].isFinal) done = true; }
+              text = text.trim();
+              if (text) input.value = text;
+              if (done && text && !aiVoiceSent) { aiVoiceSent = true; setTimeout(() => sendAiChatMessage(), 200); }
           };
 
           aiSpeechRec.onerror = (event) => {
@@ -1325,6 +1343,7 @@
           };
 
           aiSpeechRec.onend = () => {
+              if (!aiVoiceSent && input.value.trim()) { aiVoiceSent = true; setTimeout(() => sendAiChatMessage(), 200); } // [패치 #59]
               isAiListening = false;
               btn.className = "w-[60px] h-[56px] bg-[#151E2D] hover:bg-black text-[#84CC16] rounded-[18px] font-black shadow-md active:scale-95 transition-all shrink-0 flex flex-col items-center justify-center gap-0.5";
               textEl.innerText = "음성";
@@ -2330,22 +2349,23 @@
 
         // 1번(수목)과 2번(병해충) 각각의 시스템 최면(Role)을 분리하여 AI의 안전 필터 우회
         const systemRole = type === 'plant'
-            ? "당신은 추측성 단어를 절대 쓰지 않고, 언제나 확신에 찬 단정형 어조('~입니다', '~로 판정합니다')로 명확한 결론을 내리는 30년 경력의 조경수목 감정평가사입니다."
-            : "당신은 30년 경력의 현장 조경 방제 총괄 반장입니다. AI의 안전 가이드라인에 따른 회피성 발언('추정됩니다', '가능성이 있습니다', '전문가와 상의하세요', '정확한 진단은 어렵지만')을 절대 금지합니다. 사진 속 단서만으로 현장에서 가장 유력한 1순위 병해충을 무조건 확정하여 단정형 어조('~입니다', '~하십시오')로만 작업 지시를 내리십시오.";
+            ? "당신은 숙련된 조경수목 감정 전문가입니다. 군더더기 없이 명확한 어조('~입니다')로 1순위 수종을 알려 주되, 사진만으로 확실하지 않으면 확신도에 솔직하게 적습니다."
+            : "당신은 숙련된 현장 조경 방제 반장입니다. 사진 속 단서로 가장 유력한 1순위 병해충을 명확한 어조로 알려 주되, 사진만으로 확실하지 않으면 확신도에 솔직하게 적습니다. 약제 이름·희석 배수를 지어내지 않고, 실제 약제와 희석 배수는 제품 라벨과 농약사 확인을 따르도록 안내합니다."; // 🛡️ [패치 #59] 틀린 진단을 '확정'해 약제를 잘못 쓰는 일을 막음 (원래: 단정 강요·확인 권유 금지·약제명 지시)
 
         const promptText = type === 'plant' 
-            ? `사진 속 잎의 배열, 거치(톱니), 수피, 꽃과 열매의 형태를 정밀 분석해서 한국 조경 실무 기준으로 가장 확실한 1순위 수종을 단정 지어 알려줘. ('추정됩니다', '같습니다' 절대 사용 금지)
+            ? `사진 속 잎의 배열, 거치(톱니), 수피, 꽃과 열매의 형태를 정밀 분석해서 한국 조경 실무 기준으로 가장 유력한 1순위 수종을 명확하게 알려줘. 사진만으로 확실하지 않으면 확신도에 솔직하게 적어.
 
-📌 최종 판정 수종: [확정 수목명 (과명)]
+📌 최종 판정 수종: [수목명 (과명)] · 확신도: [높음/보통/낮음]
 🔍 핵심 식별 근거: [잎 모양, 수피, 꽃/열매 등 사진에서 확인된 결정적 특징 2~3가지 명확히 서술]
 💡 혼동 주의 수종: [현장에서 헷갈리기 쉬운 유사 수종 1가지와 구별 포인트 한 줄]
 ✂️ 실무 관리 핵심: [전지(가지치기) 적기, 내한성, 식재 및 관리 시 주의사항 명확히 지시]`
-            : `사진 속 잎의 반점, 변색, 갈변, 분비물(그을음, 깍지 등) 또는 벌레의 외형을 보고 한국 조경 현장에서 발생하는 가장 확실한 1순위 병해 또는 충해를 무조건 단정 지어 판독해. ('~로 보입니다', '가능성이 있습니다', '추정됩니다' 같은 자신 없는 단어 절대 사용 금지. 무조건 '~입니다'로 끝낼 것)
+            : `사진 속 잎의 반점, 변색, 갈변, 분비물(그을음, 깍지 등) 또는 벌레의 외형을 보고 한국 조경 현장에서 발생하는 가장 유력한 1순위 병해 또는 충해를 명확하게 판독해. 사진만으로 확실하지 않으면 확신도에 솔직하게 적고, 약제 이름·희석 배수는 지어내지 마.
 
-🚨 최종 판독 결과: [확정 병해명 또는 해충명 (예: 소나무 응애 피해, 철쭉 방패벌레, 회양목 명나방, 탄저병 등 1순위 확정)]
+🚨 최종 판독 결과: [병해명 또는 해충명 (예: 소나무 응애 피해, 철쭉 방패벌레, 회양목 명나방, 탄저병 등 1순위)] · 확신도: [높음/보통/낮음]
 🔍 육안 판독 근거: [사진에서 포착된 변색 형태, 식흔(갉아먹은 흔적), 해충 외형 등 결정적 단서 명확히 서술]
 💡 유사 피해 구별법: [현장에서 헷갈리기 쉬운 다른 병해충 또는 생리장해(건조/약해)와의 차이점 한 줄]
-🔫 즉각 방제 지침: [살충제(예: 스미치온, 코니도 등 실무 대표 약제 계열) 또는 살균제(예: 다이센엠, 톱신엠 등) 중 적용할 약제 계통과 살포 요령, 피해 가지 전정 등 현장 조치 지시]`;
+🔫 즉각 방제 지침: [적용할 약제 계통(예: 응애 전용 살비제, 살균제 등)과 살포 시기·요령, 피해 가지 전정 등 현장 조치]
+※ 확인할 점: [실제 약제와 희석 배수는 그 수목·병해충에 등록된 제품의 라벨(포장지)을 따르고, 확신도가 보통·낮음이면 농약사나 나무병원에 사진을 보여 확인하라는 안내 한 줄]`; // 🛡️ [패치 #59]
 
         try {
             const response = await fetch(GOOGLE_PROXY_URL, {
@@ -4514,7 +4534,7 @@
         const GOOGLE_PROXY_URL = "https://script.google.com/macros/s/AKfycbysZFaBJt9Iu964hP9rJVjmYHDMMo_TQAocjih4h8q0_im414WA6-23LS6Wm4xQvTJRQw/exec";
 
         // 조경업자에게 꼭 필요한 정보만 뽑아내는 강력한 프롬프트
-        const promptText = `너는 한국의 30년 차 조경 전문가이자 식물 백과사전이야. 사용자가 '${query}'에 대해 검색했어. 조경 현장에서 실무자가 참고하기 좋도록 아래 4가지 항목으로 나누어서 전문적이고 명확하게 설명해줘.
+        const promptText = `너는 한국의 숙련된 조경 전문가이자 식물 백과사전이야. 확실하지 않은 내용은 지어내지 마. 사용자가 '${query}'에 대해 검색했어. 조경 현장에서 실무자가 참고하기 좋도록 아래 4가지 항목으로 나누어서 전문적이고 명확하게 설명해줘.
         1. 🌿 기본 정보 (학명, 과명, 개화 시기 등)
         2. 🌳 형태 및 특징 (수형, 잎, 꽃의 특징)
         3. ❄️ 생육 환경 및 월동 (내한성, 양수/음수 여부, 적합한 토양)
@@ -6038,7 +6058,7 @@
         </div>
         <div class="flex flex-col items-center gap-3 pt-1">
           <div id="voiceMicWrap" class="w-[132px] h-[132px] rounded-full bg-[#84CC16]/20 flex items-center justify-center">
-            <div id="voiceMicDot" class="w-[104px] h-[104px] rounded-full bg-[#84CC16] flex items-center justify-center shadow-[0_0_40px_rgba(132,204,22,0.55)]">
+            <div id="voiceMicDot" onclick="voiceMicTap()" role="button" aria-label="이어서 말하기" class="w-[104px] h-[104px] rounded-full bg-[#84CC16] flex items-center justify-center shadow-[0_0_40px_rgba(132,204,22,0.55)] cursor-pointer"><!-- 🎤 [패치 #59] 멈췄을 때 누르면 이어서 듣기 -->
               <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#151E2D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10v1a7 7 0 0 0 14 0v-1"></path><path d="M12 18v4"></path></svg>
             </div>
           </div>
@@ -6126,7 +6146,7 @@
     //   음성 인식이 안 되는 곳(카카오톡 안 화면 등)은 글자 칸을 열어 키보드 마이크로 말하게 안내합니다.
     // =====================================================================
     const VOICE_MAX_SEC = 180, VOICE_MAX_CHARS = 2000;
-    const VX = { rec: null, active: false, finals: '', interim: '', startAt: 0, timer: null, onDone: null, fallback: false, ignorePop: false, busy: false };
+    const VX = { rec: null, active: false, finals: '', interim: '', startAt: 0, timer: null, onDone: null, fallback: false, ignorePop: false, busy: false, single: false, paused: false };
     function voiceSupported() { return !!(window.SpeechRecognition || window.webkitSpeechRecognition); }
     // 🎤 [패치 #53] 카카오톡·네이버 앱 등 '앱 안의 브라우저'는 마이크 허용을 기억하지 못해서, 말을 멈출 때마다(듣기 재시작)
     //   "마이크를 사용하시겠습니까?" 창이 계속 뜸 → 이런 곳에서는 바로 듣기 대신 키보드 마이크로 받아 적기 + [인터넷 앱으로 열기] 안내
@@ -6156,7 +6176,7 @@
     }
     function voiceStartRec() {
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition; if (!SR) return voiceUseFallback();
-      const r = new SR(); r.lang = 'ko-KR'; r.interimResults = true; r.continuous = false; r.maxAlternatives = 1;
+      const r = new SR(); r.lang = 'ko-KR'; r.interimResults = true; r.continuous = VX.single; r.maxAlternatives = 1; // 🎤 [패치 #59] 앱 안 브라우저는 한 번 켜서 길게 듣기(다시 켤 때마다 마이크 허용 창이 뜨는 문제)
       r.onresult = (e) => {
         let interim = '';
         for (let i = e.resultIndex; i < e.results.length; i++) {
@@ -6168,11 +6188,13 @@
         voiceRender();
       };
       r.onerror = (e) => {
+        if (VX.single && e.error !== 'no-speech' && e.error !== 'aborted' && e.error !== 'not-allowed' && e.error !== 'service-not-allowed') { VX.active = false; voiceUseFallback(); return; } // [패치 #59] 앱 안 브라우저에서 듣기가 안 되면 키보드로
         if (e.error === 'not-allowed' || e.error === 'service-not-allowed') { VX.active = false; voiceUseFallback('마이크 사용이 막혀 있습니다. 주소창 옆 자물쇠(또는 휴대폰 설정)에서 마이크를 [허용]해 주세요.\n지금은 키보드의 마이크 버튼을 누르고 말씀하셔도 됩니다.'); }
       };
       r.onend = () => {
         if (VX.interim) { VX.finals = (VX.finals ? VX.finals + ' ' : '') + VX.interim; VX.interim = ''; voiceRender(); }
-        if (VX.active && VX.rec === r) setTimeout(() => { if (VX.active && VX.rec === r) voiceStartRec(); }, 120); // 멈춰도 계속 듣기
+        if (VX.single && VX.active && VX.rec === r) { voicePause(); return; } // [패치 #59] 앱 안 브라우저: 멈추면 '마이크 눌러 이어서 말하기'
+        if (VX.active && VX.rec === r) setTimeout(() => { if (VX.active && VX.rec === r) voiceStartRec(); }, 60); // 멈춰도 계속 듣기 ([패치 #59] 120→60ms: 다시 켜는 사이 앞말이 잘리는 것 줄임)
       };
       VX.rec = r;
       try { r.start(); } catch (e) { voiceUseFallback(); }
@@ -6186,16 +6208,34 @@
       document.getElementById('voiceGuide').innerText = msg || '이 화면에서는 바로 듣기가 안 됩니다.\n아래 흰 칸을 누르고, 키보드의 마이크 버튼을 눌러 말씀하세요.';
       document.getElementById('voiceGuide').classList.remove('hidden'); // 🎤 [패치 #45] 안내판 모드에서도 안내 문구는 보이게
       document.getElementById('voiceMicDot').classList.remove('animate-pulse');
-      setTimeout(() => { try { ta.focus(); } catch (e) {} }, 200);
+      // [패치 #59] 키보드를 자동으로 띄우지 않음 (고객 화면에서 자판이 가려 불편) → 흰 칸을 누르면 그때 키보드
+    }
+    // 🎤 [패치 #59] 앱 안 브라우저: 말이 멈추면 잠깐 쉬고, 가운데 마이크를 누르면 받아 적은 글 뒤에 이어서 듣기
+    function voicePause() {
+      VX.active = false; VX.paused = true; clearInterval(VX.timer); VX.rec = null;
+      document.getElementById('voiceMicDot').classList.remove('animate-pulse');
+      document.getElementById('voiceStatus').innerText = '잠깐 멈췄어요';
+      document.getElementById('voiceGuide').innerText = '더 말씀하시려면 가운데 마이크를 누르세요.\n다 말씀하셨으면 [말하기 끝]을 누르세요.';
+      document.getElementById('voiceGuide').classList.remove('hidden');
+      document.getElementById('voiceMicWrap').classList.remove('hidden');
+    }
+    function voiceMicTap() {
+      if (VX.fallback || VX.busy) return;
+      if (VX.active) return; // 듣는 중에는 그대로
+      VX.paused = false; VX.active = true; VX.startAt = Date.now();
+      document.getElementById('voiceMicDot').classList.add('animate-pulse');
+      document.getElementById('voiceGuide').innerText = '이어서 말씀하세요.';
+      clearInterval(VX.timer); VX.timer = setInterval(() => { voiceRender(); if (VX.active && Date.now() - VX.startAt > VOICE_MAX_SEC * 1000) voiceFinish(); }, 500);
+      voiceRender(); voiceStartRec();
     }
     function voiceBegin() {
-      VX.finals = ''; VX.interim = ''; VX.fallback = false;
+      VX.finals = ''; VX.interim = ''; VX.fallback = false; VX.single = false; VX.paused = false;
       const ta = document.getElementById('voiceText'); ta.value = ''; ta.readOnly = true;
       document.getElementById('voiceTextLabel').innerText = '받아 적는 중';
       document.getElementById('voiceGuide').innerText = '천천히, 생각나는 대로 말씀하세요.\n잠깐 멈춰도 끊기지 않습니다.';
       if (!voiceSupported()) return voiceUseFallback();
       const iab = inAppBrowserName(); // 🎤 [패치 #53]
-      if (iab) return voiceUseFallback(`${iab} 안에서 열려 있어 마이크 허용 창이 계속 뜰 수 있어요.\n아래 흰 칸을 누르고, 키보드의 마이크 버튼을 누른 뒤 말씀하세요.`);
+      if (iab) { VX.single = true; document.getElementById('voiceGuide').innerText = '천천히 말씀하세요.\n마이크 허용 창이 뜨면 [허용]을 눌러 주세요.'; } // 🎤 [패치 #59] 앱 안 브라우저도 바로 듣기 먼저 시도 (원래: 바로 키보드로 전환)
       VX.active = true; VX.startAt = Date.now();
       document.getElementById('voiceMicDot').classList.add('animate-pulse');
       clearInterval(VX.timer); VX.timer = setInterval(() => { voiceRender(); if (VX.active && Date.now() - VX.startAt > VOICE_MAX_SEC * 1000) voiceFinish(); }, 500);
@@ -8158,6 +8198,12 @@ ${AI_COMMON_RULES}
     }
     function blogPhotoLine(g) { return '▼ ' + g.label + ' 사진'; }
     // 블로그 맨 아래 주소: 배너 카드가 나오는 연결 페이지(request.html) → 누르면 이 업체 고객 의뢰함(/?req=)으로
+    // 제목 예시 (일지에서 지역·현장 유형·작업만 뽑아 만듦 · 대표님이 보고 직접 입력)
+    function blogTitleExample() {
+      const s = BL.src || {}, area = blogArea(s.addr).split(' ').slice(-2).join(' ');
+      const work = String(s.cat || '').split(',').map(x => x.trim()).filter(Boolean).slice(0, 2).join('·');
+      return [area, blogPlace(s), work].filter(Boolean).join(' ') || '용인 수지 단독주택 정원 소나무 전지';
+    }
     function blogReqLink() { const origin = (location.protocol === 'https:' && location.hostname) ? location.origin : 'https://www.jogyeongnote.com'; return origin + '/request.html?c=' + encodeURIComponent(currentUserId || ''); }
     function blogTags() { return ((BL.draft && BL.draft.tags) || []).map(t => '#' + t).join(' '); }
     // 복사되는 본문 (제목 없음 · 소제목 아래 한 줄 비워 둠 → 거기에 사진 넣기)
@@ -8243,12 +8289,6 @@ ${AI_COMMON_RULES}
           : `<div class="bg-[#F1F5F9] border-2 border-dashed border-[#CBD5E1] rounded-[14px] px-3 py-2.5 text-[15px] font-bold text-[#475569]">일지에 ${g.label} 사진이 없어요 · 있으면 여기에 넣으세요</div>`;
         return `<span class="self-start mt-1 border-y-[3px] border-[#0F172A] py-1.5 text-[18px] font-black text-[#0F172A] leading-snug">${blogHead(g)}</span>${g.imgs.length ? `<span class="text-[16.5px] font-bold text-[#1E293B] -mt-1.5">${blogPhotoLine(g)}</span>` : ''}${box}${ta(`blogSetSec(${gi}, this.value)`, g.text)}`; }).join('');
       return `<div class="flex flex-col gap-2"><span class="text-[18px] font-black">말투 <span class="text-[15px] font-bold text-[#475569]">(누르면 AI가 다시 써요)</span></span>${blogChipsHtml()}</div>
-        <div class="bg-[#F4FBEA] border-2 border-[#84CC16] rounded-[18px] p-3.5 flex flex-col gap-2.5">
-          <span class="text-[16px] font-black text-[#3F6212]">제목 <span class="text-[15px] font-bold text-[#475569]">(AI가 추천한 제목 · 고쳐 쓰셔도 돼요)</span></span>
-          <textarea id="blogTitleBox" data-grow rows="1" maxlength="60" placeholder="예) 용인 수지 단독주택 소나무 전지" oninput="blogSet('title', this.value); blogGrow(this); blogTitleCount()" class="w-full rounded-[12px] border-2 border-[#D9F99D] bg-white p-2.5 text-[19px] font-black leading-snug resize-none placeholder:text-[#94A3B8] focus:outline-none focus:border-[#3F6212]">${escHtml(d.title)}</textarea>
-          <div class="flex items-center justify-between gap-2"><span class="text-[15px] font-bold text-[#475569] leading-snug">검색이 잘 되려면 <b>지역 + 작업 이름</b>을 넣어 주세요</span><span id="blogTitleCount" class="text-[15px] font-black text-[#3F6212] shrink-0">${(d.title || '').length}자</span></div>
-          <button type="button" onclick="blogEditTitle()" class="h-[52px] rounded-[14px] bg-[#14261E] text-[#BEF264] text-[17px] font-black active:scale-[0.98]">제목 직접 고치기</button>
-        </div>
         <div class="flex flex-col gap-2">
           <span class="text-[18px] font-black">본문 <span class="text-[15px] font-bold text-[#475569]">(글자를 눌러 고칠 수 있어요)</span></span>
           <div class="bg-white border-[1.5px] border-[#CBD5E1] rounded-[20px] p-4 flex flex-col gap-3">
@@ -8273,9 +8313,6 @@ ${AI_COMMON_RULES}
       const at = BL.chips.indexOf(c); if (at === -1) BL.chips.push(c); else BL.chips.splice(at, 1);
       const y = document.getElementById('blogView').scrollTop; blogRender(); document.getElementById('blogView').scrollTop = y;
     }
-    // 제목 직접 고치기: 제목 칸에 커서를 두고 키보드를 올림
-    function blogEditTitle() { const t = document.getElementById('blogTitleBox'); if (!t) return; t.focus(); const n = t.value.length; t.setSelectionRange(n, n); t.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
-    function blogTitleCount() { const t = document.getElementById('blogTitleBox'), c = document.getElementById('blogTitleCount'); if (t && c) c.innerText = t.value.length + '자'; }
     function blogSet(k, v) { if (BL.draft) BL.draft[k] = String(v); }
     function blogSetSec(gi, v) { if (BL.secs[gi]) BL.secs[gi].text = String(v); }
     function blogPickStyle(k) {
@@ -8318,7 +8355,6 @@ ${AI_COMMON_RULES}
 8. tips 칸은 이 현장 이야기가 아니라, 오늘 한 작업(한 작업 목록)에 대한 일반적인 조경 관리 상식이다. 왜 그 작업이 필요한지, 보통 언제 하는지, 집에서 살펴볼 점을 널리 알려진 내용으로만 쓴다. 약제 이름, 희석 배수, 정확한 수치, 효과 장담은 쓰지 않고, 확실하지 않은 내용은 뺀다. "이 댁", "이번 현장" 같은 말로 현장 이야기처럼 쓰지 않는다.
 7. 다른 글과 비슷해지지 않게, 흔한 인사말("안녕하세요, ○○입니다. 오늘은 ~에 다녀왔습니다")로 시작하지 않는다. 이번 글은 [${open}]로 첫 문장을 시작하고, 업체명은 intro 안에 한 번만 자연스럽게 넣는다. 문장 길이와 짜임을 섞는다.
 [칸 설명]
-- title: 검색에 잘 걸리게 현장 지역(시·구·동 중 1~2개) + 현장 유형 + 작업 이름이 들어간 제목, 35자 이내.
 - intro: 오늘 다녀온 현장을 소개하는 2~3문장 (위 7번대로 시작).
 - before: "작업 전 현장 모습" 사진 아래 들어갈 설명 2~3문장.
 - during: "작업 진행 과정" 사진 아래 들어갈 설명 2~4문장. 한 작업을 하나씩 짚어 무엇을 했는지 쓴다.
@@ -8327,7 +8363,7 @@ ${AI_COMMON_RULES}
 - tips: 위 8번대로, 알아두면 좋은 관리 정보 3~5문장.
 - outro: 마무리 1~2문장(관리 시기 안내나 상담 권유 정도).
 - tags: 해시태그 5~8개, # 없이 단어만(예: "수지정원관리"). 지역+작업 조합.
-설명 없이 JSON 하나만: {"title":"","intro":"","before":"","during":"","after":"","issue":"","tips":"","outro":"","tags":[]}`;
+설명 없이 JSON 하나만: {"intro":"","before":"","during":"","after":"","issue":"","tips":"","outro":"","tags":[]}`;
       BL.loading = true; blogRender(); document.getElementById('blogView').scrollTop = 0;
       try {
         const res = await fetch(BLOG_AI_URL, {
@@ -8341,9 +8377,9 @@ ${AI_COMMON_RULES}
         const m = raw.match(/\{[\s\S]*\}/); if (!m) throw new Error('AI 답을 읽지 못했습니다.');
         const j = JSON.parse(m[0]);
         const t = v => String(v == null ? '' : v).replace(/^■.*\n?/gm, '').trim().slice(0, 1500);
-        const draft = { title: t(j.title).slice(0, 60), intro: t(j.intro), outro: t(j.outro),
+        const draft = { intro: t(j.intro), outro: t(j.outro),
           tags: (Array.isArray(j.tags) ? j.tags : []).map(x => String(x).replace(/[#\s]/g, '').slice(0, 20)).filter(Boolean).slice(0, 8) };
-        if (!draft.title && !draft.intro) throw new Error('글이 비어 있습니다.');
+        if (!draft.intro) throw new Error('글이 비어 있습니다.');
         BL.draft = draft;
         BL.secs.forEach(g => { g.text = t(j[g.ai]); });
         BL.loading = false; blogRender();
@@ -8361,11 +8397,6 @@ ${AI_COMMON_RULES}
       try { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).catch(() => {}); ok = ok || !!(navigator.clipboard && navigator.clipboard.writeText); } catch (e) {}
       return ok;
     }
-    function blogCopyTitle(btn) {
-      const title = (BL.draft && BL.draft.title || '').trim(); if (!title) { alert('제목이 비어 있어요.'); return; }
-      const ok = blogCopyNow(title);
-      if (btn) { const old = btn.innerText; btn.innerText = ok ? '제목 복사됐어요' : '복사 안 됨 · 다시 눌러 주세요'; setTimeout(() => { btn.innerText = old; }, 2000); }
-    }
     // 메인 버튼: 휴대폰은 안내부터 (본문은 보내기 창으로 넘어가서 복사 필요 없음) · 컴퓨터는 본문 복사
     function blogCopyBody() {
       if (blogIsPC()) { blogShowGuide(blogCopyNow(blogBodyText())); return; }
@@ -8377,12 +8408,10 @@ ${AI_COMMON_RULES}
       a.style.display = 'none'; document.body.appendChild(a); a.click(); a.remove();
     }
     // [패치 #58] 휴대폰: '보내기' 창 → 블로그 앱 글쓰기 화면에 본문이 들어감 (블로그 아이디 필요 없음)
-    //   네이버 앱은 제목을 '[공유] 본문 앞부분'으로 자동으로 채움 → 누르는 순간 제목을 복사해 둠 → 블로그에서 [모두 선택]→[붙여넣기]
+    //   네이버 앱은 제목을 '[공유] 본문 앞부분'으로 자동으로 채움 → 대표님이 지우고 직접 입력 (제목 복사 기능은 뺌: 붙여넣기 오류가 잦음)
     async function blogOpenNaver() {
       if (blogIsPC()) { window.open(BLOG_NAVER.pcWrite, '_blank'); return; }
       const f = document.getElementById('blogOpenFail');
-      const title = (BL.draft && BL.draft.title || '').trim();
-      if (title) blogCopyNow(title);
       if (!navigator.share) { if (f) f.classList.remove('hidden'); return; }
       try { await navigator.share({ text: blogBodyText() }); }
       catch (e) { if (!(e && e.name === 'AbortError') && f) f.classList.remove('hidden'); }
@@ -8399,10 +8428,10 @@ ${AI_COMMON_RULES}
       const photoStep = n => step(n, '▼ 사진 줄 아래에 사진 넣기', eg + txt('카메라 버튼은 화면 <b>맨 아래 왼쪽</b>에 있어요. 사진첩 <b>원본</b>을 여러 장 한 번에 골라도 돼요. 작업 중·작업 후도 똑같이.'));
       const steps = pc
         ? step(1, '블로그 글쓰기에서 본문 붙여넣기', txt('본문을 한 번 클릭하고 <b>Ctrl + V</b> (본문은 복사돼 있어요)'))
-          + step(2, '제목 넣기', txt('아래 [제목 다시 복사] → 제목 칸 클릭 → <b>Ctrl + V</b>'))
+          + step(2, '제목 직접 쓰기', txt('검색이 잘 되려면 <b>지역 + 작업 이름</b>을 넣어 주세요.<br>예) ' + escHtml(blogTitleExample())))
           + photoStep(3) + step(4, '[발행] 누르면 끝', '')
         : step(1, '보내기 창에서 [블로그] 누르기', txt('<b>본문이 들어간</b> 글쓰기 화면이 열려요.'))
-          + step(2, '제목 바꾸기', `<div class="bg-[#F1F5F9] rounded-[14px] px-3 py-2.5 text-[15px] font-bold text-[#334155] leading-relaxed">제목이 <b>[공유] …</b>로 길게 들어가 있어요 (네이버 앱이 자동으로 넣는 거예요)</div>` + txt('제목을 <b>꾹</b> 누르기 → <b>[모두 선택]</b> → <b>[붙여넣기]</b><br>제목은 복사돼 있어요.'))
+          + step(2, '제목 직접 쓰기', `<div class="bg-[#F1F5F9] rounded-[14px] px-3 py-2.5 text-[15px] font-bold text-[#334155] leading-relaxed">제목 칸에 <b>[공유] …</b>가 들어가 있어요 (네이버 앱이 자동으로 넣는 거예요)</div>` + txt('제목 칸 <b>맨 끝을 톡</b> → 키보드 <b>지우기 버튼을 꾹</b> 눌러 지우고 → 제목을 직접 쓰세요.<br>검색이 잘 되려면 <b>지역 + 작업 이름</b>을 넣어 주세요.') + `<div class="bg-[#F4FBEA] border-l-[5px] border-[#84CC16] rounded-[10px] px-3 py-2 text-[15.5px] font-black text-[#14261E]">예) ${escHtml(blogTitleExample())}</div>`)
           + photoStep(3) + step(4, '[등록] 누르면 끝', txt('소제목을 더 크게 꾸미고 싶으면: 소제목 줄을 톡 → 맨 아래 <b>T</b> 버튼 → 크기·굵기 (선택)'));
       document.getElementById('blogGuideBody').innerHTML = `
         <div class="flex flex-col items-center gap-2 text-center">
@@ -8415,10 +8444,7 @@ ${AI_COMMON_RULES}
           <span class="text-[16px] font-extrabold text-[#713F12] leading-relaxed">보내기 창이 안 떴나요? 본문을 복사해서 인터넷 블로그로 열어 드릴게요. 글쓰기를 누르고 본문에 붙여넣기 하세요.</span>
           <button type="button" onclick="blogOpenWeb()" class="h-[54px] rounded-[14px] bg-[#03C75A] text-white text-[18px] font-black active:scale-[0.98]">본문 복사하고 인터넷으로 열기</button>
         </div>
-        <div class="grid grid-cols-2 gap-2">
-          <button type="button" onclick="blogCopyTitle(this)" class="h-[54px] rounded-[16px] bg-[#14261E] text-[#BEF264] text-[16.5px] font-black active:scale-95">제목 다시 복사</button>
-          <button type="button" onclick="blogCopyBodyAgain(this)" class="h-[54px] rounded-[16px] bg-[#14261E] text-[#BEF264] text-[16.5px] font-black active:scale-95">본문 복사</button>
-        </div>
+        <button type="button" onclick="blogCopyBodyAgain(this)" class="h-[54px] rounded-[16px] bg-[#14261E] text-[#BEF264] text-[17px] font-black active:scale-95">본문 복사 (보내기가 안 될 때)</button>
         <button type="button" onclick="blogCloseGuide()" class="h-[52px] rounded-[16px] border-2 border-[#CBD5E1] bg-white text-[17px] font-black active:scale-95">닫기</button>`;
       const g = document.getElementById('blogGuide');
       if (g.classList.contains('hidden')) { g.classList.remove('hidden'); history.pushState({ blogGuide: 1 }, '', ''); BL.depth++; }
