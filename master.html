@@ -51,7 +51,7 @@
         <input type="password" id="masterPw" placeholder="비밀번호 (6자리 이상 숫자/영문)" autocomplete="off" class="w-full bg-[#0F172A] border border-white/10 rounded-[14px] px-5 py-4 text-white text-[15px] font-bold focus:outline-none focus:border-[#3B82F6]" onkeypress="if(event.key === 'Enter') loginMaster()">
       </div>
       <div class="w-full flex items-center mb-6 px-1 relative z-10">
-        <label class="flex items-center gap-2 cursor-pointer text-[#94A3B8] text-[13px] font-bold hover:text-white transition-colors"><input type="checkbox" id="masterAutoLoginCheck" class="w-5 h-5 rounded border-white/10 bg-transparent text-[#3B82F6] focus:ring-[#3B82F6]" checked>자동 로그인</label>
+        <label class="flex items-center gap-2 cursor-pointer text-[#94A3B8] text-[13px] font-bold hover:text-white transition-colors"><input type="checkbox" id="masterAutoLoginCheck" class="w-5 h-5 rounded border-white/10 bg-transparent text-[#3B82F6] focus:ring-[#3B82F6]" checked>아이디 저장 (비밀번호는 매번 입력)</label><!-- 🔐 [패치 #73] -->
       </div>
       
       <button onclick="loginMaster()" class="w-full py-4.5 bg-[#3B82F6] text-white rounded-[16px] font-black text-[16px] hover:bg-[#2563EB] shadow-[0_8px_20px_rgba(59,130,246,0.3)] transition-all relative z-10 flex items-center justify-center gap-2 mb-4">
@@ -204,6 +204,13 @@
       </div>
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- 🔔 [패치 #73] 관리자 휴대폰 알림 (가입 신청 · 충전 신청 · 로그아웃 상태여도 옴) -->
+        <div class="rounded-[24px] p-6 space-y-3 border-2 border-[#84CC16]/60" style="background:rgba(132,204,22,0.10);">
+            <h3 class="text-white font-black text-[19px]">관리자 휴대폰 알림</h3>
+            <p class="text-[#E2E8F0] text-[16px] font-bold leading-relaxed">신규 가입 신청과 포인트 충전 신청이 오면 이 휴대폰으로 알려 드려요. 로그아웃한 상태여도 와요.</p>
+            <p id="admPushText" class="text-[#BEF264] text-[16px] font-black leading-relaxed"></p>
+            <button type="button" id="admPushBtn" onclick="admPushEnable()" class="w-full h-[56px] rounded-[14px] bg-[#84CC16] text-[#12261E] text-[17px] font-black">이 휴대폰에서 알림 켜기</button>
+        </div>
         <div class="glass-panel rounded-[24px] p-6 space-y-4">
             <h3 class="text-white font-black text-[16px] flex items-center gap-2 mb-2"><i data-lucide="shield" class="w-5 h-5 text-blue-400"></i> 마스터 관리자 계정</h3>
             <p class="text-[#94A3B8] text-[12px] leading-relaxed">* 최고 관리자 아이디 및 비밀번호 변경은 보안 정책에 따라 구글 파이어베이스 콘솔(Authentication)에서 직접 관리해 주시기 바랍니다.</p>
@@ -272,6 +279,14 @@
     <div id="view-points" class="hidden space-y-5">
       <div class="flex items-center justify-between border-b border-white/10 pb-4">
         <h1 class="text-[24px] font-black tracking-tight flex items-center gap-2"><i data-lucide="coins" class="w-6 h-6 text-[#84CC16]"></i> 포인트 관리</h1>
+      </div>
+      <!-- 💰 [패치 #72] 포인트 차감 켜기/끄기 -->
+      <div class="rounded-[20px] p-5 border border-white/15" style="background:#151E2D;">
+        <div class="flex items-center justify-between gap-3">
+          <span class="text-white text-[19px] font-black">포인트 차감</span>
+          <button type="button" id="ptmLiveBtn" onclick="ptmLiveToggle()" class="h-[52px] min-w-[120px] px-5 rounded-[14px] text-[17px] font-black" style="background:#475569;color:#fff;">불러오는 중</button>
+        </div>
+        <p id="ptmLiveText" class="text-[#CBD5E1] text-[16px] font-bold leading-relaxed mt-2"></p>
       </div>
       <div class="grid grid-cols-3 gap-2">
         <button type="button" data-ptm-tab="charge" onclick="ptmTab('charge')" class="ptm-tab h-[56px] rounded-[14px] text-[16px] font-black">충전 승인 <span id="ptmCntCharge"></span></button>
@@ -572,16 +587,10 @@
             currentIdToken = authData.idToken; startTokenAutoRefresh(authData.refreshToken); // 🔐 [패치 #3]
             currentMasterUserId = id + '_master'; // 🔔 [패치 #33]
             
-            localStorage.removeItem('shinhwa_master_pw'); // 🔐 [패치 #35] 비밀번호 대신 로그인 열쇠만 저장
-            if(session || document.getElementById('masterAutoLoginCheck').checked) {
-                localStorage.setItem('shinhwa_master_id', id);
-                localStorage.setItem('shinhwa_master_auto', 'true');
-                if (authData.refreshToken) localStorage.setItem('shinhwa_master_session', authData.refreshToken);
-            } else {
-                localStorage.removeItem('shinhwa_master_id');
-                localStorage.removeItem('shinhwa_master_auto');
-                localStorage.removeItem('shinhwa_master_session');
-            }
+            // 🔐 [패치 #73] 자동 로그인 없앰 (휴대폰 분실 대비) · [아이디 저장]을 켜면 아이디만 기억
+            ['shinhwa_master_pw', 'shinhwa_master_auto', 'shinhwa_master_session'].forEach(k => localStorage.removeItem(k));
+            if (document.getElementById('masterAutoLoginCheck').checked) localStorage.setItem('shinhwa_master_id', id);
+            else localStorage.removeItem('shinhwa_master_id');
 
             document.getElementById('masterLoginView').classList.add('hidden');
             document.getElementById('mainContent').classList.remove('hidden');
@@ -590,6 +599,9 @@
             
             await initMasterSettings();
             startDashboard();
+            // 🔔 [패치 #73] 알림을 눌러 들어온 경우 해당 화면으로 (?tab=approval / ?tab=points)
+            try { const t = new URLSearchParams(location.search).get('tab'); if (['approval', 'points', 'companies', 'inquiries', 'settings'].includes(t)) switchTab(t); } catch (e) {}
+            admPushStatus();
 
         } catch(e) {
             alert("로그인 통신 중 오류가 발생했습니다.");
@@ -597,22 +609,10 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
+        // 🔐 [패치 #73] 자동 로그인 없앰: 들어올 때마다 비밀번호 입력 (저장한 아이디만 미리 채움) · 예전 로그인 열쇠는 지움
         const savedId = localStorage.getItem('shinhwa_master_id');
-        const savedPw = localStorage.getItem('shinhwa_master_pw');
-        const isAuto = localStorage.getItem('shinhwa_master_auto');
-        const savedSession = localStorage.getItem('shinhwa_master_session'); // 🔐 [패치 #35]
-        if (savedId && savedSession && isAuto === 'true') {
-            document.getElementById('masterId').value = savedId;
-            document.getElementById('masterAutoLoginCheck').checked = true;
-            fetch(`https://securetoken.googleapis.com/v1/token?key=${API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: `grant_type=refresh_token&refresh_token=${encodeURIComponent(savedSession)}` })
-                .then(r => r.json()).then(d => { if (d.id_token) loginMaster({ id: savedId, idToken: d.id_token, refreshToken: d.refresh_token || savedSession }); else if (d.error) localStorage.removeItem('shinhwa_master_session'); })
-                .catch(() => {});
-        } else if (savedId && savedPw && isAuto === 'true') {
-            document.getElementById('masterId').value = savedId;
-            document.getElementById('masterPw').value = savedPw;
-            document.getElementById('masterAutoLoginCheck').checked = true;
-            loginMaster(); 
-        }
+        ['shinhwa_master_pw', 'shinhwa_master_auto', 'shinhwa_master_session'].forEach(k => localStorage.removeItem(k));
+        if (savedId) { document.getElementById('masterId').value = savedId; document.getElementById('masterAutoLoginCheck').checked = true; }
         lucide.createIcons();
     });
 
@@ -954,6 +954,9 @@
             let safeImg = acc.license || ''; // 🔐 [패치 #37] 따옴표 처리는 jsArg가 담당
             
             // ✨ [추가] DB에 저장된 약관 동의 시간 데이터를 예쁘게 출력
+            const bizD = String(acc.bizNum || '').replace(/[^0-9]/g, ''); // 🧾 [패치 #73] 같은 사업자번호 가입 표시
+            const dupAcc = bizD.length >= 10 ? allAccounts.filter(a => a.id !== acc.id && String(a.bizNum || '').replace(/[^0-9]/g, '') === bizD) : [];
+            const dupHtml = dupAcc.length ? `<div class="col-span-2 bg-red-500/20 border border-red-500/50 rounded-[12px] px-3 py-2.5 text-red-200 text-[15px] font-black leading-relaxed">같은 사업자번호로 가입된 계정이 있어요: ${dupAcc.map(a => pmEsc((a.name || '') + ' (' + a.id + ')')).join(', ')}</div>` : '';
             const agreedText = acc.termsAgreedAt ? `<span class="text-[#84CC16] font-black">${pmEsc(acc.termsAgreedAt)} 동의완료</span>` : '<span class="text-red-400 font-bold">기록 없음 (구버전 가입)</span>';
 
             div.innerHTML = `
@@ -968,7 +971,7 @@
                 <div class="grid grid-cols-2 gap-y-3 gap-x-2 text-[13px] bg-black/20 p-4 rounded-[16px]">
                     <div><span class="text-[#94A3B8] block text-[11px] mb-0.5">접속 아이디</span><strong class="text-white">${pmEsc(acc.id)}</strong></div>
                     <div><span class="text-[#94A3B8] block text-[11px] mb-0.5">대표자명</span><strong class="text-white">${pmEsc(acc.ceo)}</strong></div>
-                    <div class="col-span-2"><span class="text-[#94A3B8] block text-[11px] mb-0.5">사업자번호</span><strong class="text-[#3B82F6] tracking-wide">${pmEsc(acc.bizNum)}</strong></div>
+                    <div class="col-span-2"><span class="text-[#94A3B8] block text-[11px] mb-0.5">사업자번호</span><strong class="text-[#3B82F6] tracking-wide">${pmEsc(acc.bizNum)}</strong></div>${dupHtml}
                     <div class="col-span-2"><span class="text-[#94A3B8] block text-[11px] mb-0.5">대표 연락처</span><strong class="text-white">${pmEsc(acc.phone)}</strong></div>
                     
                     <!-- ✨ 법적 증빙: 승인 전 동의 일시를 확인하는 영역 -->
@@ -1164,7 +1167,12 @@
         if(!confirm(`플랫폼 이용을 최종 승인하시겠습니까?`)) return;
         try {
             // 💰 [패치 #71] 서버가 승인 + 가입 축하 3,000P (사업자번호당 1번). 서버가 예전 버전이면 기존 방식으로 승인
-            const ar = await adminPush({ action: "admin_approve", targetId: id });
+            let ar = await adminPush({ action: "admin_approve", targetId: id });
+            if (ar && !ar.ok && ar.msg === 'dup-biz') { // 🧾 [패치 #73] 같은 사업자번호로 가입된 계정이 있음
+                if (!confirm(`같은 사업자번호로 가입된 계정이 이미 있습니다.\n\n${ar.otherName || ''} (아이디: ${ar.other})\n\n사업자번호 1개당 계정 1개가 원칙입니다.\n그래도 승인할까요? (보통은 [반려 및 삭제]를 눌러 주세요)`)) return;
+                ar = await adminPush({ action: "admin_approve", targetId: id, force: true });
+            }
+            if (ar && !ar.ok && ar.msg !== 'unknown') return alert("승인하지 못했습니다. (" + (ar.msg || '연결 오류') + ")\n잠시 후 다시 눌러 주세요.");
             let welcomeMsg = "";
             if (ar && ar.ok) welcomeMsg = ar.welcome ? "\n가입 축하 3,000P를 지급했습니다 (1개월 사용)." : (ar.welcomeBefore ? "\n이 사업자번호는 예전에 가입 축하 포인트를 받아서 이번에는 지급하지 않았습니다." : "\n사업자번호가 없어 가입 축하 포인트는 지급하지 않았습니다.");
             else {
@@ -1916,7 +1924,7 @@
         const mobBtns = document.querySelectorAll('.mob-nav-btn'); const mobMap = { dashboard: 0, approval: 1, companies: 2, settings: 3, points: 4 }; /* 💰 [패치 #71] */
         mobBtns.forEach(btn => { btn.classList.remove('text-[#3B82F6]'); btn.classList.add('text-[#94A3B8]'); });
         if (mobMap[tabId] !== undefined && mobBtns[mobMap[tabId]]) { mobBtns[mobMap[tabId]].classList.remove('text-[#94A3B8]'); mobBtns[mobMap[tabId]].classList.add('text-[#3B82F6]'); }
-        if (tabId === 'points') ptmTab(PTM.tab); // 💰 [패치 #71]
+        if (tabId === 'points') { ptmTab(PTM.tab); ptmLiveLoad(); } // 💰 [패치 #71·#72]
         lucide.createIcons();
     }  
     // ==========================================
@@ -2047,6 +2055,68 @@
         if (!r || !r.ok) return ptmFail(r);
         const q = ptmFind(acc, rid); if (q) { q.taxDone = true; }
         ptmBadges(); ptmRender(); fetchAccounts();
+    }
+    // ==========================================
+    // 🔔 [패치 #73] 관리자 휴대폰 알림 (앱과 같은 알림 방식 · push_subs/관리자아이디 에 이 휴대폰 등록)
+    // ==========================================
+    const ADM_FB_CONFIG = { apiKey: "AIzaSyC_1KaOSychXSNF-Z-vnVONLB_-aAGghhk", authDomain: "shinhwa-landnote.firebaseapp.com", databaseURL: "https://shinhwa-landnote-default-rtdb.firebaseio.com", projectId: "shinhwa-landnote", storageBucket: "shinhwa-landnote.firebasestorage.app", messagingSenderId: "623461445108", appId: "1:623461445108:web:351eea30e03d278725dda1" };
+    const ADM_VAPID = "BJrrESIaNMTvCe98leRovFlWDT09OOGMSTW6Y7vZ7uwVNLzpb9X9aCGDstxiMr455nnIgG3Qm1sS7xjMfsWY7MU";
+    // 관리자는 게시판·공지·대화 알림은 받지 않음 (가입·충전 알림만)
+    const ADM_PREFS = { chat: false, comment: false, notice: false, request: false, boards: { '현장협력': false, '일감양도': false, '장비자재': false, '견적단가': false, '자유소통': false, '정보교환': false, '노하우': false, '불량거래처': false } };
+    function admPushOk() { return ('serviceWorker' in navigator) && ('PushManager' in window) && ('Notification' in window) && location.protocol === 'https:'; }
+    function admPushUrl() { return `https://shinhwa-landnote-default-rtdb.firebaseio.com/push_subs/${encodeURIComponent(currentMasterUserId)}`; }
+    function admHash(t) { let h = 5381; for (let i = 0; i < t.length; i++) h = ((h << 5) + h + t.charCodeAt(i)) >>> 0; return 't' + h.toString(36); }
+    function admLoadScript(src) { return new Promise((ok, fail) => { if (document.querySelector(`script[src="${src}"]`)) return ok(); const el = document.createElement('script'); el.src = src; el.onload = ok; el.onerror = fail; document.head.appendChild(el); }); }
+    async function admPushStatus() {
+        const t = document.getElementById('admPushText'), b = document.getElementById('admPushBtn'); if (!t) return;
+        if (!admPushOk()) { t.textContent = '이 화면에서는 알림을 켤 수 없어요. 휴대폰의 삼성 인터넷이나 크롬에서 관리자 화면을 열어 주세요.'; b.classList.add('hidden'); return; }
+        if (Notification.permission === 'denied') { t.textContent = '휴대폰에서 알림이 막혀 있어요. 휴대폰 [설정 → 애플리케이션 → 삼성 인터넷(또는 크롬) → 알림]에서 허용해 주세요.'; b.classList.add('hidden'); return; }
+        let on = false;
+        try { const r = await fetch(getAuthUrl(`${admPushUrl()}/tokens.json`)); const d = r.ok ? await r.json() : null; on = Notification.permission === 'granted' && !!d; } catch (e) {}
+        t.textContent = on ? '알림이 켜져 있어요. (다른 휴대폰에서도 켜려면 그 휴대폰에서 한 번 더 눌러 주세요)' : '아직 이 휴대폰은 알림이 꺼져 있어요.';
+        b.classList.remove('hidden'); b.textContent = on ? '이 휴대폰 알림 다시 연결하기' : '이 휴대폰에서 알림 켜기';
+    }
+    async function admPushEnable() {
+        if (!admPushOk()) return admPushStatus();
+        try {
+            if (await Notification.requestPermission() !== 'granted') { alert('알림이 허용되지 않았어요.\n휴대폰 [설정 → 애플리케이션 → 삼성 인터넷(또는 크롬) → 알림]에서 허용한 뒤 다시 눌러 주세요.'); return admPushStatus(); }
+            await admLoadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js');
+            await admLoadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js');
+            if (!firebase.apps.length) firebase.initializeApp(ADM_FB_CONFIG);
+            const reg = await navigator.serviceWorker.register('/sw.js'); await navigator.serviceWorker.ready;
+            const token = await firebase.messaging().getToken({ vapidKey: ADM_VAPID, serviceWorkerRegistration: reg });
+            if (!token) throw new Error('no token');
+            const body = { prefs: ADM_PREFS }; body['tokens/' + admHash(token)] = { t: token, at: Date.now(), ua: navigator.userAgent.slice(0, 120) };
+            const r = await fetch(getAuthUrl(`${admPushUrl()}.json`), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+            if (!r.ok) throw new Error('save');
+            alert('알림이 켜졌어요.\n이제 가입 신청과 충전 신청이 오면 이 휴대폰으로 알려 드려요.');
+        } catch (e) { alert('알림 연결에 실패했어요. 잠시 후 다시 눌러 주세요.'); }
+        admPushStatus();
+    }
+    // 💰 [패치 #72] 포인트 차감 스위치 (settings/pointsLive · 서버가 발행할 때 이 값을 확인)
+    PTM.live = null;
+    function ptmLiveShow() {
+        const b = document.getElementById('ptmLiveBtn'), t = document.getElementById('ptmLiveText');
+        if (PTM.live === null) { b.textContent = '다시 불러오기'; b.style.background = '#475569'; b.style.color = '#fff'; t.textContent = '상태를 불러오지 못했어요.'; return; }
+        b.textContent = PTM.live ? '켜짐 · 끄기' : '꺼짐 · 켜기';
+        b.style.background = PTM.live ? '#84CC16' : '#475569'; b.style.color = PTM.live ? '#12261E' : '#fff';
+        t.innerHTML = PTM.live ? '지금: <b style="color:#BEF264">켜짐</b> · 발행할 때 포인트가 빠져요. (일지 500P · 견적 1,000P · 고객 이름이 같은 수정 발행은 무료)'
+            : '지금: <b style="color:#FDE047">꺼짐</b> · 모든 발행이 무료예요. 켜면 그 순간부터 일지 500P · 견적 1,000P가 빠져요. 켜기 전에 앱 공지로 먼저 알려 주세요.';
+    }
+    async function ptmLiveLoad() {
+        try { const r = await fetch(getAuthUrl(`${SETTINGS_URL}/pointsLive.json?t=${Date.now()}`)); PTM.live = r.ok ? (await r.json()) === true : null; } catch (e) { PTM.live = null; }
+        ptmLiveShow();
+    }
+    async function ptmLiveToggle() {
+        if (PTM.live === null) return ptmLiveLoad();
+        const next = !PTM.live;
+        if (!confirm(next ? '포인트 차감을 켤까요?\n\n켜는 순간부터 모든 업체의 발행에서 포인트가 빠집니다.\n(업체 앱은 5분 안에 반영돼요)' : '포인트 차감을 끌까요?\n\n끄면 모든 발행이 무료가 됩니다.')) return;
+        try {
+            const r = await fetch(getAuthUrl(`${SETTINGS_URL}/pointsLive.json`), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(next) });
+            if (!r.ok) throw new Error('fail');
+            PTM.live = next; ptmLiveShow();
+            alert(next ? '포인트 차감을 켰습니다.' : '포인트 차감을 껐습니다. 모든 발행이 무료입니다.');
+        } catch (e) { alert('저장하지 못했어요. 다시 눌러 주세요.'); }
     }
     // 포인트 지급
     function ptmRenderPick() {

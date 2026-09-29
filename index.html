@@ -255,7 +255,7 @@
         </div>
       </div>
       <div class="w-full flex items-center mb-8 px-2">
-        <label class="flex items-center gap-2.5 cursor-pointer text-[#CBD5E1] text-[15px] font-bold hover:text-white transition-colors"><input type="checkbox" id="autoLoginCheck" class="w-5 h-5 rounded border-white/20 bg-transparent text-[#84CC16] focus:ring-[#84CC16]" checked>자동 로그인 유지</label>
+        <label class="flex items-center gap-2.5 cursor-pointer text-[#CBD5E1] text-[15px] font-bold hover:text-white transition-colors"><input type="checkbox" id="autoLoginCheck" class="w-5 h-5 rounded border-white/20 bg-transparent text-[#84CC16] focus:ring-[#84CC16]" checked>아이디 저장 <span class="text-[#94A3B8] font-bold">(비밀번호는 매번 입력)</span></label><!-- 🔐 [패치 #73] 자동 로그인 없앰 · 아이디만 저장 -->
       </div>
       <!-- 💡 시인성 업그레이드: 버튼 크기 확대 및 텍스트 20px로 확대 -->
       <button onclick="doLogin()" class="w-full py-5 bg-[#84CC16] text-[#151E2D] rounded-[18px] font-black text-[20px] hover:bg-[#9BE32D] shadow-[0_6px_20px_rgba(132,204,22,0.35)] transition-all mb-5">로그인</button>
@@ -2001,6 +2001,13 @@
             currentIdToken = tempToken; 
             const safeKey = getSafeKey(id); const res = await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`)); const existing = await res.json();
             if(existing && !existing.error) { document.getElementById('loadingOverlay')?.remove(); return alert("이미 사용 중인 아이디입니다."); }
+            // 🧾 [패치 #73] 사업자번호 1개당 계정 1개 (서버가 확인 · 서버 확인이 안 되면 그대로 진행하고 관리자 승인 때 한 번 더 확인)
+            const bizChk = await requestPoints({ action: 'pts_bizcheck', bizNum, userId: id });
+            if (bizChk && bizChk.ok && bizChk.dup) {
+                if (!authData.error) { try { await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:delete?key=${API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken: tempToken }) }); } catch (e) {} }
+                currentIdToken = ""; document.getElementById('loadingOverlay')?.remove();
+                return alert("이 사업자번호로 이미 가입된 계정이 있습니다.\n사업자번호 1개당 계정은 1개만 만들 수 있어요.\n\n아이디나 비밀번호가 기억나지 않으시면 조경노트 운영본부로 문의해 주세요.");
+            }
             let licenseUrl = await uploadToFirebaseStorage(obBizLicenseBase64, "licenses");
             
             // ✨ [법적 증빙] 약관 동의 버튼을 누른 정확한 시간(Timestamp) 생성
@@ -2009,6 +2016,7 @@
             
             const profileData = { id, name, ceo, phone, bizNum, region, /* 🔐 [패치 #35] 비밀번호 글자 저장 안 함 */ license: licenseUrl, status: 'pending', termsAgreedAt: agreedTime }; // 📍 [패치 #10] region 추가
             await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(profileData) });
+            requestPush({ action: 'push_signup', userId: id }); // 🔔 [패치 #73] 관리자 휴대폰에 가입 신청 알림
             alert("가입이 완료되었습니다. 관리자 승인을 기다려주세요.");
             // 🔔 [패치 #33] 승인되면 휴대폰 알림으로 알려드리기
             if (pushConfigured() && pushBrowserOk() && !pushIsIphoneBrowser() && confirm('관리자가 승인하면 휴대폰 알림으로 바로 알려드릴까요?\n(다음 화면에서 [허용]을 눌러주세요)')) {
@@ -2072,10 +2080,11 @@
                 if (myCompanyProfile.pw !== undefined) { delete myCompanyProfile.pw; fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pw: null }) }).catch(() => {}); }
                 
                 localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile)); 
-                localStorage.setItem('shinhwa_pro_logged_in_id', id); 
                 localStorage.removeItem('shinhwa_pro_logged_in_pw'); 
-                if(session || document.getElementById('autoLoginCheck').checked) { localStorage.setItem('shinhwa_pro_auto_login', 'true'); if (authData.refreshToken) localStorage.setItem('shinhwa_pro_session', authData.refreshToken); }
-                else { localStorage.removeItem('shinhwa_pro_auto_login'); localStorage.removeItem('shinhwa_pro_session'); }
+                // 🔐 [패치 #73] 자동 로그인 열쇠는 저장하지 않음 (휴대폰 분실 대비) · [아이디 저장]을 켜면 아이디만 기억
+                localStorage.removeItem('shinhwa_pro_auto_login'); localStorage.removeItem('shinhwa_pro_session');
+                if (document.getElementById('autoLoginCheck').checked) { localStorage.setItem('shinhwa_pro_logged_in_id', id); localStorage.setItem('shinhwa_pro_save_id', '1'); }
+                else { localStorage.removeItem('shinhwa_pro_logged_in_id'); localStorage.removeItem('shinhwa_pro_save_id'); }
                 
                 applyCompanyProfile(); 
                 document.getElementById('authView').classList.add('hidden'); 
@@ -2084,7 +2093,7 @@
                 loadRealWeather(); 
                 history.replaceState({ view: 'home' }, "", ""); 
                 switchView('home', false); 
-                setTimeout(() => { handlePushOpen(); silentPushRefresh(); refreshReqBadge(); /* 📋 [패치 #51] */ if (typeof ptChipRender === 'function') ptChipRender(); /* 💰 [패치 #71] */ }, 700); // 🔔 [패치 #33]
+                setTimeout(() => { handlePushOpen(); silentPushRefresh(); refreshReqBadge(); /* 📋 [패치 #51] */ if (typeof ptBoot === 'function') ptBoot(); /* 💰 [패치 #71·#72] */ }, 700); // 🔔 [패치 #33]
                 // 앱 진입 1초 후 최초 팝업 확인
                 setTimeout(() => {
                     checkAppNotices(); // 📖 [패치 #24] 로그인 시 사용법 자동 표시 제거 (설정 > '앱 사용법 다시 보기'로만)
@@ -2179,7 +2188,7 @@
     }
     async function clearTargetNotice() { try { const safeKey = getSafeKey(currentUserId); await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ targetNotice: "" }) }); myCompanyProfile.targetNotice = ""; localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile)); } catch(e) {} }
 
-    function logoutAdmin() { if(confirm('로그아웃 하시겠습니까?')) { localStorage.removeItem('shinhwa_pro_auto_login'); localStorage.removeItem('shinhwa_pro_logged_in_id'); localStorage.removeItem('shinhwa_pro_logged_in_pw'); localStorage.removeItem('shinhwa_pro_session'); location.reload(); } } // 🔐 [패치 #35]
+    function logoutAdmin() { if(confirm('로그아웃 하시겠습니까?')) { localStorage.removeItem('shinhwa_pro_auto_login'); if (localStorage.getItem('shinhwa_pro_save_id') !== '1') localStorage.removeItem('shinhwa_pro_logged_in_id'); /* 🔐 [패치 #73] 저장한 아이디는 남김 */ localStorage.removeItem('shinhwa_pro_logged_in_pw'); localStorage.removeItem('shinhwa_pro_session'); location.reload(); } } // 🔐 [패치 #35]
     
     function openSettings() {
         if(!myCompanyProfile) return;
@@ -2571,14 +2580,13 @@
 
     function formatNumberInput(input) { let val = input.value.replace(/[^0-9]/g, ''); if(val) input.value = parseInt(val).toLocaleString('ko-KR'); else input.value = ''; }
 
-    async function createShortCloudLink(payload, existingId = null) {
+    async function createShortCloudLink(payload, existingId = null, opts = null) { // 💰 [패치 #72] opts.relink = 보관함에서 열기(무료)
         let clean = JSON.parse(JSON.stringify(payload));
         clean.ownerId = String(currentUserId || ''); // 🔐 [패치 #37] 리포트 주인 표시 (다른 업체가 덮어쓰지 못하게)
         let shortCloudId = existingId || ("doc_" + Date.now() + "_" + Array.from(crypto.getRandomValues(new Uint8Array(8)), b => (b % 36).toString(36)).join('')); // 🔐 [패치 #37] 새 링크는 추측할 수 없게
-        try {
-            const uploadRes = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_shared_docs/${shortCloudId}.json?auth=${currentIdToken}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(clean) });
-            if (!uploadRes.ok) { alert("리포트 저장에 실패했습니다. 잠시 후 다시 시도해 주세요.\n(계속 안 되면 [1:1 문의]로 알려주세요)"); return null; } // 🔐 [패치 #37] 실패를 알려드림
-        } catch(e) { alert("인터넷 연결이 불안정해 리포트를 저장하지 못했습니다. 다시 시도해 주세요."); return null; }
+        // 💰 [패치 #72] 저장은 서버가 (포인트 확인 → 저장 → 차감). 실패하면 알림을 띄우고 null
+        const ptSaved = await ptPublishDoc(clean, shortCloudId, (opts && opts.relink) ? 'relink' : 'publish');
+        if (!ptSaved) return null;
 
         let savedRecords = [];
         if (Array.isArray(records)) {
@@ -2718,6 +2726,7 @@
     async function generateReport() {
       const clientName = document.getElementById('clientSelect').value; if(!clientName) return alert("고객명을 입력하거나 선택하세요.");
       const clientPhone = document.getElementById('inputClientPhone').value; const clientAddress = document.getElementById('inputClientAddress') ? document.getElementById('inputClientAddress').value : '';
+      if (!(await ptConfirmPublish(false, clientName))) return; // 💰 [패치 #72] 요금 확인
       showLoadingOverlay("리포트 발행 중...");
       try {
         const round = document.getElementById('inputRound').value; const diagnosis = document.getElementById('inputDiagnosis').value; const issueText = document.getElementById('inputIssue').value; const workDate = (document.getElementById('inputWorkDate') && document.getElementById('inputWorkDate').value) || getTodayStr(); /* 📅 [패치 #9] */ 
@@ -2785,6 +2794,7 @@
         if(btn.classList.contains('bg-[#151E2D]')) { let desc = elDesc.value; let priceStr = elPrice.value.replace(/[^0-9]/g, ''); if(desc || priceStr) { let label = btn.innerText; monthsData.push({ m: label, d: desc, p: priceStr ? parseInt(priceStr) : 0 }); if(priceStr) sum += parseInt(priceStr); } }
       }
       if(monthsData.length === 0) return alert("내용이 없습니다.");
+      if (!(await ptConfirmPublish(true, clientName))) return; // 💰 [패치 #72] 요금 확인
 
       showLoadingOverlay("발행 중...");
       try {
@@ -2819,7 +2829,7 @@
         }
         currentLoadedRecordId = r.id; 
         if (r.url) generatedShareUrl = r.url;
-        else { generatedShareUrl = await createShortCloudLink(payloadData, r.id); r.url = generatedShareUrl; let idx = records.findIndex(rec => rec && rec.id === r.id); if (idx !== -1) { records[idx].url = generatedShareUrl; updateData('records', records); } }
+        else { generatedShareUrl = await createShortCloudLink(payloadData, r.id, { relink: true }); /* 💰 [패치 #72] 무료 */ r.url = generatedShareUrl; let idx = records.findIndex(rec => rec && rec.id === r.id); if (idx !== -1) { records[idx].url = generatedShareUrl; updateData('records', records); } }
         renderClientView(payloadData, 'admin_history');
       } catch (e) { alert("오류가 발생했습니다."); } finally { document.getElementById('loadingOverlay')?.remove(); }
     }
@@ -4029,13 +4039,12 @@
           if(loadedData) renderClientView(loadedData, 'client_shared'); else throw new Error("No data");
         } catch(e) { document.getElementById('loadingOverlay')?.remove(); document.body.innerHTML = `<div class="p-10 text-center font-bold text-lg mt-20 text-white">존재하지 않거나 보안상 만료된 문서입니다.</div>`; }
       } else {
+        // 🔐 [패치 #73] 자동 로그인 없앰: 앱을 열 때마다 비밀번호 입력 (저장한 아이디만 미리 채움) · 예전에 저장된 로그인 열쇠·비밀번호는 지움
         const savedId = localStorage.getItem('shinhwa_pro_logged_in_id'); 
-        const savedPw = localStorage.getItem('shinhwa_pro_logged_in_pw');
-        const autoLogin = localStorage.getItem('shinhwa_pro_auto_login');
-        const savedSession = localStorage.getItem('shinhwa_pro_session'); // 🔐 [패치 #35]
-        if (savedId && savedSession && autoLogin === 'true') { autoLoginWithSession(savedId, savedSession); }
-        else if (savedId && savedPw && autoLogin === 'true') { document.getElementById('loginId').value = savedId; document.getElementById('loginPw').value = savedPw; doLogin(); } 
-        else { document.getElementById('authView').classList.remove('hidden'); if (new URLSearchParams(location.search).get('signup')) showSignUp(); } // 🌱 [패치 #29] 소개 페이지 '무료로 시작하기' → 업체 등록 화면
+        ['shinhwa_pro_session', 'shinhwa_pro_auto_login', 'shinhwa_pro_logged_in_pw'].forEach(k => { try { localStorage.removeItem(k); } catch (e) {} });
+        if (savedId) { document.getElementById('loginId').value = savedId; localStorage.setItem('shinhwa_pro_save_id', '1'); }
+        {
+          document.getElementById('authView').classList.remove('hidden'); if (new URLSearchParams(location.search).get('signup')) showSignUp(); } // 🌱 [패치 #29] 소개 페이지 '무료로 시작하기' → 업체 등록 화면
         lucide.createIcons();
       }
     });
@@ -8657,7 +8666,7 @@ ${AI_COMMON_RULES}
           <div class="pv-row" style="color:#CBD5E1;font-size:16px;font-weight:700;"><span>무료 포인트 (먼저 사용)</span><b id="ptFree" style="color:#fff;">0P</b></div>
           <div id="ptFreeExp" style="color:#CBD5E1;font-size:15px;font-weight:700;text-align:right;"></div>
           <div class="pv-row" style="color:#CBD5E1;font-size:16px;font-weight:700;margin-top:6px;"><span>충전 포인트</span><b id="ptPaid" style="color:#fff;">0P</b></div>
-          <div style="color:#CBD5E1;font-size:15px;font-weight:700;text-align:right;">충전일부터 1년</div>
+          <div style="color:#CBD5E1;font-size:15px;font-weight:700;text-align:right;">사용 기한: 충전일부터 1년</div>
           <button type="button" class="pv-btn pv-lime" style="margin-top:14px;" onclick="ptOpenCharge()">충전하기</button>
         </div>
         <div id="ptReqCard" class="hidden pv-card">
@@ -8676,7 +8685,7 @@ ${AI_COMMON_RULES}
           <div class="pv-row pv-sub" style="padding:3px 0;"><span>고객 응대 (1번만)</span><b style="color:#0F172A;">1,000P</b></div>
           <div class="pv-row pv-sub" style="padding:3px 0;"><span>AI 블로그 글</span><b style="color:#0F172A;">1,000P</b></div>
           <div class="pv-row pv-sub" style="padding:3px 0;"><span>AI 비서 · AI 렌즈</span><b style="color:#0F172A;">무료 (하루 30회)</b></div>
-          <div class="pv-note" style="margin-top:10px;">포인트 차감은 준비가 끝나면 공지한 뒤 시작해요.</div>
+          <div id="ptLiveNote" class="pv-note" style="margin-top:10px;">포인트 차감은 준비가 끝나면 공지한 뒤 시작해요.</div>
         </div>
       </div>
 
@@ -8752,6 +8761,9 @@ ${AI_COMMON_RULES}
       if (myCompanyProfile) { myCompanyProfile.usable = r.usable; try { localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile)); } catch (e) {} }
       ptChipRender();
       ptRender();
+      if (typeof r.live === 'boolean') { PT.live = r.live; PT.liveAt = Date.now(); if (typeof ptBtnCost === 'function') ptBtnCost(); } // 💰 [패치 #72]
+      document.getElementById('ptLiveNote').classList.toggle('hidden', PT.live);
+      if (PT.goCharge) { PT.goCharge = false; ptOpenCharge(); }
     }
     function ptRender() {
       const d = PT.data; if (!d) return;
@@ -8759,7 +8771,7 @@ ${AI_COMMON_RULES}
       document.getElementById('ptFree').textContent = ptNum(d.free) + 'P';
       document.getElementById('ptPaid').textContent = ptNum(d.paid) + 'P';
       const freeExp = (d.lots || []).filter(l => l.type !== 'charge' && l.exp).map(l => l.exp).sort((a, b) => a - b)[0];
-      document.getElementById('ptFreeExp').textContent = d.free > 0 ? (freeExp ? ptDate(freeExp) + '까지' + ((d.lots || []).some(l => l.type !== 'charge' && !l.exp) ? ' (일부는 기한 없음)' : '') : '기한 없음') : '';
+      document.getElementById('ptFreeExp').textContent = d.free > 0 ? '사용 기한: ' + (freeExp ? ptDate(freeExp) + '까지' + ((d.lots || []).some(l => l.type !== 'charge' && !l.exp) ? ' (일부는 기한 없음)' : '') : '기한 없음') : '';
       // 충전 신청 (확인 중 · 반려 · 최근 완료)
       const reqs = (d.reqs || []).filter(q => q.status === 'wait' || ((q.status === 'no' || q.status === 'done') && Date.now() - q.at < 14 * 86400000));
       document.getElementById('ptReqCard').classList.toggle('hidden', !reqs.length);
@@ -8831,6 +8843,128 @@ ${AI_COMMON_RULES}
       if (st.ptCharge) ptShowPane('charge'); else if (st.ptOpen) ptShowPane('main'); else v.classList.add('hidden');
       e.stopImmediatePropagation();
     }, true);
+  </script>
+  <!-- 💰 [패치 #72] 발행 요금 확인 창 · 포인트 부족 창 -->
+  <style>
+    #btnGenerateReport[data-pt-cost], #btnGenerateQuote[data-pt-cost] { flex-wrap: wrap; row-gap: 0; }
+    #btnGenerateReport[data-pt-cost]::after, #btnGenerateQuote[data-pt-cost]::after { content: attr(data-pt-cost); flex-basis: 100%; text-align: center; font-size: 15px; font-weight: 800; color: #365314; line-height: 1.25; }
+    #ptSheet .ps-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid #EEF2F6; font-size: 18px; font-weight: 800; color: #0F172A; }
+    #ptSheet .ps-row:last-child { border-bottom: 0; }
+    #ptSheet .ps-btn { height: 60px; border-radius: 18px; font-size: 19px; font-weight: 900; width: 100%; display: flex; align-items: center; justify-content: center; }
+    #ptSheet .ps-btn:active { transform: scale(.97); }
+  </style>
+  <div id="ptSheet" class="hidden fixed inset-0 z-[9500] flex items-end justify-center" style="background:rgba(0,0,0,.6);" onclick="if(event.target===this) ptSheetClose(false)">
+    <div class="w-full max-w-md" style="background:#fff;border-radius:26px 26px 0 0;padding:22px 18px calc(22px + env(safe-area-inset-bottom));word-break:keep-all;">
+      <span id="psBadge" class="hidden" style="display:inline-block;background:#FEE2E2;color:#991B1B;font-size:15px;font-weight:900;border-radius:999px;padding:3px 12px;margin-bottom:8px;">포인트 부족</span>
+      <div id="psTitle" style="font-size:22px;font-weight:900;color:#0F172A;line-height:1.35;"></div>
+      <div id="psSub" style="font-size:16px;font-weight:700;color:#475569;margin-top:4px;line-height:1.5;"></div>
+      <div id="psRows" style="margin-top:8px;"></div>
+      <div id="psNote" class="hidden" style="background:#F4FBEA;border-left:5px solid #84CC16;border-radius:10px;padding:10px 12px;font-size:16px;font-weight:800;color:#3F6212;line-height:1.5;margin-top:6px;">작성하신 내용은 그대로 남아 있어요. 충전 뒤에 다시 [발행]을 누르시면 돼요.</div>
+      <button type="button" id="psOk" class="ps-btn" style="margin-top:14px;background:#84CC16;color:#14261E;border:0;" onclick="ptSheetClose(true)"></button>
+      <button type="button" id="psNo" class="ps-btn" style="margin-top:8px;background:#fff;color:#334155;border:2px solid #CBD5E1;" onclick="ptSheetClose(false)"></button>
+    </div>
+  </div>
+  <script>
+    // 💰 [패치 #72] 발행 요금 (서버가 최종 확인 · 이 화면은 미리 보여 주기만)
+    PT.live = false; PT.liveAt = 0; PT.expect = undefined; PT.sheetDone = null; PT.goCharge = false;
+    const PT_PRICE = { report: 500, quote: 1000 };
+    async function ptLiveGet() {
+      if (Date.now() - PT.liveAt < 5 * 60 * 1000) return PT.live;
+      try { const r = await fetch(getAuthUrl(`${SETTINGS_URL}/pointsLive.json?t=${Date.now()}`)); if (r.ok) { PT.live = (await r.json()) === true; PT.liveAt = Date.now(); } } catch (e) {}
+      return PT.live;
+    }
+    function ptBoot() { ptChipRender(); ptLiveGet().then(ptBtnCost); }
+    function ptNameKey(v) { return String(v || '').replace(/\s+/g, '').toLowerCase(); }
+    // 수정 발행: 고객 이름이 그대로면 무료, 바뀌면 새 발행 요금 (견적서·일지 같음)
+    function ptPriceFor(isQuote, clientName) {
+      if (!PT.live) return 0;
+      if (editingRecordId) {
+        const list = Array.isArray(records) ? records : Object.values(records || {});
+        const rec = list.find(r => r && r.id === editingRecordId);
+        const old = rec && rec.payload;
+        if (old && (old.isQuote === true) === isQuote && ptNameKey(old.c) === ptNameKey(clientName)) return 0;
+      }
+      return isQuote ? PT_PRICE.quote : PT_PRICE.report;
+    }
+    function ptBtnCost() {
+      [['btnGenerateReport', PT_PRICE.report], ['btnGenerateQuote', PT_PRICE.quote]].forEach(([id, price]) => {
+        const b = document.getElementById(id); if (!b) return;
+        if (!PT.live) { b.removeAttribute('data-pt-cost'); return; }
+        const cost = (b.textContent || '').includes('수정 완료') ? '수정 발행은 무료 (고객 이름이 같을 때)' : ptNum(price) + 'P 사용';
+        if (b.getAttribute('data-pt-cost') !== cost) b.setAttribute('data-pt-cost', cost);
+      });
+    }
+    ['btnGenerateReport', 'btnGenerateQuote'].forEach(id => { const b = document.getElementById(id); if (b) new MutationObserver(ptBtnCost).observe(b, { childList: true }); });
+
+    function ptSheetOpen(o) {
+      document.getElementById('psBadge').classList.toggle('hidden', !o.short);
+      document.getElementById('psTitle').textContent = o.title;
+      document.getElementById('psSub').textContent = o.sub || '';
+      document.getElementById('psSub').classList.toggle('hidden', !o.sub);
+      document.getElementById('psRows').innerHTML = o.rows.map(([k, v, c]) => `<div class="ps-row"><span>${ptEsc(k)}</span><b style="font-size:20px;${c ? 'color:' + c + ';' : ''}">${ptEsc(v)}</b></div>`).join('');
+      document.getElementById('psNote').classList.toggle('hidden', !o.short);
+      document.getElementById('psOk').textContent = o.ok; document.getElementById('psNo').textContent = o.no;
+      document.getElementById('ptSheet').classList.remove('hidden');
+      history.pushState({ ptSheet: 1 }, '', '');
+      return new Promise(res => { PT.sheetDone = res; });
+    }
+    function ptSheetClose(yes, fromPop) {
+      const sh = document.getElementById('ptSheet'); if (sh.classList.contains('hidden')) return;
+      sh.classList.add('hidden');
+      if (!fromPop && history.state && history.state.ptSheet) { VX.ignorePop = true; history.back(); }
+      const done = PT.sheetDone; PT.sheetDone = null; if (done) done(!!yes);
+    }
+    window.addEventListener('popstate', (e) => {
+      const sh = document.getElementById('ptSheet'); if (!sh || sh.classList.contains('hidden')) return;
+      ptSheetClose(false, true); e.stopImmediatePropagation();
+    }, true);
+    async function ptShortSheet(need, usable) {
+      const go = await ptSheetOpen({ short: true, title: '포인트가 조금 모자라요', rows: [['필요한 포인트', ptNum(need) + 'P'], ['지금 포인트', ptNum(usable) + 'P', '#B91C1C']], ok: '충전하러 가기', no: '닫기' });
+      if (go) { PT.goCharge = true; setTimeout(openPointView, 350); }
+    }
+    // 발행 전에 요금 확인 (차감이 꺼져 있거나 무료면 창 없이 바로 진행)
+    async function ptConfirmPublish(isQuote, clientName) {
+      PT.expect = undefined;
+      const live = await ptLiveGet();
+      const price = live ? ptPriceFor(isQuote, clientName) : 0;
+      PT.expect = price;
+      if (price === 0) return true;
+      let usable = myCompanyProfile && typeof myCompanyProfile.usable === 'number' ? myCompanyProfile.usable : null;
+      if (usable === null) { const w = await requestPoints({ action: 'pts_wallet' }); if (w && w.ok) { usable = w.usable; myCompanyProfile.usable = w.usable; ptChipRender(); } }
+      if (usable !== null && usable < price) { ptShortSheet(price, usable); return false; }
+      const kind = isQuote ? '견적서' : '작업일지';
+      const rows = [['사용할 포인트', ptNum(price) + 'P']];
+      if (usable !== null) rows.push(['지금 포인트', ptNum(usable) + 'P'], ['발행 후 남는 포인트', ptNum(usable - price) + 'P', '#3F6212']);
+      return await ptSheetOpen({ title: kind + '를 발행할까요?', sub: String(clientName || ''), rows, ok: '발행하기 (' + ptNum(price) + 'P)', no: '취소' });
+    }
+    // 서버에 저장 요청 (포인트 확인·차감·저장을 서버가 한 번에). 성공하면 true
+    async function ptPublishDoc(clean, id, mode) {
+      const body = { action: 'pts_publish', docId: id, doc: clean, mode };
+      if (mode === 'publish' && typeof PT.expect === 'number') body.expect = PT.expect;
+      let r = await requestPoints(body);
+      if (r && !r.ok && r.msg === 'price') {
+        document.getElementById('loadingOverlay')?.remove();
+        PT.live = !!r.live; PT.liveAt = Date.now(); ptBtnCost();
+        if (!confirm(r.price > 0 ? `이번 발행은 ${ptNum(r.price)}P가 사용돼요.\n(고객 이름이 바뀌었거나 포인트 차감이 방금 시작됐어요)\n\n발행할까요?` : '이번 발행은 무료예요. 발행할까요?')) return false;
+        showLoadingOverlay('발행 중...');
+        body.expect = r.price; r = await requestPoints(body);
+      }
+      PT.expect = undefined;
+      if (r && r.ok) {
+        if (typeof r.usable === 'number' && myCompanyProfile) { myCompanyProfile.usable = r.usable; try { localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile)); } catch (e) {} ptChipRender(); }
+        return true;
+      }
+      if (r && r.msg === 'unknown') { // 서버가 아직 예전 버전일 때만: 예전 방식으로 저장 (서버 배포 후에는 쓰이지 않음)
+        try { const res = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_shared_docs/${id}.json?auth=${currentIdToken}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(clean) }); if (res.ok) return true; } catch (e) {}
+        alert("리포트 저장에 실패했습니다. 잠시 후 다시 시도해 주세요."); return false;
+      }
+      document.getElementById('loadingOverlay')?.remove();
+      if (r && r.msg === 'short') { ptShortSheet(r.need, r.usable); return false; }
+      if (mode === 'relink') { alert(r && r.msg === 'no-record' ? '예전 문서라 고객용 링크를 새로 만들 수 없어요. 내용 보기는 그대로 할 수 있어요.' : '고객용 링크를 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'); return false; }
+      const m = { 'not-owner': '다른 업체의 문서라 저장할 수 없어요.', inactive: '승인된 업체만 발행할 수 있어요.', 'save-fail': '저장에 실패했어요. 포인트는 빠지지 않았어요. 잠시 후 다시 눌러 주세요.', 'too-big': '내용이 너무 커서 저장하지 못했어요. 사진 수를 줄여 주세요.', busy: '서버가 바빠요. 잠시 후 다시 눌러 주세요.', login: '로그인이 풀렸어요. 앱을 다시 열어 주세요.' };
+      alert(m[r && r.msg] || "인터넷 연결이 불안정해 저장하지 못했습니다. 다시 시도해 주세요.\n(계속 안 되면 [1:1 문의]로 알려주세요)");
+      return false;
+    }
   </script>
 </body>
 </html>
