@@ -1490,37 +1490,26 @@
       </div>
 
       <div class="rounded-[32px] p-8 luxury-shadow space-y-7 print-card relative overflow-hidden text-[#1A1D1A]" id="printCardArea">
-        <div class="absolute -top-16 -right-16 w-64 h-64 bg-gradient-to-br from-[#C5A880]/15 to-[#84CC16]/5 rounded-full blur-3xl pointer-events-none z-0"></div>
+        <div class="hidden absolute -top-16 -right-16 w-64 h-64 bg-gradient-to-br from-[#C5A880]/15 to-[#84CC16]/5 rounded-full blur-3xl pointer-events-none z-0"></div><!-- 🧾 [패치 #62] 흐릿한 장식 원 끔 -->
         <div class="absolute -bottom-16 -left-16 w-64 h-64 bg-gradient-to-tr from-[#12261E]/5 to-transparent rounded-full blur-3xl pointer-events-none z-0"></div>
 
-        <div class="border-b border-[#EAEBEA] pb-5 relative z-10">
-          <div class="flex items-center justify-between mb-4">
-            <!-- uppercase(대문자 변환) 속성을 빼고 한글로 변경했습니다. -->
-            <span id="docTypeLabel" class="text-[14px] font-black text-[#C5A880] tracking-wider flex items-center gap-1.5"><i data-lucide="shield-check" class="w-5 h-5 text-[#84CC16]"></i> 스마트 조경관리 솔루션</span>
-            <span id="docStatusLabel" class="text-[13.5px] bg-[#151E2D] text-[#84CC16] font-black px-3 py-1 rounded-lg">완료</span>
+        <!-- 🧾 [패치 #62] A안: 남색 머리띠 + 받는 분·공급자 줄 맞춤 (원래: 연두·하늘색 박스) -->
+        <div class="relative z-10 -mx-8 !-mt-8 bg-[#151E2D] px-6 pt-6 pb-5 text-white">
+          <div class="flex items-center justify-between gap-2">
+            <span id="docTypeLabel" class="text-[14.5px] font-black text-[#BEF264] tracking-wide flex items-center gap-1.5"><i data-lucide="shield-check" class="w-5 h-5 text-[#84CC16]"></i> 스마트 조경관리 솔루션</span>
+            <span id="docStatusLabel" class="text-[13.5px] font-black text-[#BEF264] border-[1.5px] border-[#BEF264] px-3 py-0.5 rounded-full whitespace-nowrap">완료</span>
           </div>
-          <h1 id="viewRound" class="text-[24px] font-black text-[#151E2D] tracking-tight leading-snug mb-5">-</h1>
-          <div class="flex flex-col gap-3">
-            <div class="bg-[#F2FBEC] p-4 rounded-[18px] border border-[#EAEBEA] shadow-sm flex flex-col gap-1.5">
-              <div class="flex justify-between items-start w-full gap-2">
-                <div class="text-[15px] font-black text-[#151E2D] break-keep leading-snug">수신: <span id="viewDocClientName">-</span> 귀하</div>
-                <div class="text-[13.5px] font-bold text-[#4E5968] flex-shrink-0 mt-0.5 whitespace-nowrap"><span id="viewDateLabel">발행일</span>: <span id="viewDate">-</span></div>
-              </div>
-              <div class="text-[13.5px] font-bold text-[#4E5968] flex items-center gap-1"><i data-lucide="phone" class="w-3.5 h-3.5"></i> <span id="viewDocClientPhone">-</span></div>
-              <div class="text-[13.5px] font-bold text-[#4E5968] flex items-center gap-1 mt-0.5"><i data-lucide="map-pin" class="w-3.5 h-3.5"></i> <span id="viewDocClientAddress">-</span></div>
-            </div>
-            <div class="bg-[#F0F9FF] p-4 rounded-[18px] border border-[#BAE6FD] shadow-sm">
-              <div class="text-[14.5px] font-black text-[#0369A1] mb-2.5">공급자 (Supplier)</div>
-              <div class="flex justify-between items-center gap-2 text-[14.5px] mb-2">
-                <div class="flex items-center min-w-0"><span class="w-14 text-[#0284C7] font-black flex-shrink-0">상호명</span><strong id="doc-company-name" class="text-[15px] font-black text-[#0C4A6E] whitespace-nowrap">업체명</strong></div>
-                <div class="flex items-center flex-shrink-0"><span class="w-12 text-[#0284C7] font-black flex-shrink-0">대표자</span><strong id="doc-company-ceo" class="text-[14px] text-[#0C4A6E] font-black whitespace-nowrap">대표자명</strong></div>
-              </div>
-              <div class="flex flex-col gap-y-1.5 text-[14.5px]">
-                <div class="flex items-center"><span class="w-16 text-[#0284C7] font-black flex-shrink-0">등록번호</span><strong id="doc-company-biz-num" class="text-[14px] text-[#0C4A6E] font-black">000-00-00000</strong></div>
-                <div class="flex items-start"><span class="w-16 text-[#0284C7] font-black flex-shrink-0 mt-0.5">연락처</span><strong id="doc-company-phone" class="text-[15px] font-black text-[#0C4A6E] break-keep leading-tight">0000-0000</strong></div>
-              </div>
-            </div>
-          </div>
+          <h1 id="viewRound" class="text-[26px] font-black text-white tracking-tight leading-snug mt-3 break-keep">-</h1>
+          <div class="text-[14.5px] font-bold text-[#94A3B8] mt-1"><span id="viewDateLabel">발행일</span> <span id="viewDate">-</span></div>
+        </div>
+        <div class="relative z-10">
+          <div class="text-[13.5px] font-black text-[#64748B] tracking-wide mb-1.5">받는 분</div>
+          <div class="text-[21px] font-black text-[#0F172A] leading-snug break-keep"><span id="viewDocClientName">-</span> <span class="text-[16px] font-bold text-[#475569]">귀하</span></div>
+          <div class="grid grid-cols-[64px_1fr] gap-y-1.5 mt-2.5 text-[15.5px]"><span class="text-[#64748B] font-bold">연락처</span><span id="viewDocClientPhone" class="font-extrabold text-[#1E293B] break-keep">-</span><span class="text-[#64748B] font-bold">현장</span><span id="viewDocClientAddress" class="font-extrabold text-[#1E293B] break-keep">-</span></div>
+          <div class="h-px bg-[#E2E8F0] my-5"></div>
+          <div class="text-[13.5px] font-black text-[#64748B] tracking-wide mb-1.5">공급자</div>
+          <div class="grid grid-cols-[64px_1fr] gap-y-1.5 text-[15.5px]"><span class="text-[#64748B] font-bold">상호</span><strong id="doc-company-name" class="font-extrabold text-[#1E293B] break-keep">업체명</strong><span class="text-[#64748B] font-bold">대표자</span><strong id="doc-company-ceo" class="font-extrabold text-[#1E293B] break-keep">대표자명</strong><span class="text-[#64748B] font-bold">사업자</span><strong id="doc-company-biz-num" class="font-extrabold text-[#1E293B] break-keep">000-00-00000</strong><span class="text-[#64748B] font-bold">연락처</span><strong id="doc-company-phone" class="font-extrabold text-[#1E293B] break-keep">0000-0000</strong></div>
+          <div class="h-px bg-[#E2E8F0] mt-5"></div>
         </div>
 
         <div id="reportContentBlock" class="space-y-7 hidden"><div class="space-y-3 relative z-10"><h2 class="text-[18px] font-black text-[#151E2D] flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#4E5968]"></span> 작업 전 <span class="text-[13.5px] font-bold ml-1 text-[#4E5968]">(사진 터치시 확대)</span></h2><div id="viewBeforeGallery" class="grid grid-cols-2 gap-3"></div></div><div class="space-y-3 relative z-10"><h2 class="text-[18px] font-black text-[#151E2D] flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#3B82F6]"></span> 작업 중 <span class="text-[13.5px] font-bold ml-1 text-[#4E5968]">(사진 터치시 확대)</span></h2><div id="viewDuringGallery" class="grid grid-cols-2 gap-3"></div></div><div class="space-y-3 relative z-10"><h2 class="text-[18px] font-black text-[#151E2D] flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#84CC16]"></span> 작업 후 <span class="text-[13.5px] font-bold ml-1 text-[#4E5968]">(사진 터치시 확대)</span></h2><div id="viewAfterGallery" class="grid grid-cols-2 gap-3"></div></div>
@@ -1540,21 +1529,19 @@
             <h2 class="text-[15px] font-black text-[#151E2D] flex items-center gap-1.5"><i data-lucide="lock" class="w-5 h-5 text-[#84CC16]"></i> 현장 상태 기록 (고객 미노출)</h2>
             <div id="viewQuotePhotoGrid" class="grid grid-cols-2 gap-3"></div>
           </div>
-          <h2 class="text-[18px] font-black text-[#151E2D] flex items-center gap-1.5"><i data-lucide="list" class="w-5 h-5 text-[#84CC16]"></i> 세부 견적 내역</h2>
-          <div id="viewQuoteMonths" class="space-y-2"></div>
-          <div class="mt-6 bg-[#F9F9F8] p-5 rounded-[20px] border border-[#EAEBEA] space-y-3">
-            <div class="flex justify-between items-center text-[15px] text-[#1A1D1A] font-black"><span>공급가액</span><span id="viewQuoteSubtotal">0원</span></div>
-            <div class="flex justify-between items-center text-[14px] text-[#4E5968] font-black pb-3 border-b border-[#EAEBEA]">
-              <span id="viewQuoteVatLabel">부가가치세</span><span id="viewQuoteVat"><span class="text-[#3B82F6] font-black">부가세 별도(요청시)</span></span>
-            </div>
-            <div class="flex justify-between items-center pt-1"><span class="text-[18px] font-black text-[#1A1D1A]">견적 총액</span><span id="viewQuoteGrandTotal" class="text-[20px] font-black text-[#84CC16]">0원</span></div>
+          <h2 class="text-[13.5px] font-black text-[#64748B] tracking-wide">세부 견적 내역</h2><!-- 🧾 [패치 #62] -->
+          <div id="viewQuoteMonths" class="!mt-2"></div>
+          <div class="bg-[#151E2D] rounded-[18px] px-5 py-4 text-white">
+            <div class="flex justify-between items-center text-[15.5px] font-bold text-[#CBD5E1] py-0.5"><span>공급가액</span><span id="viewQuoteSubtotal" class="font-extrabold text-white">0원</span></div>
+            <div class="flex justify-between items-center text-[15.5px] font-bold text-[#CBD5E1] py-0.5"><span id="viewQuoteVatLabel">부가가치세</span><span id="viewQuoteVat"><span class="font-extrabold text-white">별도 (요청 시)</span></span></div>
+            <div class="flex justify-between items-baseline border-t border-white/15 mt-2.5 pt-3"><span class="text-[17px] font-black">견적 총액</span><span id="viewQuoteGrandTotal" class="text-[26px] font-black text-[#BEF264] tabular-nums">0원</span></div>
           </div>
           <div id="viewQuoteMemoBlock"></div>
-          <p class="text-[13.5px] text-[#4E5968] font-bold text-center mt-3 bg-[#F4F5F4] py-2 rounded-lg">* 본 문서는 현장 여건 및 기상 상황에 따라 내역이 일부 조정될 수 있습니다.</p>
+          <p class="text-[13.5px] text-[#64748B] font-bold text-center break-keep">본 견적은 현장 여건과 날씨에 따라 일부 조정될 수 있습니다.</p>
         </div>
 
-        <div class="pt-5 flex justify-between items-end opacity-90 relative z-10 border-t border-[#EAEBEA] mt-5">
-          <div class="flex items-center gap-2">
+        <div class="pt-5 flex justify-between items-center gap-3 relative z-10 border-t border-[#E2E8F0] mt-5">
+          <div class="flex items-center gap-2 shrink-0">
             <!-- 문서용 미니 로고 -->
             <svg width="24" height="24" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="opacity-80">
               <rect x="10" y="20" width="50" height="70" rx="4" fill="none" stroke="#12261E" stroke-width="2.5"/>
@@ -1572,9 +1559,14 @@
                 </g>
               </g>
             </svg>
-            <div class="flex flex-col"><span class="text-[11.5px] font-black text-[#A3A8A3] tracking-wider uppercase mb-0">Powered by</span><span class="text-[14px] font-black text-[#84CC16] tracking-tight">신화 조경노트</span></div>
+            <span class="text-[12.5px] font-black text-[#94A3B8] whitespace-nowrap">조경노트 PRO로 발행</span><!-- 🧾 [패치 #62] 옛 이름 '신화 조경노트' 정리 -->
           </div>
-          <div class="flex items-center gap-2"><span class="text-[18px] font-black text-[#151E2D] tracking-tight"><span id="doc-company-name-sign">업체명</span> 드림</span></div>
+          <div class="flex items-center gap-2 min-w-0 flex-1 justify-end"><span class="text-[18px] font-black text-[#151E2D] tracking-tight text-right break-keep"><span id="doc-company-name-sign">업체명</span>&nbsp;드림</span></div>
+        </div>
+        <!-- 📞 [패치 #62] 고객이 바로 전화·문자 (업체 연락처가 있을 때만) -->
+        <div id="docContactBox" class="no-print hidden grid grid-cols-2 gap-2.5 relative z-10 !mt-4">
+          <a id="docCallBtn" href="#" class="min-h-[58px] rounded-[16px] bg-[#151E2D] text-[#BEF264] text-[17px] font-black flex items-center justify-center gap-2" style="text-decoration:none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"></path></svg>전화 걸기</a>
+          <a id="docSmsBtn" href="#" class="min-h-[58px] rounded-[16px] bg-[#84CC16] text-[#14261E] text-[17px] font-black flex items-center justify-center gap-2" style="text-decoration:none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>문자 보내기</a>
         </div>
 
         <div id="printBtnBox" class="no-print pt-6 relative z-10 space-y-2">
@@ -2873,7 +2865,10 @@
 
       document.getElementById('doc-company-name').innerText = sName;
       document.getElementById('doc-company-ceo').innerText = sCeo;
-      document.getElementById('doc-company-biz-num').innerText = sBiz;
+      document.getElementById('doc-company-biz-num').innerText = (/^\d{10}$/.test(String(sBiz).replace(/[^0-9]/g, '')) ? String(sBiz).replace(/[^0-9]/g, '').replace(/^(\d{3})(\d{2})(\d{5})$/, '$1-$2-$3') : sBiz); // 🧾 [패치 #62] 5593501139 → 559-35-01139 (보이는 모양만)
+      { const box = document.getElementById('docContactBox'), dig = String(sPhone || '').replace(/[^0-9]/g, ''); // 📞 [패치 #62]
+        if (box) { const ok = dig.length >= 9 && dig.length <= 11; box.classList.toggle('hidden', !ok);
+          if (ok) { document.getElementById('docCallBtn').href = 'tel:' + dig; document.getElementById('docSmsBtn').href = 'sms:' + dig + '?body=' + encodeURIComponent('[' + sName + '] ' + (data.r || (data.isQuote ? '견적서' : '작업 리포트')) + ' 관련 문의드립니다.\n'); } } }
       document.getElementById('doc-company-phone').innerText = sPhone;
       document.getElementById('doc-company-name-sign').innerText = sName;
 
@@ -2890,6 +2885,7 @@
         } else { quotePhotoContainer.classList.add('hidden'); }
 
         let mHtml = "";
+        const quoteHasPrice = (Array.isArray(data.m) ? data.m : []).some(x => x && Number(x.p) > 0); // 🧾 [패치 #62] 금액이 하나도 없으면 모든 항목을 보여 줌
         (Array.isArray(data.m) ? data.m : []).forEach(rawItem => { /* 🔐 [패치 #37] 고객 리포트 글자 안전 처리 */
           if (!rawItem || typeof rawItem !== 'object') return;
           const item = { m: escHtml(rawItem.m), d: escHtml(rawItem.d), p: Number(rawItem.p) || 0 };
@@ -2909,10 +2905,14 @@
                  }
              }
           }
-          mHtml += `<div class="flex justify-between items-center bg-white p-3 rounded-[14px] border border-[#EAEBEA] shadow-sm mb-2"><div class="flex items-center gap-3 w-[72%]"><span class="w-10 text-center font-black text-[14.5px] bg-[#151E2D] text-white py-1.5 rounded-[8px] flex-shrink-0">${item.m}</span><div class="flex-1 w-full">${descHtml}</div></div><span class="text-[15px] font-black text-[#1A1D1A] flex-shrink-0 whitespace-nowrap text-right">${item.p.toLocaleString('ko-KR')}원</span></div>`;
+          if (quoteHasPrice && !item.p) return; // 🧾 [패치 #62] 금액 없는 항목은 빼고 보여 줌
+          { const isTpl = item.d.startsWith('[') && descHtml.indexOf('규격/면적') !== -1;
+            const lines = String(rawItem.d || '').split(/\n|, (?=[^)]*(?:\(|$))/).map(t => t.replace(/^[·•\-\s]+/, '').trim()).filter(Boolean);
+            const body = isTpl ? descHtml : (lines.length > 1 ? lines.map(t => `<div class="relative pl-3 text-[16px] font-bold text-[#0F172A] leading-[1.55] break-keep"><span class="absolute left-0 top-[11px] w-1 h-1 rounded-full bg-[#84CC16]"></span>${escHtml(t)}</div>`).join('') : `<div class="text-[16.5px] font-extrabold text-[#0F172A] leading-[1.45] break-keep whitespace-pre-wrap">${item.d}</div>`);
+            mHtml += `<div class="grid grid-cols-[40px_1fr_auto] gap-2.5 py-3.5 border-b border-[#E2E8F0] items-start"><span class="text-[14px] font-black text-[#65A30D] pt-0.5 break-keep">${item.m}</span><div class="min-w-0">${body}</div><span class="text-[16.5px] font-black text-[#0F172A] whitespace-nowrap text-right tabular-nums">${item.p ? item.p.toLocaleString('ko-KR') + '원' : ''}</span></div>`; }
         });
-        document.getElementById('viewQuoteMonths').innerHTML = mHtml; document.getElementById('viewQuoteSubtotal').className = "text-[15px] text-[#1A1D1A] font-black"; document.getElementById('viewQuoteSubtotal').innerText = (data.s || 0).toLocaleString('ko-KR') + "원"; document.getElementById('viewQuoteVatLabel').innerText = "부가가치세"; document.getElementById('viewQuoteVat').innerHTML = '<span class="text-[#3B82F6] font-black">부가세 별도(요청시)</span>'; document.getElementById('viewQuoteGrandTotal').innerText = (data.s || 0).toLocaleString('ko-KR') + "원";
-        if(data.memo && String(data.memo).trim() !== '') { document.getElementById('viewQuoteMemoBlock').innerHTML = `<div class="mt-4 bg-[#FFFDF9] p-5 rounded-[20px] border border-[#C5A880]/30 shadow-sm text-left"><h2 class="text-[15px] font-black text-[#151E2D] flex items-center gap-1.5 mb-2"><i data-lucide="info" class="w-5 h-5 text-[#C5A880]"></i> 참고 및 특이사항</h2><p class="text-[15px] leading-[1.8] text-[#151E2D] font-black whitespace-pre-wrap">${escHtml(data.memo)}</p></div>`; } else { document.getElementById('viewQuoteMemoBlock').innerHTML = ''; }
+        document.getElementById('viewQuoteMonths').innerHTML = (mHtml ? '<div class="flex justify-between text-[13.5px] font-black text-[#64748B] px-0.5 pb-2 border-b-2 border-[#151E2D]"><span>번호 · 내용</span><span>금액</span></div>' : '') + mHtml; document.getElementById('viewQuoteSubtotal').className = "font-extrabold text-white tabular-nums"; document.getElementById('viewQuoteSubtotal').innerText = (data.s || 0).toLocaleString('ko-KR') + "원"; document.getElementById('viewQuoteVatLabel').innerText = "부가가치세"; document.getElementById('viewQuoteVat').innerHTML = '<span class="font-extrabold text-white">별도 (요청 시)</span>'; document.getElementById('viewQuoteGrandTotal').innerText = (data.s || 0).toLocaleString('ko-KR') + "원";
+        if(data.memo && String(data.memo).trim() !== '') { document.getElementById('viewQuoteMemoBlock').innerHTML = `<div class="border-[1.5px] border-[#E2E8F0] rounded-[16px] px-4 py-3.5 text-left"><div class="text-[13.5px] font-black text-[#64748B] tracking-wide mb-1.5">참고 및 특이사항</div><p class="text-[15.5px] leading-[1.75] text-[#1E293B] font-bold whitespace-pre-wrap break-keep">${escHtml(data.memo)}</p></div>`; /* 🧾 [패치 #62] */ } else { document.getElementById('viewQuoteMemoBlock').innerHTML = ''; }
       } else {
         // 💡 일지일 경우: 일지 박스는 켜고, 견적 박스는 숨김
         document.getElementById('quoteContentBlock').classList.add('hidden');
