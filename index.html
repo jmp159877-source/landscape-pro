@@ -171,6 +171,14 @@
     html.outdoor #bottomNav .bnav-btn.is-active, html.outdoor #bottomNav .bnav-btn.is-active span { color: #3F6212 !important; }
     
     /* ===== 안쪽 화면 공통 (S = 밝게 바꿀 영역, DK = 그대로 어둡게 둘 작은 버튼·배지) ===== */
+    /* 🧾 [패치 #65] 고객에게 보내는 견적서·리포트 종이(#printCardArea)는 야외 모드에서도 원래 색 그대로 (남색 머리띠·합계 상자가 흰색으로 바뀌던 문제) */
+    html.outdoor #swipeContainer #printCardArea :is(div, span)[class*="bg-[#151E2D]"] { background: #151E2D !important; border-color: transparent !important; }
+    html.outdoor #swipeContainer #printCardArea [class*="bg-[#151E2D]"] :is(.text-white, h1, span.font-black, span.font-extrabold):not([class*="text-[#"]) { color: #FFFFFF !important; }
+    html.outdoor #swipeContainer #printCardArea [class*="bg-[#151E2D]"] [class*="text-[#BEF264]"], html.outdoor #swipeContainer #printCardArea [class*="text-[#BEF264]"] { color: #BEF264 !important; }
+    html.outdoor #swipeContainer #printCardArea [class*="bg-[#151E2D]"] [class*="text-[#CBD5E1]"] { color: #CBD5E1 !important; }
+    html.outdoor #swipeContainer #printCardArea [class*="bg-[#151E2D]"] [class*="text-[#94A3B8]"] { color: #94A3B8 !important; }
+    html.outdoor #swipeContainer #printCardArea [class*="bg-[#151E2D]"] [class*="border-white"] { border-color: rgba(255,255,255,0.15) !important; }
+    html.outdoor #swipeContainer #printCardArea [class*="border-[#BEF264]"] { border-color: #BEF264 !important; }
     html.outdoor .luxury-shadow { box-shadow: 0 4px 16px rgba(20,38,30,0.08) !important; outline: 1px solid #DCE2D6; }
     html.outdoor :is(#boardView, #reqView, #stockView, #memoView, #formAiPreview) { background: #F2F4EF !important; }
     html.outdoor #loungeView h2, html.outdoor #ledgerView h2.text-white, html.outdoor #ledgerView h3.text-white { color: #14261E !important; }
@@ -2867,7 +2875,7 @@
       document.getElementById('doc-company-ceo').innerText = sCeo;
       document.getElementById('doc-company-biz-num').innerText = (/^\d{10}$/.test(String(sBiz).replace(/[^0-9]/g, '')) ? String(sBiz).replace(/[^0-9]/g, '').replace(/^(\d{3})(\d{2})(\d{5})$/, '$1-$2-$3') : sBiz); // 🧾 [패치 #62] 5593501139 → 559-35-01139 (보이는 모양만)
       { const box = document.getElementById('docContactBox'), dig = String(sPhone || '').replace(/[^0-9]/g, ''); // 📞 [패치 #62]
-        if (box) { const ok = viewMode === 'client_shared' && dig.length >= 9 && dig.length <= 11; box.classList.toggle('hidden', !ok); // [패치 #62 수정] 고객이 받은 화면에서만 (대표님 화면에서는 숨김 · 대표님이 눌러 자기 번호로 문자가 가던 오류)
+        if (box) { const isOwner = !!(currentUserId && data.ownerId && String(data.ownerId) === String(currentUserId)); const ok = viewMode === 'client_shared' && !isOwner && dig.length >= 9 && dig.length <= 11; // [패치 #65] 대표님이 보낸 링크를 직접 열어 봐도 안 보이게 box.classList.toggle('hidden', !ok); // [패치 #62 수정] 고객이 받은 화면에서만 (대표님 화면에서는 숨김 · 대표님이 눌러 자기 번호로 문자가 가던 오류)
           if (ok) { document.getElementById('docCallBtn').href = 'tel:' + dig; document.getElementById('docSmsBtn').href = 'sms:' + dig + '?body=' + encodeURIComponent('[' + sName + '] ' + (data.r || (data.isQuote ? '견적서' : '작업 리포트')) + ' 관련 문의드립니다.\n'); } } }
       document.getElementById('doc-company-phone').innerText = sPhone;
       document.getElementById('doc-company-name-sign').innerText = sName;
@@ -2910,8 +2918,8 @@
           { const isTpl = item.d.startsWith('[') && descHtml.indexOf('규격/면적') !== -1;
             const lines = String(rawItem.d || '').split(/\n|, (?=[^)]*(?:\(|$))/).map(t => t.replace(/^[·•\-\s]+/, '').trim()).filter(Boolean);
             const body = isTpl ? descHtml : (lines.length > 1 ? lines.map(t => `<div class="relative pl-3 text-[16px] font-bold text-[#0F172A] leading-[1.55] break-keep"><span class="absolute left-0 top-[11px] w-1 h-1 rounded-full bg-[#84CC16]"></span>${escHtml(t)}</div>`).join('') : `<div class="text-[16.5px] font-extrabold text-[#0F172A] leading-[1.45] break-keep whitespace-pre-wrap">${item.d}</div>`);
-            quoteShownNo++; const shownLabel = /^\d+$/.test(String(rawItem.m || '').trim()) ? String(quoteShownNo).padStart(2, '0') : item.m;
-            mHtml += `<div class="grid grid-cols-[40px_1fr_auto] gap-2.5 py-3.5 border-b border-[#E2E8F0] items-start"><span class="text-[14px] font-black text-[#65A30D] pt-0.5 break-keep">${shownLabel}</span><div class="min-w-0">${body}</div><span class="text-[16.5px] font-black text-[#0F172A] whitespace-nowrap text-right tabular-nums">${item.p ? item.p.toLocaleString('ko-KR') + '원' : ''}</span></div>`; }
+            quoteShownNo++; /* 🧾 [패치 #66] 번호·금액을 항목 가운데 높이에 (여러 줄 항목 전체가 이 금액) */ const shownLabel = /^\d+$/.test(String(rawItem.m || '').trim()) ? String(quoteShownNo).padStart(2, '0') : item.m;
+            mHtml += `<div class="grid grid-cols-[40px_1fr_auto] gap-2.5 py-3.5 border-b border-[#E2E8F0] items-center"><span class="text-[14px] font-black text-[#65A30D] break-keep">${shownLabel}</span><div class="min-w-0">${body}</div><span class="text-[16.5px] font-black text-[#0F172A] whitespace-nowrap text-right tabular-nums">${item.p ? item.p.toLocaleString('ko-KR') + '원' : ''}</span></div>`; }
         });
         document.getElementById('viewQuoteMonths').innerHTML = (mHtml ? '<div class="flex justify-between text-[13.5px] font-black text-[#64748B] px-0.5 pb-2 border-b-2 border-[#151E2D]"><span>번호 · 내용</span><span>금액</span></div>' : '') + mHtml; document.getElementById('viewQuoteSubtotal').className = "ml-auto font-extrabold text-white tabular-nums whitespace-nowrap"; document.getElementById('viewQuoteSubtotal').innerText = (data.s || 0).toLocaleString('ko-KR') + "원"; document.getElementById('viewQuoteVatLabel').innerText = "부가가치세"; document.getElementById('viewQuoteVat').innerHTML = '<span class="font-extrabold text-white">별도 (요청 시)</span>'; document.getElementById('viewQuoteGrandTotal').innerText = (data.s || 0).toLocaleString('ko-KR') + "원";
         if(data.memo && String(data.memo).trim() !== '') { document.getElementById('viewQuoteMemoBlock').innerHTML = `<div class="border-[1.5px] border-[#E2E8F0] rounded-[16px] px-4 py-3.5 text-left"><div class="text-[17px] font-black text-[#151E2D] flex items-center gap-2 mb-2"><span class="w-[4px] h-[17px] rounded-full bg-[#84CC16]"></span>참고 및 특이사항</div><p class="text-[15.5px] leading-[1.75] text-[#1E293B] font-bold whitespace-pre-wrap break-keep">${escHtml(data.memo)}</p></div>`; /* 🧾 [패치 #62] */ } else { document.getElementById('viewQuoteMemoBlock').innerHTML = ''; }
@@ -3205,7 +3213,7 @@
         const div = document.createElement('div'); div.className = "bg-white p-5 rounded-[20px] border-[1.5px] border-[#CBD5E1] shadow-sm cursor-pointer hover:border-[#84CC16] hover:shadow-md transition-all flex flex-col gap-2.5 relative";
         div.onclick = () => loadHistoryRecord(r.id, true, r);
         let sumValue = r.payload ? (r.payload.s || 0).toLocaleString('ko-KR') : "0";
-        div.innerHTML = `<button onclick="deleteRecord(event, '${r.id}', true)" class="absolute top-4 right-4 text-[#64748B] hover:text-red-600 p-2 bg-[#F1F5F9] rounded-xl transition-colors"><i data-lucide="trash-2" class="w-5 h-5"></i></button><div class="flex items-center gap-2"><span class="text-[13.5px] font-black bg-[#1E3A8A] text-white px-2.5 py-1 rounded-lg">견적서</span><span class="text-[14px] font-extrabold text-[#64748B]">${r.date}</span></div><div class="font-black text-[#151E2D] text-[18px] truncate pr-10">${r.round}</div><div class="flex justify-between items-end mt-1 pt-2 border-t border-[#F1F5F9]"><div class="text-[15.5px] font-black text-[#334155] flex items-center gap-1.5"><i data-lucide="building" class="w-4 h-4 text-[#65A30D]"></i> ${r.clientName}</div><div class="text-[19px] font-black text-[#65A30D]">${sumValue}원</div></div>`;
+        div.innerHTML = `<button onclick="deleteRecord(event, '${r.id}', true)" class="absolute top-4 right-4 text-[#64748B] hover:text-red-600 p-2 bg-[#F1F5F9] rounded-xl transition-colors"><i data-lucide="trash-2" class="w-5 h-5"></i></button><div class="flex items-center gap-2"><span class="text-[13.5px] font-black bg-[#151E2D] text-[#BEF264] px-2.5 py-1 rounded-lg">견적서</span><span class="text-[14px] font-extrabold text-[#64748B]">${r.date}</span></div><div class="font-black text-[#151E2D] text-[18px] truncate pr-10">${r.round}</div><div class="flex justify-between items-end mt-1 pt-2 border-t border-[#F1F5F9]"><div class="text-[15.5px] font-black text-[#334155] flex items-center gap-1.5"><i data-lucide="building" class="w-4 h-4 text-[#65A30D]"></i> ${r.clientName}</div><div class="text-[19px] font-black text-[#65A30D]">${sumValue}원</div></div>`;
         container.appendChild(div);
       }); lucide.createIcons();
     }
