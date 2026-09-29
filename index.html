@@ -335,6 +335,11 @@
           <p class="mt-1.5 mb-3 text-[15.5px] font-bold text-[#334155] leading-relaxed break-keep">홈 화면에 아이콘이 생겨 <b class="text-[#0F172A]">한 번에 열리고</b>, 알림도 더 잘 옵니다.</p>
           <button id="installAppBtn" onclick="installApp()" class="w-full h-[58px] rounded-[14px] bg-[#151E2D] text-[#BEF264] text-[18.5px] font-black flex items-center justify-center gap-2 active:scale-95 transition-all">지금 설치하기 (무료)</button>
         </div>
+        <!-- 💰 [패치 #71] 내 포인트 (설정) -->
+        <button type="button" onclick="openPointView()" class="w-full flex items-center justify-between gap-3 rounded-[18px] px-4 active:scale-[0.98] transition-all" style="min-height:64px; background:#84CC16; border:0;">
+          <span style="color:#14261E; font-size:18px; font-weight:900; white-space:nowrap;">내 포인트 · 충전</span>
+          <b id="setPointNum" style="color:#14261E; font-size:20px; font-weight:900; white-space:nowrap;">확인하기</b>
+        </button>
         <div class="flex justify-between items-end mb-3">
             <p class="text-[13.5px] text-[#A3A8A3] leading-relaxed break-keep font-bold">* 상호 변경 및 앱 관련 오류 신고</p>
             <button onclick="openInquiryModal()" class="px-3 py-1.5 bg-[#84CC16]/20 text-[#84CC16] border border-[#84CC16]/40 rounded-[8px] text-[13.5px] font-black hover:bg-[#84CC16]/30 transition-colors shadow-sm">1:1 문의하기</button>
@@ -430,6 +435,11 @@
           <button type="button" id="smbIn" onclick="setOutdoor(false)" aria-pressed="true" class="smb-btn h-[48px] rounded-[14px] text-[17px] font-black flex items-center justify-center gap-1.5 active:scale-95 transition-all"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>실내용</button>
         </div>
       </div>
+      <!-- 💰 [패치 #71] 내 포인트 바로가기 (색은 style로 지정 → 야외용 화면에서도 그대로 남색) -->
+      <button type="button" id="homePointChip" onclick="openPointView()" class="w-full flex items-center justify-between gap-3 rounded-[18px] px-4 active:scale-[0.98] transition-all" style="min-height:60px; background:#151E2D; border:1.5px solid #84CC16;">
+        <span style="color:#FFFFFF; font-size:17px; font-weight:900; white-space:nowrap;">내 포인트</span>
+        <span class="flex items-center gap-2"><b id="homePointNum" style="color:#BEF264; font-size:21px; font-weight:900; white-space:nowrap;">확인하기</b><span style="color:#CBD5E1; font-size:15px; font-weight:800; white-space:nowrap;">충전·내역 ›</span></span>
+      </button>
       <div id="homeDashboard" class="space-y-4"></div>
       <div class="rounded-[28px] px-4 pt-5 pb-6 border border-white/10" style="background: rgba(255,255,255,0.03);">
         <h2 class="text-[20px] font-black text-white flex items-center gap-2 mb-1 ml-1"><i data-lucide="layout-grid" class="w-6 h-6 text-[#84CC16]"></i> 전체 메뉴</h2>
@@ -572,7 +582,7 @@
         </div>
         <div class="flex items-center gap-2 mt-2 ml-1"><span class="w-1.5 h-5 rounded-full" style="background:#F8FAFC"></span><span class="text-[17px] font-black tracking-tight" style="color:#F8FAFC;">정보 나누기</span></div>
         <div class="grid grid-cols-2 gap-3">
-          <button onclick="openBoard('자유 소통·일상방')" class="lounge-cat text-left rounded-[20px] p-4 flex flex-col active:scale-95 transition-all" style="background:#1E293B; border:1.5px solid #475569;"><i data-lucide="coffee" class="w-7 h-7 stroke-[2.2]" style="color:#84CC16;"></i><span class="block text-[19px] font-black text-white leading-tight tracking-tight mt-2.5 break-keep">자유 소통</span><span class="block text-[14.5px] font-bold text-[#94A3B8] leading-snug mt-2 pt-2 border-t border-[#334155] break-keep">현장 일상 이야기</span></button>
+          <button onclick="openBoard('자유 소통·일상방')" data-board-hidden="1" class="hidden lounge-cat text-left rounded-[20px] p-4 flex flex-col active:scale-95 transition-all" style="background:#1E293B; border:1.5px solid #475569;"><i data-lucide="coffee" class="w-7 h-7 stroke-[2.2]" style="color:#84CC16;"></i><span class="block text-[19px] font-black text-white leading-tight tracking-tight mt-2.5 break-keep">자유 소통</span><span class="block text-[14.5px] font-bold text-[#94A3B8] leading-snug mt-2 pt-2 border-t border-[#334155] break-keep">현장 일상 이야기</span></button>
           <button onclick="openBoard('정보 교환·업체 찾기')" class="lounge-cat text-left rounded-[20px] p-4 flex flex-col active:scale-95 transition-all" style="background:#1E293B; border:1.5px solid #475569;"><i data-lucide="map" class="w-7 h-7 stroke-[2.2]" style="color:#84CC16;"></i><span class="block text-[19px] font-black text-white leading-tight tracking-tight mt-2.5 break-keep">정보 교환·업체 공유</span><span class="block text-[14.5px] font-bold text-[#94A3B8] leading-snug mt-2 pt-2 border-t border-[#334155] break-keep">현장 정보 교환</span></button>
           <button onclick="openBoard('실무 노하우 공유')" class="lounge-cat text-left rounded-[20px] p-4 flex flex-col active:scale-95 transition-all" style="background:#1E293B; border:1.5px solid #475569;"><i data-lucide="lightbulb" class="w-7 h-7 stroke-[2.2]" style="color:#84CC16;"></i><span class="block text-[19px] font-black text-white leading-tight tracking-tight mt-2.5 break-keep">실무 노하우</span><span class="block text-[14.5px] font-bold text-[#94A3B8] leading-snug mt-2 pt-2 border-t border-[#334155] break-keep">전지·시공 기술</span></button>
           <button onclick="openBoard('불량 거래처 경보')" class="lounge-cat text-left rounded-[20px] p-4 flex flex-col active:scale-95 transition-all" style="background:#1E293B; border:1.5px solid #7F1D1D;"><i data-lucide="alert-triangle" class="w-7 h-7 stroke-[2.2]" style="color:#F87171;"></i><span class="block text-[19px] font-black text-white leading-tight tracking-tight mt-2.5 break-keep">불량 거래처 경보</span><span class="block text-[14.5px] font-bold text-[#94A3B8] leading-snug mt-2 pt-2 border-t border-[#334155] break-keep">미수금 주의 · 익명</span></button>
@@ -2074,7 +2084,7 @@
                 loadRealWeather(); 
                 history.replaceState({ view: 'home' }, "", ""); 
                 switchView('home', false); 
-                setTimeout(() => { handlePushOpen(); silentPushRefresh(); refreshReqBadge(); /* 📋 [패치 #51] */ }, 700); // 🔔 [패치 #33]
+                setTimeout(() => { handlePushOpen(); silentPushRefresh(); refreshReqBadge(); /* 📋 [패치 #51] */ if (typeof ptChipRender === 'function') ptChipRender(); /* 💰 [패치 #71] */ }, 700); // 🔔 [패치 #33]
                 // 앱 진입 1초 후 최초 팝업 확인
                 setTimeout(() => {
                     checkAppNotices(); // 📖 [패치 #24] 로그인 시 사용법 자동 표시 제거 (설정 > '앱 사용법 다시 보기'로만)
@@ -3804,6 +3814,7 @@
     const FCM_VAPID_KEY = "BJrrESIaNMTvCe98leRovFlWDT09OOGMSTW6Y7vZ7uwVNLzpb9X9aCGDstxiMr455nnIgG3Qm1sS7xjMfsWY7MU";          // 예: "BKxxxx...(웹 푸시 인증서 키 쌍)"
     const PUSH_BOARDS = [['현장협력', '작업 지원·협력'], ['일감양도', '작업 양도·양수'], ['장비자재', '장비·자재 직거래'], ['견적단가', '견적·단가 자문'], ['자유소통', '자유 소통'], ['정보교환', '정보 교환·업체 공유'], ['노하우', '실무 노하우'], ['불량거래처', '불량 거래처 경보']];
     const PUSH_DEFAULT_PREFS = { chat: true, comment: true, request: true /* 📋 [패치 #51] */, notice: true, boards: { '현장협력': true, '일감양도': true, '장비자재': true, '견적단가': false, '자유소통': false, '정보교환': false, '노하우': false, '불량거래처': true } };
+    const BOARD_HIDDEN = ['자유소통']; // 🗂 [패치 #69] 화면에서 숨긴 게시판 (코드·글은 보관 · 다시 쓰려면 이 줄에서 빼고, data-board-hidden 표시가 붙은 버튼 2개의 hidden, 글쓰기 분류 2곳의 hidden disabled를 지우기)
     const PUSH_BOARD_TITLES = { '현장협력': '현장 협력·지원', '일감양도': '일감 패스·공사 양도', '장비자재': '장비·자재 직거래', '견적단가': '실전 견적·단가 자문', '자유소통': '자유 소통·일상방', '정보교환': '정보 교환·업체 찾기', '노하우': '실무 노하우 공유', '불량거래처': '불량 거래처 경보' }; // openBoard() 내부 키
     let pushPrefsCache = null;
     function pushConfigured() { return !!(FIREBASE_WEB_CONFIG && FIREBASE_WEB_CONFIG.messagingSenderId && FCM_VAPID_KEY); }
@@ -3849,7 +3860,7 @@
         row('comment', '💬 내 글에 새 댓글', pushPrefsCache.comment !== false) + /* 💬 [패치 #40] */
         row('notice', '📢 관리자 공지', pushPrefsCache.notice !== false) +
         '<div class="text-[14.5px] font-black text-[#BEF264] pt-2 ml-1">소통방 게시판 새 글</div>' +
-        PUSH_BOARDS.map(([k, t]) => row('b_' + k, t, !!pushPrefsCache.boards[k])).join('');
+        PUSH_BOARDS.filter(([k]) => BOARD_HIDDEN.indexOf(k) === -1).map(([k, t]) => row('b_' + k, t, !!pushPrefsCache.boards[k])).join(''); /* 🗂 [패치 #69] */
     }
     async function enablePush() {
       if (!pushConfigured() || !pushBrowserOk()) return refreshPushPanel();
@@ -3889,6 +3900,7 @@
         history.replaceState({ view: 'home' }, '', location.pathname);
         if (open === 'board') { switchView('lounge'); setTimeout(() => { loadCommunityPosts(); openBoard(PUSH_BOARD_TITLES[q.get('cat')] || '전체'); }, 150); }
         else if (open === 'req') { const rid = String(q.get('rid') || ''); setTimeout(() => openReqView(/^[A-Za-z0-9_-]{1,60}$/.test(rid) ? rid : ''), 150); } // 📋 [패치 #51]
+        else if (open === 'points') setTimeout(() => { if (typeof openPointView === 'function') openPointView(); }, 150); // 💰 [패치 #71]
         else if (open === 'chat' && q.get('with')) { switchView('lounge'); setTimeout(() => openBoardChat(q.get('with'), q.get('name') || '대표님'), 150); }
       } catch (e) {}
     }
@@ -5381,7 +5393,7 @@
       <!-- 가로 스크롤 카테고리 탭 (8대 카테고리 완비) -->
       <div class="flex gap-2 overflow-x-auto nav-scroll px-1 pb-2 mt-4" id="boardTabContainer">
           <button onclick="filterBoard('전체', this)" class="board-tab-btn px-5 py-3 bg-[#84CC16] text-[#151E2D] rounded-full text-[15px] font-black shrink-0 shadow-md border border-[#84CC16] transition-all">전체보기</button>
-          <button onclick="filterBoard('자유소통', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">☕ 자유소통</button>
+          <button onclick="filterBoard('자유소통', this)" data-board-hidden="1" class="hidden board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">☕ 자유소통</button>
           <button onclick="filterBoard('정보교환', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">📢 정보교환·업체공유</button>
           <button onclick="filterBoard('현장협력', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">🤝 작업지원·협력</button>
           <button onclick="filterBoard('장비자재', this)" class="board-tab-btn px-4 py-3 bg-white text-[#4E5968] rounded-full text-[14px] font-bold shrink-0 border border-[#EAEBEA] transition-all">🛒 장비·자재</button>
@@ -5432,7 +5444,7 @@
               <div>
                   <label class="block text-[17.5px] font-black text-[#151E2D] mb-2">1. 카테고리 선택</label>
                   <select id="bwCategory" onchange="boardPrefillPhone()" class="w-full bg-[#F8FAFC] border-2 border-[#94A3B8] rounded-[16px] px-4 py-4 text-[18px] font-black text-[#151E2D] focus:outline-none focus:border-[#151E2D]">
-                      <option value="자유소통">☕ 자유 소통·일상방</option>
+                      <option value="자유소통" hidden disabled>☕ 자유 소통·일상방</option><!-- 🗂 [패치 #69] 자유소통 숨김 (다시 쓸 때 hidden disabled 지우기) -->
                       <option value="정보교환">📢 정보 교환·업체 공유</option>
                       <option value="현장협력">🤝 작업 지원·협력</option>
                       <option value="장비자재">🛒 장비·자재 직거래</option>
@@ -5642,7 +5654,7 @@
 
           const items = document.querySelectorAll('.board-feed-item');
           items.forEach(item => {
-              if (category === '전체' || item.getAttribute('data-category') === category) {
+              if ((category === '전체' && BOARD_HIDDEN.indexOf(item.getAttribute('data-category')) === -1) || item.getAttribute('data-category') === category) { /* 🗂 [패치 #69] 숨긴 게시판 글은 '전체'에서도 안 보임 */
                   item.style.display = 'block';
               } else {
                   item.style.display = 'none';
@@ -6163,7 +6175,7 @@
           <label for="aipCategory" class="text-[15px] font-extrabold text-[#475569] shrink-0">게시판</label>
           <select id="aipCategory" onchange="aiPreviewCategoryChanged()" class="flex-1 min-w-0 h-[48px] rounded-[12px] border-[1.5px] border-[#84CC16] bg-[#ECFCCB] px-3 text-[16px] font-black text-[#3F6212]">
             <option value="현장협력">작업 지원·협력</option><option value="일감양도">작업 양도·양수</option><option value="장비자재">장비·자재 직거래</option><option value="견적단가">견적·단가 자문</option>
-            <option value="자유소통">자유 소통</option><option value="정보교환">정보 교환·업체 공유</option><option value="노하우">실무 노하우</option><option value="불량거래처">불량 거래처 경보</option>
+            <option value="자유소통" hidden disabled>자유 소통</option><option value="정보교환">정보 교환·업체 공유</option><option value="노하우">실무 노하우</option><option value="불량거래처">불량 거래처 경보</option>
           </select>
           <span class="text-[14px] font-bold text-[#64748B] shrink-0">눌러서 바꾸기</span>
         </div>
@@ -6430,7 +6442,7 @@
       voiceOpen({ title: '말로 쓰기', chip: boardCatLabel(cur), hints: ['무엇을', '규격·수량', '가격', '지역', '연락처'], guide: boardGuideFor(cur), onDone: runBoardAi }); // 🎤 [패치 #45] guide
     }
     function buildBoardAiPrompt(curCat) {
-      const cats = Object.keys(BOARD_AI_GUIDE).map(k => `- "${k}": ${BOARD_AI_GUIDE[k]}`).join('\n');
+      const cats = Object.keys(BOARD_AI_GUIDE).filter(k => BOARD_HIDDEN.indexOf(k) === -1).map( /* 🗂 [패치 #69] */k => `- "${k}": ${BOARD_AI_GUIDE[k]}`).join('\n');
       return `너는 '조경노트 PRO' 대표님 소통방(조경 사업자끼리 쓰는 게시판)의 글 정리 도우미다.
 대표님이 휴대폰에 말로 두서없이 한 이야기(음성 인식이라 오타·띄어쓰기 틀림이 있음)를 게시판 글로 깔끔하게 정리한다.
 
@@ -6467,7 +6479,8 @@ ${cats}
       voiceShowThinking(['알맞은 게시판 고르기', '제목 만들기', '규격·가격·연락처 정리']);
       try {
         const j = await voiceAskAiJson(buildBoardAiPrompt(curCat), text);
-        const cat = BOARD_AI_GUIDE[j.category] ? j.category : (BOARD_AI_GUIDE[curCat] ? curCat : '자유소통');
+        let cat = BOARD_AI_GUIDE[j.category] ? j.category : (BOARD_AI_GUIDE[curCat] ? curCat : '정보교환');
+        if (BOARD_HIDDEN.indexOf(cat) !== -1) cat = (BOARD_AI_GUIDE[curCat] && BOARD_HIDDEN.indexOf(curCat) === -1) ? curCat : '정보교환'; // 🗂 [패치 #69] 숨긴 게시판으로는 안 보냄
         const digits = String(j.phone || '').replace(/[^0-9]/g, '');
         aiBoardDraft = {
           transcript: text, category: cat,
@@ -8604,5 +8617,220 @@ ${AI_COMMON_RULES}
     <button data-nav="quote" onclick="switchView('quote')" class="bnav-btn relative flex flex-col items-center justify-center gap-1 h-[68px] text-[#CBD5E1] active:scale-95 transition-all"><span class="bnav-bar absolute top-0 left-1/2 -translate-x-1/2 w-10 h-[3px] rounded-b-full bg-[#84CC16] opacity-0"></span><i data-lucide="calculator" class="w-7 h-7 stroke-[2.2]"></i><span class="text-[15px] font-black tracking-tight">견적</span></button>
    </div>
   </nav>
+  <!-- 💰 [패치 #71] 내 포인트 · 충전 신청 화면 (서버가 계산한 지갑을 보여 주기만 함 · 업체가 포인트를 직접 바꿀 수 없음) -->
+  <style>
+    #ptView { background: #0B1512; color: #0F172A; word-break: keep-all; }
+    #ptView .pv-hd { display: flex; align-items: center; gap: 10px; color: #fff; font-size: 22px; font-weight: 900; padding: 4px 2px 6px; }
+    #ptView .pv-bk { width: 46px; height: 46px; border-radius: 13px; background: rgba(255,255,255,.1); color: #fff; display: flex; align-items: center; justify-content: center; border: 0; }
+    #ptView .pv-card { background: #fff; border-radius: 22px; padding: 18px; }
+    #ptView .pv-navy { background: #151E2D; color: #fff; border-radius: 22px; padding: 18px; border: 1px solid rgba(255,255,255,.12); }
+    #ptView .pv-lab { font-size: 16px; font-weight: 800; color: #94A3B8; }
+    #ptView .pv-big { font-size: 36px; font-weight: 900; color: #BEF264; letter-spacing: -.5px; line-height: 1.2; }
+    #ptView .pv-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    #ptView .pv-t { font-size: 19px; font-weight: 900; color: #0F172A; }
+    #ptView .pv-sub { font-size: 16px; font-weight: 700; color: #475569; line-height: 1.55; }
+    #ptView .pv-btn { height: 60px; border-radius: 18px; border: 0; font-size: 19px; font-weight: 900; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    #ptView .pv-btn:active, #ptView .pv-chip:active, #ptView .pv-copy:active { transform: scale(.97); }
+    #ptView .pv-lime { background: #84CC16; color: #14261E; }
+    #ptView .pv-li { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid #EEF2F6; }
+    #ptView .pv-li:last-child { border-bottom: 0; }
+    #ptView .pv-chip { height: 56px; border-radius: 14px; border: 2px solid #CBD5E1; background: #fff; color: #0F172A; font-size: 18px; font-weight: 900; }
+    #ptView .pv-chip.on { background: #151E2D; border-color: #151E2D; color: #BEF264; }
+    #ptView .pv-box { background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    #ptView .pv-copy { height: 48px; padding: 0 16px; border-radius: 12px; background: #ECFCCB; color: #3F6212; font-size: 16px; font-weight: 900; border: 0; flex-shrink: 0; }
+    #ptView .pv-note { background: #F4FBEA; border-left: 5px solid #84CC16; border-radius: 10px; padding: 10px 12px; font-size: 16px; font-weight: 800; color: #3F6212; line-height: 1.5; }
+    #ptView .pv-inp { width: 100%; height: 54px; border-radius: 14px; border: 2px solid #CBD5E1; background: #fff; padding: 0 14px; font-size: 17px; font-weight: 800; color: #0F172A; outline: none; }
+    #ptView .pv-inp:focus { border-color: #84CC16; }
+    #ptView .pv-tag { display: inline-block; font-size: 15px; font-weight: 900; border-radius: 8px; padding: 2px 9px; }
+  </style>
+  <div id="ptView" class="hidden fixed inset-0 z-[9450] flex justify-center overflow-y-auto">
+    <div class="w-full max-w-md px-3.5 pt-5 pb-12 flex flex-col gap-3">
+      <div class="pv-hd"><button type="button" class="pv-bk" onclick="closePointView()" aria-label="뒤로"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><span id="ptTitle">내 포인트</span></div>
+      <div id="ptMsg" class="hidden pv-card pv-sub" style="text-align:center;"></div>
+
+      <!-- 내 포인트 -->
+      <div id="ptMainPane" class="flex flex-col gap-3">
+        <div class="pv-navy">
+          <div class="pv-lab">지금 쓸 수 있는 포인트</div>
+          <div id="ptUsable" class="pv-big">-</div>
+          <div style="height:1px;background:rgba(255,255,255,.15);margin:12px 0;"></div>
+          <div class="pv-row" style="color:#CBD5E1;font-size:16px;font-weight:700;"><span>무료 포인트 (먼저 사용)</span><b id="ptFree" style="color:#fff;">0P</b></div>
+          <div id="ptFreeExp" style="color:#CBD5E1;font-size:15px;font-weight:700;text-align:right;"></div>
+          <div class="pv-row" style="color:#CBD5E1;font-size:16px;font-weight:700;margin-top:6px;"><span>충전 포인트</span><b id="ptPaid" style="color:#fff;">0P</b></div>
+          <div style="color:#CBD5E1;font-size:15px;font-weight:700;text-align:right;">충전일부터 1년</div>
+          <button type="button" class="pv-btn pv-lime" style="margin-top:14px;" onclick="ptOpenCharge()">충전하기</button>
+        </div>
+        <div id="ptReqCard" class="hidden pv-card">
+          <div class="pv-t" style="margin-bottom:4px;">충전 신청</div>
+          <div id="ptReqList"></div>
+        </div>
+        <div class="pv-card">
+          <div class="pv-t" style="margin-bottom:4px;">포인트 내역</div>
+          <div id="ptLogList"><div class="pv-sub" style="padding:10px 0;">아직 내역이 없어요.</div></div>
+        </div>
+        <div class="pv-card">
+          <div class="pv-t" style="margin-bottom:8px;">얼마나 쓰이나요</div>
+          <div class="pv-row pv-sub" style="padding:3px 0;"><span>작업 일정표</span><b style="color:#0F172A;">무료</b></div>
+          <div class="pv-row pv-sub" style="padding:3px 0;"><span>작업일지 발행</span><b style="color:#0F172A;">500P</b></div>
+          <div class="pv-row pv-sub" style="padding:3px 0;"><span>견적서 발행 · 수정 발행</span><b style="color:#0F172A;">1,000P</b></div>
+          <div class="pv-row pv-sub" style="padding:3px 0;"><span>고객 응대 (1번만)</span><b style="color:#0F172A;">1,000P</b></div>
+          <div class="pv-row pv-sub" style="padding:3px 0;"><span>AI 블로그 글</span><b style="color:#0F172A;">1,000P</b></div>
+          <div class="pv-row pv-sub" style="padding:3px 0;"><span>AI 비서 · AI 렌즈</span><b style="color:#0F172A;">무료 (하루 30회)</b></div>
+          <div class="pv-note" style="margin-top:10px;">포인트 차감은 준비가 끝나면 공지한 뒤 시작해요.</div>
+        </div>
+      </div>
+
+      <!-- 충전 신청 -->
+      <div id="ptChargePane" class="hidden flex flex-col gap-3">
+        <div class="pv-card flex flex-col gap-3">
+          <div class="pv-t">충전할 금액</div>
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button" class="pv-chip" data-pt-amt="30000" onclick="ptPickAmount(30000)">3만 원</button>
+            <button type="button" class="pv-chip" data-pt-amt="50000" onclick="ptPickAmount(50000)">5만 원</button>
+            <button type="button" class="pv-chip" data-pt-amt="100000" onclick="ptPickAmount(100000)">10만 원</button>
+          </div>
+          <div id="ptAmtNote" class="pv-note"></div>
+          <div class="pv-sub">충전은 3만 원부터 할 수 있어요.</div>
+        </div>
+        <div class="pv-card flex flex-col gap-2.5">
+          <div class="pv-t">이 계좌로 입금해 주세요</div>
+          <div class="pv-box"><div class="min-w-0"><div class="pv-lab" style="color:#64748B;">입금 계좌</div><div id="ptBankNum" style="font-size:19px;font-weight:900;color:#0F172A;"></div><div id="ptBankHolder" class="pv-sub"></div></div><button type="button" class="pv-copy" onclick="ptCopy('bank')">복사</button></div>
+          <div class="pv-box"><div class="min-w-0"><div class="pv-lab" style="color:#64748B;">입금자명 (꼭 상호명으로)</div><div id="ptPayer" style="font-size:19px;font-weight:900;color:#0F172A;"></div></div><button type="button" class="pv-copy" onclick="ptCopy('payer')">복사</button></div>
+          <label class="flex items-start gap-3 mt-1" style="cursor:pointer;">
+            <input type="checkbox" id="ptInvoice" checked onchange="ptInvoiceToggle()" style="width:26px;height:26px;accent-color:#84CC16;flex-shrink:0;margin-top:2px;">
+            <span style="font-size:17px;font-weight:900;color:#0F172A;line-height:1.45;">세금계산서 발행 · 가입하신 사업자 정보로 발행해요</span>
+          </label>
+          <div id="ptEmailBox" class="flex flex-col gap-1.5">
+            <span class="pv-sub" style="font-weight:800;">세금계산서 받을 이메일</span>
+            <input type="email" id="ptEmail" class="pv-inp" placeholder="예: shinhwa@naver.com" autocomplete="email" inputmode="email">
+          </div>
+        </div>
+        <button type="button" id="ptSubmitBtn" class="pv-btn pv-lime" onclick="ptSubmitCharge()">입금했어요 · 충전 신청</button>
+        <div style="color:#E2E8F0;font-size:16px;font-weight:700;text-align:center;line-height:1.55;">관리자가 입금을 확인하면 포인트가 들어가고 알림을 보내 드려요.<br>충전 포인트는 충전일부터 1년 동안 쓸 수 있어요.</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // 💰 [패치 #71] 내 포인트 · 충전 신청
+    const PT = { data: null, amount: 30000, busy: false };
+    function ptEsc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+    function ptNum(n) { return (Number(n) || 0).toLocaleString('ko-KR'); }
+    function ptDate(ms) { const d = new Date(Number(ms) || 0); return (d.getMonth() + 1) + '월 ' + d.getDate() + '일'; }
+    // 홈 화면 · 설정의 포인트 숫자 (서버가 적어 둔 값)
+    function ptChipRender() {
+      const u = myCompanyProfile && typeof myCompanyProfile.usable === 'number' ? myCompanyProfile.usable : null;
+      ['homePointNum', 'setPointNum'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = u === null ? '확인하기' : ptNum(u) + 'P'; });
+    }
+    function openPointView() {
+      if (!currentUserId) return;
+      const sm = document.getElementById('settingsModal');
+      const fromSettings = sm && !sm.classList.contains('hidden');
+      if (fromSettings) { sm.classList.add('hidden', 'opacity-0'); history.replaceState({ ptOpen: 1 }, '', ''); } // 설정 창 기록 자리를 그대로 씀 → 뒤로가기 한 번에 닫힘
+      else history.pushState({ ptOpen: 1 }, '', '');
+      document.getElementById('ptView').classList.remove('hidden');
+      ptShowPane('main');
+      ptLoad();
+    }
+    function closePointView() {
+      const st = history.state || {};
+      if (st.ptCharge) history.go(-2); else if (st.ptOpen) history.back();
+      else document.getElementById('ptView').classList.add('hidden');
+    }
+    function ptShowPane(p) {
+      document.getElementById('ptMainPane').classList.toggle('hidden', p !== 'main');
+      document.getElementById('ptChargePane').classList.toggle('hidden', p !== 'charge');
+      document.getElementById('ptTitle').textContent = p === 'charge' ? '포인트 충전' : '내 포인트';
+      document.getElementById('ptView').scrollTop = 0;
+    }
+    function ptMsg(t) { const m = document.getElementById('ptMsg'); m.textContent = t || ''; m.classList.toggle('hidden', !t); }
+    async function ptLoad() {
+      ptMsg('포인트를 불러오는 중...');
+      const r = await requestPoints({ action: 'pts_wallet' });
+      if (!r || !r.ok) { ptMsg(r && r.msg === 'unknown' ? '포인트 기능을 준비 중이에요. 잠시 후 다시 열어 주세요.' : '포인트를 불러오지 못했어요. 인터넷 연결을 확인하고 다시 열어 주세요.'); return; }
+      ptMsg('');
+      PT.data = r;
+      if (myCompanyProfile) { myCompanyProfile.usable = r.usable; try { localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile)); } catch (e) {} }
+      ptChipRender();
+      ptRender();
+    }
+    function ptRender() {
+      const d = PT.data; if (!d) return;
+      document.getElementById('ptUsable').textContent = ptNum(d.usable) + 'P';
+      document.getElementById('ptFree').textContent = ptNum(d.free) + 'P';
+      document.getElementById('ptPaid').textContent = ptNum(d.paid) + 'P';
+      const freeExp = (d.lots || []).filter(l => l.type !== 'charge' && l.exp).map(l => l.exp).sort((a, b) => a - b)[0];
+      document.getElementById('ptFreeExp').textContent = d.free > 0 ? (freeExp ? ptDate(freeExp) + '까지' + ((d.lots || []).some(l => l.type !== 'charge' && !l.exp) ? ' (일부는 기한 없음)' : '') : '기한 없음') : '';
+      // 충전 신청 (확인 중 · 반려 · 최근 완료)
+      const reqs = (d.reqs || []).filter(q => q.status === 'wait' || ((q.status === 'no' || q.status === 'done') && Date.now() - q.at < 14 * 86400000));
+      document.getElementById('ptReqCard').classList.toggle('hidden', !reqs.length);
+      document.getElementById('ptReqList').innerHTML = reqs.map(q => {
+        const tag = q.status === 'wait' ? '<span class="pv-tag" style="background:#FEF9C3;color:#713F12;">입금 확인 중</span>'
+          : q.status === 'done' ? '<span class="pv-tag" style="background:#ECFCCB;color:#3F6212;">충전 완료</span>'
+          : '<span class="pv-tag" style="background:#FEE2E2;color:#991B1B;">확인 필요</span>';
+        return `<div class="pv-li"><div class="min-w-0"><div style="font-size:17px;font-weight:900;color:#0F172A;">${ptNum(q.amount)}원 ${tag}</div><div class="pv-sub">${ptDate(q.at)} 신청${q.status === 'no' && q.memo ? ' · ' + ptEsc(q.memo) : ''}</div></div>${q.status === 'wait' ? `<button type="button" class="pv-copy" style="background:#F1F5F9;color:#334155;" onclick="ptCancelReq('${ptEsc(q.id)}')">신청 취소</button>` : ''}</div>`;
+      }).join('');
+      // 포인트 내역
+      const logs = d.logs || [];
+      document.getElementById('ptLogList').innerHTML = logs.length ? logs.map(l => {
+        const a = Number(l.amt) || 0;
+        return `<div class="pv-li"><div class="min-w-0"><div style="font-size:17px;font-weight:800;color:#0F172A;">${ptEsc(l.memo || '포인트')}</div><div class="pv-sub">${ptDate(l.at)}</div></div><b style="font-size:18px;font-weight:900;white-space:nowrap;color:${a > 0 ? '#3F6212' : '#0F172A'};">${a > 0 ? '+' : ''}${ptNum(a)}P</b></div>`;
+      }).join('') : '<div class="pv-sub" style="padding:10px 0;">아직 내역이 없어요.</div>';
+    }
+    function ptOpenCharge() {
+      const d = PT.data; if (!d) return;
+      const b = d.bank || {};
+      document.getElementById('ptBankNum').textContent = (b.bank || '') + ' ' + (b.num || '');
+      document.getElementById('ptBankHolder').textContent = '예금주 ' + (b.holder || '');
+      document.getElementById('ptPayer').textContent = (myCompanyProfile && myCompanyProfile.name) || '';
+      const em = document.getElementById('ptEmail'); if (!em.value) em.value = d.taxEmail || '';
+      ptPickAmount(PT.amount); ptInvoiceToggle();
+      history.pushState({ ptOpen: 1, ptCharge: 1 }, '', '');
+      ptShowPane('charge');
+    }
+    function ptPickAmount(v) {
+      PT.amount = v;
+      document.querySelectorAll('#ptView [data-pt-amt]').forEach(b => b.classList.toggle('on', Number(b.dataset.ptAmt) === v));
+      document.getElementById('ptAmtNote').textContent = ptNum(v) + '원 입금 → ' + ptNum(v) + 'P (부가세 포함 금액)';
+    }
+    function ptInvoiceToggle() { document.getElementById('ptEmailBox').classList.toggle('hidden', !document.getElementById('ptInvoice').checked); }
+    function ptCopy(which) {
+      const b = (PT.data && PT.data.bank) || {};
+      const t = which === 'bank' ? (b.bank + ' ' + b.num) : ((myCompanyProfile && myCompanyProfile.name) || '');
+      const done = () => alert('복사했어요.\n' + t);
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done).catch(() => ptCopyOld(t, done)); else ptCopyOld(t, done);
+    }
+    function ptCopyOld(t, done) { const x = document.createElement('textarea'); x.value = t; x.style.position = 'fixed'; x.style.opacity = '0'; document.body.appendChild(x); x.select(); try { document.execCommand('copy'); done(); } catch (e) { alert(t); } x.remove(); }
+    async function ptSubmitCharge() {
+      if (PT.busy) return;
+      const inv = document.getElementById('ptInvoice').checked;
+      const email = document.getElementById('ptEmail').value.trim();
+      if (inv && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert('세금계산서 받을 이메일을 정확히 적어 주세요.'); document.getElementById('ptEmail').focus(); return; }
+      if (!confirm(ptNum(PT.amount) + '원을 입금하셨나요?\n\n입금자명: ' + ((myCompanyProfile && myCompanyProfile.name) || '') + '\n관리자가 입금을 확인하면 ' + ptNum(PT.amount) + 'P가 들어가요.')) return;
+      const btn = document.getElementById('ptSubmitBtn'); PT.busy = true; btn.textContent = '보내는 중...';
+      const r = await requestPoints({ action: 'pts_charge_req', amount: PT.amount, invoice: inv, email: inv ? email : '' });
+      PT.busy = false; btn.textContent = '입금했어요 · 충전 신청';
+      if (!r || !r.ok) {
+        const m = { 'too-many': '입금 확인을 기다리는 신청이 3건 있어요. 확인이 끝난 뒤 다시 신청해 주세요.', 'bad-email': '이메일을 다시 확인해 주세요.', inactive: '승인된 업체만 충전할 수 있어요.', unknown: '충전 기능을 준비 중이에요. 잠시 후 다시 해 주세요.' };
+        return alert(m[r && r.msg] || '신청을 보내지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.');
+      }
+      PT.data = r; ptRender();
+      alert('충전 신청을 보냈어요.\n입금이 확인되면 포인트가 들어가고 알림을 보내 드려요.');
+      history.back(); // 충전 화면 → 내 포인트
+    }
+    async function ptCancelReq(id) {
+      if (PT.busy || !confirm('이 충전 신청을 취소할까요?\n(아직 입금하지 않았을 때만 취소해 주세요)')) return;
+      PT.busy = true; const r = await requestPoints({ action: 'pts_charge_cancel', reqId: id }); PT.busy = false;
+      if (!r || !r.ok) return alert(r && r.msg === 'not-wait' ? '이미 처리된 신청이에요.' : '취소하지 못했어요. 다시 눌러 주세요.');
+      PT.data = r; ptRender();
+    }
+    // 휴대폰 뒤로가기: 충전 화면 → 내 포인트 → 닫기
+    window.addEventListener('popstate', (e) => {
+      const v = document.getElementById('ptView'); if (!v || v.classList.contains('hidden')) return;
+      const ov = document.getElementById('voiceOverlay'); if (ov && !ov.classList.contains('hidden')) return;
+      const st = history.state || {};
+      if (st.ptCharge) ptShowPane('charge'); else if (st.ptOpen) ptShowPane('main'); else v.classList.add('hidden');
+      e.stopImmediatePropagation();
+    }, true);
+  </script>
 </body>
 </html>

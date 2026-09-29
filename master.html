@@ -98,6 +98,10 @@
       <button onclick="logoutMaster()" class="md:hidden nav-btn w-full flex flex-col items-center justify-center gap-1 p-2 rounded-[12px] text-red-400 hover:bg-red-500/10 font-bold transition-all text-[11px]">
         <i data-lucide="log-out" class="w-5 h-5"></i> <span class="whitespace-nowrap">로그아웃</span>
       </button>
+      <button onclick="switchTab('points')" class="nav-btn w-full flex flex-col md:flex-row items-center justify-center md:justify-between gap-1 p-2 md:px-4 md:py-3.5 rounded-[12px] text-[#94A3B8] hover:bg-white/5 hover:text-white font-bold transition-all text-[11px] md:text-[14px] relative"><!-- 💰 [패치 #71] -->
+        <div class="flex flex-col md:flex-row items-center gap-1 md:gap-3"><i data-lucide="coins" class="w-5 h-5"></i> <span class="whitespace-nowrap">포인트 관리</span></div>
+        <span id="sidePointCount" class="absolute top-1 right-2 md:relative md:top-auto md:right-auto bg-red-500 text-white text-[10px] md:text-[11px] px-1.5 py-0.5 rounded-full hidden">0</span>
+      </button>
     </nav>
     
     <div class="mt-auto hidden md:block">
@@ -264,6 +268,41 @@
         </div>
       </div>
     </div>
+    <!-- 💰 [패치 #71] 포인트 관리 (충전 승인 · 세금계산서 · 포인트 지급) -->
+    <div id="view-points" class="hidden space-y-5">
+      <div class="flex items-center justify-between border-b border-white/10 pb-4">
+        <h1 class="text-[24px] font-black tracking-tight flex items-center gap-2"><i data-lucide="coins" class="w-6 h-6 text-[#84CC16]"></i> 포인트 관리</h1>
+      </div>
+      <div class="grid grid-cols-3 gap-2">
+        <button type="button" data-ptm-tab="charge" onclick="ptmTab('charge')" class="ptm-tab h-[56px] rounded-[14px] text-[16px] font-black">충전 승인 <span id="ptmCntCharge"></span></button>
+        <button type="button" data-ptm-tab="tax" onclick="ptmTab('tax')" class="ptm-tab h-[56px] rounded-[14px] text-[16px] font-black">세금계산서 <span id="ptmCntTax"></span></button>
+        <button type="button" data-ptm-tab="grant" onclick="ptmTab('grant')" class="ptm-tab h-[56px] rounded-[14px] text-[16px] font-black">포인트 지급</button>
+      </div>
+      <div id="ptmPaneCharge" class="space-y-3"></div>
+      <div id="ptmPaneTax" class="hidden space-y-3"></div>
+      <div id="ptmPaneGrant" class="hidden space-y-3">
+        <div class="glass-panel rounded-[20px] p-5 space-y-3">
+          <div class="text-white text-[18px] font-black">업체 고르기</div>
+          <input type="text" id="ptmSearch" oninput="ptmRenderPick()" placeholder="상호명 · 대표자 · 아이디로 검색" class="w-full h-[54px] bg-[#0F172A] border border-white/15 rounded-[14px] px-4 text-white text-[16px] font-bold focus:outline-none focus:border-[#84CC16]">
+          <div id="ptmPickList" class="space-y-2 max-h-[320px] overflow-y-auto"></div>
+        </div>
+        <div id="ptmGrantBox" class="hidden glass-panel rounded-[20px] p-5 space-y-3 border-[#84CC16]/40">
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0"><div id="ptmGrantName" class="text-white text-[19px] font-black"></div><div id="ptmGrantInfo" class="text-[#CBD5E1] text-[16px] font-bold mt-1"></div></div>
+            <button type="button" onclick="ptmLoadWallet()" class="shrink-0 h-[44px] px-4 rounded-[12px] bg-white/10 text-white text-[15px] font-bold">새로고침</button>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <input type="number" id="ptmGrantAmt" min="1" step="100" placeholder="포인트 (예: 5000)" class="h-[54px] bg-[#0F172A] border border-white/15 rounded-[14px] px-4 text-white text-[17px] font-black focus:outline-none focus:border-[#84CC16]">
+            <select id="ptmGrantDays" class="h-[54px] bg-[#0F172A] border border-white/15 rounded-[14px] px-3 text-white text-[16px] font-bold">
+              <option value="0">기한 없음</option><option value="30">30일</option><option value="90">90일</option><option value="365" selected>1년</option>
+            </select>
+          </div>
+          <input type="text" id="ptmGrantMemo" maxlength="40" placeholder="사유 (예: 협력 업체, 기존 가입 업체)" class="w-full h-[54px] bg-[#0F172A] border border-white/15 rounded-[14px] px-4 text-white text-[16px] font-bold focus:outline-none focus:border-[#84CC16]">
+          <button type="button" onclick="ptmGrant()" class="w-full h-[58px] rounded-[16px] bg-[#84CC16] text-[#12261E] text-[18px] font-black">무료 포인트 지급</button>
+          <p class="text-[#94A3B8] text-[15px] font-bold leading-relaxed">무료 포인트는 충전 포인트보다 먼저 쓰이고, 환불되지 않아요.</p>
+        </div>
+      </div>
+    </div>
   </main>
 
   <!-- 📋 [패치 #11] 라운지 게시글 관리 창 -->
@@ -293,6 +332,10 @@
     </button>
     <button onclick="switchTab('companies')" class="mob-nav-btn flex flex-col items-center gap-1.5 text-[#94A3B8] font-bold"><i data-lucide="building-2" class="w-6 h-6"></i><span class="text-[10px]">업체관리</span></button>
     <button onclick="switchTab('settings')" class="mob-nav-btn flex flex-col items-center gap-1.5 text-[#94A3B8] font-bold"><i data-lucide="settings" class="w-6 h-6"></i><span class="text-[10px]">설정</span></button>
+    <button onclick="switchTab('points')" class="mob-nav-btn flex flex-col items-center gap-1.5 text-[#94A3B8] font-bold relative"><!-- 💰 [패치 #71] -->
+        <span id="mobPointCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-[11px] font-black px-1.5 rounded-full hidden">0</span>
+        <i data-lucide="coins" class="w-6 h-6"></i><span class="text-[10px]">포인트</span>
+    </button>
   </nav>
 
   <!-- 모달 모음 -->
@@ -807,6 +850,7 @@
                 for (const accId in data) {
                     if (data[accId].profile) allAccounts.push(data[accId].profile);
                 }
+                try { ptmCollect(data); } catch (e) {} // 💰 [패치 #71] 충전 신청 모으기
             }
 
             const pendingAccounts = allAccounts.filter(acc => acc.status === 'pending');
@@ -1119,13 +1163,20 @@
     async function approveAccount(id) {
         if(!confirm(`플랫폼 이용을 최종 승인하시겠습니까?`)) return;
         try {
+            // 💰 [패치 #71] 서버가 승인 + 가입 축하 3,000P (사업자번호당 1번). 서버가 예전 버전이면 기존 방식으로 승인
+            const ar = await adminPush({ action: "admin_approve", targetId: id });
+            let welcomeMsg = "";
+            if (ar && ar.ok) welcomeMsg = ar.welcome ? "\n가입 축하 3,000P를 지급했습니다 (1개월 사용)." : (ar.welcomeBefore ? "\n이 사업자번호는 예전에 가입 축하 포인트를 받아서 이번에는 지급하지 않았습니다." : "\n사업자번호가 없어 가입 축하 포인트는 지급하지 않았습니다.");
+            else {
             await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(id)}/profile.json`), {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status: 'active' })
             });
+            welcomeMsg = "\n(가입 축하 포인트는 지급되지 않았습니다. 포인트 관리에서 직접 지급해 주세요.)";
+            }
             const pr = await adminPush({ action: "push_approved", targetId: id }); // 🔔 [패치 #33]
-            alert("✅ 승인되었습니다." + (pr && pr.sent ? "\n📱 업체 휴대폰으로 승인 알림을 보냈습니다." : ""));
+            alert("✅ 승인되었습니다." + welcomeMsg + (pr && pr.sent ? "\n📱 업체 휴대폰으로 승인 알림을 보냈습니다." : ""));
             fetchAccounts();
         } catch(e) { alert("오류가 발생했습니다."); }
     }
@@ -1838,7 +1889,7 @@
     // 네비게이션 탭 스위칭 훅 추가 (inquiries 탭 지원)
     const originalSwitchTab = switchTab;
     switchTab = function(tabId) {
-        const views = ['view-dashboard', 'view-approval', 'view-companies', 'view-settings', 'view-inquiries'];
+        const views = ['view-dashboard', 'view-approval', 'view-companies', 'view-settings', 'view-inquiries', 'view-points']; // 💰 [패치 #71] view-points
         views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
         
         const activeView = document.getElementById('view-' + tabId);
@@ -1847,7 +1898,7 @@
         const navBtns = document.querySelectorAll('.nav-btn');
         navBtns.forEach(btn => {
             btn.className = "nav-btn w-full flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-3 p-2 md:px-4 md:py-3.5 rounded-[12px] text-[#94A3B8] hover:bg-white/5 hover:text-white font-bold transition-all text-[11px] md:text-[14px]";
-            if(btn.innerHTML.includes('가입 승인') || btn.innerHTML.includes('1:1 문의')) btn.className += " justify-between relative";
+            if(btn.innerHTML.includes('가입 승인') || btn.innerHTML.includes('1:1 문의') || btn.innerHTML.includes('포인트 관리')) btn.className += " justify-between relative";
         });
         
         let pcActiveIndex = 0;
@@ -1855,17 +1906,186 @@
         if(tabId === 'companies') pcActiveIndex = 2;
         if(tabId === 'inquiries') pcActiveIndex = 3;
         if(tabId === 'settings') pcActiveIndex = 4;
+        if(tabId === 'points') pcActiveIndex = 6; /* 💰 [패치 #71] (5번은 모바일 로그아웃) */
         
         if(navBtns[pcActiveIndex]) {
             navBtns[pcActiveIndex].className = "nav-btn w-full flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-3 p-2 md:px-4 md:py-3.5 rounded-[12px] bg-[#3B82F6] text-white font-bold transition-all shadow-[0_4px_12px_rgba(59,130,246,0.3)] text-[11px] md:text-[14px]";
-            if(tabId === 'approval' || tabId === 'inquiries') navBtns[pcActiveIndex].className += " justify-between relative";
+            if(tabId === 'approval' || tabId === 'inquiries' || tabId === 'points') navBtns[pcActiveIndex].className += " justify-between relative";
         }
         // 📱 [패치 #2] 모바일 하단 메뉴의 선택 표시(파란색)도 함께 이동
-        const mobBtns = document.querySelectorAll('.mob-nav-btn'); const mobMap = { dashboard: 0, approval: 1, companies: 2, settings: 3 };
+        const mobBtns = document.querySelectorAll('.mob-nav-btn'); const mobMap = { dashboard: 0, approval: 1, companies: 2, settings: 3, points: 4 }; /* 💰 [패치 #71] */
         mobBtns.forEach(btn => { btn.classList.remove('text-[#3B82F6]'); btn.classList.add('text-[#94A3B8]'); });
         if (mobMap[tabId] !== undefined && mobBtns[mobMap[tabId]]) { mobBtns[mobMap[tabId]].classList.remove('text-[#94A3B8]'); mobBtns[mobMap[tabId]].classList.add('text-[#3B82F6]'); }
+        if (tabId === 'points') ptmTab(PTM.tab); // 💰 [패치 #71]
         lucide.createIcons();
     }  
+    // ==========================================
+    // 💰 [패치 #71] 포인트 관리 (서버가 포인트를 넣고 빼며, 이 화면은 요청만 보냄)
+    // ==========================================
+    const PTM = { tab: 'charge', reqs: [], known: null, pick: null, busy: false };
+    function ptmNum(n) { return (Number(n) || 0).toLocaleString('ko-KR'); }
+    function ptmTime(ms) { const d = new Date(Number(ms) || 0); return `${d.getMonth() + 1}월 ${d.getDate()}일 ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; }
+    function ptmBiz(v) { const d = String(v || '').replace(/[^0-9]/g, ''); return d.length === 10 ? `${d.slice(0, 3)}-${d.slice(3, 5)}-${d.slice(5)}` : String(v || ''); }
+    // fetchAccounts가 읽어 온 전체 업체 자료에서 충전 신청만 모음 (서버를 따로 부르지 않음)
+    function ptmCollect(data) {
+        const list = [];
+        for (const accId in (data || {})) {
+            const acc = data[accId] || {}, reqs = (acc.wallet && acc.wallet.reqs) || {};
+            for (const rid in reqs) { const r = reqs[rid]; if (r && typeof r === 'object') list.push(Object.assign({ rid, acc: accId, prof: acc.profile || {} }, r)); }
+        }
+        list.sort((a, b) => (b.at || 0) - (a.at || 0));
+        const waitIds = list.filter(r => r.status === 'wait').map(r => r.acc + '/' + r.rid);
+        if (PTM.known) {
+            const fresh = list.filter(r => r.status === 'wait' && !PTM.known.has(r.acc + '/' + r.rid));
+            if (fresh.length) { playNotificationSound(); ptmToast(fresh[0]); }
+        }
+        PTM.known = new Set(waitIds);
+        PTM.reqs = list;
+        ptmBadges();
+        if (!document.getElementById('view-points').classList.contains('hidden') && !PTM.busy) ptmRender();
+    }
+    function ptmToast(r) {
+        const c = document.getElementById('toastContainer'); if (!c) return;
+        const t = document.createElement('div');
+        t.className = 'bg-white rounded-[16px] p-4 shadow-[0_10px_40px_rgba(0,0,0,0.5)] border-l-4 border-[#84CC16] toast-enter pointer-events-auto min-w-[280px] cursor-pointer';
+        t.innerHTML = `<div class="text-[15px] font-black text-[#1A1D1A]">포인트 충전 신청</div><div class="text-[15px] font-bold text-[#4E5968] mt-1">${pmEsc(r.prof.name || r.acc)} · ${ptmNum(r.amount)}원</div>`;
+        t.onclick = () => { switchTab('points'); ptmTab('charge'); t.remove(); };
+        c.appendChild(t);
+        setTimeout(() => { t.classList.replace('toast-enter', 'toast-exit'); setTimeout(() => t.remove(), 500); }, 8000);
+    }
+    function ptmBadges() {
+        const nWait = PTM.reqs.filter(r => r.status === 'wait').length;
+        const nTax = PTM.reqs.filter(r => r.status === 'done' && r.invoice && !r.taxDone).length;
+        document.getElementById('ptmCntCharge').textContent = nWait ? nWait : '';
+        document.getElementById('ptmCntTax').textContent = nTax ? nTax : '';
+        const n = nWait + nTax;
+        ['sidePointCount', 'mobPointCount'].forEach(id => { const el = document.getElementById(id); if (el) { el.textContent = n; el.classList.toggle('hidden', !n); } });
+    }
+    function ptmTab(t) {
+        PTM.tab = t;
+        document.querySelectorAll('.ptm-tab').forEach(b => { const on = b.dataset.ptmTab === t; b.style.background = on ? '#84CC16' : 'rgba(255,255,255,0.08)'; b.style.color = on ? '#12261E' : '#CBD5E1'; });
+        document.getElementById('ptmPaneCharge').classList.toggle('hidden', t !== 'charge');
+        document.getElementById('ptmPaneTax').classList.toggle('hidden', t !== 'tax');
+        document.getElementById('ptmPaneGrant').classList.toggle('hidden', t !== 'grant');
+        if (t === 'grant') ptmRenderPick();
+        ptmRender();
+    }
+    function ptmRender() {
+        const cBox = document.getElementById('ptmPaneCharge'), tBox = document.getElementById('ptmPaneTax');
+        const wait = PTM.reqs.filter(r => r.status === 'wait');
+        const recent = PTM.reqs.filter(r => r.status === 'done' || r.status === 'no').slice(0, 15);
+        const empty = (msg) => `<div class="glass-panel rounded-[20px] py-12 text-center text-[#94A3B8] text-[16px] font-bold">${msg}</div>`;
+        cBox.innerHTML = (wait.length ? wait.map(r => `
+            <div class="bg-white rounded-[20px] p-5 space-y-3">
+              <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0"><div class="text-[#0F172A] text-[19px] font-black">${pmEsc(r.prof.name || r.acc)}</div>
+                <div class="text-[#475569] text-[16px] font-bold leading-relaxed">${ptmTime(r.at)} 신청 · 입금자명 ${pmEsc(r.payer || '')}${r.invoice ? ' · 세금계산서 요청' : ''}</div></div>
+                <div class="text-[#3F6212] text-[22px] font-black whitespace-nowrap">${ptmNum(r.amount)}원</div>
+              </div>
+              <div class="flex gap-2">
+                <button type="button" onclick="ptmChargeOk(${jsArg(r.acc)}, ${jsArg(r.rid)}, ${Number(r.amount) || 0}, ${jsArg(r.prof.name || r.acc)})" class="flex-1 h-[56px] rounded-[16px] bg-[#151E2D] text-[#BEF264] text-[17px] font-black">입금 확인 · 충전 승인</button>
+                <button type="button" onclick="ptmChargeNo(${jsArg(r.acc)}, ${jsArg(r.rid)})" class="px-5 h-[56px] rounded-[16px] bg-white border-2 border-[#CBD5E1] text-[#334155] text-[17px] font-black">반려</button>
+              </div>
+            </div>`).join('') : empty('입금 확인을 기다리는 충전 신청이 없어요.'))
+          + (recent.length ? `<div class="glass-panel rounded-[20px] p-5"><div class="text-white text-[17px] font-black mb-2">최근 처리 내역</div>${recent.map(r => `
+              <div class="flex items-center justify-between gap-3 py-2.5 border-b border-white/5 last:border-0">
+                <div class="min-w-0 text-[16px] font-bold text-[#CBD5E1]"><span class="text-white font-black">${pmEsc(r.prof.name || r.acc)}</span> · ${ptmTime(r.doneAt || r.at)}${r.status === 'no' && r.memo ? ' · ' + pmEsc(r.memo) : ''}</div>
+                <div class="text-[16px] font-black whitespace-nowrap ${r.status === 'done' ? 'text-[#84CC16]' : 'text-red-300'}">${ptmNum(r.amount)}원 ${r.status === 'done' ? '승인' : '반려'}</div>
+              </div>`).join('')}</div>` : '');
+        const tax = PTM.reqs.filter(r => r.status === 'done' && r.invoice && !r.taxDone);
+        tBox.innerHTML = tax.length ? tax.map(r => {
+            const total = Number(r.amount) || 0, supply = Math.round(total / 1.1), vat = total - supply;
+            return `
+            <div class="bg-white rounded-[20px] p-5 space-y-2">
+              <div class="flex items-start justify-between gap-3">
+                <div class="text-[#0F172A] text-[19px] font-black">${pmEsc(r.prof.name || r.acc)}</div>
+                <button type="button" onclick="ptmCopyTax(${jsArg(r.acc)}, ${jsArg(r.rid)})" class="shrink-0 h-[46px] px-4 rounded-[12px] bg-[#ECFCCB] text-[#3F6212] text-[16px] font-black">복사</button>
+              </div>
+              <div class="text-[#334155] text-[16px] font-bold leading-relaxed">사업자 ${pmEsc(ptmBiz(r.prof.bizNum))} · 대표 ${pmEsc(r.prof.ceo || '')}<br>공급가액 ${ptmNum(supply)}원 · 세액 ${ptmNum(vat)}원 · 합계 ${ptmNum(total)}원<br>이메일 ${pmEsc(r.email || '')}<br><span class="text-[#64748B]">입금 확인 ${ptmTime(r.doneAt)}</span></div>
+              <button type="button" onclick="ptmTaxDone(${jsArg(r.acc)}, ${jsArg(r.rid)})" class="w-full h-[56px] rounded-[16px] bg-[#151E2D] text-[#BEF264] text-[17px] font-black">홈택스 발행 완료</button>
+            </div>`;
+        }).join('') + `<p class="text-[#94A3B8] text-[15px] font-bold px-1">공급가액은 합계 ÷ 1.1 을 반올림한 값이에요. 홈택스 입력 금액과 한 번 더 맞춰 보세요.</p>` : empty('발행할 세금계산서가 없어요.');
+    }
+    function ptmFind(acc, rid) { return PTM.reqs.find(r => r.acc === acc && r.rid === rid); }
+    async function ptmCall(payload) {
+        PTM.busy = true;
+        try { return await adminPush(payload); } finally { PTM.busy = false; }
+    }
+    function ptmFail(r) {
+        const m = { 'not-wait': '이미 처리된 신청이에요.', 'admin-only': '관리자 로그인이 필요해요.', busy: '서버가 바빠요. 잠시 후 다시 눌러 주세요.', unknown: '구글 스크립트가 최신 버전으로 배포되었는지 확인해 주세요.' };
+        alert('처리하지 못했어요.\n' + (m[r && r.msg] || (r && r.msg ? '(' + r.msg + ')' : '인터넷 연결을 확인해 주세요.')));
+    }
+    async function ptmChargeOk(acc, rid, amount, name) {
+        if (PTM.busy) return;
+        if (!confirm(`${name} · ${ptmNum(amount)}원\n\n통장에 입금된 것을 확인하셨나요?\n승인하면 ${ptmNum(amount)}P가 바로 들어가요.`)) return;
+        const r = await ptmCall({ action: 'admin_charge_ok', targetId: acc, reqId: rid });
+        if (!r || !r.ok) return ptmFail(r);
+        const q = ptmFind(acc, rid); if (q) { q.status = 'done'; q.doneAt = Date.now(); }
+        ptmBadges(); ptmRender();
+        alert(`충전 승인 완료\n${name} 업체의 지금 쓸 수 있는 포인트: ${ptmNum(r.usable)}P` + (q && q.invoice ? '\n\n세금계산서 탭에 발행할 목록이 올라갔어요.' : ''));
+        fetchAccounts();
+    }
+    async function ptmChargeNo(acc, rid) {
+        if (PTM.busy) return;
+        const memo = prompt('반려 사유 (업체에 알림으로 가요)', '입금이 확인되지 않았습니다');
+        if (memo === null) return;
+        const r = await ptmCall({ action: 'admin_charge_no', targetId: acc, reqId: rid, memo: memo.trim() || '입금이 확인되지 않았습니다' });
+        if (!r || !r.ok) return ptmFail(r);
+        const q = ptmFind(acc, rid); if (q) { q.status = 'no'; q.doneAt = Date.now(); q.memo = memo; }
+        ptmBadges(); ptmRender(); fetchAccounts();
+    }
+    function ptmCopyTax(acc, rid) {
+        const r = ptmFind(acc, rid); if (!r) return;
+        const total = Number(r.amount) || 0, supply = Math.round(total / 1.1);
+        const t = `상호: ${r.prof.name || ''}\n사업자번호: ${ptmBiz(r.prof.bizNum)}\n대표자: ${r.prof.ceo || ''}\n이메일: ${r.email || ''}\n품목: 조경노트 포인트 충전\n공급가액: ${supply}\n세액: ${total - supply}\n합계: ${total}`;
+        const ok = () => alert('복사했어요.\n\n' + t);
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok).catch(() => alert(t)); else alert(t);
+    }
+    async function ptmTaxDone(acc, rid) {
+        if (PTM.busy || !confirm('홈택스에서 세금계산서 발행을 마치셨나요?\n완료로 표시하면 목록에서 빠져요.')) return;
+        const r = await ptmCall({ action: 'admin_tax_done', targetId: acc, reqId: rid });
+        if (!r || !r.ok) return ptmFail(r);
+        const q = ptmFind(acc, rid); if (q) { q.taxDone = true; }
+        ptmBadges(); ptmRender(); fetchAccounts();
+    }
+    // 포인트 지급
+    function ptmRenderPick() {
+        const q = (document.getElementById('ptmSearch').value || '').toLowerCase().trim();
+        const list = (currentActiveAccounts || []).filter(a => !q || [a.name, a.ceo, a.id, a.region].some(v => String(v || '').toLowerCase().includes(q))).slice(0, 30);
+        document.getElementById('ptmPickList').innerHTML = list.length ? list.map(a => `
+            <button type="button" onclick="ptmPick(${jsArg(a.id)})" class="w-full text-left min-h-[56px] px-4 py-2.5 rounded-[14px] ${PTM.pick === a.id ? 'bg-[#84CC16]/20 border-[#84CC16]' : 'bg-white/5 border-white/10'} border flex items-center justify-between gap-3">
+              <span class="min-w-0"><span class="block text-white text-[17px] font-black">${a.region ? `<span class="text-[#84CC16] text-[15px] mr-1">[${pmEsc(a.region)}]</span>` : ''}${pmEsc(a.name)}</span><span class="block text-[#94A3B8] text-[15px] font-bold">${pmEsc(a.ceo || '')} · ${pmEsc(a.id)}</span></span>
+              <span class="text-[#BEF264] text-[16px] font-black whitespace-nowrap">${typeof a.usable === 'number' ? ptmNum(a.usable) + 'P' : ''}</span>
+            </button>`).join('') : '<div class="text-[#94A3B8] text-[16px] font-bold py-6 text-center">검색 결과가 없어요.</div>';
+    }
+    function ptmPick(id) {
+        PTM.pick = id; ptmRenderPick();
+        const a = (currentActiveAccounts || []).find(x => x.id === id) || {};
+        document.getElementById('ptmGrantBox').classList.remove('hidden');
+        document.getElementById('ptmGrantName').textContent = a.name || id;
+        ptmLoadWallet();
+    }
+    async function ptmLoadWallet() {
+        if (!PTM.pick) return;
+        const info = document.getElementById('ptmGrantInfo'); info.textContent = '포인트 불러오는 중...';
+        const r = await ptmCall({ action: 'admin_wallet', targetId: PTM.pick });
+        info.textContent = r && r.ok ? `쓸 수 있는 포인트 ${ptmNum(r.usable)}P (무료 ${ptmNum(r.free)} · 충전 ${ptmNum(r.paid)})` : '포인트를 불러오지 못했어요. 새로고침을 눌러 주세요.';
+    }
+    async function ptmGrant() {
+        if (PTM.busy || !PTM.pick) return;
+        const amt = Math.floor(Number(document.getElementById('ptmGrantAmt').value) || 0);
+        const days = Number(document.getElementById('ptmGrantDays').value) || 0;
+        const memo = document.getElementById('ptmGrantMemo').value.trim() || '관리자 지급';
+        if (amt < 1 || amt > 1000000) return alert('지급할 포인트를 1 ~ 1,000,000 사이로 적어 주세요.');
+        const name = document.getElementById('ptmGrantName').textContent;
+        if (!confirm(`${name}\n무료 포인트 ${ptmNum(amt)}P를 지급할까요?\n기한: ${days ? days + '일' : '없음'} · 사유: ${memo}`)) return;
+        const r = await ptmCall({ action: 'admin_grant', targetId: PTM.pick, amount: amt, days, memo });
+        if (!r || !r.ok) return ptmFail(r);
+        document.getElementById('ptmGrantAmt').value = ''; document.getElementById('ptmGrantMemo').value = '';
+        document.getElementById('ptmGrantInfo').textContent = `쓸 수 있는 포인트 ${ptmNum(r.usable)}P (무료 ${ptmNum(r.free)} · 충전 ${ptmNum(r.paid)})`;
+        alert(`지급 완료\n지금 쓸 수 있는 포인트: ${ptmNum(r.usable)}P`);
+        fetchAccounts();
+    }
   </script>
 </body>
 </html>
