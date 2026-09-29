@@ -316,6 +316,20 @@
           <button type="button" onclick="ptmGrant()" class="w-full h-[58px] rounded-[16px] bg-[#84CC16] text-[#12261E] text-[18px] font-black">무료 포인트 지급</button>
           <p class="text-[#94A3B8] text-[15px] font-bold leading-relaxed">무료 포인트는 충전 포인트보다 먼저 쓰이고, 환불되지 않아요.</p>
         </div>
+        <!-- 💰 [패치 #75] 탈퇴 후 재가입 제한 -->
+        <div class="glass-panel rounded-[20px] p-5 space-y-3">
+          <div class="text-white text-[18px] font-black">탈퇴 후 재가입 제한</div>
+          <p class="text-[#CBD5E1] text-[15px] font-bold leading-relaxed">탈퇴한 사업자번호는 아래 기간 동안 다시 가입할 수 없어요. (0 = 제한 없음)</p>
+          <div class="flex gap-2">
+            <input type="number" id="ptmRejoinDays" min="0" max="365" class="w-28 h-[54px] bg-[#0F172A] border border-white/15 rounded-[14px] px-4 text-white text-[17px] font-black">
+            <span class="text-white text-[17px] font-black self-center">일</span>
+            <button type="button" onclick="ptmRejoinSave()" class="flex-1 h-[54px] rounded-[14px] bg-white/10 text-white text-[16px] font-black">저장</button>
+          </div>
+          <div class="flex gap-2">
+            <input type="text" id="ptmRejoinBiz" placeholder="사업자번호" inputmode="numeric" class="flex-1 min-w-0 h-[54px] bg-[#0F172A] border border-white/15 rounded-[14px] px-4 text-white text-[16px] font-bold">
+            <button type="button" onclick="ptmRejoinOk()" class="px-4 h-[54px] rounded-[14px] bg-white text-[#0F172A] text-[16px] font-black whitespace-nowrap">제한 풀어 주기</button>
+          </div>
+        </div>
       </div>
     </div>
   </main>
@@ -956,8 +970,10 @@
             
             // ✨ [추가] DB에 저장된 약관 동의 시간 데이터를 예쁘게 출력
             const bizD = String(acc.bizNum || '').replace(/[^0-9]/g, ''); // 🧾 [패치 #73] 같은 사업자번호 가입 표시
-            const dupAcc = bizD.length >= 10 ? allAccounts.filter(a => a.id !== acc.id && String(a.bizNum || '').replace(/[^0-9]/g, '') === bizD) : [];
-            const dupHtml = dupAcc.length ? `<div class="col-span-2 bg-red-500/20 border border-red-500/50 rounded-[12px] px-3 py-2.5 text-red-200 text-[15px] font-black leading-relaxed">같은 사업자번호로 가입된 계정이 있어요: ${dupAcc.map(a => pmEsc((a.name || '') + ' (' + a.id + ')')).join(', ')}</div>` : '';
+            const dupAcc = bizD.length >= 10 ? allAccounts.filter(a => a.id !== acc.id && !a.withdrawRequestedAt && String(a.bizNum || '').replace(/[^0-9]/g, '') === bizD) : [];
+            const prevWd = Number(acc.prevWithdraw) || 0; // 💰 [패치 #75]
+            const prevHtml = prevWd ? `<div class="col-span-2 bg-red-500/20 border border-red-500/50 rounded-[12px] px-3 py-2.5 text-red-200 text-[15px] font-black">이전 탈퇴 ${prevWd}회 · 가입 축하 포인트는 다시 지급하지 않아요</div>` : '';
+            const dupHtml = prevHtml + (dupAcc.length ? `<div class="col-span-2 bg-red-500/20 border border-red-500/50 rounded-[12px] px-3 py-2.5 text-red-200 text-[15px] font-black leading-relaxed">같은 사업자번호로 가입된 계정이 있어요: ${dupAcc.map(a => pmEsc((a.name || '') + ' (' + a.id + ')')).join(', ')}</div>` : '');
             const agreedText = acc.termsAgreedAt ? `<span class="text-[#84CC16] font-black">${pmEsc(acc.termsAgreedAt)} 동의완료</span>` : '<span class="text-red-400 font-bold">기록 없음 (구버전 가입)</span>';
 
             div.innerHTML = `
@@ -1925,7 +1941,7 @@
         const mobBtns = document.querySelectorAll('.mob-nav-btn'); const mobMap = { dashboard: 0, approval: 1, companies: 2, settings: 3, points: 4 }; /* 💰 [패치 #71] */
         mobBtns.forEach(btn => { btn.classList.remove('text-[#3B82F6]'); btn.classList.add('text-[#94A3B8]'); });
         if (mobMap[tabId] !== undefined && mobBtns[mobMap[tabId]]) { mobBtns[mobMap[tabId]].classList.remove('text-[#94A3B8]'); mobBtns[mobMap[tabId]].classList.add('text-[#3B82F6]'); }
-        if (tabId === 'points') { ptmTab(PTM.tab); ptmLiveLoad(); } // 💰 [패치 #71·#72]
+        if (tabId === 'points') { ptmTab(PTM.tab); ptmLiveLoad(); ptmRejoinLoad(); } // 💰 [패치 #71·#72·#75]
         lucide.createIcons();
     }  
     // ==========================================
@@ -1938,8 +1954,10 @@
     // fetchAccounts가 읽어 온 전체 업체 자료에서 충전 신청만 모음 (서버를 따로 부르지 않음)
     function ptmCollect(data) {
         const list = [];
+        const refunds = []; // 💰 [패치 #75] 탈퇴 환불 대기
         for (const accId in (data || {})) {
             const acc = data[accId] || {}, reqs = (acc.wallet && acc.wallet.reqs) || {};
+            const rf = acc.wallet && acc.wallet.refund; if (rf && rf.status === 'wait') refunds.push(Object.assign({ acc: accId, prof: acc.profile || {} }, rf));
             for (const rid in reqs) { const r = reqs[rid]; if (r && typeof r === 'object') list.push(Object.assign({ rid, acc: accId, prof: acc.profile || {} }, r)); }
         }
         list.sort((a, b) => (b.at || 0) - (a.at || 0));
@@ -1949,7 +1967,7 @@
             if (fresh.length) { playNotificationSound(); ptmToast(fresh[0]); }
         }
         PTM.known = new Set(waitIds);
-        PTM.reqs = list;
+        PTM.reqs = list; PTM.refunds = refunds;
         ptmBadges();
         if (!document.getElementById('view-points').classList.contains('hidden') && !PTM.busy) ptmRender();
     }
@@ -1967,7 +1985,7 @@
         const nTax = PTM.reqs.filter(r => r.status === 'done' && r.invoice && !r.taxDone).length;
         document.getElementById('ptmCntCharge').textContent = nWait ? nWait : '';
         document.getElementById('ptmCntTax').textContent = nTax ? nTax : '';
-        const n = nWait + nTax;
+        const n = nWait + nTax + (PTM.refunds || []).length; // 💰 [패치 #75] 탈퇴 환불 대기 포함
         ['sidePointCount', 'mobPointCount'].forEach(id => { const el = document.getElementById(id); if (el) { el.textContent = n; el.classList.toggle('hidden', !n); } });
     }
     function ptmTab(t) {
@@ -1984,7 +2002,19 @@
         const wait = PTM.reqs.filter(r => r.status === 'wait');
         const recent = PTM.reqs.filter(r => r.status === 'done' || r.status === 'no').slice(0, 15);
         const empty = (msg) => `<div class="glass-panel rounded-[20px] py-12 text-center text-[#94A3B8] text-[16px] font-bold">${msg}</div>`;
-        cBox.innerHTML = (wait.length ? wait.map(r => `
+        const rfHtml = (PTM.refunds || []).map(r => `
+            <div class="rounded-[20px] p-5 space-y-3" style="background:#FEF9C3; border:2px solid #EAB308;">
+              <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0"><div class="text-[#713F12] text-[15px] font-black">탈퇴 환불 · ${ptmTime(r.at)} 탈퇴</div><div class="text-[#0F172A] text-[19px] font-black">${pmEsc(r.prof.name || r.acc)}</div></div>
+                <div class="text-[#713F12] text-[22px] font-black whitespace-nowrap">${ptmNum(r.amount)}원</div>
+              </div>
+              <div class="text-[#334155] text-[16px] font-bold">${pmEsc(r.bank)} ${pmEsc(r.num)} · 예금주 ${pmEsc(r.holder)}</div>
+              <div class="flex gap-2">
+                <button type="button" onclick="ptmCopyRefund(${jsArg(r.acc)})" class="px-5 h-[54px] rounded-[16px] bg-white border-2 border-[#EAB308] text-[#713F12] text-[17px] font-black">복사</button>
+                <button type="button" onclick="ptmRefundDone(${jsArg(r.acc)}, ${jsArg(r.prof.name || r.acc)}, ${Number(r.amount) || 0})" class="flex-1 h-[54px] rounded-[16px] bg-[#151E2D] text-[#BEF264] text-[17px] font-black">환불 입금 완료</button>
+              </div>
+            </div>`).join(''); // 💰 [패치 #75]
+        cBox.innerHTML = rfHtml + (wait.length ? wait.map(r => `
             <div class="bg-white rounded-[20px] p-5 space-y-3">
               <div class="flex items-start justify-between gap-3">
                 <div class="min-w-0"><div class="text-[#0F172A] text-[19px] font-black">${pmEsc(r.prof.name || r.acc)}</div>
@@ -2093,6 +2123,35 @@
             alert('알림이 켜졌어요.\n이제 가입 신청과 충전 신청이 오면 이 휴대폰으로 알려 드려요.');
         } catch (e) { alert('알림 연결에 실패했어요. 잠시 후 다시 눌러 주세요.'); }
         admPushStatus();
+    }
+    // 💰 [패치 #75] 탈퇴 환불 · 재가입 제한
+    function ptmCopyRefund(acc) {
+        const r = (PTM.refunds || []).find(x => x.acc === acc); if (!r) return;
+        const t = `${r.bank} ${r.num} ${r.holder} ${r.amount}원`;
+        const ok = () => alert('복사했어요.\n' + t);
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok).catch(() => alert(t)); else alert(t);
+    }
+    async function ptmRefundDone(acc, name, amount) {
+        if (PTM.busy || !confirm(`${name} · ${ptmNum(amount)}원\n\n환불 금액을 계좌로 입금하셨나요?\n완료로 표시하면 목록에서 빠지고, 그 업체의 충전 포인트는 0이 돼요.`)) return;
+        const r = await ptmCall({ action: 'admin_refund_done', targetId: acc });
+        if (!r || !r.ok) return ptmFail(r);
+        PTM.refunds = (PTM.refunds || []).filter(x => x.acc !== acc); ptmBadges(); ptmRender(); fetchAccounts();
+    }
+    async function ptmRejoinLoad() {
+        try { const r = await fetch(getAuthUrl(`${SETTINGS_URL}/rejoinDays.json?t=${Date.now()}`)); const d = r.ok ? await r.json() : null; document.getElementById('ptmRejoinDays').value = typeof d === 'number' ? d : 7; } catch (e) {}
+    }
+    async function ptmRejoinSave() {
+        const d = Math.floor(Number(document.getElementById('ptmRejoinDays').value));
+        if (!(d >= 0 && d <= 365)) return alert('0 ~ 365 사이 숫자로 적어 주세요. (0 = 제한 없음)');
+        try { const r = await fetch(getAuthUrl(`${SETTINGS_URL}/rejoinDays.json`), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(d) }); if (!r.ok) throw new Error(); alert(d ? `탈퇴 후 ${d}일 동안 같은 사업자번호로 다시 가입할 수 없게 했어요.` : '재가입 제한을 없앴어요.'); } catch (e) { alert('저장하지 못했어요. 다시 눌러 주세요.'); }
+    }
+    async function ptmRejoinOk() {
+        const b = document.getElementById('ptmRejoinBiz').value.trim();
+        if (b.replace(/[^0-9]/g, '').length < 10) return alert('사업자번호 10자리를 적어 주세요.');
+        if (!confirm(`사업자번호 ${b}\n재가입 제한을 풀어 줄까요?`)) return;
+        const r = await ptmCall({ action: 'admin_rejoin_ok', bizNum: b });
+        if (!r || !r.ok) return alert(r && r.msg === 'no-withdraw' ? '이 사업자번호는 탈퇴 기록이 없어요.' : '풀지 못했어요. (' + ((r && r.msg) || '연결 오류') + ')');
+        document.getElementById('ptmRejoinBiz').value = ''; alert('풀었어요. 이제 바로 다시 가입할 수 있어요.');
     }
     // 💰 [패치 #72] 포인트 차감 스위치 (settings/pointsLive · 서버가 발행할 때 이 값을 확인)
     PTM.live = null;

@@ -369,6 +369,8 @@
           <label class="block text-[14.5px] font-black text-[#84CC16] ml-1"><i data-lucide="key" class="w-4 h-4 inline-block -mt-0.5"></i> 새로운 비밀번호 설정</label>
           <input type="password" id="setCompanyPw" placeholder="새 비밀번호 (6자리 이상 숫자)" inputmode="numeric" pattern="[0-9]*" class="w-full bg-black/40 border border-[#84CC16]/50 rounded-[14px] px-4 py-4 text-white text-[18px] font-black focus:outline-none focus:border-[#84CC16]">
         </div>
+        <!-- 💾 [패치 #76] 내 자료 내려받기 -->
+        <button type="button" onclick="downloadMyBackup(this)" class="w-full h-[56px] rounded-[14px] bg-white/10 border border-white/20 text-white text-[16.5px] font-black flex items-center justify-center gap-2">내 자료 내려받기 (엑셀 백업)</button>
         <div class="pt-5 flex items-center justify-center gap-5"><a href="/privacy.html" target="_blank" rel="noopener" class="text-[14.5px] font-bold text-[#CBD5E1] underline underline-offset-4">개인정보처리방침</a><button onclick="openWithdraw()" class="text-[14.5px] font-bold text-[#94A3B8] underline underline-offset-4">회원 탈퇴</button></div><!-- 🚪 [패치 #26] --><div class="mt-3 text-center text-[13.5px] leading-relaxed text-[#94A3B8] font-bold break-keep"><!-- 🏢 [패치 #36] 사업자 정보 --><span class="text-[#CBD5E1]">신화조경노트</span> · 대표 박정근<br>사업자등록번호 559-35-01139<br>경기도 수원시 장안구 상률로46번길 17-7, 가-316호<br>전화 1668-3936<br>jmp159877@gmail.com</div>
       </div>
       <div class="p-4 bg-[#0F1722] border-t border-white/10 flex gap-2">
@@ -2007,6 +2009,12 @@
             if(existing && !existing.error) { document.getElementById('loadingOverlay')?.remove(); return alert("이미 사용 중인 아이디입니다."); }
             // 🧾 [패치 #73] 사업자번호 1개당 계정 1개 (서버가 확인 · 서버 확인이 안 되면 그대로 진행하고 관리자 승인 때 한 번 더 확인)
             const bizChk = await requestPoints({ action: 'pts_bizcheck', bizNum, userId: id });
+            if (bizChk && bizChk.ok && bizChk.blocked) { // 💰 [패치 #75] 탈퇴 후 재가입 제한 기간
+                if (!authData.error) { try { await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:delete?key=${API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken: tempToken }) }); } catch (e) {} }
+                currentIdToken = ""; document.getElementById('loadingOverlay')?.remove();
+                const md = t => { const d = new Date(Number(t)); return (d.getMonth() + 1) + '월 ' + d.getDate() + '일'; };
+                return alert(`이 사업자는 ${md(bizChk.withdrawAt)}에 탈퇴했어요.\n${md(bizChk.until)}부터 다시 가입할 수 있어요.\n\n급하시면 조경노트 운영본부로 문의해 주세요.`);
+            }
             if (bizChk && bizChk.ok && bizChk.dup) {
                 if (!authData.error) { try { await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:delete?key=${API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken: tempToken }) }); } catch (e) {} }
                 currentIdToken = ""; document.getElementById('loadingOverlay')?.remove();
@@ -3793,7 +3801,19 @@
     }
 
     // 🚪 [패치 #26] 회원 탈퇴: 비밀번호로 본인 확인 → 탈퇴 요청 기록 → 로그인 계정 삭제 (자료는 30일 뒤 관리자가 삭제)
-    function openWithdraw() { document.getElementById('settingsModal')?.classList.add('hidden'); document.getElementById('withdrawPw').value = ''; document.getElementById('withdrawModal').classList.remove('hidden'); if (typeof lucide !== 'undefined') lucide.createIcons(); }
+    function openWithdraw() { document.getElementById('settingsModal')?.classList.add('hidden'); document.getElementById('withdrawPw').value = ''; document.getElementById('withdrawModal').classList.remove('hidden'); if (typeof lucide !== 'undefined') lucide.createIcons(); wdLoadInfo(); /* 💰 [패치 #75] */ }
+    // 💰 [패치 #75] 탈퇴 화면: 환불될 충전 포인트 · 재가입 제한 일수 보여 주기
+    let WD = { paid: null };
+    async function wdLoadInfo() {
+      const info = document.getElementById('wdRefundInfo'), box = document.getElementById('wdRefundBox');
+      WD.paid = null; info.textContent = '남은 포인트를 확인하는 중...'; box.classList.add('hidden');
+      const r = await requestPoints({ action: 'pts_withdraw_info' });
+      if (!r || !r.ok) { info.textContent = '남은 충전 포인트가 있으면 탈퇴 후 7일 안에 계좌로 돌려 드려요. 무료 포인트(가입 축하·지급·소통방)는 환불되지 않고 사라져요.'; return; }
+      WD.paid = r.paid; document.getElementById('wdDays').textContent = r.rejoinDays;
+      info.textContent = r.paid > 0 ? `남은 충전 포인트 ${r.paid.toLocaleString('ko-KR')}P는 탈퇴 후 7일 안에 아래 계좌로 돌려 드려요. 무료 포인트(가입 축하·지급·소통방)는 환불되지 않고 사라져요.`
+        : '돌려 드릴 충전 포인트가 없어요. 무료 포인트(가입 축하·지급·소통방)는 환불되지 않고 사라져요.';
+      box.classList.toggle('hidden', !(r.paid > 0));
+    }
     function closeWithdraw() { document.getElementById('withdrawModal').classList.add('hidden'); }
     async function confirmWithdraw() {
       const pw = document.getElementById('withdrawPw').value.trim();
@@ -3806,6 +3826,10 @@
         const lr = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: currentUserId + '@jogyeongnote.com', password: pw, returnSecureToken: true }) });
         const ld = await lr.json();
         if (ld.error || !ld.idToken) { document.getElementById('loadingOverlay')?.remove(); return alert('❌ 비밀번호가 맞지 않습니다.'); }
+        // 💰 [패치 #75] 서버에 환불 계좌·탈퇴 기록 (재가입 제한용). 서버가 예전 버전이면 그냥 진행
+        const wr = await requestPoints({ action: 'pts_withdraw', idToken: ld.idToken, bank: (document.getElementById('wdBank').value || '').trim(), num: (document.getElementById('wdNum').value || '').trim(), holder: (document.getElementById('wdHolder').value || '').trim() });
+        if (wr && !wr.ok && wr.msg === 'need-account') { document.getElementById('loadingOverlay')?.remove(); document.getElementById('wdRefundBox').classList.remove('hidden'); return alert(`남은 충전 포인트 ${Number(wr.paid || 0).toLocaleString('ko-KR')}P를 돌려 드릴 계좌를 적어 주세요.\n(은행 이름 · 계좌번호 · 예금주)`); }
+        if (!wr || (!wr.ok && wr.msg !== 'unknown')) throw new Error('withdraw-record');
         // 2) 관리자 센터에 탈퇴 요청 기록 (30일 보관 기간 계산용)
         const pr = await fetch(`${DB_BASE_URL}/${getSafeKey(currentUserId)}/profile.json?auth=${ld.idToken}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ withdrawRequestedAt: new Date().toISOString() }) });
         if (!pr.ok) throw new Error('profile');
@@ -7033,14 +7057,31 @@ ${AI_COMMON_RULES}
 
   <!-- 🚪 [패치 #26] 회원 탈퇴 -->
   <div id="withdrawModal" class="hidden fixed inset-0 z-[6600] bg-black/85 flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-[26px] p-6 shadow-2xl">
+    <div class="bg-white w-full max-w-sm rounded-[26px] p-6 shadow-2xl max-h-[92vh] overflow-y-auto"><!-- 💰 [패치 #75] 내용이 길어져 화면 안에서 넘겨 보기 -->
       <div class="w-14 h-14 rounded-[16px] bg-red-50 flex items-center justify-center mb-4"><i data-lucide="log-out" class="w-7 h-7 text-red-600"></i></div>
       <h2 class="text-[23px] font-black text-[#0F172A]">회원 탈퇴</h2>
       <ul class="mt-3 space-y-2 text-[15.5px] font-bold text-[#334155] leading-relaxed break-keep">
         <li>• 탈퇴하면 <b class="text-red-600">바로 로그인할 수 없습니다.</b></li>
         <li>• 일지·견적·장부 등 모든 자료는 <b>30일간 보관 후 완전히 삭제</b>되며, 삭제 후에는 복구할 수 없습니다.</li>
+        <li>• 보관 중인 자료는 <b>따로 보내 드리지 않습니다.</b> 탈퇴 전에 아래 버튼으로 직접 내려받아 주세요.</li>
         <li>• 30일 안에 마음이 바뀌시면 [1:1 문의] 또는 고객센터로 연락 주세요.</li>
       </ul>
+      <!-- 💾 [패치 #76] 탈퇴 전 백업 -->
+      <div class="mt-4 rounded-[14px] p-3.5 space-y-2.5" style="background:#F4FBEA; border:2px solid #84CC16;">
+        <div class="text-[15.5px] font-black leading-relaxed break-keep" style="color:#3F6212;">탈퇴 전에 꼭 백업하세요. 일지·견적서·거래처·일정·장부·메모·고객 의뢰를 엑셀 파일 하나로 내려받아요.</div>
+        <button type="button" onclick="downloadMyBackup(this)" class="w-full h-[54px] rounded-[14px] text-[17px] font-black" style="background:#151E2D; color:#BEF264;">내 자료 내려받기 (엑셀)</button>
+      </div>
+      <!-- 💰 [패치 #75] 재가입 제한 · 포인트 환불 -->
+      <div class="mt-4 rounded-[14px] p-3.5 text-[15.5px] font-black leading-relaxed break-keep" style="background:#FEF2F2; border:2px solid #DC2626; color:#B91C1C;">
+        탈퇴하면 <span id="wdDays">7</span>일 동안 같은 사업자로 다시 가입할 수 없어요.<br>가입 축하 3,000P는 다시 가입해도 다시 드리지 않아요.
+      </div>
+      <div id="wdRefundInfo" class="mt-3 rounded-[14px] p-3.5 text-[15.5px] font-black leading-relaxed break-keep" style="background:#FEF9C3; border:2px solid #EAB308; color:#713F12;">남은 포인트를 확인하는 중...</div>
+      <div id="wdRefundBox" class="hidden mt-3 space-y-2">
+        <span class="block text-[15px] font-black text-[#0F172A]">환불받을 계좌</span>
+        <input type="text" id="wdBank" placeholder="은행 이름 (예: 국민은행)" class="w-full h-[54px] bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-[14px] px-4 text-[17px] font-black text-[#0F172A] focus:outline-none focus:border-red-500">
+        <input type="text" id="wdNum" inputmode="numeric" placeholder="계좌번호 (숫자만)" class="w-full h-[54px] bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-[14px] px-4 text-[17px] font-black text-[#0F172A] focus:outline-none focus:border-red-500">
+        <input type="text" id="wdHolder" placeholder="예금주" class="w-full h-[54px] bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-[14px] px-4 text-[17px] font-black text-[#0F172A] focus:outline-none focus:border-red-500">
+      </div>
       <label for="withdrawPw" class="block text-[15px] font-black text-[#0F172A] mt-5 mb-1.5">본인 확인을 위해 비밀번호를 입력하세요</label>
       <input type="password" id="withdrawPw" inputmode="numeric" autocomplete="current-password" placeholder="비밀번호" class="w-full h-[54px] bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-[14px] px-4 text-[17px] font-black text-[#0F172A] focus:outline-none focus:border-red-500">
       <div class="grid grid-cols-2 gap-2.5 mt-5">
@@ -9092,6 +9133,101 @@ ${AI_COMMON_RULES}
       if (r && r.msg === 'short') { ptShortSheet(r.need, r.usable); return false; }
       alert('포인트를 차감하지 못해서 블로그 글을 만들지 않았어요. 잠시 후 다시 눌러 주세요.');
       return false;
+    }
+  </script>
+  <script>
+    // 💾 [패치 #76] 내 자료 내려받기 (엑셀 백업) · 서버에서 내 자료를 새로 읽어 한 파일로 저장 (읽기만 함 · 아무것도 고치지 않음)
+    const BK = { busy: false };
+    function bkArr(v) { return Array.isArray(v) ? v.filter(Boolean) : (v && typeof v === 'object' ? Object.values(v).filter(Boolean) : []); }
+    function bkCut(v) { const t = String(v == null ? '' : v); return t.length > 32000 ? t.slice(0, 32000) + ' …(이하 생략)' : t; }
+    function bkDate(ms) { const n = Number(ms); if (!n) return ''; const d = new Date(n); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
+    function bkImgs(...lists) { return lists.map(x => String(x || '')).join(',').split(',').map(x => x.trim()).filter(u => /^https:\/\//.test(u)).join('\n'); }
+    function bkBase() { return (location.protocol === 'https:' && location.hostname) ? location.origin + '/' : 'https://www.jogyeongnote.com/'; }
+    // 엑셀(.xlsx) 파일을 직접 만듦 (외부 프로그램 없이 · 글자는 셀에 그대로 넣음)
+    function bkXml(v) { return String(v == null ? '' : v).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+    function bkCol(i) { let s = ''; i++; while (i > 0) { const m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = Math.floor((i - 1) / 26); } return s; }
+    function bkSheetXml(aoa, widths) {
+      const rows = aoa.map((row, r) => `<row r="${r + 1}">` + row.map((v, c) => {
+        const ref = bkCol(c) + (r + 1), st = r === 0 ? ' s="1"' : ' s="2"';
+        return (typeof v === 'number' && isFinite(v)) ? `<c r="${ref}"${st}><v>${v}</v></c>` : `<c r="${ref}" t="inlineStr"${st}><is><t xml:space="preserve">${bkXml(v)}</t></is></c>`;
+      }).join('') + '</row>').join('');
+      const cols = widths && widths.length ? '<cols>' + widths.map((w, i) => `<col min="${i + 1}" max="${i + 1}" width="${w}" customWidth="1"/>`).join('') + '</cols>' : '';
+      return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>${cols}<sheetData>${rows}</sheetData></worksheet>`;
+    }
+    const BK_CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+    function bkCrc(b) { let c = 0xFFFFFFFF; for (let i = 0; i < b.length; i++) c = BK_CRC[(c ^ b[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+    function bkZip(files) { // 압축 없이 묶기 (엑셀 파일 형식)
+      const enc = new TextEncoder(), parts = [], central = []; let off = 0;
+      files.forEach(f => {
+        const name = enc.encode(f.name), data = enc.encode(f.text), crc = bkCrc(data);
+        const h = new DataView(new ArrayBuffer(30));
+        h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true); h.setUint16(8, 0, true);
+        h.setUint32(14, crc, true); h.setUint32(18, data.length, true); h.setUint32(22, data.length, true); h.setUint16(26, name.length, true);
+        parts.push(new Uint8Array(h.buffer), name, data);
+        const c = new DataView(new ArrayBuffer(46));
+        c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(8, 0x0800, true);
+        c.setUint32(16, crc, true); c.setUint32(20, data.length, true); c.setUint32(24, data.length, true); c.setUint16(28, name.length, true); c.setUint32(42, off, true);
+        central.push(new Uint8Array(c.buffer), name);
+        off += 30 + name.length + data.length;
+      });
+      const csize = central.reduce((a, b) => a + b.length, 0), e = new DataView(new ArrayBuffer(22));
+      e.setUint32(0, 0x06054b50, true); e.setUint16(8, files.length, true); e.setUint16(10, files.length, true); e.setUint32(12, csize, true); e.setUint32(16, off, true);
+      return new Blob([...parts, ...central, new Uint8Array(e.buffer)], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    }
+    function bkXlsx(sheets) { // sheets: [{ name, aoa, widths }]
+      const wbSheets = sheets.map((s, i) => `<sheet name="${bkXml(s.name)}" sheetId="${i + 1}" r:id="rId${i + 1}"/>`).join('');
+      const rels = sheets.map((s, i) => `<Relationship Id="rId${i + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i + 1}.xml"/>`).join('') + `<Relationship Id="rId${sheets.length + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>`;
+      const files = [
+        { name: '[Content_Types].xml', text: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>` + sheets.map((s, i) => `<Override PartName="/xl/worksheets/sheet${i + 1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('') + `</Types>` },
+        { name: '_rels/.rels', text: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>` },
+        { name: 'xl/workbook.xml', text: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>${wbSheets}</sheets></workbook>` },
+        { name: 'xl/_rels/workbook.xml.rels', text: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${rels}</Relationships>` },
+        { name: 'xl/styles.xml', text: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="맑은 고딕"/></font><font><b/><sz val="11"/><name val="맑은 고딕"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFECFCCB"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="3"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>` }
+      ];
+      sheets.forEach((s, i) => files.push({ name: `xl/worksheets/sheet${i + 1}.xml`, text: bkSheetXml(s.aoa, s.widths) }));
+      return bkZip(files);
+    }
+    function bkSave(blob, fname) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fname; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000); }
+    async function downloadMyBackup(btn) {
+      if (BK.busy) return;
+      if (!currentUserId) return alert('로그인한 뒤에 내려받을 수 있어요.');
+      const old = btn ? btn.innerHTML : ''; BK.busy = true; if (btn) btn.innerHTML = '자료 모으는 중...';
+      try {
+        const base = `${DB_BASE_URL}/${getSafeKey(currentUserId)}`;
+        const [dRes, qRes] = await Promise.all([fetch(getAuthUrl(`${base}/data.json`)), fetch(getAuthUrl(`${base}/requests.json`))]);
+        if (!dRes.ok) throw new Error('data');
+        const d = (await dRes.json()) || {}; const rq = qRes.ok ? ((await qRes.json()) || {}) : {};
+        const recs = bkArr(d.records);
+        const reports = recs.filter(r => !(r.payload ? r.payload.isQuote : r.type === 'quote'));
+        const quotes = recs.filter(r => (r.payload ? r.payload.isQuote : r.type === 'quote'));
+        const S = {};
+        S['작업일지'] = reports.map(r => { const p = r.payload || {}; return { '작업일': p.wd || r.date || '', '고객명': p.c || r.clientName || '', '연락처': p.p || r.clientPhone || '', '현장 주소': p.addr || '', '제목·회차': p.r || r.round || '', '작업 항목': p.cat || r.cat || '', '특이사항': bkCut(p.issue || r.issue), '작업자 코멘트': bkCut(p.d || r.diagnosis), '고객용 링크': r.id ? bkBase() + '?id=' + r.id : '', '사진 링크 (작업 전·중·후·특이사항)': bkCut(bkImgs(p.b || r.b, p.dur, p.a || r.a, p.imgsIssue || r.imgsIssue)) }; });
+        S['견적서'] = quotes.map(r => { const p = r.payload || {}; const items = bkArr(p.m).map(x => `${x.m || ''} ${String(x.d || '').replace(/\n/g, ' / ')} : ${(Number(x.p) || 0).toLocaleString('ko-KR')}원`).join('\n'); return { '발행일': r.date || '', '고객명': p.c || r.clientName || '', '연락처': p.p || r.clientPhone || '', '현장 주소': p.addr || '', '제목': p.r || r.round || '', '항목': bkCut(items), '합계(원)': Number(p.s) || 0, '메모': bkCut(p.memo), '고객용 링크': r.id ? bkBase() + '?id=' + r.id : '', '사진 링크': bkCut(bkImgs(p.imgs)) }; });
+        S['거래처'] = bkArr(d.clients).map(c => ({ '이름': c.name || '', '연락처': c.phone || '', '주소': c.address || '', '구분': c.type || '' }));
+        S['일정'] = bkArr(d.schedules).map(x => ({ '날짜': x.date || '', '제목': x.title || '', '구분': x.tag || '', '메모': bkCut(x.memo) })).sort((a, b) => String(a['날짜']).localeCompare(String(b['날짜'])));
+        S['장부'] = bkArr(d.ledgers).map(x => ({ '날짜': x.date || '', '내용': x.title || '', '수입(원)': Number(x.income) || 0, '지출(원)': Number(x.expense) || 0, '부가세(원)': Number(x.vat) || 0, '메모': bkCut(x.memo) })).sort((a, b) => String(a['날짜']).localeCompare(String(b['날짜'])));
+        const ct = d.contacts || {};
+        S['연락처'] = bkArr(ct.clients).map(x => ({ '구분': '고객', '이름': x.name || '', '연락처': x.phone || '', '메모': bkCut(x.memo) })).concat(bkArr(ct.labors).map(x => ({ '구분': '인력', '이름': x.name || '', '연락처': x.phone || '', '메모': bkCut(x.memo) })));
+        S['메모'] = Object.values(d.memos && typeof d.memos === 'object' ? d.memos : {}).filter(Boolean).map(m => ({ '작성일': bkDate(m.createdAt), '제목': m.title || '', '내용': bkCut(bkArr(m.lines).join('\n') || m.raw) }));
+        const stk = d.stock && typeof d.stock === 'object' ? d.stock : {}, stkName = { supply: '비품·자재', plant: '수목·식물', car: '차계부' };
+        S['재고함'] = [];
+        Object.keys(stkName).forEach(k => Object.values(stk[k] && typeof stk[k] === 'object' ? stk[k] : {}).filter(Boolean).forEach(x => S['재고함'].push({ '분류': stkName[k], '날짜': x.date || '', '품목': x.item || '', '내용': bkCut(x.content), '수량·금액': k === 'car' ? (Number(x.amount) || 0) : (x.qty || ''), '비고': bkCut(x.etc) })));
+        const rst = { new: '새 의뢰', talk: '상담 중', done: '끝난 의뢰' };
+        S['고객 의뢰'] = Object.values(rq && typeof rq === 'object' ? rq : {}).filter(x => x && typeof x === 'object').map(x => ({ '접수일': bkDate(x.createdAt), '고객명': x.name || '', '연락처': x.phone || '', '현장 주소': x.addr || '', '원하는 작업': bkArr(x.works).join(', '), '희망 시기': x.when || '', '남긴 말': bkCut(x.text), '상태': rst[x.status] || '', '사진 링크': bkCut(bkArr(x.imgs).join('\n')) }));
+        const name = (myCompanyProfile && myCompanyProfile.name) || currentUserId, today = getTodayStr();
+        const guide = [['조경노트 자료 백업', ''], ['업체', name], ['아이디', currentUserId], ['내려받은 날', today], ['', ''],
+          ['들어 있는 자료', Object.keys(S).map(k => `${k} ${S[k].length}건`).join(' · ')], ['', ''],
+          ['사진', '사진은 파일 대신 링크로 들어 있어요. 링크를 누르면 사진이 열려요.'], ['', '탈퇴하면 30일 뒤 사진 링크도 열리지 않으니, 꼭 필요한 사진은 미리 휴대폰에 저장해 두세요.']];
+        const sheets = [{ name: '안내', aoa: guide, widths: [16, 80] }];
+        Object.keys(S).forEach(k => {
+          const rows = S[k], heads = rows.length ? Object.keys(rows[0]) : ['자료 없음'];
+          sheets.push({ name: k, aoa: [heads].concat(rows.map(r => heads.map(h => r[h]))), widths: heads.map(h => /링크|내용|항목|메모|코멘트|특이사항|남긴 말/.test(h) ? 50 : 16) });
+        });
+        const fname = `조경노트_백업_${String(name).replace(/[\\/:*?"<>|\s]+/g, '')}_${today}.xlsx`;
+        bkSave(bkXlsx(sheets), fname);
+        alert(`내 자료를 엑셀 파일로 내려받았어요.\n\n파일 이름: ${fname}\n휴대폰 [내 파일 → 다운로드]에서 찾을 수 있어요.\n\n` + Object.keys(S).map(k => `${k} ${S[k].length}건`).join(', '));
+      } catch (e) { alert('자료를 내려받지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.'); }
+      finally { BK.busy = false; if (btn) btn.innerHTML = old; }
     }
   </script>
 </body>
