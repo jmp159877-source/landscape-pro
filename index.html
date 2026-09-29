@@ -6801,13 +6801,46 @@ ${AI_COMMON_RULES}
     // ---------------- 견적서 ----------------
     const QUOTE_TPL_NAMES = { single: '단건 의뢰', residential: '개인주택 (월별)', commercial: '상업/빌딩 (월별)', construction: '조경공사' };
     let aiQuoteDraft = null;
-    function startQuoteVoice() { voiceOpen({ title: '말로 견적 쓰기', chip: '견적서', hints: ['고객·현장', '작업 항목', '수량·규격', '금액', '특이사항'], guide: VOICE_GUIDES.quote, onDone: runQuoteAi }); } // 🎤 [패치 #45] guide
+    // 🎤 [패치 #61] 말로 견적 쓰기: 지금 고른 견적 템플릿의 '기본 폼'을 보여 주고, 그 순서대로 말하게 함
+    const QV = { tpl: 'single', rows: [] };
+    function quoteVoiceRows() {
+      const tplBtn = document.querySelector('.quote-tpl.ring-2'); const tpl = (tplBtn && tplBtn.getAttribute('data-tpl')) || 'single';
+      let rows = [];
+      document.querySelectorAll('#quoteItemsContainer .quote-month-btn').forEach(b => {
+        const card = b.closest('.flex-col') || b.parentElement; const ta = card ? card.querySelector('textarea[id^="quoteDesc_"]') : null;
+        rows.push({ label: b.innerText.trim(), desc: ta ? String(ta.value || '').split('\n').map(x => x.replace(/^[·•\-\s]+/, '').trim()).filter(Boolean).join(', ') : '' });
+      });
+      if (!rows.length && quoteTemplates[tpl]) rows = quoteTemplates[tpl].rows.map(r => ({ label: r.l, desc: r.d === '관리없음' ? '' : r.d }));
+      return { tpl, rows: rows.slice(0, 14) };
+    }
+    function quoteVoiceFormHtml() {
+      const monthly = QV.tpl === 'residential' || QV.tpl === 'commercial';
+      const dTitle = (quoteTemplates[QV.tpl] || {}).title || '견적서';
+      const num = n => `<span class="w-[28px] h-[28px] rounded-full bg-[#151E2D] text-[#BEF264] text-[15px] font-black flex items-center justify-center shrink-0">${n}</span>`;
+      const box = (ex) => `<span class="block border-b-2 border-dashed border-[#CBD5E1] pb-1 text-[15px] font-bold text-[#64748B] break-keep">${ex}</span>`;
+      const field = (n, label, ex) => `<div class="flex gap-2.5 items-start">${num(n)}<div class="flex flex-col gap-1 min-w-0 flex-1"><span class="text-[17px] font-black text-[#151E2D]">${label}</span>${box(ex)}</div></div>`;
+      const rows = QV.rows.map(r => `<div class="flex items-center gap-2 min-w-0"><span class="text-[13.5px] font-black bg-[#151E2D] text-[#BEF264] px-1.5 py-0.5 rounded-[6px] shrink-0">${escHtml(r.label)}</span><span class="text-[15px] font-bold text-[#334155] truncate">${escHtml(r.desc || '내용')}</span><span class="ml-auto text-[14px] font-black text-[#94A3B8] shrink-0">금액</span></div>`).join('');
+      return `<div class="flex items-center justify-between gap-2"><span class="text-[18px] font-black text-[#151E2D]">견적서 기본 폼</span><span class="text-[13.5px] font-black text-[#3F6212] bg-[#ECFCCB] px-2 py-0.5 rounded-md">${escHtml(QUOTE_TPL_NAMES[QV.tpl] || '')}</span></div>
+        <span class="text-[15px] font-bold text-[#475569] -mt-1">위에서부터 차례로 말씀하세요. 순서가 달라도 괜찮아요.</span>
+        ${field(1, '고객 · 현장', '예) "수지 박영희 고객님 단독주택"')}
+        ${field(2, '견적 제목', '예) "견적 제목은 소나무 전지 견적서" · 안 하시면 "' + escHtml(dTitle) + '"')}
+        <div class="flex gap-2.5 items-start">${num(3)}<div class="flex flex-col gap-1.5 min-w-0 flex-1"><span class="text-[17px] font-black text-[#151E2D]">세부 견적 내역 <span class="text-[14px] font-bold text-[#475569]">(항목마다 내용 + 금액)</span></span>
+          <div class="bg-[#F8FAFC] border-[1.5px] border-[#E2E8F0] rounded-[12px] px-2.5 py-2 flex flex-col gap-1.5">${rows}</div>
+          ${box(monthly ? '예) "3월 가지치기 삼십만 원, 5월 병해충 방제 이십만 원"' : '예) "1번 소나무 전지 다섯 주 칠십오만 원, 2번 병해충 소독 이십만 원"')}</div></div>
+        ${field(4, '참고 및 특이사항', '예) "부가세 별도, 폐기물 처리비 포함"')}`;
+    }
+    function startQuoteVoice() {
+      const r = quoteVoiceRows(); QV.tpl = r.tpl; QV.rows = r.rows;
+      voiceOpen({ title: '말로 견적 쓰기', chip: '견적서', hints: [], guide: VOICE_GUIDES.quote, onDone: runQuoteAi }); // 🎤 [패치 #45] guide
+      const board = document.getElementById('voiceGuideBoard'); if (board) board.innerHTML = quoteVoiceFormHtml(); // 🎤 [패치 #61] 순서 안내 대신 견적서 기본 폼
+    }
     async function runQuoteAi(text) {
       voiceShowThinking(['고객 찾기', '견적 종류 고르기', '항목·금액 정리']);
       const prompt = `너는 조경 사업자 대표님의 견적서 작성 도우미다. 대표님이 말로 한 견적 내용을 견적서 칸에 맞게 정리한다.
 - clientName: 고객명/현장명(존칭 뺌). phone, address: 말한 경우만.
 - template: 한 번 하는 작업이면 "single", 개인주택 연간(월별) 관리면 "residential", 상가·빌딩 연간 관리면 "commercial", 식재·시공 공사면 "construction".
-- title: 견적 제목. 특별히 말 안 했으면 "".
+- title: 견적 제목. "견적 제목은 ~"처럼 제목을 말하면 그 말 그대로(군말만 빼고). 특별히 말 안 했으면 "".
+- (패치 #61) 대표님은 이 견적서 기본 폼을 보면서 말한다: 종류 [${QUOTE_TPL_NAMES[QV.tpl] || ''}], 항목 [${QV.rows.map(r => r.label + ' ' + (r.desc || '(빈 칸)')).join(' / ')}]. 다른 종류를 말하지 않으면 template은 "${QV.tpl}"로 하고, 말한 항목이 기본 폼의 항목과 같거나 "1번"·"3월"처럼 번호를 말하면 그 label을 그대로 쓴다.
 - items: 항목 배열 [{"label":"","desc":"","price":0}]. residential/commercial(월별)이면 label은 "3월"처럼 월, 나머지는 "01","02"… 순서 번호.
   desc: 작업 내용(수량·규격 포함, 예: "소나무 전지 5주"). price: 대표님이 말한 금액만 숫자로, 말 안 했으면 0 (절대 단가를 추측하지 말 것).
 - memo: 참고 및 특이사항(부가세, 추가 비용 조건 등). 없으면 "".
@@ -6836,27 +6869,64 @@ ${AI_COMMON_RULES}
         alert('AI 정리에 실패했습니다. (' + (e && e.message ? e.message : '통신 오류') + ')\n' + keep);
       }
     }
+    // ✍️ [패치 #61] 정리 결과 확인: 고객명·제목·항목 내용·금액·연락처·주소·특이사항 모두 눌러서 바로 고칠 수 있게 (원래: 금액·연락처만)
+    const FPQ_IN = 'w-full rounded-[12px] border-[1.5px] border-[#EAB308] bg-white px-3 text-[17px] font-black text-[#0F172A] placeholder:text-[15px] placeholder:font-bold placeholder:text-[#94A3B8] focus:outline-none focus:border-[#65A30D]';
+    function fpqRowHtml(label, desc, price) {
+      const n = (fpqRowHtml.n = (fpqRowHtml.n || 0) + 1);
+      return `<div data-fpq-row data-label="${escHtml(label)}" class="flex flex-col gap-1.5 pb-2.5 border-b border-[#EAB308]/40">
+          <div class="flex items-center gap-2"><span class="text-[13.5px] font-black bg-[#151E2D] text-white px-1.5 py-0.5 rounded-[5px] shrink-0">${escHtml(label)}</span><span class="text-[14px] font-bold text-[#854D0E]">내용</span><button type="button" onclick="fpqRemoveRow(this)" class="ml-auto h-[36px] px-3 rounded-[10px] border-[1.5px] border-[#CBD5E1] bg-white text-[14.5px] font-black text-[#475569] active:scale-95">빼기</button></div>
+          <label for="fpQD${n}" class="sr-only">${escHtml(label)} 내용</label><textarea id="fpQD${n}" data-fpq-desc rows="2" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" placeholder="작업 내용" class="${FPQ_IN} py-2.5 leading-snug resize-none">${escHtml(desc)}</textarea>
+          <div class="flex items-center gap-1.5"><label for="fpQP${n}" class="text-[14px] font-bold text-[#854D0E] shrink-0">금액</label><input id="fpQP${n}" data-fpq-price inputmode="numeric" oninput="formatNumberInput(this); fpQuoteSum()" value="${price ? Number(price).toLocaleString('ko-KR') : ''}" placeholder="금액 말씀 안 하셨어요" class="${FPQ_IN} h-[50px] text-right"><span class="text-[16px] font-black text-[#334155] shrink-0">원</span></div>
+        </div>`;
+    }
+    function fpqRemoveRow(btn) { const r = btn.closest('[data-fpq-row]'); if (r) r.remove(); fpQuoteSum(); }
+    function fpqAddRow() {
+      const list = document.getElementById('fpQRows'); if (!list) return;
+      const tpl = (document.getElementById('fpQTpl') || {}).value || 'single';
+      let label = '추가';
+      if (tpl !== 'residential' && tpl !== 'commercial') { let max = 0; list.querySelectorAll('[data-fpq-row]').forEach(r => { const n = parseInt(r.getAttribute('data-label'), 10); if (n > max) max = n; }); label = String(max + 1).padStart(2, '0'); }
+      list.insertAdjacentHTML('beforeend', fpqRowHtml(label, '', 0));
+      const t = list.querySelector('[data-fpq-row]:last-child textarea'); if (t) t.focus();
+    }
+    function fpqTplChanged(sel) { // 제목을 안 고쳤으면 종류에 맞는 기본 제목으로 바꿔 줌
+      const t = document.getElementById('fpQTitle'); if (!t) return;
+      const prevDefault = t.getAttribute('data-default') || ''; const next = (quoteTemplates[sel.value] || {}).title || '';
+      if (!t.value.trim() || t.value.trim() === prevDefault) t.value = next;
+      t.setAttribute('data-default', next);
+    }
     function showQuotePreview() {
-      const d = aiQuoteDraft;
+      const d = aiQuoteDraft; fpqRowHtml.n = 0;
       const tplOpts = Object.keys(QUOTE_TPL_NAMES).map(k => `<option value="${k}" ${k === d.template ? 'selected' : ''}>${QUOTE_TPL_NAMES[k]}</option>`).join('');
-      const rows = d.items.map((it, i) => `<div class="flex flex-col gap-1.5 pb-2 border-b border-[#EAB308]/40"><div class="flex items-center gap-2"><span class="text-[13px] font-black bg-[#151E2D] text-white px-1.5 py-0.5 rounded-[5px] shrink-0">${escHtml(it.label)}</span><span class="text-[16px] font-extrabold text-[#334155] break-keep">${escHtml(it.desc || '-')}</span></div><div class="flex items-center gap-1.5"><label for="fpQPrice${i}" class="sr-only">${escHtml(it.label)} 금액</label><input id="fpQPrice${i}" inputmode="numeric" oninput="formatNumberInput(this); fpQuoteSum()" value="${it.price ? it.price.toLocaleString('ko-KR') : ''}" placeholder="금액 말씀 안 하셨어요" class="flex-1 min-w-0 h-[46px] rounded-[10px] border-[1.5px] border-[#EAB308] bg-white px-3 text-right text-[18px] font-black text-[#0F172A] placeholder:text-[14px] placeholder:font-bold placeholder:text-[#94A3B8]"><span class="text-[15px] font-black text-[#475569]">원</span></div></div>`).join('');
-      const body = `${fpField('고객명 / 현장명', `<div class="flex items-center justify-between gap-2 bg-[#F4FBEA] border-l-[7px] border-[#84CC16] rounded-[14px] px-3 py-2.5"><span class="text-[19px] font-black text-[#0F172A] break-keep">${escHtml(d.clientName || '(말씀 안 하셨어요)')}</span>${d.found ? '<span class="text-[13.5px] font-black text-[#3F6212] bg-[#D9F99D] px-2 py-0.5 rounded-md shrink-0">기존 거래처</span>' : ''}</div>`)}
-        <div class="flex items-center gap-2"><label for="fpQTpl" class="text-[15px] font-extrabold text-[#475569] shrink-0">견적 종류</label><select id="fpQTpl" class="flex-1 min-w-0 h-[48px] rounded-[12px] border-[1.5px] border-[#84CC16] bg-[#ECFCCB] px-3 text-[16px] font-black text-[#3F6212]">${tplOpts}</select></div>
-        <div class="bg-[#FEF9C3] border-2 border-[#EAB308] rounded-[16px] px-3.5 py-3 flex flex-col gap-2.5"><span class="text-[15px] font-black text-[#854D0E]">견적 항목 · 금액 꼭 확인하세요</span>${rows}
+      const defTitle = (quoteTemplates[d.template] || {}).title || '';
+      const rows = d.items.map(it => fpqRowHtml(it.label, it.desc, it.price)).join('');
+      const body = `<div class="flex flex-col gap-1"><label for="fpQName" class="text-[16px] font-extrabold text-[#334155]">고객명 / 현장명${d.found ? ' <span class="text-[13.5px] font-black text-[#3F6212] bg-[#D9F99D] px-2 py-0.5 rounded-md">기존 거래처</span>' : ''}</label><input id="fpQName" autocomplete="off" value="${escHtml(d.clientName)}" placeholder="말씀 안 하셨어요" class="${FPQ_IN} h-[52px] !text-[19px]"></div>
+        <div class="flex items-center gap-2"><label for="fpQTpl" class="text-[15px] font-extrabold text-[#475569] shrink-0">견적 종류</label><select id="fpQTpl" onchange="fpqTplChanged(this)" class="flex-1 min-w-0 h-[48px] rounded-[12px] border-[1.5px] border-[#84CC16] bg-[#ECFCCB] px-3 text-[16px] font-black text-[#3F6212]">${tplOpts}</select></div>
+        <div class="flex flex-col gap-1"><label for="fpQTitle" class="text-[16px] font-extrabold text-[#334155]">견적 제목 <span class="text-[14px] font-bold text-[#64748B]">(눌러서 고칠 수 있어요)</span></label><input id="fpQTitle" data-default="${escHtml(defTitle)}" autocomplete="off" value="${escHtml(d.title || defTitle)}" placeholder="견적 제목" class="${FPQ_IN} h-[52px]"></div>
+        <div class="bg-[#FEF9C3] border-2 border-[#EAB308] rounded-[16px] px-3.5 py-3 flex flex-col gap-2.5"><span class="text-[15px] font-black text-[#854D0E]">세부 견적 내역 · 내용과 금액을 눌러서 고칠 수 있어요</span>
+          <div id="fpQRows" class="flex flex-col gap-2.5">${rows}</div>
+          <button type="button" onclick="fpqAddRow()" class="h-[50px] rounded-[12px] border-2 border-dashed border-[#65A30D] bg-white text-[16px] font-black text-[#3F6212] active:scale-[0.98]">+ 항목 추가</button>
           <div class="flex justify-between items-baseline"><span class="text-[17px] font-black text-[#151E2D]">합계</span><span id="fpQSum" class="text-[21px] font-black text-[#15803D]"></span></div></div>
         ${fpInputRow('fpQPhone', '연락처', fmtPhone(d.phone), { type: 'tel', oninput: 'autoHyphen(this)', color: 'text-[#1D4ED8]', warn: d.phoneWarn, placeholder: '말씀 안 하셨어요 (비워 둬도 됩니다)' })}
-        ${fpField('참고 및 특이사항', fpText(d.memo, '없음'))}
+        ${fpInputRow('fpQAddr', '현장 주소', d.address, { placeholder: '말씀 안 하셨어요 (비워 둬도 됩니다)' })}
+        <div class="flex flex-col gap-1"><label for="fpQMemo" class="text-[16px] font-extrabold text-[#334155]">참고 및 특이사항</label><textarea id="fpQMemo" rows="3" placeholder="없음" class="${FPQ_IN} py-2.5 leading-relaxed resize-none">${escHtml(d.memo)}</textarea></div>
         <span class="text-[14.5px] font-bold text-[#475569] leading-relaxed">금액은 대표님이 말씀하신 것만 넣었습니다. 빈 곳은 직접 넣어 주세요.</span>`;
       formPreviewShow({ badge: '견적서', title: '이렇게 채울까요?', bodyHtml: body, primaryLabel: '견적서 칸에 채우기', onPrimary: quoteFillForm, onRetry: startQuoteVoice });
+      document.querySelectorAll('#fpQRows textarea').forEach(t => { t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; });
       fpQuoteSum();
     }
     function fpQuoteSum() {
-      let sum = 0; (aiQuoteDraft ? aiQuoteDraft.items : []).forEach((it, i) => { const el = document.getElementById('fpQPrice' + i); if (el) sum += Number(el.value.replace(/[^0-9]/g, '')) || 0; });
+      let sum = 0; document.querySelectorAll('#fpQRows [data-fpq-price]').forEach(el => { sum += Number(el.value.replace(/[^0-9]/g, '')) || 0; });
       const s = document.getElementById('fpQSum'); if (s) s.innerText = sum.toLocaleString('ko-KR') + '원';
     }
     function quoteFillForm() {
       const d = aiQuoteDraft; if (!d) return false;
       const tpl = document.getElementById('fpQTpl').value;
+      // ✍️ [패치 #61] 확인 화면에서 고친 내용 그대로 가져옴
+      const items = Array.from(document.querySelectorAll('#fpQRows [data-fpq-row]')).map(r => ({ label: r.getAttribute('data-label') || '', desc: (r.querySelector('[data-fpq-desc]') || {}).value.trim(), price: (r.querySelector('[data-fpq-price]') || {}).value || '' })).filter(it => it.desc || it.price.replace(/[^0-9]/g, ''));
+      if (!items.length) { alert('견적 항목이 없습니다. 항목을 추가해 주세요.'); return false; }
+      const fName = ((document.getElementById('fpQName') || {}).value || '').trim(); const fFound = fName ? findClientByName(fName) : null;
+      const fTitle = ((document.getElementById('fpQTitle') || {}).value || '').trim();
+      const fAddr = ((document.getElementById('fpQAddr') || {}).value || '').trim(); const fMemo = ((document.getElementById('fpQMemo') || {}).value || '').trim();
       // 기존 템플릿 기능 그대로: 템플릿을 불러오고 선택 표시
       loadQuoteTemplate(tpl); markQuoteTemplate(document.querySelector(`.quote-tpl[data-tpl="${tpl}"]`));
       // 템플릿 기본 줄은 모두 꺼 두고, 말씀하신 항목만 켜서 채움
@@ -6866,8 +6936,8 @@ ${AI_COMMON_RULES}
         desc.value = ''; price.value = '';
       }
       const used = new Set();
-      d.items.forEach((it, k) => {
-        const priceVal = (document.getElementById('fpQPrice' + k) || {}).value || '';
+      items.forEach((it, k) => {
+        const priceVal = it.price;
         let rowIdx = null;
         for (let i = 1; i <= currentQuoteRowCount; i++) { const desc = document.getElementById(`quoteDesc_${i}`); if (!desc || used.has(i)) continue; const b = desc.parentElement.querySelector('.quote-month-btn'); if (b && b.innerText.trim() === it.label) { rowIdx = i; break; } }
         if (rowIdx === null) { for (let i = 1; i <= currentQuoteRowCount; i++) { if (!used.has(i) && document.getElementById(`quoteDesc_${i}`) && !/월$/.test(it.label) && tpl !== 'residential' && tpl !== 'commercial') { rowIdx = i; break; } } }
@@ -6877,11 +6947,11 @@ ${AI_COMMON_RULES}
         desc.value = it.desc; price.value = priceVal;
         const b = desc.parentElement.querySelector('.quote-month-btn'); if (b && !b.classList.contains('bg-[#151E2D]')) toggleQuoteMonth(b);
       });
-      if (d.clientName) document.getElementById('quoteClientSelect').value = d.clientName;
+      if (fName) document.getElementById('quoteClientSelect').value = fFound ? fFound.name : fName;
       document.getElementById('quoteInputClientPhone').value = document.getElementById('fpQPhone').value.trim();
-      if (d.address && document.getElementById('quoteInputClientAddress')) document.getElementById('quoteInputClientAddress').value = d.address;
-      if (d.title) document.getElementById('quoteInputRound').value = d.title;
-      if (d.memo && document.getElementById('quoteInputMemo')) document.getElementById('quoteInputMemo').value = d.memo;
+      const fAddr2 = fAddr || (fFound ? (fFound.address || '') : ''); if (fAddr2 && document.getElementById('quoteInputClientAddress')) document.getElementById('quoteInputClientAddress').value = fAddr2;
+      if (fTitle) document.getElementById('quoteInputRound').value = fTitle;
+      if (document.getElementById('quoteInputMemo')) document.getElementById('quoteInputMemo').value = fMemo;
       calculateQuoteTotal();
       setTimeout(() => { const t = document.getElementById('quoteItemsContainer'); if (t) t.scrollIntoView({ block: 'start', behavior: 'smooth' }); }, 200);
     }
