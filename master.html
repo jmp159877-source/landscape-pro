@@ -2222,20 +2222,23 @@
         fetchAccounts();
     }
     // ==========================================
-    // ↩️ [패치 #78] 휴대폰 뒤로가기: 창 닫기 → 이전 탭 → 대시보드 → '한 번 더 누르면 닫혀요' (로그인·저장 코드는 건드리지 않음)
+    // ↩️ [패치 #78 · #80 다시 만듦] 휴대폰 뒤로가기: 창 닫기 → 이전 탭 → '한 번 더 누르면 닫혀요' (로그인·저장 코드는 건드리지 않음)
+    //    #80: 휴대폰 크롬은 '누르지 않고 만든 뒤로가기 칸'을 건너뜀 → 칸은 대표님이 누를 때(탭 이동·창 열기)만 만들고, 뒤로가기 처리 중에는 절대 만들지 않음
     // ==========================================
-    const PMB = { armed: false, stack: [], cur: 'dashboard', fromPop: false, toastT: 0 };
+    const PMB = { entries: [], cur: 'dashboard', fromPop: false, toastT: 0, homeDone: false, shown: {} };
+    const PMB_MODALS = ['postManagerModal', 'documentPreviewModal', 'companyDataModal', 'licenseModal', 'targetNoticeModal', 'editCompanyModal'];
     function pmbLoggedIn() { const lv = document.getElementById('masterLoginView'); return !!lv && lv.classList.contains('hidden'); }
-    function pmbArm() { if (PMB.armed || !pmbLoggedIn()) return; try { history.pushState({ pmb: 1 }, ''); PMB.armed = true; } catch (e) {} }
     function pmbOpen(id) { const e = document.getElementById(id); return !!e && !e.classList.contains('hidden') && !e.classList.contains('opacity-0'); }
-    function pmbCloseTop() {
-        if (pmbOpen('postManagerModal')) { closePostManager(); return true; }
-        if (pmbOpen('documentPreviewModal')) { closeDocumentPreview(); return true; }
-        if (pmbOpen('companyDataModal')) { const bb = document.getElementById('btnBackToDataMenu'); if (bb && !bb.classList.contains('hidden')) showDataMenu(); else closeCompanyDataModal(); return true; }
-        if (pmbOpen('licenseModal')) { closeLicenseModal(); return true; }
-        if (pmbOpen('targetNoticeModal')) { closeTargetNoticeModal(); return true; }
-        if (pmbOpen('editCompanyModal')) { closeEditCompanyModal(); return true; }
-        return false;
+    function pmbSubOpen() { const bb = document.getElementById('btnBackToDataMenu'); return pmbOpen('companyDataModal') && !!bb && !bb.classList.contains('hidden'); }
+    function pmbPush(e) {
+        if (!pmbLoggedIn() || PMB.fromPop) return;
+        e.i = PMB.entries.length + 1; PMB.entries.push(e);
+        try { history.pushState({ pmb: e.i }, ''); } catch (x) { PMB.entries.pop(); }
+    }
+    function pmbClose(id) {
+        if (id === 'postManagerModal') closePostManager(); else if (id === 'documentPreviewModal') closeDocumentPreview();
+        else if (id === 'companyDataModal') closeCompanyDataModal(); else if (id === 'licenseModal') closeLicenseModal();
+        else if (id === 'targetNoticeModal') closeTargetNoticeModal(); else if (id === 'editCompanyModal') closeEditCompanyModal();
     }
     function pmbToast(msg) {
         let t = document.getElementById('pmbToast');
@@ -2243,26 +2246,38 @@
         t.textContent = msg; t.style.display = 'block';
         clearTimeout(PMB.toastT); PMB.toastT = setTimeout(() => { t.style.display = 'none'; }, 2500);
     }
-    function pmbGo(tabId) { PMB.fromPop = true; try { switchTab(tabId); } finally { PMB.fromPop = false; } try { window.scrollTo(0, 0); } catch (e) {} }
     const pmbSwitchTab0 = switchTab;
     switchTab = function (tabId) {
-        if (!PMB.fromPop && tabId !== PMB.cur) { PMB.stack.push(PMB.cur); if (PMB.stack.length > 20) PMB.stack.shift(); }
-        PMB.cur = tabId;
+        const prev = PMB.cur; PMB.cur = tabId;
         const r = pmbSwitchTab0.apply(this, arguments);
-        pmbArm();
+        if (tabId !== prev) pmbPush({ k: 'tab', prev });   // 뒤로가기 처리 중(fromPop)에는 pmbPush가 알아서 안 만듦
         return r;
     };
-    // 로그인 후 화면을 한 번이라도 누르면 뒤로가기 준비 (휴대폰 크롬은 누른 적 있는 화면에서만 뒤로가기를 잡을 수 있음)
-    document.addEventListener('click', pmbArm, true);
-    try { const lv0 = document.getElementById('masterLoginView'); if (lv0) new MutationObserver(() => pmbArm()).observe(lv0, { attributes: true, attributeFilter: ['class'] }); } catch (e) {}
-    window.addEventListener('popstate', function () {
-        if (!PMB.armed) return;
-        PMB.armed = false;
+    // 창이 '열릴 때'만 칸 하나 (대표님이 누른 직후라 크롬이 건너뛰지 않음). 닫힘 버튼으로 닫은 창의 칸은 뒤로가기 때 자동으로 넘김.
+    try {
+        PMB_MODALS.forEach(id => { const el = document.getElementById(id); if (!el) return; PMB.shown[id] = pmbOpen(id);
+            new MutationObserver(() => { const o = pmbOpen(id); if (o && !PMB.shown[id]) pmbPush({ k: 'modal', id }); PMB.shown[id] = o; }).observe(el, { attributes: true, attributeFilter: ['class'] }); });
+        const bb0 = document.getElementById('btnBackToDataMenu'); PMB.shown.sub = false;
+        if (bb0) new MutationObserver(() => { const o = pmbSubOpen(); if (o && !PMB.shown.sub) pmbPush({ k: 'sub' }); PMB.shown.sub = o; }).observe(bb0, { attributes: true, attributeFilter: ['class'] });
+        const lv0 = document.getElementById('masterLoginView'); // 로그인 버튼을 누른 직후 첫 칸 (대시보드에서 뒤로가기 → 안내)
+        if (lv0) new MutationObserver(() => { if (!PMB.homeDone && pmbLoggedIn()) { PMB.homeDone = true; pmbPush({ k: 'home' }); } }).observe(lv0, { attributes: true, attributeFilter: ['class'] });
+    } catch (e) {}
+    window.addEventListener('popstate', function (ev) {
         if (!pmbLoggedIn()) return;
-        if (pmbCloseTop()) { pmbArm(); return; }
-        if (PMB.stack.length) { pmbGo(PMB.stack.pop()); return; }
-        if (PMB.cur !== 'dashboard') { pmbGo('dashboard'); return; }
-        pmbToast('뒤로가기를 한 번 더 누르면 관리자 화면이 닫혀요.');
+        const target = (ev.state && ev.state.pmb) || 0;
+        let acted = false, tabTo = null;
+        PMB.fromPop = true;
+        try {
+            while (PMB.entries.length > target) {   // 크롬이 칸을 여러 개 건너뛰어도 한꺼번에 정리
+                const e = PMB.entries.pop();
+                if (e.k === 'modal' && pmbOpen(e.id)) { pmbClose(e.id); acted = true; }
+                else if (e.k === 'sub' && pmbSubOpen()) { showDataMenu(); acted = true; }
+                else if (e.k === 'tab') { tabTo = e.prev; }
+            }
+            if (tabTo && tabTo !== PMB.cur) { switchTab(tabTo); acted = true; try { window.scrollTo(0, 0); } catch (x) {} }
+        } finally { PMB.fromPop = false; }
+        if (!acted && PMB.entries.length > 0) { history.back(); return; }   // 이미 닫힌 창의 칸 → 한 칸 더 (새 칸은 만들지 않음)
+        if (PMB.entries.length === 0) pmbToast('뒤로가기를 한 번 더 누르면 관리자 화면이 닫혀요.');
     });
   </script>
 </body>
