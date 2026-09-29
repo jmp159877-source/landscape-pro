@@ -1874,7 +1874,7 @@
 
 제 3조 (포인트 이용 요금)
 ① 서비스는 월정액 없이 포인트 충전식으로 운영합니다. 1원은 1포인트(P)이며, 충전 금액은 부가가치세를 포함한 금액입니다. 충전은 3만 원부터 할 수 있으며, 회사 계좌로 입금하면 회사가 입금을 확인한 뒤 포인트를 넣어 드립니다.
-② 포인트는 작업일지 발행 500P, 견적서 발행 1,000P, AI 블로그 글 1,000P가 사용됩니다. 고객 이름이 같은 수정 발행과 같은 일지로 블로그 글을 다시 만드는 것은 무료입니다. 작업 일정표, 말로 쓰기, AI 비서, AI 렌즈는 무료이며, AI 비서와 AI 렌즈는 각각 하루 30회까지 쓸 수 있습니다. 요금이 바뀌면 시행 7일 전에 앱 공지로 알려 드립니다.
+② 포인트는 작업일지 발행 500P, 견적서 발행 1,000P, AI 블로그 글 1,000P, 고객 의뢰 열기(의뢰 1건당 처음 한 번) 1,000P가 사용됩니다. 포인트를 사용해 연 고객 의뢰가 장난·허위 의뢰로 확인되면 사용한 포인트를 돌려 드리며, 신고는 연 날로부터 7일 안에 할 수 있습니다. 고객 이름이 같은 수정 발행과 같은 일지로 블로그 글을 다시 만드는 것은 무료입니다. 작업 일정표, 말로 쓰기, AI 비서, AI 렌즈는 무료이며, AI 비서와 AI 렌즈는 각각 하루 30회까지 쓸 수 있습니다. 요금이 바뀌면 시행 7일 전에 앱 공지로 알려 드립니다.
 ③ 충전 포인트는 충전일로부터 1년 동안 쓸 수 있습니다. 가입 축하 포인트(3,000P, 사업자등록번호당 1번)는 지급일로부터 1개월, 관리자 지급 포인트는 지급할 때 정한 기간 동안 쓸 수 있으며, 기간이 지나면 사라집니다.
 ④ 포인트는 무료 포인트(가입 축하·관리자 지급·활동 포인트 전환분)부터 먼저 쓰이고, 그다음 충전 포인트가 오래된 것부터 쓰입니다.
 ⑤ 충전 금액에 대해서는 신청한 회원에게 전자세금계산서를 발행합니다.
@@ -5015,7 +5015,7 @@
       ] },
       { t: '리포트 발행\n· 포인트', qs: [
         { q: '발행하면 포인트가 얼마나 빠져요?', s: [
-          ['요금', '작업일지 500P · 견적서 1,000P · AI 블로그 글 1,000P'],
+          ['요금', '작업일지 500P · 견적서 1,000P · AI 블로그 글 1,000P · 고객 의뢰 열기 1,000P(1건당 1번)'],
           ['무료', '작업 일정표, 말로 쓰기, AI 비서·AI 렌즈(하루 30번까지)는 무료예요.'],
           ['고쳐서 다시 발행', '고객 이름이 같으면 무료, 고객 이름이 바뀌면 새로 발행한 것으로 보고 요금이 빠져요.'],
           ['미리 확인', '발행 전에 확인 창에서 쓸 포인트와 남는 포인트를 먼저 보여 드려요.']] },
@@ -5076,13 +5076,18 @@
       { t: '고객 의뢰\n받기', qs: [
         { q: '내 의뢰 받는 주소는 어디 있어요?', s: [
           ['고객 의뢰함', '메인 화면 [고객 의뢰함] → 맨 위 "내 의뢰 받는 주소"'],
-          ['보내기', '[카톡 보내기]·[문자 보내기]·[주소 복사]·[QR 보기]로 고객에게 보내거나 명함·블로그에 붙이세요. 수수료는 없어요.']] },
+          ['보내기', '[카톡 보내기]·[문자 보내기]·[주소 복사]·[QR 보기]로 고객에게 보내거나 명함·블로그에 붙이세요. 내 링크로 들어온 의뢰는 우리 업체만 봐요.']] },
+        { q: '의뢰를 열면 포인트가 빠져요?', s: [
+          ['의뢰 1건당 1,000P', '새 의뢰는 작업·동네·시기·사진 장수만 보이고, [1,000P로 내용 보기]를 누르면 성함·전화번호·주소·남긴 말·사진이 보여요.'],
+          ['한 번만', '한 번 연 의뢰는 계속 무료로 볼 수 있어요. 열기 전에 확인 창으로 먼저 알려 드려요.']] },
         { q: '고객 의뢰가 오면 어떻게 해요?', s: [
           ['알림', '"새 고객 의뢰" 알림을 누르면 그 의뢰가 바로 열려요.'],
-          ['자세히 보기', '전화·문자·지도·사진을 볼 수 있고, [거래처로 등록]·[방문 일정 잡기]·[견적서 쓰기]로 바로 이어서 일할 수 있어요.'],
+          ['내용 열기', '의뢰를 누르고 [1,000P로 내용 보기]를 누르면 전화·문자·지도·사진이 열려요.'],
+          ['이어서 일하기', '[거래처로 등록]·[방문 일정 잡기]·[견적서 쓰기]로 바로 이어서 일할 수 있어요.'],
           ['상태 바꾸기', '새 의뢰 → 상담 중 → 끝난 의뢰로 바꿔 정리하세요.']] },
         { q: '장난 의뢰가 왔어요', s: [
-          ['지우기', '의뢰 자세히 화면 아래 [장난·스팸 의뢰 지우기]를 누르세요.']] }
+          ['신고하고 돌려받기', '포인트를 내고 연 의뢰가 장난이면, 연 날부터 7일 안에 의뢰 자세히 화면의 [장난 의뢰 신고]를 누르세요. 관리자가 확인하면 1,000P를 돌려드리고 알림으로 알려 드려요.'],
+          ['지우기', '정리하려면 [장난·스팸 의뢰 지우기]를 누르세요. 신고한 뒤에 지워도 괜찮아요.']] }
       ] },
       { t: '일정 · 장부\n· 견적', qs: [
         { q: '등록한 일정을 고치고 싶어요', s: [
@@ -8502,6 +8507,132 @@ ${AI_COMMON_RULES}
         </div>
         ${btn('reqDelete()', '장난·스팸 의뢰 지우기', 'h-12 text-[#FCA5A5] text-[15.5px] font-black')}`;
     }
+    // ==========================================
+    // 🔒 [패치 #83] 고객 의뢰 열기 1,000P (시안 '의뢰열기_시안' 승인 2026-09-29 20:56)
+    //  - 서버가 새 의뢰의 성함·전화·주소·내용·사진을 잠가 두고 의뢰함에는 요약(작업·동네·시기·사진 장수)만 넣음 (locked:true)
+    //  - [1,000P로 내용 보기] → 서버 pts_req_open (check → 확인 창 → pay) → 서버가 차감 후 내용을 의뢰함에 풀어 줌
+    //  - 돈 내고 연 의뢰는 7일 안에 [장난 의뢰 신고] → 관리자 확인 후 돌려줌 (wallet/reqOpens · 서버만 씀)
+    //  - 예전 의뢰(잠금 표시 없음)는 그대로 무료. 기존 목록·자세히 함수는 감싸서 잠긴 것만 다르게 그림
+    // ==========================================
+    RV.opens = {}; RV.busy = false; RV.repOpen = false;
+    const reqClean0 = reqClean;
+    reqClean = function (r, id) {
+      const c = reqClean0(r, id); if (!c) return c;
+      c.locked = r.locked === true;
+      c.area = String(r.area || '').slice(0, 30);
+      c.imgCount = Math.max(0, Math.min(5, Number(r.imgCount) || 0));
+      c.openedAt = Number(r.openedAt) || 0; c.openPaid = Number(r.openPaid) || 0;
+      if (c.locked) { c.name = c.area || '고객'; c.noName = false; c.phone = ''; c.addr = ''; c.text = ''; c.imgs = []; }
+      return c;
+    };
+    const loadReqs0 = loadReqs;
+    loadReqs = async function () {
+      await loadReqs0();
+      try { const res = await fetch(getAuthUrl(`${DB_BASE_URL}/${getSafeKey(currentUserId)}/wallet/reqOpens.json?t=${Date.now()}`)); const d = res.ok ? await res.json() : null; RV.opens = (d && typeof d === 'object') ? d : {}; } catch (e) {}
+    };
+    const reqLockSvg = (c) => `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>`;
+    function reqPriceText() { return (typeof PT !== 'undefined' && PT.live === false) ? '내용 보기' : '1,000P로 내용 보기'; }
+    const reqRenderList0 = reqRenderList;
+    reqRenderList = function () {
+      reqRenderList0();
+      const cards = document.getElementById('reqList').children;
+      RV.view.forEach((r, i) => {
+        const el = cards[i]; if (!el || el.tagName !== 'BUTTON') return;
+        if (r.locked) {
+          const thumbs = r.imgCount ? Array.from({ length: Math.min(3, r.imgCount) }, () => '<span class="w-12 h-12 rounded-[10px] shrink-0" style="background:repeating-linear-gradient(45deg,#CBD5E1,#CBD5E1 6px,#E2E8F0 6px,#E2E8F0 12px)"></span>').join('') + `<span class="text-[14.5px] font-bold text-[#64748B]">사진 ${r.imgCount}장</span>` : '<span class="text-[14.5px] font-bold text-[#64748B]">사진 없음</span>';
+          el.innerHTML = `
+          <span class="flex justify-between items-center w-full gap-2">${!r.seenAt && r.status === 'new' ? '<span class="text-[13.5px] font-black bg-[#DC2626] text-white rounded-md px-2 py-0.5">NEW</span>' : '<span></span>'}<span class="text-[14px] font-bold text-[#64748B]">${escHtml(reqWhen(r.createdAt))}</span></span>
+          <span class="text-[19px] font-black leading-snug break-keep">${escHtml(r.works.join(' · ') || '작업 내용은 글로 적음')}</span>
+          <span class="text-[16px] font-bold text-[#334155] break-keep">${escHtml(r.area || '동네 정보 없음')}${r.when ? ' · ' + escHtml(r.when === '급해요' ? r.when : r.when + ' 희망') : ''}</span>
+          <span class="flex gap-1.5 items-center w-full">${thumbs}</span>
+          <span class="w-full h-[52px] rounded-[14px] bg-[#14261E] text-[#BEF264] text-[17px] font-black flex items-center justify-center gap-2">${reqLockSvg('#BEF264')}${reqPriceText()}</span>`;
+        } else if (r.openPaid > 0) {
+          el.insertAdjacentHTML('beforeend', '<span class="text-[15px] font-black text-[#3F6212]">열어 본 의뢰 · 계속 무료로 보기</span>');
+        }
+      });
+    };
+    const reqRenderDetail0 = reqRenderDetail;
+    reqRenderDetail = function () {
+      const r = RV.cur; if (!r) return;
+      RV.repOpen = false;
+      if (!r.locked) { reqRenderDetail0(); reqReportPaint(); return; }
+      const st = { new: ['새 의뢰', 'bg-[#DC2626] text-white'], talk: ['상담 중', 'bg-[#84CC16] text-[#1A2E05]'], done: ['끝난 의뢰', 'bg-[#475569] text-white'] }[r.status];
+      const chip = (t, dark) => `<span class="text-[15px] font-black rounded-[10px] px-2.5 py-1.5 ${dark ? 'bg-[#14261E] text-[#BEF264]' : 'bg-[#ECFCCB] text-[#3F6212]'}">${escHtml(t)}</span>`;
+      const hidden = ['고객님 성함', '전화번호', '상세 주소'].join(' · ') + '<br>고객님이 남긴 말' + (r.imgCount ? ' · 사진 ' + r.imgCount + '장' : '');
+      document.getElementById('reqDetailPane').innerHTML = `
+        <div class="flex items-center gap-2.5"><button type="button" onclick="history.back()" aria-label="뒤로" class="w-11 h-11 rounded-[12px] bg-[#1E293B] text-white flex items-center justify-center active:scale-95"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg></button><span class="text-[22px] font-black flex-1">의뢰 자세히</span><span class="text-[14.5px] font-black rounded-full px-2.5 py-1 ${st[1]}">${st[0]}</span></div>
+        <div class="bg-white rounded-[22px] p-4 flex flex-col gap-3.5 text-[#0F172A]">
+          <span class="text-[14px] font-bold text-[#64748B]">${escHtml(reqWhen(r.createdAt))} 접수${r.via === 'voice' ? ' · 말로 신청' : ''}</span>
+          <div class="flex flex-col gap-1.5"><span class="text-[15px] font-black text-[#3F6212]">원하는 작업 · 시기</span><span class="flex flex-wrap gap-1.5">${r.works.map(w => chip(w, true)).join('')}${r.when ? chip(r.when === '급해요' ? r.when : r.when + ' 희망', false) : ''}${!r.works.length && !r.when ? '<span class="text-[15px] font-bold text-[#64748B]">고르지 않음 (내용에 적음)</span>' : ''}</span></div>
+          <div class="flex flex-col gap-1"><span class="text-[15px] font-black text-[#3F6212]">현장 동네</span><span class="text-[17px] font-bold break-keep">${escHtml(r.area || '동네 정보 없음')}</span></div>
+          <div class="rounded-[16px] border-2 border-dashed border-[#CBD5E1] p-3.5 flex flex-col gap-2">
+            <span class="text-[16px] font-black flex items-center gap-2">${reqLockSvg('#0F172A')}열어 보면 보여요</span>
+            <span class="text-[16px] font-bold text-[#334155] leading-relaxed break-keep">${hidden}</span>
+          </div>
+          <button type="button" id="reqUnlockBtn" onclick="reqUnlock()" class="h-[58px] rounded-[16px] bg-[#84CC16] text-[#14261E] text-[19px] font-black active:scale-[0.98] transition-all">${reqPriceText()}</button>
+          <span class="text-[15px] font-bold text-[#475569] text-center leading-relaxed break-keep">한 번 열면 계속 볼 수 있어요<br>내 링크로 들어온 의뢰라 우리 업체만 봐요</span>
+        </div>
+        <button type="button" onclick="reqDelete()" class="h-12 text-[#FCA5A5] text-[15.5px] font-black active:scale-[0.98] transition-all">장난·스팸 의뢰 지우기</button>`;
+    };
+    async function reqUnlock() {
+      const r = RV.cur; if (!r || !r.locked || RV.busy) return;
+      const btn = document.getElementById('reqUnlockBtn');
+      const done = () => { RV.busy = false; if (btn) { btn.disabled = false; btn.textContent = reqPriceText(); } };
+      RV.busy = true; if (btn) { btn.disabled = true; btn.textContent = '확인하는 중…'; }
+      const c = await requestPoints({ action: 'pts_req_open', reqId: r.id, mode: 'check' });
+      if (!c || !c.ok) {
+        done();
+        if (c && c.msg === 'unknown') return alert('서버 준비가 아직 안 됐어요. 관리자에게 알려 주세요.');
+        return alert({ inactive: '승인된 업체만 열 수 있어요.', 'no-req': '이 의뢰를 찾지 못했어요. 이미 지워졌을 수 있어요.', 'no-private': '이 의뢰의 내용을 찾지 못했어요. [도움말 · 문의]에서 관리자에게 알려 주세요.', busy: '잠시 후 다시 눌러 주세요.' }[c && c.msg] || '인터넷 연결을 확인하고 다시 눌러 주세요.');
+      }
+      if (!c.already && c.price > 0) {
+        if (c.usable < c.price) { done(); ptShortSheet(c.price, c.usable); return; }
+        const ok = await ptSheetOpen({ title: '이 의뢰를 열까요?', sub: '한 번 열면 계속 무료로 볼 수 있어요', rows: [['사용할 포인트', ptNum(c.price) + 'P'], ['지금 포인트', ptNum(c.usable) + 'P'], ['남는 포인트', ptNum(c.usable - c.price) + 'P', '#3F6212']], ok: '열기 (' + ptNum(c.price) + 'P)', no: '취소' });
+        if (!ok) return done();
+      }
+      if (btn) btn.textContent = '여는 중…';
+      const p = c.already ? c : await requestPoints({ action: 'pts_req_open', reqId: r.id, mode: 'pay', expect: c.price });
+      if (p && p.ok && p.rec) {
+        const fresh = reqClean(p.rec, r.id);
+        if (fresh) { fresh.seenAt = r.seenAt || Date.now(); const i = RV.list.findIndex(x => x.id === r.id); if (i >= 0) RV.list[i] = fresh; RV.cur = fresh; }
+        if (p.charged > 0) RV.opens[r.id] = { at: Date.now(), paid: p.charged };
+        if (typeof p.usable === 'number' && myCompanyProfile) { myCompanyProfile.usable = p.usable; try { localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile)); } catch (e) {} if (typeof ptChipRender === 'function') ptChipRender(); }
+        RV.busy = false; reqRenderDetail(); reqRenderList();
+        return;
+      }
+      done();
+      if (p && p.msg === 'short') return ptShortSheet(p.need, p.usable);
+      if (p && p.msg === 'price') return alert('요금이 방금 바뀌었어요. 다시 한 번 눌러 주세요.');
+      alert(p && p.msg === 'save-fail' ? '열지 못했어요. 포인트는 빠지지 않았어요. 잠시 후 다시 눌러 주세요.' : '인터넷 연결이 불안정해 열지 못했어요. 포인트는 빠지지 않았어요.');
+    }
+    // 장난 의뢰 신고 (돈 내고 연 의뢰 · 연 뒤 7일 안 · 1번)
+    function reqReportPaint() {
+      const r = RV.cur, pane = document.getElementById('reqDetailPane'); if (!r || !pane) return;
+      const op = RV.opens[r.id]; if (!op || !(Number(op.paid) > 0)) return;
+      const rep = op.report, box = document.createElement('div'); box.id = 'reqRepBox'; box.className = 'flex flex-col gap-2';
+      if (rep) {
+        const m = { wait: ['신고 접수됨', '관리자가 확인하고 알림으로 알려 드려요.'], refunded: ['신고 확인 · 포인트 돌려받음', ptNum(op.paid) + 'P를 돌려드렸어요.'], rejected: ['신고 결과 · 돌려받지 못함', '장난 의뢰로 보기 어렵다는 확인 결과예요.'] }[rep.status] || ['신고 접수됨', ''];
+        box.innerHTML = `<div class="rounded-[16px] border-[1.5px] border-[#475569] p-3.5 flex flex-col gap-1"><span class="text-[16.5px] font-black text-white">${m[0]}</span><span class="text-[15px] font-bold text-[#CBD5E1] break-keep">${m[1]}</span></div>`;
+      } else if (Date.now() - Number(op.at || 0) <= 7 * 24 * 60 * 60 * 1000) {
+        box.innerHTML = RV.repOpen
+          ? `<span class="text-[16.5px] font-black text-white">어떤 장난 의뢰인가요?</span>
+             ${['없는 번호예요', '장난·욕설이에요', '광고·스팸이에요'].map(t => `<button type="button" onclick="reqReport(${JSON.stringify(t).replace(/"/g, '&quot;')})" class="h-[52px] rounded-[14px] bg-white text-[#0F172A] text-[16.5px] font-black active:scale-[0.98] transition-all">${t}</button>`).join('')}
+             <button type="button" onclick="RV.repOpen=false;reqRenderDetail()" class="h-[48px] rounded-[14px] border border-[#64748B] text-white text-[16px] font-black">취소</button>`
+          : `<button type="button" onclick="RV.repOpen=true;document.getElementById('reqRepBox').remove();reqReportPaint();" class="h-[52px] rounded-[14px] border-[1.5px] border-[#FCA5A5] text-[#FCA5A5] text-[16px] font-black active:scale-[0.98] transition-all">장난 의뢰 신고 (확인되면 ${ptNum(op.paid)}P 돌려드려요)</button>`;
+      } else return;
+      const del = Array.from(pane.querySelectorAll('button')).find(b => (b.getAttribute('onclick') || '') === 'reqDelete()');
+      if (del) pane.insertBefore(box, del); else pane.appendChild(box);
+    }
+    async function reqReport(reason) {
+      const r = RV.cur; if (!r || RV.busy) return;
+      if (!confirm(`'${reason}'(으)로 신고할까요?\n관리자가 확인한 뒤 알림으로 결과를 알려 드려요.`)) return;
+      RV.busy = true;
+      const p = await requestPoints({ action: 'pts_req_report', reqId: r.id, reason });
+      RV.busy = false;
+      if (p && p.ok) { RV.opens[r.id] = Object.assign({}, RV.opens[r.id], { report: { status: 'wait', at: Date.now(), reason } }); reqRenderDetail(); return alert('신고했어요. 관리자가 확인하고 알려 드릴게요.'); }
+      const m = { already: '이미 신고한 의뢰예요.', 'too-late': '연 지 7일이 지나서 신고할 수 없어요. 관리자에게 1:1 문의로 알려 주세요.', 'not-paid': '포인트를 내고 연 의뢰만 신고할 수 있어요.' };
+      alert(m[p && p.msg] || '신고하지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.');
+    }
     function reqOpenPhoto(i) {
       const r = RV.cur; if (!r || !r.imgs[i]) return;
       modalImages = r.imgs; modalCurrentIdx = i; updateModalImage();
@@ -9051,7 +9182,8 @@ ${AI_COMMON_RULES}
           <div class="pv-row pv-sub" style="padding:3px 0;"><span>작업 일정표</span><b style="color:#0F172A;">무료</b></div>
           <div class="pv-row pv-sub" style="padding:3px 0;"><span>작업일지 발행</span><b style="color:#0F172A;">500P</b></div>
           <div class="pv-row pv-sub" style="padding:3px 0;"><span>견적서 발행</span><b style="color:#0F172A;">1,000P</b></div>
-          <div class="pv-row pv-sub" style="padding:3px 0;"><span>고객 이름이 같은 수정 발행</span><b style="color:#0F172A;">무료</b></div><!-- 💰 [패치 #82] 요금표를 서버·약관과 맞춤 (예전: '견적서 발행 · 수정 발행 1,000P', '고객 응대 (1번만) 1,000P' → 서버는 받지 않는 요금이었음) -->
+          <div class="pv-row pv-sub" style="padding:3px 0;"><span>고객 이름이 같은 수정 발행</span><b style="color:#0F172A;">무료</b></div>
+          <div class="pv-row pv-sub" style="padding:3px 0;"><span>고객 의뢰 열기 (1건당 1번)</span><b style="color:#0F172A;">1,000P</b></div><!-- 🔒 [패치 #83] --><!-- 💰 [패치 #82] 요금표를 서버·약관과 맞춤 (예전: '견적서 발행 · 수정 발행 1,000P', '고객 응대 (1번만) 1,000P' → 서버는 받지 않는 요금이었음) -->
           <div class="pv-row pv-sub" style="padding:3px 0;"><span>AI 블로그 글</span><b style="color:#0F172A;">1,000P</b></div>
           <div class="pv-row pv-sub" style="padding:3px 0;"><span>AI 비서 · AI 렌즈</span><b style="color:#0F172A;">무료 (하루 30회)</b></div>
           <div id="ptLiveNote" class="pv-note" style="margin-top:10px;">포인트 차감은 준비가 끝나면 공지한 뒤 시작해요.</div>
@@ -9277,6 +9409,7 @@ ${AI_COMMON_RULES}
 
     function ptSheetOpen(o) {
       document.getElementById('psBadge').classList.toggle('hidden', !o.short);
+      document.getElementById('psBadge').style.display = o.short ? 'inline-block' : 'none'; // 🩹 [패치 #84] 글자 칸에 박힌 display가 hidden을 이겨서 모든 확인 창에 '포인트 부족'이 보이던 문제
       document.getElementById('psTitle').textContent = o.title;
       document.getElementById('psSub').textContent = o.sub || '';
       document.getElementById('psSub').classList.toggle('hidden', !o.sub);

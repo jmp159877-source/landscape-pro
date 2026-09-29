@@ -4,19 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>조경노트 PRO - 조경 사업자 대표님을 위한 현장 관리 앱</title>
-<meta name="description" content="20년 조경 현장 대표가 직접 만든 앱. 작업일지 한 번 쓰면 고객님께 사진 리포트가 가고, 일정과 장부는 자동 저장, 스마트한 AI 기능까지. 고객 작업 의뢰를 건당 수수료 없이 받고, 전국 조경 대표님들과 인력·장비·일감을 나누는 조경 전문 앱. 지금 가입하면 1개월 무료 체험.">
+<meta name="description" content="20년 조경 현장 대표가 직접 만든 앱. 작업일지 한 번 쓰면 고객님께 사진 리포트가 가고, 일정과 장부는 자동 저장, 스마트한 AI 기능까지. 내 링크로 고객 작업 의뢰를 받고, 전국 조경 대표님들과 인력·장비·일감을 나누는 조경 전문 앱. 지금 가입하면 3,000포인트 선물.">
 <meta name="keywords" content="조경노트, 조경노트 PRO, 조경 앱, 조경 일지, 조경 견적, 조경 관리, 조경 사업자, 조경 일감, 조경 인력, 정원 관리, 수목 관리">
 <link rel="canonical" href="https://www.jogyeongnote.com/about.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="조경노트 PRO">
 <meta property="og:title" content="조경노트 PRO - 조경 대표님의 현장 일이 쉬워집니다">
-<meta property="og:description" content="사진 리포트, 일정·장부 자동 저장, AI 수목 렌즈, 대표님 소통방. 지금 가입하면 1개월 무료 체험.">
+<meta property="og:description" content="사진 리포트, 일정·장부 자동 저장, AI 수목 렌즈, 대표님 소통방. 지금 가입하면 3,000포인트 선물.">
 <meta property="og:url" content="https://www.jogyeongnote.com/about.html">
 <meta property="og:image" content="https://www.jogyeongnote.com/icon-512.png">
 <meta name="theme-color" content="#151E2D">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap"><!-- ✍️ [패치 #86] 만든 사람 카드 손글씨 (나눔손글씨 펜) -->
 <style>
   @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
   :root { --navy:#151E2D; --navy2:#1E293B; --lime:#84CC16; --lime-l:#BEF264; --lime-bg:#ECFCCB; --olive:#3F6212; --ink:#0F172A; --sub:#334155; --muted:#CBD5E1; --line:#E2E8F0; --bg:#F6F8F4; }
@@ -46,6 +49,21 @@
   .nw { white-space:nowrap; }
   .maker .sign { display:flex; align-items:center; gap:10px; margin-top:16px; padding-top:14px; border-top:1px solid var(--line); font-size:16px; font-weight:800; color:var(--olive); }
   .maker .sign .logo { width:34px; height:34px; font-size:20px; border-radius:10px; }
+  /* ✍️ [패치 #86] 만든 사람 카드: 공책 줄 위에 직접 쓴 편지 느낌 (글꼴이 안 불러와지면 일반 글씨로 그대로 보임) */
+  .maker.note { background-color:#FFFDF5; padding:26px 20px 20px 30px; background-image:repeating-linear-gradient(to bottom,transparent 0,transparent 43px,#E7E3D3 43px,#E7E3D3 44px); background-position:0 22px; }
+  .maker.note:before { content:""; position:absolute; left:17px; top:14px; bottom:14px; border-left:2px solid #F3C4C4; }
+  .maker.note .hw { font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif; word-break:keep-all; }
+  .maker.note h2.hw { font-size:25px; line-height:1.35; font-weight:900; color:#14261E; margin:0 0 8px; }
+  .maker.note p.hw { font-size:18px; line-height:44px; color:#1E293B; margin:0; }
+  .maker.note .sign.hw { font-size:17px; font-weight:800; }
+  /* 손글씨 글꼴이 실제로 불러와졌을 때만 손글씨 크기로 (못 불러오면 위의 일반 글씨 그대로) */
+  .maker.note.hwok .hw { font-family:'Nanum Pen Script',cursive; }
+  .maker.note.hwok h2.hw { font-size:40px; line-height:1.25; font-weight:400; }
+  .maker.note.hwok p.hw { font-size:30px; }
+  .maker.note.hwok .sign.hw { font-size:30px; font-weight:400; }
+  .maker.note p.hw + p.hw { margin-top:14px; }
+  .maker.note .mk { background:linear-gradient(transparent 58%,#D9F99D 58%); padding:0 2px; }
+  .maker.note .sign { justify-content:flex-end; border-top:0; margin-top:12px; padding-top:0; color:#3F6212; }
   .req { margin:18px 14px 6px; background:var(--navy2); border:2.5px solid var(--lime); border-radius:22px; padding:20px 18px; color:#fff; }
   .req-top { display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; }
   .soon { background:#FDE047; color:#412402; font-size:15px; font-weight:900; padding:4px 10px; border-radius:8px; }
@@ -105,29 +123,30 @@
 
 <div class="hero"><div class="wrap">
   <div class="brand"><span class="logo"><svg class="i"><use href="#i-leaf"/></svg></span>조경노트 <b>PRO</b></div>
-  <span class="badge">지금 가입하면 1개월 무료 체험</span>
+  <span class="badge">지금 가입하면 3,000포인트 선물</span><!-- 💰 [패치 #85] 포인트 충전식에 맞춤 (예전: 1개월 무료 체험) -->
   <h1>조경 대표님의<br>현장 일이 쉬워집니다</h1>
   <p>작업일지 한 번 쓰면 고객님께 사진 리포트가 가고,<br><em>일정과 장부는 자동 저장</em>, <em>스마트한 AI 기능</em>까지.</p>
-  <a class="btn btn-main" href="/?signup=1">1개월 무료로 시작하기 <svg class="i"><use href="#i-arrow"/></svg></a>
+  <a class="btn btn-main" href="/?signup=1">무료로 가입하기 <svg class="i"><use href="#i-arrow"/></svg></a>
   <a class="btn btn-line" href="/">이미 회원이면 로그인</a>
 </div></div>
 
 <div class="wrap">
-  <!-- 🌱 [패치 #30] 만든 사람 소개 (20년 현장 경력) -->
-  <div class="maker">
-    <span class="q">&ldquo;</span>
-    <h2>20년 조경 현장 대표가<br>직접 만들었습니다</h2>
-    <p><b><span class="nw">예초기 메고,</span> <span class="nw">사다리 타고,</span> <span class="nw">전지가위 들고,</span></b><br><span class="nw">비 오는 날 걱정하며</span> <span class="nw">해 왔던 사람이 만들었습니다.</span></p>
-    <p>책상 앞에서 만든 앱이 아니라, 20년 동안 현장에서 <b>"이런 게 있었으면"</b> 했던 것들을 하나씩 담았습니다.</p>
-    <div class="sign"><span class="logo"><svg class="i"><use href="#i-leaf"/></svg></span>신화 조경노트 PRO 대표</div>
+  <!-- 🌱 [패치 #30] 만든 사람 소개 (20년 현장 경력) · ✍️ [패치 #86] 손글씨 편지로 바꿈 (문구: 대표님 확인 "정말 팩트다" 2026-09-29) -->
+  <div class="maker note">
+    <h2 class="hw">조경 현장 20년,<br>제가 필요해서<br>만들었습니다</h2>
+    <p class="hw">예초기 메고, 사다리 타고,<br>전지가위 들고 20년.<br>비 오는 날이면<br>내일 일정부터 걱정했습니다.</p>
+    <p class="hw">낮에는 현장, 밤에는 일지와 견적.<br>블로그는 늘 <span class="mk">'내일 해야지'</span><br>하다 못 올렸지요.</p>
+    <p class="hw">그래서 직접 만들었습니다.<br><span class="mk">대표님들이</span><br><span class="mk">현장 일에만 집중하시도록.</span></p>
+    <div class="sign hw">- 신화 조경노트 PRO 대표</div>
   </div>
+  <script>/* ✍️ [패치 #86] 손글씨 글꼴이 불러와지면 손글씨로 바꿈 */try{document.fonts.load("30px 'Nanum Pen Script'").then(function(f){if(f&&f.length)document.querySelector('.maker.note').classList.add('hwok');});}catch(e){}</script>
   <div class="req">
-    <div class="req-top"><span class="soon">오픈 예정</span><span class="first">가입 대표님께 먼저 열립니다</span></div>
+    <div class="req-top"><span class="soon">지금 사용 중</span><span class="first">내 링크로 들어온 의뢰는 우리 업체만 봐요</span></div><!-- 📋 [패치 #85] 고객 의뢰 기능 열림 (#51) · 의뢰 열기 1,000포인트 (#83) -->
     <h2><svg class="i"><use href="#i-brief"/></svg><span>고객 작업 의뢰,<br>이제 앱으로 바로 받으세요</span></h2>
-    <div class="nofee"><svg class="i"><use href="#i-coin"/></svg>건당 수수료 없이 일을 받으세요</div>
-    <p>내 활동 지역 고객의 조경 의뢰가 들어오면, 상담부터 리포트까지 앱 하나로 끝냅니다.</p>
+    <div class="nofee"><svg class="i"><use href="#i-coin"/></svg>작업비 수수료 없이 일을 받으세요</div>
+    <p>의뢰 1건 열어 보기 1,000포인트 · 계약한 작업비에서 떼는 돈은 없어요.<br>내 블로그·명함·카톡에 붙인 링크로 고객 의뢰가 들어오면, 상담부터 리포트까지 앱 하나로 끝냅니다.</p>
     <div class="step"><span class="num">1</span><span>고객 의뢰 접수 <small>(사진·주소·내용)</small></span></div>
-    <div class="step"><span class="num">2</span><span>고객과 1:1 상담</span></div>
+    <div class="step"><span class="num">2</span><span>전화·문자로 바로 상담</span></div>
     <div class="step"><span class="num">3</span><span>견적서 바로 발송</span></div>
     <div class="step"><span class="num">4</span><span>작업 후 사진 리포트까지 원스톱</span></div>
   </div>
@@ -142,7 +161,7 @@
 
   <section class="s">
     <h2 class="trust-h"><svg class="i"><use href="#i-shield"/></svg>믿고 쓰실 수 있습니다</h2>
-    <div class="trust"><span class="tic"><svg class="i"><use href="#i-id"/></svg></span><div><h3>사업자 인증 업체만 가입</h3><p>사업자등록증을 확인한 뒤 운영팀이 직접 승인합니다.</p></div></div>
+    <div class="trust"><span class="tic"><svg class="i"><use href="#i-id"/></svg></span><div><h3>사업자 확인 업체만 가입</h3><p>사업자등록증을 확인한 뒤 운영팀이 직접 승인합니다.</p></div></div>
     <div class="trust"><span class="tic"><svg class="i"><use href="#i-lock"/></svg></span><div><h3>고객 정보 철저 보호</h3><p>고객 이름·주소·사진은 검색에 노출되지 않습니다.</p></div></div>
     <div class="trust"><span class="tic"><svg class="i"><use href="#i-cloud"/></svg></span><div><h3>자료는 안전하게 자동 보관</h3><p>휴대폰을 바꿔도 로그인만 하면 그대로입니다.</p></div></div>
   </section>
@@ -158,9 +177,9 @@
 </div>
 
 <div class="end"><div class="wrap">
-  <h2>지금 1개월 무료로 시작해 보세요</h2>
+  <h2>지금 가입하고 3,000포인트로 시작해 보세요</h2>
   <p>조경 대표님을 위해 만든 현장 관리 앱</p>
-  <a class="btn btn-main" href="/?signup=1">1개월 무료로 시작하기 <svg class="i"><use href="#i-arrow"/></svg></a>
+  <a class="btn btn-main" href="/?signup=1">무료로 가입하기 <svg class="i"><use href="#i-arrow"/></svg></a>
 </div></div>
 <footer>
   <div class="biz"><!-- 🏢 [패치 #36] 사업자 정보 -->
