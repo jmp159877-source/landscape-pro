@@ -1875,7 +1875,7 @@
 제 3조 (포인트 이용 요금)
 ① 서비스는 월정액 없이 포인트 충전식으로 운영합니다. 1원은 1포인트(P)이며, 충전 금액은 부가가치세를 포함한 금액입니다. 충전은 3만 원부터 할 수 있으며, 회사 계좌로 입금하면 회사가 입금을 확인한 뒤 포인트를 넣어 드립니다.
 ② 포인트는 작업일지 발행 500P, 견적서 발행 1,000P, AI 블로그 글 1,000P, 고객 의뢰 열기(의뢰 1건당 처음 한 번) 1,000P가 사용됩니다. 포인트를 사용해 연 고객 의뢰가 장난·허위 의뢰로 확인되면 사용한 포인트를 돌려 드리며, 신고는 연 날로부터 7일 안에 할 수 있습니다. 고객 이름이 같은 수정 발행과 같은 일지로 블로그 글을 다시 만드는 것은 무료입니다. 작업 일정표, 말로 쓰기, AI 비서, AI 렌즈는 무료이며, AI 비서와 AI 렌즈는 각각 하루 30회까지 쓸 수 있습니다. 요금이 바뀌면 시행 7일 전에 앱 공지로 알려 드립니다.
-③ 충전 포인트는 충전일로부터 1년 동안 쓸 수 있습니다. 가입 축하 포인트(3,000P, 사업자등록번호당 1번)는 지급일로부터 1개월, 관리자 지급 포인트는 지급할 때 정한 기간 동안 쓸 수 있으며, 기간이 지나면 사라집니다.
+③ 충전 포인트는 충전일로부터 1년 동안 쓸 수 있습니다. 가입 축하 포인트(5,000P, 사업자등록번호당 1번)는 지급일로부터 1개월, 관리자 지급 포인트는 지급할 때 정한 기간 동안 쓸 수 있으며, 기간이 지나면 사라집니다.
 ④ 포인트는 무료 포인트(가입 축하·관리자 지급·활동 포인트 전환분)부터 먼저 쓰이고, 그다음 충전 포인트가 오래된 것부터 쓰입니다.
 ⑤ 충전 금액에 대해서는 신청한 회원에게 전자세금계산서를 발행합니다.
 
@@ -5041,7 +5041,7 @@
         { q: '세금계산서를 받고 싶어요', s: [
           ['충전 신청할 때', '충전 화면의 세금계산서 발행에 체크하고 받을 이메일을 적어 주세요. 가입하신 사업자 정보로 발행해요.']] },
         { q: '포인트 사용 기한·환불이 궁금해요', s: [
-          ['사용 기한', '충전 포인트는 충전일부터 1년, 가입 축하 3,000P는 1개월이에요.'],
+          ['사용 기한', '충전 포인트는 충전일부터 1년, 가입 축하 5,000P는 1개월이에요.'],
           ['쓰는 순서', '무료 포인트가 먼저 쓰이고, 그다음 충전 포인트가 오래된 것부터 쓰여요.'],
           ['환불', '남은 충전 포인트는 탈퇴할 때 적어 주신 계좌로 7일 안에 돌려 드려요. 무료 포인트는 환불되지 않아요.']] }
       ] },
@@ -5111,7 +5111,7 @@
       'AI 메모장: 현장에서 치수·수량을 말로 남기면 줄별로 정리. 견적서 화면 [메모장 참고하기]로 견적을 채울 수 있음.',
       '개인 재고함: 비품·자재 / 수목·식물 / 차계부를 표로 기록, 말로 입력 가능.',
       '말로 입력 버튼이 있는 곳: 일정 등록, 작업일지, 견적서, 개인 장부, 식물 검색, 거래처 찾기, 소통방 글쓰기, 1:1 대화, AI 메모장, 재고함.',
-      '가입: 사업자등록번호 1개당 계정 1개. 관리자가 사업자등록증을 확인하고 승인해야 쓸 수 있음. 가입 승인 때 가입 축하 3,000P(1개월).',
+      '가입: 사업자등록번호 1개당 계정 1개. 관리자가 사업자등록증을 확인하고 승인해야 쓸 수 있음. 가입 승인 때 가입 축하 5,000P(1개월).',
       '회원 탈퇴: [설정] 맨 아래 [회원 탈퇴]. 자료는 30일 보관 뒤 삭제되며 따로 보내 주지 않으니 탈퇴 전에 [내 자료 내려받기]로 백업. 탈퇴 후 같은 사업자번호로 재가입은 일정 기간(기본 7일) 뒤에 가능.',
       '상호명·대표자·연락처·사업자번호 변경은 직접 못 바꾸고 관리자에게 문의해야 함. 활동 지역은 [설정]에서 직접 바꿀 수 있음.',
       '관리자에게 문의: 이 도움말 아래 [관리자에게 직접 문의 남기기]. 관리자가 답하면 알림이 옴.'
@@ -7392,7 +7392,7 @@ ${AI_COMMON_RULES}
       </div>
       <!-- 💰 [패치 #75] 재가입 제한 · 포인트 환불 -->
       <div class="mt-4 rounded-[14px] p-3.5 text-[15.5px] font-black leading-relaxed break-keep" style="background:#FEF2F2; border:2px solid #DC2626; color:#B91C1C;">
-        탈퇴하면 <span id="wdDays">7</span>일 동안 같은 사업자로 다시 가입할 수 없어요.<br>가입 축하 3,000P는 다시 가입해도 다시 드리지 않아요.
+        탈퇴하면 <span id="wdDays">7</span>일 동안 같은 사업자로 다시 가입할 수 없어요.<br>가입 축하 5,000P는 다시 가입해도 다시 드리지 않아요.
       </div>
       <div id="wdRefundInfo" class="mt-3 rounded-[14px] p-3.5 text-[15.5px] font-black leading-relaxed break-keep" style="background:#FEF9C3; border:2px solid #EAB308; color:#713F12;">남은 포인트를 확인하는 중...</div>
       <div id="wdRefundBox" class="hidden mt-3 space-y-2">
@@ -9489,7 +9489,7 @@ ${AI_COMMON_RULES}
       <div class="px-5 pt-5 pb-5 flex flex-col gap-3.5">
         <div class="rounded-[18px] border-2 border-[#84CC16] bg-[#F4FBEA] px-4 py-4 text-center">
           <div class="text-[16px] font-black text-[#3F6212]">🎁 가입 축하 포인트</div>
-          <div id="welcomePts" class="mt-1 font-black text-[#15803D] tracking-tight leading-tight" style="font-size:34px;">3,000P</div>
+          <div id="welcomePts" class="mt-1 font-black text-[#15803D] tracking-tight leading-tight" style="font-size:34px;">5,000P</div>
           <div id="welcomeExp" class="mt-1 text-[15px] font-bold text-[#475569]"></div>
         </div>
         <div class="text-[15.5px] font-bold text-[#334155] leading-relaxed">고객 리포트 발행, AI 블로그 글, 고객 의뢰 열기에 쓸 수 있어요. 남은 포인트는 첫 화면 <b class="text-[#151E2D]">[내 포인트]</b>에서 볼 수 있어요.</div>
@@ -9512,9 +9512,10 @@ ${AI_COMMON_RULES}
         const nm = (myCompanyProfile.name || '').trim();
         document.getElementById('welcomeName').innerText = (nm ? nm + ' ' : '') + '대표님, 환영합니다!';
         const left = Number(lot.left) || 0;
-        document.getElementById('welcomePts').innerText = '3,000P';
+        const full = Number(lot.amt) || 5000; /* 💰 [패치 #97] 받은 금액 그대로 표시 (서버가 amt를 안 주면 5,000) */
+        document.getElementById('welcomePts').innerText = full.toLocaleString('ko-KR') + 'P';
         const e = Number(lot.exp) || 0; const d = new Date(e);
-        document.getElementById('welcomeExp').innerText = (e ? `사용 기한: ${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일까지` : '') + (left < 3000 ? ` · 남은 ${left.toLocaleString('ko-KR')}P` : '');
+        document.getElementById('welcomeExp').innerText = (e ? `사용 기한: ${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일까지` : '') + (left < full ? ` · 남은 ${left.toLocaleString('ko-KR')}P` : '');
         document.getElementById('welcomeSheet').classList.remove('hidden');
       } catch (e) {}
     }
