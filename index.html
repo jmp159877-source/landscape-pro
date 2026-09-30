@@ -240,10 +240,10 @@
     </div>
   </div>
 
-  <section id="authView" class="hidden fixed inset-0 z-[2000] bg-[#151E2D] flex flex-col items-center justify-center px-6">
+  <section id="authView" class="hidden fixed inset-0 z-[2000] bg-[#151E2D] flex flex-col items-center justify-start overflow-y-auto px-6 py-6"><!-- 📱 [패치 #91] 작은 폰·키보드 올라올 때 위아래 잘림 → 스크롤 되게(가운데 정렬은 카드 my-auto) -->
     <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(132,204,22,0.1)_0%,transparent_50%)] pointer-events-none"></div>
-    <div class="bg-white/5 backdrop-blur-xl p-8 rounded-[32px] w-full max-w-sm border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col items-center relative z-10">
-      <div class="w-16 h-16 bg-[#84CC16] rounded-[20px] flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(132,204,22,0.3)]"><i data-lucide="shield-check" class="w-8 h-8 text-[#151E2D]"></i></div>
+    <div class="bg-white/5 backdrop-blur-xl p-8 rounded-[32px] w-full max-w-sm border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col items-center relative z-10 my-auto shrink-0"><!-- 📱 [패치 #91] 카드 가운데(my-auto) -->
+      <!-- 📲 [패치 #92] 로그인 전 [휴대폰에 설치하기] (설치된 앱으로 열면 숨김) --><button type="button" id="authInstallCard" onclick="authInstallTap()" class="w-full mb-6 min-h-[68px] rounded-[18px] bg-white flex items-center gap-3 px-4 py-3 text-left shadow-[0_6px_20px_rgba(0,0,0,0.35)] border-l-[8px] border-[#84CC16] active:scale-[0.98] transition-all"><span class="w-11 h-11 rounded-full bg-[#84CC16] flex items-center justify-center shrink-0"><i data-lucide="download" class="w-6 h-6 text-[#151E2D]"></i></span><span class="flex-1 min-w-0"><span class="block text-[18px] font-black text-[#151E2D] whitespace-nowrap">휴대폰에 설치하기</span><span class="block text-[14.5px] font-bold text-[#475569] whitespace-nowrap">홈 화면에 아이콘이 생겨요</span></span><i data-lucide="chevron-right" class="w-6 h-6 text-[#3F6212] shrink-0"></i></button><div class="w-16 h-16 bg-[#84CC16] rounded-[20px] flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(132,204,22,0.3)]"><i data-lucide="shield-check" class="w-8 h-8 text-[#151E2D]"></i></div>
       <h2 class="text-white font-black text-[24px] mb-2 tracking-tight">조경노트 PRO 로그인</h2>
       <p class="text-[#A3A8A3] text-[15px] font-bold mb-8 text-center leading-relaxed">강력한 보안 암호화가 적용되었습니다.<br>안심하고 접속하세요.</p>
       <div class="w-full space-y-3 mb-5">
@@ -264,7 +264,7 @@
         <!-- 💡 시인성 업그레이드: 텍스트 17px 및 font-black(아주 굵게) 적용, 아이콘 크기 확대 -->
         <button onclick="showSignUp()" class="w-full py-5 bg-white/5 border border-white/10 text-white rounded-[18px] font-black text-[17px] hover:bg-white/10 transition-all flex items-center justify-center gap-2">업체 등록 신청하기 <i data-lucide="arrow-right" class="w-5 h-5"></i></button>
       </div>
-      <div class="flex items-center justify-center gap-5 mt-4"><a href="/about.html" class="text-[15px] font-black text-[#84CC16] underline underline-offset-4">조경노트 PRO 소개</a><a href="/privacy.html" target="_blank" rel="noopener" class="text-[14.5px] font-bold text-[#CBD5E1] underline underline-offset-4">개인정보처리방침</a></div><!-- 🔐 [패치 #27] 🌱 [패치 #29] --><div class="mt-5 text-center text-[13.5px] leading-relaxed text-[#94A3B8] font-bold break-keep"><!-- 🏢 [패치 #36] 사업자 정보 --><span class="text-[#CBD5E1]">신화조경노트</span> · 대표 박정근<br>사업자등록번호 559-35-01139<br>경기도 수원시 장안구 상률로46번길 17-7, 가-316호<br>전화 1668-3936<br>jmp159877@gmail.com</div>
+      <div class="flex flex-col items-center gap-1 mt-5"><a href="/about.html" class="py-1.5 whitespace-nowrap text-[18px] font-black text-[#84CC16] underline underline-offset-4">조경노트 PRO 소개</a><a href="/privacy.html" target="_blank" rel="noopener" class="py-1.5 whitespace-nowrap text-[16.5px] font-bold text-[#E2E8F0] underline underline-offset-4">개인정보처리방침</a></div><!-- 🔠 [패치 #90] 소개·개인정보 링크 크게(두 줄) --><!-- 🔐 [패치 #27] 🌱 [패치 #29] --><div class="mt-4 text-center text-[10.5px] leading-[1.6] text-[#8392A6] font-semibold"><!-- 🏢 [패치 #36] 사업자 정보 · 🔠 [패치 #90] 내용 그대로, 10.5px(읽을 수 있는 최소 크기)·항목 중간에서 안 끊김 --><span class="whitespace-nowrap"><span class="text-[#CBD5E1]">신화조경노트</span> · 대표 박정근</span> · <span class="whitespace-nowrap">사업자등록번호 559-35-01139</span><br><span class="whitespace-nowrap">경기도 수원시 장안구 상률로46번길 17-7,</span> <span class="whitespace-nowrap">가-316호</span><br><span class="whitespace-nowrap">전화 1668-3936</span> · <span class="whitespace-nowrap">jmp159877@gmail.com</span></div>
     </div>
   </section>
 
@@ -613,7 +613,7 @@
           <span class="w-16 h-16 rounded-full bg-[#151E2D] flex items-center justify-center shrink-0"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#BEF264" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10v1a7 7 0 0 0 14 0v-1"></path><path d="M12 18v4"></path></svg></span>
           <span class="flex flex-col gap-1"><span class="text-[24px] font-black text-[#1A2E05] tracking-tight leading-none">말로 일지 쓰기</span><span class="text-[16px] font-bold text-[#1A2E05] leading-snug">오늘 한 일을 말하면<br>AI가 칸마다 채워 드립니다.</span></span>
         </button>
-        <div class="bg-[#84CC16]/10 border-[1.5px] border-[#84CC16]/50 rounded-[14px] px-3.5 py-3 text-[15px] font-bold text-[#D9F99D] leading-relaxed break-keep">예) "오늘 영통 김철수 고객님 댁 소나무 전지하고 방제했어요. 응애가 좀 보여서 다음 달에 한 번 더 쳐야 돼요."</div>
+        <div class="bg-[#84CC16]/10 border-[1.5px] border-[#84CC16]/50 rounded-[14px] px-3.5 py-3 text-[15px] font-bold text-[#D9F99D] leading-relaxed break-keep">예) "오늘 서초동 홍길동 고객님 댁 소나무 전지하고 방제했어요. 응애가 좀 보여서 다음 달에 한 번 더 쳐야 돼요."</div> <!-- ✏️ [패치 #89] 예시 문구 서초동·홍길동 -->
         </div>
 
       <!-- 1. 현장 기본 정보 (타이틀 특대 확대 & 항목명 17px 굵게 & 안내문구 13.5px 작게) -->
@@ -1036,7 +1036,7 @@
             <!-- 🎤 [패치 #44] 달력 화면에서 바로 말로 일정 등록 -->
             <button type="button" onclick="startScheduleVoiceFromCalendar()" class="w-full text-left bg-[#84CC16] rounded-[24px] px-[18px] py-4 flex items-center gap-3.5 shadow-[0_10px_24px_rgba(132,204,22,0.35)] active:scale-[0.99] transition-all">
                 <span class="w-[52px] h-[52px] rounded-full bg-[#151E2D] flex items-center justify-center shrink-0"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#BEF264" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10v1a7 7 0 0 0 14 0v-1"></path><path d="M12 18v4"></path></svg></span>
-                <span class="flex flex-col gap-0.5"><span class="text-[21px] font-black text-[#1A2E05] tracking-tight leading-tight">말로 일정 등록</span><span class="text-[15.5px] font-bold text-[#1A2E05] leading-snug break-keep">"다음 주 화요일 영통 소나무 전지"</span></span>
+                <span class="flex flex-col gap-0.5"><span class="text-[21px] font-black text-[#1A2E05] tracking-tight leading-tight">말로 일정 등록</span><span class="text-[15.5px] font-bold text-[#1A2E05] leading-snug break-keep">"다음 주 화요일 서초동 소나무 전지"</span></span> <!-- ✏️ [패치 #89] 예시 문구 서초동·홍길동 -->
             </button>
 
             <!-- 등록된 일정 카드 리스트 -->
@@ -1487,7 +1487,7 @@
         <h3 id="selectedLedgerDateText" class="font-black text-white text-[18px] flex items-center gap-1.5 ml-1"><i data-lucide="calendar-check" class="w-5 h-5 text-[#84CC16]"></i> 선택된 날짜</h3>
         <button type="button" onclick="startLedgerVoice()" class="w-full text-left bg-[#84CC16] rounded-[24px] px-[18px] py-4 flex items-center gap-3.5 shadow-[0_10px_24px_rgba(132,204,22,0.35)] active:scale-[0.99] transition-all">
           <span class="w-[52px] h-[52px] rounded-full bg-[#151E2D] flex items-center justify-center shrink-0"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#BEF264" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10v1a7 7 0 0 0 14 0v-1"></path><path d="M12 18v4"></path></svg></span>
-          <span class="flex flex-col gap-0.5"><span class="text-[21px] font-black text-[#1A2E05] tracking-tight leading-tight">말로 장부 쓰기</span><span class="text-[15.5px] font-bold text-[#1A2E05] leading-snug break-keep">"영통 전지 오십만 원 받고 인건비 이십만 원"</span></span>
+          <span class="flex flex-col gap-0.5"><span class="text-[21px] font-black text-[#1A2E05] tracking-tight leading-tight">말로 장부 쓰기</span><span class="text-[15.5px] font-bold text-[#1A2E05] leading-snug break-keep">"서초동 전지 오십만 원 받고 인건비 이십만 원"</span></span> <!-- ✏️ [패치 #89] 예시 문구 서초동·홍길동 -->
         </button>
         <div class="grid grid-cols-[1.4fr_1fr_auto] gap-2">
           <button onclick="openLedgerModal()" class="h-[52px] rounded-[14px] bg-white text-[#151E2D] text-[16px] font-black flex items-center justify-center gap-1.5 active:scale-95 transition-all"><i data-lucide="plus" class="w-5 h-5 stroke-[3] text-[#65A30D]"></i> 직접 입력</button>
@@ -1773,7 +1773,7 @@
           <span class="w-16 h-16 rounded-full bg-[#151E2D] flex items-center justify-center shrink-0"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#BEF264" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10v1a7 7 0 0 0 14 0v-1"></path><path d="M12 18v4"></path></svg></span>
           <span class="flex flex-col gap-1"><span class="text-[24px] font-black text-[#1A2E05] tracking-tight leading-none">말로 일정 등록</span><span class="text-[16px] font-bold text-[#1A2E05] leading-snug">날짜와 현장을 말하면<br>AI가 일정을 만들어 드립니다.</span></span>
         </button>
-        <div class="bg-[#F4FBEA] rounded-[14px] px-3.5 py-3 text-[15px] font-bold text-[#3F6212] leading-relaxed break-keep">예) "다음 주 화요일 수원 영통 김사장님 댁 소나무 전지, 오십만 원 받기로 했고 인건비 이십만 원, 아침 여덟 시 도착"</div>
+        <div class="bg-[#F4FBEA] rounded-[14px] px-3.5 py-3 text-[15px] font-bold text-[#3F6212] leading-relaxed break-keep">예) "다음 주 화요일 서초동 홍길동 고객님 댁 소나무 전지, 오십만 원 받기로 했고 인건비 이십만 원, 아침 여덟 시 도착"</div> <!-- ✏️ [패치 #89] 예시 문구 서초동·홍길동 -->
             
             <!-- 작업 날짜 (상단 잘림 현상 완벽 해결) -->
             <div>
@@ -5796,7 +5796,7 @@ ${HELP_EXTRA.join('\n')}`;
                   <span class="w-[68px] h-[68px] rounded-full bg-[#151E2D] flex items-center justify-center shrink-0"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#BEF264" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10v1a7 7 0 0 0 14 0v-1"></path><path d="M12 18v4"></path></svg></span>
                   <span class="flex flex-col gap-1"><span class="text-[25px] font-black text-[#1A2E05] tracking-tight leading-none">말로 쓰기</span><span class="text-[16px] font-bold text-[#1A2E05] leading-snug">누르고 편하게 말씀하세요.<br>AI가 글로 정리해 드립니다.</span></span>
               </button>
-              <div class="bg-[#F4FBEA] rounded-[14px] px-3.5 py-3 text-[15px] font-bold text-[#3F6212] leading-relaxed break-keep">예) "남은 소나무 세 그루 팔아요. 수고 3미터, 그루당 30만 원, 수원 영통, 연락은 010…"</div>
+              <div class="bg-[#F4FBEA] rounded-[14px] px-3.5 py-3 text-[15px] font-bold text-[#3F6212] leading-relaxed break-keep">예) "남은 소나무 세 그루 팔아요. 수고 3미터, 그루당 30만 원, 서울 서초, 연락은 010…"</div> <!-- ✏️ [패치 #89] 예시 문구 서초동·홍길동 -->
               <div class="flex items-center gap-2.5"><div class="flex-1 h-px bg-[#CBD5E1]"></div><span class="text-[15px] font-extrabold text-[#475569]">또는 손으로 입력</span><div class="flex-1 h-px bg-[#CBD5E1]"></div></div>
               <div>
                   <label class="block text-[17.5px] font-black text-[#151E2D] mb-2">1. 카테고리 선택</label>
@@ -6709,14 +6709,14 @@ ${HELP_EXTRA.join('\n')}`;
         + '<div class="bg-[#F4FBEA] rounded-[12px] px-3 py-2.5 text-[15.5px] font-extrabold text-[#3F6212] leading-relaxed break-keep">순서가 달라도, 말을 더듬어도, 단어를 틀려도 괜찮아요. AI가 알아서 정리합니다.</div>';
     }
     const VOICE_GUIDES = {
-      schedule: [['언제', '"다음 주 화요일 아침 8시"'], ['어디 · 누구 댁', '"영통 김사장님 댁"'], ['무슨 작업', '"소나무 전지"'], ['금액 (있으면)', '"50만 원 받고 인건비 20만 원"'], ['메모 (있으면)', '"사다리 챙기기"']],
-      log: [['어느 고객님 댁', '"영통 김철수 고객님 댁"'], ['언제', '"오늘" · "어제" (안 하시면 오늘)'], ['무슨 작업을 했는지', '"소나무 전지하고 방제했어요"'], ['특이사항 (있으면)', '"응애가 보여서 다음 달 한 번 더"']],
+      schedule: [['언제', '"다음 주 화요일 아침 8시"'], ['어디 · 누구 댁', '"서초동 홍길동 고객님 댁"'], ['무슨 작업', '"소나무 전지"'], ['금액 (있으면)', '"50만 원 받고 인건비 20만 원"'], ['메모 (있으면)', '"사다리 챙기기"']], // ✏️ [패치 #89] 예시 문구 서초동·홍길동
+      log: [['어느 고객님 댁', '"서초동 홍길동 고객님 댁"'], ['언제', '"오늘" · "어제" (안 하시면 오늘)'], ['무슨 작업을 했는지', '"소나무 전지하고 방제했어요"'], ['특이사항 (있으면)', '"응애가 보여서 다음 달 한 번 더"']], // ✏️ [패치 #89] 예시 문구 서초동·홍길동
       quote: [['어느 고객님 · 현장', '"수지 박영희 고객님 단독주택"'], ['작업 항목 · 수량', '"소나무 전지 다섯 주"'], ['항목별 금액', '"칠십오만 원" (항목이 여럿이면 2~3번 반복)'], ['특이사항 (있으면)', '"부가세 별도"']],
-      memo: [['어디 · 누구 현장', '"영통 김철수 댁 앞마당"'], ['치수 · 수량', '"가로 12미터 세로 8미터, 소나무 세 그루"'], ['할 일 · 특이사항', '"잔디 절반 고사, 10월 중순 전 희망"']],
+      memo: [['어디 · 누구 현장', '"서초동 홍길동 댁 앞마당"'], ['치수 · 수량', '"가로 12미터 세로 8미터, 소나무 세 그루"'], ['할 일 · 특이사항', '"잔디 절반 고사, 10월 중순 전 희망"']], // ✏️ [패치 #89] 예시 문구 서초동·홍길동
       trade: [['무엇을', '"1톤 집게차" · "소나무 H3.0"'], ['규격 · 수량 · 날짜', '"다섯 주, 이번 주 토요일"'], ['가격 · 조건 (있으면)', '"하루 이십만 원"'], ['지역', '"용인 수지"'], ['연락 방법 (있으면)', '"문자 주세요"']],
       ask: [['무엇이 궁금한지', '"소나무 전지 단가가 궁금해요"'], ['현장 · 규격 · 수량', '"H3.0 다섯 주, 단독주택"'], ['지역 (있으면)', '"수원"']],
       talk: [['하고 싶은 이야기를 편하게', '"오늘 비가 와서 현장 쉬었어요"']],
-      ledger: [['언제 (안 하시면 고른 날짜)', '"어제" · "10월 3일"'], ['어디서 무슨 일', '"영통 김사장님 댁 소나무 전지"'], ['받은 돈 · 나간 돈', '"오십만 원 받고, 인건비 이십만 원"'], ['부가세 · 적요 (있으면)', '"부가세 오만 원, 식대 삼만 원"']], // 🎤 [패치 #52]
+      ledger: [['언제 (안 하시면 고른 날짜)', '"어제" · "10월 3일"'], ['어디서 무슨 일', '"서초동 홍길동 고객님 댁 소나무 전지"'], ['받은 돈 · 나간 돈', '"오십만 원 받고, 인건비 이십만 원"'], ['부가세 · 적요 (있으면)', '"부가세 오만 원, 식대 삼만 원"']], // 🎤 [패치 #52] · [패치 #89] 예시 문구 서초동·홍길동
       warn: [['어떤 일이 있었는지', '"공사 끝났는데 잔금을 안 줘요"'], ['언제 · 어느 지역', '"지난달, 화성"'], ['주의할 점', '"계약금 먼저 받으세요" (실명·상호는 AI가 뺍니다)']]
     };
     function boardGuideFor(cat) {
@@ -7449,7 +7449,7 @@ ${AI_COMMON_RULES}
         </div>
         <div class="bg-white border-2 border-[#D4AF37] rounded-[20px] px-4 py-3.5 flex flex-col gap-1.5">
           <label for="memoTitleInput" class="text-[14px] font-black text-[#3F6212]">제목</label>
-          <input id="memoTitleInput" maxlength="40" placeholder="예) 영통 김철수 댁 앞마당" class="h-[48px] rounded-[12px] border-[1.5px] border-[#CBD5E1] px-3 text-[19px] font-black text-[#151E2D] placeholder:text-[15px] placeholder:font-bold placeholder:text-[#94A3B8]">
+          <input id="memoTitleInput" maxlength="40" placeholder="예) 서초동 홍길동 댁 앞마당" class="h-[48px] rounded-[12px] border-[1.5px] border-[#CBD5E1] px-3 text-[19px] font-black text-[#151E2D] placeholder:text-[15px] placeholder:font-bold placeholder:text-[#94A3B8]"> <!-- ✏️ [패치 #89] 예시 문구 서초동·홍길동 -->
           <div id="memoLinesView" class="flex flex-col mt-1"></div>
           <label for="memoLinesInput" id="memoLinesLabel" class="hidden text-[14px] font-black text-[#3F6212] mt-1">내용 (한 줄에 하나씩)</label>
           <textarea id="memoLinesInput" rows="8" class="hidden w-full rounded-[12px] border-[1.5px] border-[#CBD5E1] p-3 text-[17px] font-bold text-[#151E2D] leading-[1.6]"></textarea>
@@ -7832,8 +7832,8 @@ ${AI_COMMON_RULES}
       car: { name: '차계부', qtyLabel: '금액 (원)', ex: '"1톤 트럭 주유 칠만 원"' }
     };
     const STOCK_GUIDES = {
-      supply: [['언제 (안 하시면 오늘)', '"어제"'], ['무엇을 · 몇 개', '"예초기 날 다섯 개"'], ['샀는지 · 썼는지', '"샀어" · "영통 현장에서 썼어"'], ['기타 (있으면)', '"수원 농기계에서"']],
-      plant: [['언제 (안 하시면 오늘)', '"오늘"'], ['수종 · 규격 · 몇 주', '"소나무 H3.0 다섯 주"'], ['들어왔는지 · 심었는지', '"농장에서 들어왔어" · "영통에 심었어"'], ['기타 (있으면)', '"가식장 왼쪽"']],
+      supply: [['언제 (안 하시면 오늘)', '"어제"'], ['무엇을 · 몇 개', '"예초기 날 다섯 개"'], ['샀는지 · 썼는지', '"샀어" · "서초동 현장에서 썼어"'], ['기타 (있으면)', '"수원 농기계에서"']], // ✏️ [패치 #89] 예시 문구 서초동·홍길동
+      plant: [['언제 (안 하시면 오늘)', '"오늘"'], ['수종 · 규격 · 몇 주', '"소나무 H3.0 다섯 주"'], ['들어왔는지 · 심었는지', '"농장에서 들어왔어" · "서초동에 심었어"'], ['기타 (있으면)', '"가식장 왼쪽"']], // ✏️ [패치 #89] 예시 문구 서초동·홍길동
       car: [['언제 (안 하시면 오늘)', '"어제"'], ['어느 차', '"1톤 트럭"'], ['무엇에 얼마', '"주유 칠만 원"'], ['기타 (있으면)', '"주행거리 8만 2천"']]
     };
     const STK = { cat: 'supply', data: { supply: [], plant: [], car: [] }, view: [], editIdx: -1, loaded: false };
@@ -8143,7 +8143,7 @@ ${AI_COMMON_RULES}
             <span class="w-[62px] h-[62px] rounded-full bg-[#14261E] flex items-center justify-center shrink-0"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#BEF264" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10v1a7 7 0 0 0 14 0v-1"></path><path d="M12 18v4"></path></svg></span>
             <span class="flex flex-col gap-1"><span class="text-[23px] font-black text-[#14261E] leading-tight">말로 신청하기</span><span class="text-[15.5px] font-bold text-[#1A2E05] leading-snug break-keep">편하게 길게 말씀하셔도 AI가 알아서 칸을 채워 드려요. 확인하고 보내기만 누르세요.</span></span>
           </button>
-          <div class="bg-[#ECFCCB] rounded-[14px] px-3.5 py-3 text-[15px] font-bold text-[#3F6212] leading-relaxed break-keep">예) "영통동 아파트 화단 소나무 세 그루 전지하고 싶어요. 잎이 누런 나무도 있고요. 이번 주 안에 와 주시면 좋겠어요. 김철수, 010…"</div>
+          <div class="bg-[#ECFCCB] rounded-[14px] px-3.5 py-3 text-[15px] font-bold text-[#3F6212] leading-relaxed break-keep">예) "서초동 아파트 화단 소나무 세 그루 전지하고 싶어요. 잎이 누런 나무도 있고요. 이번 주 안에 와 주시면 좋겠어요. 홍길동, 010…"</div> <!-- ✏️ [패치 #89] 예시 문구 서초동·홍길동 -->
           <div id="rqpAiNote" class="hidden bg-[#FEF9C3] border-2 border-[#EAB308] rounded-[14px] px-3.5 py-3 text-[16px] font-extrabold text-[#713F12] leading-relaxed break-keep">AI가 칸을 채웠어요. 틀린 곳이 없는지 확인하시고, 맨 아래 [의뢰 보내기]를 눌러 주세요.</div>
           <div class="flex items-center gap-2.5"><span class="flex-1 h-px bg-[#CBD5E1]"></span><span class="text-[15px] font-extrabold text-[#475569]">또는 직접 입력</span><span class="flex-1 h-px bg-[#CBD5E1]"></span></div>
 
@@ -8159,7 +8159,7 @@ ${AI_COMMON_RULES}
             </div></div>
 
           <label id="rqpStepAddr" class="flex flex-col gap-2 scroll-mt-4"><span class="text-[19px] font-black flex items-center gap-2 flex-wrap">3. 현장 주소 <span class="text-[14px] font-black bg-[#DC2626] text-white rounded-md px-1.5 py-0.5 align-middle">필수</span></span><span class="-mt-1 text-[15px] font-bold text-[#475569]">동네 이름까지만 적으셔도 됩니다</span>
-            <input id="rqpAddr" maxlength="150" autocomplete="street-address" placeholder="예) 수원시 영통동 ○○아파트" class="h-[58px] rounded-[14px] border-2 border-[#CBD5E1] bg-white px-4 text-[18px] font-bold text-[#0F172A] placeholder:text-[#64748B] placeholder:text-[16px] focus:outline-none focus:border-[#65A30D]"></label>
+            <input id="rqpAddr" maxlength="150" autocomplete="street-address" placeholder="예) 서초구 서초동 ○○아파트" class="h-[58px] rounded-[14px] border-2 border-[#CBD5E1] bg-white px-4 text-[18px] font-bold text-[#0F172A] placeholder:text-[#64748B] placeholder:text-[16px] focus:outline-none focus:border-[#65A30D]"></label> <!-- ✏️ [패치 #89] 예시 문구 서초동·홍길동 -->
 
           <div class="flex flex-col gap-2.5"><span class="text-[19px] font-black flex items-center gap-2 flex-wrap">4. 언제쯤 원하세요? <span class="text-[14px] font-black bg-[#E2E8F0] text-[#334155] rounded-md px-1.5 py-0.5 align-middle">선택</span></span>
             <div id="rqpWhens" class="grid grid-cols-2 gap-2"></div></div>
@@ -8171,7 +8171,7 @@ ${AI_COMMON_RULES}
             <input id="rqpPhone" type="tel" inputmode="numeric" maxlength="13" autocomplete="tel" oninput="autoHyphen(this)" placeholder="010-0000-0000" class="h-[58px] rounded-[14px] border-2 border-[#CBD5E1] bg-white px-4 text-[18px] font-bold text-[#0F172A] placeholder:text-[#64748B] placeholder:text-[16px] focus:outline-none focus:border-[#65A30D] !text-[#1D4ED8] !text-[20px] tracking-wide"></label>
 
           <label class="flex flex-col gap-2"><span class="text-[19px] font-black flex items-center gap-2 flex-wrap">7. 성함 <span class="text-[14px] font-black bg-[#E2E8F0] text-[#334155] rounded-md px-1.5 py-0.5 align-middle">선택</span></span>
-            <input id="rqpCName" maxlength="20" autocomplete="name" placeholder="예) 김철수 (안 적으셔도 됩니다)" class="h-[58px] rounded-[14px] border-2 border-[#CBD5E1] bg-white px-4 text-[18px] font-bold text-[#0F172A] placeholder:text-[#64748B] placeholder:text-[16px] focus:outline-none focus:border-[#65A30D]"></label>
+            <input id="rqpCName" maxlength="20" autocomplete="name" placeholder="예) 홍길동 (안 적으셔도 됩니다)" class="h-[58px] rounded-[14px] border-2 border-[#CBD5E1] bg-white px-4 text-[18px] font-bold text-[#0F172A] placeholder:text-[#64748B] placeholder:text-[16px] focus:outline-none focus:border-[#65A30D]"></label> <!-- ✏️ [패치 #89] 예시 문구 서초동·홍길동 -->
           <input id="rqpHp" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" class="hidden">
 
           <label id="rqpAgreeBox" for="rqpAgree" class="flex items-start gap-3 bg-white border-2 border-[#CBD5E1] rounded-[16px] p-4 text-[16.5px] font-bold text-[#334155] leading-relaxed cursor-pointer scroll-mt-4">
@@ -8330,7 +8330,7 @@ ${AI_COMMON_RULES}
       alert(`개인정보 처리 안내\n\n• 받는 곳: ${n} (조경노트 PRO를 쓰는 조경 사업자)\n• 받는 정보: 성함, 연락처, 현장 주소, 사진, 적어 주신 내용\n• 쓰는 곳: 견적·상담 연락과 작업 진행에만 씁니다.\n• 보관: 상담·작업이 끝날 때까지 보관하며, 원하시면 업체에 말씀해 바로 지울 수 있습니다.\n• 동의하지 않으셔도 되지만, 그 경우 신청서를 보낼 수 없습니다. (전화로 문의해 주세요)\n\n※ 자세한 내용은 jogyeongnote.com/privacy.html 에서 보실 수 있습니다.`);
     }
     // 말로 신청하기 (공통 음성 엔진 #38 사용, AI 정리는 Code.gs가 대신 해 줌)
-    const REQ_VOICE_GUIDE = [['어떤 작업이 필요한지', '"소나무 세 그루 전지하고 싶어요"'], ['현장 주소', '"영통동 ○○아파트 화단"'], ['언제쯤', '"이번 주 안에"'], ['성함 · 연락처', '"김철수, 010…"']];
+    const REQ_VOICE_GUIDE = [['어떤 작업이 필요한지', '"소나무 세 그루 전지하고 싶어요"'], ['현장 주소', '"서초동 ○○아파트 화단"'], ['언제쯤', '"이번 주 안에"'], ['성함 · 연락처', '"홍길동, 010…"']]; // ✏️ [패치 #89] 예시 문구 서초동·홍길동
     function startReqVoice() {
       if (!RQ.info) return;
       voiceOpen({ title: '말로 신청하기', chip: RQ.info.name, hints: [], guide: REQ_VOICE_GUIDE, onDone: runReqAi });
@@ -9677,5 +9677,55 @@ ${AI_COMMON_RULES}
       finally { BK.busy = false; if (btn) btn.innerHTML = old; }
     }
   </script>
+
+<!-- 📲 [패치 #92] 설치 안내 창 (/?install=1 로 들어왔을 때) -->
+<div id="installReadySheet" class="hidden fixed inset-0 z-[2100] bg-black/55 flex items-end" onclick="if(event.target===this)installSheetHide()">
+  <div class="w-full bg-white rounded-t-[28px] px-6 pt-7 pb-8">
+    <div class="w-14 h-14 rounded-[16px] bg-[#84CC16] flex items-center justify-center mb-4"><i data-lucide="download" class="w-8 h-8 text-[#151E2D]"></i></div>
+    <h3 id="isTitle" class="text-[23px] font-black text-[#151E2D] mb-2">설치 준비가 됐어요</h3>
+    <p id="isText" class="text-[17px] font-bold text-[#334155] leading-relaxed mb-6 break-keep"></p>
+    <button type="button" id="isGo" onclick="installSheetGo()" class="w-full h-[60px] rounded-[16px] bg-[#84CC16] text-[#151E2D] text-[20px] font-black mb-3 active:scale-[0.98] transition-all">지금 설치하기</button>
+    <button type="button" onclick="installSheetHide()" class="w-full h-[52px] rounded-[16px] bg-[#F1F5F9] text-[#475569] text-[17px] font-black">나중에 할게요</button>
+  </div>
+</div>
+<script>
+  // 📲 [패치 #92] 로그인 화면·소개 페이지 [휴대폰에 설치하기] — 기존 설치(#25 installApp·deferredInstallPrompt)와 앱 안 브라우저 판별(#53 inAppBrowserName)을 그대로 씀
+  let IS_MODE = 'ready';
+  function isAndroidUA() { return /Android/i.test(navigator.userAgent || ''); }
+  function goChromeInstall() {
+    const url = location.origin + '/?install=1', ua = navigator.userAgent || '';
+    if (/KAKAOTALK/i.test(ua)) { location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(url); return; }
+    if (isAndroidUA()) { location.href = 'intent://' + location.host + '/?install=1#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(url) + ';end'; return; }
+    installApp();
+  }
+  function authInstallTap() {
+    if (isStandaloneApp()) return;
+    if (!deferredInstallPrompt && isAndroidUA() && inAppBrowserName()) return goChromeInstall();
+    installApp();
+  }
+  function installSheetShow(mode) {
+    IS_MODE = mode;
+    const T = { ready: ['설치 준비가 됐어요', '아래 연두 버튼을 누르고,<br>뜨는 창에서 <b class="text-[#3F6212]">[설치]</b>를 한 번 더 누르면 끝이에요.', '지금 설치하기'],
+                inapp: ['크롬에서 설치할게요', '네이버·카카오톡 안에서는 설치가 안 돼요.<br>아래 버튼을 누르면 <b class="text-[#3F6212]">크롬</b>으로 열려요.', '크롬으로 열기'],
+                ios:   ['아이폰은 이렇게 설치해요', '사파리 아래 <b class="text-[#3F6212]">[공유]</b> 버튼(네모에 위 화살표)을 누르고<br><b class="text-[#3F6212]">[홈 화면에 추가]</b>를 누르세요.', '확인'] }[mode];
+    document.getElementById('isTitle').textContent = T[0];
+    document.getElementById('isText').innerHTML = T[1];
+    document.getElementById('isGo').textContent = T[2];
+    document.getElementById('installReadySheet').classList.remove('hidden');
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  }
+  function installSheetHide() { document.getElementById('installReadySheet').classList.add('hidden'); }
+  function installSheetGo() { const m = IS_MODE; installSheetHide(); if (m === 'inapp') goChromeInstall(); else if (m === 'ready') installApp(); }
+  window.addEventListener('appinstalled', () => { document.getElementById('authInstallCard')?.classList.add('hidden'); installSheetHide(); });
+  document.addEventListener('DOMContentLoaded', () => {
+    if (isStandaloneApp()) { document.getElementById('authInstallCard')?.classList.add('hidden'); return; }
+    let q; try { q = new URLSearchParams(location.search); } catch (e) { return; }
+    if (q.get('install') !== '1' || q.get('req') || q.get('id')) return;
+    try { history.replaceState(history.state, '', location.pathname); } catch (e) {}
+    const ios = /iPhone|iPad|iPod/i.test(navigator.userAgent || '');
+    const mode = ios ? 'ios' : ((isAndroidUA() && inAppBrowserName()) ? 'inapp' : 'ready');
+    setTimeout(() => installSheetShow(mode), 2300);
+  });
+</script>
 </body>
 </html>
