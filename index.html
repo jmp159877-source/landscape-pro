@@ -9703,10 +9703,15 @@ ${AI_COMMON_RULES}
     if (!deferredInstallPrompt && isAndroidUA() && inAppBrowserName()) return goChromeInstall();
     installApp();
   }
+  // 🛡️ [패치 #94] 삼성 인터넷으로 설치하면 안드로이드 14+에서 '안전하지 않은 앱 차단됨'(삼성이 옛 기준으로 포장 · 삼성 미해결 문제) → 설치는 크롬으로 보냄
+  function isSamsungBrowser() { return /SamsungBrowser/i.test(navigator.userAgent || ''); }
+  const installApp0 = installApp;
+  installApp = function () { if (isAndroidUA() && isSamsungBrowser() && !isStandaloneApp()) return goChromeInstall(); return installApp0(); };
   function installSheetShow(mode) {
     IS_MODE = mode;
     const T = { ready: ['설치 준비가 됐어요', '아래 연두 버튼을 누르고,<br>뜨는 창에서 <b class="text-[#3F6212]">[설치]</b>를 한 번 더 누르면 끝이에요.', '지금 설치하기'],
                 inapp: ['크롬에서 설치할게요', '네이버·카카오톡 안에서는 설치가 안 돼요.<br>아래 버튼을 누르면 <b class="text-[#3F6212]">크롬</b>으로 열려요.', '크롬으로 열기'],
+                samsung: ['크롬에서 설치할게요', '삼성 인터넷으로 설치하면 휴대폰이 <b class="text-[#3F6212]">안전하지 않은 앱</b>으로 막을 수 있어요.<br>아래 버튼을 누르면 <b class="text-[#3F6212]">크롬</b>으로 열려요.', '크롬으로 열기'], // 🛡️ [패치 #94]
                 ios:   ['아이폰은 이렇게 설치해요', '사파리 아래 <b class="text-[#3F6212]">[공유]</b> 버튼(네모에 위 화살표)을 누르고<br><b class="text-[#3F6212]">[홈 화면에 추가]</b>를 누르세요.', '확인'] }[mode];
     document.getElementById('isTitle').textContent = T[0];
     document.getElementById('isText').innerHTML = T[1];
@@ -9715,7 +9720,7 @@ ${AI_COMMON_RULES}
     if (typeof lucide !== 'undefined') lucide.createIcons();
   }
   function installSheetHide() { document.getElementById('installReadySheet').classList.add('hidden'); }
-  function installSheetGo() { const m = IS_MODE; installSheetHide(); if (m === 'inapp') goChromeInstall(); else if (m === 'ready') installApp(); }
+  function installSheetGo() { const m = IS_MODE; installSheetHide(); if (m === 'inapp' || m === 'samsung') goChromeInstall(); else if (m === 'ready') installApp(); } // 🛡️ [패치 #94] samsung
   window.addEventListener('appinstalled', () => { document.getElementById('authInstallCard')?.classList.add('hidden'); installSheetHide(); });
   document.addEventListener('DOMContentLoaded', () => {
     if (isStandaloneApp()) { document.getElementById('authInstallCard')?.classList.add('hidden'); return; }
@@ -9723,7 +9728,7 @@ ${AI_COMMON_RULES}
     if (q.get('install') !== '1' || q.get('req') || q.get('id')) return;
     try { history.replaceState(history.state, '', location.pathname); } catch (e) {}
     const ios = /iPhone|iPad|iPod/i.test(navigator.userAgent || '');
-    const mode = ios ? 'ios' : ((isAndroidUA() && inAppBrowserName()) ? 'inapp' : 'ready');
+    const mode = ios ? 'ios' : ((isAndroidUA() && inAppBrowserName()) ? 'inapp' : ((isAndroidUA() && isSamsungBrowser()) ? 'samsung' : 'ready')); // 🛡️ [패치 #94]
     setTimeout(() => installSheetShow(mode), 2300);
   });
 </script>
