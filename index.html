@@ -9679,7 +9679,7 @@ ${AI_COMMON_RULES}
   </script>
 
 <!-- 📲 [패치 #92] 설치 안내 창 (/?install=1 로 들어왔을 때) -->
-<div id="installReadySheet" class="hidden fixed inset-0 z-[2100] bg-black/55 flex items-end" onclick="if(event.target===this)installSheetHide()">
+<div id="installReadySheet" class="hidden fixed inset-0 z-[3600] bg-black/55 flex items-end" onclick="if(event.target===this)installSheetHide()"><!-- 🛡️ [패치 #95] 설정 창(z 3500) 위에도 보이게 -->
   <div class="w-full bg-white rounded-t-[28px] px-6 pt-7 pb-8">
     <div class="w-14 h-14 rounded-[16px] bg-[#84CC16] flex items-center justify-center mb-4"><i data-lucide="download" class="w-8 h-8 text-[#151E2D]"></i></div>
     <h3 id="isTitle" class="text-[23px] font-black text-[#151E2D] mb-2">설치 준비가 됐어요</h3>
@@ -9706,12 +9706,12 @@ ${AI_COMMON_RULES}
   // 🛡️ [패치 #94] 삼성 인터넷으로 설치하면 안드로이드 14+에서 '안전하지 않은 앱 차단됨'(삼성이 옛 기준으로 포장 · 삼성 미해결 문제) → 설치는 크롬으로 보냄
   function isSamsungBrowser() { return /SamsungBrowser/i.test(navigator.userAgent || ''); }
   const installApp0 = installApp;
-  installApp = function () { if (isAndroidUA() && isSamsungBrowser() && !isStandaloneApp()) return goChromeInstall(); return installApp0(); };
+  installApp = function () { if (isAndroidUA() && isSamsungBrowser() && !isStandaloneApp()) return installSheetShow('samsung'); return installApp0(); }; // 🛡️ [패치 #95] 바로 넘기지 않고 '[크롬]을 골라 주세요' 안내 먼저
   function installSheetShow(mode) {
     IS_MODE = mode;
     const T = { ready: ['설치 준비가 됐어요', '아래 연두 버튼을 누르고,<br>뜨는 창에서 <b class="text-[#3F6212]">[설치]</b>를 한 번 더 누르면 끝이에요.', '지금 설치하기'],
                 inapp: ['크롬에서 설치할게요', '네이버·카카오톡 안에서는 설치가 안 돼요.<br>아래 버튼을 누르면 <b class="text-[#3F6212]">크롬</b>으로 열려요.', '크롬으로 열기'],
-                samsung: ['크롬에서 설치할게요', '삼성 인터넷으로 설치하면 휴대폰이 <b class="text-[#3F6212]">안전하지 않은 앱</b>으로 막을 수 있어요.<br>아래 버튼을 누르면 <b class="text-[#3F6212]">크롬</b>으로 열려요.', '크롬으로 열기'], // 🛡️ [패치 #94]
+                samsung: ['크롬에서 설치할게요', '삼성 인터넷으로 설치하면 휴대폰이 막을 수 있어서 크롬으로 설치해요.<br>다음 화면에서 <b class="text-[#3F6212] text-[19px]">[크롬]</b>을 골라 주세요.', '크롬으로 열기'], // 🛡️ [패치 #94] · [패치 #95] 문구
                 ios:   ['아이폰은 이렇게 설치해요', '사파리 아래 <b class="text-[#3F6212]">[공유]</b> 버튼(네모에 위 화살표)을 누르고<br><b class="text-[#3F6212]">[홈 화면에 추가]</b>를 누르세요.', '확인'] }[mode];
     document.getElementById('isTitle').textContent = T[0];
     document.getElementById('isText').innerHTML = T[1];
