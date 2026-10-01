@@ -191,9 +191,24 @@
       <div class="flex items-center justify-between border-b border-white/10 pb-4">
         <h1 class="text-[24px] font-black tracking-tight flex items-center gap-2"><i data-lucide="message-square" class="w-6 h-6 text-[#84CC16]"></i> 1:1 고객센터 (문의 관리)</h1>
       </div>
-      <div class="glass-panel rounded-[24px] overflow-hidden shadow-lg p-6 min-h-[400px]">
-        <div id="masterInquiryList" class="space-y-4">
-           <div class="text-center text-[#94A3B8] py-16 font-bold">수신된 문의가 없습니다.</div>
+      <!-- 💬 [패치 #99] 업체별 대화방: 왼쪽 목록 · 오른쪽 대화 (휴대폰은 목록 → 누르면 대화) -->
+      <div class="glass-panel rounded-[24px] overflow-hidden shadow-lg md:grid md:grid-cols-[340px_1fr] md:min-h-[560px]">
+        <div id="inqListPane" class="md:block md:border-r border-white/5">
+          <div class="flex gap-2 p-4 pb-3">
+            <button id="inqTabWait" onclick="inqSetFilter('wait')" class="px-4 py-2 rounded-full text-[14px] font-black bg-[#84CC16] text-[#12261E]">답변 대기</button>
+            <button id="inqTabAll" onclick="inqSetFilter('all')" class="px-4 py-2 rounded-full text-[14px] font-black bg-white/5 text-[#94A3B8]">전체</button>
+          </div>
+          <div class="px-4 pb-3"><input id="inqSearchBox" oninput="inqSearch(this.value)" placeholder="🔍 업체 이름으로 찾기" class="w-full bg-[#0F172A] border border-white/10 rounded-[12px] px-3.5 py-2.5 text-white text-[14px] font-bold focus:outline-none focus:border-[#84CC16]"></div>
+          <div id="inqRoomList" class="md:max-h-[70vh] md:overflow-y-auto"><div class="text-center text-[#94A3B8] py-16 font-bold">문의를 불러오는 중...</div></div>
+        </div>
+        <div id="inqEmptyPane" class="hidden md:flex items-center justify-center text-[#64748B] font-bold text-[15px] p-10">왼쪽에서 업체를 누르면 대화가 열립니다.</div>
+        <div id="inqThreadPane" class="hidden flex-col md:min-h-[560px]">
+          <div id="inqThreadHead" class="flex items-center gap-2.5 px-4 py-3 border-b border-white/5"></div>
+          <div id="inqMsgs" class="flex-1 overflow-y-auto p-4 space-y-2.5" style="max-height:62vh;"></div>
+          <div class="flex gap-2 p-3 border-t border-white/5">
+            <textarea id="inqReply" rows="2" placeholder="답변을 입력하세요" class="flex-1 bg-[#0F172A] border border-white/10 rounded-[14px] p-3 text-white text-[14px] font-bold focus:outline-none focus:border-[#84CC16] resize-none"></textarea>
+            <button id="inqSendBtn" onclick="inqSend()" class="px-5 bg-[#84CC16] text-[#12261E] rounded-[14px] font-black text-[15px] shrink-0">전송</button>
+          </div>
         </div>
       </div>
     </div>
@@ -364,6 +379,10 @@
     <button onclick="switchTab('points')" class="mob-nav-btn flex flex-col items-center gap-1.5 text-[#94A3B8] font-bold relative"><!-- 💰 [패치 #71] -->
         <span id="mobPointCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-[11px] font-black px-1.5 rounded-full hidden">0</span>
         <i data-lucide="coins" class="w-6 h-6"></i><span class="text-[10px]">포인트</span>
+    </button>
+    <button onclick="switchTab('inquiries')" class="mob-nav-btn flex flex-col items-center gap-1.5 text-[#94A3B8] font-bold relative"><!-- 💬 [패치 #99] 휴대폰에서도 1:1 문의 -->
+        <span id="mobInquiryCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-[11px] font-black px-1.5 rounded-full hidden">0</span>
+        <i data-lucide="message-square" class="w-6 h-6"></i><span class="text-[10px]">문의</span>
     </button>
   </nav>
 
@@ -614,7 +633,7 @@
             await initMasterSettings();
             startDashboard();
             // 🔔 [패치 #73] 알림을 눌러 들어온 경우 해당 화면으로 (?tab=approval / ?tab=points)
-            try { const t = new URLSearchParams(location.search).get('tab'); if (['approval', 'points', 'companies', 'inquiries', 'settings'].includes(t)) switchTab(t); } catch (e) {}
+            try { const t = new URLSearchParams(location.search).get('tab'); if (['approval', 'points', 'companies', 'inquiries', 'settings'].includes(t)) switchTab(t); const qa = new URLSearchParams(location.search).get('acc'); if (t === 'inquiries' && qa) { INQ.sel = qa; INQ.filter = 'all'; renderInquiryList(); } } catch (e) {}
             admPushStatus();
 
         } catch(e) {
@@ -851,14 +870,42 @@
 
     function startDashboard() {
         fetchAccounts(); 
-        autoRefreshTimer = setInterval(fetchAccounts, 10000); 
+        autoRefreshTimer = setInterval(() => { if (!document.hidden) fetchAccounts(); }, 10000); // 🚀 [패치 #99] 화면을 안 보고 있을 땐 쉬기
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) fetchAccounts(); });
     }
 
+    // 🚀 [패치 #99] 관리자 화면 자료 가볍게: 예전엔 10초마다 모든 업체 자료(일지·장부·기록 전체)를 통째로 받았음
+    //  → 업체 목록(이름만) 받고, 업체마다 필요한 칸(업체 정보·문의·충전 신청·환불·의뢰 신고)만 받음. 화면에 보이는 내용은 같음
+    let ACC_LAST = null, ACC_BUSY = false;
+    const ACC_PARTS = ['profile', 'inquiries', 'wallet/reqs', 'wallet/refund', 'wallet/reqOpens'];
+    async function accGet(path) {
+        const r = await fetch(getAuthUrl(`${DB_BASE_URL}/${path}.json`));
+        if (!r.ok) throw new Error('load ' + r.status);
+        return r.json();
+    }
+    async function loadAccountsLite() {
+        const r = await fetch(getAuthUrl(`${DB_BASE_URL}.json?shallow=true`));
+        const ids = await r.json();
+        if (!r.ok || (ids && ids.error)) throw new Error('load');
+        const keys = Object.keys(ids || {}), out = {};
+        for (let i = 0; i < keys.length; i += 6) {
+            await Promise.all(keys.slice(i, i + 6).map(async id => {
+                const e = encodeURIComponent(id);
+                const [profile, inquiries, reqs, refund, reqOpens] = await Promise.all(ACC_PARTS.map(p => accGet(`${e}/${p}`)));
+                const acc = { profile, inquiries, wallet: { reqs, refund, reqOpens } };
+                const want = Object.keys(reqOpens || {}).filter(q => reqOpens[q] && reqOpens[q].report && reqOpens[q].report.status === 'wait');
+                if (want.length) { acc.requests = {}; await Promise.all(want.map(async q => { acc.requests[q] = await accGet(`${e}/requests/${encodeURIComponent(q)}`); })); }
+                out[id] = acc;
+            }));
+        }
+        return out;
+    }
     async function fetchAccounts() {
-        if (!currentIdToken) return;
+        if (!currentIdToken || ACC_BUSY) return;
+        ACC_BUSY = true;
         try {
-            const res = await fetch(getAuthUrl(`${DB_BASE_URL}.json`));
-            const data = await res.json();
+            const data = await loadAccountsLite();
+            ACC_LAST = data;
             
             allAccounts = [];
             if (data && !data.error) {
@@ -891,7 +938,7 @@
             renderPendingList(pendingAccounts);
             renderActiveList();
 
-        } catch (e) {}
+        } catch (e) {} finally { ACC_BUSY = false; }
     }
 
     function playNotificationSound() {
@@ -1786,131 +1833,128 @@
         setTimeout(() => { modal.classList.add('hidden'); }, 200);
     }
   // ==========================================
-    // 💬 마스터 1:1 문의 관리 센터 로직
+    // 💬 [패치 #99] 1:1 문의 관리 — 업체별 대화방 (시안 '1대1문의_시안' 승인 2026-10-01 11:22)
+    //  - 문의는 업체마다 accounts/{업체}/inquiries 에 따로 저장 (업체는 자기 것만 봄 · 규칙 그대로)
+    //  - 답변은 고른 업체의 '답변 대기' 질문에 한 칸씩 PATCH (통째로 덮어쓰지 않음)
     // ==========================================
     let allInquiries = [];
-
-    // 기존 fetchAccounts 함수 내부에 몰래 숨어서 1:1 문의 데이터도 같이 긁어오는 트릭입니다.
-    const originalFetchAccounts = fetchAccounts;
-    fetchAccounts = async function() {
-        await originalFetchAccounts();
-        if (!currentIdToken) return;
-        try {
-            const res = await fetch(getAuthUrl(`${DB_BASE_URL}.json`));
-            const data = await res.json();
-            
-            allInquiries = [];
-            let unreadCount = 0;
-
-            if (data && !data.error) {
-                for (const accId in data) {
-                    if (data[accId].inquiries) {
-                        const inqs = normalizeData(data[accId].inquiries);
-                        const profile = data[accId].profile || { name: '알 수 없는 업체' };
-                        
-                        inqs.forEach((inq, idx) => {
-                            if (inq.status === 'waiting') unreadCount++;
-                            allInquiries.push({ accId, idx, companyName: profile.name, ...inq });
-                        });
-                    }
-                }
-            }
-
-            // 최신 문의가 위로 오도록 정렬 (답변 대기 중인 것이 최상단)
-            allInquiries.sort((a, b) => {
-                if (a.status === 'waiting' && b.status !== 'waiting') return -1;
-                if (a.status !== 'waiting' && b.status === 'waiting') return 1;
-                return b.id - a.id;
-            });
-
-            // 안 읽은 문의 뱃지 업데이트
-            const sideBadge = document.getElementById('sideInquiryCount');
-            if (unreadCount > 0) {
-                sideBadge.innerText = unreadCount; sideBadge.classList.remove('hidden');
-            } else {
-                sideBadge.classList.add('hidden');
-            }
-
-            renderInquiryList();
-        } catch (e) {}
+    const INQ = { rooms: [], sel: null, filter: 'wait', q: '', sig: '', busy: false };
+    function inqTime(ms) {
+        const d = new Date(Number(ms) || 0); if (!ms || isNaN(d)) return '';
+        const now = new Date(), hm = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+        if (d.toDateString() === now.toDateString()) return hm;
+        const y = new Date(now); y.setDate(now.getDate() - 1); if (d.toDateString() === y.toDateString()) return '어제';
+        return `${d.getMonth() + 1}/${d.getDate()}`;
     }
+    function inqDay(ms) { const d = new Date(Number(ms) || 0); return (!ms || isNaN(d)) ? '' : (d.toDateString() === new Date().toDateString() ? '오늘' : `${d.getMonth() + 1}월 ${d.getDate()}일`); }
+    function inqCollect(data) {
+        const rooms = []; allInquiries = []; let unread = 0;
+        for (const accId in (data || {})) {
+            const raw = data[accId] && data[accId].inquiries; if (!raw || typeof raw !== 'object') continue;
+            const prof = (data[accId] && data[accId].profile) || {};
+            const items = Object.keys(raw).map(k => raw[k] && typeof raw[k] === 'object' ? Object.assign({ _key: String(k) }, raw[k]) : null).filter(Boolean)
+                .sort((a, b) => (Number(a.id) || 0) - (Number(b.id) || 0));
+            if (!items.length) continue;
+            const wait = items.filter(i => i.status === 'waiting').length; unread += wait;
+            const last = items[items.length - 1];
+            items.forEach((inq, idx) => allInquiries.push({ accId, idx, companyName: prof.name, ...inq }));
+            rooms.push({ accId, name: prof.name || accId, ceo: prof.ceo || '', phone: prof.phone || '', region: prof.region || '', items, wait,
+                lastAt: Number(last.replyAt) > Number(last.id) ? Number(last.replyAt) : Number(last.id) || 0,
+                lastText: last.reply ? '답변: ' + last.reply : last.text });
+        }
+        rooms.sort((a, b) => (b.wait ? 1 : 0) - (a.wait ? 1 : 0) || b.lastAt - a.lastAt);
+        INQ.rooms = rooms;
+        ['sideInquiryCount', 'mobInquiryCount'].forEach(id => { const el = document.getElementById(id); if (el) { el.innerText = unread; el.classList.toggle('hidden', !unread); } });
+        const sig = JSON.stringify(rooms.map(r => [r.accId, r.name, r.items.map(i => [i._key, i.status, i.reply || ''])]));
+        if (sig !== INQ.sig) { INQ.sig = sig; renderInquiryList(); }
+    }
+
+    // 기존 fetchAccounts가 받아 둔 자료(ACC_LAST)로 문의도 함께 정리 (따로 다시 받지 않음)
+    const originalFetchAccounts = fetchAccounts;
+    fetchAccounts = async function () {
+        await originalFetchAccounts();
+        try { if (ACC_LAST) inqCollect(ACC_LAST); } catch (e) {}
+    }
+
+    function inqSetFilter(f) { INQ.filter = f; renderInquiryList(); }
+    function inqSearch(v) { INQ.q = String(v || '').trim(); renderInquiryList(); }
+    function inqOpen(accId) { INQ.sel = accId; renderInquiryList(); setTimeout(() => { const t = document.getElementById('inqReply'); if (t && window.innerWidth >= 768) t.focus(); }, 50); }
+    function inqBack() { INQ.sel = null; renderInquiryList(); }
 
     function renderInquiryList() {
-        const container = document.getElementById('masterInquiryList');
-        if (allInquiries.length === 0) {
-            container.innerHTML = '<div class="text-center text-[#94A3B8] py-16 font-bold"><i data-lucide="check-circle" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>처리할 문의 내역이 없습니다.</div>';
-            return;
-        }
+        const listEl = document.getElementById('inqRoomList'); if (!listEl) return;
+        const waitRooms = INQ.rooms.filter(r => r.wait).length;
+        document.getElementById('inqTabWait').innerText = `답변 대기 ${waitRooms}곳`;
+        document.getElementById('inqTabAll').innerText = `전체 ${INQ.rooms.length}곳`;
+        const on = 'bg-[#84CC16] text-[#12261E]', off = 'bg-white/5 text-[#94A3B8]';
+        document.getElementById('inqTabWait').className = 'px-4 py-2 rounded-full text-[14px] font-black ' + (INQ.filter === 'wait' ? on : off);
+        document.getElementById('inqTabAll').className = 'px-4 py-2 rounded-full text-[14px] font-black ' + (INQ.filter === 'all' ? on : off);
+        let rooms = INQ.rooms;
+        if (INQ.filter === 'wait') rooms = rooms.filter(r => r.wait);
+        if (INQ.q) { const q = INQ.q.replace(/\s/g, '').toLowerCase(); rooms = rooms.filter(r => (r.name + r.ceo + r.region).replace(/\s/g, '').toLowerCase().includes(q)); }
+        listEl.innerHTML = rooms.length ? rooms.map(r => `
+            <button onclick="inqOpen(${jsArg(r.accId)})" class="w-full text-left flex items-center gap-3 px-4 py-3.5 border-t border-white/5 hover:bg-white/5 ${INQ.sel === r.accId ? 'bg-white/10' : ''}">
+                <div class="w-11 h-11 rounded-[14px] bg-[#1E3A2B] text-[#BEF264] flex items-center justify-center font-black text-[17px] shrink-0">${pmEsc(String(r.name).trim().charAt(0) || '?')}</div>
+                <div class="min-w-0 flex-1"><div class="text-white text-[15.5px] font-black truncate">${pmEsc(r.name)}</div><div class="text-[#94A3B8] text-[13.5px] font-bold truncate mt-0.5">${pmEsc(r.lastText)}</div></div>
+                <div class="text-right shrink-0"><div class="text-[#64748B] text-[12px] font-bold">${inqTime(r.lastAt)}</div>${r.wait ? `<span class="inline-block mt-1 bg-red-500 text-white rounded-full text-[12px] font-black px-2 py-0.5">${r.wait}</span>` : '<span class="inline-block mt-1 text-[#84CC16] text-[12px] font-black">답변 완료</span>'}</div>
+            </button>`).join('')
+            : `<div class="text-center text-[#94A3B8] py-16 font-bold">${INQ.filter === 'wait' && INQ.rooms.length ? '답변 기다리는 문의가 없습니다 👍' : (INQ.q ? '찾는 업체가 없습니다.' : '들어온 문의가 없습니다.')}</div>`;
 
-        let html = '';
-        allInquiries.forEach(inq => {
-            const isWaiting = inq.status === 'waiting';
-            const statusBadge = isWaiting 
-                ? `<span class="bg-yellow-500/20 text-yellow-500 border border-yellow-500/30 px-2 py-0.5 rounded text-[10px] font-black">답변 대기</span>` 
-                : `<span class="bg-[#84CC16]/20 text-[#84CC16] border border-[#84CC16]/30 px-2 py-0.5 rounded text-[10px] font-black">답변 완료</span>`;
-
-            html += `
-                <div class="bg-[#1E293B] border border-white/5 rounded-[16px] p-5 shadow-sm">
-                    <div class="flex justify-between items-center mb-3">
-                        <div class="flex items-center gap-2">
-                            ${statusBadge}
-                            <span class="text-white text-[14px] font-black">${pmEsc(inq.companyName)}</span>
-                            <span class="text-[#94A3B8] text-[11px] font-medium">${pmEsc(inq.date)}</span>
-                        </div>
-                    </div>
-                    <div class="text-[#F8FAFC] text-[14px] font-bold bg-black/20 p-4 rounded-[12px] break-keep whitespace-pre-wrap mb-3 border border-white/5">${pmEsc(inq.text)}</div>
-                    
-                    ${isWaiting ? `
-                        <div class="flex gap-2 mt-2">
-                            <textarea id="reply_${pmEsc(inq.accId)}_${inq.idx}" rows="1" placeholder="답변을 입력해 주세요." class="flex-1 bg-[#0F172A] border border-white/10 rounded-[12px] p-3 text-white text-[13px] font-bold focus:outline-none focus:border-[#84CC16] resize-none"></textarea>
-                            <button onclick="sendReply(${jsArg(inq.accId)},${inq.idx})" class="px-5 bg-[#84CC16] text-[#12261E] rounded-[12px] font-black text-[13px] hover:bg-[#9BE32D] transition-colors shrink-0 shadow-sm">답변 전송</button>
-                        </div>
-                    ` : `
-                        <div class="mt-2 text-[11px] font-black text-[#84CC16] mb-1 flex items-center gap-1"><i data-lucide="corner-down-right" class="w-3.5 h-3.5"></i> 운영본부 답변</div>
-                        <div class="text-[#94A3B8] text-[13px] font-bold bg-[#0F172A] p-4 rounded-[12px] break-keep whitespace-pre-wrap border border-white/5">${pmEsc(inq.reply)}</div>
-                    `}
-                </div>
-            `;
+        const room = INQ.rooms.find(r => r.accId === INQ.sel);
+        const lp = document.getElementById('inqListPane'), tp = document.getElementById('inqThreadPane');
+        lp.classList.toggle('hidden', !!room); lp.classList.add('md:block');
+        tp.classList.toggle('hidden', !room); tp.classList.toggle('flex', !!room);
+        document.getElementById('inqEmptyPane').classList.toggle('md:flex', !room);
+        if (!room) return;
+        const tel = String(room.phone || '').replace(/[^0-9]/g, '');
+        document.getElementById('inqThreadHead').innerHTML = `
+            <button onclick="inqBack()" class="md:hidden text-[#94A3B8] text-[26px] font-black px-1">‹</button>
+            <div class="w-10 h-10 rounded-[12px] bg-[#1E3A2B] text-[#BEF264] flex items-center justify-center font-black shrink-0">${pmEsc(String(room.name).trim().charAt(0) || '?')}</div>
+            <div class="min-w-0"><div class="text-white text-[16px] font-black truncate">${pmEsc(room.name)}</div>
+            <div class="text-[#94A3B8] text-[12.5px] font-bold truncate">${pmEsc([room.region, room.ceo ? room.ceo + ' 대표' : ''].filter(Boolean).join(' · '))}${tel ? ` · <a href="tel:${tel}" class="text-[#84CC16]">${pmEsc(room.phone)}</a>` : ''}</div></div>`;
+        let html = '', day = '';
+        room.items.forEach(i => {
+            const d = inqDay(i.id); if (d && d !== day) { day = d; html += `<div class="text-center my-2"><span class="text-[#64748B] text-[12px] font-black bg-white/5 rounded-full px-3 py-1">${d}</span></div>`; }
+            html += `<div class="flex flex-col items-start"><div class="max-w-[82%] bg-[#1E293B] text-[#F8FAFC] rounded-[16px] rounded-bl-[4px] px-3.5 py-2.5 text-[14.5px] font-bold whitespace-pre-wrap break-keep">${pmEsc(i.text)}</div><span class="text-[#64748B] text-[11.5px] font-bold mt-1">${pmEsc(i.date || '')}</span></div>`;
+            if (i.reply) html += `<div class="flex flex-col items-end"><div class="max-w-[82%] bg-[#84CC16] text-[#12261E] rounded-[16px] rounded-br-[4px] px-3.5 py-2.5 text-[14.5px] font-extrabold whitespace-pre-wrap break-keep">${pmEsc(i.reply)}</div><span class="text-[#64748B] text-[11.5px] font-bold mt-1">${i.replyAt ? inqTime(i.replyAt) + ' · ' : ''}운영본부</span></div>`;
         });
-        container.innerHTML = html;
-        if(typeof lucide !== 'undefined') lucide.createIcons();
+        if (room.wait) html += `<div class="text-[#FACC15] text-[12.5px] font-black">● 답변 기다리는 중 (${room.wait}개)</div>`;
+        const box = document.getElementById('inqMsgs'), atEnd = box.scrollHeight - box.scrollTop - box.clientHeight < 80, changed = box.getAttribute('data-acc') !== room.accId;
+        box.innerHTML = html; box.setAttribute('data-acc', room.accId);
+        if (changed || atEnd) box.scrollTop = box.scrollHeight;
+        document.getElementById('inqReply').placeholder = room.wait > 1 ? `답변을 입력하세요 (위 ${room.wait}개 질문에 한 번에 답)` : (room.wait ? '답변을 입력하세요' : '답변할 질문이 없습니다 (새 문의가 오면 여기서 답해요)');
+        document.getElementById('inqReply').disabled = !room.wait; document.getElementById('inqSendBtn').disabled = !room.wait;
+        document.getElementById('inqSendBtn').classList.toggle('opacity-40', !room.wait);
     }
 
-    async function sendReply(accId, index) {
-        const replyText = document.getElementById(`reply_${accId}_${index}`).value.trim();
+    async function inqSend() {
+        const room = INQ.rooms.find(r => r.accId === INQ.sel); if (!room || INQ.busy) return;
+        const ta = document.getElementById('inqReply'); const replyText = ta.value.trim();
         if (!replyText) return alert("답변 내용을 입력해주세요.");
-        if (!confirm("답변을 전송하시겠습니까?\n(전송 후에는 수정이 불가능하며, 해당 업체 앱에 즉시 알림이 뜹니다.)")) return;
-
+        if (!confirm(`${room.name}에 답변을 보낼까요?\n(보낸 뒤에는 고칠 수 없고, 업체 앱에 바로 알림이 갑니다.)`)) return;
+        INQ.busy = true; const btn = document.getElementById('inqSendBtn'); btn.disabled = true;
         try {
-            // 1. 해당 업체의 문의 내역 전체를 가져와서 답변을 업데이트합니다.
-            const res = await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(accId)}/inquiries.json`));
-            let userInquiries = await res.json();
-            userInquiries = normalizeData(userInquiries);
-            
-            userInquiries[index].reply = replyText;
-            userInquiries[index].status = 'answered';
-
-            // 2. 답변 업데이트
-            await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(accId)}/inquiries.json`), {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(userInquiries)
-            });
-
-            // 3. 해당 업체에게 "답변이 도착했습니다" 라고 타겟 팝업 공지까지 자동으로 쏴줍니다!
-            await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(accId)}/profile.json`), {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ targetNotice: `[고객센터 답변 도착]\n요청하신 1:1 문의에 대한 답변이 등록되었습니다.\n설정의 '1:1 문의하기' 메뉴에서 확인해 주세요.` })
-            });
-
-            alert("✅ 답변이 전송되었습니다.");
-            fetchAccounts(); // 화면 새로고침
+            const base = `${DB_BASE_URL}/${encodeURIComponent(room.accId)}`;
+            // 보내기 직전에 최신 문의를 다시 받아서, 그 사이 새로 온 질문까지 함께 답변 처리
+            const fresh = await (await fetch(getAuthUrl(`${base}/inquiries.json?t=${Date.now()}`))).json() || {};
+            const keys = Object.keys(fresh).filter(k => fresh[k] && fresh[k].status === 'waiting').sort((a, b) => (Number(fresh[a].id) || 0) - (Number(fresh[b].id) || 0));
+            if (!keys.length) { alert('이미 답변된 문의입니다.'); return; }
+            const now = Date.now(), upd = {};
+            keys.forEach((k, n) => { upd[`${k}/status`] = 'answered'; if (n === keys.length - 1) { upd[`${k}/reply`] = replyText; upd[`${k}/replyAt`] = now; } });
+            const w = await fetch(getAuthUrl(`${base}/inquiries.json`), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(upd) });
+            if (!w.ok) throw new Error('save');
+            await fetch(getAuthUrl(`${base}/profile.json`), { method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ targetNotice: `[고객센터 답변 도착]\n요청하신 1:1 문의에 대한 답변이 등록되었습니다.\n설정의 '1:1 문의하기' 메뉴에서 확인해 주세요.` }) });
+            ta.value = '';
+            keys.forEach((k, n) => { const it = room.items.find(i => i._key === k); if (it) { it.status = 'answered'; if (n === keys.length - 1) { it.reply = replyText; it.replyAt = now; } } });
+            room.wait = 0; room.lastAt = now; room.lastText = '답변: ' + replyText; INQ.sig = ''; renderInquiryList();
+            fetchAccounts();
         } catch (e) {
-            alert("전송 중 오류가 발생했습니다.");
-        }
+            alert("전송 중 오류가 발생했습니다. 잠시 후 다시 눌러 주세요.");
+        } finally { INQ.busy = false; btn.disabled = false; }
     }
-    
+    function sendReply() {} // 예전 이름 (쓰는 곳 없음)
+
     // 네비게이션 탭 스위칭 훅 추가 (inquiries 탭 지원)
     const originalSwitchTab = switchTab;
     switchTab = function(tabId) {
@@ -1938,7 +1982,7 @@
             if(tabId === 'approval' || tabId === 'inquiries' || tabId === 'points') navBtns[pcActiveIndex].className += " justify-between relative";
         }
         // 📱 [패치 #2] 모바일 하단 메뉴의 선택 표시(파란색)도 함께 이동
-        const mobBtns = document.querySelectorAll('.mob-nav-btn'); const mobMap = { dashboard: 0, approval: 1, companies: 2, settings: 3, points: 4 }; /* 💰 [패치 #71] */
+        const mobBtns = document.querySelectorAll('.mob-nav-btn'); const mobMap = { dashboard: 0, approval: 1, companies: 2, settings: 3, points: 4, inquiries: 5 }; /* 💰 [패치 #71] */
         mobBtns.forEach(btn => { btn.classList.remove('text-[#3B82F6]'); btn.classList.add('text-[#94A3B8]'); });
         if (mobMap[tabId] !== undefined && mobBtns[mobMap[tabId]]) { mobBtns[mobMap[tabId]].classList.remove('text-[#94A3B8]'); mobBtns[mobMap[tabId]].classList.add('text-[#3B82F6]'); }
         if (tabId === 'points') { ptmTab(PTM.tab); ptmLiveLoad(); ptmRejoinLoad(); } // 💰 [패치 #71·#72·#75]
