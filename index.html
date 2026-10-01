@@ -1874,7 +1874,7 @@
 
 제 3조 (포인트 이용 요금)
 ① 서비스는 월정액 없이 포인트 충전식으로 운영합니다. 1원은 1포인트(P)이며, 충전 금액은 부가가치세를 포함한 금액입니다. 충전은 3만 원부터 할 수 있으며, 회사 계좌로 입금하면 회사가 입금을 확인한 뒤 포인트를 넣어 드립니다.
-② 포인트는 작업일지 발행 500P, 견적서 발행 1,000P, AI 블로그 글 1,000P, 고객 의뢰 열기(의뢰 1건당 처음 한 번) 1,000P가 사용됩니다. 포인트를 사용해 연 고객 의뢰가 장난·허위 의뢰로 확인되면 사용한 포인트를 돌려 드리며, 신고는 연 날로부터 7일 안에 할 수 있습니다. 고객 이름이 같은 수정 발행과 같은 일지로 블로그 글을 다시 만드는 것은 무료입니다. 작업 일정표, 말로 쓰기, AI 비서, AI 렌즈는 무료이며, AI 비서와 AI 렌즈는 각각 하루 30회까지 쓸 수 있습니다. 요금이 바뀌면 시행 7일 전에 앱 공지로 알려 드립니다.
+② 포인트는 작업일지 발행 1,000P, 견적서 발행 1,000P, AI 블로그 글 1,000P, 고객 의뢰 열기(의뢰 1건당 처음 한 번) 1,000P가 사용됩니다. 포인트를 사용해 연 고객 의뢰가 장난·허위 의뢰로 확인되면 사용한 포인트를 돌려 드리며, 신고는 연 날로부터 7일 안에 할 수 있습니다. 고객 이름이 같은 수정 발행과 같은 일지로 블로그 글을 다시 만드는 것은 무료입니다. 작업 일정표, 말로 쓰기, AI 비서, AI 렌즈는 무료이며, AI 비서와 AI 렌즈는 각각 하루 30회까지 쓸 수 있습니다. 요금이 바뀌면 시행 7일 전에 앱 공지로 알려 드립니다.
 ③ 충전 포인트는 충전일로부터 1년 동안 쓸 수 있습니다. 가입 축하 포인트(5,000P, 사업자등록번호당 1번)는 지급일로부터 1개월, 관리자 지급 포인트는 지급할 때 정한 기간 동안 쓸 수 있으며, 기간이 지나면 사라집니다.
 ④ 포인트는 무료 포인트(가입 축하·관리자 지급·활동 포인트 전환분)부터 먼저 쓰이고, 그다음 충전 포인트가 오래된 것부터 쓰입니다.
 ⑤ 충전 금액에 대해서는 신청한 회원에게 전자세금계산서를 발행합니다.
@@ -5015,7 +5015,7 @@
       ] },
       { t: '리포트 발행\n· 포인트', qs: [
         { q: '발행하면 포인트가 얼마나 빠져요?', s: [
-          ['요금', '작업일지 500P · 견적서 1,000P · AI 블로그 글 1,000P · 고객 의뢰 열기 1,000P(1건당 1번)'],
+          ['요금', '작업일지 1,000P · 견적서 1,000P · AI 블로그 글 1,000P · 고객 의뢰 열기 1,000P(1건당 1번)'],
           ['무료', '작업 일정표, 말로 쓰기, AI 비서·AI 렌즈(하루 30번까지)는 무료예요.'],
           ['고쳐서 다시 발행', '고객 이름이 같으면 무료, 고객 이름이 바뀌면 새로 발행한 것으로 보고 요금이 빠져요.'],
           ['미리 확인', '발행 전에 확인 창에서 쓸 포인트와 남는 포인트를 먼저 보여 드려요.']] },
@@ -9180,7 +9180,7 @@ ${AI_COMMON_RULES}
         <div class="pv-card">
           <div class="pv-t" style="margin-bottom:8px;">얼마나 쓰이나요</div>
           <div class="pv-row pv-sub" style="padding:3px 0;"><span>작업 일정표</span><b style="color:#0F172A;">무료</b></div>
-          <div class="pv-row pv-sub" style="padding:3px 0;"><span>작업일지 발행</span><b style="color:#0F172A;">500P</b></div>
+          <div class="pv-row pv-sub" style="padding:3px 0;"><span>작업일지 발행</span><b style="color:#0F172A;">1,000P</b></div>
           <div class="pv-row pv-sub" style="padding:3px 0;"><span>견적서 발행</span><b style="color:#0F172A;">1,000P</b></div>
           <div class="pv-row pv-sub" style="padding:3px 0;"><span>고객 이름이 같은 수정 발행</span><b style="color:#0F172A;">무료</b></div>
           <div class="pv-row pv-sub" style="padding:3px 0;"><span>고객 의뢰 열기 (1건당 1번)</span><b style="color:#0F172A;">1,000P</b></div><!-- 🔒 [패치 #83] --><!-- 💰 [패치 #82] 요금표를 서버·약관과 맞춤 (예전: '견적서 발행 · 수정 발행 1,000P', '고객 응대 (1번만) 1,000P' → 서버는 받지 않는 요금이었음) -->
@@ -9369,7 +9369,7 @@ ${AI_COMMON_RULES}
   <script>
     // 💰 [패치 #72] 발행 요금 (서버가 최종 확인 · 이 화면은 미리 보여 주기만)
     PT.live = false; PT.liveAt = 0; PT.expect = undefined; PT.sheetDone = null; PT.goCharge = false;
-    const PT_PRICE = { report: 500, quote: 1000 };
+    const PT_PRICE = { report: 1000, quote: 1000 }; // 💰 [패치 #98] 일지 500 → 1,000
     async function ptLiveGet() {
       if (Date.now() - PT.liveAt < 5 * 60 * 1000) return PT.live;
       try { const r = await fetch(getAuthUrl(`${SETTINGS_URL}/pointsLive.json?t=${Date.now()}`)); if (r.ok) { PT.live = (await r.json()) === true; PT.liveAt = Date.now(); } } catch (e) {}

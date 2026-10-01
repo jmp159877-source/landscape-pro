@@ -2165,8 +2165,8 @@
         if (PTM.live === null) { b.textContent = '다시 불러오기'; b.style.background = '#475569'; b.style.color = '#fff'; t.textContent = '상태를 불러오지 못했어요.'; return; }
         b.textContent = PTM.live ? '켜짐 · 끄기' : '꺼짐 · 켜기';
         b.style.background = PTM.live ? '#84CC16' : '#475569'; b.style.color = PTM.live ? '#12261E' : '#fff';
-        t.innerHTML = PTM.live ? '지금: <b style="color:#BEF264">켜짐</b> · 발행할 때 포인트가 빠져요. (일지 500P · 견적 1,000P · 고객 이름이 같은 수정 발행은 무료)'
-            : '지금: <b style="color:#FDE047">꺼짐</b> · 모든 발행이 무료예요. 켜면 그 순간부터 일지 500P · 견적 1,000P가 빠져요. 켜기 전에 앱 공지로 먼저 알려 주세요.';
+        t.innerHTML = PTM.live ? '지금: <b style="color:#BEF264">켜짐</b> · 발행할 때 포인트가 빠져요. (일지 1,000P · 견적 1,000P · 고객 이름이 같은 수정 발행은 무료)'
+            : '지금: <b style="color:#FDE047">꺼짐</b> · 모든 발행이 무료예요. 켜면 그 순간부터 일지 1,000P · 견적 1,000P가 빠져요. 켜기 전에 앱 공지로 먼저 알려 주세요.';
     }
     async function ptmLiveLoad() {
         try { const r = await fetch(getAuthUrl(`${SETTINGS_URL}/pointsLive.json?t=${Date.now()}`)); PTM.live = r.ok ? (await r.json()) === true : null; } catch (e) { PTM.live = null; }
