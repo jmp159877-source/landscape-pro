@@ -5169,7 +5169,7 @@
       const many = x.s.length > 1;
       const body = x.s.map((s, k) => `<div><b class="text-white">${many ? (k + 1) + '. ' : ''}${helpEsc(s[0])}</b><br>${helpEsc(s[1])}</div>`).join('');
       helpAdd(`${many ? '<div class="text-[#BEF264] font-black text-[17.5px]">이 순서로 확인해 보세요</div>' : ''}<div class="flex flex-col gap-2.5 ${many ? 'mt-2' : ''}">${body}</div>`);
-      const vk = (typeof helpVideoKey === 'function') ? helpVideoKey(HELP_FAQ[i].t) : ''; // 🎬 [패치 #101] 관련 영상
+      const vk = (typeof helpVideoKey === 'function') ? helpVideoKey(HELP_FAQ[i].t, x.q) : ''; // 🎬 [패치 #101] 관련 영상 · [패치 #102] 질문별로도 찾음
       if (vk) helpAdd(`<button type="button" onclick="openGuideVideo('${vk}')" class="w-full h-[54px] rounded-[14px] bg-white text-[#151E2D] text-[16.5px] font-black flex items-center justify-center gap-2"><span class="w-7 h-7 rounded-full bg-[#FF0000] flex items-center justify-center"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></span> 영상으로 보기 (1분)</button>`, 'raw');
       helpDoneBtns();
     }
@@ -9819,20 +9819,22 @@ ${AI_COMMON_RULES}
       f4: { id: 'wes2avNM1dY', title: '사용법 04 · 말로 일지 · 고객 리포트' },
       f5: { id: 'M8OD_YW6wR0', title: '사용법 05 · 고객님이 받는 리포트' },
       f6: { id: 'LjOeUUCiHJ0', title: '사용법 06 · 블로그 글 자동 작성' },
-      f7: { id: '', title: '사용법 07 · AI 메모장과 말로 견적' },
-      f8: { id: '', title: '사용법 08 · 고객 의뢰함' },
-      f9: { id: '', title: '사용법 09 · 대표님 소통방' },
-      f10: { id: '', title: '사용법 10 · 장부와 재고함' },
-      f11: { id: '', title: '사용법 11 · AI 렌즈 · 현장 비서' },
-      f12: { id: '', title: '사용법 12 · 도움말과 문의' },
-      f13: { id: '', title: '사용법 13 · PC · 휴대폰 분실' },
-      f14: { id: '', title: '사용법 14 · 거래처 미리 등록' }
+      f7: { id: 'dkxKcH4Kiy0', title: '사용법 07 · AI 메모장과 말로 견적' },
+      f8: { id: 'ZoJBFgKihsk', title: '사용법 08 · 고객 의뢰함' },
+      f9: { id: 'hAt5y3biHFo', title: '사용법 09 · 대표님 소통방' },
+      f10: { id: '0LtfkqtrppU', title: '사용법 10 · 장부와 재고함' },
+      f11: { id: 'ql8nZNDyLtY', title: '사용법 11 · AI 렌즈 · 현장 비서' },
+      f12: { id: 'wTW-dTetNRA', title: '사용법 12 · 도움말과 문의' },
+      f13: { id: 'Imurf_EMCbU', title: '사용법 13 · PC · 휴대폰 분실' },
+      f14: { id: '1q_OCowbR08', title: '사용법 14 · 거래처 미리 등록' } // 🎬 [패치 #102] 03-7~03-14 아이디 넣음
     };
     // 도움말 챗봇: 주제별로 답 아래에 [영상으로 보기] (주제 이름 첫 글자로 찾음)
     const HELP_VIDEO = [['말로', 'f4'], ['블로그', 'f6'], ['리포트', 'f4'], ['앱 설치', 'f1'], ['고객 의뢰', 'f8'], ['일정', 'f3']];
-    function helpVideoKey(catTitle) { const t = String(catTitle || '').replace(/\n/g, ' '); const m = HELP_VIDEO.find(([w]) => t.startsWith(w)); const k = m && m[1]; return (k && GUIDE_VIDEOS[k] && GUIDE_VIDEOS[k].id) ? k : ''; }
+    // 🎬 [패치 #102] 질문별 영상 (질문 첫 글자로 찾음 · 없으면 주제별 영상)
+    const HELP_VIDEO_Q = [['등록한 일정', 'f3'], ['일정 금액이 장부', 'f10'], ['내 자료를 따로', 'f13'], ['AI 비서·렌즈', 'f11'], ['앱이 잠겨서', 'f13'], ['매번 로그인', 'f13'], ['비밀번호를 바꾸', ''], ['장부 비밀번호', '']]; // '' = 맞는 영상이 없어서 버튼 안 보임
+    function helpVideoKey(catTitle, q) { const ok = k => (k && GUIDE_VIDEOS[k] && GUIDE_VIDEOS[k].id) ? k : ''; const qm = HELP_VIDEO_Q.find(([w]) => String(q || '').startsWith(w)); if (qm) return ok(qm[1]); const t = String(catTitle || '').replace(/\n/g, ' '); const m = HELP_VIDEO.find(([w]) => t.startsWith(w)); return ok(m && m[1]); }
     function gvPlay(id, start) {
-      document.getElementById('gvBox').innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?autoplay=1&playsinline=1&rel=0&modestbranding=1${start ? '&start=' + Number(start) : ''}" title="사용 안내 영상" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen style="width:100%;height:100%;border:0;"></iframe>`;
+      document.getElementById('gvBox').innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?autoplay=1&playsinline=1&rel=0&modestbranding=1&cc_load_policy=0${start ? '&start=' + Number(start) : ''}" title="사용 안내 영상" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen style="width:100%;height:100%;border:0;"></iframe>`;
     }
     function openGuideVideo(key, start) {
       const v = GUIDE_VIDEOS[key]; if (!v || !v.id) return;
@@ -9842,9 +9844,20 @@ ${AI_COMMON_RULES}
       document.getElementById('gvChapters').innerHTML = chs.map(([n, t]) => `<button type="button" onclick="gvPlay(${JSON.stringify(v.id).replace(/"/g, '&quot;')}, ${t}); document.getElementById('gvYtLink').href='https://youtu.be/${encodeURIComponent(v.id)}?t=${t}'" class="shrink-0 px-3.5 py-2 rounded-full bg-white/10 border border-white/15 text-white text-[15px] font-black whitespace-nowrap">${escHtml(n)}</button>`).join('');
       document.getElementById('gvChapters').classList.toggle('hidden', !chs.length);
       gvPlay(v.id, start);
-      document.getElementById('guideVideoModal').classList.remove('hidden');
+      const gvm = document.getElementById('guideVideoModal'), wasOpen = !gvm.classList.contains('hidden');
+      gvm.classList.remove('hidden');
+      // ↩️ [패치 #102] 휴대폰 뒤로가기 = 영상 창만 닫힘. 뒤로가기 칸은 대표님이 누를 때만 1칸 (#80 교훈) · 설정 창에서 열면 설정 창 칸을 그대로 씀
+      if (!wasOpen) { const sm = document.getElementById('settingsModal'); if (history.state && history.state.modalOpen && sm && sm.classList.contains('hidden')) history.replaceState({ gvOpen: 1 }, '', ''); else history.pushState({ gvOpen: 1 }, '', ''); }
     }
-    function closeGuideVideo() { document.getElementById('gvBox').innerHTML = ''; document.getElementById('guideVideoModal').classList.add('hidden'); }
+    function closeGuideVideo(fromPop) {
+      const gvm = document.getElementById('guideVideoModal'); if (gvm.classList.contains('hidden')) return;
+      document.getElementById('gvBox').innerHTML = ''; gvm.classList.add('hidden');
+      if (!fromPop && history.state && history.state.gvOpen) { VX.ignorePop = true; history.back(); } // [패치 #102]
+    }
+    window.addEventListener('popstate', (e) => { // ↩️ [패치 #102]
+      const gvm = document.getElementById('guideVideoModal'); if (!gvm || gvm.classList.contains('hidden')) return;
+      closeGuideVideo(true); e.stopImmediatePropagation();
+    }, true);
   </script>
 </body>
 </html>
