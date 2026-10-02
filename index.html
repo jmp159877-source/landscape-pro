@@ -254,8 +254,9 @@
           <input type="password" id="loginPw" placeholder="비밀번호 입력" autocomplete="off" class="w-full bg-black/40 border border-white/10 rounded-[16px] px-5 py-4 text-white text-[16px] font-bold focus:outline-none focus:border-[#84CC16] transition-colors placeholder:text-gray-500 placeholder:font-medium" onkeypress="if(event.key === 'Enter') doLogin()">
         </div>
       </div>
-      <div class="w-full flex items-center mb-8 px-2">
-        <label class="flex items-center gap-2.5 cursor-pointer text-[#CBD5E1] text-[15px] font-bold hover:text-white transition-colors"><input type="checkbox" id="autoLoginCheck" class="w-5 h-5 rounded border-white/20 bg-transparent text-[#84CC16] focus:ring-[#84CC16]" checked>아이디 저장 <span class="text-[#94A3B8] font-bold">(비밀번호는 매번 입력)</span></label><!-- 🔐 [패치 #73] 자동 로그인 없앰 · 아이디만 저장 -->
+      <div class="w-full flex flex-col gap-3 mb-8 px-2"><!-- 🔐 [패치 #104] 아이디 저장 + 자동 로그인(선택) 두 칸 -->
+        <label class="flex items-center gap-2.5 cursor-pointer text-[#E2E8F0] text-[16px] font-bold hover:text-white transition-colors"><input type="checkbox" id="autoLoginCheck" onchange="if(!this.checked) document.getElementById('keepLoginCheck').checked=false" class="w-6 h-6 rounded border-white/20 bg-transparent text-[#84CC16] focus:ring-[#84CC16] shrink-0" checked>아이디 저장</label><!-- 🔐 [패치 #73] 아이디 저장 -->
+        <label class="flex items-start gap-2.5 cursor-pointer text-[#E2E8F0] text-[16px] font-bold hover:text-white transition-colors"><input type="checkbox" id="keepLoginCheck" onchange="if(this.checked) document.getElementById('autoLoginCheck').checked=true" class="w-6 h-6 mt-0.5 rounded border-white/20 bg-transparent text-[#84CC16] focus:ring-[#84CC16] shrink-0"><span class="break-keep">아이디·비밀번호 저장 <span class="text-[#BEF264] whitespace-nowrap">(자동 로그인)</span><span class="block text-[14px] font-bold text-[#94A3B8] mt-0.5">혼자 쓰는 휴대폰에서만 켜 주세요</span></span></label>
       </div>
       <!-- 💡 시인성 업그레이드: 버튼 크기 확대 및 텍스트 20px로 확대 -->
       <button onclick="doLogin()" class="w-full py-5 bg-[#84CC16] text-[#151E2D] rounded-[18px] font-black text-[20px] hover:bg-[#9BE32D] shadow-[0_6px_20px_rgba(132,204,22,0.35)] transition-all mb-5">로그인</button>
@@ -518,8 +519,7 @@
             <!-- 📋 [패치 #51] 고객 의뢰함: 고객이 보낸 견적·상담 신청 (새 의뢰 수 빨간 숫자) -->
             <button type="button" id="tabClientRequest" onclick="openReqView()" class="w-full mt-3 text-left rounded-[22px] px-4 py-3.5 flex items-center gap-3.5 active:scale-[0.98] transition-all" style="background:#84CC16 !important; border: 2px solid #84CC16 !important; box-shadow: 0 8px 20px rgba(132,204,22,0.3) !important;">
                 <span class="w-[50px] h-[50px] rounded-[16px] bg-[#151E2D] flex items-center justify-center shrink-0"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#BEF264" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"></path><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path></svg></span>
-                <span class="flex flex-col gap-0.5 flex-1 min-w-0"><span class="text-[21px] font-black tracking-tight leading-tight" style="color:#1A2E05 !important;">고객 의뢰함</span><span class="text-[15px] font-bold leading-snug break-keep" style="color:#1A2E05 !important;">고객이 보낸 견적·상담 신청</span></span>
-                <span id="reqBadge" class="hidden shrink-0 bg-[#DC2626] text-white text-[16px] font-black rounded-full px-3 py-1">새 0</span>
+                <span class="flex flex-col gap-0.5 flex-1 min-w-0"><span class="text-[21px] font-black tracking-tight leading-tight" style="color:#1A2E05 !important;">고객 의뢰함</span><span class="text-[15px] font-bold leading-snug break-keep" style="color:#1A2E05 !important;">고객이 보낸 견적·상담 신청</span><span id="reqBadge" class="hidden self-start mt-1 bg-[#DC2626] text-white text-[15.5px] font-black rounded-full px-3 py-0.5 whitespace-nowrap">새로운 의뢰 0건</span></span><!-- 📋 [패치 #103] 빨간 표시를 글 아래로 · '새 N' → '새로운 의뢰 N건' -->
             </button>
             <!-- 🏷️ [패치 #48] 대표님 소통방: 넓은 금색 버튼 (누르면 가는 곳은 예전과 같음) -->
             <button type="button" id="tabLounge" onclick="switchView('lounge')" class="w-full mt-3 text-left rounded-[22px] px-4 py-3.5 flex items-center gap-3.5 active:scale-[0.98] transition-all" style="background:#E3B341 !important; border: 2px solid #E3B341 !important; box-shadow: 0 8px 20px rgba(227,179,65,0.3) !important;">
@@ -2113,6 +2113,7 @@
                 localStorage.removeItem('shinhwa_pro_logged_in_pw'); 
                 // 🔐 [패치 #73] 자동 로그인 열쇠는 저장하지 않음 (휴대폰 분실 대비) · [아이디 저장]을 켜면 아이디만 기억
                 localStorage.removeItem('shinhwa_pro_auto_login'); localStorage.removeItem('shinhwa_pro_session');
+                if (document.getElementById('keepLoginCheck') && document.getElementById('keepLoginCheck').checked && authData.refreshToken) { localStorage.setItem('shinhwa_pro_auto_login', 'true'); localStorage.setItem('shinhwa_pro_session', authData.refreshToken); document.getElementById('autoLoginCheck').checked = true; } // 🔐 [패치 #104] 자동 로그인을 고른 경우만: 비밀번호 글자가 아니라 로그인 열쇠만 저장 (로그아웃하면 지움)
                 if (document.getElementById('autoLoginCheck').checked) { localStorage.setItem('shinhwa_pro_logged_in_id', id); localStorage.setItem('shinhwa_pro_save_id', '1'); }
                 else { localStorage.removeItem('shinhwa_pro_logged_in_id'); localStorage.removeItem('shinhwa_pro_save_id'); }
                 
@@ -4088,9 +4089,11 @@
       } else {
         // 🔐 [패치 #73] 자동 로그인 없앰: 앱을 열 때마다 비밀번호 입력 (저장한 아이디만 미리 채움) · 예전에 저장된 로그인 열쇠·비밀번호는 지움
         const savedId = localStorage.getItem('shinhwa_pro_logged_in_id'); 
-        ['shinhwa_pro_session', 'shinhwa_pro_auto_login', 'shinhwa_pro_logged_in_pw'].forEach(k => { try { localStorage.removeItem(k); } catch (e) {} });
+        const keepSession = localStorage.getItem('shinhwa_pro_auto_login') === 'true' ? localStorage.getItem('shinhwa_pro_session') : ''; // 🔐 [패치 #104] 자동 로그인을 고른 경우만 남김
+        (keepSession && savedId ? ['shinhwa_pro_logged_in_pw'] : ['shinhwa_pro_session', 'shinhwa_pro_auto_login', 'shinhwa_pro_logged_in_pw']).forEach(k => { try { localStorage.removeItem(k); } catch (e) {} });
         if (savedId) { document.getElementById('loginId').value = savedId; localStorage.setItem('shinhwa_pro_save_id', '1'); }
-        {
+        if (keepSession && savedId && !new URLSearchParams(location.search).get('signup')) { document.getElementById('keepLoginCheck').checked = true; autoLoginWithSession(savedId, keepSession); } // 🔐 [패치 #104] 열쇠가 만료되면 로그인 화면으로
+        else {
           document.getElementById('authView').classList.remove('hidden'); if (new URLSearchParams(location.search).get('signup')) showSignUp(); } // 🌱 [패치 #29] 소개 페이지 '무료로 시작하기' → 업체 등록 화면
         lucide.createIcons();
       }
@@ -5075,14 +5078,15 @@
           ['크롬에서', '오른쪽 위 [⋮] 메뉴 → [홈 화면에 추가] 또는 [앱 설치]'],
           ['아이폰', '사파리 아래 [공유] 버튼 → [홈 화면에 추가]']] },
         { q: '앱이 잠겨서 비밀번호를 물어봐요', s: [
-          ['30분 잠금', '앱을 켜 둔 채 30분 넘게 쓰지 않으면 안전을 위해 잠가요. 비밀번호를 넣으면 쓰던 내용 그대로 이어서 쓸 수 있어요.']] },
+          ['30분 잠금', '앱을 켜 둔 채 30분 넘게 쓰지 않으면 안전을 위해 잠가요. 비밀번호를 넣으면 쓰던 내용 그대로 이어서 쓸 수 있어요.'], ['잠금이 번거로우면', '로그인 화면에서 [아이디·비밀번호 저장 (자동 로그인)]을 켜면 잠그지 않아요. 혼자 쓰는 휴대폰에서만 켜 주세요.']] }, // 🔐 [패치 #104]
         { q: '비밀번호를 바꾸거나 잊었어요', s: [
           ['바꾸기', '[설정] → 새로운 비밀번호 설정 (숫자 6자리 이상)'],
           ['잊었을 때', '관리자에게 문의하시면 임시 비밀번호를 만들어 드려요. 로그인이 안 되면 조경노트 전화 1668-3936으로 연락해 주세요.']] },
         { q: '장부 비밀번호(4자리)를 잊었어요', s: [
           ['초기화 요청', '장부 비밀번호 창의 [비밀번호를 잊으셨나요?]를 누르고 관리자에게 초기화를 요청해 주세요.']] },
-        { q: '매번 로그인하기 번거로워요', s: [
-          ['아이디 저장', '로그인 화면에서 [아이디 저장]을 켜 두면 아이디는 기억해요. 비밀번호는 휴대폰을 잃어버렸을 때를 대비해 매번 넣도록 했어요.']] }
+        { q: '매번 로그인하기 번거로워요', s: [ // 🔐 [패치 #104] 자동 로그인 선택
+          ['자동 로그인 켜기', '로그인 화면에서 [아이디·비밀번호 저장 (자동 로그인)]에 체크하고 로그인하면, 다음부터 앱을 열 때 바로 들어가요.'],
+          ['꼭 알아 두세요', '휴대폰을 잃어버리면 다른 사람도 앱을 열 수 있어요. 혼자 쓰는 휴대폰에서만 켜 주세요. 끄려면 [로그아웃]을 누르면 돼요.']] }
       ] },
       { t: '고객 의뢰\n받기', qs: [
         { q: '내 의뢰 받는 주소는 어디 있어요?', s: [
@@ -8430,8 +8434,8 @@ ${AI_COMMON_RULES}
       RV.loaded = true; reqPaintBadge();
     }
     function reqPaintBadge() {
-      const n = RV.list.filter(r => r.status === 'new').length; const b = document.getElementById('reqBadge');
-      if (b) { b.innerText = '새 ' + n; b.classList.toggle('hidden', !n); }
+      const n = RV.list.filter(r => r.status === 'new' && !r.seenAt).length; const b = document.getElementById('reqBadge'); // 📋 [패치 #103] 열어 본 의뢰는 세지 않음 (예전: '새 의뢰' 칸에 있으면 열어 봐도 계속 셈)
+      if (b) { b.innerText = '새로운 의뢰 ' + n + '건'; b.classList.toggle('hidden', !n); }
     }
     async function refreshReqBadge() { try { if (currentUserId) await loadReqs(); } catch (e) {} }
     function reqWhen(ts) {
@@ -8480,7 +8484,7 @@ ${AI_COMMON_RULES}
     function reqOpenDetail(id) {
       const r = RV.list.find(x => x.id === id); if (!r) return;
       RV.cur = r;
-      if (!r.seenAt) { r.seenAt = Date.now(); fetch(reqUrl(r.id), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ seenAt: r.seenAt }) }).catch(() => {}); }
+      if (!r.seenAt) { r.seenAt = Date.now(); fetch(reqUrl(r.id), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ seenAt: r.seenAt }) }).catch(() => {}); reqPaintBadge(); /* 📋 [패치 #103] 열면 바로 숫자 줄임 */ }
       reqRenderDetail();
       document.getElementById('reqListPane').classList.add('hidden');
       document.getElementById('reqDetailPane').classList.remove('hidden');
@@ -9559,6 +9563,7 @@ ${AI_COMMON_RULES}
     function appLockActive() { const a = document.getElementById('authView'); return !!currentUserId && a && a.classList.contains('hidden'); }
     function appLockShow() {
       if (!appLockActive()) return;
+      if (localStorage.getItem('shinhwa_pro_auto_login') === 'true') return; // 🔐 [패치 #104] 자동 로그인을 켠 기기는 잠그지 않음
       try { if (document.activeElement) document.activeElement.blur(); } catch (e) {}
       document.getElementById('appLockWho').textContent = ((myCompanyProfile && myCompanyProfile.name) ? myCompanyProfile.name + ' · ' : '') + currentUserId;
       document.getElementById('appLockPw').value = '';
@@ -9831,7 +9836,7 @@ ${AI_COMMON_RULES}
     // 도움말 챗봇: 주제별로 답 아래에 [영상으로 보기] (주제 이름 첫 글자로 찾음)
     const HELP_VIDEO = [['말로', 'f4'], ['블로그', 'f6'], ['리포트', 'f4'], ['앱 설치', 'f1'], ['고객 의뢰', 'f8'], ['일정', 'f3']];
     // 🎬 [패치 #102] 질문별 영상 (질문 첫 글자로 찾음 · 없으면 주제별 영상)
-    const HELP_VIDEO_Q = [['등록한 일정', 'f3'], ['일정 금액이 장부', 'f10'], ['내 자료를 따로', 'f13'], ['AI 비서·렌즈', 'f11'], ['앱이 잠겨서', 'f13'], ['매번 로그인', 'f13'], ['비밀번호를 바꾸', ''], ['장부 비밀번호', '']]; // '' = 맞는 영상이 없어서 버튼 안 보임
+    const HELP_VIDEO_Q = [['등록한 일정', 'f3'], ['일정 금액이 장부', 'f10'], ['내 자료를 따로', 'f13'], ['AI 비서·렌즈', 'f11'], ['앱이 잠겨서', 'f13'], ['매번 로그인', ''], ['비밀번호를 바꾸', ''], ['장부 비밀번호', '']]; // '' = 맞는 영상이 없어서 버튼 안 보임
     function helpVideoKey(catTitle, q) { const ok = k => (k && GUIDE_VIDEOS[k] && GUIDE_VIDEOS[k].id) ? k : ''; const qm = HELP_VIDEO_Q.find(([w]) => String(q || '').startsWith(w)); if (qm) return ok(qm[1]); const t = String(catTitle || '').replace(/\n/g, ' '); const m = HELP_VIDEO.find(([w]) => t.startsWith(w)); return ok(m && m[1]); }
     function gvPlay(id, start) {
       document.getElementById('gvBox').innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?autoplay=1&playsinline=1&rel=0&modestbranding=1&cc_load_policy=0${start ? '&start=' + Number(start) : ''}" title="사용 안내 영상" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen style="width:100%;height:100%;border:0;"></iframe>`;
