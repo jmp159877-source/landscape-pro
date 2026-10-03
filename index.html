@@ -3758,7 +3758,7 @@
     const GUIDE_PAGES = [
       { icon: 'pen-tool', title: '작업일지 쓰고\n리포트 보내기', body: '현장 사진과 작업 내용을 적고 <b>[리포트 발행]</b>을 누르세요.<br>고객님께 <b>문자·카카오톡 링크</b>로 사진 리포트가 전달됩니다.' },
       { icon: 'calendar-days', title: '일정은\n자동으로 정리', body: '작업일지의 <b>작업 날짜</b>대로 일정표에 자동 등록됩니다.<br>화면 맨 아래 <b>홈 · 일정 · 일지 · 견적</b> 버튼으로 바로 이동하세요.' },
-      { icon: 'messages-square', title: '대표님 소통방', body: '전국 조경 대표님들과 <b>인력·장비·일감</b>을 나누세요.<br>글을 쓰면 <b>+100P</b>, 매일 출석하면 <b>+50P</b>가 쌓입니다.' }
+      { icon: 'messages-square', title: '대표님 소통방', body: '전국 조경 대표님들과 <b>인력·장비·일감</b>을 나누는 공간을<br><b>준비하고 있어요.</b> 문을 열면 앱 공지로 알려 드릴게요.' } // 🚧 [패치 #105] 소통방 준비 중
     ];
     let guideIdx = 0, guideOnClose = null;
     function guideKey() { return 'shinhwa_pro_guide_done_' + (currentUserId || 'guest'); }
@@ -3872,6 +3872,31 @@
     const FCM_VAPID_KEY = "BJrrESIaNMTvCe98leRovFlWDT09OOGMSTW6Y7vZ7uwVNLzpb9X9aCGDstxiMr455nnIgG3Qm1sS7xjMfsWY7MU";          // 예: "BKxxxx...(웹 푸시 인증서 키 쌍)"
     const PUSH_BOARDS = [['현장협력', '작업 지원·협력'], ['일감양도', '작업 양도·양수'], ['장비자재', '장비·자재 직거래'], ['견적단가', '견적·단가 자문'], ['자유소통', '자유 소통'], ['정보교환', '정보 교환·업체 공유'], ['노하우', '실무 노하우'], ['불량거래처', '불량 거래처 경보']];
     const PUSH_DEFAULT_PREFS = { chat: true, comment: true, request: true /* 📋 [패치 #51] */, notice: true, boards: { '현장협력': true, '일감양도': true, '장비자재': true, '견적단가': false, '자유소통': false, '정보교환': false, '노하우': false, '불량거래처': true } };
+    // 🚧 [패치 #105] 대표님 소통방 준비 중 스위치 (다시 열 때: false → true 한 곳만 바꾸면 됨 · 글·포인트·서버는 그대로 보관)
+    const LOUNGE_OPEN = false;
+    function loungeSoon() { alert('대표님 소통방은 지금 준비 중입니다.\n문을 열면 앱 공지로 알려 드릴게요.'); }
+    function loungeApplySoon() {
+      if (LOUNGE_OPEN) return;
+      const badge = () => { const b = document.createElement('span'); b.className = 'lounge-soon-badge'; b.textContent = '준비 중'; b.style.cssText = 'display:inline-flex;align-items:center;white-space:nowrap;background:#E3B341;color:#151E2D;font-size:13.5px;font-weight:900;line-height:1;border-radius:999px;padding:5px 10px;'; return b; };
+      const tab = document.getElementById('tabLounge'); // 메인 버튼: 제목 옆에 (준비 중입니다) · 누르면 안으로 들어감
+      if (tab && !tab.dataset.soon) {
+        tab.dataset.soon = '1';
+        const t = tab.querySelector('span.flex.flex-col > span'); if (t) { const x = document.createElement('span'); x.textContent = ' (준비 중입니다)'; x.style.cssText = 'font-size:15.5px;font-weight:900;color:#7A1F1F;white-space:nowrap;'; t.appendChild(x); }
+      }
+      const lv = document.getElementById('loungeView'); if (!lv || lv.dataset.soon) return; lv.dataset.soon = '1';
+      const att = document.getElementById('btnLoungeAttend'); const pc = att && att.closest('div.rounded-\\[24px\\]'); if (pc) pc.classList.add('hidden'); // 출석·활동 포인트 카드 숨김
+      const h2 = lv.querySelector('h2');
+      if (h2) { const n = document.createElement('div'); n.id = 'loungeSoonNote'; n.style.cssText = 'background:#1E293B;border:2px solid #E3B341;border-radius:22px;padding:18px;color:#fff;';
+        n.innerHTML = '<div style="display:flex;align-items:center;gap:8px;font-size:20px;font-weight:900;"><span style="color:#E3B341;">●</span> 지금 준비 중입니다</div><div style="font-size:16px;font-weight:700;color:#E2E8F0;line-height:1.6;margin-top:8px;word-break:keep-all;">전국 조경 대표님들이 인력·장비·일감·노하우를 나누는 공간을 준비하고 있어요. 아래 게시판들로 문을 열 예정이며, 열리면 앱 공지로 알려 드릴게요.</div>';
+        h2.insertAdjacentElement('afterend', n); }
+      lv.querySelectorAll('button[onclick^="openBoard("]').forEach(b => { // 게시판 버튼: 이름은 보이고 누를 수 없음
+        b.disabled = true; b.removeAttribute('onclick'); b.classList.remove('active:scale-95', 'active:scale-[0.98]'); b.style.cursor = 'default';
+        const ic = b.querySelector('i[data-lucide="chevron-right"], svg.lucide-chevron-right'); if (ic) ic.remove();
+        if (b.classList.contains('lounge-cat')) { b.style.position = 'relative'; const bd = badge(); bd.style.position = 'absolute'; bd.style.top = '12px'; bd.style.right = '12px'; b.appendChild(bd); }
+        else b.appendChild(badge());
+      });
+    }
+    document.addEventListener('DOMContentLoaded', loungeApplySoon);
     const BOARD_HIDDEN = ['자유소통']; // 🗂 [패치 #69] 화면에서 숨긴 게시판 (코드·글은 보관 · 다시 쓰려면 이 줄에서 빼고, data-board-hidden 표시가 붙은 버튼 2개의 hidden, 글쓰기 분류 2곳의 hidden disabled를 지우기)
     const PUSH_BOARD_TITLES = { '현장협력': '현장 협력·지원', '일감양도': '일감 패스·공사 양도', '장비자재': '장비·자재 직거래', '견적단가': '실전 견적·단가 자문', '자유소통': '자유 소통·일상방', '정보교환': '정보 교환·업체 찾기', '노하우': '실무 노하우 공유', '불량거래처': '불량 거래처 경보' }; // openBoard() 내부 키
     let pushPrefsCache = null;
@@ -3914,11 +3939,11 @@
       const row = (id, label, checked, sub2) => `<label class="flex items-center justify-between gap-3 bg-black/30 rounded-[12px] px-4 py-3 cursor-pointer"><span class="text-[16px] font-black text-white">${label}${sub2 ? `<span class="block text-[13.5px] font-bold text-[#CBD5E1]">${sub2}</span>` : ''}</span><input type="checkbox" data-push="${id}" ${checked ? 'checked' : ''} class="w-7 h-7 accent-[#84CC16] shrink-0"></label>`;
       document.getElementById('pushPrefsList').innerHTML =
         row('request', '📋 새 고객 의뢰', pushPrefsCache.request !== false) + /* 📋 [패치 #51] */
-        row('chat', '💬 1:1 대화 새 메시지', pushPrefsCache.chat !== false) +
-        row('comment', '💬 내 글에 새 댓글', pushPrefsCache.comment !== false) + /* 💬 [패치 #40] */
+        (LOUNGE_OPEN ? row('chat', '💬 1:1 대화 새 메시지', pushPrefsCache.chat !== false) +
+        row('comment', '💬 내 글에 새 댓글', pushPrefsCache.comment !== false) : '') + /* 💬 [패치 #40] · 🚧 [패치 #105] 소통방 준비 중엔 숨김 */
         row('notice', '📢 관리자 공지', pushPrefsCache.notice !== false) +
-        '<div class="text-[14.5px] font-black text-[#BEF264] pt-2 ml-1">소통방 게시판 새 글</div>' +
-        PUSH_BOARDS.filter(([k]) => BOARD_HIDDEN.indexOf(k) === -1).map(([k, t]) => row('b_' + k, t, !!pushPrefsCache.boards[k])).join(''); /* 🗂 [패치 #69] */
+        (LOUNGE_OPEN ? '<div class="text-[14.5px] font-black text-[#BEF264] pt-2 ml-1">소통방 게시판 새 글</div>' +
+        PUSH_BOARDS.filter(([k]) => BOARD_HIDDEN.indexOf(k) === -1).map(([k, t]) => row('b_' + k, t, !!pushPrefsCache.boards[k])).join('') : ''); /* 🗂 [패치 #69] */
     }
     async function enablePush() {
       if (!pushConfigured() || !pushBrowserOk()) return refreshPushPanel();
@@ -3956,10 +3981,10 @@
       try {
         const q = new URLSearchParams(location.search); const open = q.get('open'); if (!open) return;
         history.replaceState({ view: 'home' }, '', location.pathname);
-        if (open === 'board') { switchView('lounge'); setTimeout(() => { loadCommunityPosts(); openBoard(PUSH_BOARD_TITLES[q.get('cat')] || '전체'); }, 150); }
+        if (open === 'board') { switchView('lounge'); if (LOUNGE_OPEN) setTimeout(() => { loadCommunityPosts(); openBoard(PUSH_BOARD_TITLES[q.get('cat')] || '전체'); }, 150); }
         else if (open === 'req') { const rid = String(q.get('rid') || ''); setTimeout(() => openReqView(/^[A-Za-z0-9_-]{1,60}$/.test(rid) ? rid : ''), 150); } // 📋 [패치 #51]
         else if (open === 'points') setTimeout(() => { if (typeof openPointView === 'function') openPointView(); }, 150); // 💰 [패치 #71]
-        else if (open === 'chat' && q.get('with')) { switchView('lounge'); setTimeout(() => openBoardChat(q.get('with'), q.get('name') || '대표님'), 150); }
+        else if (open === 'chat' && q.get('with')) { switchView('lounge'); if (LOUNGE_OPEN) setTimeout(() => openBoardChat(q.get('with'), q.get('name') || '대표님'), 150); }
       } catch (e) {}
     }
 
@@ -5041,7 +5066,7 @@
           ['고치고 다시 발행', '[현재 일지 수정하기] 또는 [현재 견적서 수정하기]로 고친 뒤 다시 발행하세요. 고객 이름이 같으면 무료예요.']] },
         { q: '포인트가 모자라다고 나와요', s: [
           ['충전하기', '모자라다는 창에서 [충전하러 가기]를 누르면 충전 화면으로 가요.'],
-          ['활동 포인트', '소통방 출석·글쓰기로 모은 활동 포인트가 3,000P 이상이면 [쓸 수 있는 포인트로 바꾸기]로 바꿔 쓸 수 있어요.']] }
+          ['소통방 활동 포인트', '대표님 소통방은 지금 준비 중이에요. 문을 열면 출석·글쓰기로 활동 포인트를 모을 수 있어요.']] } // 🚧 [패치 #105]
       ] },
       { t: '포인트 충전', qs: [
         { q: '충전은 어떻게 해요?', s: [
@@ -5122,6 +5147,7 @@
       '조경노트 PRO: 조경 사업자용 앱. 메인 메뉴 = 업무 관리(작업 일정표·작업 일지 작성·거래처 목록·견적서·견적 보관함·연락처·AI 메모장), 현장 도구(식물 검색·AI 렌즈·날씨), 대표님 전용(개인 장부함·개인 재고함·AI 현장 비서·고객 의뢰함·대표님 소통방).',
       '아래 메뉴줄: 홈 · 일정 · 대표님 소통방 · 일지 · 견적. 위쪽 줄: 문의(이 도움말) · 로그아웃 · 설정.',
       '화면 바꾸기: 메인 화면 맨 위 [야외용]을 누르면 밝은 화면, [실내용]을 누르면 어두운 화면.',
+      '★ 대표님 소통방은 지금 준비 중(문 열기 전): 게시판 목록만 보이고 글 보기·글쓰기·출석·1:1 대화·활동 포인트는 아직 쓸 수 없음. 물으면 준비 중이며 열리면 앱 공지로 알려 드린다고 답할 것. (아래는 문을 연 뒤의 설명)', // 🚧 [패치 #105]
       '대표님 소통방: 전국 업체끼리 인력·장비·일감을 나누는 게시판. 출석 50P, 글쓰기 100P(정보 교환·실무 노하우 게시판 200P), 하루 최대 300P, 불량 거래처 경보 글은 적립 없음. 글마다 [1:1 대화하기]와 댓글. 글을 말로 쓰는 [말로 쓰기] 버튼 있음.',
       'AI 메모장: 현장에서 치수·수량을 말로 남기면 줄별로 정리. 견적서 화면 [메모장 참고하기]로 견적을 채울 수 있음.',
       '개인 재고함: 비품·자재 / 수목·식물 / 차계부를 표로 기록, 말로 입력 가능.',
@@ -5984,6 +6010,7 @@ ${HELP_EXTRA.join('\n')}`;
           renderLoungePointCard();
       }
       async function claimLoungeAttendance() {
+          if (!LOUNGE_OPEN) return loungeSoon(); // 🚧 [패치 #105]
           const todayKey = seoulToday();
           const storageKey = 'shinhwa_attend_' + (currentUserId || 'guest');
           if (localStorage.getItem(storageKey) === todayKey) {
@@ -6043,6 +6070,7 @@ ${HELP_EXTRA.join('\n')}`;
       }
 
       function openBoard(categoryTitle) {
+          if (!LOUNGE_OPEN) return loungeSoon(); // 🚧 [패치 #105]
           const swipeContainer = document.getElementById('swipeContainer');
           if(swipeContainer) swipeContainer.style.display = 'none';
           
@@ -6371,6 +6399,7 @@ ${HELP_EXTRA.join('\n')}`;
       }
 
       function openBoardChat(targetId, targetName) {
+          if (!LOUNGE_OPEN) return loungeSoon(); // 🚧 [패치 #105]
           if(!currentUserId) return alert("로그인 후 이용 가능합니다.");
           chatTargetId = targetId;
           document.getElementById('chatTargetName').innerText = targetName;
