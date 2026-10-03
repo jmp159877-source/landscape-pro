@@ -2,7 +2,7 @@
 // 원칙: 화면은 항상 인터넷에서 최신 버전을 먼저 받는다 (옛 화면에 갇히는 문제 방지).
 //       인터넷이 끊겼을 때만 마지막으로 저장해 둔 화면을 보여준다.
 //       Firebase·AI·날씨 등 외부 서버 요청은 절대 가로채지 않는다.
-const CACHE = 'jogyeongnote-v2'; // 🔔 패치 #33: 알림 기능 추가로 버전 올림
+const CACHE = 'jogyeongnote-v3'; // 🔔 패치 #33: 알림 기능 추가로 버전 올림 · #108: 알림 누르면 맞는 창으로
 const SHELL = ['/', '/manifest.json', '/icon-192.png', '/icon-512.png'];
 
 self.addEventListener('install', (e) => {
@@ -64,18 +64,25 @@ self.addEventListener('push', (e) => {
   e.waitUntil(self.registration.showNotification(title, opts));
 });
 
-// 알림을 누르면 해당 화면으로 이동 (이미 열린 앱이 있으면 그 창을 사용)
+// 🔔 [패치 #108] 알림을 누르면 '맞는 창'으로 이동
+//  - 관리자 알림(master.html) → 열린 관리자 창에 메시지만 보냄 (관리자 창은 새로 불러오면 로그아웃되므로 이동하지 않음)
+//  - 업체 알림(/?open=…)     → 열린 업체 앱 창에 메시지만 보냄 (관리자 창·고객 화면은 건드리지 않음)
+//  - 맞는 창이 없으면 새 창으로 열기
+function jnKind(path) { return /^\/master/.test(path) ? 'master' : (path === '/' || path === '/index.html') ? 'app' : 'other'; }
 self.addEventListener('notificationclick', (e) => {
   e.notification.close();
   const url = (e.notification.data && e.notification.data.url) || '/';
+  const target = new URL(url, self.location.origin);
+  const want = jnKind(target.pathname);
   e.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
-      for (const c of list) {
-        if (new URL(c.url).origin === self.location.origin && 'focus' in c) {
-          return c.navigate(url).then((w) => (w || c).focus()).catch(() => c.focus());
-        }
+      const mine = list.filter((c) => { try { const u = new URL(c.url); return u.origin === self.location.origin && jnKind(u.pathname) === want; } catch (x) { return false; } });
+      const c = mine.find((x) => x.focused) || mine.find((x) => x.visibilityState === 'visible') || mine[0];
+      if (c && want !== 'other') {
+        try { c.postMessage({ type: 'jn-open', url: target.pathname + target.search }); } catch (x) {}
+        return 'focus' in c ? c.focus() : undefined;
       }
-      return self.clients.openWindow(url);
+      return self.clients.openWindow(target.pathname + target.search);
     })
   );
 });
