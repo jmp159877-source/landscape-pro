@@ -113,6 +113,8 @@
     .sec-title.sec-white { color: #F8FAFC !important; } .sec-bar.sec-white { background: #F8FAFC; }
     .sec-title.sec-gold { color: #E3B341 !important; } .sec-bar.sec-gold { background: #E3B341; }
     #tabEncyclopedia, #tabLens, #tabWeather { background: linear-gradient(160deg, #FFFFFF 0%, #EEF2F6 100%) !important; border: 1.5px solid #84CC16 !important; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35) !important; }
+    #tabLounge { background: linear-gradient(145deg, #1E293B 0%, #273449 60%, #1E293B 100%) !important; border: 2px solid #E3B341 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important; } /* 🎨 [패치 #105] */
+    #tabLounge .lg-t { color: #FFFFFF !important; } #tabLounge .lg-s { color: #CBD5E1 !important; }
     #tabLedger, #tabAiChat { background: linear-gradient(145deg, #1E293B 0%, #273449 60%, #1E293B 100%) !important; border: 1.5px solid #E3B341 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important; }
     #tabStock { background: linear-gradient(145deg, #1E293B 0%, #273449 60%, #1E293B 100%) !important; border: 2px solid #E3B341 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important; }
     .own-t { color: #FFFFFF !important; } .own-i { color: #E3B341 !important; }
@@ -163,7 +165,8 @@
     html.outdoor .own-i { color: #B45309 !important; }
     
     html.outdoor #tabMemo, html.outdoor #tabClientRequest { box-shadow: 0 4px 12px rgba(63,98,18,0.22) !important; }
-    html.outdoor #tabLounge { box-shadow: 0 4px 12px rgba(180,120,20,0.22) !important; }
+    html.outdoor #tabLounge { background: #FFF8E6 !important; border: 2px solid #E3B341 !important; box-shadow: 0 3px 8px rgba(20,38,30,0.08) !important; } /* 🎨 [패치 #105] 위 장부함 칸과 같은 크림색 */
+    html.outdoor #tabLounge .lg-t { color: #151E2D !important; } html.outdoor #tabLounge .lg-s { color: #5B4A1E !important; }
     
     html.outdoor #bottomNav { background: #FFFFFF !important; border-top: 1px solid #DCE2D6 !important; box-shadow: 0 -4px 14px rgba(20,38,30,0.08) !important; }
     html.outdoor .bnav-btn:not(.is-active):not(.bnav-center) { color: #4B5A52 !important; }
@@ -522,9 +525,9 @@
                 <span class="flex flex-col gap-0.5 flex-1 min-w-0"><span class="text-[21px] font-black tracking-tight leading-tight" style="color:#1A2E05 !important;">고객 의뢰함</span><span class="text-[15px] font-bold leading-snug break-keep" style="color:#1A2E05 !important;">고객이 보낸 견적·상담 신청</span><span id="reqBadge" class="hidden self-start mt-1 bg-[#DC2626] text-white text-[15.5px] font-black rounded-full px-3 py-0.5 whitespace-nowrap">새로운 의뢰 0건</span></span><!-- 📋 [패치 #103] 빨간 표시를 글 아래로 · '새 N' → '새로운 의뢰 N건' -->
             </button>
             <!-- 🏷️ [패치 #48] 대표님 소통방: 넓은 금색 버튼 (누르면 가는 곳은 예전과 같음) -->
-            <button type="button" id="tabLounge" onclick="switchView('lounge')" class="w-full mt-3 text-left rounded-[22px] px-4 py-3.5 flex items-center gap-3.5 active:scale-[0.98] transition-all" style="background:#E3B341 !important; border: 2px solid #E3B341 !important; box-shadow: 0 8px 20px rgba(227,179,65,0.3) !important;">
-                <span class="w-[50px] h-[50px] rounded-[16px] bg-[#151E2D] flex items-center justify-center shrink-0"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E3B341" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z"></path><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"></path></svg></span>
-                <span class="flex flex-col gap-0.5"><span class="text-[21px] font-black tracking-tight leading-tight" style="color:#151E2D !important;">대표님 소통방</span><span class="text-[15px] font-bold leading-snug break-keep" style="color:#3A2E0B !important;">일감·장비·노하우를 대표님들과 나눠요</span></span>
+            <button type="button" id="tabLounge" onclick="switchView('lounge')" class="w-full mt-3 text-left rounded-[22px] px-4 py-3.5 flex items-center gap-3.5 active:scale-[0.98] transition-all"><!-- 🎨 [패치 #105] 금색 통 → 장부함과 같은 남색(야외: 크림색) + 금색 테두리 -->
+                <span class="w-[50px] h-[50px] rounded-[16px] flex items-center justify-center shrink-0" style="background:#E3B341;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#151E2D" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z"></path><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"></path></svg></span>
+                <span class="flex flex-col gap-0.5"><span class="lg-t text-[21px] font-black tracking-tight leading-tight">대표님 소통방</span><span class="lg-s text-[15px] font-bold leading-snug break-keep">일감·장비·노하우를 대표님들과 나눠요</span></span>
             </button>
         </div>
                 
@@ -3881,7 +3884,7 @@
       const tab = document.getElementById('tabLounge'); // 메인 버튼: 제목 옆에 (준비 중입니다) · 누르면 안으로 들어감
       if (tab && !tab.dataset.soon) {
         tab.dataset.soon = '1';
-        const t = tab.querySelector('span.flex.flex-col > span'); if (t) { const x = document.createElement('span'); x.textContent = ' (준비 중입니다)'; x.style.cssText = 'font-size:15.5px;font-weight:900;color:#7A1F1F;white-space:nowrap;'; t.appendChild(x); }
+        const t = tab.querySelector('span.flex.flex-col > span'); if (t) { const x = document.createElement('span'); x.textContent = '준비 중입니다'; x.style.cssText = 'display:inline-block;vertical-align:3px;margin-left:8px;background:#E3B341;color:#151E2D;font-size:13.5px;font-weight:900;line-height:1;border-radius:999px;padding:5px 10px;white-space:nowrap;letter-spacing:0;'; t.appendChild(x); }
       }
       const lv = document.getElementById('loungeView'); if (!lv || lv.dataset.soon) return; lv.dataset.soon = '1';
       const att = document.getElementById('btnLoungeAttend'); const pc = att && att.closest('div.rounded-\\[24px\\]'); if (pc) pc.classList.add('hidden'); // 출석·활동 포인트 카드 숨김
