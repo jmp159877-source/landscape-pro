@@ -102,6 +102,10 @@
         <div class="flex flex-col md:flex-row items-center gap-1 md:gap-3"><i data-lucide="coins" class="w-5 h-5"></i> <span class="whitespace-nowrap">포인트 관리</span></div>
         <span id="sidePointCount" class="absolute top-1 right-2 md:relative md:top-auto md:right-auto bg-red-500 text-white text-[10px] md:text-[11px] px-1.5 py-0.5 rounded-full hidden">0</span>
       </button>
+      <button onclick="switchTab('home')" id="navHomeBtn" class="nav-btn w-full flex flex-col md:flex-row items-center justify-center md:justify-between gap-1 p-2 md:px-4 md:py-3.5 rounded-[12px] text-[#94A3B8] hover:bg-white/5 hover:text-white font-bold transition-all text-[11px] md:text-[14px] relative"><!-- 🏡 [패치 #106] -->
+        <div class="flex flex-col md:flex-row items-center gap-1 md:gap-3"><i data-lucide="house" class="w-5 h-5"></i> <span class="whitespace-nowrap">Home 의뢰</span></div>
+        <span id="sideHomeCount" class="absolute top-1 right-2 md:relative md:top-auto md:right-auto bg-red-500 text-white text-[10px] md:text-[11px] px-1.5 py-0.5 rounded-full hidden">0</span>
+      </button>
     </nav>
     
     <div class="mt-auto hidden md:block">
@@ -211,6 +215,21 @@
           </div>
         </div>
       </div>
+    </div>
+    <!-- 🏡 [패치 #106] 조경노트 Home 의뢰 (고객 → 운영팀 1차 상담 → 업체 연결) -->
+    <div id="view-home" class="hidden space-y-5">
+      <div class="flex items-center justify-between gap-3 border-b border-white/10 pb-4 flex-wrap">
+        <h1 class="text-[24px] font-black tracking-tight flex items-center gap-2"><i data-lucide="house" class="w-6 h-6 text-[#84CC16]"></i> 조경노트 Home 의뢰</h1>
+        <div class="flex gap-2">
+          <a href="/home.html" target="_blank" rel="noopener" class="px-4 py-2.5 rounded-[12px] bg-white/5 border border-white/10 text-[#CBD5E1] text-[14px] font-black">고객 화면 보기</a>
+          <button onclick="hmLoad(true)" class="px-4 py-2.5 rounded-[12px] bg-white/5 border border-white/10 text-[#CBD5E1] text-[14px] font-black">새로고침</button>
+        </div>
+      </div>
+      <div class="flex gap-2 overflow-x-auto scrollbar-hide" id="hmTabs"></div>
+      <div id="hmList" class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="col-span-full py-16 text-center text-[#94A3B8] glass-panel rounded-[24px] font-bold">의뢰를 불러오는 중...</div></div>
+    </div>
+    <div id="hmModal" class="hidden fixed inset-0 z-[5500] bg-black/80 flex items-end md:items-center justify-center" onclick="if(event.target===this) hmClose()">
+      <div id="hmBox" class="w-full md:max-w-[640px] max-h-[94vh] overflow-y-auto bg-[#0F172A] border border-white/10 rounded-t-[26px] md:rounded-[26px] p-5 pb-8 space-y-4"></div>
     </div>
     <!-- 플랫폼 설정 화면 -->
     <div id="view-settings" class="hidden space-y-6">
@@ -383,6 +402,10 @@
     <button onclick="switchTab('inquiries')" class="mob-nav-btn flex flex-col items-center gap-1.5 text-[#94A3B8] font-bold relative"><!-- 💬 [패치 #99] 휴대폰에서도 1:1 문의 -->
         <span id="mobInquiryCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-[11px] font-black px-1.5 rounded-full hidden">0</span>
         <i data-lucide="message-square" class="w-6 h-6"></i><span class="text-[10px]">문의</span>
+    </button>
+    <button onclick="switchTab('home')" class="mob-nav-btn flex flex-col items-center gap-1.5 text-[#94A3B8] font-bold relative"><!-- 🏡 [패치 #106] -->
+        <span id="mobHomeCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-[11px] font-black px-1.5 rounded-full hidden">0</span>
+        <i data-lucide="house" class="w-6 h-6"></i><span class="text-[10px]">Home</span>
     </button>
   </nav>
 
@@ -633,7 +656,7 @@
             await initMasterSettings();
             startDashboard();
             // 🔔 [패치 #73] 알림을 눌러 들어온 경우 해당 화면으로 (?tab=approval / ?tab=points)
-            try { const t = new URLSearchParams(location.search).get('tab'); if (['approval', 'points', 'companies', 'inquiries', 'settings'].includes(t)) switchTab(t); const qa = new URLSearchParams(location.search).get('acc'); if (t === 'inquiries' && qa) { INQ.sel = qa; INQ.filter = 'all'; renderInquiryList(); } } catch (e) {}
+            try { const t = new URLSearchParams(location.search).get('tab'); if (['approval', 'points', 'companies', 'inquiries', 'settings', 'home'].includes(t)) switchTab(t); if (t === 'home') { const qh = new URLSearchParams(location.search).get('hid'); if (qh) HM.want = qh; } /* 🏡 [패치 #106] */ const qa = new URLSearchParams(location.search).get('acc'); if (t === 'inquiries' && qa) { INQ.sel = qa; INQ.filter = 'all'; renderInquiryList(); } } catch (e) {}
             admPushStatus();
 
         } catch(e) {
@@ -2384,5 +2407,202 @@
         if (PMB.entries.length === 0) pmbToast('뒤로가기를 한 번 더 누르면 관리자 화면이 닫혀요.');
     });
   </script>
+<script>
+    // ==========================================
+    // 🏡 [패치 #106] 조경노트 Home 의뢰 관리
+    //  - 고객 의뢰는 서버(home.gs)가 /home_reqs 에 저장 (관리자만 읽고 고침)
+    //  - [이 업체에 보내기] → 서버 admin_home_send (업체 의뢰함에 넣고 업체 휴대폰 알림)
+    //  - 안내 문자는 문구가 채워진 문자 창을 열어 줌 (대표님 휴대폰으로 발송) · 상태(안내함·끝남)는 여기서 바로 저장
+    // ==========================================
+    const HM = { list: [], tab: 'new', cur: null, busy: false, want: '', timer: null, pick: '' };
+    const HM_URL = 'https://shinhwa-landnote-default-rtdb.firebaseio.com/home_reqs';
+    const HM_KINDS = { single: '단건 의뢰', regular: '정기 조경관리', build: '조경 공사' };
+    const HM_SITES = { house: '주택', biz: '회사·빌딩', pub: '공공·기타' };
+    const HM_PLANS = { month: '매월 1회 (3월~12월)', quarter: '분기 1회 · 연 4회 (3·5·7·10월)', year: '연 1회 전체 관리', ask: '잘 모르겠어요 · 상담 후 정하기' };
+    const HM_ST = { new: ['새 의뢰', 'bg-red-500 text-white'], sent: ['업체 연결함', 'bg-[#84CC16] text-[#12261E]'], declined: ['업체가 못 한대요', 'bg-amber-400 text-[#12261E]'], guided: ['안내 문자 보냄', 'bg-sky-400 text-[#0B1120]'], done: ['끝남', 'bg-[#475569] text-white'] };
+    const HM_TABS = [['new', '새 의뢰 · 다시 연결'], ['sent', '업체 연결함'], ['guided', '안내 문자 보냄'], ['done', '끝남']];
+    const HM_SIDO = ['서울', '경기', '인천', '강원', '충북', '충남', '세종', '대전', '전북', '전남', '광주', '경북', '경남', '대구', '울산', '부산', '제주'];
+    function hmE(v) { return pmEsc(v); }
+    function hmWon(n) { n = Number(n) || 0; if (!n) return ''; const man = Math.floor(n / 10000), rest = n % 10000; return (man ? man.toLocaleString('ko-KR') + '만' : '') + (rest ? ' ' + rest.toLocaleString('ko-KR') : '') + '원'; }
+    function hmTel(d) { d = String(d || '').replace(/[^0-9]/g, ''); return d.length === 11 ? d.replace(/^(\d{3})(\d{4})(\d{4})$/, '$1-$2-$3') : d.length === 10 ? d.replace(/^(\d{2,3})(\d{3,4})(\d{4})$/, '$1-$2-$3') : d; }
+    function hmTime(ms) { const d = new Date(Number(ms) || 0); return `${d.getMonth() + 1}월 ${d.getDate()}일 ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; }
+    function hmWorks(r) { if (r.kind === 'regular') return '정기 관리 · ' + (HM_PLANS[r.plan] || '횟수 미정'); const w = (r.works || []).filter(x => x !== '기타'); if (r.etc) w.push(r.etc); return w.join(' · ') || (r.kind === 'build' ? '조경 공사 (내용에 적음)' : '작업 (내용에 적음)'); }
+    function hmTabOf(r) { return r.status === 'sent' ? 'sent' : r.status === 'guided' ? 'guided' : r.status === 'done' ? 'done' : 'new'; }
+    async function hmLoad(force) {
+        if (!currentIdToken) return;
+        try {
+            const res = await fetch(getAuthUrl(`${HM_URL}.json?t=${Date.now()}`));
+            const d = res.ok ? await res.json() : null;
+            if (d && d.error) throw new Error('rule');
+            HM.list = Object.keys(d || {}).filter(k => /^h[0-9]{10,20}$/.test(k) && d[k] && typeof d[k] === 'object').map(k => Object.assign({ id: k }, d[k])).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+            HM.err = '';
+        } catch (e) { HM.err = 'DB 규칙에 home_reqs 읽기 권한이 없거나 인터넷 연결이 불안정해요. (DB 규칙 v8 게시 확인)'; }
+        hmBadge();
+        if (!document.getElementById('view-home').classList.contains('hidden')) hmRender();
+        if (HM.want) { const w = HM.want; HM.want = ''; if (HM.list.some(r => r.id === w)) hmOpen(w); }
+        if (HM.cur && !document.getElementById('hmModal').classList.contains('hidden') && !HM.busy) { const f = HM.list.find(r => r.id === HM.cur.id); if (f && JSON.stringify(f) !== JSON.stringify(HM.cur)) { HM.cur = f; hmPaint(); } }
+    }
+    function hmBadge() {
+        const n = HM.list.filter(r => r.status === 'new' || r.status === 'declined').length;
+        [['sideHomeCount', n], ['mobHomeCount', n]].forEach(([id, v]) => { const el = document.getElementById(id); if (el) { el.textContent = v; el.classList.toggle('hidden', !v); } });
+    }
+    function hmRender() {
+        const cnt = {}; HM.list.forEach(r => { const t = hmTabOf(r); cnt[t] = (cnt[t] || 0) + 1; });
+        document.getElementById('hmTabs').innerHTML = HM_TABS.map(([k, t]) => `<button onclick="HM.tab='${k}'; hmRender()" class="shrink-0 px-4 py-2.5 rounded-full text-[14.5px] font-black ${HM.tab === k ? 'bg-[#84CC16] text-[#12261E]' : 'bg-white/5 text-[#94A3B8] border border-white/10'}">${t}${cnt[k] ? ' ' + cnt[k] : ''}</button>`).join('');
+        const view = HM.list.filter(r => hmTabOf(r) === HM.tab);
+        const box = document.getElementById('hmList');
+        if (HM.err) { box.innerHTML = `<div class="col-span-full py-12 px-6 text-center text-amber-300 glass-panel rounded-[24px] font-bold leading-relaxed">${hmE(HM.err)}</div>`; return; }
+        box.innerHTML = view.length ? view.map(r => {
+            const st = HM_ST[r.status] || HM_ST.new;
+            return `<button onclick="hmOpen(${jsArg(r.id)})" class="text-left glass-panel rounded-[22px] p-4 flex flex-col gap-2 hover:border-[#84CC16]/50 transition-all">
+              <span class="flex items-center justify-between gap-2 w-full"><span class="text-[12.5px] font-black px-2.5 py-1 rounded-full ${st[1]}">${st[0]}</span><span class="text-[13px] font-bold text-[#94A3B8]">${hmTime(r.createdAt)}</span></span>
+              <span class="text-[18px] font-black text-white leading-snug">${hmE(hmWorks(r))}</span>
+              <span class="text-[14.5px] font-bold text-[#CBD5E1]">${hmE(HM_KINDS[r.kind] || '')}${r.site ? ' · ' + hmE(HM_SITES[r.site]) : ''} · ${hmE(r.area || r.addr || '')}</span>
+              <span class="flex flex-wrap gap-1.5">
+                ${r.budget ? `<span class="text-[13px] font-black px-2 py-1 rounded-lg bg-[#ECFCCB] text-[#3F6212]">예산 ${hmE(hmWon(r.budget))}</span>` : (r.budgetUnknown ? '<span class="text-[13px] font-black px-2 py-1 rounded-lg bg-white/10 text-[#CBD5E1]">예산 상담 후</span>' : '')}
+                <span class="text-[13px] font-black px-2 py-1 rounded-lg ${r.contact === 'call' ? 'bg-white/10 text-[#CBD5E1]' : 'bg-sky-400/20 text-sky-300'}">${r.contact === 'call' ? '전화 OK' : '문자로만'}</span>
+                <span class="text-[13px] font-black px-2 py-1 rounded-lg bg-white/10 text-[#CBD5E1]">사진 ${(r.imgs || []).length}장</span>
+                ${r.sentName ? `<span class="text-[13px] font-black px-2 py-1 rounded-lg bg-[#84CC16]/20 text-[#BEF264]">→ ${hmE(r.sentName)}</span>` : ''}
+              </span>
+            </button>`;
+        }).join('') : `<div class="col-span-full py-16 text-center text-[#94A3B8] glass-panel rounded-[24px] font-bold">${HM.tab === 'new' ? '새로 들어온 의뢰가 없어요.' : '없어요.'}</div>`;
+        lucide.createIcons();
+    }
+    function hmOpen(id) {
+        const r = HM.list.find(x => x.id === id); if (!r) return;
+        HM.cur = r; HM.pick = ''; hmPaint();
+        document.getElementById('hmModal').classList.remove('hidden');
+        if (!(history.state && history.state.hmOpen)) history.pushState({ hmOpen: 1 }, '', '');
+    }
+    function hmClose(fromPop) {
+        const m = document.getElementById('hmModal'); if (m.classList.contains('hidden')) return;
+        m.classList.add('hidden'); HM.cur = null;
+        if (!fromPop && history.state && history.state.hmOpen) history.back();
+    }
+    window.addEventListener('popstate', () => { if (!document.getElementById('hmModal').classList.contains('hidden')) hmClose(true); });
+    function hmCompanies(r) {
+        const acc = ACC_LAST || {}, sido = r.sido || '';
+        return Object.keys(acc).map(id => ({ id, p: (acc[id] && acc[id].profile) || {} })).filter(x => x.p.status === 'active')
+            .map(x => { const areas = Array.isArray(x.p.workAreas) ? x.p.workAreas : []; return { id: x.id, name: x.p.name || x.id, region: x.p.region || '', phone: x.p.phone || '', areas, ok: !sido || areas.includes(sido), set: areas.length > 0 }; })
+            .sort((a, b) => (b.ok - a.ok) || (b.set - a.set) || String(a.name).localeCompare(String(b.name), 'ko'));
+    }
+    function hmPaint() {
+        const r = HM.cur; if (!r) return;
+        const st = HM_ST[r.status] || HM_ST.new, cos = hmCompanies(r);
+        const row = (k, v) => v ? `<div class="flex gap-3 py-2.5 border-b border-white/5"><span class="w-[86px] shrink-0 text-[14px] font-black text-[#94A3B8]">${k}</span><span class="flex-1 text-[15.5px] font-bold text-white leading-relaxed break-keep" style="overflow-wrap:anywhere">${v}</span></div>` : '';
+        const hist = Object.keys(r.hist || {}).map(k => r.hist[k]).sort((a, b) => (a.at || 0) - (b.at || 0));
+        const okN = cos.filter(c => c.ok).length;
+        document.getElementById('hmBox').innerHTML = `
+          <div class="flex items-center gap-2"><span class="text-[13px] font-black px-2.5 py-1 rounded-full ${st[1]}">${st[0]}</span><span class="text-[13.5px] font-bold text-[#94A3B8] flex-1">${hmTime(r.createdAt)} 접수${r.via === 'voice' ? ' · 말로 의뢰' : ''}</span><button onclick="hmClose()" class="w-10 h-10 rounded-full bg-white/10 text-white text-[20px] font-black">×</button></div>
+          <div class="text-[22px] font-black text-white leading-snug">${hmE(hmWorks(r))}</div>
+          <div class="bg-white/5 rounded-[18px] px-4">
+            ${row('의뢰 종류', hmE((HM_KINDS[r.kind] || '') + (r.site ? ' · ' + HM_SITES[r.site] : '')))}
+            ${row('고객', hmE((r.name ? r.name + ' 고객님' : '성함 없음')))}
+            ${row('연락처', `<span class="text-[17px] text-sky-300">${hmE(hmTel(r.phone))}</span> <span class="ml-1 text-[13px] font-black px-2 py-0.5 rounded-md ${r.contact === 'call' ? 'bg-white/10 text-[#CBD5E1]' : 'bg-sky-400/20 text-sky-300'}">${r.contact === 'call' ? '전화도 괜찮아요' : '문자로만 받을게요'}</span>`)}
+            ${row('현장 주소', hmE(r.addr) + ` <a href="https://map.naver.com/p/search/${encodeURIComponent(r.addr || '')}" target="_blank" rel="noopener" class="text-[13.5px] text-[#BEF264] underline ml-1">지도</a>`)}
+            ${row('예산', r.budget ? '<b class="text-[#BEF264]">' + hmE(hmWon(r.budget)) + '</b>' : (r.budgetUnknown ? '잘 모르겠어요 · 상담 후 정하기' : '안 적음'))}
+            ${row('희망 시기', hmE(r.when))}
+            ${r.kind === 'regular' ? row('관리 횟수', hmE(HM_PLANS[r.plan] || '')) : ''}
+            ${row('남긴 말', hmE(r.text).replace(/\n/g, '<br>'))}
+          </div>
+          ${(r.imgs || []).length ? `<div class="grid grid-cols-3 gap-2">${r.imgs.map(u => `<a href="${hmE(u)}" target="_blank" rel="noopener" class="block aspect-square rounded-[12px] overflow-hidden bg-white/5"><img src="${hmE(u)}" class="w-full h-full object-cover" loading="lazy"></a>`).join('')}</div>` : '<div class="text-[14px] font-bold text-amber-300">사진 없이 보낸 의뢰예요.</div>'}
+          ${r.status === 'declined' ? `<div class="rounded-[16px] bg-amber-400/15 border border-amber-400/40 p-3.5 text-[15px] font-bold text-amber-200 leading-relaxed">↩️ ${hmE(r.declinedName || '')} 업체가 못 한대요${r.declineReason ? ' · ' + hmE(r.declineReason) : ''}. 다른 업체로 연결해 주세요.</div>` : ''}
+          ${r.status === 'sent' ? `<div class="rounded-[16px] bg-[#84CC16]/15 border border-[#84CC16]/40 p-3.5 text-[15px] font-bold text-[#D9F99D] leading-relaxed">✅ ${hmE(r.sentName || '')} 업체에 연결했어요 (${hmTime(r.sentAt)})${r.memo ? '<br>메모: ' + hmE(r.memo) : ''}</div>` : ''}
+
+          <div class="pt-1">
+            <div class="text-[16px] font-black text-white mb-1">1. 연결할 업체 고르기</div>
+            <div class="text-[13.5px] font-bold text-[#94A3B8] mb-2">${r.sido ? `<b class="text-[#BEF264]">${hmE(r.sido)}</b>에 갈 수 있는 업체 ${okN}곳 (업체 앱 설정의 '작업 가능 지역' 기준)` : '주소에서 시·도를 못 찾아 전체 업체를 보여 드려요'}</div>
+            <div class="flex flex-col gap-2">${cos.length ? cos.map(c => `<button onclick="HM.pick=${jsArg(c.id)}; hmPaint()" class="text-left flex items-center gap-3 rounded-[14px] px-3.5 py-3 border-2 ${HM.pick === c.id ? 'border-[#84CC16] bg-[#84CC16]/10' : 'border-white/10 bg-white/5'} ${c.ok ? '' : 'opacity-60'}">
+                <span class="w-5 h-5 rounded-full shrink-0 ${HM.pick === c.id ? 'border-[6px] border-[#84CC16]' : 'border-2 border-[#64748B]'}"></span>
+                <span class="flex-1 min-w-0"><span class="block text-[16px] font-black text-white">${hmE(c.name)}${r.sentTo === c.id ? ' <span class="text-[12px] text-[#BEF264]">(지금 연결된 곳)</span>' : ''}${r.declinedBy === c.id ? ' <span class="text-[12px] text-amber-300">(못 한다고 함)</span>' : ''}</span>
+                <span class="block text-[13px] font-bold text-[#94A3B8]">${c.set ? '갈 수 있는 곳: ' + hmE(c.areas.join('·')) : '작업 가능 지역 미설정'}${c.region ? ' · 활동 ' + hmE(c.region) : ''}</span></span></button>`).join('') : '<div class="text-[14px] font-bold text-[#94A3B8]">승인된 업체가 없어요.</div>'}</div>
+            <textarea id="hmMemo" rows="2" maxlength="200" placeholder="업체에 남길 메모 (선택) 예) 예산 적정, 현장 확인 필요" class="mt-2.5 w-full bg-[#0B1120] border border-white/10 rounded-[14px] p-3 text-white text-[15px] font-bold focus:outline-none focus:border-[#84CC16]"></textarea>
+            <button id="hmSendBtn" onclick="hmSend()" class="mt-2 w-full h-[56px] rounded-[16px] bg-[#84CC16] text-[#12261E] text-[17px] font-black disabled:opacity-50" ${HM.pick ? '' : 'disabled'}>${HM.pick ? '이 업체에 보내기' : '위에서 업체를 골라 주세요'}</button>
+          </div>
+
+          <div class="pt-2">
+            <div class="text-[16px] font-black text-white mb-2">2. 고객에게 안내 문자 (대표님 휴대폰으로 발송)</div>
+            <div class="grid grid-cols-2 gap-2">
+              <button onclick="hmSms('sent')" class="h-[52px] rounded-[14px] bg-white/10 border border-white/15 text-white text-[14.5px] font-black">업체 연결 안내</button>
+              <button onclick="hmSms('budget')" class="h-[52px] rounded-[14px] bg-white/10 border border-white/15 text-white text-[14.5px] font-black">예산 안내</button>
+              <button onclick="hmSms('area')" class="h-[52px] rounded-[14px] bg-white/10 border border-white/15 text-white text-[14.5px] font-black">지역 준비 중</button>
+              <button onclick="hmSms('free')" class="h-[52px] rounded-[14px] bg-white/10 border border-white/15 text-white text-[14.5px] font-black">직접 쓰기</button>
+            </div>
+            ${r.contact === 'call' ? `<a href="tel:${hmE(String(r.phone || '').replace(/[^0-9]/g, ''))}" class="mt-2 w-full h-[52px] rounded-[14px] bg-sky-500 text-white text-[15.5px] font-black flex items-center justify-center">전화하기 (전화도 괜찮다고 하심)</a>` : '<div class="mt-2 text-[13.5px] font-bold text-sky-300">이 고객은 문자로만 연락을 원해요. 전화는 고객이 원할 때만.</div>'}
+          </div>
+
+          <div class="pt-2">
+            <div class="text-[16px] font-black text-white mb-2">3. 상태 바꾸기</div>
+            <div class="grid grid-cols-3 gap-2">
+              <button onclick="hmSet('guided')" class="h-[50px] rounded-[14px] border-2 border-sky-400/60 text-sky-300 text-[14px] font-black">안내 문자 보냄</button>
+              <button onclick="hmSet('done')" class="h-[50px] rounded-[14px] border-2 border-white/20 text-white text-[14px] font-black">끝남</button>
+              <button onclick="hmSet('new')" class="h-[50px] rounded-[14px] border-2 border-white/20 text-white text-[14px] font-black">새 의뢰로</button>
+            </div>
+            <button onclick="hmDelete()" class="mt-2 w-full h-[46px] text-red-400 text-[14.5px] font-black">장난·스팸 의뢰 지우기</button>
+          </div>
+          ${hist.length ? `<div class="pt-1"><div class="text-[14px] font-black text-[#94A3B8] mb-1.5">기록</div>${hist.map(h => `<div class="text-[13.5px] font-bold text-[#CBD5E1] py-1">${hmTime(h.at)} · ${h.decline ? '↩️ ' + hmE(h.toName) + ' 못 함' : '→ ' + hmE(h.toName) + ' 연결'}${h.memo ? ' · ' + hmE(h.memo) : ''}</div>`).join('')}</div>` : ''}`;
+        const memo = document.getElementById('hmMemo'); if (memo && r.memo && HM.pick === r.sentTo) memo.value = r.memo;
+    }
+    async function hmSend() {
+        const r = HM.cur; if (!r || !HM.pick || HM.busy) return;
+        const c = hmCompanies(r).find(x => x.id === HM.pick); if (!c) return;
+        if (r.status === 'sent' && r.sentTo && !confirm(`이미 ${r.sentName || r.sentTo} 업체에 연결한 의뢰예요.\n${c.name} 업체에도 보낼까요?`)) return;
+        if (!c.ok && r.sido && !confirm(`${c.name} 업체의 작업 가능 지역에 ${r.sido}이(가) 없어요.\n그래도 보낼까요?`)) return;
+        HM.busy = true; const b = document.getElementById('hmSendBtn'); if (b) { b.disabled = true; b.textContent = '보내는 중…'; }
+        const res = await adminPush({ action: 'admin_home_send', hid: r.id, targetId: c.id, memo: (document.getElementById('hmMemo') || {}).value || '' });
+        HM.busy = false;
+        if (res && res.ok) { alert(`✅ ${res.name} 업체에 연결했어요.\n업체 휴대폰으로 알림이 갔어요.\n\n이제 [업체 연결 안내] 문자를 고객에게 보내 주세요.`); await hmLoad(); return; }
+        if (b) { b.disabled = false; b.textContent = '이 업체에 보내기'; }
+        alert('보내지 못했어요. ' + ({ inactive: '승인된 업체가 아니에요.', 'no-req': '의뢰를 찾지 못했어요.', 'admin-only': '관리자 로그인이 필요해요.', unknown: '구글 스크립트(home.gs)가 최신 버전으로 배포되었는지 확인해 주세요.', busy: '서버가 바빠요. 잠시 후 다시 눌러 주세요.' }[res && res.msg] || '인터넷 연결을 확인해 주세요.'));
+    }
+    function hmSmsText(kind, r) {
+        const w = hmWorks(r), area = r.area || '';
+        const hi = (r.name ? r.name + ' 고객님, ' : '고객님, ') + '안녕하세요. 조경노트 Home입니다.\n';
+        if (kind === 'sent') return `[조경노트 Home] ${hi}의뢰하신 ${w} 건, 가장 알맞은 전문 업체에 연결해 드렸습니다.\n곧 견적 리포트를 문자로 받아 보실 수 있어요.\n- 조경노트 Home 드림`;
+        if (kind === 'budget') return `[조경노트 Home] ${hi}의뢰하신 ${w} 건 확인했습니다.\n말씀하신 예산으로는 지금 맡을 수 있는 업체를 찾기 어렵습니다.\n이런 작업은 보통 ○○만~○○만 원 정도입니다. (현장을 확인하면 달라질 수 있어요)\n이 금액으로 연결을 원하시면 이 문자에 답장 주세요.\n- 조경노트 Home 드림`;
+        if (kind === 'area') return `[조경노트 Home] ${hi}의뢰하신 ${area ? area + ' ' : ''}${w} 건 확인했습니다.\n죄송하지만 아직 이 지역은 연결해 드릴 전문 업체를 준비하고 있습니다.\n준비되면 먼저 연락드리겠습니다.\n- 조경노트 Home 드림`;
+        return `[조경노트 Home] ${hi}`;
+    }
+    function hmSms(kind) {
+        const r = HM.cur; if (!r) return;
+        const num = String(r.phone || '').replace(/[^0-9]/g, ''), ios = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+        const text = hmSmsText(kind, r);
+        if (kind === 'budget') alert('문자 창이 열리면 "○○만~○○만 원" 부분에 참고 금액을 넣어 보내 주세요.');
+        if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) { location.href = 'sms:' + num + (ios ? '&' : '?') + 'body=' + encodeURIComponent(text); }
+        else { (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).then(() => alert('PC에서는 문자를 바로 보낼 수 없어요.\n문구를 복사했어요. 휴대폰 문자에 붙여 넣어 ' + hmTel(num) + '로 보내 주세요.')).catch(() => prompt('이 문구를 복사해서 ' + hmTel(num) + '로 보내 주세요.', text)); }
+    }
+    async function hmSet(st) {
+        const r = HM.cur; if (!r) return;
+        try { const res = await fetch(getAuthUrl(`${HM_URL}/${encodeURIComponent(r.id)}.json`), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: st, statusAt: Date.now() }) }); if (!res.ok) throw new Error(); }
+        catch (e) { return alert('저장하지 못했어요. (DB 규칙 v8 게시 확인)'); }
+        r.status = st; HM.tab = hmTabOf(r); hmClose(); await hmLoad();
+    }
+    async function hmDelete() {
+        const r = HM.cur; if (!r || !confirm('이 의뢰를 완전히 지울까요?\n(업체에 이미 보낸 의뢰는 업체 의뢰함에 그대로 남아요)')) return;
+        try { const res = await fetch(getAuthUrl(`${HM_URL}/${encodeURIComponent(r.id)}.json`), { method: 'DELETE' }); if (!res.ok) throw new Error(); }
+        catch (e) { return alert('지우지 못했어요. (DB 규칙 v8 게시 확인)'); }
+        hmClose(); await hmLoad();
+    }
+    // 탭 이동에 Home 화면 추가 (기존 탭은 그대로)
+    const switchTabBeforeHome = switchTab;
+    switchTab = function (tabId) {
+        const hv = document.getElementById('view-home'); if (hv) hv.classList.add('hidden');
+        switchTabBeforeHome(tabId);
+        const hb0 = document.getElementById('navHomeBtn'); if (hb0) hb0.classList.add('relative', 'md:justify-between');
+        if (tabId !== 'home') return;
+        hv.classList.remove('hidden');
+        const navBtns = document.querySelectorAll('.nav-btn');
+        if (navBtns[0] && navBtns[2]) navBtns[0].className = navBtns[2].className;   // 대시보드 강조 해제 (업체 관리 버튼과 같은 모양으로)
+        const hb = document.getElementById('navHomeBtn'); if (hb) hb.className = "nav-btn w-full flex flex-col md:flex-row items-center justify-center md:justify-between gap-1 md:gap-3 p-2 md:px-4 md:py-3.5 rounded-[12px] bg-[#3B82F6] text-white font-bold transition-all shadow-[0_4px_12px_rgba(59,130,246,0.3)] text-[11px] md:text-[14px] relative";
+        const mob = document.querySelectorAll('.mob-nav-btn'), last = mob[mob.length - 1]; if (last) { last.classList.remove('text-[#94A3B8]'); last.classList.add('text-[#3B82F6]'); }
+        hmRender(); hmLoad(); lucide.createIcons();
+    };
+    const startDashboardBeforeHome = startDashboard;
+    startDashboard = function () {
+        startDashboardBeforeHome();
+        hmLoad();
+        HM.timer = setInterval(() => { if (!document.hidden) hmLoad(); }, 30000);
+    };
+</script>
 </body>
 </html>
