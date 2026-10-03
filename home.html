@@ -154,6 +154,23 @@
   .vbar .btns { display:grid; grid-template-columns:1fr 2fr; gap:8px; margin-top:10px; }
   .vbar .b1 { height:50px; border-radius:14px; background:#F5F5F2; font-size:15px; font-weight:700; color:#44403C; }
   .vbar .b2 { height:50px; border-radius:14px; background:var(--lime); color:var(--dark); font-size:16.5px; font-weight:800; box-shadow:inset 0 0 0 1.5px var(--ink); }
+  .vguide { margin-top:10px; background:var(--lime-l); border-radius:14px; padding:12px 14px; }
+  .vguide .h { font-size:15px; font-weight:800; color:var(--lime-dd); }
+  .vguide ol { list-style:none; margin:8px 0 0; padding:0; display:grid; gap:5px; }
+  .vguide li { font-size:15.5px; font-weight:700; color:var(--ink); line-height:1.4; }
+  .vguide li b { display:inline-flex; width:22px; height:22px; border-radius:50%; background:var(--ink); color:#D9F99D; font-size:12.5px; align-items:center; justify-content:center; margin-right:7px; vertical-align:1px; }
+  .vguide li span { color:var(--mute); font-weight:600; font-size:14px; }
+  .vguide .ex { margin-top:9px; font-size:14.5px; color:var(--sub); line-height:1.5; }
+  .vguide.mini ol { display:flex; flex-wrap:wrap; gap:4px 12px; margin-top:0; }
+  .vguide.mini li { font-size:14px; } .vguide.mini li span, .vguide.mini .h, .vguide.mini .ex { display:none; }
+  .vguide.mini { padding:9px 12px; }
+  .vbar .go { width:100%; height:58px; margin-top:10px; border-radius:16px; background:var(--lime); color:var(--dark); font-size:18px; font-weight:900; box-shadow:inset 0 0 0 2px var(--ink); }
+  .vbar .resume { width:100%; height:54px; margin-top:10px; border-radius:14px; background:var(--ink); color:#D9F99D; font-size:17px; font-weight:800; }
+  .vbar .ext { display:block; width:100%; margin-top:8px; font-size:14px; font-weight:700; color:var(--lime-dd); text-decoration:underline; text-align:center; min-height:34px; }
+  .mictip { margin-top:10px; border-radius:14px; border:1.5px dashed var(--ink); padding:10px 12px; font-size:14.5px; line-height:1.5; color:var(--ink); }
+  .mictip b { font-weight:900; }
+  .mictip .arw { display:block; text-align:center; font-size:26px; line-height:1; margin-top:4px; color:var(--lime-dd); animation:bob 1s ease-in-out infinite; }
+  @keyframes bob { 0%,100% { transform:translateY(0) } 50% { transform:translateY(6px) } }
   /* ---------- 아래에서 올라오는 창 ---------- */
   .dim { position:fixed; inset:0; background:rgba(28,25,23,.5); z-index:60; display:flex; align-items:flex-end; justify-content:center; }
   .sheet { width:100%; max-width:480px; background:#fff; border-radius:26px 26px 0 0; padding:26px 22px calc(22px + env(safe-area-inset-bottom)); animation:up2 .22s ease-out; }
@@ -180,6 +197,14 @@
   .sum div span { color:var(--mute); flex-shrink:0; }
   .sum div b { text-align:right; font-weight:700; }
   @media (min-width:520px) { body { padding:20px 0; } .app { border-radius:24px; overflow:hidden; min-height:calc(100vh - 40px); } }
+  .sheet.confirm { max-height:92vh; max-height:92dvh; overflow-y:auto; overscroll-behavior:contain; }
+  .sheet.confirm .sum { margin:16px 0 0; }
+  .sheet.confirm .sd b { color:var(--ink); }
+  .sum div.tel b { font-size:19px; font-weight:900; color:var(--ink); background:var(--lime-l2); border-radius:8px; padding:1px 8px; }
+  .sbtn.ghost { background:#fff; color:var(--ink); box-shadow:inset 0 0 0 1.5px var(--line); }
+  .sum .dphotos { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; padding:12px 0 2px; border-bottom:0; }
+  .dphotos img { width:100%; aspect-ratio:1; object-fit:cover; border-radius:10px; display:block; }
+  .sum .dnote { font-size:13.5px; color:var(--mute); margin:0; padding:10px 0 12px; border-top:1px solid #ECEBE6; }
 </style>
 </head>
 <body>
@@ -264,7 +289,18 @@
     <div class="btns">
       <button type="button" class="sbtn lime" onclick="closeSheet(); pickPhoto('cam')">ICON_CAMERA 지금 사진 찍기</button>
       <button type="button" class="sbtn ink" onclick="closeSheet(); pickPhoto('gal')">ICON_IMAGE 휴대폰에 있는 사진 고르기</button>
-      <button type="button" class="link" onclick="S.photoAsked=true; closeSheet(); submitForm();">사진 없이 보내기</button>
+      <button type="button" class="link" onclick="S.photoAsked=true; closeSheet(); setTimeout(submitForm, 350);">사진 없이 계속</button>
+    </div>
+  </div>
+</div>
+<div class="dim hidden" id="shConfirm" onclick="if(event.target===this) closeSheet()">
+  <div class="sheet confirm">
+    <h3>이대로 보낼까요?</h3>
+    <div class="sd">특히 <b>연락받을 번호</b>가 맞는지 확인해 주세요.</div>
+    <div class="card sum" id="cfSum"></div>
+    <div class="btns">
+      <button type="button" class="sbtn lime" onclick="confirmSend()">맞아요, 이대로 보내기</button>
+      <button type="button" class="sbtn ghost" onclick="closeSheet()">고칠게요</button>
     </div>
   </div>
 </div>
@@ -272,10 +308,15 @@
 <!-- 말로 쉽게 쓰기 띠 (신청서는 그대로 보임) -->
 <div class="vbar hidden" id="vbar">
   <div class="top"><span class="wave" id="vWave"><i></i><i></i><i></i><i></i><i></i></span><span class="lbl" id="vLbl">듣고 있어요 · 편하게 말씀하세요</span><button type="button" class="x" onclick="voiceClose()">닫기</button></div>
+  <div class="vguide" id="vGuide"></div>
   <div class="txt" id="vLive"></div>
-  <textarea id="vType" class="hidden" placeholder="키보드의 🎤 마이크를 누르고 말씀하시거나, 직접 적어 주세요."></textarea>
+  <button type="button" class="resume hidden" id="vResume" onclick="voiceResume()">🎤 이어서 말하기</button>
+  <textarea id="vType" class="hidden" placeholder="여기에 말씀하신 내용이 써져요"></textarea>
+  <div class="mictip hidden" id="vMicTip">키보드에서 <b>🎙 마이크 모양</b>을 누르고 말씀하세요.<br>· 삼성 키보드: <b>맨 아래 왼쪽</b><br>· 그 밖의 키보드: <b>오른쪽 위</b><span class="arw">↓</span></div>
   <div class="hint hidden" id="vHint"></div>
-  <div class="btns"><button type="button" class="b1" id="vRetry" onclick="voiceRetry()">다시 말하기</button><button type="button" class="b2" id="vFinish" onclick="voiceFinish()">다 말했어요</button></div>
+  <button type="button" class="go hidden" id="vGo" onclick="voiceTypedGo()">🎤 말하기 시작</button>
+  <button type="button" class="ext hidden" id="vExt" onclick="openOutside()">말로 쓰기가 더 편한 인터넷 앱으로 열기</button>
+  <div class="btns" id="vBtns"><button type="button" class="b1" id="vRetry" onclick="voiceRetry()">지우기</button><button type="button" class="b2" id="vFinish" onclick="voiceFinish()">다 말했어요</button></div>
 </div>
 
 <div class="busy hidden" id="busy"><span class="spin"></span><span id="busyText">보내는 중…</span></div>
@@ -330,7 +371,7 @@ function openForm(kind, fromHash) {
 }
 function goIntro(push) { voiceClose(); S = null; show('vIntro'); if (push) history.pushState({ v: 'intro' }, '', location.pathname); }
 let sheetOpen = '';
-function openSheet(id) { sheetOpen = id; $(id).classList.remove('hidden'); history.pushState({ v: 'sheet' }, '', ''); }
+function openSheet(id) { $('toast').classList.add('hidden'); sheetOpen = id; $(id).classList.remove('hidden'); history.pushState({ v: 'sheet' }, '', ''); }
 function closeSheet(fromPop) {
   if (!sheetOpen) return; const id = sheetOpen; sheetOpen = ''; $(id).classList.add('hidden');
   if (!fromPop && history.state && history.state.v === 'sheet') history.back();
@@ -449,47 +490,105 @@ function shrink(file) {   // 긴 쪽 1280px · 1.4MB 안으로 줄임
 function paintThumbs() { const t = $('thumbs'); if (!t) return; t.innerHTML = S.imgs.map((d, i) => `<span class="thumb"><img src="${d}" alt="첨부 사진 ${i + 1}"><button type="button" aria-label="사진 빼기" onclick="S.imgs.splice(${i},1); paintThumbs()">×</button></span>`).join(''); }
 
 // ===================== 말로 쉽게 쓰기 (아래 띠 · 신청서는 그대로 보임) =====================
-//  - 한 번 누르면 한 번만 들음 (예전처럼 자동으로 다시 켜지 않음 → 허락 창이 계속 뜨지 않음)
-//  - 카톡·네이버 등 앱 안 화면에서는 휴대폰 듣기가 잘 안 되므로 처음부터 '키보드 마이크로 말하기' 칸을 보여 줌
+//  - 휴대폰 인터넷 앱: 화면의 마이크가 직접 들음. 안드로이드는 잠깐 쉬면 저절로 꺼지므로,
+//    마이크 허락이 '항상 허용'으로 저장돼 있을 때만 조용히 다시 켬 (허락 창이 반복해서 뜨지 않게).
+//    허락이 저장돼 있지 않으면 [이어서 말하기] 버튼을 보여 줌 (앞에 한 말은 그대로).
+//  - 카톡·네이버 등 앱 안 화면: 먼저 '이렇게 말씀하세요' 안내 → [말하기 시작] → 키보드 마이크 위치 안내.
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-const IN_APP = /KAKAOTALK|NAVER\(|NAVER |Instagram|FBAN|FBAV|Line\/|DaumApps|everytimeApp|BAND\//i.test(navigator.userAgent);
-const V = { rec: null, finals: '', interim: '', mode: 'fill', typed: false };
-function voiceTyped(msg) {
-  V.typed = true;
-  $('vType').classList.remove('hidden'); $('vLive').classList.add('hidden'); $('vRetry').textContent = '지우기';
-  $('vLbl').textContent = '키보드 마이크로 말씀하세요'; $('vWave').classList.remove('on');
-  $('vHint').classList.remove('hidden'); $('vHint').textContent = msg;
-  setTimeout(() => $('vType').focus(), 200);
+const UA = navigator.userAgent;
+const IN_KAKAO = /KAKAOTALK/i.test(UA);
+const IN_APP = /KAKAOTALK|NAVER\(|NAVER |Instagram|FBAN|FBAV|Line\/|DaumApps|everytimeApp|BAND\//i.test(UA);
+const V = { rec: null, finals: '', interim: '', mode: 'fill', typed: false, want: false, ends: [], lastHeard: 0 };
+function outsideUrl() { return location.origin + location.pathname + location.hash; }
+function openOutside() {
+  if (IN_KAKAO) { location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(outsideUrl()); return; }
+  toast('오른쪽 위(또는 아래)의 ⋮ / ··· 를 누르고 [다른 브라우저로 열기]를 고르세요.', 5200);
+}
+function paintGuide(mini) {
+  const g = $('vGuide'), b = V.mode === 'build';
+  g.className = 'vguide' + (mini ? ' mini' : '');
+  g.innerHTML = `<div class="h">이렇게 말씀해 보세요</div><ol>
+    <li><b>1</b>어디인지 <span>· 서초구 방배동</span></li>
+    <li><b>2</b>${b ? '어떤 공사인지' : '무슨 작업인지'} <span>· ${b ? '마당에 판석, 나무 심기' : '소나무 세 그루 전지'}</span></li>
+    <li><b>3</b>예산 <span>· 몰라도 괜찮아요</span></li></ol>
+    <div class="ex">예) "${b ? '방배동 주택인데요, 마당 잔디 걷고 판석 깔고 싶어요. 예산은 잘 모르겠어요' : '방배동 주택인데요, 소나무 세 그루 전지하고 싶어요. 80만 원쯤 생각해요'}"</div>`;
+}
+function voiceTyped(msg) {   // 키보드 마이크 방식 (1단계: 안내 먼저, 키보드는 아직 안 올림)
+  voiceStopRec(); V.typed = true;
+  paintGuide(false);
+  $('vLive').classList.add('hidden'); $('vResume').classList.add('hidden');
+  $('vType').classList.add('hidden'); $('vMicTip').classList.add('hidden'); $('vBtns').classList.add('hidden');
+  $('vGo').classList.remove('hidden');
+  $('vExt').classList.toggle('hidden', !IN_APP);
+  $('vLbl').textContent = '말로 쉽게 쓰기'; $('vWave').classList.remove('on');
+  $('vHint').classList.toggle('hidden', !msg); $('vHint').textContent = msg || '';
+}
+function voiceTypedGo() {   // 2단계: 글칸 + 키보드 마이크 위치 안내
+  paintGuide(true);
+  $('vGo').classList.add('hidden'); $('vHint').classList.add('hidden'); $('vExt').classList.add('hidden');
+  $('vType').classList.remove('hidden'); $('vMicTip').classList.remove('hidden'); $('vBtns').classList.remove('hidden');
+  $('vLbl').textContent = '키보드의 🎙 마이크로 말씀하세요';
+  $('vType').focus();
+  $('vType').oninput = () => { if ($('vType').value.trim()) $('vMicTip').classList.add('hidden'); };
 }
 function voiceOpen(mode) {
   $('toast').classList.add('hidden');
-  V.mode = mode; V.finals = ''; V.interim = ''; V.typed = false;
+  V.mode = mode; V.finals = ''; V.interim = ''; V.typed = false; V.ends = [];
   $('vbar').classList.remove('hidden'); $('sticky').classList.add('hidden');
   const vc = $('voiceCard'); if (vc) vc.classList.add('faded');
-  $('vType').value = ''; $('vType').classList.add('hidden'); $('vLive').classList.remove('hidden'); $('vHint').classList.add('hidden'); $('vRetry').textContent = '다시 말하기';
-  if (!SR || IN_APP) return voiceTyped(IN_APP ? '카톡·네이버 안에서는 키보드의 🎤 마이크를 쓰시면 잘 돼요. 다 말하면 [다 말했어요]를 눌러 주세요.' : '키보드의 🎤 마이크를 누르고 말씀하시거나 직접 적어 주세요.');
-  paintLive(); voiceStart();
+  $('vType').value = ''; $('vType').classList.add('hidden'); $('vMicTip').classList.add('hidden'); $('vGo').classList.add('hidden'); $('vExt').classList.add('hidden');
+  $('vLive').classList.remove('hidden'); $('vHint').classList.add('hidden'); $('vResume').classList.add('hidden'); $('vBtns').classList.remove('hidden');
+  if (!SR || IN_APP) return voiceTyped('');
+  paintGuide(false); paintLive(); V.want = true; voiceStart();
 }
-function paintLive() { const t = (V.finals + ' ' + V.interim).trim(); $('vLive').innerHTML = t ? esc(t) : `<i>${V.mode === 'build' ? '예) 마당에 판석 깔고 나무 몇 그루 심고 싶어요' : '예) 서초구 방배동인데 소나무 세 그루 전지하고 싶어요'}</i>`; }
+function paintLive() {
+  const t = (V.finals + ' ' + V.interim).trim();
+  $('vLive').innerHTML = t ? esc(t) : '<i>말씀하시면 여기에 글자로 나타나요</i>';
+  if (t && !V.typed) paintGuide(true);
+}
+async function micSaved() {   // 마이크 허락이 저장돼 있는지 (다시 켜도 허락 창이 안 뜨는지)
+  try { const p = await navigator.permissions.query({ name: 'microphone' }); return p.state === 'granted'; } catch (e) { return false; }
+}
+function voicePaused() {
+  $('vWave').classList.remove('on');
+  $('vLbl').textContent = '잠깐 멈췄어요';
+  $('vResume').classList.remove('hidden');
+}
 function voiceStart() {
+  $('vResume').classList.add('hidden');
   try {
     const r = new SR(); V.rec = r;
     r.lang = 'ko-KR'; r.continuous = true; r.interimResults = true;
-    r.onresult = e => { let interim = ''; for (let i = e.resultIndex; i < e.results.length; i++) { const x = e.results[i]; if (x.isFinal) V.finals += ' ' + x[0].transcript; else interim += x[0].transcript; } V.interim = interim; paintLive(); };
-    r.onerror = e => { if (V.rec === r && /not-allowed|service-not-allowed|audio-capture/.test(e.error)) { V.rec = null; voiceTyped('마이크를 쓸 수 없어요. 키보드의 🎤 마이크를 누르고 말씀하시거나 직접 적어 주세요.'); } };
-    r.onend = () => {   // 다시 켜지 않음 (허락 창이 반복해서 뜨지 않게)
+    r.onresult = e => { V.lastHeard = Date.now(); let interim = ''; for (let i = e.resultIndex; i < e.results.length; i++) { const x = e.results[i]; if (x.isFinal) V.finals += ' ' + x[0].transcript; else interim += x[0].transcript; } V.interim = interim; paintLive(); };
+    r.onerror = e => { if (V.rec === r && /not-allowed|service-not-allowed|audio-capture/.test(e.error)) { V.want = false; V.rec = null; voiceTyped('마이크를 쓸 수 없어서 키보드 마이크로 바꿨어요.'); } };
+    r.onend = async () => {
       if (V.rec !== r) return; V.rec = null;
       if (V.interim) { V.finals += ' ' + V.interim; V.interim = ''; }
-      paintLive(); $('vWave').classList.remove('on');
-      $('vLbl').textContent = V.finals.trim() ? '끝나면 [다 말했어요]를 눌러 주세요' : '[다시 말하기]를 누르고 말씀하세요';
+      paintLive();
+      if (!V.want || $('vbar').classList.contains('hidden')) return;
+      const now = Date.now(); V.ends = V.ends.filter(t => now - t < 8000); V.ends.push(now);
+      const quiet = now - V.lastHeard > 45000;          // 45초 넘게 아무 말 없으면 멈춤
+      if (V.ends.length < 5 && !quiet && await micSaved()) {
+        setTimeout(() => { if (V.want && !V.rec && !V.typed && !$('vbar').classList.contains('hidden')) voiceStart(); }, 120);
+        return;
+      }
+      voicePaused();
     };
+    V.lastHeard = V.lastHeard && V.ends.length ? V.lastHeard : Date.now();
     r.start(); $('vWave').classList.add('on'); $('vLbl').textContent = '듣고 있어요 · 편하게 말씀하세요';
-  } catch (e) { voiceTyped('키보드의 🎤 마이크를 누르고 말씀하시거나 직접 적어 주세요.'); }
+  } catch (e) { V.want = false; voiceTyped('마이크를 쓸 수 없어서 키보드 마이크로 바꿨어요.'); }
 }
-function voiceStop() { if (V.rec) { const r = V.rec; V.rec = null; try { r.stop(); } catch (e) {} } $('vWave').classList.remove('on'); }
-function voiceRetry() { if (V.typed) { $('vType').value = ''; $('vType').focus(); return; } voiceStop(); V.finals = ''; V.interim = ''; paintLive(); voiceStart(); }
+function voiceResume() { V.want = true; V.ends = []; V.lastHeard = Date.now(); voiceStart(); }
+function voiceStopRec() { if (V.rec) { const r = V.rec; V.rec = null; try { r.stop(); } catch (e) {} } $('vWave').classList.remove('on'); }
+function voiceStop() { V.want = false; voiceStopRec(); }
+function voiceRetry() {   // 지우기 (듣기는 계속)
+  if (V.typed) { $('vType').value = ''; $('vType').focus(); return; }
+  V.finals = ''; V.interim = ''; paintGuide(false); paintLive();
+  if (V.rec) { const r = V.rec; V.rec = null; try { r.abort(); } catch (e) {} V.want = true; V.ends = []; V.lastHeard = Date.now(); voiceStart(); }
+}
 function voiceClose() { voiceStop(); $('vbar').classList.add('hidden'); $('sticky').classList.remove('hidden'); const vc = $('voiceCard'); if (vc) vc.classList.remove('faded'); }
 function voiceFinish() {
+  V.want = false;
   const text = (V.typed ? $('vType').value : (V.finals + ' ' + V.interim)).replace(/\s+/g, ' ').trim();
   if (text.replace(/\s/g, '').length < 4) return toast('조금 더 말씀해 주세요. (예: 어디에서, 어떤 작업을)');
   const mode = V.mode; voiceClose();
@@ -565,6 +664,14 @@ async function submitForm() {
   const p = collect();
   if (!check(p)) return;
   if (!p.imgs.length && !S.photoAsked) { openSheet('shPhoto'); return; }
+  $('cfSum').innerHTML = sumHtml(p, p.imgs.length, '');   // 보내기 전 한 번 확인
+  openSheet('shConfirm'); $('shConfirm').querySelector('.sheet').scrollTop = 0;
+}
+function confirmSend() { closeSheet(); setTimeout(sendNow, 300); }
+async function sendNow() {
+  if (!S) return;
+  const p = collect();
+  if (!check(p)) return;
   const btn = $('fSend'); btn.disabled = true;
   busy(true, p.imgs.length ? `보내는 중… 사진 ${p.imgs.length}장이 있어 조금 걸려요` : '보내는 중…');
   let r = null;
@@ -580,15 +687,23 @@ async function submitForm() {
   }[r && r.msg];
   toast(m || `보내지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요. (급하시면 ${TEL})`, 5200);
 }
-function showDone(p, r) {
+function sumHtml(p, n, note) {
   const K = KINDS[p.kind], site = (SITES.find(s => s[0] === p.site) || [])[1];
   let work = '';
   if (p.kind === 'regular') work = (PLANS.find(x => x[0] === p.plan) || ['', ''])[1];
   else { const w = p.works.filter(x => x !== '기타'); if (p.etc) w.push(p.etc); work = w.join(' · ') || (p.text ? p.text.slice(0, 24) + (p.text.length > 24 ? '…' : '') : '사진으로 보냄'); }
-  const rows = [['의뢰', K.t + (site ? ' · ' + site : '')], [p.kind === 'regular' ? '관리 횟수' : '작업', work], ['지역', p.addr], ['사진', (r.imgCount || 0) + '장'], ['연락 방법', p.contact === 'sms' ? '문자로만' : '전화도 괜찮아요']];
+  const rows = [['의뢰', K.t + (site ? ' · ' + site : '')], [p.kind === 'regular' ? '관리 횟수' : '작업', work], ['지역', p.addr]];
+  if (p.name) rows.push(['성함', p.name + ' 님']);
+  rows.push(['연락받을 번호', telFmt(p.phone), 'tel'], ['연락 방법', p.contact === 'sms' ? '문자로만' : '전화도 괜찮아요']);
   if (p.budget) rows.push(['예산', wonKo(p.budget)]); else if (p.budgetUnknown) rows.push(['예산', '상담 후 정하기']);
-  $('doneSum').innerHTML = rows.map(([a, b]) => `<div><span>${esc(a)}</span><b>${esc(b)}</b></div>`).join('');
-  S = null; show('vDone');
+  rows.push(['사진', n ? n + '장' : '없음']);
+  return rows.map(([a, b, c]) => `<div${c ? ` class="${c}"` : ''}><span>${esc(a)}</span><b>${esc(b)}</b></div>`).join('')
+    + ((p.imgs || []).length ? `<div class="dphotos">${p.imgs.map(u => `<img src="${u}" alt="">`).join('')}</div>` : '')
+    + (note ? `<p class="dnote">${note}</p>` : '');
+}
+function showDone(p, r) {
+  $('doneSum').innerHTML = sumHtml(p, r.imgCount || (p.imgs || []).length, `내용이 다르면 ${TEL}로 전화 주세요.`);
+  S = null; $('toast').classList.add('hidden'); show('vDone');
   history.replaceState({ v: 'done' }, '', location.pathname);
 }
 
@@ -616,6 +731,8 @@ document.querySelectorAll('#vIntro, #vDone, #shPhoto').forEach(el => { el.innerH
 
 // 블로그 링크로 바로 신청서 열기: /home.html#single · #regular · #build
 (function start() {
+  // 카톡 안에서 열면 휴대폰 인터넷 앱으로 넘김 (말로 쓰기가 훨씬 편함). 안 넘어가면 그대로 이 화면 사용.
+  if (IN_KAKAO) setTimeout(() => { try { location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(outsideUrl()); } catch (e) {} }, 300);
   const k = (location.hash || '').replace('#', '');
   history.replaceState({ v: 'intro' }, '', location.pathname);
   if (KINDS[k]) { history.pushState({ v: 'form', kind: k }, '', '#' + k); S = freshState(k); renderForm(); show('vForm'); }

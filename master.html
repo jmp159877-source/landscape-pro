@@ -29,6 +29,17 @@
     .toggle-checkbox:checked + .toggle-label { background-color: #84CC16; }
     .toggle-checkbox { right: 0; z-index: 1; border-color: #E2E8F0; transition: all 0.3s; }
     .toggle-label { background-color: #475569; border-radius: 9999px; transition: all 0.3s; }
+    /* 🏡 [패치 #107] 휴대폰: 화면을 아래로 끌어도 새로고침(=로그아웃) 안 되게 · Home 의뢰 창 전체 화면 · 사진 크게 보기 */
+    html, body { overscroll-behavior-y: none; }
+    #hmBox { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+    @media (max-width: 767px) { #hmBox { height: 100vh; height: 100dvh; max-height: none; border-radius: 0; border: 0; padding-top: 0; padding-bottom: calc(28px + env(safe-area-inset-bottom)); } }
+    .hm-head { position: sticky; top: 0; z-index: 5; background: #0F172A; margin: 0 -20px; padding: 14px 20px 10px; }
+    @media (min-width: 768px) { .hm-head { top: -20px; } }
+    #hmLb { touch-action: none; user-select: none; -webkit-user-select: none; }
+    #hmLbImg { transition: transform .22s ease; transform-origin: center center; will-change: transform; }
+    #hmLbImg.drag { transition: none; }
+    .hm-lb-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 52px; height: 52px; border-radius: 999px; background: rgba(255,255,255,.14); color: #fff; font-size: 30px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
+    .hm-lb-nav:disabled { opacity: .2; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col md:flex-row">
@@ -229,7 +240,22 @@
       <div id="hmList" class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="col-span-full py-16 text-center text-[#94A3B8] glass-panel rounded-[24px] font-bold">의뢰를 불러오는 중...</div></div>
     </div>
     <div id="hmModal" class="hidden fixed inset-0 z-[5500] bg-black/80 flex items-end md:items-center justify-center" onclick="if(event.target===this) hmClose()">
-      <div id="hmBox" class="w-full md:max-w-[640px] max-h-[94vh] overflow-y-auto bg-[#0F172A] border border-white/10 rounded-t-[26px] md:rounded-[26px] p-5 pb-8 space-y-4"></div>
+      <div id="hmBox" class="w-full md:max-w-[640px] max-h-[90vh] overflow-y-auto bg-[#0F172A] border border-white/10 rounded-t-[26px] md:rounded-[26px] p-5 pb-8 space-y-4"></div>
+    </div>
+    <!-- 🏡 [패치 #107] 사진 크게 보기 (좌우로 넘기기 · 두 번 눌러 확대) -->
+    <div id="hmLb" class="hidden fixed inset-0 z-[5600] bg-black flex flex-col">
+      <div class="flex items-center gap-3 px-4 pt-[max(12px,env(safe-area-inset-top))] pb-3 text-white">
+        <span id="hmLbCount" class="text-[16px] font-black flex-1"></span>
+        <a id="hmLbOrig" href="#" target="_blank" rel="noopener" class="text-[13.5px] font-black text-[#BEF264] underline px-2 py-2">원본</a>
+        <button onclick="hmLbClose()" class="w-11 h-11 rounded-full bg-white/15 text-[24px] font-black">×</button>
+      </div>
+      <div id="hmLbStage" class="flex-1 relative overflow-hidden">
+        <img id="hmLbImg" alt="" draggable="false" class="absolute inset-0 m-auto max-w-full max-h-full object-contain">
+        <button id="hmLbPrev" class="hm-lb-nav left-3" onclick="hmLbGo(-1)">‹</button>
+        <button id="hmLbNext" class="hm-lb-nav right-3" onclick="hmLbGo(1)">›</button>
+      </div>
+      <div class="text-center text-[13px] font-bold text-white/60 py-1.5">옆으로 밀면 다음 사진 · 두 번 누르면 확대</div>
+      <div id="hmLbThumbs" class="flex gap-2 overflow-x-auto px-4 pb-[max(14px,env(safe-area-inset-bottom))] pt-1 justify-center"></div>
     </div>
     <!-- 플랫폼 설정 화면 -->
     <div id="view-settings" class="hidden space-y-6">
@@ -2391,6 +2417,7 @@
     } catch (e) {}
     window.addEventListener('popstate', function (ev) {
         if (!pmbLoggedIn()) return;
+        { const hm = document.getElementById('hmModal'); if ((hm && !hm.classList.contains('hidden')) || (ev.state && ev.state.hmOpen)) return; }   // 🏡 [패치 #107] Home 의뢰 창·사진은 자기 뒤로가기만 처리
         const target = (ev.state && ev.state.pmb) || 0;
         let acted = false, tabTo = null;
         PMB.fromPop = true;
@@ -2472,14 +2499,83 @@
         const r = HM.list.find(x => x.id === id); if (!r) return;
         HM.cur = r; HM.pick = ''; hmPaint();
         document.getElementById('hmModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
         if (!(history.state && history.state.hmOpen)) history.pushState({ hmOpen: 1 }, '', '');
     }
     function hmClose(fromPop) {
         const m = document.getElementById('hmModal'); if (m.classList.contains('hidden')) return;
-        m.classList.add('hidden'); HM.cur = null;
+        m.classList.add('hidden'); HM.cur = null; document.body.style.overflow = '';
         if (!fromPop && history.state && history.state.hmOpen) history.back();
     }
-    window.addEventListener('popstate', () => { if (!document.getElementById('hmModal').classList.contains('hidden')) hmClose(true); });
+    window.addEventListener('popstate', () => {
+        if (!document.getElementById('hmLb').classList.contains('hidden')) { hmLbClose(true); return; }   // 사진 → 의뢰 창으로
+        if (!document.getElementById('hmModal').classList.contains('hidden')) hmClose(true);
+    });
+    // ---------- 🏡 [패치 #107] 사진 크게 보기 ----------
+    const LB = { list: [], i: 0, zoom: 1, tx: 0, ty: 0, sx: 0, sy: 0, dx: 0, dy: 0, down: false, lastTap: 0, moved: false };
+    function hmLbOpen(i) {
+        const r = HM.cur; if (!r || !(r.imgs || []).length) return;
+        LB.list = r.imgs.slice(); LB.i = i;
+        document.getElementById('hmLb').classList.remove('hidden');
+        history.pushState({ hmOpen: 1, hmLb: 1 }, '', '');
+        hmLbShow();
+    }
+    function hmLbClose(fromPop) {
+        const el = document.getElementById('hmLb'); if (el.classList.contains('hidden')) return;
+        el.classList.add('hidden');
+        if (!fromPop && history.state && history.state.hmLb) history.back();
+    }
+    function hmLbApply(drag) {
+        const img = document.getElementById('hmLbImg');
+        img.classList.toggle('drag', !!drag);
+        img.style.transform = `translate(${LB.tx + LB.dx}px, ${LB.ty + LB.dy}px) scale(${LB.zoom})`;
+    }
+    function hmLbShow() {
+        const n = LB.list.length, u = LB.list[LB.i];
+        LB.zoom = 1; LB.tx = LB.ty = LB.dx = LB.dy = 0;
+        const img = document.getElementById('hmLbImg'); img.src = u; hmLbApply();
+        document.getElementById('hmLbCount').textContent = `사진 ${LB.i + 1} / ${n}`;
+        document.getElementById('hmLbOrig').href = u;
+        document.getElementById('hmLbPrev').disabled = LB.i <= 0;
+        document.getElementById('hmLbNext').disabled = LB.i >= n - 1;
+        ['hmLbPrev', 'hmLbNext'].forEach(id => document.getElementById(id).style.display = n > 1 ? '' : 'none');
+        document.getElementById('hmLbThumbs').innerHTML = n > 1 ? LB.list.map((x, k) => `<button onclick="LB.i=${k}; hmLbShow()" class="shrink-0 w-14 h-14 rounded-[10px] overflow-hidden ${k === LB.i ? 'ring-2 ring-[#84CC16]' : 'opacity-50'}"><img src="${hmE(x)}" class="w-full h-full object-cover"></button>`).join('') : '';
+        if (LB.list[LB.i + 1]) { const p = new Image(); p.src = LB.list[LB.i + 1]; }
+    }
+    function hmLbGo(d) { const j = LB.i + d; if (j < 0 || j >= LB.list.length) { LB.dx = 0; hmLbApply(); return; } LB.i = j; hmLbShow(); }
+    function hmLbToggleZoom(cx, cy) {
+        const st = document.getElementById('hmLbStage').getBoundingClientRect();
+        if (LB.zoom > 1) { LB.zoom = 1; LB.tx = LB.ty = 0; }
+        else { LB.zoom = 2.5; LB.tx = (st.width / 2 - (cx - st.left)) * 1.5; LB.ty = (st.height / 2 - (cy - st.top)) * 1.5; }
+        hmLbApply();
+    }
+    (function () {
+        const stage = document.getElementById('hmLbStage'); if (!stage) return;
+        const pt = e => (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]) || e;
+        const start = e => { if (e.target.closest('button')) return; if (e.touches && e.touches.length > 1) return; const p = pt(e); LB.down = true; LB.moved = false; LB.sx = p.clientX; LB.sy = p.clientY; LB.dx = LB.dy = 0; };
+        const move = e => { if (!LB.down) return; const p = pt(e); const dx = p.clientX - LB.sx, dy = p.clientY - LB.sy; if (Math.abs(dx) > 6 || Math.abs(dy) > 6) LB.moved = true;
+            if (LB.zoom > 1) { LB.dx = dx; LB.dy = dy; } else { LB.dx = dx; LB.dy = 0; } hmLbApply(true); if (e.cancelable) e.preventDefault(); };
+        const end = e => { if (!LB.down) return; LB.down = false; const p = pt(e);
+            if (!LB.moved) {   // 누름 (두 번 누르면 확대/원래대로)
+                const now = Date.now(); if (now - LB.lastTap < 320) { LB.lastTap = 0; hmLbToggleZoom(p.clientX, p.clientY); } else LB.lastTap = now;
+                LB.dx = LB.dy = 0; return;
+            }
+            if (LB.zoom > 1) { LB.tx += LB.dx; LB.ty += LB.dy; LB.dx = LB.dy = 0; hmLbApply(); return; }
+            const w = stage.clientWidth, dx = LB.dx; LB.dx = 0;
+            if (dx < -Math.min(60, w * 0.15)) hmLbGo(1); else if (dx > Math.min(60, w * 0.15)) hmLbGo(-1); else hmLbApply();
+        };
+        stage.addEventListener('touchstart', start, { passive: true });
+        stage.addEventListener('touchmove', move, { passive: false });
+        stage.addEventListener('touchend', end);
+        stage.addEventListener('mousedown', e => { e.preventDefault(); start(e); });
+        window.addEventListener('mousemove', e => { if (LB.down && !document.getElementById('hmLb').classList.contains('hidden')) move(e); });
+        window.addEventListener('mouseup', e => { if (LB.down) end(e); });
+        stage.addEventListener('wheel', e => { if (document.getElementById('hmLb').classList.contains('hidden')) return; e.preventDefault(); if ((e.deltaY < 0) !== (LB.zoom > 1)) hmLbToggleZoom(e.clientX, e.clientY); }, { passive: false });
+        window.addEventListener('keydown', e => {
+            if (document.getElementById('hmLb').classList.contains('hidden')) return;
+            if (e.key === 'ArrowRight') hmLbGo(1); else if (e.key === 'ArrowLeft') hmLbGo(-1); else if (e.key === 'Escape') hmLbClose();
+        });
+    })();
     function hmCompanies(r) {
         const acc = ACC_LAST || {}, sido = r.sido || '';
         return Object.keys(acc).map(id => ({ id, p: (acc[id] && acc[id].profile) || {} })).filter(x => x.p.status === 'active')
@@ -2493,7 +2589,7 @@
         const hist = Object.keys(r.hist || {}).map(k => r.hist[k]).sort((a, b) => (a.at || 0) - (b.at || 0));
         const okN = cos.filter(c => c.ok).length;
         document.getElementById('hmBox').innerHTML = `
-          <div class="flex items-center gap-2"><span class="text-[13px] font-black px-2.5 py-1 rounded-full ${st[1]}">${st[0]}</span><span class="text-[13.5px] font-bold text-[#94A3B8] flex-1">${hmTime(r.createdAt)} 접수${r.via === 'voice' ? ' · 말로 의뢰' : ''}</span><button onclick="hmClose()" class="w-10 h-10 rounded-full bg-white/10 text-white text-[20px] font-black">×</button></div>
+          <div class="hm-head flex items-center gap-2"><span class="text-[13px] font-black px-2.5 py-1 rounded-full ${st[1]}">${st[0]}</span><span class="text-[13.5px] font-bold text-[#94A3B8] flex-1">${hmTime(r.createdAt)} 접수${r.via === 'voice' ? ' · 말로 의뢰' : ''}</span><button onclick="hmClose()" class="w-10 h-10 rounded-full bg-white/10 text-white text-[20px] font-black">×</button></div>
           <div class="text-[22px] font-black text-white leading-snug">${hmE(hmWorks(r))}</div>
           <div class="bg-white/5 rounded-[18px] px-4">
             ${row('의뢰 종류', hmE((HM_KINDS[r.kind] || '') + (r.site ? ' · ' + HM_SITES[r.site] : '')))}
@@ -2505,7 +2601,7 @@
             ${r.kind === 'regular' ? row('관리 횟수', hmE(HM_PLANS[r.plan] || '')) : ''}
             ${row('남긴 말', hmE(r.text).replace(/\n/g, '<br>'))}
           </div>
-          ${(r.imgs || []).length ? `<div class="grid grid-cols-3 gap-2">${r.imgs.map(u => `<a href="${hmE(u)}" target="_blank" rel="noopener" class="block aspect-square rounded-[12px] overflow-hidden bg-white/5"><img src="${hmE(u)}" class="w-full h-full object-cover" loading="lazy"></a>`).join('')}</div>` : '<div class="text-[14px] font-bold text-amber-300">사진 없이 보낸 의뢰예요.</div>'}
+          ${(r.imgs || []).length ? `<div class="grid grid-cols-3 gap-2">${r.imgs.map((u, i) => `<button type="button" onclick="hmLbOpen(${i})" class="block aspect-square rounded-[12px] overflow-hidden bg-white/5"><img src="${hmE(u)}" class="w-full h-full object-cover" loading="lazy"></button>`).join('')}</div><div class="text-[13px] font-bold text-[#94A3B8] -mt-2">사진을 누르면 크게 보고 옆으로 넘길 수 있어요</div>` : '<div class="text-[14px] font-bold text-amber-300">사진 없이 보낸 의뢰예요.</div>'}
           ${r.status === 'declined' ? `<div class="rounded-[16px] bg-amber-400/15 border border-amber-400/40 p-3.5 text-[15px] font-bold text-amber-200 leading-relaxed">↩️ ${hmE(r.declinedName || '')} 업체가 못 한대요${r.declineReason ? ' · ' + hmE(r.declineReason) : ''}. 다른 업체로 연결해 주세요.</div>` : ''}
           ${r.status === 'sent' ? `<div class="rounded-[16px] bg-[#84CC16]/15 border border-[#84CC16]/40 p-3.5 text-[15px] font-bold text-[#D9F99D] leading-relaxed">✅ ${hmE(r.sentName || '')} 업체에 연결했어요 (${hmTime(r.sentAt)})${r.memo ? '<br>메모: ' + hmE(r.memo) : ''}</div>` : ''}
 
