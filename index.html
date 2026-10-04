@@ -1280,7 +1280,15 @@
                   else if (msg.includes('국밥')) cleanKeyword = '국밥';
 
                   const searchQuery = encodeURIComponent(`${ctx.locName}${cleanKeyword}`);
-                  mapButtonHtml = `
+                  const aiArea = String(ctx.locName || '').startsWith('현재 위치') ? '' : String(ctx.locName || '').trim();   // 🗺️ [패치 #115] 가게 이름 대신 '지역+종류'로 지도 앱 검색
+                  const aiNavQ = (aiArea ? aiArea + ' ' : '') + cleanKeyword;
+                  mapButtonHtml = window.jnAddrRow ? `
+                      <div class="mt-3.5 pt-3 border-t border-[#E2E8F0]">
+                          <div class="text-[14.5px] font-black text-[#151E2D] break-keep">🗺️ 지도 앱에서 "${escHtml(aiNavQ)}" 바로 찾기</div>
+                          <div class="text-[13px] font-bold text-[#64748B] mt-0.5 break-keep">가게 이름·전화번호·길안내는 지도 앱의 실제 정보를 확인하세요.</div>
+                          ${jnAddrRow(aiNavQ, false, 'search')}
+                      </div>
+                  ` : `
                       <div class="mt-3.5 pt-3 border-t border-[#E2E8F0] flex flex-col gap-2">
                           <a href="https://m.map.naver.com/search2/search.naver?query=${searchQuery}" target="_blank" class="w-full py-3 bg-[#151E2D] hover:bg-black text-[#84CC16] rounded-[12px] text-[14px] font-black flex items-center justify-center gap-1.5 shadow-sm transition-colors">
                               <i data-lucide="map-pin" class="w-4 h-4"></i> 네이버 지도로 주변 [${cleanKeyword}] 즉시 검색
@@ -1807,7 +1815,7 @@
             <!-- 📍 [패치 #114] 현장 주소 (길찾기·주소 복사) -->
             <div>
                 <label class="block text-[16px] font-black text-[#151E2D] mb-2">현장 주소 <span class="text-[14px] font-extrabold text-[#64748B] ml-1">길찾기·주소 복사에 쓰여요</span></label>
-                <input type="text" id="scheduleAddr" placeholder="예: 강원 원주시 지정면 ○○로 12" autocomplete="off" class="w-full h-[54px] bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 text-[16px] font-black text-[#151E2D] placeholder:text-[#94A3B8] placeholder:font-bold focus:outline-none focus:border-[#151E2D] focus:bg-white transition-colors">
+                <input type="text" id="scheduleAddr" placeholder="예: 서울 서초구 서초동 ○○로 12" autocomplete="off" class="w-full h-[54px] bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 text-[16px] font-black text-[#151E2D] placeholder:text-[#94A3B8] placeholder:font-bold focus:outline-none focus:border-[#151E2D] focus:bg-white transition-colors">
                 <select id="scheduleAddrPick" onchange="jnPickClientAddr(this)" class="hidden w-full h-[48px] mt-2 bg-white border-[1.5px] border-[#CBD5E1] rounded-[14px] px-3 text-[15px] font-black text-[#334155] focus:outline-none focus:border-[#151E2D]"><option value="">📒 거래처 주소 불러오기</option></select>
                 <p id="scheduleAddrHint" class="hidden text-[14px] font-extrabold text-[#4D7C0F] mt-1.5"></p>
             </div>
@@ -5747,7 +5755,7 @@ ${HELP_EXTRA.join('\n')}`;
               <!-- 🔎 [패치 #114] 다른 지역 날씨 검색 + 최근 지역 -->
               <div id="wxSearchBox" class="bg-white rounded-[22px] border-[1.5px] border-[#CBD5E1] p-3.5 shadow-sm">
                   <div class="flex gap-2">
-                      <input id="wxQ" type="search" enterkeyhint="search" autocomplete="off" placeholder="다른 지역 날씨 (예: 원주 지정면)" onkeydown="if(event.key==='Enter'){event.preventDefault();wxSearch();}" class="flex-1 min-w-0 h-[50px] bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-[14px] px-3.5 text-[16px] font-black text-[#151E2D] placeholder:text-[#94A3B8] placeholder:font-bold focus:outline-none focus:border-[#151E2D] focus:bg-white">
+                      <input id="wxQ" type="search" enterkeyhint="search" autocomplete="off" placeholder="다른 지역 날씨 (예: 서울 서초동)" onkeydown="if(event.key==='Enter'){event.preventDefault();wxSearch();}" class="flex-1 min-w-0 h-[50px] bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-[14px] px-3.5 text-[16px] font-black text-[#151E2D] placeholder:text-[#94A3B8] placeholder:font-bold focus:outline-none focus:border-[#151E2D] focus:bg-white">
                       <button type="button" onclick="wxSearch()" class="h-[50px] px-4 bg-[#151E2D] text-[#D9F99D] text-[16px] font-black rounded-[14px] shrink-0 active:scale-95 transition-all">찾기</button>
                   </div>
                   <div id="wxResults" class="hidden mt-2.5 flex flex-col gap-1.5"></div>
@@ -10249,22 +10257,25 @@ ${AI_COMMON_RULES}
       const m = String(s.memo || '').match(/주소\s*[:：]\s*([^\n]+)/);   // 예전 일정은 메모의 '주소:' 줄을 씀
       return m ? m[1].trim() : '';
     };
-    window.jnAddrRow = function(addr, showText){
+    window.jnAddrRow = function(addr, showText, kind){   // 🎨 [패치 #115] B안: 같은 모양 4칸 + T맵만 파란색으로 잘 보이게
       addr = String(addr || '').trim(); if (!addr) return '';
-      const b = 'h-[40px] px-3 rounded-[12px] text-[14.5px] font-black flex items-center gap-1 active:scale-95 transition-all border-[1.5px]';
-      return `<div class="jn-nav mt-2.5" data-a="${E(addr)}">`
+      const cell = 'flex flex-col items-center justify-center gap-1 min-h-[60px] px-1 text-[13.5px] font-black active:scale-95 transition-all';
+      const badge = (bg, fg, t) => `<span style="width:24px;height:24px;border-radius:8px;background:${bg};color:${fg};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;line-height:1">${t}</span>`;
+      const copyIc = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+      const sep = 'border-right:1.5px solid #E2E8F0;';
+      return `<div class="jn-nav mt-2.5" data-a="${E(addr)}" data-k="${kind === 'search' ? 'search' : 'addr'}">`
         + (showText ? `<div class="text-[15px] font-extrabold text-[#334155] break-keep leading-snug mb-2">📍 ${E(addr)}</div>` : '')
-        + `<div class="flex flex-wrap gap-1.5">`
-        + `<button type="button" onclick="event.stopPropagation();jnCopyAddr(this)" class="${b} bg-white border-[#CBD5E1] text-[#151E2D]">📋 주소 복사</button>`
-        + `<button type="button" onclick="event.stopPropagation();jnNav('tmap',this)" class="${b} bg-[#EEF2FF] border-[#C7D2FE] text-[#3730A3]">T맵</button>`
-        + `<button type="button" onclick="event.stopPropagation();jnNav('kakao',this)" class="${b} bg-[#FEF9C3] border-[#FDE047] text-[#713F12]">카카오맵</button>`
-        + `<button type="button" onclick="event.stopPropagation();jnNav('naver',this)" class="${b} bg-[#DCFCE7] border-[#86EFAC] text-[#14532D]">네이버지도</button>`
+        + `<div style="display:grid;grid-template-columns:1fr 1.15fr 1fr 1fr;border:1.5px solid #E2E8F0;border-radius:16px;overflow:hidden;background:#F8FAFC">`
+        + `<button type="button" onclick="event.stopPropagation();jnCopyAddr(this)" class="${cell}" style="${sep}color:#334155">${badge('#E2E8F0', '#334155', copyIc)}${kind === 'search' ? '검색어 복사' : '주소 복사'}</button>`
+        + `<button type="button" onclick="event.stopPropagation();jnNav('tmap',this)" class="${cell}" style="background:#1D4ED8;color:#fff;${sep}border-right-color:#1D4ED8">${badge('#fff', '#1D4ED8', 'T')}T맵</button>`
+        + `<button type="button" onclick="event.stopPropagation();jnNav('kakao',this)" class="${cell}" style="${sep}color:#334155">${badge('#FEE500', '#3C1E1E', 'K')}카카오맵</button>`
+        + `<button type="button" onclick="event.stopPropagation();jnNav('naver',this)" class="${cell}" style="color:#334155">${badge('#03C75A', '#fff', 'N')}네이버지도</button>`
         + `</div></div>`;
     };
     const addrOf = el => { const w = el && el.closest('.jn-nav'); return w ? (w.dataset.a || '') : ''; };
     window.jnCopyAddr = async function(el){
       const a = addrOf(el); if (!a) return;
-      jnToast((await copyText(a)) ? '주소를 복사했어요. 길찾기 앱에 붙여넣기 하세요.' : '복사가 안 됐어요. 주소를 길게 눌러 복사해 주세요.');
+      jnToast((await copyText(a)) ? '복사했어요. 지도 앱에 붙여넣기 하세요.' : '복사가 안 됐어요. 주소를 길게 눌러 복사해 주세요.');
     };
     window.jnNav = async function(app, el){
       const a = addrOf(el); if (!a) return;
@@ -10287,7 +10298,7 @@ ${AI_COMMON_RULES}
       location.href = url;
       setTimeout(() => {
         document.removeEventListener('visibilitychange', onHide);
-        if (!left && !document.hidden) jnToast(`${name} 안 열리면 앱을 직접 여시고 붙여넣기 하세요.${copied ? ' (주소는 복사해 두었어요)' : ''}`);
+        if (!left && !document.hidden) jnToast(`${name} 안 열리면 앱을 직접 여시고 붙여넣기 하세요.${copied ? ' (복사해 두었어요)' : ''}`);
       }, 1800);
     };
 
@@ -10342,7 +10353,7 @@ ${AI_COMMON_RULES}
     };
     window.wxSearch = async function(){
       const inp = document.getElementById('wxQ'), res = document.getElementById('wxResults'); if (!inp || !res) return;
-      const q = inp.value.trim(); if (q.length < 2) { jnToast('지역 이름을 두 글자 이상 써 주세요. (예: 원주 지정면)'); return; }
+      const q = inp.value.trim(); if (q.length < 2) { jnToast('지역 이름을 두 글자 이상 써 주세요. (예: 서울 서초동)'); return; }
       inp.blur(); res.classList.remove('hidden'); res.innerHTML = '<div class="text-[15px] font-bold text-[#64748B] px-1 py-2">찾는 중...</div>';
       const my = ++WX.seq;
       try {
@@ -10352,7 +10363,7 @@ ${AI_COMMON_RULES}
         WX.list = list;
         res.innerHTML = list.length
           ? list.map((x, i) => `<button type="button" onclick="wxPick(${i})" class="w-full text-left min-h-[48px] px-3.5 py-2.5 rounded-[14px] bg-[#F7FEE7] border-[1.5px] border-[#D9F99D] text-[15.5px] font-black text-[#151E2D] break-keep active:scale-[0.98] transition-all">📍 ${E(x.n)}</button>`).join('')
-          : '<div class="text-[15px] font-bold text-[#64748B] px-1 py-2 break-keep">찾지 못했어요. "원주 지정면"처럼 시·군 이름과 함께 써 보세요.</div>';
+          : '<div class="text-[15px] font-bold text-[#64748B] px-1 py-2 break-keep">찾지 못했어요. "서울 서초동"처럼 시·구 이름과 함께 써 보세요.</div>';
       } catch(e) { if (my === WX.seq) res.innerHTML = '<div class="text-[15px] font-bold text-[#B91C1C] px-1 py-2">인터넷 연결을 확인하고 다시 눌러 주세요.</div>'; }
     };
     async function showAt(p){
