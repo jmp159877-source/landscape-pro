@@ -1804,6 +1804,14 @@
                 <input type="text" id="scheduleTitle" placeholder="예: 일산 주택 소나무 전지 및 방제" autocomplete="off" class="w-full h-[54px] bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 text-[17px] font-black text-[#151E2D] placeholder:text-[#94A3B8] placeholder:font-bold focus:outline-none focus:border-[#151E2D] focus:bg-white transition-colors">
             </div>
 
+            <!-- 📍 [패치 #114] 현장 주소 (길찾기·주소 복사) -->
+            <div>
+                <label class="block text-[16px] font-black text-[#151E2D] mb-2">현장 주소 <span class="text-[14px] font-extrabold text-[#64748B] ml-1">길찾기·주소 복사에 쓰여요</span></label>
+                <input type="text" id="scheduleAddr" placeholder="예: 강원 원주시 지정면 ○○로 12" autocomplete="off" class="w-full h-[54px] bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 text-[16px] font-black text-[#151E2D] placeholder:text-[#94A3B8] placeholder:font-bold focus:outline-none focus:border-[#151E2D] focus:bg-white transition-colors">
+                <select id="scheduleAddrPick" onchange="jnPickClientAddr(this)" class="hidden w-full h-[48px] mt-2 bg-white border-[1.5px] border-[#CBD5E1] rounded-[14px] px-3 text-[15px] font-black text-[#334155] focus:outline-none focus:border-[#151E2D]"><option value="">📒 거래처 주소 불러오기</option></select>
+                <p id="scheduleAddrHint" class="hidden text-[14px] font-extrabold text-[#4D7C0F] mt-1.5"></p>
+            </div>
+
             <!-- 작업 분류명 & 중요도 색상 -->
             <div class="grid grid-cols-12 gap-3">
                 <div class="col-span-7">
@@ -3227,8 +3235,9 @@
                 <span class="truncate">${escHtml(c.name)}</span>${query ? `<span class="shrink-0 text-[13px] font-black px-2 py-0.5 rounded-md ${c.type === '개별 고객' ? 'bg-[#E2E8F0] text-[#334155]' : 'bg-[#ECFCCB] text-[#3F6212]'}">${c.type === '개별 고객' ? '개별' : '정기'}</span>` : ''}
               </div>
               <div class="text-[14.5px] font-bold text-[#4E5968] mt-1.5 break-keep truncate">
-                <i data-lucide="map-pin" class="w-4 h-4 inline-block mr-1 text-[#64748B]"></i> ${c.address || '주소 미등록'}
+                <i data-lucide="map-pin" class="w-4 h-4 inline-block mr-1 text-[#64748B]"></i> ${c.address ? escHtml(c.address) : '주소 미등록'}
               </div>
+              ${c.address && window.jnAddrRow ? jnAddrRow(c.address) : ''}
               <div class="text-[16px] font-black text-[#151E2D] mt-1.5">
                 <i data-lucide="phone" class="w-4 h-4 inline-block text-blue-600 mr-1"></i> ${formatPhoneToLink(c.phone)}
               </div>
@@ -3448,6 +3457,7 @@
                         </span>
                     </div>
                     <h4 class="font-black text-[18px] text-[#151E2D] leading-snug break-keep mt-1">${escHtml(s.title)}</h4>
+                    ${window.jnAddrRow ? jnAddrRow(jnSchedAddr(s), true) : ''}
                     ${s.memo ? `<div class="text-[15px] text-[#334155] font-bold bg-[#F8FAFC] border border-[#E2E8F0] px-4 py-3 rounded-[14px] mt-3 leading-relaxed break-keep">${escHtml(s.memo).replace(/\n/g, '<br>')}</div>` : ''}
                 </div>
             `;
@@ -3493,6 +3503,8 @@
             color: document.getElementById('scheduleColor').value,
             tag: document.getElementById('scheduleTagText').value, // 🔥 직접 작성한 태그명 저장
             memo: document.getElementById('scheduleMemo').value
+        ,
+            addr: (document.getElementById('scheduleAddr') ? document.getElementById('scheduleAddr').value.trim() : '') // 📍 [패치 #114]
         };
         
         const editIdx = schedules.findIndex(s => String(s.id) === String(id)); // ✏️ [패치 #47] 고친 일정은 같은 자리에서 바꿔 끼움 (새 일정은 영향 없음)
@@ -5732,6 +5744,16 @@ ${HELP_EXTRA.join('\n')}`;
           <!-- 모달 본문 스크롤 영역 -->
           <div class="p-4 sm:p-5 overflow-y-auto space-y-5 flex-1 nav-scroll">
               
+              <!-- 🔎 [패치 #114] 다른 지역 날씨 검색 + 최근 지역 -->
+              <div id="wxSearchBox" class="bg-white rounded-[22px] border-[1.5px] border-[#CBD5E1] p-3.5 shadow-sm">
+                  <div class="flex gap-2">
+                      <input id="wxQ" type="search" enterkeyhint="search" autocomplete="off" placeholder="다른 지역 날씨 (예: 원주 지정면)" onkeydown="if(event.key==='Enter'){event.preventDefault();wxSearch();}" class="flex-1 min-w-0 h-[50px] bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-[14px] px-3.5 text-[16px] font-black text-[#151E2D] placeholder:text-[#94A3B8] placeholder:font-bold focus:outline-none focus:border-[#151E2D] focus:bg-white">
+                      <button type="button" onclick="wxSearch()" class="h-[50px] px-4 bg-[#151E2D] text-[#D9F99D] text-[16px] font-black rounded-[14px] shrink-0 active:scale-95 transition-all">찾기</button>
+                  </div>
+                  <div id="wxResults" class="hidden mt-2.5 flex flex-col gap-1.5"></div>
+                  <div id="wxChips" class="flex flex-wrap gap-1.5 mt-2.5"></div>
+              </div>
+
               <!-- 🔥 [완벽 복구] 실시간 지역 위치 & 위치갱신 & 현재 기온 & 작업 지침 카드 -->
               <div class="relative overflow-hidden rounded-[24px] p-5 shadow-md border border-sky-300/40" style="background: linear-gradient(135deg, #0B1F3A 0%, #0369A1 55%, #0284C7 100%);">
                   <div class="relative z-10 flex flex-col gap-3.5">
@@ -8546,7 +8568,7 @@ ${AI_COMMON_RULES}
             <a href="${escHtml(reqSmsHref(tel, reqReplyText(r)))}" class="h-14 rounded-[16px] bg-[#84CC16] text-[#1A2E05] text-[18px] font-black flex items-center justify-center" style="text-decoration:none">문자하기</a>
           </div>
           <div class="h-px bg-[#E2E8F0]"></div>
-          ${sec('현장 주소', `<span class="text-[17px] font-bold leading-relaxed break-keep">${escHtml(r.addr)}</span><a href="https://map.naver.com/p/search/${encodeURIComponent(r.addr)}" target="_blank" rel="noopener" class="self-start text-[15px] font-black text-[#1D4ED8] underline underline-offset-2 min-h-[36px] flex items-center">지도에서 보기</a>`)}
+          ${sec('현장 주소', `<span class="text-[17px] font-bold leading-relaxed break-keep">${escHtml(r.addr)}</span>${window.jnAddrRow ? jnAddrRow(r.addr) : `<a href="https://map.naver.com/p/search/${encodeURIComponent(r.addr)}" target="_blank" rel="noopener" class="self-start text-[15px] font-black text-[#1D4ED8] underline underline-offset-2 min-h-[36px] flex items-center">지도에서 보기</a>`}`)}
           ${sec('원하는 작업 · 시기', `<span class="flex flex-wrap gap-1.5">${r.works.map(w => chip(w, true)).join('')}${r.when ? chip(r.when === '급해요' ? r.when : r.when + ' 희망', false) : ''}${!r.works.length && !r.when ? '<span class="text-[15px] font-bold text-[#64748B]">고르지 않음</span>' : ''}</span>`)}
           ${r.text ? sec('고객님이 남긴 말', `<span class="text-[17px] font-bold leading-relaxed bg-[#F8FAFC] rounded-[12px] p-3 whitespace-pre-wrap break-keep" style="overflow-wrap:anywhere">${escHtml(r.text)}</span>`) : ''}
           ${r.imgs.length ? sec(`사진 ${r.imgs.length}장 · 누르면 크게`, `<span class="grid grid-cols-2 gap-2">${r.imgs.map((u, i) => `<button type="button" onclick="reqOpenPhoto(${i})" class="h-[130px] rounded-[14px] overflow-hidden bg-[#D9E4D0]"><img src="${escHtml(u)}" alt="현장 사진 ${i + 1}" loading="lazy" class="w-full h-full object-cover"></button>`).join('')}</span>`) : ''}
@@ -8927,7 +8949,7 @@ ${AI_COMMON_RULES}
       try {
         const mark = hpMark(r), i = schedules.findIndex(x => x && String(x.memo || '').includes(mark));
         const sc = { id: i >= 0 ? schedules[i].id : String(Date.now()), date, title: `${reqArea(r.addr)} ${r.name} 고객님 ${r.works.length ? r.works.join(', ') : '조경 작업'}`.slice(0, 80),
-          color: 'border-[#84CC16]', tag: '작업 · ' + HP_SLOT[slot], memo: `연락처: ${reqPhoneFmt(r.phone)}\n주소: ${r.addr}${amount ? '\n예상 금액: ' + amount.toLocaleString('ko-KR') + '원' : ''}\n${mark}` };
+          color: 'border-[#84CC16]', tag: '작업 · ' + HP_SLOT[slot], addr: r.addr || '', memo: `연락처: ${reqPhoneFmt(r.phone)}\n주소: ${r.addr}${amount ? '\n예상 금액: ' + amount.toLocaleString('ko-KR') + '원' : ''}\n${mark}` };
         if (i >= 0) schedules[i] = sc; else schedules.push(sc);
         updateData('schedules', schedules); try { renderCalendar(); renderScheduleList(); } catch (e) {}
         return true;
@@ -10207,6 +10229,167 @@ ${AI_COMMON_RULES}
       const gvm = document.getElementById('guideVideoModal'); if (!gvm || gvm.classList.contains('hidden')) return;
       closeGuideVideo(true); e.stopImmediatePropagation();
     }, true);
+  </script>
+  <script>
+  /* 📍🔎 [패치 #114] 현장 주소 길찾기(복사·T맵·카카오맵·네이버지도) + 날씨 다른 지역 검색 */
+  (function(){
+    const E = s => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    window.jnToast = function(msg){
+      let t = document.getElementById('jnToast');
+      if (!t) { t = document.createElement('div'); t.id = 'jnToast'; t.style.cssText = 'position:fixed;left:50%;bottom:96px;transform:translateX(-50%);z-index:99999;max-width:88vw;background:#151E2D;color:#fff;font-weight:800;font-size:15px;line-height:1.45;padding:12px 18px;border-radius:16px;box-shadow:0 10px 26px rgba(0,0,0,.3);text-align:center;word-break:keep-all;transition:opacity .25s;opacity:0;pointer-events:none'; document.body.appendChild(t); }
+      t.textContent = msg; t.style.opacity = '1'; clearTimeout(t._h); t._h = setTimeout(() => { t.style.opacity = '0'; }, 2600);
+    };
+    async function copyText(text){
+      try { if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(text); return true; } } catch(e) {}
+      try { const ta = document.createElement('textarea'); ta.value = text; ta.setAttribute('readonly',''); ta.style.cssText = 'position:fixed;top:-1000px;opacity:0'; document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, 99999); const ok = document.execCommand('copy'); ta.remove(); return ok; } catch(e) { return false; }
+    }
+    window.jnSchedAddr = function(s){
+      if (!s) return '';
+      if (s.addr && String(s.addr).trim()) return String(s.addr).trim();
+      const m = String(s.memo || '').match(/주소\s*[:：]\s*([^\n]+)/);   // 예전 일정은 메모의 '주소:' 줄을 씀
+      return m ? m[1].trim() : '';
+    };
+    window.jnAddrRow = function(addr, showText){
+      addr = String(addr || '').trim(); if (!addr) return '';
+      const b = 'h-[40px] px-3 rounded-[12px] text-[14.5px] font-black flex items-center gap-1 active:scale-95 transition-all border-[1.5px]';
+      return `<div class="jn-nav mt-2.5" data-a="${E(addr)}">`
+        + (showText ? `<div class="text-[15px] font-extrabold text-[#334155] break-keep leading-snug mb-2">📍 ${E(addr)}</div>` : '')
+        + `<div class="flex flex-wrap gap-1.5">`
+        + `<button type="button" onclick="event.stopPropagation();jnCopyAddr(this)" class="${b} bg-white border-[#CBD5E1] text-[#151E2D]">📋 주소 복사</button>`
+        + `<button type="button" onclick="event.stopPropagation();jnNav('tmap',this)" class="${b} bg-[#EEF2FF] border-[#C7D2FE] text-[#3730A3]">T맵</button>`
+        + `<button type="button" onclick="event.stopPropagation();jnNav('kakao',this)" class="${b} bg-[#FEF9C3] border-[#FDE047] text-[#713F12]">카카오맵</button>`
+        + `<button type="button" onclick="event.stopPropagation();jnNav('naver',this)" class="${b} bg-[#DCFCE7] border-[#86EFAC] text-[#14532D]">네이버지도</button>`
+        + `</div></div>`;
+    };
+    const addrOf = el => { const w = el && el.closest('.jn-nav'); return w ? (w.dataset.a || '') : ''; };
+    window.jnCopyAddr = async function(el){
+      const a = addrOf(el); if (!a) return;
+      jnToast((await copyText(a)) ? '주소를 복사했어요. 길찾기 앱에 붙여넣기 하세요.' : '복사가 안 됐어요. 주소를 길게 눌러 복사해 주세요.');
+    };
+    window.jnNav = async function(app, el){
+      const a = addrOf(el); if (!a) return;
+      const copied = await copyText(a);   // 앱이 안 열려도 바로 붙여넣기 할 수 있게 먼저 복사
+      const q = encodeURIComponent(a), ua = navigator.userAgent || '';
+      const android = /Android/i.test(ua), ios = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      const name = { tmap: 'T맵이', kakao: '카카오맵이', naver: '네이버지도가' }[app];
+      if (!android && !ios) {   // 컴퓨터: 앱 대신 웹 지도
+        const web = { tmap: 'https://map.naver.com/p/search/' + q, kakao: 'https://map.kakao.com/?q=' + q, naver: 'https://map.naver.com/p/search/' + q }[app];
+        window.open(web, '_blank', 'noopener');
+        jnToast(app === 'tmap' ? 'T맵은 핸드폰에서 열려요. 컴퓨터에서는 지도로 보여 드려요.' : '지도를 새 창으로 열었어요.');
+        return;
+      }
+      const path = { tmap: 'search?name=' + q, kakao: 'search?q=' + q, naver: 'search?query=' + q + '&appname=www.jogyeongnote.com' }[app];
+      const scheme = { tmap: 'tmap', kakao: 'kakaomap', naver: 'nmap' }[app];
+      const pkg = { tmap: 'com.skt.tmap.ku', kakao: 'net.daum.android.map', naver: 'com.nhn.android.nmap' }[app];
+      const url = android ? `intent://${path}#Intent;scheme=${scheme};package=${pkg};end` : `${scheme}://${path}`;
+      let left = false; const onHide = () => { if (document.hidden) left = true; };
+      document.addEventListener('visibilitychange', onHide);
+      location.href = url;
+      setTimeout(() => {
+        document.removeEventListener('visibilitychange', onHide);
+        if (!left && !document.hidden) jnToast(`${name} 안 열리면 앱을 직접 여시고 붙여넣기 하세요.${copied ? ' (주소는 복사해 두었어요)' : ''}`);
+      }, 1800);
+    };
+
+    /* 일정 창: 주소 칸 + 거래처 주소 불러오기 + 제목에 거래처 이름 있으면 자동 */
+    const addrInp = () => document.getElementById('scheduleAddr');
+    const clientList = () => { try { return (Array.isArray(clients) ? clients : []).filter(c => c && c.name && c.address && String(c.address).trim()); } catch(e) { return []; } };
+    function hint(t){ const h = document.getElementById('scheduleAddrHint'); if (!h) return; h.textContent = t || ''; h.classList.toggle('hidden', !t); }
+    function fillPick(){
+      const sel = document.getElementById('scheduleAddrPick'); if (!sel) return;
+      const list = clientList();
+      sel.innerHTML = '<option value="">📒 거래처 주소 불러오기</option>' + list.map((c, i) => `<option value="${i}">${E(c.name)} · ${E(String(c.address).slice(0, 24))}</option>`).join('');
+      sel.classList.toggle('hidden', !list.length); sel.value = '';
+    }
+    window.jnPickClientAddr = function(sel){
+      const c = clientList()[Number(sel.value)]; sel.value = ''; if (!c || !addrInp()) return;
+      addrInp().value = String(c.address).trim(); hint(`✔ ${c.name} 주소를 넣었어요.`);
+    };
+    if (typeof openScheduleModal === 'function') {
+      const _open = openScheduleModal;
+      openScheduleModal = function(){ const r = _open.apply(this, arguments); if (addrInp()) addrInp().value = ''; hint(''); fillPick(); return r; };
+    }
+    if (typeof openScheduleEdit === 'function') {
+      const _edit = openScheduleEdit;
+      openScheduleEdit = function(id){ const r = _edit.apply(this, arguments); try { const s = schedules.find(x => String(x.id) === String(id)); if (s && addrInp()) addrInp().value = jnSchedAddr(s); } catch(e) {} return r; };
+    }
+    if (typeof reqToSchedule === 'function') {
+      const _rts = reqToSchedule;
+      reqToSchedule = function(){ const r = _rts.apply(this, arguments); try { if (RV.cur && addrInp()) addrInp().value = RV.cur.addr || ''; } catch(e) {} return r; };
+    }
+    document.addEventListener('change', e => {
+      if (!e.target || e.target.id !== 'scheduleTitle' || !addrInp() || addrInp().value.trim()) return;
+      const t = e.target.value || ''; const c = clientList().find(c => String(c.name).trim().length >= 2 && t.includes(String(c.name).trim()));
+      if (c) { addrInp().value = String(c.address).trim(); hint(`✔ 거래처 '${c.name}' 주소를 넣었어요. 아니면 지우고 고쳐 주세요.`); }
+    });
+
+    /* 날씨: 다른 지역 검색 + 최근 지역 5개 */
+    const WX = { mode: 'gps', name: '', seq: 0 };
+    const RK = 'jn_wx_recent';
+    const recent = () => { try { const a = JSON.parse(localStorage.getItem(RK) || '[]'); return Array.isArray(a) ? a.filter(x => x && x.n && isFinite(x.lat) && isFinite(x.lon)).slice(0, 5) : []; } catch(e) { return []; } };
+    const SHORT = { '서울특별시':'서울','부산광역시':'부산','대구광역시':'대구','인천광역시':'인천','광주광역시':'광주','대전광역시':'대전','울산광역시':'울산','세종특별자치시':'세종','경기도':'경기','강원특별자치도':'강원','강원도':'강원','충청북도':'충북','충청남도':'충남','전북특별자치도':'전북','전라북도':'전북','전라남도':'전남','경상북도':'경북','경상남도':'경남','제주특별자치도':'제주' };
+    function placeName(d){
+      const parts = String(d.display_name || '').split(',').map(x => x.trim()).filter(x => x && x !== '대한민국' && !/^\d{5}$/.test(x)).reverse();
+      const out = []; parts.forEach(p => { p = SHORT[p] || p; if (!out.includes(p)) out.push(p); });
+      return out.slice(0, 4).join(' ') || (d.name || '');
+    }
+    window.wxRenderChips = function(){
+      const box = document.getElementById('wxChips'); if (!box) return;
+      const on = 'bg-[#151E2D] text-[#D9F99D] border-[#151E2D]', off = 'bg-[#F8FAFC] text-[#151E2D] border-[#CBD5E1]';
+      const c = 'h-[40px] px-3.5 rounded-full text-[14.5px] font-black border-[1.5px] active:scale-95 transition-all max-w-full truncate';
+      box.innerHTML = `<button type="button" onclick="wxBackGps()" class="${c} ${WX.mode === 'gps' ? on : off}">📍 내 위치</button>`
+        + recent().map((r, i) => `<button type="button" onclick="wxPickRecent(${i})" class="${c} ${WX.mode === 'search' && WX.name === r.n ? on : off}">${E(r.n)}</button>`).join('');
+    };
+    window.wxSearch = async function(){
+      const inp = document.getElementById('wxQ'), res = document.getElementById('wxResults'); if (!inp || !res) return;
+      const q = inp.value.trim(); if (q.length < 2) { jnToast('지역 이름을 두 글자 이상 써 주세요. (예: 원주 지정면)'); return; }
+      inp.blur(); res.classList.remove('hidden'); res.innerHTML = '<div class="text-[15px] font-bold text-[#64748B] px-1 py-2">찾는 중...</div>';
+      const my = ++WX.seq;
+      try {
+        const r = await fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&countrycodes=kr&accept-language=ko&limit=8&q=' + encodeURIComponent(q));
+        const data = await r.json(); if (my !== WX.seq) return;
+        const seen = new Set(); const list = (Array.isArray(data) ? data : []).map(d => ({ n: placeName(d), lat: Number(d.lat), lon: Number(d.lon) })).filter(x => x.n && isFinite(x.lat) && isFinite(x.lon) && !seen.has(x.n) && seen.add(x.n)).slice(0, 6);
+        WX.list = list;
+        res.innerHTML = list.length
+          ? list.map((x, i) => `<button type="button" onclick="wxPick(${i})" class="w-full text-left min-h-[48px] px-3.5 py-2.5 rounded-[14px] bg-[#F7FEE7] border-[1.5px] border-[#D9F99D] text-[15.5px] font-black text-[#151E2D] break-keep active:scale-[0.98] transition-all">📍 ${E(x.n)}</button>`).join('')
+          : '<div class="text-[15px] font-bold text-[#64748B] px-1 py-2 break-keep">찾지 못했어요. "원주 지정면"처럼 시·군 이름과 함께 써 보세요.</div>';
+      } catch(e) { if (my === WX.seq) res.innerHTML = '<div class="text-[15px] font-bold text-[#B91C1C] px-1 py-2">인터넷 연결을 확인하고 다시 눌러 주세요.</div>'; }
+    };
+    async function showAt(p){
+      WX.mode = 'search'; WX.name = p.n; const my = ++WX.seq;
+      const a = recent().filter(x => x.n !== p.n); a.unshift({ n: p.n, lat: p.lat, lon: p.lon });
+      try { localStorage.setItem(RK, JSON.stringify(a.slice(0, 5))); } catch(e) {}
+      const res = document.getElementById('wxResults'); if (res) { res.classList.add('hidden'); res.innerHTML = ''; }
+      const inp = document.getElementById('wxQ'); if (inp) inp.value = '';
+      wxRenderChips();
+      const t = document.getElementById('weatherMainTemp'); if (t) t.innerText = '기상 수신중..';
+      const prev = localStorage.getItem('shinhwa_last_loc');   // 내 위치 기억은 건드리지 않음
+      await fetchWeatherApi(p.lat, p.lon);
+      try { if (prev) localStorage.setItem('shinhwa_last_loc', prev); else localStorage.removeItem('shinhwa_last_loc'); } catch(e) {}
+      if (my !== WX.seq || WX.mode !== 'search') return;
+      const loc = document.getElementById('weatherLocation');
+      if (loc) loc.innerHTML = `<span class="text-white font-black tracking-tight drop-shadow-sm">🔎 ${E(p.n)}</span><span class="inline-flex items-center gap-1 bg-[#091526]/90 border border-[#FEE500]/60 text-[#FEE500] text-[13px] font-black px-2.5 py-1 rounded-full shadow-md ml-0.5">📍 내 위치로</span>`;
+      const ai = document.getElementById('aiChatLocText'); if (ai) ai.dataset.wxSearch = '1';
+    }
+    window.wxPick = i => { const p = (WX.list || [])[i]; if (p) showAt(p); };
+    window.wxPickRecent = i => { const p = recent()[i]; if (p) showAt(p); };
+    window.wxBackGps = function(){
+      const was = WX.mode; WX.mode = 'gps'; WX.name = ''; ++WX.seq; wxRenderChips();
+      if (was === 'search') { weatherIsLoaded = false; loadRealWeather(false); }
+    };
+    if (typeof loadRealWeather === 'function') {
+      const _lrw = loadRealWeather;
+      loadRealWeather = function(force){ if (WX.mode === 'search') { WX.mode = 'gps'; WX.name = ''; ++WX.seq; } setTimeout(wxRenderChips, 0); return _lrw.apply(this, arguments); };
+    }
+    if (typeof openWeatherModal === 'function') {
+      const _ow = openWeatherModal;
+      openWeatherModal = function(){ const r = _ow.apply(this, arguments); const res = document.getElementById('wxResults'); if (res) { res.classList.add('hidden'); res.innerHTML = ''; } wxRenderChips(); return r; };
+    }
+    if (typeof closeWeatherModal === 'function') {
+      const _cw = closeWeatherModal;
+      closeWeatherModal = function(){ const r = _cw.apply(this, arguments); if (WX.mode === 'search') wxBackGps(); return r; };   // 창을 닫으면 다시 내 위치 날씨
+    }
+  })();
   </script>
 </body>
 </html>
