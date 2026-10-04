@@ -5,6 +5,14 @@
   <meta name="robots" content="noindex, nofollow"><!-- 🔎 [패치 #28] 관리자 센터는 검색에 나오지 않게 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>조경노트 마스터 관리자 센터</title>
+  <!-- 📲 [패치 #111] 관리자 전용 바탕화면 아이콘 (노란 바탕 '관리') -->
+  <link rel="manifest" href="/master.webmanifest">
+  <link rel="icon" type="image/png" sizes="32x32" href="/master-icon-32.png">
+  <link rel="apple-touch-icon" href="/master-icon-180.png">
+  <meta name="theme-color" content="#151E2D">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="조경노트 관리자">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@1.47.0"></script>
   <style>
@@ -62,9 +70,10 @@
         <input type="password" id="masterPw" placeholder="비밀번호 (6자리 이상 숫자/영문)" autocomplete="off" class="w-full bg-[#0F172A] border border-white/10 rounded-[14px] px-5 py-4 text-white text-[15px] font-bold focus:outline-none focus:border-[#3B82F6]" onkeypress="if(event.key === 'Enter') loginMaster()">
       </div>
       <div class="w-full flex items-center mb-6 px-1 relative z-10">
-        <label class="flex items-center gap-2 cursor-pointer text-[#94A3B8] text-[13px] font-bold hover:text-white transition-colors"><input type="checkbox" id="masterAutoLoginCheck" class="w-5 h-5 rounded border-white/10 bg-transparent text-[#3B82F6] focus:ring-[#3B82F6]" checked>아이디 저장 (비밀번호는 매번 입력)</label><!-- 🔐 [패치 #73] -->
+        <label class="flex items-center gap-2 cursor-pointer text-[#94A3B8] text-[13px] font-bold hover:text-white transition-colors" style="display:none"><input type="checkbox" id="masterAutoLoginCheck" class="w-5 h-5 rounded border-white/10 bg-transparent text-[#3B82F6] focus:ring-[#3B82F6]" checked>아이디 저장 (비밀번호는 매번 입력)</label><!-- 🔐 [패치 #73] -->
       </div>
       
+      <label class="w-full flex items-start gap-3 cursor-pointer rounded-[14px] bg-[#FFE100]/10 border border-[#FFE100]/40 px-4 py-3.5 mb-4 relative z-10"><input type="checkbox" id="mqCheck" class="w-6 h-6 mt-0.5 shrink-0 accent-[#FFE100]"><span><b class="block text-white text-[15.5px] font-black">이 휴대폰에서 자동 로그인</b><span class="block text-[#CBD5E1] text-[13px] font-bold mt-0.5">다음부터 잠금 번호 4자리만 누르면 바로 들어가요</span></span></label>
       <button onclick="loginMaster()" class="w-full py-4.5 bg-[#3B82F6] text-white rounded-[16px] font-black text-[16px] hover:bg-[#2563EB] shadow-[0_8px_20px_rgba(59,130,246,0.3)] transition-all relative z-10 flex items-center justify-center gap-2 mb-4">
         <i data-lucide="power" class="w-5 h-5"></i> 통제실 접속 (로그인)
       </button>
@@ -672,8 +681,8 @@
             
             // 🔐 [패치 #73] 자동 로그인 없앰 (휴대폰 분실 대비) · [아이디 저장]을 켜면 아이디만 기억
             ['shinhwa_master_pw', 'shinhwa_master_auto', 'shinhwa_master_session'].forEach(k => localStorage.removeItem(k));
-            if (document.getElementById('masterAutoLoginCheck').checked) localStorage.setItem('shinhwa_master_id', id);
-            else localStorage.removeItem('shinhwa_master_id');
+            localStorage.setItem('shinhwa_master_id', id);   // 아이디는 늘 기억
+            if (!session && document.getElementById('mqCheck') && document.getElementById('mqCheck').checked && window.crypto && crypto.subtle) { MQ.id = id; setTimeout(() => mqShow('set'), 300); }   // 🔐 [패치 #111]
 
             document.getElementById('masterLoginView').classList.add('hidden');
             document.getElementById('mainContent').classList.remove('hidden');
@@ -691,11 +700,81 @@
         }
     }
 
+    // ==========================================
+    // 🔐 [패치 #111] 관리자 자동 로그인 = 잠금 번호 4자리
+    //  - 비밀번호는 저장하지 않음. 로그인 열쇠(refresh token)를 잠금 번호로 암호화(AES)해서 이 휴대폰에만 보관
+    //  - 열 때 4자리만 누르면 바로 들어감 · 5번 틀리면 열쇠를 지우고 비밀번호 로그인으로
+    //  - [로그아웃]하면 열쇠 삭제
+    // ==========================================
+    const MQ_KEY = 'jn_master_quick';
+    const MQ = { mode: '', pin: '', first: '', key: null, salt: null, id: '' };
+    function mqLoad() { try { const v = JSON.parse(localStorage.getItem(MQ_KEY) || 'null'); return v && v.ct && v.salt && v.iv && v.id ? v : null; } catch (e) { return null; } }
+    const mqB64 = buf => btoa(String.fromCharCode.apply(null, new Uint8Array(buf)));
+    const mqBuf = b64 => Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+    async function mqDerive(pin, salt) {
+        const base = await crypto.subtle.importKey('raw', new TextEncoder().encode('jn-master|' + pin), 'PBKDF2', false, ['deriveKey']);
+        return crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: 150000, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+    }
+    async function mqSave(rt) {   // 열쇠가 새로 바뀌면 다시 잠가서 저장
+        if (!MQ.key || !MQ.salt || !rt) return;
+        try { const iv = crypto.getRandomValues(new Uint8Array(12)); const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, MQ.key, new TextEncoder().encode(rt));
+            localStorage.setItem(MQ_KEY, JSON.stringify({ id: MQ.id, salt: mqB64(MQ.salt), iv: mqB64(iv), ct: mqB64(ct), fails: 0, at: Date.now() })); } catch (e) {}
+    }
+    function mqClear() { localStorage.removeItem(MQ_KEY); MQ.key = null; MQ.salt = null; }
+    function mqShow(mode, sub) {
+        MQ.mode = mode; MQ.pin = '';
+        document.getElementById('mqTitle').textContent = mode === 'unlock' ? '잠금 번호 4자리' : mode === 'set' ? '잠금 번호 4자리를 정해 주세요' : '한 번 더 눌러 주세요';
+        document.getElementById('mqSub').textContent = sub || (mode === 'unlock' ? '조경노트 관리자' : '다음부터 이 번호로 바로 들어가요');
+        document.getElementById('mqAlt').textContent = mode === 'unlock' ? '비밀번호로 로그인' : '나중에 하기';
+        mqPaint(); document.getElementById('mqPin').classList.remove('hidden'); document.getElementById('mqPin').style.display = 'flex';
+    }
+    function mqHide() { const el = document.getElementById('mqPin'); el.classList.add('hidden'); el.style.display = 'none'; }
+    function mqPaint() {
+        document.getElementById('mqDots').innerHTML = [0, 1, 2, 3].map(i => `<span style="width:20px;height:20px;border-radius:50%;${i < MQ.pin.length ? 'background:#FFE100;' : 'border:2px solid #475569;'}"></span>`).join('');
+        const k = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', '⌫'];
+        document.getElementById('mqPad').innerHTML = k.map(x => x === '' ? '<span></span>' : `<button type="button" onclick="mqKey('${x}')" style="height:72px;border-radius:22px;background:${x === '⌫' ? 'transparent' : '#1E293B'};color:#fff;font-size:${x === '⌫' ? '24px' : '30px'};font-weight:900;border:0;">${x}</button>`).join('');
+    }
+    async function mqKey(x) {
+        if (x === '⌫') { MQ.pin = MQ.pin.slice(0, -1); return mqPaint(); }
+        if (MQ.pin.length >= 4) return;
+        MQ.pin += x; mqPaint();
+        if (MQ.pin.length < 4) return;
+        const pin = MQ.pin;
+        if (MQ.mode === 'set') { MQ.first = pin; return setTimeout(() => mqShow('again'), 150); }
+        if (MQ.mode === 'again') {
+            if (pin !== MQ.first) return setTimeout(() => mqShow('set', '두 번 누른 번호가 달라요. 다시 정해 주세요.'), 150);
+            MQ.salt = crypto.getRandomValues(new Uint8Array(16)); MQ.key = await mqDerive(pin, MQ.salt);
+            await mqSave(currentRefreshToken); mqHide();
+            return alert('🔐 자동 로그인을 켰어요.\n다음부터 잠금 번호 4자리만 누르면 바로 들어가요.\n(로그아웃하면 꺼져요)');
+        }
+        // 풀기
+        const v = mqLoad(); if (!v) { mqHide(); return; }
+        document.getElementById('mqSub').textContent = '확인하는 중…';
+        let rt = '';
+        try { const salt = mqBuf(v.salt), key = await mqDerive(pin, salt); rt = new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: mqBuf(v.iv) }, key, mqBuf(v.ct))); MQ.key = key; MQ.salt = salt; MQ.id = v.id; }
+        catch (e) {
+            v.fails = (Number(v.fails) || 0) + 1;
+            if (v.fails >= 5) { mqClear(); mqHide(); return alert('잠금 번호를 5번 틀려서 자동 로그인을 껐어요.\n비밀번호로 로그인해 주세요.'); }
+            localStorage.setItem(MQ_KEY, JSON.stringify(v));
+            return mqShow('unlock', `번호가 달라요 · ${5 - v.fails}번 남았어요`);
+        }
+        currentRefreshToken = rt;
+        const ok = await refreshIdToken();
+        if (!ok) { mqClear(); mqHide(); return alert('자동 로그인이 만료됐어요. 비밀번호로 한 번 로그인해 주세요.'); }
+        mqHide(); await mqSave(currentRefreshToken);
+        loginMaster({ id: v.id, idToken: currentIdToken, refreshToken: currentRefreshToken });
+    }
+    function mqUsePassword() { mqHide(); if (MQ.mode !== 'unlock') return; }
+    // 로그인 열쇠가 새로 바뀌면 다시 저장
+    const refreshIdTokenMQ0 = refreshIdToken;
+    refreshIdToken = async function () { const before = currentRefreshToken, ok = await refreshIdTokenMQ0(); if (ok && currentRefreshToken !== before && mqLoad()) mqSave(currentRefreshToken); return ok; };
+
     window.addEventListener('DOMContentLoaded', () => {
         // 🔐 [패치 #73] 자동 로그인 없앰: 들어올 때마다 비밀번호 입력 (저장한 아이디만 미리 채움) · 예전 로그인 열쇠는 지움
         const savedId = localStorage.getItem('shinhwa_master_id');
         ['shinhwa_master_pw', 'shinhwa_master_auto', 'shinhwa_master_session'].forEach(k => localStorage.removeItem(k));
         if (savedId) { document.getElementById('masterId').value = savedId; document.getElementById('masterAutoLoginCheck').checked = true; }
+        try { if (mqLoad() && window.crypto && crypto.subtle) mqShow('unlock'); } catch (e) {}   // 🔐 [패치 #111]
         lucide.createIcons();
     });
 
@@ -722,6 +801,7 @@
         localStorage.removeItem('shinhwa_master_pw');
         localStorage.removeItem('shinhwa_master_auto');
         localStorage.removeItem('shinhwa_master_session'); // 🔐 [패치 #35]
+        mqClear(); // 🔐 [패치 #111] 자동 로그인(잠금 번호) 끄기
         location.reload();
       }
     }
@@ -2822,5 +2902,14 @@
         HM.timer = setInterval(() => { if (!document.hidden) hmLoad(); }, 30000);
     };
 </script>
+<!-- 🔐 [패치 #111] 잠금 번호 4자리 화면 -->
+<div id="mqPin" class="hidden" style="position:fixed;inset:0;z-index:99990;background:#0B1120;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;">
+  <img src="/master-icon-192.png" alt="" style="width:76px;height:76px;border-radius:20px;">
+  <div id="mqTitle" style="color:#fff;font-size:22px;font-weight:900;margin-top:16px;text-align:center;"></div>
+  <div id="mqSub" style="color:#94A3B8;font-size:14.5px;font-weight:700;margin-top:6px;text-align:center;min-height:20px;"></div>
+  <div id="mqDots" style="display:flex;gap:18px;margin:26px 0 30px;"></div>
+  <div id="mqPad" style="display:grid;grid-template-columns:repeat(3,84px);gap:14px;"></div>
+  <button id="mqAlt" onclick="mqUsePassword()" style="margin-top:26px;color:#94A3B8;font-size:14.5px;font-weight:800;text-decoration:underline;background:none;border:0;">비밀번호로 로그인</button>
+</div>
 </body>
 </html>

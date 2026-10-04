@@ -1,0 +1,15 @@
+{
+  "id": "/master.html",
+  "name": "조경노트 관리자",
+  "short_name": "조경노트 관리자",
+  "start_url": "/master.html",
+  "scope": "/master",
+  "display": "standalone",
+  "background_color": "#FFE100",
+  "theme_color": "#151E2D",
+  "icons": [
+    { "src": "/master-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/master-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/master-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
