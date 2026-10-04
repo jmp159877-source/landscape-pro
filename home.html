@@ -580,12 +580,30 @@ function voicePaused() {
   $('vLbl').textContent = '잠깐 멈췄어요';
   $('vResume').classList.remove('hidden');
 }
+function srMerge(res) {   // 🎙️ [패치 #117] 안드로이드(삼성·크롬)는 같은 말을 여러 번 '확정'으로 다시 보내서 "예를 들어 예를 들어…"처럼 반복됨 → 처음부터 다시 맞춰 겹치는 말은 하나로
+  let out = [];
+  const nz = w => w.replace(/[.,!?~]/g, '');
+  for (let i = 0; i < res.length; i++) {
+    const t = String((res[i] && res[i][0] && res[i][0].transcript) || '').replace(/\s+/g, ' ').trim(); if (!t) continue;
+    const tw = t.split(' ');
+    if (!out.length) { out = tw; continue; }
+    const os = out.map(nz).join(''), ts = tw.map(nz).join('');
+    let hit = false;                                                     // 앞 끝부분(몇 단어)을 이어서 다시 보냄 → 그 끝부분을 새 것으로 바꿈
+    for (let k = out.length; k > 0; k--) { const suf = out.slice(-k).map(nz).join(''); if (suf.length >= 2 && ts.startsWith(suf)) { out = out.slice(0, out.length - k).concat(tw); hit = true; break; } }
+    if (hit) continue;
+    if (os.endsWith(ts) || os.includes(ts) && ts.length >= 4) continue; // 이미 있는 말 → 버림
+    let k = Math.min(out.length, tw.length);                            // 앞 끝과 새 앞머리가 겹치면 겹친 만큼 빼고 붙임
+    for (; k > 0; k--) { if (out.slice(-k).map(nz).join(' ') === tw.slice(0, k).map(nz).join(' ')) break; }
+    out = out.concat(tw.slice(k));
+  }
+  return out.join(' ');
+}
 function voiceStart() {
   $('vResume').classList.add('hidden');
   try {
     const r = new SR(); V.rec = r;
     r.lang = 'ko-KR'; r.continuous = true; r.interimResults = true;
-    r.onresult = e => { V.lastHeard = Date.now(); let interim = ''; for (let i = e.resultIndex; i < e.results.length; i++) { const x = e.results[i]; if (x.isFinal) V.finals += ' ' + x[0].transcript; else interim += x[0].transcript; } V.interim = interim; paintLive(); };
+    r.onresult = e => { V.lastHeard = Date.now(); V.interim = srMerge(e.results); paintLive(); };   // 이번 듣기 전체를 매번 다시 맞춤 (끝나면 onend가 V.finals로 옮김)
     r.onerror = e => { if (V.rec === r && /not-allowed|service-not-allowed|audio-capture/.test(e.error)) { V.want = false; V.rec = null; voiceTyped('마이크를 쓸 수 없어서 키보드 마이크로 바꿨어요.'); } };
     r.onend = async () => {
       if (V.rec !== r) return; V.rec = null;

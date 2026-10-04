@@ -1378,7 +1378,7 @@
           aiSpeechRec.onresult = (event) => {
               // 🎙️ [패치 #59] 들리는 대로 입력칸에 바로 보여 주고, 말이 끝나면(isFinal) 자동 전송
               let text = '', done = false;
-              for (let i = 0; i < event.results.length; i++) { text += event.results[i][0].transcript; if (event.results[i].isFinal) done = true; }
+              text = srMerge(event.results); for (let i = 0; i < event.results.length; i++) { if (event.results[i].isFinal) done = true; } /* 🎙️ [패치 #117] */
               text = text.trim();
               if (text) input.value = text;
               if (done && text && !aiVoiceSent) { aiVoiceSent = true; setTimeout(() => sendAiChatMessage(), 200); }
@@ -3203,7 +3203,7 @@
       if (!SR) { alert('이 화면에서는 바로 듣기가 안 됩니다.\n검색칸을 누르고 키보드의 마이크 버튼을 눌러 말씀하세요.'); if (inp) inp.focus(); return; }
       const r = new SR(); r.lang = 'ko-KR'; r.interimResults = true; r.continuous = false; r.maxAlternatives = 1;
       let finalText = '';
-      r.onresult = (e) => { let t = ''; for (let i = 0; i < e.results.length; i++) { t += (e.results[i][0] && e.results[i][0].transcript || ''); if (e.results[i].isFinal) finalText = t; } inp.value = t.trim(); };
+      r.onresult = (e) => { const t = srMerge(e.results); if (e.results.length && e.results[e.results.length - 1].isFinal) finalText = t; /* 🎙️ [패치 #117] */ inp.value = t.trim(); };
       r.onerror = (e) => { if (e.error === 'not-allowed' || e.error === 'service-not-allowed') alert('마이크 사용이 막혀 있습니다. 휴대폰 설정에서 마이크를 [허용]해 주세요.\n지금은 키보드의 마이크 버튼으로 말씀하셔도 됩니다.'); };
       r.onend = () => {
         if (CLV.rec !== r) return;
@@ -4694,7 +4694,7 @@
         if (!SR) { alert('이 화면에서는 바로 듣기가 안 됩니다.\n검색칸을 누르고 키보드의 마이크 버튼을 눌러 말씀하세요.'); if (inp) inp.focus(); return; }
         const r = new SR(); r.lang = 'ko-KR'; r.interimResults = true; r.continuous = false; r.maxAlternatives = 1;
         let finalText = '';
-        r.onresult = (e) => { let t = ''; for (let i = 0; i < e.results.length; i++) { t += (e.results[i][0] && e.results[i][0].transcript || ''); if (e.results[i].isFinal) finalText = t; } inp.value = t.trim(); };
+        r.onresult = (e) => { const t = srMerge(e.results); if (e.results.length && e.results[e.results.length - 1].isFinal) finalText = t; /* 🎙️ [패치 #117] */ inp.value = t.trim(); };
         r.onerror = (e) => { if (e.error === 'not-allowed' || e.error === 'service-not-allowed') alert('마이크 사용이 막혀 있습니다. 휴대폰 설정에서 마이크를 [허용]해 주세요.\n지금은 키보드의 마이크 버튼으로 말씀하셔도 됩니다.'); };
         r.onend = () => {
             if (PV.rec !== r) return;
@@ -5322,7 +5322,7 @@ ${HELP_EXTRA.join('\n')}`;
       if (!SR || iab) { alert('이 화면에서는 바로 듣기가 잘 안 돼요.\n아래 칸을 누르고 키보드의 마이크 버튼을 눌러 말씀하세요.'); if (inp) inp.focus(); return; }
       const r = new SR(); r.lang = 'ko-KR'; r.interimResults = true; r.continuous = false; r.maxAlternatives = 1;
       let finalText = '';
-      r.onresult = (e) => { let t = ''; for (let i = 0; i < e.results.length; i++) { t += (e.results[i][0] && e.results[i][0].transcript || ''); if (e.results[i].isFinal) finalText = t; } inp.value = t.trim(); };
+      r.onresult = (e) => { const t = srMerge(e.results); if (e.results.length && e.results[e.results.length - 1].isFinal) finalText = t; /* 🎙️ [패치 #117] */ inp.value = t.trim(); };
       r.onerror = (e) => { if (e.error === 'not-allowed' || e.error === 'service-not-allowed') alert('마이크 사용이 막혀 있어요. 휴대폰 설정 → 애플리케이션 → Chrome → 권한 → 마이크를 [허용]해 주세요.\n지금은 키보드의 마이크 버튼으로 말해도 돼요.'); };
       r.onend = () => { if (HB.mic !== r) return; const was = HB.micOn; helpMicStop(false); const q = (finalText || inp.value || '').trim(); inp.value = q; if (was && q) helpAsk(); };
       HB.mic = r; HB.micOn = true; inp.value = ''; helpMicUI();
@@ -6331,7 +6331,7 @@ ${HELP_EXTRA.join('\n')}`;
       function chatVoiceStartRec() {
           const SR = window.SpeechRecognition || window.webkitSpeechRecognition; if (!SR) return;
           const r = new SR(); r.lang = 'ko-KR'; r.interimResults = true; r.continuous = false; r.maxAlternatives = 1;
-          r.onresult = (e) => { let im = ''; for (let i = e.resultIndex; i < e.results.length; i++) { const t = (e.results[i][0] && e.results[i][0].transcript || '').trim(); if (!t) continue; if (e.results[i].isFinal) CV.finals = (CV.finals ? CV.finals + ' ' : '') + t; else im += (im ? ' ' : '') + t; } CV.interim = im; chatVoiceWrite(); };
+          r.onresult = (e) => { CV.interim = srMerge(e.results); chatVoiceWrite(); };   // 🎙️ [패치 #117] 이번 듣기 전체 다시 맞춤 (끝나면 onend가 finals로)
           r.onerror = (e) => { if (e.error === 'not-allowed' || e.error === 'service-not-allowed') { chatVoiceStop(); alert('마이크 사용이 막혀 있습니다. 휴대폰 설정에서 마이크를 [허용]해 주세요.\n지금은 키보드의 마이크 버튼으로 말씀하셔도 됩니다.'); } };
           r.onend = () => { if (CV.interim) { CV.finals = (CV.finals ? CV.finals + ' ' : '') + CV.interim; CV.interim = ''; chatVoiceWrite(); } if (CV.active && CV.rec === r) setTimeout(() => { if (CV.active && CV.rec === r) chatVoiceStartRec(); }, 120); };
           CV.rec = r; try { r.start(); } catch (e) { chatVoiceStop(); }
@@ -6696,10 +6696,29 @@ ${HELP_EXTRA.join('\n')}`;
       if (!VX.fallback) { ta.value = voiceText(); ta.scrollTop = ta.scrollHeight; }
       if (VX.active) { const sec = Math.floor((Date.now() - VX.startAt) / 1000); document.getElementById('voiceStatus').innerText = `듣고 있어요 · ${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`; }
     }
+    function srMerge(res) {   // 🎙️ [패치 #117] 안드로이드(삼성·크롬)는 같은 말을 여러 번 '확정'으로 다시 보내서 "예를 들어 예를 들어…"처럼 반복됨 → 처음부터 다시 맞춰 겹치는 말은 하나로
+      let out = [];
+      const nz = w => w.replace(/[.,!?~]/g, '');
+      for (let i = 0; i < res.length; i++) {
+        const t = String((res[i] && res[i][0] && res[i][0].transcript) || '').replace(/\s+/g, ' ').trim(); if (!t) continue;
+        const tw = t.split(' ');
+        if (!out.length) { out = tw; continue; }
+        const os = out.map(nz).join(''), ts = tw.map(nz).join('');
+        let hit = false;                                                     // 앞 끝부분(몇 단어)을 이어서 다시 보냄 → 그 끝부분을 새 것으로 바꿈
+        for (let k = out.length; k > 0; k--) { const suf = out.slice(-k).map(nz).join(''); if (suf.length >= 2 && ts.startsWith(suf)) { out = out.slice(0, out.length - k).concat(tw); hit = true; break; } }
+        if (hit) continue;
+        if (os.endsWith(ts) || os.includes(ts) && ts.length >= 4) continue; // 이미 있는 말 → 버림
+        let k = Math.min(out.length, tw.length);                            // 앞 끝과 새 앞머리가 겹치면 겹친 만큼 빼고 붙임
+        for (; k > 0; k--) { if (out.slice(-k).map(nz).join(' ') === tw.slice(0, k).map(nz).join(' ')) break; }
+        out = out.concat(tw.slice(k));
+      }
+      return out.join(' ');
+    }
     function voiceStartRec() {
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition; if (!SR) return voiceUseFallback();
       const r = new SR(); r.lang = 'ko-KR'; r.interimResults = true; r.continuous = VX.single; r.maxAlternatives = 1; // 🎤 [패치 #59] 앱 안 브라우저는 한 번 켜서 길게 듣기(다시 켤 때마다 마이크 허용 창이 뜨는 문제)
       r.onresult = (e) => {
+        VX.interim = srMerge(e.results); if (VX.finals.length + VX.interim.length > VOICE_MAX_CHARS) { VX.interim = VX.interim.slice(0, Math.max(0, VOICE_MAX_CHARS - VX.finals.length)); voiceRender(); voiceFinish(); return; } voiceRender(); return;   // 🎙️ [패치 #117] 이번 듣기 전체를 매번 다시 맞춤 → 안드로이드 반복 글자 정리 (끝나면 onend가 finals로 옮김)
         let interim = '';
         for (let i = e.resultIndex; i < e.results.length; i++) {
           const t = (e.results[i][0] && e.results[i][0].transcript || '').trim(); if (!t) continue;
