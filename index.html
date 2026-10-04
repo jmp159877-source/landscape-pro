@@ -8859,26 +8859,26 @@ ${AI_COMMON_RULES}
           ${line('의뢰 종류', escHtml(HOME_KIND_T[h.kind] + (h.site ? ' · ' + HOME_SITE_T[h.site] : '')))}
           ${h.kind === 'regular' ? line('관리 횟수', escHtml(HOME_PLAN_T[h.plan] || '상담 후 정하기')) : ''}
           ${line('고객 예산', h.budget ? escHtml(homeWon(h.budget)) : (h.budgetUnknown ? '상담 후 정하기' : '안 적음'))}
-          ${h.memo ? line('운영팀 메모', escHtml(h.memo)) : ''}
+          ${h.memo ? line('조경노트 홈 메모', escHtml(h.memo)) : ''}
         </div>
         ${h.contact === 'sms' ? '<div class="rounded-[14px] p-3 text-[15.5px] font-black leading-relaxed break-keep" style="background:#FEF2F2;color:#991B1B;border:1.5px solid #FCA5A5;">이 고객은 <u>문자로만</u> 연락을 원해요.<br><span class="font-bold">전화 대신 문자와 견적 링크로 먼저 연락해 주세요.</span></div>' : '<div class="rounded-[14px] p-3 text-[15px] font-bold" style="background:#F0F9FF;color:#075985;">이 고객은 전화도 괜찮다고 하셨어요.</div>'}`);
       if (h.contact === 'sms') pane.querySelectorAll('a[href^="tel:"]').forEach(a => { a.onclick = e => { if (!confirm('이 고객은 문자로만 연락을 원하셨어요.\n그래도 전화할까요?')) e.preventDefault(); }; a.textContent = '전화하기 (문자 원함)'; a.style.background = '#64748B'; });
-      pane.insertAdjacentHTML('beforeend', `<button type="button" id="reqHomeDeclineBtn" onclick="reqHomeDecline()" class="h-[54px] rounded-[16px] border-2 text-[16px] font-black active:scale-[0.98] transition-all" style="border-color:#F59E0B;color:#FCD34D;">이번엔 못 해요 (운영팀이 다른 업체로 연결)</button>`);
+      pane.insertAdjacentHTML('beforeend', `<button type="button" id="reqHomeDeclineBtn" onclick="reqHomeDecline()" class="h-[54px] rounded-[16px] border-2 text-[16px] font-black active:scale-[0.98] transition-all" style="border-color:#F59E0B;color:#FCD34D;">이번엔 못 해요 (조경노트 홈이 다른 업체로 연결)</button>`);
     };
     async function reqHomeDecline() {
       const r = RV.cur; if (!r || r.via !== 'home' || RV.busy) return;
-      const reason = prompt('이 의뢰를 못 맡으시나요?\n운영팀이 다른 업체로 연결해 드려요. 이 의뢰는 내 의뢰함에서 빠져요.\n\n이유를 짧게 적어 주세요. (안 적어도 돼요)\n예) 일정이 꽉 참, 거리가 멂', '');
+      const reason = prompt('이 의뢰를 못 맡으시나요?\n조경노트 홈이 다른 업체로 연결해 드려요. 이 의뢰는 내 의뢰함에서 빠져요.\n\n이유를 짧게 적어 주세요. (안 적어도 돼요)\n예) 일정이 꽉 참, 거리가 멂', '');
       if (reason === null) return;
-      RV.busy = true; const b = document.getElementById('reqHomeDeclineBtn'); if (b) { b.disabled = true; b.textContent = '운영팀에 알리는 중…'; }
+      RV.busy = true; const b = document.getElementById('reqHomeDeclineBtn'); if (b) { b.disabled = true; b.textContent = '조경노트 홈에 알리는 중…'; }
       const res = await requestPoints({ action: 'push_home_decline', reqId: r.id, reason: String(reason).slice(0, 60) });
       RV.busy = false;
       if (res && res.ok) {
         RV.list = RV.list.filter(x => x.id !== r.id); reqPaintBadge();
         history.back();
-        setTimeout(() => { reqRenderList(); alert('운영팀에 알렸어요. 다른 업체로 연결해 드릴게요.'); }, 200);
+        setTimeout(() => { reqRenderList(); alert('조경노트 홈에 알렸어요. 다른 업체로 연결해 드릴게요.'); }, 200);
         return;
       }
-      if (b) { b.disabled = false; b.textContent = '이번엔 못 해요 (운영팀이 다른 업체로 연결)'; }
+      if (b) { b.disabled = false; b.textContent = '이번엔 못 해요 (조경노트 홈이 다른 업체로 연결)'; }
       alert(res && res.msg === 'unknown' ? '서버 준비가 아직 안 됐어요. 관리자에게 알려 주세요.' : res && res.msg === 'not-home' ? '이미 처리된 의뢰예요.' : '인터넷 연결을 확인하고 다시 눌러 주세요.');
     }
 
@@ -8937,7 +8937,7 @@ ${AI_COMMON_RULES}
       document.getElementById('hpAmtLbl').textContent = book ? '예상 금액' : '받을 금액';
       document.getElementById('hpAmtNote').textContent = book ? '작업이 끝나면 장부에 들어가요. 고객에게는 안 보여요.' : '이 금액이 개인 장부에 수입으로 들어가요.';
       document.getElementById('hpAmt').value = h.amount ? Number(h.amount).toLocaleString('ko-KR') : '';
-      document.getElementById('hpAuto').innerHTML = book ? '누르면 한 번에: <b>거래처 등록</b> · <b>방문 일정 저장</b> · <b>운영팀에 알림</b> · <b>문자 창 열기</b> (문자 앱에서 [보내기]만 누르세요)' : '누르면 한 번에: <b>개인 장부에 수입</b> · <b>운영팀에 작업 완료 알림</b>';
+      document.getElementById('hpAuto').innerHTML = book ? '누르면 한 번에: <b>거래처 등록</b> · <b>방문 일정 저장</b> · <b>조경노트 홈에 알림</b> · <b>문자 창 열기</b> (문자 앱에서 [보내기]만 누르세요)' : '누르면 한 번에: <b>개인 장부에 수입</b> · <b>조경노트 홈에 작업 완료 알림</b>';
       document.getElementById('hpGo').textContent = book ? (change ? '바꾸고 고객에게 문자 보내기' : '확정하고 고객에게 문자 보내기') : '장부에 넣고 완료하기';
       hpSlotPaint(); hpPreview();
       document.getElementById('hpModal').classList.remove('hidden');
@@ -8984,7 +8984,7 @@ ${AI_COMMON_RULES}
         if (r.status === 'new') { r.status = 'talk'; }
         hpClose(); hpApply(r, { stage: 'booked', date, slot: HP.slot, amount });
         location.href = reqSmsHref(r.phone, text);
-        p.then(res => { if (!res || !res.ok) alert('운영팀 알림을 저장하지 못했어요. 인터넷 연결을 확인하고 [날짜 바꾸기]를 한 번 더 눌러 주세요.' + (res && res.msg === 'unknown' ? '\n(구글 스크립트 최신 배포 필요)' : '')); });
+        p.then(res => { if (!res || !res.ok) alert('조경노트 홈 알림을 저장하지 못했어요. 인터넷 연결을 확인하고 [날짜 바꾸기]를 한 번 더 눌러 주세요.' + (res && res.msg === 'unknown' ? '\n(구글 스크립트 최신 배포 필요)' : '')); });
         return;
       }
       RV.busy = true; const b = document.getElementById('hpGo'); b.disabled = true; b.textContent = '저장하는 중…';
@@ -8994,10 +8994,10 @@ ${AI_COMMON_RULES}
       const led = hpAutoLedger(r, amount);
       r.status = 'done'; try { fetch(reqUrl(r.id), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'done' }) }).catch(() => {}); } catch (e) {}
       hpClose(); hpApply(r, { stage: 'done', amount });
-      setTimeout(() => alert('✅ 작업 완료!' + (led ? '\n개인 장부에 ' + amount.toLocaleString('ko-KR') + '원을 넣었어요.' : '') + '\n운영팀에도 알렸어요.'), 200);
+      setTimeout(() => alert('✅ 작업 완료!' + (led ? '\n개인 장부에 ' + amount.toLocaleString('ko-KR') + '원을 넣었어요.' : '') + '\n조경노트 홈에도 알렸어요.'), 200);
     }
     async function hpCancel() {
-      const r = RV.cur; if (!r || RV.busy || !confirm('진행을 취소할까요?\n(운영팀에도 취소로 알려져요. 고객에게는 따로 연락해 주세요.\n방문 일정은 직접 지워 주세요.)')) return;
+      const r = RV.cur; if (!r || RV.busy || !confirm('진행을 취소할까요?\n(조경노트 홈에도 취소로 알려져요. 고객에게는 따로 연락해 주세요.\n방문 일정은 직접 지워 주세요.)')) return;
       RV.busy = true; const res = await requestPoints({ action: 'push_home_progress', reqId: r.id, stage: 'cancel' }); RV.busy = false;
       if (!res || !res.ok) return alert('취소하지 못했어요. 인터넷 연결을 확인해 주세요.');
       hpApply(r, { stage: '', date: '', slot: 'talk', amount: 0 });
