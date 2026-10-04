@@ -3452,20 +3452,21 @@
             const tagName = escHtml(s.tag && String(s.tag).trim() !== '' ? s.tag : '현장 작업'); // ✏️ [패치 #47] 글자 안전 처리
             const sid = escHtml(JSON.stringify(String(s.id)));
             list.innerHTML += `
-                <div class="border-l-[6px] rounded-[20px] p-5 shadow-md bg-white border border-[#CBD5E1] ${s.color || 'border-[#84CC16]'} transition-all">
+                <div onclick="jnSchedOpen(${sid})" class="border-l-[6px] rounded-[20px] p-5 shadow-md bg-white border border-[#CBD5E1] ${s.color || 'border-[#84CC16]'} transition-all cursor-pointer active:scale-[0.99]">
                     <div class="flex justify-between items-center mb-2">
                         <span class="bg-[#151E2D] text-[#84CC16] text-[14px] font-black px-3 py-1 rounded-full">${tagName}</span>
                         <span class="flex items-center gap-1.5">
-                        <button onclick="openScheduleEdit(${sid})" class="text-[#1A2E05] bg-[#D9F99D] border border-[#84CC16] px-3 py-1.5 rounded-[10px] text-[14px] font-black flex items-center gap-1 active:scale-95 transition-all">
+                        <button onclick="event.stopPropagation();openScheduleEdit(${sid})" class="text-[#1A2E05] bg-[#D9F99D] border border-[#84CC16] px-3 py-1.5 rounded-[10px] text-[14px] font-black flex items-center gap-1 active:scale-95 transition-all">
                             <i data-lucide="pencil" class="w-4 h-4"></i> 수정
                         </button>
-                        <button onclick="deleteSchedule(${sid})" class="text-[#64748B] hover:text-red-600 bg-[#F1F5F9] px-2.5 py-1.5 rounded-[10px] text-[13.5px] font-black flex items-center gap-1 transition-colors">
+                        <button onclick="event.stopPropagation();deleteSchedule(${sid})" class="text-[#64748B] hover:text-red-600 bg-[#F1F5F9] px-2.5 py-1.5 rounded-[10px] text-[13.5px] font-black flex items-center gap-1 transition-colors">
                             <i data-lucide="trash-2" class="w-4 h-4"></i> 삭제
                         </button>
                         </span>
                     </div>
                     <h4 class="font-black text-[18px] text-[#151E2D] leading-snug break-keep mt-1">${escHtml(s.title)}</h4>
                     ${window.jnAddrRow ? jnAddrRow(jnSchedAddr(s), true) : ''}
+                    <div class="text-[13.5px] font-black text-[#4D7C0F] mt-2.5">눌러서 자세히 보기 ›</div>
                     ${s.memo ? `<div class="text-[15px] text-[#334155] font-bold bg-[#F8FAFC] border border-[#E2E8F0] px-4 py-3 rounded-[14px] mt-3 leading-relaxed break-keep">${escHtml(s.memo).replace(/\n/g, '<br>')}</div>` : ''}
                 </div>
             `;
@@ -10320,6 +10321,47 @@ ${AI_COMMON_RULES}
         if (!left && !document.hidden) jnToast(`${name} 안 열리면 앱을 직접 여시고 붙여넣기 하세요.${copied ? ' (복사해 두었어요)' : ''}`);
       }, 1800);
     };
+
+    /* 📋 [패치 #118] 일정 카드를 누르면 '일정 자세히' 창 (연락처 전화·문자, 주소 길찾기, 메모 전체, 조경노트 홈 의뢰면 [의뢰 내용 보기]) */
+    window.jnSchedOpen = function(id){
+      let s = null; try { s = schedules.find(x => x && String(x.id) === String(id)); } catch(e) {} if (!s) return;
+      const memo = String(s.memo || ''), mk = memo.match(/\(조경노트 홈 의뢰 ([A-Za-z0-9_-]{1,60})\)/), rid = mk ? mk[1] : '';
+      let phone = ((memo.match(/연락처\s*[:：]\s*([0-9][0-9\- ]{6,})/) || [])[1] || '').replace(/[^0-9]/g, '');
+      if (!phone) { try { const c = (clients || []).find(c => c && c.name && String(c.name).trim().length >= 2 && String(s.title || '').includes(String(c.name).trim()) && c.phone); if (c) phone = String(c.phone).replace(/[^0-9]/g, ''); } catch(e) {} }
+      const memoShow = memo.replace(/\n?\(조경노트 홈 의뢰 [^)]*\)/, '').trim();
+      const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s.date || '')); let dateKo = s.date || '';
+      if (m) { const d = new Date(+m[1], +m[2] - 1, +m[3]); dateKo = `${+m[2]}월 ${+m[3]}일 (${'일월화수목금토'[d.getDay()]})`; }
+      const addr = jnSchedAddr(s), phFmt = phone ? (typeof reqPhoneFmt === 'function' ? reqPhoneFmt(phone) : phone) : '';
+      const sid = E(JSON.stringify(String(s.id)));
+      let box = document.getElementById('jnSchedSheet');
+      if (!box) { box = document.createElement('div'); box.id = 'jnSchedSheet'; box.style.cssText = 'position:fixed;inset:0;z-index:9100;background:rgba(15,23,42,.55);display:flex;align-items:flex-end;justify-content:center'; box.onclick = e => { if (e.target === box) jnSchedClose(); }; document.body.appendChild(box); }
+      const sec = (k, v) => `<div style="margin-top:14px"><div style="font-size:13.5px;font-weight:900;color:#64748B;margin-bottom:6px">${k}</div>${v}</div>`;
+      const btn = 'display:flex;align-items:center;justify-content:center;gap:6px;height:52px;border-radius:14px;font-size:16px;font-weight:900;text-decoration:none';
+      box.innerHTML = `<div style="background:#fff;width:100%;max-width:480px;max-height:88vh;overflow-y:auto;border-radius:26px 26px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom));box-shadow:0 -10px 30px rgba(0,0,0,.25)">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+          <span style="background:#151E2D;color:#84CC16;font-size:14px;font-weight:900;padding:5px 12px;border-radius:99px">${E(s.tag || '현장 작업')}</span>
+          <button type="button" onclick="jnSchedClose()" style="width:40px;height:40px;border-radius:99px;background:#F1F5F9;font-size:20px;font-weight:900;color:#151E2D">✕</button>
+        </div>
+        <div style="font-size:15px;font-weight:900;color:#4D7C0F;margin-top:12px">📅 ${E(dateKo)}</div>
+        <div style="font-size:20px;font-weight:900;color:#151E2D;line-height:1.35;margin-top:4px;word-break:keep-all">${E(s.title || '')}</div>
+        ${addr ? sec('현장 주소', `<div style="font-size:16px;font-weight:800;color:#151E2D;word-break:keep-all">📍 ${E(addr)}</div>${jnAddrRow(addr)}`) : ''}
+        ${phone ? sec('고객 연락처', `<div style="font-size:17px;font-weight:900;color:#151E2D">${E(phFmt)}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px"><a href="tel:${phone}" onclick="event.stopPropagation()" style="${btn};background:#151E2D;color:#fff">📞 전화</a><a href="sms:${phone}" onclick="event.stopPropagation()" style="${btn};background:#fff;color:#151E2D;border:1.5px solid #CBD5E1">💬 문자</a></div>`) : ''}
+        ${memoShow ? sec('메모', `<div style="font-size:15.5px;font-weight:700;color:#334155;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:14px;padding:12px 14px;line-height:1.6;white-space:pre-wrap;word-break:keep-all">${E(memoShow)}</div>`) : ''}
+        ${rid ? `<button type="button" onclick="jnSchedReq(${E(JSON.stringify(rid))})" style="${btn};width:100%;margin-top:16px;background:#84CC16;color:#12261E;box-shadow:inset 0 0 0 2px #151E2D">🏡 의뢰 내용 보기 (사진·요청사항)</button>` : ''}
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:${rid ? 8 : 16}px">
+          <button type="button" onclick="jnSchedClose();setTimeout(()=>openScheduleEdit(${sid}),250)" style="${btn};background:#D9F99D;color:#1A2E05;border:1.5px solid #84CC16">✏️ 수정</button>
+          <button type="button" onclick="jnSchedClose()" style="${btn};background:#F1F5F9;color:#334155">닫기</button>
+        </div></div>`;
+      box.style.display = 'flex';
+      if (!(history.state && history.state.jnSched)) history.pushState({ jnSched: true }, '', '');
+    };
+    window.jnSchedClose = function(fromPop){
+      const box = document.getElementById('jnSchedSheet'); if (!box || box.style.display === 'none') return;
+      box.style.display = 'none';
+      if (!fromPop && history.state && history.state.jnSched) history.back();
+    };
+    window.jnSchedReq = function(rid){ jnSchedClose(); setTimeout(() => { try { openReqView(rid); } catch(e) {} }, 300); };
+    window.addEventListener('popstate', () => { const box = document.getElementById('jnSchedSheet'); if (box && box.style.display !== 'none') jnSchedClose(true); });
 
     /* 일정 창: 주소 칸 + 거래처 주소 불러오기 + 제목에 거래처 이름 있으면 자동 */
     const addrInp = () => document.getElementById('scheduleAddr');
