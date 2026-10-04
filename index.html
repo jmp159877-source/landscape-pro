@@ -8803,7 +8803,7 @@ ${AI_COMMON_RULES}
         c.via = 'home';
         c.home = { hid: String(h.hid || ''), kind: HOME_KIND_T[h.kind] ? h.kind : 'single', site: HOME_SITE_T[h.site] ? h.site : '', plan: HOME_PLAN_T[h.plan] ? h.plan : '',
           budget: Math.max(0, Number(h.budget) || 0), budgetUnknown: h.budgetUnknown === true, contact: h.contact === 'call' ? 'call' : 'sms', memo: String(h.memo || '').slice(0, 200),
-          stage: ['sched', 'booked'].includes(h.stage) ? h.stage : '', date: /^\d{4}-\d{2}-\d{2}$/.test(String(h.date || '')) ? String(h.date) : '', slot: ['am', 'pm', 'talk'].includes(h.slot) ? h.slot : 'talk', amount: Math.max(0, Number(h.amount) || 0) };   // 🤝 [패치 #108]
+          stage: ['sched', 'booked', 'done'].includes(h.stage) ? h.stage : '', date: /^\d{4}-\d{2}-\d{2}$/.test(String(h.date || '')) ? String(h.date) : '', slot: ['am', 'pm', 'talk'].includes(h.slot) ? h.slot : 'talk', amount: Math.max(0, Number(h.amount) || 0) };   // 🤝 [패치 #108]
       }
       return c;
     };
@@ -8853,114 +8853,152 @@ ${AI_COMMON_RULES}
     }
 
     // ==========================================
-    // 🤝 [패치 #108] Home 연결 의뢰: [이대로 진행 · 작업일 안내] → 고객 답장 → [예약 확정] (= 거래 성사, 운영팀에 알림)
-    //  - 문자는 업체 휴대폰 문자 창을 열어 줌 (업체 번호로 발송 · 비용 없음)
-    //  - 예약 확정하면 방문 일정 창을 날짜·금액이 채워진 채로 열어 줌 → [저장]
+    // 🤝 [패치 #109] 조경노트 홈 의뢰 — 버튼 하나로 (시니어도 쉽게)
+    //  ① [📅 날짜 정하고 진행하기] → 날짜·오전/오후·금액(선택) → [확정하고 고객에게 문자 보내기]
+    //     = 거래처 자동 등록 + 방문 일정 자동 저장 + 운영팀에 거래 성사 + 확정 안내 문자 창
+    //  ② [✅ 작업 끝났어요] → 금액 확인 → 개인 장부에 수입 + 운영팀에 작업 완료
+    //  ③ [📝 작업일지 쓰기] (선택)
+    //  화면에는 지금 할 일 버튼 하나만 크게, 맨 위에 진행 줄
     // ==========================================
-    const HP = { mode: 'sched', slot: 'am' };
+    const HP = { mode: 'book', slot: 'am' };
     const HP_SLOT = { am: '오전', pm: '오후', talk: '시간 협의' };
     function hpDateKo(d, slot) { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(d || '')); if (!m) return ''; const dt = new Date(+m[1], +m[2] - 1, +m[3]); return `${+m[2]}월 ${+m[3]}일(${'일월화수목금토'[dt.getDay()]})${slot === 'am' ? ' 오전' : slot === 'pm' ? ' 오후' : ''}`; }
     function hpToday(add) { const d = new Date(Date.now() + 9 * 3600000 + (add || 0) * 86400000); return d.toISOString().slice(0, 10); }
-    function hpText(r, date, slot) {
-      const co = (myCompanyProfile && myCompanyProfile.name) || '저희 업체', ph = (typeof myProfilePhone === 'function' ? myProfilePhone() : '');
+    function hpCo() { return (myCompanyProfile && myCompanyProfile.name) || '저희 업체'; }
+    function hpText(r, date, slot, change) {
+      const co = hpCo(), ph = (typeof myProfilePhone === 'function' ? myProfilePhone() : '');
       const who = !r.noName ? r.name + ' 고객님, ' : '고객님, ';
-      return `[🌿 조경노트 홈] ${who}안녕하세요.\n\n조경노트 홈 ${co}입니다.\n\n의뢰하신 작업을 ${hpDateKo(date, slot)}에 진행하려고 합니다.${slot === 'talk' ? '\n\n시간은 편하신 때로 맞춰 드릴게요.' : ''}\n\n괜찮으시면 "네"라고 답장 주세요.\n\n다른 날이 편하시면 알려 주세요.\n\n🌿 ${co} 드림${ph ? '\n' + ph : ''}`;   // 📝 [패치 #109] 줄 띄우기·🌿·'연결해 드린' 삭제
+      return `[🌿 조경노트 홈] ${who}안녕하세요.\n\n조경노트 홈 ${co}입니다.\n\n${change ? '작업 날짜를 바꿨습니다.\n\n바뀐 날짜: ' + hpDateKo(date, slot) : hpDateKo(date, slot) + '에 방문해 작업하겠습니다.'}${slot === 'talk' ? '\n\n시간은 편하신 때로 맞춰 드릴게요.' : ''}\n\n다른 날이 편하시면 답장 주세요.\n\n🌿 ${co} 드림${ph ? '\n' + ph : ''}`;
     }
     function hpEnsure() {
       if (document.getElementById('hpModal')) return;
       document.body.insertAdjacentHTML('beforeend', `
       <div id="hpModal" class="hidden fixed inset-0 z-[9600] bg-black/70 flex items-end md:items-center justify-center" onclick="if(event.target===this) hpClose()">
         <div class="bg-white w-full max-w-md rounded-t-[28px] md:rounded-[28px] p-5 pb-[calc(20px+env(safe-area-inset-bottom))] max-h-[92vh] overflow-y-auto" style="overscroll-behavior:contain">
-          <div class="flex items-center justify-between"><h3 id="hpTitle" class="text-[21px] font-black text-[#151E2D]"></h3><button onclick="hpClose()" class="w-10 h-10 rounded-full bg-[#F1F5F9] text-[20px] font-black text-[#475569]">×</button></div>
-          <div id="hpSub" class="text-[14.5px] font-bold text-[#64748B] mt-1 leading-relaxed"></div>
-          <label class="block text-[15px] font-black text-[#151E2D] mt-4 mb-1.5">작업 날짜</label>
-          <input id="hpDate" type="date" oninput="hpPreview()" class="w-full h-[54px] bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 text-[17px] font-black text-[#151E2D]">
-          <div class="grid grid-cols-3 gap-2 mt-2" id="hpSlots"></div>
-          <div id="hpAmtBox" class="hidden">
-            <label class="block text-[15px] font-black text-[#151E2D] mt-4 mb-1.5">확정 금액 <span class="text-[13px] text-[#94A3B8]">(안 적어도 돼요)</span></label>
-            <div class="flex items-center gap-2 bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 h-[54px]"><input id="hpAmt" inputmode="numeric" placeholder="0" oninput="formatNumberInput(this)" class="flex-1 bg-transparent text-[18px] font-black text-[#151E2D] outline-none"><span class="text-[16px] font-black text-[#475569]">원</span></div>
-            <div class="text-[13px] font-bold text-[#64748B] mt-1.5">운영팀만 보는 금액이에요. 고객에게는 안 보여요.</div>
+          <div class="flex items-center justify-between"><h3 id="hpTitle" class="text-[22px] font-black text-[#151E2D]"></h3><button onclick="hpClose()" class="w-11 h-11 rounded-full bg-[#F1F5F9] text-[22px] font-black text-[#475569]">×</button></div>
+          <div id="hpSub" class="text-[15px] font-bold text-[#64748B] mt-1 leading-relaxed"></div>
+          <div id="hpDateBox">
+            <label class="block text-[16px] font-black text-[#151E2D] mt-4 mb-1.5">작업 날짜</label>
+            <input id="hpDate" type="date" oninput="hpPreview()" class="w-full h-[58px] bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 text-[18px] font-black text-[#151E2D]">
+            <div class="grid grid-cols-3 gap-2 mt-2" id="hpSlots"></div>
           </div>
-          <div id="hpMsgBox">
-            <label class="block text-[15px] font-black text-[#151E2D] mt-4 mb-1.5">고객에게 갈 문자 <span class="text-[13px] text-[#94A3B8]">(고쳐도 돼요)</span></label>
-            <textarea id="hpMsg" rows="7" class="w-full bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-[16px] p-3.5 text-[15.5px] font-bold text-[#151E2D] leading-relaxed"></textarea>
-          </div>
-          <button id="hpGo" onclick="hpGo()" class="mt-4 w-full h-[58px] rounded-[18px] bg-[#84CC16] text-[#12261E] text-[18px] font-black"></button>
+          <label class="block text-[16px] font-black text-[#151E2D] mt-4 mb-1.5"><span id="hpAmtLbl">금액</span> <span class="text-[13.5px] text-[#94A3B8]">(몰라도 돼요)</span></label>
+          <div class="flex items-center gap-2 bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 h-[58px]"><input id="hpAmt" inputmode="numeric" placeholder="0" oninput="formatNumberInput(this)" class="flex-1 bg-transparent text-[19px] font-black text-[#151E2D] outline-none"><span class="text-[17px] font-black text-[#475569]">원</span></div>
+          <div id="hpAmtNote" class="text-[13.5px] font-bold text-[#64748B] mt-1.5"></div>
+          <details id="hpMsgBox" class="mt-4 rounded-[14px] bg-[#F8FAFC] border border-[#E2E8F0] p-3"><summary class="text-[15px] font-black text-[#3F6212] cursor-pointer">고객에게 갈 문자 보기 · 고치기</summary>
+            <textarea id="hpMsg" rows="9" class="mt-2 w-full bg-white border-[1.5px] border-[#CBD5E1] rounded-[12px] p-3 text-[15px] font-bold text-[#151E2D] leading-relaxed"></textarea></details>
+          <div id="hpAuto" class="mt-3 text-[13.5px] font-bold text-[#475569] leading-relaxed"></div>
+          <button id="hpGo" onclick="hpGo()" class="mt-3 w-full h-[62px] rounded-[18px] bg-[#84CC16] text-[#12261E] text-[19px] font-black" style="box-shadow:inset 0 0 0 2px #151E2D;"></button>
         </div>
       </div>`);
     }
-    function hpSlotPaint() { document.getElementById('hpSlots').innerHTML = Object.keys(HP_SLOT).map(k => `<button type="button" onclick="HP.slot='${k}'; hpSlotPaint(); hpPreview()" class="h-[48px] rounded-[14px] text-[15.5px] font-black border-2 ${HP.slot === k ? 'border-[#151E2D] bg-[#ECFCCB] text-[#151E2D]' : 'border-[#E2E8F0] bg-white text-[#64748B]'}">${HP_SLOT[k]}</button>`).join(''); }
-    function hpPreview() { const r = RV.cur; if (!r || HP.mode !== 'sched') return; document.getElementById('hpMsg').value = hpText(r, document.getElementById('hpDate').value, HP.slot); }
+    function hpSlotPaint() { document.getElementById('hpSlots').innerHTML = Object.keys(HP_SLOT).map(k => `<button type="button" onclick="HP.slot='${k}'; hpSlotPaint(); hpPreview()" class="h-[52px] rounded-[14px] text-[16.5px] font-black border-2 ${HP.slot === k ? 'border-[#151E2D] bg-[#ECFCCB] text-[#151E2D]' : 'border-[#E2E8F0] bg-white text-[#64748B]'}">${HP_SLOT[k]}</button>`).join(''); }
+    function hpPreview() { const r = RV.cur; if (!r || HP.mode !== 'book') return; document.getElementById('hpMsg').value = hpText(r, document.getElementById('hpDate').value, HP.slot, r.home.stage === 'booked'); }
     function hpOpen(mode) {
       const r = RV.cur; if (!r || r.via !== 'home' || !r.home) return;
       if (!r.phone) return alert('먼저 의뢰를 열어 고객 연락처를 확인해 주세요.');
-      hpEnsure(); HP.mode = mode; const h = r.home;
+      hpEnsure(); HP.mode = mode; const h = r.home, book = mode === 'book', change = h.stage === 'booked';
       HP.slot = h.slot || 'am';
       const d = document.getElementById('hpDate'); d.min = hpToday(0); d.value = h.date && h.date >= hpToday(0) ? h.date : hpToday(1);
-      document.getElementById('hpTitle').textContent = mode === 'sched' ? '작업일 안내 문자' : '🤝 예약 확정';
-      document.getElementById('hpSub').innerHTML = mode === 'sched' ? '날짜를 고르면 고객에게 보낼 문자가 채워져요.<br>[문자 창 열기] → 문자 앱에서 [보내기]만 누르세요.' : '고객이 "네"라고 답했나요? 확정하면 운영팀에 <b>거래 성사</b>로 알려지고,<br>방문 일정 창이 날짜가 채워진 채로 열려요.';
-      document.getElementById('hpAmtBox').classList.toggle('hidden', mode !== 'booked');
-      document.getElementById('hpMsgBox').classList.toggle('hidden', mode !== 'sched');
+      document.getElementById('hpTitle').textContent = book ? (change ? '📅 날짜 바꾸기' : '📅 날짜 정하고 진행하기') : '✅ 작업 끝났어요';
+      document.getElementById('hpSub').innerHTML = book ? '고객과 이야기한 날짜를 골라 주세요.' : '수고 많으셨어요! 받을 금액을 확인해 주세요.';
+      document.getElementById('hpDateBox').classList.toggle('hidden', !book);
+      document.getElementById('hpMsgBox').classList.toggle('hidden', !book); document.getElementById('hpMsgBox').open = false;
+      document.getElementById('hpAmtLbl').textContent = book ? '예상 금액' : '받을 금액';
+      document.getElementById('hpAmtNote').textContent = book ? '작업이 끝나면 장부에 들어가요. 고객에게는 안 보여요.' : '이 금액이 개인 장부에 수입으로 들어가요.';
       document.getElementById('hpAmt').value = h.amount ? Number(h.amount).toLocaleString('ko-KR') : '';
-      document.getElementById('hpGo').textContent = mode === 'sched' ? '문자 창 열기' : '예약 확정하기';
+      document.getElementById('hpAuto').innerHTML = book ? '누르면 한 번에: <b>거래처 등록</b> · <b>방문 일정 저장</b> · <b>운영팀에 알림</b> · <b>문자 창 열기</b> (문자 앱에서 [보내기]만 누르세요)' : '누르면 한 번에: <b>개인 장부에 수입</b> · <b>운영팀에 작업 완료 알림</b>';
+      document.getElementById('hpGo').textContent = book ? (change ? '바꾸고 고객에게 문자 보내기' : '확정하고 고객에게 문자 보내기') : '장부에 넣고 완료하기';
       hpSlotPaint(); hpPreview();
       document.getElementById('hpModal').classList.remove('hidden');
     }
     function hpClose() { const m = document.getElementById('hpModal'); if (m) m.classList.add('hidden'); }
-    function hpApply(r, st) { Object.assign(r.home, st); const x = RV.list.find(y => y.id === r.id); if (x && x !== r && x.home) Object.assign(x.home, st); if (r.status === 'new') r.status = 'talk'; reqRenderDetail(); }
+    function hpApply(r, st) { Object.assign(r.home, st); const x = RV.list.find(y => y.id === r.id); if (x && x !== r && x.home) Object.assign(x.home, st); reqRenderDetail(); }
+    function hpMark(r) { return `(조경노트 홈 의뢰 ${r.id})`; }
+    function hpAutoClient(r) {   // 처음 고객이면 거래처에 조용히 등록
+      try {
+        if (clients.find(c => c && String(c.phone || '').replace(/[^0-9]/g, '') === r.phone)) return false;
+        clients.push({ id: Date.now().toString(), name: r.name, phone: reqPhoneFmt(r.phone), address: r.addr, type: '개별 고객' });
+        updateData('clients', clients); if (typeof renderClientSelect === 'function') renderClientSelect(); if (typeof renderClientsList === 'function') renderClientsList();
+        return true;
+      } catch (e) { return false; }
+    }
+    function hpAutoSchedule(r, date, slot, amount) {   // 방문 일정에 조용히 저장 (같은 의뢰면 고쳐 씀)
+      try {
+        const mark = hpMark(r), i = schedules.findIndex(x => x && String(x.memo || '').includes(mark));
+        const sc = { id: i >= 0 ? schedules[i].id : String(Date.now()), date, title: `${reqArea(r.addr)} ${r.name} 고객님 ${r.works.length ? r.works.join(', ') : '조경 작업'}`.slice(0, 80),
+          color: 'border-[#84CC16]', tag: '작업 · ' + HP_SLOT[slot], memo: `연락처: ${reqPhoneFmt(r.phone)}\n주소: ${r.addr}${amount ? '\n예상 금액: ' + amount.toLocaleString('ko-KR') + '원' : ''}\n${mark}` };
+        if (i >= 0) schedules[i] = sc; else schedules.push(sc);
+        updateData('schedules', schedules); try { renderCalendar(); renderScheduleList(); } catch (e) {}
+        return true;
+      } catch (e) { return false; }
+    }
+    function hpAutoLedger(r, amount) {   // 작업 끝 → 개인 장부 수입
+      if (!amount) return false;
+      try {
+        const mark = hpMark(r); if (ledgers.find(x => x && String(x.memo || '').includes(mark))) return false;   // 두 번 들어가지 않게
+        ledgers.push({ id: Date.now() + 1, date: hpToday(0), title: `[작업] ${reqArea(r.addr)} ${r.name} 고객님 ${r.works.length ? r.works.join(', ') : '조경 작업'}`.slice(0, 80), income: amount, expense: 0, vat: 0, memo: `조경노트 홈 작업 완료 ${mark}` });
+        localStorage.setItem('shinhwa_pro_ledgers', JSON.stringify(ledgers)); if (typeof updateData === 'function') updateData('ledgers', ledgers); try { renderLedgerCalendar(); } catch (e) {}
+        return true;
+      } catch (e) { return false; }
+    }
     async function hpGo() {
       const r = RV.cur; if (!r || RV.busy) return;
-      const date = document.getElementById('hpDate').value;
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return alert('작업 날짜를 골라 주세요.');
-      if (HP.mode === 'sched') {
-        const text = document.getElementById('hpMsg').value.trim(); if (!text) return alert('문자 내용을 적어 주세요.');
-        const p = requestPoints({ action: 'push_home_progress', reqId: r.id, stage: 'sched', date, slot: HP.slot });   // 저장은 문자 창을 여는 동안 같이
-        hpClose(); hpApply(r, { stage: 'sched', date, slot: HP.slot });
+      const amount = Number(String(document.getElementById('hpAmt').value || '').replace(/[^0-9]/g, '')) || 0;
+      if (HP.mode === 'book') {
+        const date = document.getElementById('hpDate').value;
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return alert('작업 날짜를 골라 주세요.');
+        const text = document.getElementById('hpMsg').value.trim() || hpText(r, date, HP.slot, r.home.stage === 'booked');
+        const p = requestPoints({ action: 'push_home_progress', reqId: r.id, stage: 'booked', date, slot: HP.slot, amount });   // 저장은 문자 창을 여는 동안 같이
+        hpAutoClient(r); hpAutoSchedule(r, date, HP.slot, amount);
+        if (r.status === 'new') { r.status = 'talk'; }
+        hpClose(); hpApply(r, { stage: 'booked', date, slot: HP.slot, amount });
         location.href = reqSmsHref(r.phone, text);
-        p.then(res => { if (!res || !res.ok) alert('작업일 안내 기록을 저장하지 못했어요. 인터넷 연결을 확인해 주세요.' + (res && res.msg === 'unknown' ? '\n(구글 스크립트 최신 배포 필요)' : '')); });
+        p.then(res => { if (!res || !res.ok) alert('운영팀 알림을 저장하지 못했어요. 인터넷 연결을 확인하고 [날짜 바꾸기]를 한 번 더 눌러 주세요.' + (res && res.msg === 'unknown' ? '\n(구글 스크립트 최신 배포 필요)' : '')); });
         return;
       }
-      const amount = Number(String(document.getElementById('hpAmt').value || '').replace(/[^0-9]/g, '')) || 0;
-      RV.busy = true; const b = document.getElementById('hpGo'); b.disabled = true; b.textContent = '확정하는 중…';
-      const res = await requestPoints({ action: 'push_home_progress', reqId: r.id, stage: 'booked', date, slot: HP.slot, amount });
-      RV.busy = false; b.disabled = false; b.textContent = '예약 확정하기';
-      if (!res || !res.ok) return alert('확정하지 못했어요. ' + (res && res.msg === 'unknown' ? '구글 스크립트 최신 배포가 필요해요.' : res && res.msg === 'not-home' ? '운영팀 연결 의뢰가 아니거나 이미 빠진 의뢰예요.' : '인터넷 연결을 확인해 주세요.'));
-      hpClose(); hpApply(r, { stage: 'booked', date, slot: HP.slot, amount });
-      // 방문 일정 창 (날짜·금액 채워서) → 대표님이 [저장]
-      openScheduleModal(); document.getElementById('scheduleModal').style.zIndex = '9550';
-      document.getElementById('scheduleDate').value = date;
-      document.getElementById('scheduleTitle').value = `${reqArea(r.addr)} ${r.name} 고객님 ${r.works.length ? r.works.join(', ') : '조경 작업'}`.slice(0, 80);
-      document.getElementById('scheduleTagText').value = '작업';
-      document.getElementById('scheduleColor').value = 'border-[#84CC16]';
-      if (document.getElementById('scheduleIncome') && amount) document.getElementById('scheduleIncome').value = amount.toLocaleString('ko-KR');
-      document.getElementById('scheduleMemo').value = `조경노트 홈 연결 · ${HP_SLOT[HP.slot]}\n연락처: ${reqPhoneFmt(r.phone)}\n주소: ${r.addr}`;
-      setTimeout(() => alert('🤝 예약 확정! 운영팀에 알렸어요.\n방문 일정에 [저장]을 눌러 주세요.'), 300);
+      RV.busy = true; const b = document.getElementById('hpGo'); b.disabled = true; b.textContent = '저장하는 중…';
+      const res = await requestPoints({ action: 'push_home_progress', reqId: r.id, stage: 'done', amount });
+      RV.busy = false; b.disabled = false; b.textContent = '장부에 넣고 완료하기';
+      if (!res || !res.ok) return alert('저장하지 못했어요. ' + (res && res.msg === 'unknown' ? '구글 스크립트 최신 배포가 필요해요.' : '인터넷 연결을 확인해 주세요.'));
+      const led = hpAutoLedger(r, amount);
+      r.status = 'done'; try { fetch(reqUrl(r.id), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'done' }) }).catch(() => {}); } catch (e) {}
+      hpClose(); hpApply(r, { stage: 'done', amount });
+      setTimeout(() => alert('✅ 작업 완료!' + (led ? '\n개인 장부에 ' + amount.toLocaleString('ko-KR') + '원을 넣었어요.' : '') + '\n운영팀에도 알렸어요.'), 200);
     }
     async function hpCancel() {
-      const r = RV.cur; if (!r || RV.busy || !confirm('작업일 안내/예약 확정을 취소할까요?\n(운영팀에도 취소로 알려져요. 고객에게는 따로 연락해 주세요)')) return;
+      const r = RV.cur; if (!r || RV.busy || !confirm('진행을 취소할까요?\n(운영팀에도 취소로 알려져요. 고객에게는 따로 연락해 주세요.\n방문 일정은 직접 지워 주세요.)')) return;
       RV.busy = true; const res = await requestPoints({ action: 'push_home_progress', reqId: r.id, stage: 'cancel' }); RV.busy = false;
       if (!res || !res.ok) return alert('취소하지 못했어요. 인터넷 연결을 확인해 주세요.');
       hpApply(r, { stage: '', date: '', slot: 'talk', amount: 0 });
     }
+    function hpReport() {   // 작업일지 쓰기 (고객 정보 채워서)
+      const r = RV.cur; if (!r) return;
+      reqLeave(() => { switchView('admin'); try { document.getElementById('clientSelect').value = r.name; document.getElementById('inputClientPhone').value = reqPhoneFmt(r.phone); if (document.getElementById('inputClientAddress')) document.getElementById('inputClientAddress').value = r.addr; } catch (e) {} });
+    }
     const reqRenderDetailHP0 = reqRenderDetail;
     reqRenderDetail = function () {
       reqRenderDetailHP0();
-      const r = RV.cur; if (!r || r.via !== 'home' || !r.home) return;
+      const r = RV.cur; if (!r || r.via !== 'home' || !r.home || !r.phone) return;
       const h = r.home, pane = document.getElementById('reqDetailPane'), card = pane && pane.children[1]; if (!card || !card.firstElementChild) return;
-      let html;
-      if (!r.phone) html = '';
-      else if (h.stage === 'booked') html = `<div class="rounded-[16px] p-3.5 flex flex-col gap-2" style="background:#ECFCCB;border:2px solid #151E2D;">
-          <span class="text-[17px] font-black text-[#151E2D]">🤝 예약 확정 · ${escHtml(hpDateKo(h.date, h.slot))}${h.amount ? ' · ' + escHtml(homeWon(h.amount)) : ''}</span>
-          <span class="text-[13.5px] font-bold text-[#3F6212]">운영팀에 거래 성사로 알렸어요.</span>
-          <span class="grid grid-cols-2 gap-2"><button type="button" onclick="hpOpen('booked')" class="h-[44px] rounded-[12px] bg-white text-[#151E2D] text-[14.5px] font-black border border-[#CBD5E1]">날짜·금액 고치기</button><button type="button" onclick="hpCancel()" class="h-[44px] rounded-[12px] bg-white text-[#B91C1C] text-[14.5px] font-black border border-[#FCA5A5]">예약 취소</button></span></div>`;
-      else if (h.stage === 'sched') html = `<div class="rounded-[16px] p-3.5 flex flex-col gap-2" style="background:#F0F9FF;border:1.5px solid #7DD3FC;">
-          <span class="text-[16.5px] font-black text-[#0C4A6E]">📅 ${escHtml(hpDateKo(h.date, h.slot))}에 진행한다고 안내했어요</span>
-          <span class="text-[14px] font-bold text-[#0369A1]">고객이 "네"라고 답하면 [예약 확정]을 눌러 주세요.</span>
-          <button type="button" onclick="hpOpen('booked')" class="h-[54px] rounded-[14px] bg-[#84CC16] text-[#12261E] text-[17px] font-black" style="box-shadow:inset 0 0 0 2px #151E2D;">🤝 예약 확정 (고객이 OK 했어요)</button>
-          <span class="grid grid-cols-2 gap-2"><button type="button" onclick="hpOpen('sched')" class="h-[44px] rounded-[12px] bg-white text-[#0C4A6E] text-[14.5px] font-black border border-[#7DD3FC]">다른 날로 다시 안내</button><button type="button" onclick="hpCancel()" class="h-[44px] rounded-[12px] bg-white text-[#64748B] text-[14.5px] font-black border border-[#E2E8F0]">안내 취소</button></span></div>`;
-      else html = `<div class="flex flex-col gap-2"><button type="button" onclick="hpOpen('sched')" class="h-[58px] rounded-[16px] bg-[#84CC16] text-[#12261E] text-[17.5px] font-black" style="box-shadow:inset 0 0 0 2px #151E2D;">✅ 이대로 진행 · 작업일 안내 문자</button>
-          <span class="text-[13.5px] font-bold text-center" style="color:#A3B5A9;">견적이 먼저 필요하면 아래 [견적서 쓰기]를 쓰세요.</span></div>`;
-      if (html) card.firstElementChild.insertAdjacentHTML('afterend', html);
+      const step = h.stage === 'done' ? 3 : h.stage === 'booked' ? 2 : 1;
+      const dot = (n, t) => `<span class="flex-1 flex flex-col items-center gap-1"><span class="w-9 h-9 rounded-full flex items-center justify-center text-[16px] font-black" style="${n < step ? 'background:#151E2D;color:#BEF264;' : n === step ? 'background:#84CC16;color:#12261E;box-shadow:inset 0 0 0 2px #151E2D;' : 'background:#E2E8F0;color:#94A3B8;'}">${n < step ? '✓' : n}</span><span class="text-[13.5px] font-black" style="color:${n === step ? '#151E2D' : '#94A3B8'}">${t}</span></span>`;
+      const line = `<div class="flex items-start gap-1 px-1">${dot(1, '날짜 정하기')}<span class="h-[3px] flex-1 mt-[17px] rounded" style="background:${step > 1 ? '#151E2D' : '#E2E8F0'}"></span>${dot(2, '작업')}<span class="h-[3px] flex-1 mt-[17px] rounded" style="background:${step > 2 ? '#151E2D' : '#E2E8F0'}"></span>${dot(3, '완료')}</div>`;
+      const big = (fn, label) => `<button type="button" onclick="${fn}" class="w-full h-[64px] rounded-[18px] bg-[#84CC16] text-[#12261E] text-[19px] font-black active:scale-[0.98]" style="box-shadow:inset 0 0 0 2px #151E2D;">${label}</button>`;
+      const small = (fn, label, color) => `<button type="button" onclick="${fn}" class="h-[46px] rounded-[12px] bg-white text-[15px] font-black border border-[#CBD5E1]" style="color:${color || '#151E2D'}">${label}</button>`;
+      let body;
+      if (step === 1) body = big("hpOpen('book')", '📅 날짜 정하고 진행하기') + `<span class="text-[13.5px] font-bold text-center text-[#64748B]">고객과 날짜를 정했으면 눌러 주세요. 일정·거래처·문자까지 한 번에 돼요.</span>`;
+      else if (step === 2) body = `<span class="text-[17px] font-black text-[#151E2D] text-center">📅 ${escHtml(hpDateKo(h.date, h.slot))} 작업${h.amount ? ' · ' + escHtml(homeWon(h.amount)) : ''}</span>` + big("hpOpen('done')", '✅ 작업 끝났어요') + `<span class="grid grid-cols-2 gap-2">${small("hpOpen('book')", '날짜 바꾸기')}${small('hpCancel()', '진행 취소', '#B91C1C')}</span>`;
+      else body = `<span class="text-[17px] font-black text-[#3F6212] text-center">✅ 작업 완료${h.amount ? ' · ' + escHtml(homeWon(h.amount)) + ' 장부에 넣음' : ''}</span>` + big('hpReport()', '📝 작업일지 쓰기 (선택)');
+      card.firstElementChild.insertAdjacentHTML('afterend', `<div class="rounded-[18px] p-4 flex flex-col gap-3" style="background:#F7FEE7;border:2px solid #151E2D;">${line}${body}</div>`);
+      // 예전 버튼(거래처 등록·방문 일정·상태 바꾸기)은 자동으로 되니 숨기고, 견적서는 작게
+      pane.querySelectorAll('button').forEach(bt => {
+        const oc = bt.getAttribute('onclick') || '';
+        if (/^reqToClient\(\)|^reqToSchedule\(\)|^reqSetStatus/.test(oc)) bt.style.display = 'none';
+        if (/^reqToQuote\(\)/.test(oc)) { bt.textContent = '견적서 먼저 보내기 (금액 안내가 필요할 때)'; bt.className = 'h-[48px] rounded-[14px] bg-transparent border border-white/30 text-white text-[15px] font-black'; }
+      });
+      pane.querySelectorAll('div.grid').forEach(g => { const bs = g.querySelectorAll('button'); if (bs.length && [...bs].every(x => x.style.display === 'none')) g.style.display = 'none'; });
+      pane.querySelectorAll('span').forEach(sp => { if (sp.textContent === '이 의뢰로 바로 하기') sp.textContent = '그 밖에'; });
     };
     // 🔔 [패치 #108] 알림을 누르면 sw.js가 열린 업체 앱 창에 '이 화면 열어 줘'를 보냄 (창을 새로 불러오지 않음)
     try { if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e => {

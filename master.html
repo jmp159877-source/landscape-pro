@@ -236,6 +236,7 @@
           <button onclick="hmLoad(true)" class="px-4 py-2.5 rounded-[12px] bg-white/5 border border-white/10 text-[#CBD5E1] text-[14px] font-black">새로고침</button>
         </div>
       </div>
+      <div class="flex items-center gap-2 bg-white/5 border border-white/10 rounded-[14px] px-4 h-[52px]"><span class="text-[18px]">🔍</span><input id="hmQ" type="tel" inputmode="numeric" maxlength="13" placeholder="답장 온 번호 뒷자리 4개로 찾기" oninput="hmSearch(this.value)" class="flex-1 bg-transparent text-white text-[16px] font-bold outline-none placeholder:text-[#64748B]"><button onclick="document.getElementById('hmQ').value=''; hmSearch('')" class="text-[#94A3B8] text-[14px] font-black px-1">지우기</button></div>
       <div class="flex gap-2 overflow-x-auto scrollbar-hide" id="hmTabs"></div>
       <div id="hmList" class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="col-span-full py-16 text-center text-[#94A3B8] glass-panel rounded-[24px] font-bold">의뢰를 불러오는 중...</div></div>
     </div>
@@ -2417,7 +2418,7 @@
     } catch (e) {}
     window.addEventListener('popstate', function (ev) {
         if (!pmbLoggedIn()) return;
-        { const hm = document.getElementById('hmModal'); if ((hm && !hm.classList.contains('hidden')) || (ev.state && ev.state.hmOpen)) return; }   // 🏡 [패치 #107] Home 의뢰 창·사진은 자기 뒤로가기만 처리
+        { const hm = document.getElementById('hmModal'); if (typeof HM !== 'undefined' && HM.closing) { HM.closing = false; return; } if ((hm && !hm.classList.contains('hidden')) || (ev.state && ev.state.hmOpen)) return; }   // 🏡 [패치 #107] Home 의뢰 창·사진은 자기 뒤로가기만 처리
         const target = (ev.state && ev.state.pmb) || 0;
         let acted = false, tabTo = null;
         PMB.fromPop = true;
@@ -2452,9 +2453,12 @@
     const HM_SLOT = { am: ' 오전', pm: ' 오후', talk: '' };
     function hmDate(d, slot) { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(d || '')); if (!m) return ''; const dt = new Date(+m[1], +m[2] - 1, +m[3]); return `${+m[2]}월 ${+m[3]}일(${'일월화수목금토'[dt.getDay()]})${HM_SLOT[slot] || ''}`; }
     function hmStageLine(r) {   // 업체 진행 단계 한 줄
-        if (r.coStage === 'booked') return `🤝 예약 확정 · ${hmDate(r.coDate, r.coSlot)}${r.coAmount ? ' · ' + hmWon(r.coAmount) : ''}`;
+        if (r.coStage === 'done') return `✅ 작업 완료${r.coAmount ? ' · ' + hmWon(r.coAmount) : ''}${r.coDate ? ' · ' + hmDate(r.coDate, '') : ''}`;
+        if (r.coStage === 'booked') return `🤝 예약 확정 · ${hmDate(r.coDate, r.coSlot)}${r.coAmount ? ' · 예상 ' + hmWon(r.coAmount) : ''}`;
         if (r.coStage === 'sched') return `📅 업체가 작업일 안내함 · ${hmDate(r.coDate, r.coSlot)}`;
-        return r.status === 'sent' ? '업체 확인 전' : '';
+        if (r.status !== 'sent') return '';
+        if (r.coSeenAt) return '👀 업체가 봤어요 · 날짜 정하기 전';
+        return r.unseenAlertAt ? '⚠️ 업체가 2시간째 안 봤어요 · 전화해 보세요' : '업체 확인 전';
     }
     function hmHistLine(h) {
         if (h.decline) return '↩️ ' + hmE(h.toName) + ' 못 함' + (h.memo ? ' · ' + hmE(h.memo) : '');
@@ -2462,6 +2466,7 @@
         if (h.stage === 'sched') return '📅 ' + hmE(h.toName) + ' 작업일 안내 · ' + hmE(hmDate(h.date, h.slot));
         if (h.stage === 'booked') return '🤝 ' + hmE(h.toName) + ' 예약 확정 · ' + hmE(hmDate(h.date, h.slot)) + (h.amount ? ' · ' + hmE(hmWon(h.amount)) : '');
         if (h.stage === 'cancel') return '✖️ ' + hmE(h.toName) + ' 일정 취소';
+        if (h.stage === 'done') return '✅ ' + hmE(h.toName) + ' 작업 완료' + (h.amount ? ' · ' + hmE(hmWon(h.amount)) : '');
         return '→ ' + hmE(h.toName) + ' 연결' + (h.memo ? ' · ' + hmE(h.memo) : '');
     }
     const HM_SIDO = ['서울', '경기', '인천', '강원', '충북', '충남', '세종', '대전', '전북', '전남', '광주', '경북', '경남', '대구', '울산', '부산', '제주'];
@@ -2493,10 +2498,27 @@
         const n = HM.list.filter(r => r.status === 'new' || r.status === 'declined').length;   // (거래 성사는 배지에 안 셈)
         [['sideHomeCount', n], ['mobHomeCount', n]].forEach(([id, v]) => { const el = document.getElementById(id); if (el) { el.textContent = v; el.classList.toggle('hidden', !v); } });
     }
+    function hmSearch(v) {   // 🔍 [패치 #110] 답장 온 번호 뒷자리로 찾기 (한 건이면 바로 열기)
+        HM.q = String(v || '').replace(/[^0-9]/g, ''); hmRender();
+        if (HM.q.length >= 4) { const hit = HM.list.filter(r => String(r.phone || '').replace(/[^0-9]/g, '').endsWith(HM.q)); if (hit.length === 1 && !(HM.cur && HM.cur.id === hit[0].id)) hmOpen(hit[0].id); }
+    }
+    function hmVcard() {   // 📇 [패치 #110] 고객을 내 휴대폰 연락처에 저장 (답장이 오면 이름으로 보이게)
+        const r = HM.cur; if (!r) return;
+        const dong = (String(r.area || '').split(/\s+/).pop() || String(r.addr || '').split(/\s+/).slice(0, 2).join(' ')).slice(0, 12);
+        const nm = ('🌿홈 ' + dong + ' ' + (r.name || '고객')).trim(), tel = hmTel(r.phone);
+        const d = new Date(Number(r.createdAt) || Date.now()), note = hmWorks(r) + ' · ' + (d.getMonth() + 1) + '/' + d.getDate() + ' 의뢰';
+        const esc = v => String(v).replace(/[\\,;]/g, m => '\\' + m);
+        const vcf = ['BEGIN:VCARD', 'VERSION:3.0', 'N:;' + esc(nm) + ';;;', 'FN:' + esc(nm), 'TEL;TYPE=CELL:' + tel, 'NOTE:' + esc(note), 'END:VCARD'].join('\r\n');
+        const blob = new Blob([vcf], { type: 'text/vcard;charset=utf-8' }), url = URL.createObjectURL(blob), a = document.createElement('a');
+        a.href = url; a.download = nm.replace(/[\\/:*?"<>|\s]+/g, '_') + '.vcf'; document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 4000);
+        alert('📇 연락처 파일을 만들었어요.\n휴대폰 위쪽 알림(또는 다운로드)에서 파일을 누르고 [저장]을 누르면\n"' + nm + '" 이름으로 저장돼요.');
+    }
     function hmRender() {
         const cnt = {}; HM.list.forEach(r => { const t = hmTabOf(r); cnt[t] = (cnt[t] || 0) + 1; });
         document.getElementById('hmTabs').innerHTML = HM_TABS.map(([k, t]) => `<button onclick="HM.tab='${k}'; hmRender()" class="shrink-0 px-4 py-2.5 rounded-full text-[14.5px] font-black ${HM.tab === k ? 'bg-[#84CC16] text-[#12261E]' : 'bg-white/5 text-[#94A3B8] border border-white/10'}">${t}${cnt[k] ? ' ' + cnt[k] : ''}</button>`).join('');
-        const view = HM.list.filter(r => hmTabOf(r) === HM.tab);
+        const q = String(HM.q || '').replace(/[^0-9]/g, '');
+        const view = q.length >= 3 ? HM.list.filter(r => String(r.phone || '').replace(/[^0-9]/g, '').includes(q)) : HM.list.filter(r => hmTabOf(r) === HM.tab);   // 🔍 [패치 #110] 번호로 찾기는 모든 탭에서
         const box = document.getElementById('hmList');
         if (HM.err) { box.innerHTML = `<div class="col-span-full py-12 px-6 text-center text-amber-300 glass-panel rounded-[24px] font-bold leading-relaxed">${hmE(HM.err)}</div>`; return; }
         box.innerHTML = view.length ? view.map(r => {
@@ -2510,12 +2532,12 @@
                 <span class="text-[13px] font-black px-2 py-1 rounded-lg ${r.contact === 'call' ? 'bg-white/10 text-[#CBD5E1]' : 'bg-sky-400/20 text-sky-300'}">${r.contact === 'call' ? '전화 OK' : '문자로만'}</span>
                 <span class="text-[13px] font-black px-2 py-1 rounded-lg bg-white/10 text-[#CBD5E1]">사진 ${(r.imgs || []).length}장</span>
                 ${r.sentName ? `<span class="text-[13px] font-black px-2 py-1 rounded-lg bg-[#84CC16]/20 text-[#BEF264]">→ ${hmE(r.sentName)}</span>` : ''}
-                ${(r.status === 'sent' || r.status === 'booked') ? (r.custNotifiedAt ? '<span class="text-[13px] font-black px-2 py-1 rounded-lg bg-[#84CC16]/20 text-[#BEF264]">고객 안내 ✓</span>' : '<span class="text-[13px] font-black px-2 py-1 rounded-lg bg-amber-400/20 text-amber-300">고객 안내 전</span>') : ''}
+                ${(r.status === 'sent' || r.status === 'booked' || r.coStage === 'done') ? (r.custNotifiedAt ? '<span class="text-[13px] font-black px-2 py-1 rounded-lg bg-[#84CC16]/20 text-[#BEF264]">고객 안내 ✓</span>' : '<span class="text-[13px] font-black px-2 py-1 rounded-lg bg-amber-400/20 text-amber-300">고객 안내 전</span>') : ''}
                 ${r.lastSms && r.lastSms !== 'sent' ? `<span class="text-[13px] font-black px-2 py-1 rounded-lg bg-sky-400/20 text-sky-300">최근 문자: ${hmE(HM_SMS[r.lastSms] || '')}</span>` : ''}
               </span>
-              ${hmStageLine(r) ? `<span class="text-[14px] font-black ${r.coStage === 'booked' ? 'text-[#BEF264]' : r.coStage === 'sched' ? 'text-sky-300' : 'text-[#94A3B8]'}">${hmE(hmStageLine(r))}</span>` : ''}
+              ${hmStageLine(r) ? `<span class="text-[14px] font-black ${r.coStage === 'booked' || r.coStage === 'done' ? 'text-[#BEF264]' : r.coStage === 'sched' ? 'text-sky-300' : r.unseenAlertAt && !r.coSeenAt && r.status === 'sent' ? 'text-amber-300' : 'text-[#94A3B8]'}">${hmE(hmStageLine(r))}</span>` : ''}
             </button>`;
-        }).join('') : `<div class="col-span-full py-16 text-center text-[#94A3B8] glass-panel rounded-[24px] font-bold">${HM.tab === 'new' ? '새로 들어온 의뢰가 없어요.' : '없어요.'}</div>`;
+        }).join('') : `<div class="col-span-full py-16 text-center text-[#94A3B8] glass-panel rounded-[24px] font-bold">${q.length >= 3 ? '그 번호로 들어온 의뢰가 없어요.' : HM.tab === 'new' ? '새로 들어온 의뢰가 없어요.' : '없어요.'}</div>`;
         lucide.createIcons();
     }
     function hmOpen(id) {
@@ -2529,7 +2551,7 @@
     function hmClose(fromPop) {
         const m = document.getElementById('hmModal'); if (m.classList.contains('hidden')) return;
         m.classList.add('hidden'); HM.cur = null; document.body.style.overflow = '';
-        if (!fromPop && history.state && history.state.hmOpen) history.back();
+        if (!fromPop && history.state && history.state.hmOpen) { HM.closing = true; history.back(); }   // 🔙 [패치 #110] × 로 닫을 때 뒤로가기 처리기가 탭까지 넘기지 않게
     }
     window.addEventListener('popstate', () => {
         if (!document.getElementById('hmLb').classList.contains('hidden')) { hmLbClose(true); return; }   // 사진 → 의뢰 창으로
@@ -2681,7 +2703,7 @@
           </div>
           ${(r.imgs || []).length ? `<div class="grid grid-cols-3 gap-2">${r.imgs.map((u, i) => `<button type="button" onclick="hmLbOpen(${i})" class="block aspect-square rounded-[12px] overflow-hidden bg-white/5"><img src="${hmE(u)}" class="w-full h-full object-cover" loading="lazy"></button>`).join('')}</div><div class="text-[13px] font-bold text-[#94A3B8] -mt-2">사진을 누르면 크게 보고 옆으로 넘길 수 있어요</div>` : '<div class="text-[14px] font-bold text-amber-300">사진 없이 보낸 의뢰예요.</div>'}
           ${r.status === 'declined' ? `<div class="rounded-[16px] bg-amber-400/15 border border-amber-400/40 p-3.5 text-[15px] font-bold text-amber-200 leading-relaxed">↩️ ${hmE(r.declinedName || '')} 업체가 못 한대요${r.declineReason ? ' · ' + hmE(r.declineReason) : ''}. 다른 업체로 연결해 주세요.</div>` : ''}
-          ${(r.status === 'sent' || r.status === 'booked') ? `<div class="rounded-[16px] bg-[#84CC16]/15 border border-[#84CC16]/40 p-3.5 text-[15px] font-bold text-[#D9F99D] leading-relaxed">✅ ${hmE(r.sentName || '')} 업체에 연결했어요 (${hmTime(r.sentAt)})${r.memo ? '<br>메모: ' + hmE(r.memo) : ''}<br><span class="text-[16px] font-black ${r.coStage === 'booked' ? 'text-[#BEF264]' : 'text-white'}">진행: ${hmE(hmStageLine(r))}</span><br><span class="${r.custNotifiedAt ? '' : 'text-amber-300'}">${r.custNotifiedAt ? '고객에게 연결 안내 문자 보냄 ✓' : '아직 고객에게 [업체 연결 안내] 문자를 안 보냈어요'}</span></div>` : ''}
+          ${(r.status === 'sent' || r.status === 'booked' || r.coStage === 'done') ? `<div class="rounded-[16px] bg-[#84CC16]/15 border border-[#84CC16]/40 p-3.5 text-[15px] font-bold text-[#D9F99D] leading-relaxed">✅ ${hmE(r.sentName || '')} 업체에 연결했어요 (${hmTime(r.sentAt)})${r.memo ? '<br>메모: ' + hmE(r.memo) : ''}<br><span class="text-[16px] font-black ${r.coStage === 'booked' ? 'text-[#BEF264]' : 'text-white'}">진행: ${hmE(hmStageLine(r))}</span><br><span class="${r.custNotifiedAt ? '' : 'text-amber-300'}">${r.custNotifiedAt ? '고객에게 연결 안내 문자 보냄 ✓' : '아직 고객에게 [업체 연결 안내] 문자를 안 보냈어요'}</span></div>` : ''}
 
           <div class="pt-1">
             <div class="text-[16px] font-black text-white mb-1">1. 연결할 업체 고르기</div>
@@ -2696,6 +2718,7 @@
 
           <div class="pt-2">
             <div class="text-[16px] font-black text-white mb-2">2. 고객에게 안내 문자 (대표님 휴대폰으로 발송)</div>
+            <button onclick="hmVcard()" class="mb-2 w-full h-[50px] rounded-[14px] bg-[#84CC16]/15 border border-[#84CC16]/50 text-[#D9F99D] text-[15px] font-black">📇 내 휴대폰 연락처에 저장 (답장 오면 이름으로 보여요)</button>
             <div class="grid grid-cols-2 gap-2">
               <button onclick="hmSms('sent')" class="h-[52px] rounded-[14px] bg-white/10 border border-white/15 text-white text-[14.5px] font-black">업체 연결 안내</button>
               <button onclick="hmSms('budget')" class="h-[52px] rounded-[14px] bg-white/10 border border-white/15 text-white text-[14.5px] font-black">예산 안내</button>
@@ -2734,7 +2757,7 @@
     function hmSmsText(kind, r) {   // 📝 [패치 #108·#109] 작업 목록 빼고 짧게 · 문장마다 한 줄 띄우기 · 🌿
         const head = `[🌿 조경노트 홈] ${r.name ? r.name + ' 고객님' : '고객님'}, 안녕하세요.\n\n`, end = '\n\n🌿 조경노트 홈 드림';
         if (kind === 'sent') return head + `의뢰하신 내용을 확인했습니다.\n\n가장 알맞은 전문 업체${r.sentName ? '(' + r.sentName + ')' : ''}에 연결해 드렸습니다.\n\n곧 업체에서 일정과 견적을 문자로 안내해 드릴 거예요.` + end;
-        if (kind === 'budget') return head + `의뢰하신 내용을 확인했습니다.\n\n말씀하신 예산으로는 지금 맡을 수 있는 업체를 찾기 어렵습니다.\n\n이런 작업은 보통 ○○만~○○만 원 정도입니다. (현장을 확인하면 달라질 수 있어요)\n\n이 금액으로 연결을 원하시면 이 문자에 답장 주세요.` + end;
+        if (kind === 'budget') return head + `의뢰하신 내용을 확인했습니다.\n\n말씀하신 예산으로는 지금 맡을 수 있는 업체를 찾기 어렵습니다.\n\n이런 작업은 보통 ○○만~○○만 원 정도입니다. (현장을 확인하면 달라질 수 있어요)\n\n이 금액으로 연결을 원하시면 이 문자에 답장 주세요.\n(예: "네" 또는 "취소")` + end;
         if (kind === 'area') return head + `의뢰하신 내용을 확인했습니다.\n\n죄송하지만 아직 이 지역은 연결해 드릴 전문 업체를 준비하고 있습니다.\n\n준비되면 먼저 연락드리겠습니다.` + end;
         return head + end.trim();
     }
