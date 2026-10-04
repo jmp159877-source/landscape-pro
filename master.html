@@ -114,7 +114,7 @@
         <span id="sidePointCount" class="absolute top-1 right-2 md:relative md:top-auto md:right-auto bg-red-500 text-white text-[10px] md:text-[11px] px-1.5 py-0.5 rounded-full hidden">0</span>
       </button>
       <button onclick="switchTab('home')" id="navHomeBtn" class="nav-btn w-full flex flex-col md:flex-row items-center justify-center md:justify-between gap-1 p-2 md:px-4 md:py-3.5 rounded-[12px] text-[#94A3B8] hover:bg-white/5 hover:text-white font-bold transition-all text-[11px] md:text-[14px] relative"><!-- 🏡 [패치 #106] -->
-        <div class="flex flex-col md:flex-row items-center gap-1 md:gap-3"><i data-lucide="house" class="w-5 h-5"></i> <span class="whitespace-nowrap">Home 의뢰</span></div>
+        <div class="flex flex-col md:flex-row items-center gap-1 md:gap-3"><i data-lucide="house" class="w-5 h-5"></i> <span class="whitespace-nowrap">홈 의뢰</span></div>
         <span id="sideHomeCount" class="absolute top-1 right-2 md:relative md:top-auto md:right-auto bg-red-500 text-white text-[10px] md:text-[11px] px-1.5 py-0.5 rounded-full hidden">0</span>
       </button>
     </nav>
@@ -230,7 +230,7 @@
     <!-- 🏡 [패치 #106] 조경노트 Home 의뢰 (고객 → 운영팀 1차 상담 → 업체 연결) -->
     <div id="view-home" class="hidden space-y-5">
       <div class="flex items-center justify-between gap-3 border-b border-white/10 pb-4 flex-wrap">
-        <h1 class="text-[24px] font-black tracking-tight flex items-center gap-2"><i data-lucide="house" class="w-6 h-6 text-[#84CC16]"></i> 조경노트 Home 의뢰</h1>
+        <h1 class="text-[24px] font-black tracking-tight flex items-center gap-2"><i data-lucide="house" class="w-6 h-6 text-[#84CC16]"></i> 조경노트 홈 의뢰</h1>
         <div class="flex gap-2">
           <a href="/home.html" target="_blank" rel="noopener" class="px-4 py-2.5 rounded-[12px] bg-white/5 border border-white/10 text-[#CBD5E1] text-[14px] font-black">고객 화면 보기</a>
           <button onclick="hmLoad(true)" class="px-4 py-2.5 rounded-[12px] bg-white/5 border border-white/10 text-[#CBD5E1] text-[14px] font-black">새로고침</button>
@@ -431,7 +431,7 @@
     </button>
     <button onclick="switchTab('home')" class="mob-nav-btn flex flex-col items-center gap-1.5 text-[#94A3B8] font-bold relative"><!-- 🏡 [패치 #106] -->
         <span id="mobHomeCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-[11px] font-black px-1.5 rounded-full hidden">0</span>
-        <i data-lucide="house" class="w-6 h-6"></i><span class="text-[10px]">Home</span>
+        <i data-lucide="house" class="w-6 h-6"></i><span class="text-[10px]">홈 의뢰</span>
     </button>
   </nav>
 
@@ -2521,6 +2521,7 @@
     function hmOpen(id) {
         const r = HM.list.find(x => x.id === id); if (!r) return;
         HM.cur = r; HM.pick = ''; hmPaint();
+        if (HM.tab !== hmTabOf(r)) { HM.tab = hmTabOf(r); if (!document.getElementById('view-home').classList.contains('hidden')) hmRender(); }   // 🔔 [패치 #109] 알림으로 열면 그 의뢰가 있는 탭으로
         document.getElementById('hmModal').classList.remove('hidden');
         document.body.style.overflow = 'hidden';
         if (!(history.state && history.state.hmOpen)) history.pushState({ hmOpen: 1 }, '', '');
@@ -2730,12 +2731,12 @@
         if (b) { b.disabled = false; b.textContent = '이 업체에 보내기'; }
         alert('보내지 못했어요. ' + ({ inactive: '승인된 업체가 아니에요.', 'no-req': '의뢰를 찾지 못했어요.', 'admin-only': '관리자 로그인이 필요해요.', unknown: '구글 스크립트(home.gs)가 최신 버전으로 배포되었는지 확인해 주세요.', busy: '서버가 바빠요. 잠시 후 다시 눌러 주세요.' }[res && res.msg] || '인터넷 연결을 확인해 주세요.'));
     }
-    function hmSmsText(kind, r) {   // 📝 [패치 #108] 작업 목록은 빼고 짧게
-        const hi = (r.name ? r.name + ' 고객님, ' : '고객님, ') + '안녕하세요. 조경노트 Home입니다.\n';
-        if (kind === 'sent') return `[조경노트 Home] ${hi}의뢰하신 내용을 확인했습니다.\n가장 알맞은 전문 업체${r.sentName ? '(' + r.sentName + ')' : ''}에 연결해 드렸습니다.\n곧 업체에서 일정과 견적을 문자로 안내해 드릴 거예요.\n- 조경노트 Home 드림`;
-        if (kind === 'budget') return `[조경노트 Home] ${hi}의뢰하신 내용을 확인했습니다.\n말씀하신 예산으로는 지금 맡을 수 있는 업체를 찾기 어렵습니다.\n이런 작업은 보통 ○○만~○○만 원 정도입니다. (현장을 확인하면 달라질 수 있어요)\n이 금액으로 연결을 원하시면 이 문자에 답장 주세요.\n- 조경노트 Home 드림`;
-        if (kind === 'area') return `[조경노트 Home] ${hi}의뢰하신 내용을 확인했습니다.\n죄송하지만 아직 이 지역은 연결해 드릴 전문 업체를 준비하고 있습니다.\n준비되면 먼저 연락드리겠습니다.\n- 조경노트 Home 드림`;
-        return `[조경노트 Home] ${hi}`;
+    function hmSmsText(kind, r) {   // 📝 [패치 #108·#109] 작업 목록 빼고 짧게 · 문장마다 한 줄 띄우기 · 🌿
+        const head = `[🌿 조경노트 홈] ${r.name ? r.name + ' 고객님' : '고객님'}, 안녕하세요.\n\n`, end = '\n\n🌿 조경노트 홈 드림';
+        if (kind === 'sent') return head + `의뢰하신 내용을 확인했습니다.\n\n가장 알맞은 전문 업체${r.sentName ? '(' + r.sentName + ')' : ''}에 연결해 드렸습니다.\n\n곧 업체에서 일정과 견적을 문자로 안내해 드릴 거예요.` + end;
+        if (kind === 'budget') return head + `의뢰하신 내용을 확인했습니다.\n\n말씀하신 예산으로는 지금 맡을 수 있는 업체를 찾기 어렵습니다.\n\n이런 작업은 보통 ○○만~○○만 원 정도입니다. (현장을 확인하면 달라질 수 있어요)\n\n이 금액으로 연결을 원하시면 이 문자에 답장 주세요.` + end;
+        if (kind === 'area') return head + `의뢰하신 내용을 확인했습니다.\n\n죄송하지만 아직 이 지역은 연결해 드릴 전문 업체를 준비하고 있습니다.\n\n준비되면 먼저 연락드리겠습니다.` + end;
+        return head + end.trim();
     }
     function hmSmsLog(kind, r) {   // 문자 버튼을 누르면 기록 + 상태 자동 (업체 연결 안내는 '업체 연결함' 그대로)
         const now = Date.now(), up = { lastSms: kind, lastSmsAt: now };
