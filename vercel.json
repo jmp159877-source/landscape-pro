@@ -1,0 +1,22 @@
+{
+  "redirects": [
+    {
+      "source": "/",
+      "has": [{ "type": "host", "value": "jogyeongnote.co.kr" }],
+      "destination": "https://www.jogyeongnote.com/home.html",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [{ "type": "host", "value": "www.jogyeongnote.co.kr" }],
+      "destination": "https://www.jogyeongnote.com/home.html",
+      "permanent": false
+    },
+    {
+      "source": "/:path+",
+      "has": [{ "type": "host", "value": "(www\\.)?jogyeongnote\\.co\\.kr" }],
+      "destination": "https://www.jogyeongnote.com/:path+",
+      "permanent": false
+    }
+  ]
+}
