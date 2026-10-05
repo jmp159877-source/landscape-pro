@@ -3,3 +3,5 @@ Allow: /
 Disallow: /master.html
 
 Sitemap: https://www.jogyeongnote.com/sitemap.xml
+
+#DaumWebMasterTool:3b05cbe85b3ee2c70b1fcc4106e1f819e828ebe2b3b73db11e73ad10d5129ad2:jFYtrG8dYK+3XeBcGgtb4Q==
