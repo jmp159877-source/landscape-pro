@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" class="lt">
 <head>
   <meta charset="UTF-8">
   <meta name="robots" content="noindex, nofollow"><!-- 🔎 [패치 #28] 관리자 센터는 검색에 나오지 않게 -->
@@ -48,6 +48,75 @@
     #hmLbImg.drag { transition: none; }
     .hm-lb-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 52px; height: 52px; border-radius: 999px; background: rgba(255,255,255,.14); color: #fff; font-size: 30px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
     .hm-lb-nav:disabled { opacity: .2; }
+
+    /* ☀️ [패치 #122] 밝은 화면 (업체 앱 야외용처럼) + 메뉴를 위쪽 가로로 — html.lt 일 때만 적용 */
+    html.lt body { background: #F3F6F1 !important; color: #0F172A !important; }
+    html.lt .glass-panel { background: rgba(255,255,255,.96) !important; border-color: #DCE2D6 !important; box-shadow: 0 2px 10px rgba(20,38,30,.06); }
+    html.lt [class~="bg-[#0B1120]"] { background-color: #F3F6F1 !important; }
+    html.lt [class~="bg-[#1E293B]"], html.lt [class~="bg-[#1E3A2B]"] { background-color: #FFFFFF !important; }
+    html.lt [class~="bg-[#0F172A]"], html.lt [class~="bg-[#0F1722]"] { background-color: #F8FAFC !important; }
+    html.lt [class~="bg-white/5"], html.lt [class~="bg-black/20"], html.lt [class~="bg-black/30"], html.lt [class~="bg-black/40"] { background-color: #F1F5F9 !important; }
+    html.lt [class~="bg-white/10"], html.lt [class~="bg-white/20"] { background-color: #E8EDF2 !important; }
+    html.lt [class~="border-white/5"], html.lt [class~="border-white/10"], html.lt [class~="border-white/15"] { border-color: #DCE2D6 !important; }
+    html.lt [class~="border-white/20"], html.lt [class~="border-white/30"] { border-color: #CBD5E1 !important; }
+    html.lt .text-white, html.lt [class~="text-[#F8FAFC]"] { color: #0F172A !important; }
+    html.lt [class~="text-white/80"], html.lt [class~="text-[#E2E8F0]"] { color: #334155 !important; }
+    html.lt [class~="text-white/60"], html.lt [class~="text-[#94A3B8]"], html.lt [class~="text-[#CBD5E1]"] { color: #475569 !important; }
+    html.lt [class~="text-white/40"] { color: #64748B !important; }
+    html.lt [class~="text-[#84CC16]"], html.lt [class~="text-[#BEF264]"], html.lt [class~="text-[#9BE32D]"], html.lt [class~="text-[#D9F99D]"] { color: #3F6212 !important; }
+    html.lt [class~="text-[#3B82F6]"] { color: #1D4ED8 !important; }
+    html.lt [class~="text-[#FDE047]"], html.lt [class~="text-[#FACC15]"] { color: #A16207 !important; }
+    html.lt [class~="text-[#F59E0B]"] { color: #B45309 !important; }
+    html.lt .text-red-400 { color: #DC2626 !important; }
+    html.lt .text-green-400 { color: #15803D !important; }
+    html.lt input, html.lt textarea, html.lt select { color: #0F172A; }
+    html.lt input::placeholder, html.lt textarea::placeholder { color: #94A3B8 !important; }
+    html.lt .hm-head { background: #FFFFFF !important; }
+    html.lt :is(.text-blue-300, .text-blue-400) { color: #1D4ED8 !important; }
+    html.lt :is(.text-sky-300, .text-sky-400) { color: #0369A1 !important; }
+    html.lt :is(.text-orange-300, .text-orange-400) { color: #C2410C !important; }
+    html.lt :is(.text-yellow-300, .text-yellow-400, .text-yellow-500) { color: #A16207 !important; }
+    html.lt :is(.text-green-300, .text-green-400, .text-emerald-400) { color: #15803D !important; }
+    html.lt :is(.text-red-300, .text-red-400) { color: #DC2626 !important; }
+    html.lt :is(.text-purple-300, .text-purple-400) { color: #7E22CE !important; }
+    html.lt :is(.text-amber-200, .text-amber-300, .text-amber-400) { color: #B45309 !important; }
+    html.lt :is(.text-red-200) { color: #B91C1C !important; }
+    html.lt :is(.text-lime-300, .text-lime-400) { color: #3F6212 !important; }
+    html.lt #mainContent [class~="text-[10px]"] { font-size: 12px !important; }
+    html.lt #mainContent [class~="text-[11px]"] { font-size: 12.5px !important; }
+    html.lt #mainContent [class~="text-[12px]"] { font-size: 13.5px !important; }
+    html.lt #sidebar nav .nav-btn[onclick^="logoutMaster"] { display: none !important; }
+    @media (max-width: 767px) { html.lt #sidebar nav .nav-btn[onclick^="logoutMaster"] { display: flex !important; background: #FEF2F2 !important; border-color: #FECACA !important; color: #B91C1C !important; } }
+    /* 색깔 바탕 위 글자는 그대로 흰색 */
+    html.lt :is([class~="bg-[#3B82F6]"], [class~="bg-[#2563EB]"], [class~="bg-[#1E3A8A]"], [class~="bg-[#151E2D]"], [class~="bg-[#475569]"], .bg-red-500, .bg-red-600, .bg-blue-500, .bg-blue-600, .bg-sky-500, .bg-gray-600, .bg-green-500, .bg-green-600, [class~="bg-black/50"], [class~="bg-black/80"], [class~="bg-black/90"], #hmLb, #mqPin):is(.text-white, .text-white *, *) { }
+    html.lt :is([class~="bg-[#3B82F6]"], [class~="bg-[#2563EB]"], [class~="bg-[#1E3A8A]"], [class~="bg-[#151E2D]"], [class~="bg-[#475569]"], .bg-red-500, .bg-red-600, .bg-blue-500, .bg-blue-600, .bg-sky-500, .bg-gray-600, .bg-green-500, .bg-green-600, [class~="bg-black/90"], #hmLb, #mqPin).text-white,
+    html.lt :is([class~="bg-[#3B82F6]"], [class~="bg-[#2563EB]"], [class~="bg-[#1E3A8A]"], [class~="bg-[#151E2D]"], [class~="bg-[#475569]"], .bg-red-500, .bg-red-600, .bg-blue-500, .bg-blue-600, .bg-sky-500, .bg-gray-600, .bg-green-500, .bg-green-600, [class~="bg-black/90"], #hmLb, #mqPin) .text-white { color: #FFFFFF !important; }
+    html.lt #hmLb [class~="text-[#94A3B8]"], html.lt #hmLb [class~="text-[#CBD5E1]"] { color: #CBD5E1 !important; }
+    /* 메뉴: 위쪽 가로 한 줄 (PC·휴대폰 모두) */
+    html.lt body { flex-direction: column !important; }
+    html.lt #sidebar { position: sticky !important; top: 0 !important; bottom: auto !important; left: 0; width: 100% !important; height: auto !important; flex-direction: row !important; align-items: center !important; gap: 14px; padding: 10px 14px !important; border: 0 !important; border-bottom: 1px solid #DCE2D6 !important; border-radius: 0 !important; z-index: 60 !important; }
+    html.lt #sidebar > div:first-child { margin: 0 !important; padding: 0 !important; flex-shrink: 0; }
+    @media (min-width: 768px) and (max-width: 1365px) { html.lt #sidebar > div:first-child > div:last-child { display: none; } }
+    html.lt #sidebar nav { flex-direction: row !important; flex-wrap: nowrap !important; justify-content: flex-start !important; gap: 6px !important; overflow-x: auto; flex: 1; min-width: 0; scrollbar-width: none; }
+    html.lt #sidebar nav::-webkit-scrollbar { display: none; }
+    html.lt #sidebar .nav-btn { width: auto !important; flex: 0 0 auto !important; flex-direction: row !important; justify-content: center !important; gap: 6px !important; padding: 9px 13px !important; font-size: 15px !important; white-space: nowrap; border: 1px solid transparent; }
+    html.lt #sidebar .nav-btn > div { flex-direction: row !important; gap: 6px !important; }
+    html.lt #sidebar .nav-btn:not([class~="bg-[#3B82F6]"]) { background: #FFFFFF; border-color: #DCE2D6; color: #1E293B !important; }
+    html.lt #sidebar .nav-btn span[id^="side"] { position: static !important; margin-left: 4px; }
+    html.lt #sidebar > div.mt-auto { margin: 0 !important; display: flex !important; align-items: center; gap: 10px; flex-shrink: 0; }
+    html.lt #sidebar > div.mt-auto > div { display: none !important; }
+    html.lt #sidebar > div.mt-auto > button { width: auto !important; padding: 9px 13px !important; font-size: 14.5px; white-space: nowrap; background: #FEF2F2 !important; border-color: #FECACA !important; color: #B91C1C !important; }
+    html.lt nav.md\:hidden.glass-panel { display: none !important; }
+    html.lt #mainContent { padding-bottom: 40px !important; }
+    @media (max-width: 767px) {
+      html.lt #sidebar > div:first-child, html.lt #sidebar > div.mt-auto { display: none !important; }
+      html.lt #sidebar { padding: 8px 10px !important; box-shadow: 0 2px 8px rgba(20,38,30,.08); }
+      html.lt #sidebar .nav-btn { padding: 9px 12px !important; font-size: 14.5px !important; }
+      html.lt #sidebar .nav-btn i, html.lt #sidebar .nav-btn svg { display: none; }
+    }
+    /* 제목·카드 또렷하게 */
+    html.lt #mainContent h1, html.lt #mainContent h2, html.lt #mainContent h3 { color: #0F172A !important; }
+    html.lt #mainContent [class~="bg-[#1E293B]"], html.lt #mainContent .glass-panel { box-shadow: 0 2px 12px rgba(20,38,30,.07); }
   </style>
 </head>
 <body class="min-h-screen flex flex-col md:flex-row">
@@ -1343,7 +1412,7 @@
     let EC_AREAS = [], EC_AREAS_SET = false;   // 🗺️ [패치 #121]
     function ecPaintAreas() {
         const box = document.getElementById('editCompAreas'); if (!box) return;
-        box.innerHTML = HM_SIDO.map(s => { const on = EC_AREAS.includes(s); return `<button type="button" onclick="ecToggleArea('${s}')" class="h-[38px] rounded-[10px] text-[13.5px] font-black border" style="${on ? 'background:#F59E0B;color:#1E3A8A;border-color:#F59E0B' : 'background:transparent;color:#CBD5E1;border-color:rgba(255,255,255,.15)'}">${s}</button>`; }).join('');
+        box.innerHTML = HM_SIDO.map(s => { const on = EC_AREAS.includes(s); return `<button type="button" onclick="ecToggleArea('${s}')" class="h-[38px] rounded-[10px] text-[13.5px] font-black border" style="${on ? 'background:#F59E0B;color:#1E3A8A;border-color:#F59E0B' : 'background:#FFFFFF;color:#334155;border-color:#CBD5E1'}">${s}</button>`; }).join('');
         const n = document.getElementById('editCompAreasNote');
         if (n) { const g = regionSido(document.getElementById('editCompRegion') ? document.getElementById('editCompRegion').value : ''); n.textContent = EC_AREAS.length ? '고른 곳: ' + HM_SIDO.filter(s => EC_AREAS.includes(s)).join(' · ') : (g ? `아무것도 안 고르면 활동 지역 기준 '${g}'로 연결 후보가 돼요.` : '아무것도 안 고르면 미설정으로 보여요.'); }
     }
@@ -2353,8 +2422,8 @@
         if (PTM.live === null) { b.textContent = '다시 불러오기'; b.style.background = '#475569'; b.style.color = '#fff'; t.textContent = '상태를 불러오지 못했어요.'; return; }
         b.textContent = PTM.live ? '켜짐 · 끄기' : '꺼짐 · 켜기';
         b.style.background = PTM.live ? '#84CC16' : '#475569'; b.style.color = PTM.live ? '#12261E' : '#fff';
-        t.innerHTML = PTM.live ? '지금: <b style="color:#BEF264">켜짐</b> · 발행할 때 포인트가 빠져요. (일지 1,000P · 견적 1,000P · 고객 이름이 같은 수정 발행은 무료)'
-            : '지금: <b style="color:#FDE047">꺼짐</b> · 모든 발행이 무료예요. 켜면 그 순간부터 일지 1,000P · 견적 1,000P가 빠져요. 켜기 전에 앱 공지로 먼저 알려 주세요.';
+        t.innerHTML = PTM.live ? '지금: <b style="color:#3F6212">켜짐</b> · 발행할 때 포인트가 빠져요. (일지 1,000P · 견적 1,000P · 고객 이름이 같은 수정 발행은 무료)'
+            : '지금: <b style="color:#A16207">꺼짐</b> · 모든 발행이 무료예요. 켜면 그 순간부터 일지 1,000P · 견적 1,000P가 빠져요. 켜기 전에 앱 공지로 먼저 알려 주세요.';
     }
     async function ptmLiveLoad() {
         try { const r = await fetch(getAuthUrl(`${SETTINGS_URL}/pointsLive.json?t=${Date.now()}`)); PTM.live = r.ok ? (await r.json()) === true : null; } catch (e) { PTM.live = null; }
