@@ -301,11 +301,11 @@
 <div class="dim hidden" id="shPhoto" onclick="if(event.target===this) closeSheet()">
   <div class="sheet">
     <div class="badge">ICON_CAMERA_D</div>
-    <h3>사진이 없으면 정확한<br>견적 상담이 어려울 수 있어요</h3>
-    <div class="sd">지금 찍거나, 미리 찍어 둔 사진을<br>골라 첨부해 주세요.</div>
+    <h3>아직 사진을 안 넣으셨어요</h3>
+    <div class="sd">사진이 있으면 더 정확한 견적을 받을 수 있어요.<br>지금 찍거나 갤러리에서 골라 주세요.<br><small style="color:#64748B">사진을 넣은 뒤 [의뢰 보내기]를 한 번 더 눌러 주세요.</small></div>
     <div class="btns">
       <button type="button" class="sbtn lime" onclick="closeSheet(); pickPhoto('cam')">ICON_CAMERA 지금 사진 찍기</button>
-      <button type="button" class="sbtn ink" onclick="closeSheet(); pickPhoto('gal')">ICON_IMAGE 휴대폰에 있는 사진 고르기</button>
+      <button type="button" class="sbtn ink" onclick="closeSheet(); pickPhoto('gal')">ICON_IMAGE 갤러리에서 사진 고르기</button>
       <button type="button" class="link" onclick="S.photoAsked=true; closeSheet(); setTimeout(submitForm, 350);">사진 없이 계속</button>
     </div>
   </div>
@@ -383,7 +383,8 @@ function wonKo(n) { n = Number(n) || 0; if (!n) return ''; const man = Math.floo
 function show(v) { ['vIntro', 'vForm', 'vDone'].forEach(x => $(x).classList.toggle('hidden', x !== v)); window.scrollTo(0, 0); }
 function openForm(kind, fromHash) {
   if (!KINDS[kind]) return;
-  S = freshState(kind); renderForm(); show('vForm');
+  const dr = !fromHash ? draftLoad() : null;   // 💾 [패치 #120] 같은 신청서를 다시 열면 쓰던 내용 이어서
+  if (dr && dr.kind === kind) draftRestore(dr); else { if (dr) draftClear(); S = freshState(kind); renderForm(); show('vForm'); }
   if (!fromHash) history.pushState({ v: 'form', kind }, '', '#' + kind); else history.replaceState({ v: 'form', kind }, '', '#' + kind);
 }
 function goIntro(push) { voiceClose(); S = null; show('vIntro'); if (push) history.pushState({ v: 'intro' }, '', location.pathname); }
@@ -436,9 +437,6 @@ function renderForm() {
   h += `<div class="card q" id="qAddr"><div class="qt">작업 지역 <span class="req">필수</span></div><input class="inp" id="fAddr" placeholder="예) 서울 서초구 방배동" maxlength="150" autocomplete="street-address"></div>`;
   h += `<div class="card q" id="qPhone"><div class="qt">연락받을 번호 <span class="req">필수</span></div><input class="inp tel" id="fPhone" type="tel" inputmode="numeric" placeholder="010-0000-0000" maxlength="13" autocomplete="tel" oninput="this.value=telFmt(this.value)">
     <div class="chips" id="contactChips"></div><div class="qd" id="contactNote" style="margin-top:8px;"></div></div>`;
-  h += `<div class="card q" id="qPhoto"><div class="qt">현장 사진 <span class="opt">선택 · 최대 ${MAX_IMGS}장</span></div><div class="qd">사진이 있으면 더 빠르고 정확하게 상담해 드려요</div>
-    <div class="chips"><button type="button" class="chip row dark" onclick="pickPhoto('cam')">ICON_CAMERA_W 지금 찍기</button><button type="button" class="chip row" onclick="pickPhoto('gal')">ICON_IMAGE_D 사진첩에서</button></div>
-    <div class="thumbs" id="thumbs"></div></div>`;
   h += `<div class="card q" id="qBudget"><div class="qt">생각하시는 예산 <span class="opt">선택</span></div>
     <div class="won"><input class="inp" id="fBudget" inputmode="numeric" placeholder="예) 800,000" oninput="this.value=wonFmt(this.value); if(this.value){S.budgetUnknown=false; paintBudget();} $('budgetKo').textContent=wonKo(this.value.replace(/[^0-9]/g,''))"><span>원</span></div>
     <div class="qd" id="budgetKo" style="text-align:right;color:var(--lime-dd);font-weight:700;min-height:20px;"></div>
@@ -450,6 +448,11 @@ function renderForm() {
   if (k !== 'build') h += `<div class="card q" id="qText"><div class="qt">더 알려 주실 내용 <span class="opt">선택</span></div><textarea class="inp" id="fText" maxlength="1000" placeholder="${k === 'regular' ? '예) 마당 잔디 100평쯤, 소나무 5그루, 화단이 있어요' : '예) 앞마당 소나무 세 그루, 키는 3미터쯤이에요'}"></textarea></div>`;
   h += `<div class="card q" id="qName"><div class="qt">성함 <span class="opt">선택</span></div><input class="inp" id="fName" placeholder="예) 홍길동" maxlength="20" autocomplete="name"></div>`;
   h += `</div>`;
+  // 📷 [패치 #120] 사진은 말로 다 쓴 뒤 맨 아래에서 (말하다가 사진 누르는 일 줄이기)
+  h += `<div class="card q" id="qPhoto"><div class="qt">현장 사진 <span class="opt">선택 · 최대 ${MAX_IMGS}장</span></div><div class="qd">사진이 있으면 더 빠르고 정확하게 상담해 드려요</div>
+    <div class="chips"><button type="button" class="chip row dark" onclick="pickPhoto('cam')">ICON_CAMERA_W 카메라로 찍기</button><button type="button" class="chip row" onclick="pickPhoto('gal')">ICON_IMAGE_D 갤러리에서 고르기</button></div>
+    <div class="qd" style="margin-top:8px;">‘파일·내 파일’ 창이 뜨면 <b>갤러리</b>나 <b>이미지</b>를 눌러 고르세요.</div>
+    <div class="thumbs" id="thumbs"></div></div>`;
   h += `<div class="card" id="qAgree" style="scroll-margin-bottom:120px;"><button type="button" class="agree" id="fAgree" onclick="S.agree=!S.agree; this.classList.toggle('on', S.agree); $('qAgree').classList.remove('err')"><span class="box">✓</span><span><b style="color:var(--ink);">[필수]</b> ${BRAND}이 의뢰 내용을 확인하고, 의뢰하신 작업의 전문 업체 한 곳에 연락처·주소·사진을 전달하는 데 동의합니다. <a href="/privacy.html#home" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--sub);">자세히</a></span></button></div>`;
   h += `<a class="callbtn" href="tel:16683936" style="margin-top:4px;">ICON_PHONE 전화 상담 <b>${TEL}</b></a>`;
   $('fBody').innerHTML = fillIcons(h);
@@ -487,6 +490,7 @@ function paintPlan() {
 // ===================== 사진 =====================
 function pickPhoto(kind) {
   if (S.imgs.length >= MAX_IMGS) return toast(`사진은 ${MAX_IMGS}장까지 보낼 수 있어요.`);
+  draftSave();   // 💾 [패치 #120] 카메라·갤러리로 나가기 전에 저장
   const el = $(kind === 'cam' ? 'fileCam' : 'fileGal'); el.value = ''; el.click();
 }
 ['fileCam', 'fileGal'].forEach(id => $(id).addEventListener('change', async e => {
@@ -494,7 +498,7 @@ function pickPhoto(kind) {
   if (!files.length) return;
   busy(true, '사진을 준비하는 중…');
   for (const f of files) { try { const d = await shrink(f); if (d) S.imgs.push(d); } catch (err) {} }
-  busy(false); paintThumbs();
+  busy(false); paintThumbs(); draftSave();
   if (S.imgs.length) toast(`사진 ${S.imgs.length}장이 첨부됐어요.`);
 }));
 function shrink(file) {   // 긴 쪽 1280px · 1.4MB 안으로 줄임
@@ -722,7 +726,7 @@ async function sendNow() {
   let r = null;
   try { r = await api(p); } catch (e) {}
   busy(false); btn.disabled = false;
-  if (r && r.ok) { showDone(p, r); return; }
+  if (r && r.ok) { draftClear(); showDone(p, r); return; }
   const m = {
     limit: `오늘은 이 번호로 의뢰를 더 받을 수 없어요. 급하시면 전화 ${TEL}로 연락해 주세요.`,
     full: `지금 의뢰가 많아 잠시 받을 수 없어요. 전화 ${TEL}로 연락해 주세요.`,
@@ -774,12 +778,54 @@ const ICONS = {
 function fillIcons(html) { return html.replace(/\b(LEAF|ICON_[A-Z_]+)\b/g, m => ICONS[m] || m); }
 document.querySelectorAll('#vIntro, #vDone, #shPhoto').forEach(el => { el.innerHTML = fillIcons(el.innerHTML); });
 
+
+// 💾 [패치 #120] 쓰던 내용 자동 저장 → 사진 찍으러 카메라에 갔다가 화면이 새로 열려도 그대로 이어서
+const DK = 'jnHomeDraft', DKI = 'jnHomeDraftImgs';
+function draftSave() {
+  if (!S) return;
+  try {
+    const v = id => ($(id) ? $(id).value : '');
+    const voice = !$('vbar').classList.contains('hidden') ? (V.typed ? ($('vType') ? $('vType').value : '') : (V.finals + ' ' + V.interim)).replace(/\s+/g, ' ').trim() : '';
+    localStorage.setItem(DK, JSON.stringify({ t: Date.now(), kind: S.kind, site: S.site, works: Array.from(S.works), plan: S.plan, when: S.when, contact: S.contact, budgetUnknown: S.budgetUnknown, agree: S.agree, moreOpen: !!S.moreOpen, via: S.via,
+      f: { fAddr: v('fAddr'), fPhone: v('fPhone'), fBudget: v('fBudget'), fText: v('fText'), fName: v('fName'), fEtc: v('fEtc') }, voice, vmode: V.mode || 'fill' }));
+    try { sessionStorage.setItem(DKI, JSON.stringify(S.imgs || [])); } catch (e) { try { sessionStorage.removeItem(DKI); } catch (x) {} }
+  } catch (e) {}
+}
+function draftClear() { try { localStorage.removeItem(DK); sessionStorage.removeItem(DKI); } catch (e) {} }
+function draftLoad() {
+  try { const d = JSON.parse(localStorage.getItem(DK) || 'null'); if (!d || !KINDS[d.kind] || Date.now() - d.t > 3 * 3600000) return null; return d; } catch (e) { return null; }
+}
+function draftRestore(d) {
+  S = freshState(d.kind);
+  Object.assign(S, { site: d.site || '', works: new Set(d.works || []), plan: d.plan || '', when: d.when || '', contact: d.contact === 'call' ? 'call' : 'sms', budgetUnknown: !!d.budgetUnknown, agree: !!d.agree, moreOpen: !!d.moreOpen, via: d.via || 'form' });
+  try { const im = JSON.parse(sessionStorage.getItem(DKI) || '[]'); if (Array.isArray(im)) S.imgs = im.filter(x => typeof x === 'string' && x.startsWith('data:image/')).slice(0, MAX_IMGS); } catch (e) {}
+  renderForm(); show('vForm');
+  Object.entries(d.f || {}).forEach(([id, val]) => { const el = $(id); if (el && val) el.value = val; });
+  if ($('fBudget') && $('fBudget').value) $('budgetKo').textContent = wonKo($('fBudget').value.replace(/[^0-9]/g, ''));
+  if (S.works.has('기타') && $('fEtc')) $('fEtc').classList.remove('hidden');
+  if ($('fAgree')) $('fAgree').classList.toggle('on', S.agree);
+  if (d.voice && d.voice.replace(/\s/g, '').length >= 4) {   // 말하던 중이었으면 그 말로 칸을 채워 줌
+    S.via = 'voice';
+    if (d.vmode === 'build') { const t = $('fText'); if (t && !t.value.includes(d.voice)) t.value = (t.value.trim() ? t.value.trim() + '\n' : '') + d.voice; }
+    setTimeout(() => organize(d.voice, d.vmode === 'build' ? 'build' : 'fill'), 400);
+  }
+  toast('쓰시던 내용을 그대로 불러왔어요.' + (S.imgs.length ? ` (사진 ${S.imgs.length}장)` : ''), 3600);
+  draftSave();
+}
+document.addEventListener('input', e => { if (S && e.target && e.target.closest && (e.target.closest('#fBody') || e.target.id === 'vType')) draftSave(); });
+document.addEventListener('click', e => { if (S) setTimeout(draftSave, 50); }, true);
+document.addEventListener('visibilitychange', () => { if (document.hidden) draftSave(); });
+window.addEventListener('pagehide', draftSave);
+setInterval(() => { if (S && !$('vbar').classList.contains('hidden')) draftSave(); }, 3000);   // 말하는 동안에도 3초마다
+
 // 블로그 링크로 바로 신청서 열기: /home.html#single · #regular · #build
 (function start() {
   // 카톡 안에서 열면 휴대폰 인터넷 앱으로 넘김 (말로 쓰기가 훨씬 편함). 안 넘어가면 그대로 이 화면 사용.
   if (IN_KAKAO) setTimeout(() => { try { location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(outsideUrl()); } catch (e) {} }, 300);
   const k = (location.hash || '').replace('#', '');
   history.replaceState({ v: 'intro' }, '', location.pathname);
+  const dr = draftLoad();
+  if (dr && (!KINDS[k] || k === dr.kind)) { history.pushState({ v: 'form', kind: dr.kind }, '', '#' + dr.kind); draftRestore(dr); return; }   // 💾 [패치 #120]
   if (KINDS[k]) { history.pushState({ v: 'form', kind: k }, '', '#' + k); S = freshState(k); renderForm(); show('vForm'); }
 })();
 </script>
