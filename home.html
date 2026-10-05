@@ -788,14 +788,25 @@ function draftSave() {
     const voice = !$('vbar').classList.contains('hidden') ? (V.typed ? ($('vType') ? $('vType').value : '') : (V.finals + ' ' + V.interim)).replace(/\s+/g, ' ').trim() : '';
     localStorage.setItem(DK, JSON.stringify({ t: Date.now(), kind: S.kind, site: S.site, works: Array.from(S.works), plan: S.plan, when: S.when, contact: S.contact, budgetUnknown: S.budgetUnknown, agree: S.agree, moreOpen: !!S.moreOpen, via: S.via,
       f: { fAddr: v('fAddr'), fPhone: v('fPhone'), fBudget: v('fBudget'), fText: v('fText'), fName: v('fName'), fEtc: v('fEtc') }, voice, vmode: V.mode || 'fill' }));
+    try { sessionStorage.setItem('jnHomeActive', S.kind); } catch (e) {}
     try { sessionStorage.setItem(DKI, JSON.stringify(S.imgs || [])); } catch (e) { try { sessionStorage.removeItem(DKI); } catch (x) {} }
   } catch (e) {}
 }
-function draftClear() { try { localStorage.removeItem(DK); sessionStorage.removeItem(DKI); } catch (e) {} }
+function draftClear() { try { localStorage.removeItem(DK); sessionStorage.removeItem(DKI); sessionStorage.removeItem('jnHomeActive'); } catch (e) {} const b = $('resumeCard'); if (b) b.remove(); }
 function draftLoad() {
   try { const d = JSON.parse(localStorage.getItem(DK) || 'null'); if (!d || !KINDS[d.kind] || Date.now() - d.t > 3 * 3600000) return null; return d; } catch (e) { return null; }
 }
+function showResume(d) {   // 🔁 [패치 #124] 첫 화면에 '쓰시던 의뢰' 안내 (자동으로 넘기지 않음)
+  if ($('resumeCard') || !d || !KINDS[d.kind]) return;
+  const sec = document.querySelector('#vIntro .sec'); if (!sec) return;
+  const box = document.createElement('div'); box.id = 'resumeCard'; box.className = 'card';
+  box.style.cssText = 'border:2px solid #84CC16;background:#F7FEE7;padding:16px;margin-bottom:12px;';
+  box.innerHTML = `<b style="font-size:16.5px;color:#1A2E05;">✏️ 쓰시던 ${esc(KINDS[d.kind].t)}가 있어요</b><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;"><button type="button" class="chip on" style="justify-content:center;" onclick="history.pushState({ v: 'form', kind: '${d.kind}' }, '', '#${d.kind}'); draftRestore(draftLoad() || {}); this.closest('#resumeCard') && this.closest('#resumeCard').remove();">이어서 쓰기</button><button type="button" class="chip" style="justify-content:center;" onclick="draftClear()">지우기</button></div>`;
+  sec.insertBefore(box, sec.querySelector('.card'));
+}
 function draftRestore(d) {
+  if (!d || !KINDS[d.kind]) return;
+  { const rc = $('resumeCard'); if (rc) rc.remove(); }
   S = freshState(d.kind);
   Object.assign(S, { site: d.site || '', works: new Set(d.works || []), plan: d.plan || '', when: d.when || '', contact: d.contact === 'call' ? 'call' : 'sms', budgetUnknown: !!d.budgetUnknown, agree: !!d.agree, moreOpen: !!d.moreOpen, via: d.via || 'form' });
   try { const im = JSON.parse(sessionStorage.getItem(DKI) || '[]'); if (Array.isArray(im)) S.imgs = im.filter(x => typeof x === 'string' && x.startsWith('data:image/')).slice(0, MAX_IMGS); } catch (e) {}
@@ -823,10 +834,19 @@ setInterval(() => { if (S && !$('vbar').classList.contains('hidden')) draftSave(
   // 카톡 안에서 열면 휴대폰 인터넷 앱으로 넘김 (말로 쓰기가 훨씬 편함). 안 넘어가면 그대로 이 화면 사용.
   if (IN_KAKAO) setTimeout(() => { try { location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(outsideUrl()); } catch (e) {} }, 300);
   const k = (location.hash || '').replace('#', '');
+  const dr = draftLoad(); let active = ''; try { active = sessionStorage.getItem('jnHomeActive') || ''; } catch (e) {}
+  const st = history.state || {};
+  // 🔁 [패치 #124] 새로고침·카메라 갔다 온 경우: 이미 있는 방문 기록을 그대로 씀 (기록을 또 쌓지 않음 → 뒤로가기 한 번이면 나감)
+  if (st.v === 'form' && KINDS[st.kind]) { if (dr && dr.kind === st.kind) draftRestore(dr); else { S = freshState(st.kind); renderForm(); show('vForm'); } return; }
+  if (st.v === 'intro' || st.v === 'done') { if (dr) showResume(dr); return; }
   history.replaceState({ v: 'intro' }, '', location.pathname);
-  const dr = draftLoad();
-  if (dr && (!KINDS[k] || k === dr.kind)) { history.pushState({ v: 'form', kind: dr.kind }, '', '#' + dr.kind); draftRestore(dr); return; }   // 💾 [패치 #120]
-  if (KINDS[k]) { history.pushState({ v: 'form', kind: k }, '', '#' + k); S = freshState(k); renderForm(); show('vForm'); }
+  if (KINDS[k]) {   // 블로그 링크(#single 등)로 바로 신청서
+    history.pushState({ v: 'form', kind: k }, '', '#' + k);
+    if (dr && dr.kind === k && active) draftRestore(dr); else { S = freshState(k); renderForm(); show('vForm'); }
+    return;
+  }
+  if (dr && active === dr.kind) { history.pushState({ v: 'form', kind: dr.kind }, '', '#' + dr.kind); draftRestore(dr); return; }   // 같은 창에서 다시 열림
+  if (dr) showResume(dr);   // 새로 들어오면 첫 화면 그대로 + '쓰시던 의뢰 이어서 쓰기'
 })();
 </script>
 </body>
