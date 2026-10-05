@@ -8861,7 +8861,8 @@ ${AI_COMMON_RULES}
         c.via = 'home';
         c.home = { hid: String(h.hid || ''), kind: HOME_KIND_T[h.kind] ? h.kind : 'single', site: HOME_SITE_T[h.site] ? h.site : '', plan: HOME_PLAN_T[h.plan] ? h.plan : '',
           budget: Math.max(0, Number(h.budget) || 0), budgetUnknown: h.budgetUnknown === true, contact: h.contact === 'call' ? 'call' : 'sms', memo: String(h.memo || '').slice(0, 200),
-          stage: ['sched', 'booked', 'done'].includes(h.stage) ? h.stage : '', date: /^\d{4}-\d{2}-\d{2}$/.test(String(h.date || '')) ? String(h.date) : '', slot: ['am', 'pm', 'talk'].includes(h.slot) ? h.slot : 'talk', amount: Math.max(0, Number(h.amount) || 0) };   // 🤝 [패치 #108]
+          stage: ['sched', 'booked', 'done'].includes(h.stage) ? h.stage : '', date: /^\d{4}-\d{2}-\d{2}$/.test(String(h.date || '')) ? String(h.date) : '', slot: ['am', 'pm', 'talk'].includes(h.slot) ? h.slot : 'talk', amount: Math.max(0, Number(h.amount) || 0),
+          fee: Math.max(0, Number(h.fee) || 0), feeAgreedAt: Number(h.feeAgreedAt) || 0, feeChargedAt: Number(h.feeChargedAt) || 0, feeRefundedAt: Number(h.feeRefundedAt) || 0 };   // 🤝 [패치 #108] · 💰 [패치 #125]
       }
       return c;
     };
@@ -8967,6 +8968,7 @@ ${AI_COMMON_RULES}
       document.getElementById('hpAmt').value = h.amount ? Number(h.amount).toLocaleString('ko-KR') : '';
       document.getElementById('hpAuto').innerHTML = book ? '누르면 한 번에: <b>거래처 등록</b> · <b>방문 일정 저장</b> · <b>조경노트 홈에 알림</b> · <b>문자 창 열기</b> (문자 앱에서 [보내기]만 누르세요)' : '누르면 한 번에: <b>개인 장부에 수입</b> · <b>조경노트 홈에 작업 완료 알림</b>';
       document.getElementById('hpGo').textContent = book ? (change ? '바꾸고 고객에게 문자 보내기' : '확정하고 고객에게 문자 보내기') : '장부에 넣고 완료하기';
+      if (book && h.fee > 0 && !h.feeChargedAt) document.getElementById('hpAuto').innerHTML += `<div style="margin-top:8px;padding:10px 12px;border-radius:12px;background:#FFF7ED;border:1.5px solid #FB923C;color:#9A3412;font-weight:900">💰 확정하면 연결 수수료 ${ptNum(h.fee)}P가 포인트에서 빠져요</div>`;   // 💰 [패치 #125]
       hpSlotPaint(); hpPreview();
       document.getElementById('hpModal').classList.remove('hidden');
     }
@@ -9007,6 +9009,27 @@ ${AI_COMMON_RULES}
         const date = document.getElementById('hpDate').value;
         if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return alert('작업 날짜를 골라 주세요.');
         const text = document.getElementById('hpMsg').value.trim() || hpText(r, date, HP.slot, r.home.stage === 'booked');
+        if (r.home.fee > 0 && !r.home.feeChargedAt) {   // 💰 [패치 #125] 연결 수수료가 있으면 서버에서 먼저 차감 → 된 다음에 문자
+          hpClose();
+          let usable = null; try { const w = await requestPoints({ action: 'pts_wallet' }); if (w && w.ok) usable = w.usable; } catch (e) {}
+          const fee = r.home.fee, rows = [['연결 수수료', ptNum(fee) + 'P', '#9A3412']];
+          if (typeof usable === 'number') rows.push(['지금 포인트', ptNum(usable) + 'P'], ['확정 후', ptNum(usable - fee) + 'P', usable >= fee ? '#3F6212' : '#B91C1C']);
+          if (typeof usable === 'number' && usable < fee) return ptShortSheet(fee, usable, '연결 수수료가 모자라요. 충전 뒤에 이 의뢰에서 [날짜 정하고 진행하기]를 다시 누르시면 돼요. 아직 확정되지 않았어요.');
+          const go = await ptSheetOpen({ title: '예약을 확정할까요?', sub: '확정하면 연결 수수료가 포인트에서 빠져요. 고객이 취소하면 돌려드려요.', rows, ok: '확정하고 문자 보내기', no: '아직 안 할게요' });
+          if (!go) return;
+          RV.busy = true; const res = await requestPoints({ action: 'push_home_progress', reqId: r.id, stage: 'booked', date, slot: HP.slot, amount }); RV.busy = false;
+          if (!res || !res.ok) {
+            if (res && res.msg === 'short') return ptShortSheet(res.need, res.usable, '연결 수수료가 모자라요. 충전 뒤에 이 의뢰에서 [날짜 정하고 진행하기]를 다시 누르시면 돼요. 아직 확정되지 않았어요.');
+            if (res && res.msg === 'need-agree') return alert('먼저 연결 수수료에 동의해 주세요. 의뢰를 다시 열어 주세요.');
+            return alert('확정하지 못했어요. 포인트는 빠지지 않았어요.' + (res && res.msg === 'unknown' ? '\n(구글 스크립트 최신 배포 필요)' : '\n인터넷 연결을 확인하고 다시 눌러 주세요.'));
+          }
+          if (typeof res.usable === 'number' && myCompanyProfile) { myCompanyProfile.usable = res.usable; try { localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile)); } catch (e) {} if (typeof ptChipRender === 'function') ptChipRender(); }
+          hpAutoClient(r); hpAutoSchedule(r, date, HP.slot, amount);
+          if (r.status === 'new') { r.status = 'talk'; }
+          hpApply(r, { stage: 'booked', date, slot: HP.slot, amount, feeChargedAt: Date.now() });
+          location.href = reqSmsHref(r.phone, text);
+          return;
+        }
         const p = requestPoints({ action: 'push_home_progress', reqId: r.id, stage: 'booked', date, slot: HP.slot, amount });   // 저장은 문자 창을 여는 동안 같이
         hpAutoClient(r); hpAutoSchedule(r, date, HP.slot, amount);
         if (r.status === 'new') { r.status = 'talk'; }
@@ -9048,7 +9071,8 @@ ${AI_COMMON_RULES}
       if (step === 1) body = big("hpOpen('book')", '📅 날짜 정하고 진행하기') + `<span class="text-[14.5px] font-bold text-center text-[#475569] break-keep leading-relaxed">위의 <b>[문자하기]·[전화하기]</b>로 고객과 날짜를 먼저 정하고,<br>마지막에 눌러 주세요. 예약 안내 문자·일정·거래처가 한 번에 정리돼요.</span>`;
       else if (step === 2) body = `<span class="text-[17px] font-black text-[#151E2D] text-center">📅 ${escHtml(hpDateKo(h.date, h.slot))} 작업${h.amount ? ' · ' + escHtml(homeWon(h.amount)) : ''}</span>` + big("hpOpen('done')", '✅ 작업 끝났어요') + `<span class="grid grid-cols-2 gap-2">${small("hpOpen('book')", '날짜 바꾸기')}${small('hpCancel()', '진행 취소', '#B91C1C')}</span>`;
       else body = `<span class="text-[17px] font-black text-[#3F6212] text-center">✅ 작업 완료${h.amount ? ' · ' + escHtml(homeWon(h.amount)) + ' 장부에 넣음' : ''}</span>` + big('hpReport()', '📝 작업일지 쓰기 (선택)');
-      card.insertAdjacentHTML('afterend', `<div id="hpActions" class="flex flex-col gap-2.5 mt-1"><span class="text-[17px] font-black text-[#BEF264]">진행하기</span><div class="rounded-[18px] p-4 flex flex-col gap-3" style="background:#F7FEE7;border:2px solid #151E2D;">${line}${body}</div></div>`);   // 🧹 [패치 #119] 의뢰 내용을 다 본 뒤 맨 아래에서 진행
+      const feeLine = h.fee > 0 ? `<span class="text-[14px] font-black text-center rounded-[12px] px-3 py-2" style="background:#FFF7ED;color:#9A3412">💰 연결 수수료 ${ptNum(h.fee)}P · ${h.feeRefundedAt ? '돌려받음' : h.feeChargedAt ? '확정 때 차감됨' : '예약 확정할 때 빠져요'}</span>` : '';   // 💰 [패치 #125]
+      card.insertAdjacentHTML('afterend', `<div id="hpActions" class="flex flex-col gap-2.5 mt-1"><span class="text-[17px] font-black text-[#BEF264]">진행하기</span><div class="rounded-[18px] p-4 flex flex-col gap-3" style="background:#F7FEE7;border:2px solid #151E2D;">${line}${body}${feeLine}</div></div>`);   // 🧹 [패치 #119] 의뢰 내용을 다 본 뒤 맨 아래에서 진행   // 🧹 [패치 #119] 의뢰 내용을 다 본 뒤 맨 아래에서 진행
       // 예전 버튼(거래처 등록·방문 일정·상태 바꾸기)은 자동으로 되니 숨기고, 견적서는 작게
       pane.querySelectorAll('button').forEach(bt => {
         const oc = bt.getAttribute('onclick') || '';
@@ -9064,6 +9088,48 @@ ${AI_COMMON_RULES}
       }
       pane.querySelectorAll('div.grid').forEach(g => { const bs = g.querySelectorAll('button'); if (bs.length && [...bs].every(x => x.style.display === 'none')) g.style.display = 'none'; });
       pane.querySelectorAll('span').forEach(sp => { if (sp.textContent === '이 의뢰로 바로 하기') sp.textContent = '그 밖에'; });
+    };
+    // 💰 [패치 #125] 조경노트 홈 연결 수수료 — 처음 열 때 동의 (동의하면 잠긴 연락처·주소가 무료로 열림)
+    const reqRenderDetailFee0 = reqRenderDetail;
+    reqRenderDetail = function () {
+      const r = RV.cur;
+      if (!r || !(r.via === 'home' && r.locked && r.home && r.home.fee > 0)) return reqRenderDetailFee0();
+      const h = r.home, fee = h.fee;
+      document.getElementById('reqDetailPane').innerHTML = `
+        <div class="flex items-center gap-2.5"><button type="button" onclick="history.back()" aria-label="뒤로" class="w-11 h-11 rounded-[12px] bg-[#1E293B] text-white flex items-center justify-center active:scale-95"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg></button><span class="text-[20px] font-black">조경노트 홈 연결 의뢰</span></div>
+        <div class="bg-white rounded-[22px] p-4 flex flex-col gap-3 text-[#0F172A]">
+          <span class="text-[20px] font-black leading-snug break-keep">🏡 조경노트 홈이 연결해 드린<br>작업입니다</span>
+          <span class="text-[15.5px] font-bold text-[#475569] break-keep">${escHtml(r.area || '')}${r.works.length ? ' · ' + escHtml(r.works.join(', ')) : ''}${h.budget ? ' · 고객 예산 ' + escHtml(homeWon(h.budget)) : ''}</span>
+          <div class="rounded-[16px] p-3.5" style="background:#FEF9C3;border:2px solid #EAB308"><span class="block text-[14px] font-black" style="color:#854D0E">연결 수수료</span><b class="block text-[28px] font-black" style="color:#713F12">${ptNum(fee)}원</b><span class="block text-[13.5px] font-black" style="color:#854D0E">= ${ptNum(fee)}포인트 (부가세 포함)</span></div>
+          <div class="text-[15px] font-bold text-[#334155] leading-[1.7] break-keep">• 고객과 작업·일정을 정하고 <b>[예약 확정]</b>을 누를 때 포인트에서 빠져요.<br>• 확정 전에 진행하지 않으면 <b>수수료는 없어요.</b><br>• 확정 후 고객이 취소하면 <b>돌려드려요.</b><br>• 고객 만족도가 높으면 <b>매달 보너스 포인트</b>를 드려요.</div>
+          <div class="rounded-[14px] border-2 border-dashed border-[#CBD5E1] p-3 text-[14.5px] font-bold text-[#475569] break-keep">${reqLockSvg('#0F172A')} 동의하면 고객 성함·전화번호·주소${r.imgCount ? '·사진 ' + r.imgCount + '장' : ''}이 바로 보여요.</div>
+          <button type="button" id="reqFeeBtn" onclick="reqFeeAgree()" class="h-[60px] rounded-[16px] bg-[#84CC16] text-[#12261E] text-[18px] font-black active:scale-[0.98]" style="box-shadow:inset 0 0 0 2px #151E2D">동의하고 의뢰 보기</button>
+        </div>
+        <button type="button" id="reqHomeDeclineBtn" onclick="reqHomeDecline()" class="h-[56px] rounded-[16px] border-2 text-[16.5px] font-black active:scale-[0.98]" style="border-color:#F59E0B;color:#FCD34D;">이번엔 못 해요 (조경노트 홈이 다른 업체로 연결)</button>`;
+    };
+    async function reqFeeAgree() {
+      const r = RV.cur; if (!r || RV.busy) return;
+      const btn = document.getElementById('reqFeeBtn'); RV.busy = true; if (btn) { btn.disabled = true; btn.textContent = '여는 중…'; }
+      const p = await requestPoints({ action: 'push_home_fee_agree', reqId: r.id, expect: r.home.fee });
+      RV.busy = false;
+      if (p && p.ok && p.rec) {
+        const fresh = reqClean(p.rec, r.id);
+        if (fresh) { fresh.seenAt = r.seenAt || Date.now(); const i = RV.list.findIndex(x => x.id === r.id); if (i >= 0) RV.list[i] = fresh; RV.cur = fresh; }
+        reqRenderDetail(); reqRenderList(); document.getElementById('reqView').scrollTop = 0; return;
+      }
+      if (btn) { btn.disabled = false; btn.textContent = '동의하고 의뢰 보기'; }
+      if (p && p.msg === 'fee-changed') { alert('수수료가 바뀌었어요. 의뢰함을 다시 열어 주세요.'); return; }
+      alert(p && p.msg === 'unknown' ? '서버 준비가 아직 안 됐어요. 관리자에게 알려 주세요.' : '인터넷 연결을 확인하고 다시 눌러 주세요.');
+    }
+    const reqRenderListFee0 = reqRenderList;
+    reqRenderList = function () {
+      reqRenderListFee0();
+      const cards = document.getElementById('reqList').children;
+      RV.view.forEach((r, i) => {
+        const el = cards[i]; if (!el || !(r.via === 'home' && r.locked && r.home && r.home.fee > 0)) return;
+        const lb = [...el.querySelectorAll('span')].reverse().find(x => /내용 보기/.test(x.textContent || ''));
+        if (lb) lb.innerHTML = `💰 연결 수수료 ${ptNum(r.home.fee)}원 · 눌러서 확인`;
+      });
     };
     // 🔔 [패치 #108] 알림을 누르면 sw.js가 열린 업체 앱 창에 '이 화면 열어 줘'를 보냄 (창을 새로 불러오지 않음)
     try { if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e => {
@@ -9909,6 +9975,7 @@ ${AI_COMMON_RULES}
       document.getElementById('psSub').classList.toggle('hidden', !o.sub);
       document.getElementById('psRows').innerHTML = o.rows.map(([k, v, c]) => `<div class="ps-row"><span>${ptEsc(k)}</span><b style="font-size:20px;${c ? 'color:' + c + ';' : ''}">${ptEsc(v)}</b></div>`).join('');
       document.getElementById('psNote').classList.toggle('hidden', !o.short);
+      if (o.short) document.getElementById('psNote').textContent = o.note || '작성하신 내용은 그대로 남아 있어요. 충전 뒤에 다시 [발행]을 누르시면 돼요.';   // 💰 [패치 #125] 상황별 안내
       document.getElementById('psOk').textContent = o.ok; document.getElementById('psNo').textContent = o.no;
       document.getElementById('ptSheet').classList.remove('hidden');
       history.pushState({ ptSheet: 1 }, '', '');
@@ -9924,8 +9991,8 @@ ${AI_COMMON_RULES}
       const sh = document.getElementById('ptSheet'); if (!sh || sh.classList.contains('hidden')) return;
       ptSheetClose(false, true); e.stopImmediatePropagation();
     }, true);
-    async function ptShortSheet(need, usable) {
-      const go = await ptSheetOpen({ short: true, title: '포인트가 조금 모자라요', rows: [['필요한 포인트', ptNum(need) + 'P'], ['지금 포인트', ptNum(usable) + 'P', '#B91C1C']], ok: '충전하러 가기', no: '닫기' });
+    async function ptShortSheet(need, usable, note) {
+      const go = await ptSheetOpen({ short: true, title: '포인트가 조금 모자라요', rows: [['필요한 포인트', ptNum(need) + 'P'], ['지금 포인트', ptNum(usable) + 'P', '#B91C1C']], ok: '충전하러 가기', no: '닫기', note });
       if (go) { PT.goCharge = true; setTimeout(openPointView, 350); }
     }
     // 발행 전에 요금 확인 (차감이 꺼져 있거나 무료면 창 없이 바로 진행)

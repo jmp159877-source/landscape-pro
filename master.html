@@ -314,6 +314,10 @@
           <button onclick="hmLoad(true)" class="px-4 py-2.5 rounded-[12px] bg-white/5 border border-white/10 text-[#CBD5E1] text-[14px] font-black">새로고침</button>
         </div>
       </div>
+      <button type="button" id="hmFeeToggle" onclick="hmFeeToggle()" class="w-full flex items-center justify-between gap-3 rounded-[16px] px-4 py-3 border-2 text-left" style="border-color:#CBD5E1;background:#fff"><!-- 💰 [패치 #125] -->
+        <span><b class="block text-[15.5px] text-[#0F172A]">💰 연결 수수료 · ⭐ 만족도 보너스</b><span id="hmFeeSub" class="block text-[13px] font-bold text-[#475569] mt-0.5">불러오는 중…</span></span>
+        <span id="hmFeeState" class="shrink-0 text-[14px] font-black px-3.5 py-2 rounded-full" style="background:#E2E8F0;color:#334155">-</span>
+      </button>
       <div class="flex items-center gap-2 bg-white/5 border border-white/10 rounded-[14px] px-4 h-[52px]"><span class="text-[18px]">🔍</span><input id="hmQ" type="tel" inputmode="numeric" maxlength="13" placeholder="답장 온 번호 뒷자리 4개로 찾기" oninput="hmSearch(this.value)" class="flex-1 bg-transparent text-white text-[16px] font-bold outline-none placeholder:text-[#64748B]"><button onclick="document.getElementById('hmQ').value=''; hmSearch('')" class="text-[#94A3B8] text-[14px] font-black px-1">지우기</button></div>
       <div class="flex gap-2 overflow-x-auto scrollbar-hide" id="hmTabs"></div>
       <div id="hmList" class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="col-span-full py-16 text-center text-[#94A3B8] glass-panel rounded-[24px] font-bold">의뢰를 불러오는 중...</div></div>
@@ -2605,7 +2609,22 @@
     //  - [이 업체에 보내기] → 서버 admin_home_send (업체 의뢰함에 넣고 업체 휴대폰 알림)
     //  - 안내 문자는 문구가 채워진 문자 창을 열어 줌 (대표님 휴대폰으로 발송) · 상태(안내함·끝남)는 여기서 바로 저장
     // ==========================================
-    const HM = { list: [], tab: 'new', cur: null, busy: false, want: '', timer: null, pick: '' };
+    const HM = { list: [], tab: 'new', cur: null, busy: false, want: '', timer: null, pick: '', feeLive: false, fee: 0 };
+    // 💰 [패치 #125] 연결 수수료·만족도 보너스 켜기/끄기 (settings/homeFeeLive)
+    function hmFeePaint() {
+        const st = document.getElementById('hmFeeState'), sub = document.getElementById('hmFeeSub'); if (!st) return;
+        st.textContent = HM.feeLive ? '켜짐' : '꺼짐'; st.style.background = HM.feeLive ? '#84CC16' : '#E2E8F0'; st.style.color = HM.feeLive ? '#12261E' : '#334155';
+        sub.textContent = HM.feeLive ? '업체에 보낼 때 수수료를 넣어요 · 확정 때 포인트 차감 · 매달 1일 만족도 보너스' : '지금은 수수료 없이 연결돼요 · 누르면 켜기';
+        document.getElementById('hmFeeToggle').style.borderColor = HM.feeLive ? '#84CC16' : '#CBD5E1';
+    }
+    async function hmFeeLoad() { try { const r = await fetch(getAuthUrl(`${SETTINGS_URL}/homeFeeLive.json?t=${Date.now()}`)); const v = r.ok ? await r.json() : null; HM.feeLive = v === true; } catch (e) {} hmFeePaint(); }
+    async function hmFeeToggle() {
+        const next = !HM.feeLive;
+        if (!confirm(next ? '연결 수수료와 만족도 보너스를 켤까요?\n\n• 업체에 보낼 때 의뢰마다 수수료를 넣게 돼요.\n• 업체가 처음 열 때 수수료 동의 창이 떠요.\n• [예약 확정] 때 업체 포인트에서 빠져요.\n• 매달 1일 지난달 만족도 보너스(★5 1만P · ★4 5천P)를 줘요.\n\n켜기 전에 업체들에게 공지를 먼저 해 주세요.' : '연결 수수료와 만족도 보너스를 끌까요?\n\n이미 보낸 의뢰의 수수료는 그대로예요. 새로 보내는 의뢰부터 수수료 없이 연결돼요.')) return;
+        try { const r = await fetch(getAuthUrl(`${SETTINGS_URL}/homeFeeLive.json`), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(next) }); if (!r.ok) throw new Error('fail'); HM.feeLive = next; hmFeePaint(); if (HM.cur) hmPaint(); }
+        catch (e) { alert('저장하지 못했어요. 다시 눌러 주세요.'); }
+    }
+    function hmFeeSet(v) { HM.fee = Math.max(0, Math.min(10000000, Math.floor(Number(String(v).replace(/[^0-9]/g, '')) || 0))); const i = document.getElementById('hmFee'); if (i && document.activeElement !== i) i.value = HM.fee ? HM.fee.toLocaleString('ko-KR') : '0'; document.querySelectorAll('[data-fee]').forEach(b => { const on = Number(b.getAttribute('data-fee')) === HM.fee; b.style.background = on ? '#151E2D' : '#fff'; b.style.color = on ? '#D9F99D' : '#334155'; b.style.borderColor = on ? '#151E2D' : '#CBD5E1'; }); const sb = document.getElementById('hmSendBtn'); if (sb && HM.pick) sb.textContent = '이 업체에 보내기' + (HM.feeLive ? ` (수수료 ${HM.fee ? HM.fee.toLocaleString('ko-KR') + '원' : '없음'})` : ''); }
     const HM_URL = 'https://shinhwa-landnote-default-rtdb.firebaseio.com/home_reqs';
     const HM_KINDS = { single: '단건 의뢰', regular: '정기 조경관리', build: '조경 공사' };
     const HM_SITES = { house: '주택', biz: '회사·빌딩', pub: '공공·기타' };
@@ -2626,11 +2645,13 @@
     function hmHistLine(h) {
         if (h.decline) return '↩️ ' + hmE(h.toName) + ' 못 함' + (h.memo ? ' · ' + hmE(h.memo) : '');
         if (h.sms) return '💬 ' + hmE(HM_SMS[h.sms] || '문자') + ' 문자';
+        if (h.feeAgree) return '💰 ' + hmE(h.toName) + ' 수수료 ' + Number(h.feeAgree).toLocaleString('ko-KR') + 'P 동의';
+        if (h.feeRefund) return '↩ ' + hmE(h.toName) + ' 수수료 ' + Number(h.feeRefund).toLocaleString('ko-KR') + 'P 돌려줌';
         if (h.stage === 'sched') return '📅 ' + hmE(h.toName) + ' 작업일 안내 · ' + hmE(hmDate(h.date, h.slot));
         if (h.stage === 'booked') return '🤝 ' + hmE(h.toName) + ' 예약 확정 · ' + hmE(hmDate(h.date, h.slot)) + (h.amount ? ' · ' + hmE(hmWon(h.amount)) : '');
         if (h.stage === 'cancel') return '✖️ ' + hmE(h.toName) + ' 일정 취소';
         if (h.stage === 'done') return '✅ ' + hmE(h.toName) + ' 작업 완료' + (h.amount ? ' · ' + hmE(hmWon(h.amount)) : '');
-        return '→ ' + hmE(h.toName) + ' 연결' + (h.memo ? ' · ' + hmE(h.memo) : '');
+        return '→ ' + hmE(h.toName) + ' 연결' + (h.fee ? ' · 수수료 ' + Number(h.fee).toLocaleString('ko-KR') + '원' : '') + (h.memo ? ' · ' + hmE(h.memo) : '');
     }
     // 🗺️ [패치 #121] 활동 지역 → 시·도 (작업 가능 지역을 안 골랐을 때 대신 씀)
     const RS_FULL = { '서울특별시': '서울', '부산광역시': '부산', '대구광역시': '대구', '인천광역시': '인천', '광주광역시': '광주', '대전광역시': '대전', '울산광역시': '울산', '세종특별자치시': '세종', '경기도': '경기', '강원도': '강원', '강원특별자치도': '강원', '충청북도': '충북', '충청남도': '충남', '전라북도': '전북', '전북특별자치도': '전북', '전라남도': '전남', '경상북도': '경북', '경상남도': '경남', '제주특별자치도': '제주', '제주도': '제주' };
@@ -2667,7 +2688,7 @@
             const pr = await fetch(getAuthUrl(HM_URL.replace(/home_reqs$/, 'push_subs') + `.json?t=${Date.now()}`)); const ps = pr.ok ? await pr.json() : null;
             if (ps && !ps.error) { HM.push = {}; Object.keys(ps).forEach(k => { const v = ps[k] || {}; HM.push[k.toLowerCase()] = !!(v.tokens && Object.keys(v.tokens).length) && !(v.prefs && v.prefs.request === false); }); }
         } catch (e) {}
-        hmBadge();
+        hmBadge(); hmFeeLoad();
         if (!document.getElementById('view-home').classList.contains('hidden')) hmRender();
         if (HM.want) { const w = HM.want; HM.want = ''; if (HM.list.some(r => r.id === w)) hmOpen(w); }
         if (HM.cur && !document.getElementById('hmModal').classList.contains('hidden') && !HM.busy) { const f = HM.list.find(r => r.id === HM.cur.id); if (f && JSON.stringify(f) !== JSON.stringify(HM.cur)) { HM.cur = f; hmPaint(); } }
@@ -2712,6 +2733,8 @@
                 ${r.sentName ? `<span class="text-[13px] font-black px-2 py-1 rounded-lg bg-[#84CC16]/20 text-[#BEF264]">→ ${hmE(r.sentName)}</span>` : ''}
                 ${(r.status === 'sent' || r.status === 'booked' || r.coStage === 'done') ? (r.custNotifiedAt ? '<span class="text-[13px] font-black px-2 py-1 rounded-lg bg-[#84CC16]/20 text-[#BEF264]">고객 안내 ✓</span>' : '<span class="text-[13px] font-black px-2 py-1 rounded-lg bg-amber-400/20 text-amber-300">고객 안내 전</span>') : ''}
                 ${r.lastSms && r.lastSms !== 'sent' ? `<span class="text-[13px] font-black px-2 py-1 rounded-lg bg-sky-400/20 text-sky-300">최근 문자: ${hmE(HM_SMS[r.lastSms] || '')}</span>` : ''}
+                ${Number(r.fee) && r.sentTo ? `<span class="text-[13px] font-black px-2 py-1 rounded-lg" style="background:#FEF3C7;color:#92400E">💰 ${(Number(r.fee) / 10000).toLocaleString('ko-KR')}만${r.feeRefundedAt ? ' 돌려줌' : r.feeChargedAt ? ' 차감됨' : r.feeAgreedAt ? ' 동의' : ''}</span>` : ''}
+                ${(r.status === 'done' || r.coStage === 'done') ? (r.survey && r.survey.at ? `<span class="text-[13px] font-black px-2 py-1 rounded-lg" style="background:#FEF9C3;color:#854D0E">⭐ ${Number(r.survey.stars) || 0}점</span>` : r.survey && r.survey.sentAt ? '<span class="text-[13px] font-black px-2 py-1 rounded-lg" style="background:#FFEDD5;color:#9A3412">⭐ 보냄 · 답 없음</span>' : '<span class="text-[13px] font-black px-2 py-1 rounded-lg" style="background:#DCFCE7;color:#166534">⭐ 만족도 보내기 전</span>') : ''}
               </span>
               ${hmStageLine(r) ? `<span class="text-[14px] font-black ${r.coStage === 'booked' || r.coStage === 'done' ? 'text-[#BEF264]' : r.coStage === 'sched' ? 'text-sky-300' : r.unseenAlertAt && !r.coSeenAt && r.status === 'sent' ? 'text-amber-300' : 'text-[#94A3B8]'}">${hmE(hmStageLine(r))}</span>` : ''}
             </button>`;
@@ -2720,7 +2743,7 @@
     }
     function hmOpen(id) {
         const r = HM.list.find(x => x.id === id); if (!r) return;
-        HM.cur = r; HM.pick = ''; hmPaint();
+        HM.cur = r; HM.pick = ''; HM.fee = Number(r.fee) || 0; hmPaint();
         if (HM.tab !== hmTabOf(r)) { HM.tab = hmTabOf(r); if (!document.getElementById('view-home').classList.contains('hidden')) hmRender(); }   // 🔔 [패치 #109] 알림으로 열면 그 의뢰가 있는 탭으로
         document.getElementById('hmModal').classList.remove('hidden');
         document.body.style.overflow = 'hidden';
@@ -2883,6 +2906,8 @@
           ${r.status === 'declined' ? `<div class="rounded-[16px] bg-amber-400/15 border border-amber-400/40 p-3.5 text-[15px] font-bold text-amber-200 leading-relaxed">↩️ ${hmE(r.declinedName || '')} 업체가 못 한대요${r.declineReason ? ' · ' + hmE(r.declineReason) : ''}. 다른 업체로 연결해 주세요.</div>` : ''}
           ${(r.status === 'sent' || r.status === 'booked' || r.coStage === 'done') ? `<div class="rounded-[16px] bg-[#84CC16]/15 border border-[#84CC16]/40 p-3.5 text-[15px] font-bold text-[#D9F99D] leading-relaxed">✅ ${hmE(r.sentName || '')} 업체에 연결했어요 (${hmTime(r.sentAt)})${r.memo ? '<br>메모: ' + hmE(r.memo) : ''}<br><span class="text-[16px] font-black ${r.coStage === 'booked' ? 'text-[#BEF264]' : 'text-white'}">진행: ${hmE(hmStageLine(r))}</span><br><span class="${r.custNotifiedAt ? '' : 'text-amber-300'}">${r.custNotifiedAt ? '고객에게 연결 안내 문자 보냄 ✓' : '아직 고객에게 [업체 연결 안내] 문자를 안 보냈어요'}</span></div>` : ''}
 
+          ${hmFeeBox(r)}
+          ${hmSurveyBox(r)}
           <div class="pt-1">
             <div class="text-[16px] font-black text-white mb-1">1. 연결할 업체 고르기</div>
             <div class="text-[13.5px] font-bold text-[#94A3B8] mb-2">${r.sido ? `<b class="text-[#BEF264]">${hmE(r.sido)}</b>에 갈 수 있는 업체 ${okN}곳 (업체 앱 설정의 '작업 가능 지역' 기준)` : '주소에서 시·도를 못 찾아 전체 업체를 보여 드려요'}</div>
@@ -2890,6 +2915,12 @@
                 <span class="w-5 h-5 rounded-full shrink-0 ${HM.pick === c.id ? 'border-[6px] border-[#84CC16]' : 'border-2 border-[#64748B]'}"></span>
                 <span class="flex-1 min-w-0"><span class="block text-[16px] font-black text-white">${hmE(c.name)}${r.sentTo === c.id ? ' <span class="text-[12px] text-[#BEF264]">(지금 연결된 곳)</span>' : ''}${r.declinedBy === c.id ? ' <span class="text-[12px] text-amber-300">(못 한다고 함)</span>' : ''}</span>
                 <span class="block text-[13px] font-bold text-[#94A3B8]">${c.set ? '갈 수 있는 곳: ' + hmE(c.areas.join('·')) + (c.guess ? ' (활동 지역 기준)' : '') : '작업 가능 지역 미설정'}${c.region ? ' · 활동 ' + hmE(c.region) : ''}</span>${HM.push ? `<span class="block text-[13px] font-black mt-0.5 ${hmPushOn(c.id) ? 'text-[#BEF264]' : 'text-amber-300'}">${hmPushOn(c.id) ? '🔔 휴대폰 알림 켜짐' : '🔕 휴대폰 알림 꺼짐 · 보낸 뒤 따로 연락해 주세요'}</span>` : ''}</span></button>`).join('') : '<div class="text-[14px] font-bold text-[#94A3B8]">승인된 업체가 없어요.</div>'}</div>
+            ${HM.feeLive ? `<div class="mt-3 rounded-[16px] p-3.5" style="background:#FEF9C3;border:1.5px solid #EAB308">
+              <div class="text-[15.5px] font-black text-[#713F12]">💰 연결 수수료 <span class="text-[13px] font-bold">(부가세 포함 · 1P = 1원)</span></div>
+              <div class="flex flex-wrap gap-1.5 mt-2">${[30000, 50000, 100000, 300000, 1000000, 0].map(v => `<button type="button" data-fee="${v}" onclick="hmFeeSet(${v})" class="h-[38px] px-3.5 rounded-full border-[1.5px] text-[14.5px] font-black" style="background:#fff;color:#334155;border-color:#CBD5E1">${v ? (v / 10000) + '만' : '0원'}</button>`).join('')}</div>
+              <div class="flex items-center gap-2 mt-2"><input id="hmFee" inputmode="numeric" oninput="this.value=(Number(this.value.replace(/[^0-9]/g,''))||0).toLocaleString('ko-KR'); hmFeeSet(this.value)" class="flex-1 min-w-0 h-[50px] rounded-[14px] px-3 text-right text-[20px] font-black" style="background:#fff;border:2px solid #EAB308;color:#0F172A"><span class="text-[16px] font-black text-[#713F12]">원</span></div>
+              <div class="text-[13px] font-bold text-[#854D0E] mt-1.5">업체가 [예약 확정]을 누를 때 포인트에서 빠져요. 확정 전엔 수수료 없어요.</div>
+            </div>` : ''}
             <textarea id="hmMemo" rows="2" maxlength="200" placeholder="업체에 남길 메모 (선택) 예) 예산 적정, 현장 확인 필요" class="mt-2.5 w-full bg-[#0B1120] border border-white/10 rounded-[14px] p-3 text-white text-[15px] font-bold focus:outline-none focus:border-[#84CC16]"></textarea>
             <button id="hmSendBtn" onclick="hmSend()" class="mt-2 w-full h-[56px] rounded-[16px] bg-[#84CC16] text-[#12261E] text-[17px] font-black disabled:opacity-50" ${HM.pick ? '' : 'disabled'}>${HM.pick ? '이 업체에 보내기' : '위에서 업체를 골라 주세요'}</button>
           </div>
@@ -2917,6 +2948,39 @@
           </div>
           ${hist.length ? `<div class="pt-1"><div class="text-[14px] font-black text-[#94A3B8] mb-1.5">기록</div>${hist.map(h => `<div class="text-[13.5px] font-bold text-[#CBD5E1] py-1">${hmTime(h.at)} · ${hmHistLine(h)}</div>`).join('')}</div>` : ''}`;
         const memo = document.getElementById('hmMemo'); if (memo && r.memo && HM.pick === r.sentTo) memo.value = r.memo;
+        if (HM.feeLive) hmFeeSet(HM.fee);
+    }
+    function hmFeeBox(r) {   // 💰 [패치 #125] 이 의뢰의 연결 수수료 상태 + 돌려주기
+        const fee = Number(r.fee) || 0; if (!fee || !r.sentTo) return '';
+        const d = t => t ? hmTime(t) : '';
+        const st = r.feeRefundedAt ? `↩ ${d(r.feeRefundedAt)} 돌려줌` : r.feeChargedAt ? `✔ ${d(r.feeChargedAt)} 확정 때 차감됨` : r.feeAgreedAt ? `업체 동의함 (${d(r.feeAgreedAt)}) · 확정 전` : '업체가 아직 동의 전';
+        return `<div class="rounded-[16px] p-3.5" style="background:#FFFBEB;border:1.5px solid #FCD34D"><div class="text-[13px] font-black text-[#92400E]">💰 연결 수수료</div><div class="text-[17px] font-black text-[#0F172A] mt-0.5">${fee.toLocaleString('ko-KR')}P · ${hmE(r.sentName || '')}</div><div class="text-[14px] font-bold text-[#475569] mt-0.5">${st}</div>
+          ${r.feeChargedAt && !r.feeRefundedAt ? `<button onclick="hmFeeRefund()" class="mt-2.5 w-full h-[48px] rounded-[14px] border-2 text-[15px] font-black" style="border-color:#DC2626;color:#B91C1C;background:#fff">↩ 수수료 ${fee.toLocaleString('ko-KR')}P 돌려주기 (고객 취소 등)</button>` : ''}</div>`;
+    }
+    async function hmFeeRefund() {
+        const r = HM.cur; if (!r || HM.busy) return;
+        if (!confirm(`${r.sentName || '업체'}에 연결 수수료 ${(Number(r.feeCharged) || Number(r.fee) || 0).toLocaleString('ko-KR')}P를 돌려줄까요?\n(기한 없는 포인트로 들어가고, 업체에 알림이 가요)`)) return;
+        HM.busy = true; const res = await adminPush({ action: 'admin_home_fee_refund', hid: r.id }); HM.busy = false;
+        if (res && res.ok) { alert(`↩ ${res.amount.toLocaleString('ko-KR')}P를 돌려줬어요.`); await hmLoad(); return; }
+        alert('돌려주지 못했어요. ' + ({ already: '이미 돌려준 의뢰예요.', 'not-charged': '아직 차감되지 않은 의뢰예요.', unknown: '구글 스크립트(home.gs) 최신 배포를 확인해 주세요.' }[res && res.msg] || '잠시 후 다시 눌러 주세요.'));
+    }
+    function hmSurveyBox(r) {   // ⭐ [패치 #125] 작업 완료 뒤 고객 만족도
+        if (!(r.status === 'done' || r.coStage === 'done')) return '';
+        const sv = r.survey || {}, stars = n => '★★★★★'.slice(0, n) + '<span style="color:#CBD5E1">' + '★★★★★'.slice(n) + '</span>';
+        const res = sv.at ? `<div class="mt-2.5 rounded-[14px] bg-white p-3" style="border:1px solid #E2E8F0"><div class="text-[20px] font-black" style="color:#EAB308">${stars(Number(sv.stars) || 0)} <span class="text-[15px] text-[#0F172A]">${Number(sv.stars) || 0}점</span></div><div class="text-[13px] font-bold text-[#64748B]">${hmTime(sv.at)} 응답${sv.bonusAt ? ' · 보너스 ' + (Number(sv.bonus) || 0).toLocaleString('ko-KR') + 'P 지급됨' : ''}</div>${sv.comment ? `<div class="text-[15px] font-bold text-[#0F172A] mt-1.5 leading-relaxed break-keep">"${hmE(sv.comment)}"</div>` : ''}</div>`
+            : sv.sentAt ? `<div class="mt-2 text-[14px] font-black text-[#B45309]">📨 ${hmTime(sv.sentAt)} 보냄 · 아직 답이 없어요</div>` : '';
+        return `<div class="rounded-[16px] p-3.5" style="background:#F7FEE7;border:1.5px solid #84CC16"><div class="text-[15.5px] font-black text-[#3F6212]">⭐ 고객 만족도</div>
+          ${sv.at ? '' : `<button onclick="hmSurveySend()" class="mt-2 w-full h-[52px] rounded-[14px] text-[16px] font-black" style="background:#84CC16;color:#12261E;box-shadow:inset 0 0 0 2px #151E2D">${sv.sentAt ? '⭐ 만족도 조사 다시 보내기' : '⭐ 고객에게 만족도 조사 보내기'}</button>`}${res}</div>`;
+    }
+    async function hmSurveySend() {
+        const r = HM.cur; if (!r || HM.busy) return;
+        HM.busy = true; const res = await adminPush({ action: 'admin_home_survey', hid: r.id }); HM.busy = false;
+        if (!res || !res.ok) return alert('링크를 만들지 못했어요. ' + (res && res.msg === 'unknown' ? '구글 스크립트(home.gs) 최신 배포를 확인해 주세요.' : '잠시 후 다시 눌러 주세요.'));
+        const text = `[🌿 조경노트 홈] ${r.name ? r.name + ' 고객님' : '고객님'}, 조경노트 홈을 이용해 주셔서 감사합니다.\n\n작업은 만족스러우셨나요? 1분이면 끝나는 만족도 조사에 참여해 주세요.\n\n🔒 남겨 주신 평가와 의견은 작업한 업체에 알려지지 않아요. 편하게, 솔직하게 남겨 주세요.\n\n평가는 다음 의뢰 때 잘 맞는 업체를 우선 연결해 드리는 데 쓰이고, 아쉬우셨던 점은 더 나은 업체로 연결해 드리는 데 반영됩니다.\n\n▶ ${res.url}\n\n🌿 조경노트 홈 드림`;
+        const num = String(r.phone || '').replace(/[^0-9]/g, ''), ios = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+        if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) location.href = 'sms:' + num + (ios ? '&' : '?') + 'body=' + encodeURIComponent(text);
+        else (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).then(() => alert('PC에서는 문자를 바로 보낼 수 없어요.\n문구를 복사했어요. 휴대폰 문자에 붙여 넣어 ' + hmTel(num) + '로 보내 주세요.')).catch(() => prompt('이 문구를 복사해 문자로 보내 주세요.', text));
+        setTimeout(() => hmLoad(), 1500);
     }
     async function hmSend() {
         const r = HM.cur; if (!r || !HM.pick || HM.busy) return;
@@ -2925,8 +2989,9 @@
         if (!c.ok && r.sido && !confirm(`${c.name} 업체의 작업 가능 지역에 ${r.sido}이(가) 없어요.\n그래도 보낼까요?`)) return;
         const pushOff = HM.push && !hmPushOn(c.id);
         if (pushOff && !confirm(`${c.name} 업체는 휴대폰 알림이 꺼져 있어요.\n보낸 뒤 전화나 문자로 "조경노트 의뢰함을 확인해 주세요"라고 따로 알려 주세요.\n\n보낼까요?`)) return;
+        if (HM.feeLive && !confirm(`${c.name} 업체에 보낼까요?\n\n연결 수수료: ${HM.fee ? HM.fee.toLocaleString('ko-KR') + '원 (' + HM.fee.toLocaleString('ko-KR') + 'P)' : '없음 (0원)'}\n업체가 동의하고 [예약 확정]을 누를 때 빠져요.`)) return;
         HM.busy = true; const b = document.getElementById('hmSendBtn'); if (b) { b.disabled = true; b.textContent = '보내는 중…'; }
-        const res = await adminPush({ action: 'admin_home_send', hid: r.id, targetId: c.id, memo: (document.getElementById('hmMemo') || {}).value || '' });
+        const res = await adminPush({ action: 'admin_home_send', hid: r.id, targetId: c.id, memo: (document.getElementById('hmMemo') || {}).value || '', fee: HM.feeLive ? HM.fee : 0 });
         HM.busy = false;
         if (res && res.ok) { alert(`✅ ${res.name} 업체에 연결했어요.\n${pushOff ? '⚠️ 이 업체는 알림이 꺼져 있어요. 업체에 따로 연락해 주세요.' : '업체 휴대폰으로 알림이 갔어요.'}\n\n이제 [업체 연결 안내] 문자를 고객에게 보내 주세요.`); await hmLoad(); return; }
         if (b) { b.disabled = false; b.textContent = '이 업체에 보내기'; }

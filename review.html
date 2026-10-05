@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>조경노트 홈 · 작업 만족도</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#FAFAF7">
+<meta property="og:title" content="조경노트 홈 · 작업은 만족스러우셨나요?">
+<meta property="og:description" content="별점 한 번이면 끝나요. 남겨 주신 평가는 업체에 알려 드리지 않아요.">
+<meta property="og:image" content="https://www.jogyeongnote.com/home-og.jpg?v=4">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<!-- ⭐ [패치 #125] 고객 만족도 조사 페이지 (관리자가 문자로 보낸 링크 ?t=토큰 · 로그인 없음 · 한 번만 제출) -->
+<style>
+  :root { --ink:#1C1917; --sub:#57534E; --mute:#8A8580; --bg:#FAFAF7; --line:#D6D3D1; --lime:#84CC16; --lime-d:#4D7C0F; --lime-l:#F3FAE8; --dark:#1A2E05; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html { background:#E7E6E1; }
+  body { margin:0; font-family:'Pretendard Variable',Pretendard,-apple-system,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif; color:var(--ink); word-break:keep-all; overflow-wrap:anywhere; letter-spacing:-0.01em; -webkit-font-smoothing:antialiased; }
+  button { font-family:inherit; cursor:pointer; border:0; background:none; color:inherit; padding:0; }
+  textarea { font-family:inherit; }
+  .app { max-width:480px; margin:0 auto; min-height:100vh; background:var(--bg); padding:18px 18px 40px; box-shadow:0 0 40px rgba(28,25,23,.10); }
+  .hidden { display:none !important; }
+  .logo { display:flex; align-items:center; gap:8px; font-size:17px; font-weight:800; }
+  .logo b { color:var(--lime-d); }
+  .logo i { width:30px; height:30px; border-radius:9px; background:var(--lime); display:flex; align-items:center; justify-content:center; font-style:normal; font-size:17px; }
+  .card { background:#fff; border:1.5px solid var(--ink); border-radius:20px; padding:18px; margin-top:16px; }
+  h1 { font-size:25px; line-height:1.35; font-weight:800; letter-spacing:-0.035em; margin:22px 0 0; }
+  .lead { font-size:15.5px; color:var(--sub); line-height:1.6; margin:8px 0 0; font-weight:500; }
+  .job b { display:block; font-size:18px; font-weight:800; }
+  .job span { display:block; font-size:14px; color:var(--mute); margin-top:4px; }
+  .q { font-size:17px; font-weight:800; margin:0 0 12px; }
+  .stars { display:flex; justify-content:space-between; gap:4px; }
+  .stars button { flex:1; font-size:44px; line-height:1; color:#D6D3D1; transition:transform .1s; }
+  .stars button.on { color:#F59E0B; }
+  .stars button:active { transform:scale(.9); }
+  .slabel { text-align:center; font-size:16px; font-weight:800; color:var(--lime-d); margin-top:10px; min-height:22px; }
+  textarea { width:100%; min-height:110px; border:1.5px solid var(--line); border-radius:14px; padding:12px; font-size:16px; line-height:1.55; resize:vertical; background:#fff; color:var(--ink); }
+  textarea:focus { outline:none; border-color:var(--lime-d); }
+  .cnt { text-align:right; font-size:12.5px; color:var(--mute); margin-top:4px; }
+  .lock { display:flex; gap:10px; align-items:flex-start; background:var(--lime-l); border-radius:16px; padding:14px; margin-top:16px; font-size:14.5px; line-height:1.55; color:#365314; font-weight:600; }
+  .lock i { font-style:normal; font-size:20px; }
+  .go { width:100%; margin-top:18px; background:var(--lime); border:1.5px solid var(--ink); border-radius:16px; padding:17px; font-size:19px; font-weight:800; color:var(--dark); }
+  .go:disabled { background:#E7E5E4; color:#A8A29E; border-color:#D6D3D1; }
+  .msg { text-align:center; padding:40px 6px 10px; }
+  .msg .big { font-size:56px; }
+  .msg b { display:block; font-size:22px; font-weight:800; margin-top:10px; }
+  .msg p { font-size:15.5px; color:var(--sub); line-height:1.6; margin:10px 0 0; }
+  .home { display:block; text-align:center; margin-top:22px; font-size:15px; font-weight:800; color:var(--lime-d); text-decoration:none; }
+  .err { color:#B91C1C; font-size:14px; text-align:center; margin-top:10px; min-height:18px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="logo"><i>🌿</i>조경노트 <b>홈</b></div>
+
+  <div id="vLoad" class="msg"><p>잠시만요…</p></div>
+
+  <div id="vForm" class="hidden">
+    <h1>작업은 만족스러우셨나요?</h1>
+    <p class="lead">별점만 눌러 주셔도 충분해요. 1분이면 끝나요.</p>
+    <div class="card job"><b id="jTitle"></b><span id="jSub"></span></div>
+    <div class="card">
+      <p class="q">별점을 눌러 주세요</p>
+      <div class="stars" id="stars"></div>
+      <div class="slabel" id="slabel"></div>
+    </div>
+    <div class="card">
+      <p class="q">하고 싶은 말씀 <span style="font-weight:600;color:var(--mute);font-size:14px">(안 쓰셔도 돼요)</span></p>
+      <textarea id="cm" maxlength="500" placeholder="좋았던 점, 아쉬웠던 점을 편하게 적어 주세요"></textarea>
+      <div class="cnt"><span id="cnt">0</span>/500</div>
+    </div>
+    <div class="lock"><i>🔒</i><div>남겨 주신 평가는 <b>업체에 알려 드리지 않아요.</b><br>조경노트 홈이 더 좋은 업체를 연결해 드리는 데만 써요.</div></div>
+    <button class="go" id="go" disabled onclick="send()">평가 보내기</button>
+    <div class="err" id="err"></div>
+  </div>
+
+  <div id="vDone" class="msg hidden">
+    <div class="big">🌿</div>
+    <b>소중한 평가 고맙습니다</b>
+    <p>남겨 주신 말씀은 더 좋은 업체를 연결해 드리는 데 쓸게요.<br>업체에는 알려 드리지 않아요.</p>
+    <a class="home" href="/home.html">조경노트 홈 둘러보기 →</a>
+  </div>
+
+  <div id="vAlready" class="msg hidden">
+    <div class="big">✅</div>
+    <b>이미 평가를 보내 주셨어요</b>
+    <p>참여해 주셔서 고맙습니다.</p>
+    <a class="home" href="/home.html">조경노트 홈 둘러보기 →</a>
+  </div>
+
+  <div id="vBad" class="msg hidden">
+    <div class="big">🔗</div>
+    <b>링크를 확인할 수 없어요</b>
+    <p>받으신 문자의 링크를 다시 눌러 주세요.<br>계속 안 되면 조경노트 홈으로 문의해 주세요.</p>
+    <a class="home" href="/home.html">조경노트 홈으로 →</a>
+  </div>
+</div>
+<script>
+const API = 'https://script.google.com/macros/s/AKfycbysZFaBJt9Iu964hP9rJVjmYHDMMo_TQAocjih4h8q0_im414WA6-23LS6Wm4xQvTJRQw/exec';
+async function api(p) { const r = await fetch(API, { method: 'POST', body: JSON.stringify(p) }); return r.json(); }
+const T = (new URLSearchParams(location.search).get('t') || '').toLowerCase();
+const LABEL = ['', '많이 아쉬웠어요', '아쉬웠어요', '보통이에요', '만족해요', '아주 만족해요'];
+let STARS = 0, busy = false;
+function show(id) { ['vLoad','vForm','vDone','vAlready','vBad'].forEach(v => document.getElementById(v).classList.toggle('hidden', v !== id)); }
+function paint() {
+  document.querySelectorAll('#stars button').forEach((b, i) => b.classList.toggle('on', i < STARS));
+  document.getElementById('slabel').textContent = LABEL[STARS] || '';
+  document.getElementById('go').disabled = !STARS || busy;
+}
+(function build() {
+  const box = document.getElementById('stars');
+  for (let i = 1; i <= 5; i++) {
+    const b = document.createElement('button'); b.type = 'button'; b.textContent = '★'; b.setAttribute('aria-label', i + '점');
+    b.onclick = () => { STARS = i; paint(); }; box.appendChild(b);
+  }
+  const cm = document.getElementById('cm');
+  cm.addEventListener('input', () => { document.getElementById('cnt').textContent = cm.value.length; });
+})();
+async function load() {
+  if (!/^[a-f0-9]{20}$/.test(T)) return show('vBad');
+  try {
+    const r = await api({ action: 'home_survey_get', t: T });
+    if (!r || !r.ok) return show('vBad');
+    if (r.done) return show('vAlready');
+    const f = r.info || {};
+    document.getElementById('jTitle').textContent = f.title || '조경 작업';
+    document.getElementById('jSub').textContent = [f.name ? f.name + ' 님' : '', f.area, /^\d{4}-\d{2}-\d{2}$/.test(f.date || '') ? Number(f.date.slice(5, 7)) + '월 ' + Number(f.date.slice(8)) + '일 작업' : ''].filter(Boolean).join(' · ');
+    show('vForm'); paint();
+  } catch (e) { show('vBad'); }
+}
+async function send() {
+  if (!STARS || busy) return;
+  busy = true; paint();
+  const go = document.getElementById('go'); go.textContent = '보내는 중…';
+  document.getElementById('err').textContent = '';
+  try {
+    const r = await api({ action: 'home_survey_send', t: T, stars: STARS, comment: document.getElementById('cm').value.trim() });
+    if (r && r.ok) { show('vDone'); return; }
+    if (r && r.msg === 'done') { show('vAlready'); return; }
+    document.getElementById('err').textContent = '보내지 못했어요. 잠시 뒤 다시 눌러 주세요.';
+  } catch (e) { document.getElementById('err').textContent = '인터넷 연결을 확인하고 다시 눌러 주세요.'; }
+  busy = false; go.textContent = '평가 보내기'; paint();
+}
+load();
+</script>
+</body>
+</html>
