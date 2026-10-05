@@ -117,7 +117,24 @@
     /* 제목·카드 또렷하게 */
     html.lt #mainContent h1, html.lt #mainContent h2, html.lt #mainContent h3 { color: #0F172A !important; }
     html.lt #mainContent [class~="bg-[#1E293B]"], html.lt #mainContent .glass-panel { box-shadow: 0 2px 12px rgba(20,38,30,.07); }
-  </style>
+    /* 🧭 [패치 #126] 홈 의뢰 카드 */
+  .hm-card .hm-t { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .hm-steps { display:flex; align-items:flex-start; margin-top:8px; width:100%; }
+  .hm-dot { display:flex; flex-direction:column; align-items:center; gap:2px; width:64px; flex-shrink:0; }
+  .hm-dot i { width:26px; height:26px; border-radius:50%; background:#84CC16; color:#1A2E05; font-style:normal; font-size:13px; font-weight:900; display:flex; align-items:center; justify-content:center; }
+  .hm-dot.now i { background:#F59E0B; color:#fff; } .hm-dot.off i { background:#E2E8F0; color:#94A3B8; }
+  .hm-dot b { font-size:12.5px; font-weight:900; color:#334155; white-space:nowrap; margin-top:2px; }
+  .hm-dot em { font-style:normal; font-size:12.5px; font-weight:800; color:#4D7C0F; min-height:17px; }
+  .hm-dot.now em { color:#C2410C; } .hm-dot.off b { color:#94A3B8; }
+  .hm-ln { flex:1; height:3px; background:#84CC16; margin-top:12px; border-radius:2px; } .hm-ln.off { background:#E2E8F0; }
+  .hm-co { font-size:14.5px; font-weight:900; color:#0F172A; margin-top:4px; }
+  .hm-todo, .hm-wait, .hm-good { display:flex; flex-direction:column; gap:4px; width:100%; margin-top:6px; border-radius:14px; padding:9px 12px; font-size:14.5px; font-weight:900; }
+  .hm-todo { background:#FFF7ED; border:1.5px solid #FDBA74; color:#9A3412; }
+  .hm-todo span { display:flex; justify-content:space-between; gap:8px; } .hm-todo i { font-style:normal; color:#C2410C; }
+  .hm-wait { background:#F8FAFC; border:1px solid #E2E8F0; color:#64748B; }
+  .hm-good { flex-direction:row; justify-content:space-between; background:#F7FEE7; border:1.5px solid #BEF264; color:#3F6212; } .hm-good b { color:#EAB308; letter-spacing:1px; }
+  html:not(.lt) .hm-co { color:#fff; } html:not(.lt) .hm-dot b { color:#CBD5E1; }
+</style>
 </head>
 <body class="min-h-screen flex flex-col md:flex-row">
 
@@ -318,7 +335,7 @@
         <span><b class="block text-[15.5px] text-[#0F172A]">💰 연결 수수료 · ⭐ 만족도 보너스</b><span id="hmFeeSub" class="block text-[13px] font-bold text-[#475569] mt-0.5">불러오는 중…</span></span>
         <span id="hmFeeState" class="shrink-0 text-[14px] font-black px-3.5 py-2 rounded-full" style="background:#E2E8F0;color:#334155">-</span>
       </button>
-      <div class="flex items-center gap-2 bg-white/5 border border-white/10 rounded-[14px] px-4 h-[52px]"><span class="text-[18px]">🔍</span><input id="hmQ" type="tel" inputmode="numeric" maxlength="13" placeholder="답장 온 번호 뒷자리 4개로 찾기" oninput="hmSearch(this.value)" class="flex-1 bg-transparent text-white text-[16px] font-bold outline-none placeholder:text-[#64748B]"><button onclick="document.getElementById('hmQ').value=''; hmSearch('')" class="text-[#94A3B8] text-[14px] font-black px-1">지우기</button></div>
+      <div class="flex items-center gap-2 bg-white/5 border border-white/10 rounded-[14px] px-4 h-[52px]"><span class="text-[18px]">🔍</span><input id="hmQ" type="tel" inputmode="numeric" maxlength="13" placeholder="답장 온 번호 뒷자리 4개로 찾기" oninput="hmSearch(this.value)" class="flex-1 min-w-0 bg-transparent text-white text-[16px] font-bold outline-none placeholder:text-[#64748B]"><button onclick="document.getElementById('hmQ').value=''; hmSearch('')" class="text-[#94A3B8] text-[14px] font-black px-1 shrink-0 whitespace-nowrap">지우기</button></div>
       <div class="flex gap-2 overflow-x-auto scrollbar-hide" id="hmTabs"></div>
       <div id="hmList" class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="col-span-full py-16 text-center text-[#94A3B8] glass-panel rounded-[24px] font-bold">의뢰를 불러오는 중...</div></div>
     </div>
@@ -2713,6 +2730,52 @@
         setTimeout(() => URL.revokeObjectURL(url), 4000);
         alert('📇 연락처 파일을 만들었어요.\n휴대폰 위쪽 알림(또는 다운로드)에서 파일을 누르고 [저장]을 누르면\n"' + nm + '" 이름으로 저장돼요.');
     }
+    // 🧭 [패치 #126] 홈 의뢰 카드 정리: 진행 단계 점 4개(날짜) + 다음 할 일 한 칸
+    function hmMD(ms) { ms = Number(ms) || 0; if (!ms) return ''; const d = new Date(ms); return `${d.getMonth() + 1}/${d.getDate()}`; }
+    function hmHistAt(r, stage) { let at = 0; Object.values(r.hist || {}).forEach(h => { if (h && h.stage === stage && Number(h.at) > at) at = Number(h.at); }); return at; }
+    function hmSteps(r) {
+        const linked = !!r.sentTo && ['sent', 'booked', 'done'].includes(r.status);
+        const booked = linked && (r.coStage === 'booked' || r.coStage === 'done' || r.status === 'booked' || r.status === 'done');
+        const done = linked && (r.coStage === 'done' || r.status === 'done');
+        const S = [['접수', true, r.createdAt], ['업체 연결', linked, r.sentAt], ['예약 확정', booked, r.bookedAt || hmHistAt(r, 'booked')], ['작업 완료', done, r.doneAt || hmHistAt(r, 'done')]];
+        const cur = S.findIndex(x => !x[1]);
+        let h = '<span class="hm-steps">';
+        S.forEach(([t, ok, at], k) => {
+            if (k) h += `<span class="hm-ln${ok ? '' : ' off'}"></span>`;
+            const cls = ok ? 'ok' : k === cur ? 'now' : 'off';
+            const plan = k === 3 && !ok && booked && /^\d{4}-(\d{2})-(\d{2})$/.exec(String(r.coDate || ''));   // 작업일이 정해졌으면 '10/13 예정'
+            h += `<span class="hm-dot ${cls}"><i>${ok ? '✓' : k + 1}</i><b>${t}</b><em>${ok ? (hmMD(at) || '✓') : plan ? (+plan[1]) + '/' + (+plan[2]) + ' 예정' : k === cur ? '지금' : ''}</em></span>`;
+        });
+        return h + '</span>';
+    }
+    function hmTodo(r) {   // [주황=내가 할 일, 회색=기다리는 중, 초록=다 끝남]
+        const todo = [], wait = [];
+        const linked = !!r.sentTo && ['sent', 'booked', 'done'].includes(r.status), done = r.status === 'done' || r.coStage === 'done';
+        if (r.status === 'new') todo.push('업체 연결하기');
+        if (r.status === 'guided') wait.push('💬 ' + (HM_SMS[r.lastSms] || '안내') + ' 문자 보냄 · 고객 답 기다리는 중');
+        if (linked && !r.custNotifiedAt) todo.push('📨 고객에게 업체 연결 안내 문자');
+        if (r.status === 'sent' && !r.coStage) { if (r.unseenAlertAt && !r.coSeenAt) todo.push('⚠️ 업체가 2시간째 안 봤어요 · 전화해 보세요'); else wait.push(r.coSeenAt ? '👀 업체가 봤어요 · 날짜 정하기 기다리는 중' : '업체 확인 기다리는 중'); }
+        if (r.status === 'sent' && r.coStage === 'sched') wait.push('📅 업체가 작업일 안내함 · 확정 기다리는 중');
+        if (r.status === 'booked' && !done) wait.push('작업 완료 기다리는 중');
+        const sv = r.survey || {};
+        if (done) { if (sv.at) {} else if (sv.sentAt) wait.push('⭐ 만족도 보냄 · 답 기다리는 중'); else todo.push('⭐ 만족도 조사 보내기'); }
+        if (todo.length) return `<span class="hm-todo">${todo.map(t => `<span>${hmE(t)}<i>→</i></span>`).join('')}</span>`;
+        if (done && sv.at) { const n = Number(sv.stars) || 0; return `<span class="hm-good"><span>모두 끝났어요</span><span><b>${'★★★★★'.slice(0, n)}</b><span style="color:#CBD5E1">${'★★★★★'.slice(n)}</span> ${n}점</span></span>`; }
+        if (wait.length) return `<span class="hm-wait">${wait.map(t => `<span>${hmE(t)}</span>`).join('')}</span>`;
+        return '';
+    }
+    function hmCard(r, st) {
+        const info = [r.area || r.addr || '', r.site ? HM_SITES[r.site] : '', '사진 ' + (r.imgs || []).length + '장'].filter(Boolean).map(hmE).join(' · ')
+            + ` · <b style="white-space:nowrap;color:${r.contact === 'call' ? '#64748B' : '#0369A1'}">${r.contact === 'call' ? '전화 OK' : '문자로만'}</b>` + (r.budget ? ' · 예산 ' + hmE(hmWon(r.budget)) : '');
+        const fee = Number(r.fee) && r.sentTo ? ` · 💰 ${(Number(r.fee) / 10000).toLocaleString('ko-KR')}만${r.feeRefundedAt ? ' 돌려줌' : r.feeChargedAt ? ' 차감' : r.feeAgreedAt ? ' 동의' : ''}` : '';
+        const co = r.sentName ? `<span class="hm-co">🤝 ${hmE(r.sentName)}${r.coDate && (r.coStage === 'booked' || r.coStage === 'done' || r.coStage === 'sched') ? ' · 작업일 ' + hmE(hmDate(r.coDate, r.coStage === 'done' ? '' : r.coSlot)) : ''}${r.coAmount ? ' · <span style="white-space:nowrap">' + hmE(hmWon(r.coAmount)) + '</span>' : ''}${fee ? '<span style="white-space:nowrap">' + fee + '</span>' : ''}</span>` : '';
+        return `<button onclick="hmOpen(${jsArg(r.id)})" class="hm-card text-left glass-panel rounded-[22px] p-4 flex flex-col gap-1.5 hover:border-[#84CC16]/50 transition-all">
+              <span class="flex items-center justify-between gap-2 w-full"><span class="text-[12.5px] font-black px-2.5 py-1 rounded-full ${st[1]}">${st[0]}</span><span class="text-[13px] font-bold text-[#94A3B8]">${hmTime(r.createdAt)}</span></span>
+              <span class="hm-t text-[18px] font-black text-white leading-snug">${hmE(hmWorks(r))}</span>
+              <span class="text-[14px] font-bold text-[#94A3B8]">${hmE(HM_KINDS[r.kind] || '')} · ${info}</span>
+              ${hmSteps(r)}${co}${hmTodo(r)}
+            </button>`;
+    }
     function hmRender() {
         const cnt = {}; HM.list.forEach(r => { const t = hmTabOf(r); cnt[t] = (cnt[t] || 0) + 1; });
         document.getElementById('hmTabs').innerHTML = HM_TABS.map(([k, t]) => `<button onclick="HM.tab='${k}'; hmRender()" class="shrink-0 px-4 py-2.5 rounded-full text-[14.5px] font-black ${HM.tab === k ? 'bg-[#84CC16] text-[#12261E]' : 'bg-white/5 text-[#94A3B8] border border-white/10'}">${t}${cnt[k] ? ' ' + cnt[k] : ''}</button>`).join('');
@@ -2722,22 +2785,7 @@
         if (HM.err) { box.innerHTML = `<div class="col-span-full py-12 px-6 text-center text-amber-300 glass-panel rounded-[24px] font-bold leading-relaxed">${hmE(HM.err)}</div>`; return; }
         box.innerHTML = view.length ? view.map(r => {
             const st = HM_ST[r.status] || HM_ST.new;
-            return `<button onclick="hmOpen(${jsArg(r.id)})" class="text-left glass-panel rounded-[22px] p-4 flex flex-col gap-2 hover:border-[#84CC16]/50 transition-all">
-              <span class="flex items-center justify-between gap-2 w-full"><span class="text-[12.5px] font-black px-2.5 py-1 rounded-full ${st[1]}">${st[0]}</span><span class="text-[13px] font-bold text-[#94A3B8]">${hmTime(r.createdAt)}</span></span>
-              <span class="text-[18px] font-black text-white leading-snug">${hmE(hmWorks(r))}</span>
-              <span class="text-[14.5px] font-bold text-[#CBD5E1]">${hmE(HM_KINDS[r.kind] || '')}${r.site ? ' · ' + hmE(HM_SITES[r.site]) : ''} · ${hmE(r.area || r.addr || '')}</span>
-              <span class="flex flex-wrap gap-1.5">
-                ${r.budget ? `<span class="text-[13px] font-black px-2 py-1 rounded-lg bg-[#ECFCCB] text-[#3F6212]">예산 ${hmE(hmWon(r.budget))}</span>` : (r.budgetUnknown ? '<span class="text-[13px] font-black px-2 py-1 rounded-lg bg-white/10 text-[#CBD5E1]">예산 상담 후</span>' : '')}
-                <span class="text-[13px] font-black px-2 py-1 rounded-lg ${r.contact === 'call' ? 'bg-white/10 text-[#CBD5E1]' : 'bg-sky-400/20 text-sky-300'}">${r.contact === 'call' ? '전화 OK' : '문자로만'}</span>
-                <span class="text-[13px] font-black px-2 py-1 rounded-lg bg-white/10 text-[#CBD5E1]">사진 ${(r.imgs || []).length}장</span>
-                ${r.sentName ? `<span class="text-[13px] font-black px-2 py-1 rounded-lg bg-[#84CC16]/20 text-[#BEF264]">→ ${hmE(r.sentName)}</span>` : ''}
-                ${(r.status === 'sent' || r.status === 'booked' || r.coStage === 'done') ? (r.custNotifiedAt ? '<span class="text-[13px] font-black px-2 py-1 rounded-lg bg-[#84CC16]/20 text-[#BEF264]">고객 안내 ✓</span>' : '<span class="text-[13px] font-black px-2 py-1 rounded-lg bg-amber-400/20 text-amber-300">고객 안내 전</span>') : ''}
-                ${r.lastSms && r.lastSms !== 'sent' ? `<span class="text-[13px] font-black px-2 py-1 rounded-lg bg-sky-400/20 text-sky-300">최근 문자: ${hmE(HM_SMS[r.lastSms] || '')}</span>` : ''}
-                ${Number(r.fee) && r.sentTo ? `<span class="text-[13px] font-black px-2 py-1 rounded-lg" style="background:#FEF3C7;color:#92400E">💰 ${(Number(r.fee) / 10000).toLocaleString('ko-KR')}만${r.feeRefundedAt ? ' 돌려줌' : r.feeChargedAt ? ' 차감됨' : r.feeAgreedAt ? ' 동의' : ''}</span>` : ''}
-                ${(r.status === 'done' || r.coStage === 'done') ? (r.survey && r.survey.at ? `<span class="text-[13px] font-black px-2 py-1 rounded-lg" style="background:#FEF9C3;color:#854D0E">⭐ ${Number(r.survey.stars) || 0}점</span>` : r.survey && r.survey.sentAt ? '<span class="text-[13px] font-black px-2 py-1 rounded-lg" style="background:#FFEDD5;color:#9A3412">⭐ 보냄 · 답 없음</span>' : '<span class="text-[13px] font-black px-2 py-1 rounded-lg" style="background:#DCFCE7;color:#166534">⭐ 만족도 보내기 전</span>') : ''}
-              </span>
-              ${hmStageLine(r) ? `<span class="text-[14px] font-black ${r.coStage === 'booked' || r.coStage === 'done' ? 'text-[#BEF264]' : r.coStage === 'sched' ? 'text-sky-300' : r.unseenAlertAt && !r.coSeenAt && r.status === 'sent' ? 'text-amber-300' : 'text-[#94A3B8]'}">${hmE(hmStageLine(r))}</span>` : ''}
-            </button>`;
+            return hmCard(r, st);
         }).join('') : `<div class="col-span-full py-16 text-center text-[#94A3B8] glass-panel rounded-[24px] font-bold">${q.length >= 3 ? '그 번호로 들어온 의뢰가 없어요.' : HM.tab === 'new' ? '새로 들어온 의뢰가 없어요.' : '없어요.'}</div>`;
         lucide.createIcons();
     }
