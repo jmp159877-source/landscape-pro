@@ -85,7 +85,9 @@
   .instbtn img { width:46px; height:46px; border-radius:12px; flex-shrink:0; }
   .instbtn b { display:block; font-size:16px; font-weight:800; color:var(--ink); line-height:1.35; }
   .instbtn small { display:block; font-size:13.5px; color:var(--mute); font-weight:600; margin-top:2px; }
-  .instbtn.small { background:transparent; border-style:dashed; border-color:var(--line); }
+  .instbtn.small { background:#FDE047; border:2px solid var(--ink); box-shadow:0 4px 0 var(--ink); }   /* 📲 [패치 #131] 첫 화면 아래: 진한 노랑으로 눈에 띄게 */
+  .instbtn.small small { color:#57534E; }
+  .instbtn.small:active { transform:translateY(2px); box-shadow:0 2px 0 var(--ink); }
   .instbtn.small img { width:38px; height:38px; }
   .ihow { text-align:left; margin-top:14px; display:flex; flex-direction:column; gap:10px; }
   .ihow div { display:flex; gap:10px; align-items:flex-start; font-size:16px; line-height:1.55; color:var(--ink); }
