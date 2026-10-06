@@ -9211,8 +9211,9 @@ ${AI_COMMON_RULES}
     const nxBox = (lbl, inner) => `<div id="nxNow" class="rounded-[20px] p-4 flex flex-col gap-3" style="background:#F7FEE7;border:2.5px solid #84CC16;"><span class="text-[14.5px] font-black" style="color:#4D7C0F">${lbl}</span>${inner}</div>`;
     function nxMore(items, label) {   // [그 밖에] 접기
       if (!items.length) return '';
-      return `<details id="nxMore" class="rounded-[16px] border-[1.5px] border-[#334155]"><summary class="list-none cursor-pointer px-4 py-3.5 flex justify-between items-center text-[16px] font-black text-[#CBD5E1]"><span>그 밖에 (${escHtml(label)})</span><span>▾</span></summary><div id="nxMoreBody" class="flex flex-col gap-2 px-3 pb-3"></div></details>`;
+      return `<div id="nxMore" class="rounded-[16px] border-[1.5px] border-[#334155] mb-24"><button type="button" onclick="nxMoreToggle()" class="w-full min-h-[56px] px-4 py-3.5 flex justify-between items-center gap-2 text-left text-[16px] font-black text-[#CBD5E1]"><span>그 밖에 (${escHtml(label)})</span><span id="nxMoreArrow">▾</span></button><div id="nxMoreBody" class="hidden flex-col gap-2 px-3 pb-3"></div></div>`;   // 휴대폰에 따라 접기(details)가 안 눌려서 버튼으로
     }
+    function nxMoreToggle() { const b = document.getElementById('nxMoreBody'); if (!b) return; const open = b.classList.contains('hidden'); b.classList.toggle('hidden', !open); b.classList.toggle('flex', open); document.getElementById('nxMoreArrow').textContent = open ? '▴' : '▾'; if (open) setTimeout(() => { try { b.lastElementChild && b.lastElementChild.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (e) {} }, 50); }
     function nxMoreBtn(fn, label, color) { return `<button type="button" onclick="${fn}" class="w-full h-[54px] rounded-[14px] bg-white text-[16px] font-black active:scale-[0.98]" style="color:${color || '#151E2D'}">${label}</button>`; }
     async function nxDelete() {   // 🗑️ 홈 의뢰는 지우기 전에 한 번 더 알림 (진짜 의뢰를 못 맡을 땐 [이번엔 못 해요])
       const r = RV.cur; if (!r) return;
