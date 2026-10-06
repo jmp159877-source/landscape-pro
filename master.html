@@ -3140,9 +3140,20 @@
             </div>
             <button onclick="hmDelete()" class="mt-2 w-full h-[46px] text-red-400 text-[14.5px] font-black">장난·스팸 의뢰 지우기</button>
           </div>
-          ${hist.length ? `<div class="pt-1"><div class="text-[14px] font-black text-[#94A3B8] mb-1.5">기록</div>${hist.map(h => `<div class="text-[13.5px] font-bold text-[#CBD5E1] py-1">${hmTime(h.at)} · ${hmHistLine(h)}</div>`).join('')}</div>` : ''}`;
+          ${hist.length ? `<div class="pt-1"><div class="text-[14px] font-black text-[#94A3B8] mb-1.5">기록</div>${hist.map(h => `<div class="text-[13.5px] font-bold text-[#CBD5E1] py-1">${hmTime(h.at)} · ${hmHistLine(h)}</div>`).join('')}</div>` : ''}
+          <button onclick="hmDelete()" class="w-full h-[50px] rounded-[14px] border border-red-400/40 text-red-300 text-[15px] font-black mt-2">🗑️ 이 의뢰 기록 지우기</button>`;   // 🗑️ [패치 #136]
         const memo = document.getElementById('hmMemo'); if (memo && r.memo && HM.pick === r.sentTo) memo.value = r.memo;
         if (HM.feeLive) hmFeeSet(HM.fee);
+    }
+    async function hmDelete() {   // 🗑️ [패치 #136] 연습·취소된 의뢰 기록 지우기 (home_reqs/{hid} 삭제 · 업체 의뢰함 쪽은 업체가 따로 지움)
+        const r = HM.cur; if (!r || HM.busy) return;
+        const live = r.sentTo && ['sent', 'booked'].includes(r.status) && r.coStage !== 'done';
+        if (!confirm('이 의뢰 기록을 지울까요?\n지우면 되살릴 수 없어요.' + (live ? '\n\n⚠️ ' + (r.sentName || '업체') + ' 의뢰함에는 그대로 남아 있어요. 업체에도 알려 주세요.' : ''))) return;
+        HM.busy = true;
+        try {
+            const res = await fetch(getAuthUrl(`${HM_URL}/${r.id}.json`), { method: 'DELETE' }); if (!res.ok) throw new Error('fail');
+            HM.list = HM.list.filter(x => x.id !== r.id); HM.busy = false; hmClose(); hmBadge(); hmRender();
+        } catch (e) { HM.busy = false; alert('지우지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.'); }
     }
     function hmTermsBox(r) {   // 📋 [패치 #131] 이용 안내(고객)·중개 조건(업체) 동의 기록
         const t = r.terms || {}, cu = t.at ? `✅ ${hmTime(t.at)} 동의 <span style="color:#94A3B8">(${hmE(t.v || '')})</span>` : (r.termsMissing ? '<span style="color:#B45309">기록 없음 (예전 화면에서 보냄)</span>' : '<span style="color:#94A3B8">기록 없음 (#131 전 의뢰)</span>');
