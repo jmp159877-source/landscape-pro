@@ -5196,6 +5196,12 @@
         { q: '의뢰를 열면 포인트가 빠져요?', s: [
           ['의뢰 1건당 1,000P', '새 의뢰는 작업·동네·시기·사진 장수만 보이고, [1,000P로 내용 보기]를 누르면 성함·전화번호·주소·남긴 말·사진이 보여요.'],
           ['한 번만', '한 번 연 의뢰는 계속 무료로 볼 수 있어요. 열기 전에 확인 창으로 먼저 알려 드려요.']] },
+        { q: '조경노트 홈 연결 의뢰는 어떻게 해요?', s: [   // 🎬 [패치 #138]
+          ['① 열기', '[고객 의뢰함]에서 [이용 조건 확인하고 의뢰 보기]를 누르세요. 처음 한 번만 중개 이용 조건이 나와요.'],
+          ['② 연락', '맨 위 [지금 할 일] 칸에서 [문자하기]나 [전화하기]. 금액 안내가 먼저면 [💰 견적서 먼저 보내기].'],
+          ['③ 날짜 확정', '고객과 날짜가 정해지면 [📅 날짜 정했어요] → 날짜·오전/오후 → 예약 문자 보내기. 일정표·거래처는 알아서 들어가요.'],
+          ['④ 완료', '작업이 끝나면 [✅ 작업 끝났어요] → 받을 금액 확인. 개인 장부에 수입으로 들어가요.'],
+          ['못 맡을 때', '아래 [그 밖에] → [이번엔 못 해요]. 조경노트 홈이 다른 업체로 연결해 드려요.']] },
         { q: '고객 의뢰가 오면 어떻게 해요?', s: [
           ['알림', '"새 고객 의뢰" 알림을 누르면 그 의뢰가 바로 열려요.'],
           ['내용 열기', '의뢰를 누르고 [1,000P로 내용 보기]를 누르면 전화·문자·지도·사진이 열려요.'],
@@ -10547,12 +10553,13 @@ ${AI_COMMON_RULES}
       f11: { id: 'ql8nZNDyLtY', title: '사용법 11 · AI 렌즈 · 현장 비서' },
       f12: { id: 'wTW-dTetNRA', title: '사용법 12 · 도움말과 문의' },
       f13: { id: 'Imurf_EMCbU', title: '사용법 13 · PC · 휴대폰 분실' },
-      f14: { id: '1q_OCowbR08', title: '사용법 14 · 거래처 미리 등록' } // 🎬 [패치 #102] 03-7~03-14 아이디 넣음
+      f14: { id: '1q_OCowbR08', title: '사용법 14 · 거래처 미리 등록' }, // 🎬 [패치 #102] 03-7~03-14 아이디 넣음
+      f15: { id: 'YdgnuRQKvgI', title: '사용법 15 · 조경노트 홈 연결 의뢰 받기' } // 🎬 [패치 #138]
     };
     // 도움말 챗봇: 주제별로 답 아래에 [영상으로 보기] (주제 이름 첫 글자로 찾음)
     const HELP_VIDEO = [['말로', 'f4'], ['블로그', 'f6'], ['리포트', 'f4'], ['앱 설치', 'f1'], ['고객 의뢰', 'f8'], ['일정', 'f3']];
     // 🎬 [패치 #102] 질문별 영상 (질문 첫 글자로 찾음 · 없으면 주제별 영상)
-    const HELP_VIDEO_Q = [['등록한 일정', 'f3'], ['일정 금액이 장부', 'f10'], ['내 자료를 따로', 'f13'], ['AI 비서·렌즈', 'f11'], ['앱이 잠겨서', 'f13'], ['매번 로그인', ''], ['비밀번호를 바꾸', ''], ['장부 비밀번호', '']]; // '' = 맞는 영상이 없어서 버튼 안 보임
+    const HELP_VIDEO_Q = [['조경노트 홈 연결 의뢰', 'f15'], ['등록한 일정', 'f3'], ['일정 금액이 장부', 'f10'], ['내 자료를 따로', 'f13'], ['AI 비서·렌즈', 'f11'], ['앱이 잠겨서', 'f13'], ['매번 로그인', ''], ['비밀번호를 바꾸', ''], ['장부 비밀번호', '']]; // '' = 맞는 영상이 없어서 버튼 안 보임
     function helpVideoKey(catTitle, q) { const ok = k => (k && GUIDE_VIDEOS[k] && GUIDE_VIDEOS[k].id) ? k : ''; const qm = HELP_VIDEO_Q.find(([w]) => String(q || '').startsWith(w)); if (qm) return ok(qm[1]); const t = String(catTitle || '').replace(/\n/g, ' '); const m = HELP_VIDEO.find(([w]) => t.startsWith(w)); return ok(m && m[1]); }
     function gvPlay(id, start) {
       document.getElementById('gvBox').innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?autoplay=1&playsinline=1&rel=0&modestbranding=1&cc_load_policy=0${start ? '&start=' + Number(start) : ''}" title="사용 안내 영상" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen style="width:100%;height:100%;border:0;"></iframe>`;
