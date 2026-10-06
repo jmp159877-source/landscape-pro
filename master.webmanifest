@@ -5,6 +5,7 @@
   "start_url": "/master.html",
   "scope": "/master",
   "display": "standalone",
+  "launch_handler": { "client_mode": "focus-existing" },
   "background_color": "#FFE100",
   "theme_color": "#151E2D",
   "icons": [

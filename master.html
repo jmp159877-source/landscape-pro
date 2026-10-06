@@ -92,20 +92,29 @@
     html.lt :is([class~="bg-[#3B82F6]"], [class~="bg-[#2563EB]"], [class~="bg-[#1E3A8A]"], [class~="bg-[#151E2D]"], [class~="bg-[#475569]"], .bg-red-500, .bg-red-600, .bg-blue-500, .bg-blue-600, .bg-sky-500, .bg-gray-600, .bg-green-500, .bg-green-600, [class~="bg-black/90"], #hmLb, #mqPin).text-white,
     html.lt :is([class~="bg-[#3B82F6]"], [class~="bg-[#2563EB]"], [class~="bg-[#1E3A8A]"], [class~="bg-[#151E2D]"], [class~="bg-[#475569]"], .bg-red-500, .bg-red-600, .bg-blue-500, .bg-blue-600, .bg-sky-500, .bg-gray-600, .bg-green-500, .bg-green-600, [class~="bg-black/90"], #hmLb, #mqPin) .text-white { color: #FFFFFF !important; }
     html.lt #hmLb [class~="text-[#94A3B8]"], html.lt #hmLb [class~="text-[#CBD5E1]"] { color: #CBD5E1 !important; }
-    /* 메뉴: 위쪽 가로 한 줄 (PC·휴대폰 모두) */
-    html.lt body { flex-direction: column !important; }
-    html.lt #sidebar { position: sticky !important; top: 0 !important; bottom: auto !important; left: 0; width: 100% !important; height: auto !important; flex-direction: row !important; align-items: center !important; gap: 14px; padding: 10px 14px !important; border: 0 !important; border-bottom: 1px solid #DCE2D6 !important; border-radius: 0 !important; z-index: 60 !important; }
-    html.lt #sidebar > div:first-child { margin: 0 !important; padding: 0 !important; flex-shrink: 0; }
-    @media (min-width: 768px) and (max-width: 1365px) { html.lt #sidebar > div:first-child > div:last-child { display: none; } }
-    html.lt #sidebar nav { flex-direction: row !important; flex-wrap: nowrap !important; justify-content: flex-start !important; gap: 6px !important; overflow-x: auto; flex: 1; min-width: 0; scrollbar-width: none; }
-    html.lt #sidebar nav::-webkit-scrollbar { display: none; }
-    html.lt #sidebar .nav-btn { width: auto !important; flex: 0 0 auto !important; flex-direction: row !important; justify-content: center !important; gap: 6px !important; padding: 9px 13px !important; font-size: 15px !important; white-space: nowrap; border: 1px solid transparent; }
-    html.lt #sidebar .nav-btn > div { flex-direction: row !important; gap: 6px !important; }
-    html.lt #sidebar .nav-btn:not([class~="bg-[#3B82F6]"]) { background: #FFFFFF; border-color: #DCE2D6; color: #1E293B !important; }
-    html.lt #sidebar .nav-btn span[id^="side"] { position: static !important; margin-left: 4px; }
-    html.lt #sidebar > div.mt-auto { margin: 0 !important; display: flex !important; align-items: center; gap: 10px; flex-shrink: 0; }
-    html.lt #sidebar > div.mt-auto > div { display: none !important; }
-    html.lt #sidebar > div.mt-auto > button { width: auto !important; padding: 9px 13px !important; font-size: 14.5px; white-space: nowrap; background: #FEF2F2 !important; border-color: #FECACA !important; color: #B91C1C !important; }
+    /* 메뉴: ↩️ [패치 #131] PC는 예전처럼 왼쪽 세로 메뉴(밝은 색) · 휴대폰만 위쪽 가로 한 줄 */
+    @media (min-width: 768px) {
+      html.lt #sidebar { background: #FFFFFF !important; border-right: 1px solid #DCE2D6 !important; }
+      html.lt #sidebar .nav-btn:not([class~="bg-[#3B82F6]"]) { background: #FFFFFF; color: #1E293B !important; border: 1px solid #E2E8F0; }
+      html.lt #sidebar .nav-btn:not([class~="bg-[#3B82F6]"]):hover { background: #F1F5F9; }
+      html.lt #sidebar .nav-btn { font-size: 16px !important; }
+      html.lt #sidebar nav { gap: 6px !important; }
+    }
+    @media (max-width: 767px) {
+      html.lt body { flex-direction: column !important; }
+      html.lt #sidebar { position: sticky !important; top: 0 !important; bottom: auto !important; left: 0; width: 100% !important; height: auto !important; flex-direction: row !important; align-items: center !important; gap: 14px; padding: 10px 14px !important; border: 0 !important; border-bottom: 1px solid #DCE2D6 !important; border-radius: 0 !important; z-index: 60 !important; }
+      html.lt #sidebar > div:first-child { margin: 0 !important; padding: 0 !important; flex-shrink: 0; }
+      @media (min-width: 768px) and (max-width: 1365px) { html.lt #sidebar > div:first-child > div:last-child { display: none; } }
+      html.lt #sidebar nav { flex-direction: row !important; flex-wrap: nowrap !important; justify-content: flex-start !important; gap: 6px !important; overflow-x: auto; flex: 1; min-width: 0; scrollbar-width: none; }
+      html.lt #sidebar nav::-webkit-scrollbar { display: none; }
+      html.lt #sidebar .nav-btn { width: auto !important; flex: 0 0 auto !important; flex-direction: row !important; justify-content: center !important; gap: 6px !important; padding: 9px 13px !important; font-size: 15px !important; white-space: nowrap; border: 1px solid transparent; }
+      html.lt #sidebar .nav-btn > div { flex-direction: row !important; gap: 6px !important; }
+      html.lt #sidebar .nav-btn:not([class~="bg-[#3B82F6]"]) { background: #FFFFFF; border-color: #DCE2D6; color: #1E293B !important; }
+      html.lt #sidebar .nav-btn span[id^="side"] { position: static !important; margin-left: 4px; }
+      html.lt #sidebar > div.mt-auto { margin: 0 !important; display: flex !important; align-items: center; gap: 10px; flex-shrink: 0; }
+      html.lt #sidebar > div.mt-auto > div { display: none !important; }
+      html.lt #sidebar > div.mt-auto > button { width: auto !important; padding: 9px 13px !important; font-size: 14.5px; white-space: nowrap; background: #FEF2F2 !important; border-color: #FECACA !important; color: #B91C1C !important; }
+    }
     html.lt nav.md\:hidden.glass-panel { display: none !important; }
     html.lt #mainContent { padding-bottom: 40px !important; }
     @media (max-width: 767px) {
@@ -2602,8 +2611,14 @@
         const lv0 = document.getElementById('masterLoginView'); // 로그인 버튼을 누른 직후 첫 칸 (대시보드에서 뒤로가기 → 안내)
         if (lv0) new MutationObserver(() => { if (!PMB.homeDone && pmbLoggedIn()) { PMB.homeDone = true; pmbPush({ k: 'home' }); } }).observe(lv0, { attributes: true, attributeFilter: ['class'] });
     } catch (e) {}
+    // ↩️ [패치 #131] 알림을 누를 때마다 관리자 화면이 새로 열려 기록이 쌓이면, 뒤로가기마다 잠금 번호 화면이 또 나옴 → 맨 처음 화면으로 한 번에 건너뜀
+    function mqJumpOut() {
+        try { if (window.navigation && navigation.entries) { const cur = navigation.currentEntry, es = navigation.entries(); let i = es.findIndex(e => cur && e.key === cur.key); while (i > 0 && /\/master/.test(new URL(es[i - 1].url).pathname)) i--; const first = es[i]; if (first && cur && first.key !== cur.key) { navigation.traverseTo(first.key); return true; } } } catch (e) {}
+        return false;
+    }
+    try { if (!(history.state && (history.state.pmb || history.state.mqGuard))) history.pushState({ mqGuard: 1 }, ''); } catch (e) {}   // 잠금 번호·로그인 화면에서 뒤로 → 한 번에 나가기용 칸
     window.addEventListener('popstate', function (ev) {
-        if (!pmbLoggedIn()) return;
+        if (!pmbLoggedIn()) { if (!(ev.state && ev.state.mqGuard)) { if (!mqJumpOut()) history.back(); } return; }
         { const hm = document.getElementById('hmModal'); if (typeof HM !== 'undefined' && HM.closing) { HM.closing = false; return; } if ((hm && !hm.classList.contains('hidden')) || (ev.state && ev.state.hmOpen)) return; }   // 🏡 [패치 #107] Home 의뢰 창·사진은 자기 뒤로가기만 처리
         const target = (ev.state && ev.state.pmb) || 0;
         let acted = false, tabTo = null;
@@ -2618,7 +2633,10 @@
             if (tabTo && tabTo !== PMB.cur) { switchTab(tabTo); acted = true; try { window.scrollTo(0, 0); } catch (x) {} }
         } finally { PMB.fromPop = false; }
         if (!acted && PMB.entries.length > 0) { history.back(); return; }   // 이미 닫힌 창의 칸 → 한 칸 더 (새 칸은 만들지 않음)
-        if (PMB.entries.length === 0) pmbToast('뒤로가기를 한 번 더 누르면 관리자 화면이 닫혀요.');
+        if (PMB.entries.length === 0) {   // ↩️ [패치 #131] 안내 뒤 한 번 더 → 예전에 쌓인 관리자 화면(잠금 번호 화면)들을 건너뛰고 한 번에
+            if (PMB.toastAt && Date.now() - PMB.toastAt < 5000) { PMB.toastAt = 0; if (!mqJumpOut()) history.back(); }
+            else { PMB.toastAt = Date.now(); pmbToast('뒤로가기를 한 번 더 누르면 관리자 화면이 닫혀요.'); }
+        }
     });
   </script>
 <script>
