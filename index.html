@@ -9158,7 +9158,8 @@ ${AI_COMMON_RULES}
           <div class="rounded-[14px] border-2 border-dashed border-[#CBD5E1] p-3 text-[14.5px] font-bold text-[#475569] break-keep">${reqLockSvg('#0F172A')} 동의하면 고객 성함·전화번호·주소${r.imgCount ? '·사진 ' + r.imgCount + '장' : ''}이 바로 보여요.</div>
           <button type="button" id="reqFeeBtn" onclick="reqFeeAgree()" class="h-[60px] rounded-[16px] bg-[#84CC16] text-[#12261E] text-[18px] font-black active:scale-[0.98]" style="box-shadow:inset 0 0 0 2px #151E2D">${fee > 0 ? '수수료·이용 조건에 동의하고 의뢰 보기' : '이용 조건에 동의하고 의뢰 보기'}</button>
         </div>
-        <button type="button" id="reqHomeDeclineBtn" onclick="reqHomeDecline()" class="h-[56px] rounded-[16px] border-2 text-[16.5px] font-black active:scale-[0.98]" style="border-color:#F59E0B;color:#FCD34D;">이번엔 못 해요 (조경노트 홈이 다른 업체로 연결)</button>`;
+        <button type="button" id="reqHomeDeclineBtn" onclick="reqHomeDecline()" class="h-[56px] rounded-[16px] border-2 text-[16.5px] font-black active:scale-[0.98]" style="border-color:#F59E0B;color:#FCD34D;">이번엔 못 해요 (조경노트 홈이 다른 업체로 연결)</button>
+        <button type="button" onclick="nxDelete()" class="h-12 text-[#FCA5A5] text-[15.5px] font-black active:scale-[0.98]">🗑️ 의뢰함에서 지우기 (연습·장난 의뢰)</button>`;   // 🗑️ [패치 #135]
     };
     async function reqFeeAgree() {
       const r = RV.cur; if (!r || RV.busy) return;
@@ -9213,6 +9214,11 @@ ${AI_COMMON_RULES}
       return `<details id="nxMore" class="rounded-[16px] border-[1.5px] border-[#334155]"><summary class="list-none cursor-pointer px-4 py-3.5 flex justify-between items-center text-[16px] font-black text-[#CBD5E1]"><span>그 밖에 (${escHtml(label)})</span><span>▾</span></summary><div id="nxMoreBody" class="flex flex-col gap-2 px-3 pb-3"></div></details>`;
     }
     function nxMoreBtn(fn, label, color) { return `<button type="button" onclick="${fn}" class="w-full h-[54px] rounded-[14px] bg-white text-[16px] font-black active:scale-[0.98]" style="color:${color || '#151E2D'}">${label}</button>`; }
+    async function nxDelete() {   // 🗑️ 홈 의뢰는 지우기 전에 한 번 더 알림 (진짜 의뢰를 못 맡을 땐 [이번엔 못 해요])
+      const r = RV.cur; if (!r) return;
+      if (r.via === 'home' && !(r.home && r.home.stage === 'done') && !confirm('연습 의뢰나 장난 의뢰만 지워 주세요.\n진짜 의뢰를 못 맡으시면 [이번엔 못 해요]를 눌러야 조경노트 홈이 다른 업체로 연결해 드려요.\n\n그래도 지울까요?')) return;
+      return reqDelete();
+    }
     const reqRenderDetailNX0 = reqRenderDetail;
     reqRenderDetail = function () {
       reqRenderDetailNX0();
@@ -9238,8 +9244,9 @@ ${AI_COMMON_RULES}
           document.getElementById('nxNow').insertAdjacentHTML('afterend', `<div class="bg-white rounded-[20px] p-4 flex flex-col gap-2 text-[#0F172A]">
               <span class="text-[14px] font-black text-[#3F6212]">원하는 작업</span><span class="flex flex-wrap gap-1.5">${(r.works.length ? r.works : ['내용에 적음']).map(w => `<span class="text-[14.5px] font-black rounded-[9px] px-2.5 py-1 bg-[#14261E] text-[#BEF264]">${escHtml(w)}</span>`).join('')}</span>
               <span class="text-[14px] font-black text-[#3F6212] mt-1">동네</span><span class="text-[17px] font-bold">${escHtml(r.area || '동네 정보 없음')}${h.budget ? ' · 고객 예산 ' + escHtml(homeWon(h.budget)) : ''}</span>
-              <div class="rounded-[14px] border-2 border-dashed border-[#CBD5E1] p-3 text-[15px] font-bold text-[#334155] break-keep">🔒 열면 보여요 · 고객 성함 · 연락처 · 주소${r.imgCount ? ' · 사진 ' + r.imgCount + '장' : ''}</div></div>` + nxMore(['x'], '이번엔 못 해요'));
+              <div class="rounded-[14px] border-2 border-dashed border-[#CBD5E1] p-3 text-[15px] font-bold text-[#334155] break-keep">🔒 열면 보여요 · 고객 성함 · 연락처 · 주소${r.imgCount ? ' · 사진 ' + r.imgCount + '장' : ''}</div></div>` + nxMore(['x'], '이번엔 못 해요 · 지우기'));
           if (dec) { dec.classList.add('w-full'); document.getElementById('nxMoreBody').appendChild(dec); }
+          document.getElementById('nxMoreBody').insertAdjacentHTML('beforeend', nxMoreBtn('nxDelete()', '🗑️ 의뢰함에서 지우기 (연습·장난 의뢰)', '#B91C1C'));
           return;
         }
         const st = h.stage === 'done' ? 'done' : h.stage === 'booked' ? 'booked' : '';
@@ -9254,17 +9261,18 @@ ${AI_COMMON_RULES}
             (smsOnly ? '<span class="text-[14.5px] font-black text-center rounded-[12px] px-3 py-2" style="background:#FEF2F2;color:#991B1B">이 고객은 <u>문자로만</u> 연락을 원해요</span>' : '') +
             `<div class="grid grid-cols-2 gap-2">${tel}${sms}</div>` + nxBig("hpOpen('book')", '📅 날짜 정했어요') +
             '<span class="text-[14px] font-bold text-center text-[#475569] leading-relaxed break-keep">누르면 날짜·오전/오후만 고르면 끝.<br>예약 문자·일정·거래처는 알아서 정리돼요.</span>' + feeLine);
-          more = [nxMoreBtn('reqToQuote()', '💰 견적서 먼저 보내기'), 'DEC', nxMoreBtn('reqDelete()', '장난·스팸 의뢰 지우기', '#B91C1C')]; moreLbl = '견적서 먼저 · 못 해요';
+          more = [nxMoreBtn('reqToQuote()', '💰 견적서 먼저 보내기'), 'DEC', 'DEL']; moreLbl = '견적서 먼저 · 못 해요 · 지우기';
         } else if (step === 4) {
           box = nxBox('지금 할 일 · 작업하러 가기', nxDots(4) +
             `<span class="text-[18px] font-black text-[#151E2D] text-center">📅 ${escHtml(hpDateKo(h.date, h.slot))} 작업${h.amount ? ' · ' + escHtml(homeWon(h.amount)) : ''}</span>` +
             '<span class="text-[14px] font-black rounded-[12px] bg-white px-3 py-2 text-[#3F6212] leading-relaxed break-keep">✓ 예약 문자 · ✓ 일정표에 넣음 · ✓ 거래처 등록</span>' +
             nxBig("hpOpen('done')", '✅ 작업 끝났어요') + feeLine);
-          more = [nxMoreBtn("hpOpen('book')", '📅 날짜 바꾸기'), nxMoreBtn('hpCancel()', '진행 취소', '#B91C1C')]; moreLbl = '날짜 바꾸기 · 취소';
+          more = [nxMoreBtn("hpOpen('book')", '📅 날짜 바꾸기'), nxMoreBtn('hpCancel()', '진행 취소', '#B91C1C'), 'DEL']; moreLbl = '날짜 바꾸기 · 취소 · 지우기';
         } else {
           box = nxBox('수고하셨어요!', nxDots(5) +
             `<span class="text-[16.5px] font-black text-center rounded-[14px] px-3 py-3" style="background:#ECFCCB;color:#3F6212">✅ 작업 완료${h.amount ? ' · ' + escHtml(homeWon(h.amount)) + ' 장부에 넣음' : ''}</span>` +
             nxBig('hpReport()', '📝 작업일지 쓰기 (선택)', true) + '<span class="text-[14px] font-bold text-center text-[#475569]">일지를 보내면 고객님이 더 믿고 다시 찾아요.</span>');
+          more = ['DEL']; moreLbl = '의뢰함에서 지우기';
         }
         const dec = document.getElementById('reqHomeDeclineBtn');
         const old = document.getElementById('hpActions'); if (old) old.remove();
@@ -9273,7 +9281,7 @@ ${AI_COMMON_RULES}
         if (more.length) {
           pane.insertAdjacentHTML('beforeend', nxMore(more, moreLbl));
           const body = document.getElementById('nxMoreBody');
-          more.forEach(m => { if (m === 'DEC') { if (dec) { dec.classList.add('w-full'); dec.style.display = ''; body.appendChild(dec); } } else body.insertAdjacentHTML('beforeend', m); });
+          more.forEach(m => { if (m === 'DEL') { body.insertAdjacentHTML('beforeend', nxMoreBtn('nxDelete()', '🗑️ 의뢰함에서 지우기 (연습·장난 의뢰)', '#B91C1C')); return; } if (m === 'DEC') { if (dec) { dec.classList.add('w-full'); dec.style.display = ''; body.appendChild(dec); } } else body.insertAdjacentHTML('beforeend', m); });
         } else if (dec) dec.remove();
         pane.querySelectorAll('a[href^="tel:"], a[href^="sms:"]').forEach(a => { if (!a.closest('#nxNow')) a.addEventListener('click', nxMarkContact); });
         if (step <= 3) {   // 위 '지금 할 일'에 전화·문자·문자로만 안내가 있으니 아래 카드의 같은 것은 숨김
