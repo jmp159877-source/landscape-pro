@@ -143,6 +143,33 @@
   .hm-wait { background:#F8FAFC; border:1px solid #E2E8F0; color:#64748B; }
   .hm-good { flex-direction:row; justify-content:space-between; background:#F7FEE7; border:1.5px solid #BEF264; color:#3F6212; } .hm-good b { color:#EAB308; letter-spacing:1px; }
   html:not(.lt) .hm-co { color:#fff; } html:not(.lt) .hm-dot b { color:#CBD5E1; }
+  /* 📅 [패치 #132] 홈 의뢰 달력 · 묶음 제목 */
+  .hm-gh { display:flex; align-items:center; gap:8px; font-size:16px; font-weight:900; color:#0F172A; margin-top:8px; }
+  .hm-gh span { font-size:13px; padding:2px 9px; border-radius:999px; background:#E2E8F0; color:#334155; }
+  .hm-sub { font-size:14px; font-weight:900; margin-top:-4px; } .hm-sub.b { color:#2563EB; } .hm-sub.g { color:#16A34A; }
+  .hm-cal { background:#fff; border:1px solid #E2E8F0; border-radius:22px; padding:14px 12px; }
+  .hm-cal-top { display:flex; align-items:center; justify-content:space-between; padding:0 4px 10px; }
+  .hm-cal-top b { font-size:20px; font-weight:900; color:#0F172A; }
+  .hm-cal-top button { width:44px; height:44px; border-radius:14px; font-size:26px; font-weight:900; color:#64748B; background:#F1F5F9; }
+  .hm-cal-g { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:5px; }
+  .hm-cal-w span { text-align:center; font-size:13px; font-weight:900; color:#64748B; padding:2px 0 4px; }
+  .sun { color:#DC2626 !important; } .sat { color:#2563EB !important; }
+  .hm-cd { min-height:54px; border-radius:13px; background:#F8FAFC; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; color:#0F172A; }
+  .hm-cd b { font-size:16px; font-weight:900; line-height:1; } .hm-cd span { display:flex; gap:2px; min-height:17px; }
+  .hm-cd i, .hm-cal-lg i { font-style:normal; min-width:17px; height:17px; border-radius:9px; padding:0 4px; font-size:11px; font-weight:900; color:#fff; display:flex; align-items:center; justify-content:center; }
+  .hm-cd i.b, .hm-cal-lg i.b { background:#2563EB; } .hm-cd i.g, .hm-cal-lg i.g { background:#16A34A; }
+  .hm-cd.today { background:#F7FEE7; box-shadow:inset 0 0 0 2px #84CC16; }
+  .hm-cd.sel { background:#151E2D; color:#fff !important; } .hm-cd.sel b { color:#fff; }
+  .hm-cal-lg { display:flex; flex-wrap:wrap; gap:14px; margin-top:10px; padding:0 4px; font-size:13.5px; font-weight:800; color:#475569; }
+  .hm-cal-lg span { display:flex; align-items:center; gap:5px; } .hm-cal-lg i { min-width:11px; width:11px; height:11px; padding:0; }
+  .hm-mon { display:flex; align-items:center; justify-content:space-between; gap:8px; width:100%; text-align:left; background:#fff; border:1px solid #E2E8F0; border-radius:18px; padding:15px 16px; }
+  .hm-mon b { font-size:17px; font-weight:900; color:#0F172A; } .hm-mon span { font-size:14px; font-weight:800; color:#64748B; white-space:nowrap; } .hm-mon em { font-style:normal; color:#EAB308; }
+  html:not(.lt) .hm-gh { color:#fff; } html:not(.lt) .hm-gh span { background:rgba(255,255,255,.1); color:#CBD5E1; }
+  html:not(.lt) .hm-cal, html:not(.lt) .hm-mon { background:#151E2D; border-color:rgba(255,255,255,.1); }
+  html:not(.lt) .hm-cal-top b, html:not(.lt) .hm-mon b { color:#fff; } html:not(.lt) .hm-cal-top button { background:rgba(255,255,255,.06); color:#CBD5E1; }
+  html:not(.lt) .hm-cd { background:#0B1120; color:#E2E8F0; } html:not(.lt) .hm-cd.today { background:rgba(132,204,22,.14); }
+  html:not(.lt) .hm-cd.sel { background:#84CC16; } html:not(.lt) .hm-cd.sel b { color:#12261E; } html:not(.lt) .hm-cal-lg { color:#94A3B8; }
+  html:not(.lt) .hm-sub.b { color:#60A5FA; } html:not(.lt) .hm-sub.g { color:#4ADE80; }
 </style>
 </head>
 <body class="min-h-screen flex flex-col md:flex-row">
@@ -344,7 +371,7 @@
         <span><b class="block text-[15.5px] text-[#0F172A]">💰 연결 수수료 · ⭐ 만족도 보너스</b><span id="hmFeeSub" class="block text-[13px] font-bold text-[#475569] mt-0.5">불러오는 중…</span></span>
         <span id="hmFeeState" class="shrink-0 text-[14px] font-black px-3.5 py-2 rounded-full" style="background:#E2E8F0;color:#334155">-</span>
       </button>
-      <div class="flex items-center gap-2 bg-white/5 border border-white/10 rounded-[14px] px-4 h-[52px]"><span class="text-[18px]">🔍</span><input id="hmQ" type="tel" inputmode="numeric" maxlength="13" placeholder="답장 온 번호 뒷자리 4개로 찾기" oninput="hmSearch(this.value)" class="flex-1 min-w-0 bg-transparent text-white text-[16px] font-bold outline-none placeholder:text-[#64748B]"><button onclick="document.getElementById('hmQ').value=''; hmSearch('')" class="text-[#94A3B8] text-[14px] font-black px-1 shrink-0 whitespace-nowrap">지우기</button></div>
+      <div class="flex items-center gap-2 bg-white/5 border border-white/10 rounded-[14px] px-4 h-[52px]"><span class="text-[18px]">🔍</span><input id="hmQ" type="search" maxlength="20" placeholder="번호 뒷자리 · 이름 · 동네 · 업체로 찾기" oninput="hmSearch(this.value)" class="flex-1 min-w-0 bg-transparent text-white text-[16px] font-bold outline-none placeholder:text-[#64748B]"><button onclick="document.getElementById('hmQ').value=''; hmSearch('')" class="text-[#94A3B8] text-[14px] font-black px-1 shrink-0 whitespace-nowrap">지우기</button></div>
       <div class="flex gap-2 overflow-x-auto scrollbar-hide" id="hmTabs"></div>
       <div id="hmList" class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="col-span-full py-16 text-center text-[#94A3B8] glass-panel rounded-[24px] font-bold">의뢰를 불러오는 중...</div></div>
     </div>
@@ -878,7 +905,7 @@
         const savedId = localStorage.getItem('shinhwa_master_id');
         ['shinhwa_master_pw', 'shinhwa_master_auto', 'shinhwa_master_session'].forEach(k => localStorage.removeItem(k));
         if (savedId) { document.getElementById('masterId').value = savedId; document.getElementById('masterAutoLoginCheck').checked = true; }
-        try { if (mqLoad() && window.crypto && crypto.subtle) mqShow('unlock'); } catch (e) {}   // 🔐 [패치 #111]
+        try { if (mqLoad() && window.crypto && crypto.subtle && !(typeof mqSkipped !== 'undefined' && mqSkipped)) mqShow('unlock'); } catch (e) {}   // 🔐 [패치 #111]
         lucide.createIcons();
     });
 
@@ -2653,7 +2680,7 @@
     //  - [이 업체에 보내기] → 서버 admin_home_send (업체 의뢰함에 넣고 업체 휴대폰 알림)
     //  - 안내 문자는 문구가 채워진 문자 창을 열어 줌 (대표님 휴대폰으로 발송) · 상태(안내함·끝남)는 여기서 바로 저장
     // ==========================================
-    const HM = { list: [], tab: 'new', cur: null, busy: false, want: '', timer: null, pick: '', feeLive: false, fee: 0 };
+    const HM = { list: [], tab: 'new', view: 'run', calM: '', calD: '', openMon: '', cur: null, busy: false, want: '', timer: null, pick: '', feeLive: false, fee: 0 };
     // 💰 [패치 #125] 연결 수수료·만족도 보너스 켜기/끄기 (settings/homeFeeLive)
     function hmFeePaint() {
         const st = document.getElementById('hmFeeState'), sub = document.getElementById('hmFeeSub'); if (!st) return;
@@ -2742,9 +2769,10 @@
         const n = HM.list.filter(r => r.status === 'new' || r.status === 'declined').length;   // (거래 성사는 배지에 안 셈)
         [['sideHomeCount', n], ['mobHomeCount', n]].forEach(([id, v]) => { const el = document.getElementById(id); if (el) { el.textContent = v; el.classList.toggle('hidden', !v); } });
     }
-    function hmSearch(v) {   // 🔍 [패치 #110] 답장 온 번호 뒷자리로 찾기 (한 건이면 바로 열기)
-        HM.q = String(v || '').replace(/[^0-9]/g, ''); hmRender();
-        if (HM.q.length >= 4) { const hit = HM.list.filter(r => String(r.phone || '').replace(/[^0-9]/g, '').endsWith(HM.q)); if (hit.length === 1 && !(HM.cur && HM.cur.id === hit[0].id)) hmOpen(hit[0].id); }
+    function hmSearch(v) {   // 🔍 [패치 #132] 번호 뒷자리 · 이름 · 동네 · 업체로 찾기 (번호 4자리가 한 건이면 바로 열기)
+        HM.q = String(v || '').trim(); hmRender();
+        const d = HM.q.replace(/[^0-9]/g, '');
+        if (d.length >= 4 && d.length === HM.q.replace(/[\s-]/g, '').length) { const hit = HM.list.filter(r => String(r.phone || '').replace(/[^0-9]/g, '').endsWith(d)); if (hit.length === 1 && !(HM.cur && HM.cur.id === hit[0].id)) hmOpen(hit[0].id); }
     }
     function hmVcard() {   // 📇 [패치 #110] 고객을 내 휴대폰 연락처에 저장 (답장이 오면 이름으로 보이게)
         const r = HM.cur; if (!r) return;
@@ -2804,23 +2832,98 @@
               ${hmSteps(r)}${co}${hmTodo(r)}
             </button>`;
     }
+    // 📅 [패치 #132] 홈 의뢰 화면: [진행 중](한 목록에 단계별 제목) · [📅 달력](작업 예정=파랑, 작업 끝남=초록) · [✅ 끝남](달별로 접기)
+    const HM_RUN = [['new', '🔴 새 의뢰 · 다시 연결'], ['guided', '💬 안내 문자 보냄'], ['sent', '🤝 업체 연결함'], ['booked', '📅 거래 성사 · 작업 기다리는 중']];
+    function hmYmd(ms) { ms = Number(ms) || 0; if (!ms) return ''; const d = new Date(ms); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
+    function hmIsDone(r) { return r.status === 'done' || r.coStage === 'done'; }
+    function hmDoneAt(r) {   // 작업 끝난 날 (없으면 비슷한 날짜로)
+        const at = Number(r.doneAt) || hmHistAt(r, 'done'); if (at) return at;
+        const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(r.coDate || '')); if (m && r.coStage === 'done') return new Date(+m[1], +m[2] - 1, +m[3], 12).getTime();
+        return Number(r.updatedAt) || Number(r.createdAt) || 0;
+    }
+    function hmMonKey(ms) { return hmYmd(ms).slice(0, 7); }
+    function hmPlanDay(r) { return !hmIsDone(r) && r.status !== 'new' && r.status !== 'guided' && (r.coStage === 'booked' || r.coStage === 'sched' || r.status === 'booked') && /^\d{4}-\d{2}-\d{2}$/.test(String(r.coDate || '')) ? r.coDate : ''; }
+    function hmDoneDay(r) { if (!hmIsDone(r)) return ''; const at = Number(r.doneAt) || hmHistAt(r, 'done'); if (at) return hmYmd(at); return /^\d{4}-\d{2}-\d{2}$/.test(String(r.coDate || '')) ? r.coDate : hmYmd(hmDoneAt(r)); }
+    function hmMatch(r, q) {
+        q = String(q || '').trim().toLowerCase(); if (!q) return true;
+        const d = q.replace(/[^0-9]/g, ''), ph = String(r.phone || '').replace(/[^0-9]/g, '');
+        if (d && d.length === q.replace(/[\s-]/g, '').length) return d.length >= 3 ? ph.includes(d) : true;   // 숫자만 → 전화번호
+        const hay = [r.name, r.area, r.addr, r.sentName, hmWorks(r)].map(x => String(x || '')).join(' ').toLowerCase().replace(/\s+/g, '');
+        return q.split(/\s+/).filter(Boolean).every(w => hay.includes(w));
+    }
+    function hmStarsAvg(list) { const s = list.map(r => Number((r.survey || {}).stars) || 0).filter(Boolean); return s.length ? (s.reduce((a, b) => a + b, 0) / s.length).toFixed(1) : ''; }
+    function hmGo(v) { HM.view = v; if (v === 'cal' && !HM.calM) { const t = hmYmd(Date.now()); HM.calM = t.slice(0, 7); HM.calD = t; } hmRender(); try { document.getElementById('hmList').scrollIntoView({ block: 'nearest' }); } catch (e) {} }
+    function hmCalMove(n) { const [y, m] = HM.calM.split('-').map(Number); const d = new Date(y, m - 1 + n, 1); HM.calM = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; const t = hmYmd(Date.now()); HM.calD = t.startsWith(HM.calM) ? t : HM.calM + '-01'; hmRender(); }
+    function hmCalPick(d) { HM.calD = d; hmRender(); }
+    function hmMonToggle(k) { HM.monOpen = HM.monOpen || {}; HM.monOpen[k] = !hmMonIsOpen(k); hmRender(); }
+    function hmMonIsOpen(k) { const o = (HM.monOpen || {})[k]; if (o !== undefined) return o; return k === (HM.openMon || hmMonKey(Date.now())); }
     function hmRender() {
-        const cnt = {}; HM.list.forEach(r => { const t = hmTabOf(r); cnt[t] = (cnt[t] || 0) + 1; });
-        document.getElementById('hmTabs').innerHTML = HM_TABS.map(([k, t]) => `<button onclick="HM.tab='${k}'; hmRender()" class="shrink-0 px-4 py-2.5 rounded-full text-[14.5px] font-black ${HM.tab === k ? 'bg-[#84CC16] text-[#12261E]' : 'bg-white/5 text-[#94A3B8] border border-white/10'}">${t}${cnt[k] ? ' ' + cnt[k] : ''}</button>`).join('');
-        const q = String(HM.q || '').replace(/[^0-9]/g, '');
-        const view = q.length >= 3 ? HM.list.filter(r => String(r.phone || '').replace(/[^0-9]/g, '').includes(q)) : HM.list.filter(r => hmTabOf(r) === HM.tab);   // 🔍 [패치 #110] 번호로 찾기는 모든 탭에서
         const box = document.getElementById('hmList');
+        const q = String(HM.q || '').trim();
+        const all = HM.list.filter(r => hmMatch(r, q));
+        const run = all.filter(r => !hmIsDone(r) && hmTabOf(r) !== 'done'), done = all.filter(r => hmIsDone(r) || hmTabOf(r) === 'done');
+        const nNew = all.filter(r => hmTabOf(r) === 'new').length;
+        const V = HM.view || 'run';
+        const btn = (k, t) => `<button onclick="hmGo('${k}')" class="shrink-0 px-4 py-2.5 rounded-full text-[15px] font-black ${V === k ? 'bg-[#84CC16] text-[#12261E]' : 'bg-white/5 text-[#94A3B8] border border-white/10'}">${t}</button>`;
+        document.getElementById('hmTabs').innerHTML = btn('run', `진행 중 ${run.length}${nNew ? ` <span class="ml-1 px-2 py-0.5 rounded-full bg-red-500 text-white text-[12.5px]">새 ${nNew}</span>` : ''}`) + btn('cal', '📅 달력') + btn('done', `✅ 끝남 ${done.length}`);
         if (HM.err) { box.innerHTML = `<div class="col-span-full py-12 px-6 text-center text-amber-300 glass-panel rounded-[24px] font-bold leading-relaxed">${hmE(HM.err)}</div>`; return; }
-        box.innerHTML = view.length ? view.map(r => {
-            const st = HM_ST[r.status] || HM_ST.new;
-            return hmCard(r, st);
-        }).join('') : `<div class="col-span-full py-16 text-center text-[#94A3B8] glass-panel rounded-[24px] font-bold">${q.length >= 3 ? '그 번호로 들어온 의뢰가 없어요.' : HM.tab === 'new' ? '새로 들어온 의뢰가 없어요.' : '없어요.'}</div>`;
-        lucide.createIcons();
+        const empty = t => `<div class="col-span-full py-14 text-center text-[#94A3B8] glass-panel rounded-[24px] font-bold">${t}</div>`;
+        const card = r => hmCard(r, HM_ST[r.status] || HM_ST.new);
+        let h = '';
+        if (V === 'run') {
+            HM_RUN.forEach(([k, t]) => {
+                let g = run.filter(r => hmTabOf(r) === k);
+                if (k === 'booked') g = g.slice().sort((a, b) => String(a.coDate || '9').localeCompare(String(b.coDate || '9')));
+                if (!g.length) return;
+                h += `<div class="col-span-full hm-gh">${t}<span>${g.length}</span></div>` + g.map(card).join('');
+            });
+            if (!h) h = empty(q ? '찾는 의뢰가 없어요. (끝난 의뢰는 [✅ 끝남]에서 찾아요)' : '진행 중인 의뢰가 없어요.');
+        } else if (V === 'cal') {
+            if (!HM.calM) { const t = hmYmd(Date.now()); HM.calM = t.slice(0, 7); HM.calD = t; }
+            const [y, m] = HM.calM.split('-').map(Number), first = new Date(y, m - 1, 1), days = new Date(y, m, 0).getDate(), today = hmYmd(Date.now());
+            const plan = {}, fin = {};
+            all.forEach(r => { const p = hmPlanDay(r); if (p) (plan[p] = plan[p] || []).push(r); const f = hmDoneDay(r); if (f) (fin[f] = fin[f] || []).push(r); });
+            let g = '';
+            for (let i = 0; i < first.getDay(); i++) g += '<span></span>';
+            for (let d = 1; d <= days; d++) {
+                const k = `${HM.calM}-${String(d).padStart(2, '0')}`, pb = (plan[k] || []).length, gb = (fin[k] || []).length;
+                const dow = (first.getDay() + d - 1) % 7;
+                g += `<button onclick="hmCalPick('${k}')" class="hm-cd${k === today ? ' today' : ''}${k === HM.calD ? ' sel' : ''}${dow === 0 ? ' sun' : dow === 6 ? ' sat' : ''}"><b>${d}</b><span>${pb ? `<i class="b">${pb}</i>` : ''}${gb ? `<i class="g">${gb}</i>` : ''}</span></button>`;
+            }
+            h += `<div class="col-span-full hm-cal">
+                <div class="hm-cal-top"><button onclick="hmCalMove(-1)" aria-label="지난달">‹</button><b>${y}년 ${m}월</b><button onclick="hmCalMove(1)" aria-label="다음 달">›</button></div>
+                <div class="hm-cal-g hm-cal-w">${'일월화수목금토'.split('').map((w, i) => `<span class="${i === 0 ? 'sun' : i === 6 ? 'sat' : ''}">${w}</span>`).join('')}</div>
+                <div class="hm-cal-g">${g}</div>
+                <div class="hm-cal-lg"><span><i class="b"></i>작업 예정</span><span><i class="g"></i>작업 끝남</span>${q ? '<span>🔍 찾은 것만 표시</span>' : ''}</div>
+              </div>`;
+            const dd = HM.calD && HM.calD.startsWith(HM.calM) ? HM.calD : '';
+            if (dd) {
+                const P = plan[dd] || [], F = fin[dd] || [], dt = new Date(+dd.slice(0, 4), +dd.slice(5, 7) - 1, +dd.slice(8));
+                h += `<div class="col-span-full hm-gh">${dt.getMonth() + 1}월 ${dt.getDate()}일 (${'일월화수목금토'[dt.getDay()]}) · 작업 ${P.length + F.length}건</div>`;
+                if (P.length) h += `<div class="col-span-full hm-sub b">● 작업 예정 ${P.length}</div>` + P.map(card).join('');
+                if (F.length) h += `<div class="col-span-full hm-sub g">● 작업 끝남 ${F.length}</div>` + F.map(card).join('');
+                if (!P.length && !F.length) h += empty('이날은 작업이 없어요.');
+            }
+        } else {
+            const mon = {};
+            done.forEach(r => { const k = hmMonKey(hmDoneAt(r)); (mon[k] = mon[k] || []).push(r); });
+            const keys = Object.keys(mon).sort().reverse();
+            keys.forEach(k => {
+                const g = mon[k].sort((a, b) => hmDoneAt(b) - hmDoneAt(a)), avg = hmStarsAvg(g), open = q ? true : hmMonIsOpen(k);
+                h += `<button onclick="hmMonToggle('${k}')" class="col-span-full hm-mon"><b>${open ? '▾' : '▸'} ${k.slice(0, 4)}년 ${+k.slice(5)}월</b><span>${g.length}건${avg ? ` · <em>★</em> 평균 ${avg}` : ''}</span></button>`;
+                if (open) h += g.map(card).join('');
+            });
+            if (!h) h = empty(q ? '찾는 끝난 의뢰가 없어요.' : '끝난 의뢰가 아직 없어요.');
+        }
+        if (q && V === 'run' && done.length) h += `<button onclick="hmGo('done')" class="col-span-full hm-mon"><b>✅ 끝난 의뢰에서도 찾았어요</b><span>${done.length}건 보기 →</span></button>`;
+        if (q && V === 'done' && run.length) h += `<button onclick="hmGo('run')" class="col-span-full hm-mon"><b>진행 중 의뢰에서도 찾았어요</b><span>${run.length}건 보기 →</span></button>`;
+        box.innerHTML = h;
+        try { lucide.createIcons(); } catch (e) {}
     }
     function hmOpen(id) {
         const r = HM.list.find(x => x.id === id); if (!r) return;
         HM.cur = r; HM.pick = ''; HM.fee = Number(r.fee) || 0; hmPaint();
-        if (HM.tab !== hmTabOf(r)) { HM.tab = hmTabOf(r); if (!document.getElementById('view-home').classList.contains('hidden')) hmRender(); }   // 🔔 [패치 #109] 알림으로 열면 그 의뢰가 있는 탭으로
+        { const v = hmTabOf(r) === 'done' ? 'done' : 'run'; if (HM.view !== 'cal' && HM.view !== v) { HM.view = v; if (v === 'done') HM.openMon = hmMonKey(hmDoneAt(r)); if (!document.getElementById('view-home').classList.contains('hidden')) hmRender(); } }   // 🔔 [패치 #109·#132] 알림으로 열면 그 의뢰가 있는 칸으로
         document.getElementById('hmModal').classList.remove('hidden');
         document.body.style.overflow = 'hidden';
         if (!(history.state && history.state.hmOpen)) history.pushState({ hmOpen: 1 }, '', '');
@@ -3108,7 +3211,7 @@
         const r = HM.cur; if (!r) return;
         try { const res = await fetch(getAuthUrl(`${HM_URL}/${encodeURIComponent(r.id)}.json`), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: st, statusAt: Date.now() }) }); if (!res.ok) throw new Error(); }
         catch (e) { return alert('저장하지 못했어요. (DB 규칙 v8 게시 확인)'); }
-        r.status = st; HM.tab = hmTabOf(r); hmClose(); await hmLoad();
+        r.status = st; if (HM.view !== 'cal') HM.view = hmTabOf(r) === 'done' ? 'done' : 'run'; hmClose(); await hmLoad();
     }
     async function hmDelete() {
         const r = HM.cur; if (!r || !confirm('이 의뢰를 완전히 지울까요?\n(업체에 이미 보낸 의뢰는 업체 의뢰함에 그대로 남아요)')) return;
