@@ -8906,7 +8906,7 @@ ${AI_COMMON_RULES}
         c.home = { hid: String(h.hid || ''), kind: HOME_KIND_T[h.kind] ? h.kind : 'single', site: HOME_SITE_T[h.site] ? h.site : '', plan: HOME_PLAN_T[h.plan] ? h.plan : '',
           budget: Math.max(0, Number(h.budget) || 0), budgetUnknown: h.budgetUnknown === true, contact: h.contact === 'call' ? 'call' : 'sms', memo: String(h.memo || '').slice(0, 200),
           stage: ['sched', 'booked', 'done'].includes(h.stage) ? h.stage : '', date: /^\d{4}-\d{2}-\d{2}$/.test(String(h.date || '')) ? String(h.date) : '', slot: ['am', 'pm', 'talk'].includes(h.slot) ? h.slot : 'talk', amount: Math.max(0, Number(h.amount) || 0),
-          fee: Math.max(0, Number(h.fee) || 0), feeAgreedAt: Number(h.feeAgreedAt) || 0, feeChargedAt: Number(h.feeChargedAt) || 0, feeRefundedAt: Number(h.feeRefundedAt) || 0 };   // 🤝 [패치 #108] · 💰 [패치 #125]
+          fee: Math.max(0, Number(h.fee) || 0), feeAgreedAt: Number(h.feeAgreedAt) || 0, feeChargedAt: Number(h.feeChargedAt) || 0, feeRefundedAt: Number(h.feeRefundedAt) || 0, termsAt: Number(h.termsAt) || 0 };   // 🤝 [패치 #108] · 💰 [패치 #125]
       }
       return c;
     };
@@ -9183,6 +9183,104 @@ ${AI_COMMON_RULES}
         const lb = [...el.querySelectorAll('span')].reverse().find(x => /내용 보기/.test(x.textContent || ''));
         if (lb) lb.innerHTML = r.home.fee > 0 ? `💰 연결 수수료 ${ptNum(r.home.fee)}원 · 눌러서 확인` : '📋 이용 조건 확인하고 의뢰 보기';
       });
+    };
+    // ==========================================
+    // 🟢 [패치 #135] 고객 의뢰(조경노트 홈) 화면: 맨 위 '지금 할 일' 한 칸 (시안 '의뢰화면_시안' 승인 2026-10-06 22:18)
+    //  - 진행 점 4개: 열기 → 연락 → 날짜 확정 → 완료 · 지금 누를 초록 버튼 하나만 크게
+    //  - 이용 조건: 처음 한 번은 전체 화면, 그다음부터(수수료 없는 의뢰)는 체크 한 줄 + [의뢰 열기] (동의 기록은 서버에 그대로)
+    //  - 견적서 먼저·날짜 바꾸기·진행 취소·이번엔 못 해요·지우기는 [그 밖에]에 접어 둠
+    // ==========================================
+    function nxTermsKey() { return 'jn_coterms_ok_' + (currentUserId || ''); }
+    function nxTermsSeen() {
+      try { if (localStorage.getItem(nxTermsKey())) return true; } catch (e) {}
+      return (RV.list || []).some(x => x && x.via === 'home' && x.home && !x.locked && (x.home.termsAt || x.home.feeAgreedAt));
+    }
+    function nxContactKey(id) { return 'jn_hp_contact_' + id; }
+    function nxContacted(r) { try { return !!localStorage.getItem(nxContactKey(r.id)); } catch (e) { return false; } }
+    function nxMarkContact() { const r = RV.cur; if (!r) return; try { localStorage.setItem(nxContactKey(r.id), '1'); } catch (e) {} setTimeout(() => { if (RV.cur && RV.cur.id === r.id) reqRenderDetail(); }, 800); }
+    const reqFeeAgreeNX0 = reqFeeAgree;
+    reqFeeAgree = async function () { await reqFeeAgreeNX0.apply(this, arguments); if (RV.cur && !RV.cur.locked) { try { localStorage.setItem(nxTermsKey(), '1'); } catch (e) {} } else if (RV.cur && document.getElementById('nxNow')) reqRenderDetail(); };
+    function nxDots(step) {   // step: 1 열기, 2 연락, 3 날짜 확정, 4 완료, 5 = 다 끝
+      const T = ['열기', '연락', '날짜 확정', '완료'];
+      return '<div class="flex items-start">' + T.map((t, i) => { const n = i + 1, ok = n < step, cur = n === step;
+        return (i ? `<span class="flex-1 h-[3px] mt-[15px] rounded" style="background:${n <= step ? '#151E2D' : '#E2E8F0'}"></span>` : '') +
+          `<span class="flex flex-col items-center gap-1 w-[56px] shrink-0"><span class="w-8 h-8 rounded-full flex items-center justify-center text-[15px] font-black" style="${ok ? 'background:#151E2D;color:#BEF264;' : cur ? 'background:#84CC16;color:#12261E;box-shadow:0 0 0 2.5px #151E2D;' : 'background:#E2E8F0;color:#94A3B8;'}">${ok ? '✓' : n}</span><span class="text-[13px] font-black whitespace-nowrap" style="color:${ok || cur ? '#151E2D' : '#94A3B8'}">${t}</span></span>`; }).join('') + '</div>';
+    }
+    const nxBig = (fn, label, white) => `<button type="button" onclick="${fn}" id="nxBig" class="w-full min-h-[62px] rounded-[17px] text-[19px] font-black active:scale-[0.98] ${white ? 'bg-white' : 'bg-[#84CC16]'} text-[#12261E] disabled:opacity-50" style="box-shadow:inset 0 0 0 2px #151E2D">${label}</button>`;
+    const nxBox = (lbl, inner) => `<div id="nxNow" class="rounded-[20px] p-4 flex flex-col gap-3" style="background:#F7FEE7;border:2.5px solid #84CC16;"><span class="text-[14.5px] font-black" style="color:#4D7C0F">${lbl}</span>${inner}</div>`;
+    function nxMore(items, label) {   // [그 밖에] 접기
+      if (!items.length) return '';
+      return `<details id="nxMore" class="rounded-[16px] border-[1.5px] border-[#334155]"><summary class="list-none cursor-pointer px-4 py-3.5 flex justify-between items-center text-[16px] font-black text-[#CBD5E1]"><span>그 밖에 (${escHtml(label)})</span><span>▾</span></summary><div id="nxMoreBody" class="flex flex-col gap-2 px-3 pb-3"></div></details>`;
+    }
+    function nxMoreBtn(fn, label, color) { return `<button type="button" onclick="${fn}" class="w-full h-[54px] rounded-[14px] bg-white text-[16px] font-black active:scale-[0.98]" style="color:${color || '#151E2D'}">${label}</button>`; }
+    const reqRenderDetailNX0 = reqRenderDetail;
+    reqRenderDetail = function () {
+      reqRenderDetailNX0();
+      const r = RV.cur; if (!r || r.via !== 'home' || !r.home) return;
+      const pane = document.getElementById('reqDetailPane'); if (!pane || !pane.firstElementChild) return;
+      const h = r.home, head = pane.firstElementChild;
+      try {
+        if (r.locked) {   // ① 열기
+          if ((h.fee || 0) > 0 || !nxTermsSeen()) return;   // 처음이거나 수수료가 있으면 예전 전체 동의 화면 그대로
+          const dec = document.getElementById('reqHomeDeclineBtn');
+          pane.innerHTML = '';
+          pane.appendChild(head);
+          head.insertAdjacentHTML('afterend', nxBox('지금 할 일 · 의뢰 열기', nxDots(1) +
+            `<label class="flex gap-2.5 items-start cursor-pointer"><input type="checkbox" id="nxTermsChk" onchange="document.getElementById('nxBig').disabled=!this.checked" class="w-6 h-6 mt-0.5 shrink-0 accent-[#151E2D]"><span class="text-[15px] font-bold text-[#1E293B] leading-relaxed break-keep">중개 이용 조건(약관 제7조)을 확인했어요. 작업·대금은 고객과 직접 계약해요.</span></label>
+             <details><summary class="cursor-pointer text-[14.5px] font-black text-[#1D4ED8] underline underline-offset-2">이용 조건 전체 보기</summary><ol class="mt-2 pl-5 list-decimal text-[14px] font-bold text-[#334155] leading-[1.65] break-keep space-y-1">
+              <li>조경노트 홈은 고객과 업체를 연결하는 <b>중개 서비스</b>예요. 작업 계약은 <b>업체와 고객이 직접</b> 맺어요.</li>
+              <li>견적·일정·작업 품질·하자·안전사고·대금은 <b>업체 책임</b>이에요.</li>
+              <li>고객과의 분쟁은 <b>업체가 직접</b> 해결하며, 조경노트 홈은 중재하거나 보상하지 않아요. (단, 조경노트 홈의 고의나 중대한 잘못은 제외)</li>
+              <li>고객 정보는 <b>이 의뢰에만</b> 쓰고, 다른 데 쓰거나 남에게 주지 않아요.</li>
+              <li>작업 뒤 조경노트 홈이 고객 만족도를 확인해 연결 품질 관리에 반영해요.</li></ol></details>` +
+            nxBig('reqFeeAgree()', '📋 의뢰 열기').replace('id="nxBig"', 'id="nxBig" disabled').replace('onclick="reqFeeAgree()"', 'onclick="if(document.getElementById(\'nxTermsChk\').checked){this.disabled=true;this.textContent=\'여는 중…\';reqFeeAgree()}"') +
+            '<span id="reqFeeBtn" class="hidden"></span>'));
+          document.getElementById('nxNow').insertAdjacentHTML('afterend', `<div class="bg-white rounded-[20px] p-4 flex flex-col gap-2 text-[#0F172A]">
+              <span class="text-[14px] font-black text-[#3F6212]">원하는 작업</span><span class="flex flex-wrap gap-1.5">${(r.works.length ? r.works : ['내용에 적음']).map(w => `<span class="text-[14.5px] font-black rounded-[9px] px-2.5 py-1 bg-[#14261E] text-[#BEF264]">${escHtml(w)}</span>`).join('')}</span>
+              <span class="text-[14px] font-black text-[#3F6212] mt-1">동네</span><span class="text-[17px] font-bold">${escHtml(r.area || '동네 정보 없음')}${h.budget ? ' · 고객 예산 ' + escHtml(homeWon(h.budget)) : ''}</span>
+              <div class="rounded-[14px] border-2 border-dashed border-[#CBD5E1] p-3 text-[15px] font-bold text-[#334155] break-keep">🔒 열면 보여요 · 고객 성함 · 연락처 · 주소${r.imgCount ? ' · 사진 ' + r.imgCount + '장' : ''}</div></div>` + nxMore(['x'], '이번엔 못 해요'));
+          if (dec) { dec.classList.add('w-full'); document.getElementById('nxMoreBody').appendChild(dec); }
+          return;
+        }
+        const st = h.stage === 'done' ? 'done' : h.stage === 'booked' ? 'booked' : '';
+        const step = st === 'done' ? 5 : st === 'booked' ? 4 : nxContacted(r) ? 3 : 2;
+        const smsOnly = h.contact === 'sms';
+        const tel = `<a href="tel:${escHtml(r.phone)}" onclick="${smsOnly ? "if(!confirm('이 고객은 문자로만 연락을 원하셨어요.\\n그래도 전화할까요?')){event.preventDefault();return;} " : ''}nxMarkContact()" class="h-[56px] rounded-[15px] text-white text-[17.5px] font-black flex items-center justify-center" style="text-decoration:none;background:${smsOnly ? '#64748B' : '#1D4ED8'}">📞 전화하기</a>`;
+        const sms = `<a href="${escHtml(reqSmsHref(r.phone, reqReplyText(r)))}" onclick="nxMarkContact()" class="h-[56px] rounded-[15px] bg-white text-[#151E2D] text-[17.5px] font-black flex items-center justify-center" style="text-decoration:none;box-shadow:inset 0 0 0 2px #151E2D">💬 문자하기</a>`;
+        const feeLine = h.fee > 0 ? `<span class="text-[14px] font-black text-center rounded-[12px] px-3 py-2" style="background:#FFF7ED;color:#9A3412">💰 연결 수수료 ${ptNum(h.fee)}P · ${h.feeRefundedAt ? '돌려받음' : h.feeChargedAt ? '확정 때 차감됨' : '날짜 확정할 때 빠져요'}</span>` : '';
+        let box, more = [], moreLbl = '';
+        if (step <= 3) {
+          box = nxBox(step === 2 ? '지금 할 일 · 고객에게 연락하기' : '지금 할 일 · 고객과 날짜 정하기', nxDots(step) +
+            (smsOnly ? '<span class="text-[14.5px] font-black text-center rounded-[12px] px-3 py-2" style="background:#FEF2F2;color:#991B1B">이 고객은 <u>문자로만</u> 연락을 원해요</span>' : '') +
+            `<div class="grid grid-cols-2 gap-2">${tel}${sms}</div>` + nxBig("hpOpen('book')", '📅 날짜 정했어요') +
+            '<span class="text-[14px] font-bold text-center text-[#475569] leading-relaxed break-keep">누르면 날짜·오전/오후만 고르면 끝.<br>예약 문자·일정·거래처는 알아서 정리돼요.</span>' + feeLine);
+          more = [nxMoreBtn('reqToQuote()', '💰 견적서 먼저 보내기'), 'DEC', nxMoreBtn('reqDelete()', '장난·스팸 의뢰 지우기', '#B91C1C')]; moreLbl = '견적서 먼저 · 못 해요';
+        } else if (step === 4) {
+          box = nxBox('지금 할 일 · 작업하러 가기', nxDots(4) +
+            `<span class="text-[18px] font-black text-[#151E2D] text-center">📅 ${escHtml(hpDateKo(h.date, h.slot))} 작업${h.amount ? ' · ' + escHtml(homeWon(h.amount)) : ''}</span>` +
+            '<span class="text-[14px] font-black rounded-[12px] bg-white px-3 py-2 text-[#3F6212] leading-relaxed break-keep">✓ 예약 문자 · ✓ 일정표에 넣음 · ✓ 거래처 등록</span>' +
+            nxBig("hpOpen('done')", '✅ 작업 끝났어요') + feeLine);
+          more = [nxMoreBtn("hpOpen('book')", '📅 날짜 바꾸기'), nxMoreBtn('hpCancel()', '진행 취소', '#B91C1C')]; moreLbl = '날짜 바꾸기 · 취소';
+        } else {
+          box = nxBox('수고하셨어요!', nxDots(5) +
+            `<span class="text-[16.5px] font-black text-center rounded-[14px] px-3 py-3" style="background:#ECFCCB;color:#3F6212">✅ 작업 완료${h.amount ? ' · ' + escHtml(homeWon(h.amount)) + ' 장부에 넣음' : ''}</span>` +
+            nxBig('hpReport()', '📝 작업일지 쓰기 (선택)', true) + '<span class="text-[14px] font-bold text-center text-[#475569]">일지를 보내면 고객님이 더 믿고 다시 찾아요.</span>');
+        }
+        const dec = document.getElementById('reqHomeDeclineBtn');
+        const old = document.getElementById('hpActions'); if (old) old.remove();
+        [...pane.children].forEach(el => { if (el !== head && el.tagName === 'BUTTON' && /reqDelete\(\)/.test(el.getAttribute('onclick') || '')) el.remove(); });
+        head.insertAdjacentHTML('afterend', box);
+        if (more.length) {
+          pane.insertAdjacentHTML('beforeend', nxMore(more, moreLbl));
+          const body = document.getElementById('nxMoreBody');
+          more.forEach(m => { if (m === 'DEC') { if (dec) { dec.classList.add('w-full'); dec.style.display = ''; body.appendChild(dec); } } else body.insertAdjacentHTML('beforeend', m); });
+        } else if (dec) dec.remove();
+        pane.querySelectorAll('a[href^="tel:"], a[href^="sms:"]').forEach(a => { if (!a.closest('#nxNow')) a.addEventListener('click', nxMarkContact); });
+        if (step <= 3) {   // 위 '지금 할 일'에 전화·문자·문자로만 안내가 있으니 아래 카드의 같은 것은 숨김
+          pane.querySelectorAll('div.grid').forEach(g => { if (!g.closest('#nxNow') && g.querySelector('a[href^="tel:"]')) g.style.display = 'none'; });
+          pane.querySelectorAll('div').forEach(d => { if (!d.closest('#nxNow') && d.style.background && /254, 242, 242|FEF2F2/i.test(d.style.background) && /문자로만/.test(d.textContent)) d.style.display = 'none'; });
+        }
+      } catch (e) { console.log('nx', e); }
     };
     // 🔔 [패치 #108] 알림을 누르면 sw.js가 열린 업체 앱 창에 '이 화면 열어 줘'를 보냄 (창을 새로 불러오지 않음)
     try { if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e => {
