@@ -476,7 +476,7 @@
             <nav class="grid grid-cols-3 gap-3"><!-- 📋 [패치 #130] 일지 작성 옆에 일지·리포트 목록, 거래처 목록은 아래 줄로 -->
                 <button id="tabCalendar" onclick="switchView('calendar')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="calendar-days" class="w-6 h-6"></i><span class="btn-title">작업 일정표</span></button>
                 <button id="tabAdmin" onclick="switchView('admin')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="pen-tool" class="w-6 h-6"></i><span class="btn-title">작업 일지 작성</span></button>
-                <button id="tabLogList" onclick="switchView('logList')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="clipboard-list" class="w-6 h-6"></i><span class="btn-title">일지·리포트</span></button><!-- 📋 [패치 #130] -->
+                <button id="tabLogList" onclick="switchView('logList')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="clipboard-list" class="w-6 h-6"></i><span class="btn-title" style="line-height:1.25;text-align:center">작업 일지<br>목록 보기</span></button><!-- 📋 [패치 #130] -->
                 <button id="tabQuote" onclick="switchView('quote')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="calculator" class="w-6 h-6"></i><span class="btn-title">견적서 작성</span></button>
                 <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="folder-open" class="w-6 h-6"></i><span class="btn-title">견적 보관함</span></button>
                 <button id="tabClient" onclick="switchView('clients')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="building-2" class="w-6 h-6"></i><span class="btn-title">거래처 목록</span></button>
@@ -897,7 +897,7 @@
     <section id="logListView" class="hidden space-y-4">
       <div class="bg-white rounded-[28px] p-5 luxury-shadow space-y-4">
         <div class="flex items-center justify-between pb-3 border-b-2 border-[#F1F5F9]">
-          <h2 class="text-[22px] font-black text-[#151E2D] flex items-center gap-2 tracking-tight"><i data-lucide="clipboard-list" class="w-6 h-6 text-[#84CC16] stroke-[2.5]"></i> 일지·리포트 목록</h2>
+          <h2 class="text-[22px] font-black text-[#151E2D] flex items-center gap-2 tracking-tight"><i data-lucide="clipboard-list" class="w-6 h-6 text-[#84CC16] stroke-[2.5]"></i> 작업 일지 목록</h2>
           <span id="llCount" class="text-[15px] font-black bg-[#151E2D] text-[#84CC16] px-3.5 py-1.5 rounded-xl">0건</span>
         </div>
         <div id="llTabs" class="grid grid-cols-3 gap-1.5 bg-[#F1F5F9] p-1.5 rounded-[16px]"></div>
@@ -10713,7 +10713,7 @@ ${AI_COMMON_RULES}
           }
         }
         if (viewMode === 'admin_history' && LL.from) {   // 목록에서 열었으면 '목록으로'가 일지·리포트 목록으로
-          const b = document.getElementById('btnBackFromReport'); if (b) { b.innerText = '일지·리포트 목록으로'; b.onclick = () => switchView('logList'); }
+          const b = document.getElementById('btnBackFromReport'); if (b) { b.innerText = '작업 일지 목록으로'; b.onclick = () => switchView('logList'); }
         }
       } catch (e) {}
       return r;
