@@ -2724,6 +2724,7 @@
         if (r.coStage === 'booked') return `🤝 예약 확정 · ${hmDate(r.coDate, r.coSlot)}${r.coAmount ? ' · 예상 ' + hmWon(r.coAmount) : ''}`;
         if (r.coStage === 'sched') return `📅 업체가 작업일 안내함 · ${hmDate(r.coDate, r.coSlot)}`;
         if (r.status !== 'sent') return '';
+        if (r.coContactAt) return '📞 업체가 고객에게 연락함 · 날짜 정하기 전';   // [패치 #137]
         if (r.coSeenAt) return '👀 업체가 봤어요 · 날짜 정하기 전';
         return r.unseenAlertAt ? '⚠️ 업체가 2시간째 안 봤어요 · 전화해 보세요' : '업체 확인 전';
     }
@@ -2731,7 +2732,8 @@
         if (h.decline) return '↩️ ' + hmE(h.toName) + ' 못 함' + (h.memo ? ' · ' + hmE(h.memo) : '');
         if (h.sms) return '💬 ' + hmE(HM_SMS[h.sms] || '문자') + ' 문자';
         if (h.feeAgree) return '💰 ' + hmE(h.toName) + ' 수수료 ' + Number(h.feeAgree).toLocaleString('ko-KR') + 'P · 이용 조건 동의';
-        if (h.terms) return '📋 ' + hmE(h.toName) + ' 중개 이용 조건 동의';   // 📋 [패치 #131]
+        if (h.terms) return '📋 ' + hmE(h.toName) + ' 중개 이용 조건 동의';
+        if (h.contact) return '📞 ' + hmE(h.toName) + ' 고객에게 첫 연락 (' + ({ sms: '문자', tel: '전화', quote: '견적서' }[h.contact] || '문자') + ')';   // [패치 #137]   // 📋 [패치 #131]
         if (h.feeRefund) return '↩ ' + hmE(h.toName) + ' 수수료 ' + Number(h.feeRefund).toLocaleString('ko-KR') + 'P 돌려줌';
         if (h.stage === 'sched') return '📅 ' + hmE(h.toName) + ' 작업일 안내 · ' + hmE(hmDate(h.date, h.slot));
         if (h.stage === 'booked') return '🤝 ' + hmE(h.toName) + ' 예약 확정 · ' + hmE(hmDate(h.date, h.slot)) + (h.amount ? ' · ' + hmE(hmWon(h.amount)) : '');
@@ -2764,12 +2766,19 @@
     async function hmLoad(force) {
         if (!currentIdToken) return;
         try {
-            const res = await fetch(getAuthUrl(`${HM_URL}.json?t=${Date.now()}`));
-            const d = res.ok ? await res.json() : null;
+            let res = await fetch(getAuthUrl(`${HM_URL}.json?t=${Date.now()}`));
+            if (res.status === 401 || res.status === 403) { try { if (typeof refreshIdToken === 'function' && await refreshIdToken()) res = await fetch(getAuthUrl(`${HM_URL}.json?t=${Date.now()}`)); } catch (x) {} }   // 🔄 [패치 #137] 로그인 열쇠가 만료됐으면 새로 받고 다시
+            if (!res.ok) throw new Error('http ' + res.status);   // (예전: 실패하면 목록이 비어 보였음)
+            const d = await res.json();
             if (d && d.error) throw new Error('rule');
+            const before = new Set(HM.list.map(x => x.id)), first = !HM.loadedOnce;
             HM.list = Object.keys(d || {}).filter(k => /^h[0-9]{10,20}$/.test(k) && d[k] && typeof d[k] === 'object').map(k => Object.assign({ id: k }, d[k])).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-            HM.err = '';
-        } catch (e) { HM.err = 'DB 규칙에 home_reqs 읽기 권한이 없거나 인터넷 연결이 불안정해요. (DB 규칙 v8 게시 확인)'; }
+            HM.err = ''; HM.loadedOnce = true;
+            if (!first) {   // 🔔 [패치 #137] 화면을 켜 둔 채로 새 의뢰가 오면 바로 알려 줌
+                const fresh = HM.list.filter(r => !before.has(r.id) && r.status === 'new');
+                if (fresh.length) { try { pmbToast('🔔 새 홈 의뢰 ' + fresh.length + '건 · ' + (fresh[0].area || fresh[0].addr || '') + ' ' + hmWorks(fresh[0])); } catch (x) {} }
+            }
+        } catch (e) { if (!HM.list.length) HM.err = 'DB 규칙에 home_reqs 읽기 권한이 없거나 인터넷 연결이 불안정해요. (DB 규칙 v8 게시 확인)'; }
         try {   // 🔔 [패치 #108] 업체별 휴대폰 알림 켜짐/꺼짐
             const pr = await fetch(getAuthUrl(HM_URL.replace(/home_reqs$/, 'push_subs') + `.json?t=${Date.now()}`)); const ps = pr.ok ? await pr.json() : null;
             if (ps && !ps.error) { HM.push = {}; Object.keys(ps).forEach(k => { const v = ps[k] || {}; HM.push[k.toLowerCase()] = !!(v.tokens && Object.keys(v.tokens).length) && !(v.prefs && v.prefs.request === false); }); }
@@ -2781,6 +2790,7 @@
     }
     function hmBadge() {
         const n = HM.list.filter(r => r.status === 'new' || r.status === 'declined').length;   // (거래 성사는 배지에 안 셈)
+        try { document.title = (n ? '(' + n + ') ' : '') + document.title.replace(/^\(\d+\)\s*/, ''); } catch (e) {}   // 🔔 [패치 #137] 브라우저 탭에 새 의뢰 수
         [['sideHomeCount', n], ['mobHomeCount', n]].forEach(([id, v]) => { const el = document.getElementById(id); if (el) { el.textContent = v; el.classList.toggle('hidden', !v); } });
     }
     function hmSearch(v) {   // 🔍 [패치 #132] 번호 뒷자리 · 이름 · 동네 · 업체로 찾기 (번호 4자리가 한 건이면 바로 열기)
@@ -2823,8 +2833,14 @@
         const linked = !!r.sentTo && ['sent', 'booked', 'done'].includes(r.status), done = r.status === 'done' || r.coStage === 'done';
         if (r.status === 'new') todo.push('업체 연결하기');
         if (r.status === 'guided') wait.push('💬 ' + (HM_SMS[r.lastSms] || '안내') + ' 문자 보냄 · 고객 답 기다리는 중');
-        if (linked && !r.custNotifiedAt) todo.push('📨 고객에게 업체 연결 안내 문자');
-        if (r.status === 'sent' && !r.coStage) { if (r.unseenAlertAt && !r.coSeenAt) todo.push('⚠️ 업체가 2시간째 안 봤어요 · 전화해 보세요'); else wait.push(r.coSeenAt ? '👀 업체가 봤어요 · 날짜 정하기 기다리는 중' : '업체 확인 기다리는 중'); }
+        // 📞 [패치 #137] 고객 안내 문자는 업체의 첫 연락 문자가 대신함 → 관리자는 문제 있을 때만
+        const HOW = { sms: '문자', tel: '전화', quote: '견적서' }, sentAgo = Date.now() - (Number(r.sentAt) || Date.now());
+        if (r.status === 'sent' && !r.coStage) {
+            if (r.unseenAlertAt && !r.coSeenAt) todo.push('⚠️ 업체가 2시간째 안 봤어요 · 전화해 보세요');
+            else if (!r.coContactAt && sentAgo > 24 * 3600000) todo.push('⚠️ 업체가 하루째 고객에게 연락 안 했어요 · 전화해 보세요');
+            else if (r.coContactAt) wait.push('✅ 업체가 고객에게 연락함 (' + (HOW[r.coContactHow] || '문자') + ' · ' + hmMD(r.coContactAt) + ') · 날짜 정하기 기다리는 중');
+            else wait.push(r.coSeenAt ? '👀 업체가 봤어요 · 고객 연락 기다리는 중' : '업체 확인 기다리는 중');
+        }
         if (r.status === 'sent' && r.coStage === 'sched') wait.push('📅 업체가 작업일 안내함 · 확정 기다리는 중');
         if (r.status === 'booked' && !done) wait.push('작업 완료 기다리는 중');
         const sv = r.survey || {};
@@ -3097,7 +3113,7 @@
           </div>
           ${(r.imgs || []).length ? `<div class="grid grid-cols-3 gap-2">${r.imgs.map((u, i) => `<button type="button" onclick="hmLbOpen(${i})" class="block aspect-square rounded-[12px] overflow-hidden bg-white/5"><img src="${hmE(u)}" class="w-full h-full object-cover" loading="lazy"></button>`).join('')}</div><div class="text-[13px] font-bold text-[#94A3B8] -mt-2">사진을 누르면 크게 보고 옆으로 넘길 수 있어요</div>` : '<div class="text-[14px] font-bold text-amber-300">사진 없이 보낸 의뢰예요.</div>'}
           ${r.status === 'declined' ? `<div class="rounded-[16px] bg-amber-400/15 border border-amber-400/40 p-3.5 text-[15px] font-bold text-amber-200 leading-relaxed">↩️ ${hmE(r.declinedName || '')} 업체가 못 한대요${r.declineReason ? ' · ' + hmE(r.declineReason) : ''}. 다른 업체로 연결해 주세요.</div>` : ''}
-          ${(r.status === 'sent' || r.status === 'booked' || r.coStage === 'done') ? `<div class="rounded-[16px] bg-[#84CC16]/15 border border-[#84CC16]/40 p-3.5 text-[15px] font-bold text-[#D9F99D] leading-relaxed">✅ ${hmE(r.sentName || '')} 업체에 연결했어요 (${hmTime(r.sentAt)})${r.memo ? '<br>메모: ' + hmE(r.memo) : ''}<br><span class="text-[16px] font-black ${r.coStage === 'booked' ? 'text-[#BEF264]' : 'text-white'}">진행: ${hmE(hmStageLine(r))}</span><br><span class="${r.custNotifiedAt ? '' : 'text-amber-300'}">${r.custNotifiedAt ? '고객에게 연결 안내 문자 보냄 ✓' : '아직 고객에게 [업체 연결 안내] 문자를 안 보냈어요'}</span></div>` : ''}
+          ${(r.status === 'sent' || r.status === 'booked' || r.coStage === 'done') ? `<div class="rounded-[16px] bg-[#84CC16]/15 border border-[#84CC16]/40 p-3.5 text-[15px] font-bold text-[#D9F99D] leading-relaxed">✅ ${hmE(r.sentName || '')} 업체에 연결했어요 (${hmTime(r.sentAt)})${r.memo ? '<br>메모: ' + hmE(r.memo) : ''}<br><span class="text-[16px] font-black ${r.coStage === 'booked' ? 'text-[#BEF264]' : 'text-white'}">진행: ${hmE(hmStageLine(r))}</span><br><span>${r.coContactAt ? '📞 업체가 고객에게 첫 연락 ✓ (' + hmTime(r.coContactAt) + ')' : '업체가 고객에게 아직 연락 전'}${r.custNotifiedAt ? ' · 관리자 안내 문자도 보냄' : ''}</span></div>` : ''}
 
           ${hmTermsBox(r)}
           ${hmFeeBox(r)}
@@ -3272,7 +3288,8 @@
     startDashboard = function () {
         startDashboardBeforeHome();
         hmLoad();
-        HM.timer = setInterval(() => { if (!document.hidden) hmLoad(); }, 30000);
+        HM.timer = setInterval(() => { if (!document.hidden) hmLoad(); }, 15000);   // 🔄 [패치 #137] 30초 → 15초
+        document.addEventListener('visibilitychange', () => { if (!document.hidden && currentIdToken) hmLoad(); });   // 다른 창 보다가 돌아오면 바로
     };
 </script>
 <!-- 🔐 [패치 #111] 잠금 번호 4자리 화면 -->

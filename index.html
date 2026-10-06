@@ -9020,6 +9020,9 @@ ${AI_COMMON_RULES}
     function hpClose() { const m = document.getElementById('hpModal'); if (m) m.classList.add('hidden'); }
     function hpApply(r, st) { Object.assign(r.home, st); const x = RV.list.find(y => y.id === r.id); if (x && x !== r && x.home) Object.assign(x.home, st); reqRenderDetail(); }
     function hpMark(r) { return `(조경노트 홈 의뢰 ${r.id})`; }
+    // ✂️ [패치 #137] 작업이 여러 개면 '소나무 전지 외 5건' · 성함이 없으면 주소 대신 '방배동 고객님'
+    function hpWorksShort(r) { const w = (r && r.works || []).filter(x => x && x !== '기타'); return w.length ? w[0] + (w.length > 1 ? ' 외 ' + (w.length - 1) + '건' : '') : '조경 작업'; }
+    function hpWho(r) { const a = reqArea(r.addr); return r.noName ? (a ? a + ' 고객님' : '고객님') : `${a ? a + ' ' : ''}${r.name} 고객님`; }
     function hpAutoClient(r) {   // 처음 고객이면 거래처에 조용히 등록
       try {
         if (clients.find(c => c && String(c.phone || '').replace(/[^0-9]/g, '') === r.phone)) return false;
@@ -9030,9 +9033,9 @@ ${AI_COMMON_RULES}
     }
     function hpAutoSchedule(r, date, slot, amount) {   // 방문 일정에 조용히 저장 (같은 의뢰면 고쳐 씀)
       try {
-        const mark = hpMark(r), i = schedules.findIndex(x => x && String(x.memo || '').includes(mark));
-        const sc = { id: i >= 0 ? schedules[i].id : String(Date.now()), date, title: `${reqArea(r.addr)} ${r.name} 고객님 ${r.works.length ? r.works.join(', ') : '조경 작업'}`.slice(0, 80),
-          color: 'border-[#84CC16]', tag: '작업 · ' + HP_SLOT[slot], addr: r.addr || '', memo: `연락처: ${reqPhoneFmt(r.phone)}\n주소: ${r.addr}${amount ? '\n예상 금액: ' + amount.toLocaleString('ko-KR') + '원' : ''}\n${mark}` };
+        const mark = hpMark(r), i = schedules.findIndex(x => x && (x.homeRid === r.id || String(x.memo || '').includes(mark)));
+        const sc = { id: i >= 0 ? schedules[i].id : String(Date.now()), date, title: `${hpWho(r)} ${hpWorksShort(r)}`.slice(0, 80), homeRid: r.id,
+          color: 'border-[#84CC16]', tag: '작업 · ' + HP_SLOT[slot], addr: r.addr || '', memo: `연락처: ${reqPhoneFmt(r.phone)}\n주소: ${r.addr}${amount ? '\n예상 금액: ' + amount.toLocaleString('ko-KR') + '원' : ''}${r.works.length > 1 ? '\n의뢰 작업: ' + r.works.join(', ') : ''}` };
         if (i >= 0) schedules[i] = sc; else schedules.push(sc);
         updateData('schedules', schedules); try { renderCalendar(); renderScheduleList(); } catch (e) {}
         return true;
@@ -9041,8 +9044,8 @@ ${AI_COMMON_RULES}
     function hpAutoLedger(r, amount) {   // 작업 끝 → 개인 장부 수입
       if (!amount) return false;
       try {
-        const mark = hpMark(r); if (ledgers.find(x => x && String(x.memo || '').includes(mark))) return false;   // 두 번 들어가지 않게
-        ledgers.push({ id: Date.now() + 1, date: hpToday(0), title: `[작업] ${reqArea(r.addr)} ${r.name} 고객님 ${r.works.length ? r.works.join(', ') : '조경 작업'}`.slice(0, 80), income: amount, expense: 0, vat: 0, memo: `조경노트 홈 작업 완료 ${mark}` });
+        const mark = hpMark(r); if (ledgers.find(x => x && (x.homeRid === r.id || String(x.memo || '').includes(mark)))) return false;   // 두 번 들어가지 않게
+        ledgers.push({ id: Date.now() + 1, date: hpToday(0), title: `[작업] ${hpWho(r)} ${hpWorksShort(r)}`.slice(0, 80), income: amount, expense: 0, vat: 0, memo: '조경노트 홈 작업 완료', homeRid: r.id });
         localStorage.setItem('shinhwa_pro_ledgers', JSON.stringify(ledgers)); if (typeof updateData === 'function') updateData('ledgers', ledgers); try { renderLedgerCalendar(); } catch (e) {}
         return true;
       } catch (e) { return false; }
@@ -9198,7 +9201,13 @@ ${AI_COMMON_RULES}
     }
     function nxContactKey(id) { return 'jn_hp_contact_' + id; }
     function nxContacted(r) { try { return !!localStorage.getItem(nxContactKey(r.id)); } catch (e) { return false; } }
-    function nxMarkContact() { const r = RV.cur; if (!r) return; try { localStorage.setItem(nxContactKey(r.id), '1'); } catch (e) {} setTimeout(() => { if (RV.cur && RV.cur.id === r.id) reqRenderDetail(); }, 800); }
+    function nxMarkContact(how) {
+      const r = RV.cur; if (!r) return; const first = !nxContacted(r);
+      try { localStorage.setItem(nxContactKey(r.id), '1'); } catch (e) {}
+      if (first && r.via === 'home') { try { requestPoints({ action: 'push_home_progress', reqId: r.id, stage: 'contact', how: typeof how === 'string' ? how : 'sms' }).catch(() => {}); } catch (e) {} }   // 📞 [패치 #137] 관리자 화면에 '업체가 연락함'
+      setTimeout(() => { if (RV.cur && RV.cur.id === r.id) reqRenderDetail(); }, 800);
+    }
+    function nxQuote() { nxMarkContact('quote'); reqToQuote(); }
     const reqFeeAgreeNX0 = reqFeeAgree;
     reqFeeAgree = async function () { await reqFeeAgreeNX0.apply(this, arguments); if (RV.cur && !RV.cur.locked) { try { localStorage.setItem(nxTermsKey(), '1'); } catch (e) {} } else if (RV.cur && document.getElementById('nxNow')) reqRenderDetail(); };
     function nxDots(step) {   // step: 1 열기, 2 연락, 3 날짜 확정, 4 완료, 5 = 다 끝
@@ -9253,16 +9262,18 @@ ${AI_COMMON_RULES}
         const st = h.stage === 'done' ? 'done' : h.stage === 'booked' ? 'booked' : '';
         const step = st === 'done' ? 5 : st === 'booked' ? 4 : nxContacted(r) ? 3 : 2;
         const smsOnly = h.contact === 'sms';
-        const tel = `<a href="tel:${escHtml(r.phone)}" onclick="${smsOnly ? "if(!confirm('이 고객은 문자로만 연락을 원하셨어요.\\n그래도 전화할까요?')){event.preventDefault();return;} " : ''}nxMarkContact()" class="h-[56px] rounded-[15px] text-white text-[17.5px] font-black flex items-center justify-center" style="text-decoration:none;background:${smsOnly ? '#64748B' : '#1D4ED8'}">📞 전화하기</a>`;
-        const sms = `<a href="${escHtml(reqSmsHref(r.phone, reqReplyText(r)))}" onclick="nxMarkContact()" class="h-[56px] rounded-[15px] bg-white text-[#151E2D] text-[17.5px] font-black flex items-center justify-center" style="text-decoration:none;box-shadow:inset 0 0 0 2px #151E2D">💬 문자하기</a>`;
+        const tel = `<a href="tel:${escHtml(r.phone)}" onclick="${smsOnly ? "if(!confirm('이 고객은 문자로만 연락을 원하셨어요.\\n그래도 전화할까요?')){event.preventDefault();return;} " : ''}nxMarkContact('tel')" class="h-[56px] rounded-[15px] text-white text-[17.5px] font-black flex items-center justify-center" style="text-decoration:none;background:${smsOnly ? '#64748B' : '#1D4ED8'}">📞 전화하기</a>`;
+        const sms = `<a href="${escHtml(reqSmsHref(r.phone, reqReplyText(r)))}" onclick="nxMarkContact('sms')" class="h-[56px] rounded-[15px] bg-white text-[#151E2D] text-[17.5px] font-black flex items-center justify-center" style="text-decoration:none;box-shadow:inset 0 0 0 2px #151E2D">💬 문자하기</a>`;
         const feeLine = h.fee > 0 ? `<span class="text-[14px] font-black text-center rounded-[12px] px-3 py-2" style="background:#FFF7ED;color:#9A3412">💰 연결 수수료 ${ptNum(h.fee)}P · ${h.feeRefundedAt ? '돌려받음' : h.feeChargedAt ? '확정 때 차감됨' : '날짜 확정할 때 빠져요'}</span>` : '';
         let box, more = [], moreLbl = '';
         if (step <= 3) {
           box = nxBox(step === 2 ? '지금 할 일 · 고객에게 연락하기' : '지금 할 일 · 고객과 날짜 정하기', nxDots(step) +
             (smsOnly ? '<span class="text-[14.5px] font-black text-center rounded-[12px] px-3 py-2" style="background:#FEF2F2;color:#991B1B">이 고객은 <u>문자로만</u> 연락을 원해요</span>' : '') +
-            `<div class="grid grid-cols-2 gap-2">${tel}${sms}</div>` + nxBig("hpOpen('book')", '📅 날짜 정했어요') +
+            `<div class="grid grid-cols-2 gap-2">${tel}${sms}</div>` +
+            `<button type="button" onclick="nxQuote()" class="w-full min-h-[56px] rounded-[15px] bg-white text-[#151E2D] text-[17px] font-black active:scale-[0.98] leading-tight px-2" style="box-shadow:inset 0 0 0 2px #151E2D">💰 견적서 먼저 보내기<span class="block text-[13px] font-bold text-[#64748B] mt-0.5">금액 안내가 필요할 때</span></button>` +
+            nxBig("hpOpen('book')", '📅 날짜 정했어요') +
             '<span class="text-[14px] font-bold text-center text-[#475569] leading-relaxed break-keep">누르면 날짜·오전/오후만 고르면 끝.<br>예약 문자·일정·거래처는 알아서 정리돼요.</span>' + feeLine);
-          more = [nxMoreBtn('reqToQuote()', '💰 견적서 먼저 보내기'), 'DEC', 'DEL']; moreLbl = '견적서 먼저 · 못 해요 · 지우기';
+          more = ['DEC', 'DEL']; moreLbl = '못 해요 · 지우기';
         } else if (step === 4) {
           box = nxBox('지금 할 일 · 작업하러 가기', nxDots(4) +
             `<span class="text-[18px] font-black text-[#151E2D] text-center">📅 ${escHtml(hpDateKo(h.date, h.slot))} 작업${h.amount ? ' · ' + escHtml(homeWon(h.amount)) : ''}</span>` +
@@ -9284,7 +9295,8 @@ ${AI_COMMON_RULES}
           const body = document.getElementById('nxMoreBody');
           more.forEach(m => { if (m === 'DEL') { body.insertAdjacentHTML('beforeend', nxMoreBtn('nxDelete()', '🗑️ 의뢰함에서 지우기 (연습·장난 의뢰)', '#B91C1C')); return; } if (m === 'DEC') { if (dec) { dec.classList.add('w-full'); dec.style.display = ''; body.appendChild(dec); } } else body.insertAdjacentHTML('beforeend', m); });
         } else if (dec) dec.remove();
-        pane.querySelectorAll('a[href^="tel:"], a[href^="sms:"]').forEach(a => { if (!a.closest('#nxNow')) a.addEventListener('click', nxMarkContact); });
+        pane.querySelectorAll('a[href^="tel:"], a[href^="sms:"]').forEach(a => { if (!a.closest('#nxNow')) a.addEventListener('click', () => nxMarkContact(/^tel:/.test(a.getAttribute('href')) ? 'tel' : 'sms')); });
+        if (step === 5) pane.querySelectorAll('div').forEach(d => { if (d.style.background && /254, 242, 242|FEF2F2/i.test(d.style.background) && /문자로만/.test(d.textContent)) d.style.display = 'none'; });   // 끝난 뒤엔 '문자로만' 안내 숨김
         if (step <= 3) {   // 위 '지금 할 일'에 전화·문자·문자로만 안내가 있으니 아래 카드의 같은 것은 숨김
           pane.querySelectorAll('div.grid').forEach(g => { if (!g.closest('#nxNow') && g.querySelector('a[href^="tel:"]')) g.style.display = 'none'; });
           pane.querySelectorAll('div').forEach(d => { if (!d.closest('#nxNow') && d.style.background && /254, 242, 242|FEF2F2/i.test(d.style.background) && /문자로만/.test(d.textContent)) d.style.display = 'none'; });
@@ -9303,9 +9315,9 @@ ${AI_COMMON_RULES}
     reqReplyText = function (r) {
       if (!r || r.via !== 'home') return reqReplyTextH0(r);
       const who = !r.noName ? r.name + ' 고객님, ' : '고객님, ';
-      const w = r.works && r.works.length ? r.works.join(', ') : '조경 작업';
+      const w = hpWorksShort(r);   // ✂️ [패치 #137] 줄줄이 말고 짧게
       const co = (myCompanyProfile && myCompanyProfile.name) || '저희 업체';
-      return `[🌿 조경노트 홈] ${who}안녕하세요.\n\n조경노트 홈 ${co}입니다.\n\n의뢰하신 ${w} 건으로 연락드립니다.\n\n`;   // 📝 [패치 #109]
+      return `[🌿 조경노트 홈] ${who}안녕하세요.\n\n조경노트 홈 ${co}입니다.\n\n의뢰하신 ${w} 작업으로 연락드립니다.\n\n`;   // 📝 [패치 #109] · ✂️ #137
     };
     const reqToQuoteH0 = reqToQuote;
     reqToQuote = function () {
