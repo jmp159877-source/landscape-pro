@@ -30,6 +30,10 @@
 ]}
 </script>
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="manifest" href="/home.webmanifest"><!-- 📲 [패치 #131] 홈 화면 아이콘 '조경의뢰' -->
+<link rel="apple-touch-icon" href="/home-icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="조경의뢰">
 <link rel="preload" as="image" href="/home-hero2.jpg">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <!-- 🏡 [패치 #106·#107] 조경노트 Home: 고객 전용 의뢰 페이지 (로그인 없음 · 서버 home.gs 가 받아서 관리자에게 알림)
@@ -77,6 +81,17 @@
   .rq.main { background:var(--lime); }
   .rq.main .ic { background:rgba(255,255,255,.55); }
   .rq.main .t, .rq.main .ar { color:var(--dark); } .rq.main .d { color:#365314; }
+  .instbtn { width:100%; display:flex; align-items:center; gap:12px; text-align:left; padding:12px 14px; border-radius:16px; background:#fff; border:1.5px solid var(--ink); }
+  .instbtn img { width:46px; height:46px; border-radius:12px; flex-shrink:0; }
+  .instbtn b { display:block; font-size:16px; font-weight:800; color:var(--ink); line-height:1.35; }
+  .instbtn small { display:block; font-size:13.5px; color:var(--mute); font-weight:600; margin-top:2px; }
+  .instbtn.small { background:transparent; border-style:dashed; border-color:var(--line); }
+  .instbtn.small img { width:38px; height:38px; }
+  .ihow { text-align:left; margin-top:14px; display:flex; flex-direction:column; gap:10px; }
+  .ihow div { display:flex; gap:10px; align-items:flex-start; font-size:16px; line-height:1.55; color:var(--ink); }
+  .ihow i { font-style:normal; width:28px; height:28px; border-radius:50%; background:var(--lime); color:var(--dark); font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .broker { margin:10px auto 0; max-width:400px; font-size:12.5px; line-height:1.6; color:var(--mute); }
+  .broker b { color:var(--sub); }
   .note { font-size:13.5px; color:var(--mute); text-align:center; line-height:1.5; }
   .steps { padding:6px 16px; }
   .st { display:flex; gap:12px; align-items:flex-start; padding:13px 0; border-bottom:1px solid #ECEBE6; }
@@ -210,6 +225,18 @@
   .sum div span { color:var(--mute); flex-shrink:0; }
   .sum div b { text-align:right; font-weight:700; }
   @media (min-width:520px) { body { padding:20px 0; } .app { border-radius:24px; overflow:hidden; min-height:calc(100vh - 40px); } }
+  .terms { margin-top:14px; background:#F8FAF5; border:1.5px solid #D6D3D1; border-radius:16px; padding:14px 14px 10px; text-align:left; }
+  .terms .tt { display:block; font-size:16px; font-weight:800; color:var(--ink); }
+  .terms ol { margin:8px 0 0; padding-left:20px; font-size:14px; line-height:1.6; color:var(--sub); }
+  .terms ol li + li { margin-top:4px; }
+  .terms ol b { color:var(--ink); font-weight:700; }
+  .tagree { width:100%; display:flex; gap:10px; align-items:center; text-align:left; margin-top:10px; padding:12px; border-radius:12px; background:#fff; border:1.5px solid var(--ink); font-size:15.5px; color:var(--ink); line-height:1.4; }
+  .tagree .box { width:26px; height:26px; flex-shrink:0; border-radius:8px; border:2px solid var(--line); display:flex; align-items:center; justify-content:center; color:transparent; font-weight:900; }
+  .tagree.on { background:var(--lime-l); }
+  .tagree.on .box { background:var(--lime); border-color:var(--ink); color:var(--dark); }
+  .terms.err { border-color:#DC2626; animation:shake .35s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+  .sbtn.off { opacity:.45; }
   .sheet.confirm { max-height:92vh; max-height:92dvh; overflow-y:auto; overscroll-behavior:contain; }
   .sheet.confirm .sum { margin:16px 0 0; }
   .sheet.confirm .sd b { color:var(--ink); }
@@ -278,11 +305,13 @@
     <details class="card faqall"><summary><span>❓ 자주 묻는 질문 <small>15개</small></span><i>열기</i></summary>
     <div class="faqs"><details class="faq"><summary>조경노트 홈은 어떤 곳인가요?</summary><p>전화하지 않고, 만나지 않고도 조경 견적과 상담을 받을 수 있는 곳이에요. 말이나 글로 의뢰하고 사진만 보내 주시면, 사업자등록이 확인된 조경 전문 업체를 연결해 드려요. 견적·상담은 무료예요.</p></details><details class="faq"><summary>조경 견적 무료로 받을 수 있나요?</summary><p>네, 무료예요. 의뢰를 보내고 견적을 받기까지 고객님이 내는 돈은 없고 가입도 필요 없어요. 작업 비용은 견적을 보고 마음에 드실 때만 업체와 정하시면 돼요.</p></details><details class="faq"><summary>전화 없이 조경 견적 받는 방법이 있나요?</summary><p>조경노트 홈에서 말로 하시거나 글로 적고 사진 몇 장만 보내 주세요. 먼저 문자로 연락드리고, 업체 견적도 문자 링크로 받아 보실 수 있어요. &#x27;문자로만 받을게요&#x27;를 고르시면 전화는 드리지 않아요.</p></details><details class="faq"><summary>소나무 전지 시기는 언제가 좋나요?</summary><p>1·2월 혹한기만 피하면 어느 때든 수형에 맞게 작업할 수 있어요. 나무 상태에 따라 알맞은 작업이 다르니 사진을 보내 주시면 그 나무에 맞게 안내해 드려요.</p></details><details class="faq"><summary>소나무 전지 비용은 어떻게 정해지나요?</summary><p>나무 크기와 수량, 높이, 사다리차 같은 장비가 필요한지, 나오는 가지와 폐기물 양에 따라 달라져요. 사진을 보면 대략 알 수 있고, 꼭 필요하면 현장을 본 뒤 정확한 금액을 알려 드려요.</p></details><details class="faq"><summary>소나무·단풍나무 같은 정원수 소독은 언제, 어떻게 하나요?</summary><p>벌레와 병은 새순이 나오는 봄부터 여름 사이에 많이 생겨서, 이 시기에 나무에 맞는 약으로 몇 차례 나눠 소독하는 게 일반적이에요. 소나무, 단풍나무, 유실수마다 잘 생기는 벌레가 달라서 약과 시기도 달라요. 잎이나 가지 사진을 보내 주시면 그 나무에 맞게 안내해 드리고, 연간 정기 관리로 맡기시면 때맞춰 해 드려요.</p></details><details class="faq"><summary>잔디밭·화단 잡초는 어떻게 없애나요? 약은 어떻게 치나요?</summary><p>잡초가 적을 때는 뿌리째 뽑는 게 가장 안전해요. 약(제초제)은 잔디는 두고 잡초만 죽이는 약과 닿는 풀을 다 죽이는 약이 따로 있어서, 잘못 쓰면 잔디나 나무까지 상할 수 있어요. 잡초 종류와 시기에 맞는 약을 써야 하니 사진을 보내 주시면 알맞은 방법을 안내해 드리고, 원하시면 전문 업체가 직접 해 드려요.</p></details><details class="faq"><summary>잔디 마당 관리가 너무 힘들어요. 어떻게 해야 하나요?</summary><p>잔디는 자라는 철에 자주 깎아 줘야 하고, 잡초 뽑기와 거름, 물 주기까지 손이 많이 가서 힘드신 게 당연해요. 방법은 두 가지예요. 정기 관리를 맡겨서 깎기·잡초·소독을 때맞춰 받으시거나, 관리가 힘든 곳만 판석·자갈·화단처럼 손이 덜 가는 마당으로 바꾸는 조경 공사를 하시는 거예요. 사진을 보내 주시면 두 가지 다 견적을 받아 보실 수 있어요.</p></details><details class="faq"><summary>믿을 만한 조경업체는 어떻게 찾나요?</summary><p>조경노트 홈은 사업자등록을 확인한 조경 전문 업체만 연결해 드려요. 의뢰하신 작업과 지역에 맞는 업체 한 곳을 골라 연결해 드리니, 여러 곳에 일일이 전화하지 않으셔도 돼요.</p></details><details class="faq"><summary>집 마당 가지치기·잔디 예초 업체는 어디에 맡기나요?</summary><p>조경노트 홈에서 &#x27;단건 의뢰하기&#x27;를 누르고 가지치기, 잔디·예초처럼 원하는 작업을 고르시면 돼요. 주택 마당, 회사·빌딩 화단, 공공시설 모두 맡기실 수 있어요.</p></details><details class="faq"><summary>정원 관리를 정기적으로 맡길 수 있나요?</summary><p>네. &#x27;정기 조경관리 의뢰하기&#x27;에서 매월 1회, 분기 1회(연 4회), 연 1회 전체 관리 중에 고르실 수 있어요. 잘 모르시면 &#x27;상담 후 정하기&#x27;를 고르세요.</p></details><details class="faq"><summary>회사·빌딩·아파트 조경 관리 업체는 어떻게 맡기나요?</summary><p>&#x27;정기 조경관리 의뢰하기&#x27;에서 현장 종류를 &#x27;회사·빌딩&#x27;으로 고르고, 원하는 관리 횟수와 사진을 보내 주세요. 수목 전지, 잔디·예초, 화단 관리, 병해충 방제를 연간 일정으로 맡기실 수 있어요. 작업할 때마다 작업 전·후 사진이 담긴 보고서를 문자 링크로 받아 보실 수 있어서, 현장에 가 보지 않아도 관리 상태를 확인하고 내부 보고에도 바로 쓰실 수 있어요.</p></details><details class="faq"><summary>공장·산업단지처럼 넓은 부지도 예초·전지 관리가 되나요?</summary><p>네. 넓은 부지의 풀베기(예초), 울타리·경계 수목 전지, 녹지 관리를 한 번만 맡기셔도 되고 연간으로 맡기셔도 돼요. 면적과 나무 수량에 따라 장비와 인원이 달라지니, 부지 사진 몇 장과 대략적인 면적을 보내 주시면 현장 확인 일정과 견적을 안내해 드려요.</p></details><details class="faq"><summary>정원 만들기·조경 공사 견적은 어떻게 받나요?</summary><p>&#x27;조경 공사 의뢰하기&#x27;에서 정원 조성, 수목 식재, 블럭·판석, 자연석, 담장·펜스, 데크 등 원하는 공사를 고르고 현장 사진을 보내 주세요. 공사는 현장 확인 뒤 정확한 견적을 드려요.</p></details><details class="faq"><summary>우리 동네 조경업체도 연결되나요?</summary><p>전국 어디서든 의뢰하실 수 있어요. 지역에 맞는 업체를 찾아 연결해 드리고, 아직 연결할 업체가 없는 지역이면 그렇다고 문자로 바로 알려 드려요.</p></details></div></details>
   </section>
+  <section class="sec" style="padding-bottom:0;"><button type="button" class="instbtn small hidden" data-inst onclick="instOpen()"><img src="/home-icon-192.png" alt=""><span><b>휴대폰 홈 화면에 '조경의뢰' 아이콘 추가</b><small>진행 상황 확인·다음 의뢰를 한 번에</small></span></button></section>
   <section class="sec" style="padding-bottom:0;"><a class="callbtn" href="tel:16683936">ICON_PHONE 전화 상담을 원하시면 <b>1668-3936</b></a></section>
   <footer class="foot">
     <a href="/area/">서울·경기 지역별 조경 안내</a><br><!-- 📍 [패치 #128] -->
     조경 사업자이신가요? <a href="/about.html">조경노트 PRO 알아보기</a><br>
-    신화조경노트 · 대표 박정근 · 사업자등록번호 559-35-01139<br>문의 1668-3936 · <a href="/privacy.html#home">개인정보처리방침</a>
+    신화조경노트 · 대표 박정근 · 사업자등록번호 559-35-01139<br>경기도 수원시 장안구 상률로46번길 17-7, 가-316호 · 호스팅 Vercel Inc.<br>문의 1668-3936 · <a href="/privacy.html#home">개인정보처리방침</a>
+    <p class="broker">조경노트 홈은 고객과 조경 업체를 연결하는 <b>중개 서비스</b>로, 작업 계약의 당사자가 아닙니다. 견적·계약·작업과 그에 따른 책임은 고객과 업체 사이에 있습니다.</p><!-- 📋 [패치 #131] 중개자 고지 -->
   </footer>
 </main>
 
@@ -308,6 +337,7 @@
   <div class="card sum" id="doneSum"></div>
   <div style="padding:20px 18px 34px;display:flex;flex-direction:column;gap:12px;">
     <div style="background:var(--lime-l);border-radius:14px;padding:14px;font-size:15px;color:var(--sub);line-height:1.6;">견적은 <b style="color:var(--ink);">연결된 조경 업체</b>가 문자로 보내 드려요. 링크를 누르면 사진이 담긴 견적 리포트를 볼 수 있어요.</div>
+    <button type="button" class="instbtn hidden" data-inst onclick="instOpen()"><img src="/home-icon-192.png" alt=""><span><b>휴대폰 홈 화면에 '조경의뢰' 아이콘 추가</b><small>진행 상황 확인·다음 의뢰를 한 번에</small></span></button>
     <a class="callbtn" href="tel:16683936">ICON_PHONE 급하시면 전화 <b>1668-3936</b></a>
     <button type="button" class="link" onclick="goIntro(true)">처음 화면으로</button>
   </div>
@@ -315,6 +345,16 @@
 
 <input type="file" id="fileCam" accept="image/*" capture="environment" class="hidden">
 <input type="file" id="fileGal" accept="image/*" multiple class="hidden">
+
+<!-- 📲 [패치 #131] 홈 화면에 아이콘 추가 안내 (설치 창이 안 뜨는 휴대폰용) -->
+<div class="dim hidden" id="shInst" onclick="if(event.target===this) closeSheet()">
+  <div class="sheet">
+    <div class="badge" style="background:none"><img src="/home-icon-192.png" alt="" style="width:64px;height:64px;border-radius:16px"></div>
+    <h3>홈 화면에 '조경의뢰' 아이콘 만들기</h3>
+    <div class="ihow" id="instHow"></div>
+    <div class="btns"><button type="button" class="sbtn ghost" onclick="closeSheet()">닫기</button></div>
+  </div>
+</div>
 
 <!-- 사진 권유 창 -->
 <div class="dim hidden" id="shPhoto" onclick="if(event.target===this) closeSheet()">
@@ -334,8 +374,19 @@
     <h3>이대로 보낼까요?</h3>
     <div class="sd">특히 <b>연락받을 번호</b>가 맞는지 확인해 주세요.</div>
     <div class="card sum" id="cfSum"></div>
+    <!-- 📋 [패치 #131] 조경노트 홈 이용 안내 (중개 서비스) — 동의해야 보낼 수 있음 · 동의 기록은 서버에 저장 -->
+    <div class="terms" id="cfTerms">
+      <b class="tt">조경노트 홈 이용 안내</b>
+      <ol>
+        <li>조경노트 홈은 고객과 조경 업체를 <b>연결해 주는 중개 서비스</b>예요. 작업 계약의 당사자가 아니에요.</li>
+        <li>연결하는 업체는 <b>사업자등록(상호·대표자·연락처·업종)을 확인</b>한 곳이에요. 다만 작업 품질이나 결과를 보증하지는 않아요.</li>
+        <li>견적·일정·금액은 연결된 업체와 <b>충분히 상의하신 뒤 신중하게</b> 정해 주세요.</li>
+        <li>작업이나 계약으로 생긴 분쟁은 <b>고객님과 업체가 직접</b> 해결하셔야 해요. 조경노트 홈은 중재하거나 대신 책임지지 않아요. (단, 조경노트 홈의 고의나 중대한 잘못으로 생긴 문제는 제외)</li>
+      </ol>
+      <button type="button" class="tagree" id="cfTermsBtn" onclick="S.terms=!S.terms; termsPaint()"><span class="box">✓</span><span><b>[필수]</b> 위 이용 안내를 읽었고 동의합니다</span></button>
+    </div>
     <div class="btns">
-      <button type="button" class="sbtn lime" onclick="confirmSend()">맞아요, 이대로 보내기</button>
+      <button type="button" class="sbtn lime" id="cfSend" onclick="confirmSend()">맞아요, 이대로 보내기</button>
       <button type="button" class="sbtn ghost" onclick="closeSheet()">고칠게요</button>
     </div>
   </div>
@@ -714,7 +765,8 @@ function collect() {
     addr: v('fAddr'), phone: v('fPhone').replace(/[^0-9]/g, ''), contact: S.contact,
     works: Array.from(S.works), etc: S.works.has('기타') ? v('fEtc') : '', plan: S.plan, when: S.when,
     budget: Number(v('fBudget').replace(/[^0-9]/g, '')) || 0, budgetUnknown: S.budgetUnknown,
-    text: v('fText'), name: v('fName'), imgs: S.imgs, via: S.via
+    text: v('fText'), name: v('fName'), imgs: S.imgs, via: S.via,
+    terms: S.terms ? HOME_TERMS_V : ''   // 📋 [패치 #131]
   };
 }
 function check(p) {
@@ -733,9 +785,14 @@ async function submitForm() {
   if (!check(p)) return;
   if (!p.imgs.length && !S.photoAsked) { openSheet('shPhoto'); return; }
   $('cfSum').innerHTML = sumHtml(p, p.imgs.length, '');   // 보내기 전 한 번 확인
-  openSheet('shConfirm'); $('shConfirm').querySelector('.sheet').scrollTop = 0;
+  openSheet('shConfirm'); $('shConfirm').querySelector('.sheet').scrollTop = 0; termsPaint();
 }
-function confirmSend() { closeSheet(); setTimeout(sendNow, 300); }
+const HOME_TERMS_V = 'home-terms-v1';   // 📋 [패치 #131] 이용 안내 문구 판번호 (문구 바꾸면 v2로)
+function termsPaint() { const b = $('cfTermsBtn'); if (b) b.classList.toggle('on', !!S.terms); const s = $('cfSend'); if (s) s.classList.toggle('off', !S.terms); if (S.terms && $('cfTerms')) $('cfTerms').classList.remove('err'); }
+function confirmSend() {
+  if (!S.terms) { const t = $('cfTerms'); if (t) { t.classList.remove('err'); void t.offsetWidth; t.classList.add('err'); t.scrollIntoView({ behavior: 'smooth', block: 'center' }); } toast('이용 안내를 읽고 [필수] 동의 칸을 눌러 주세요.'); return; }
+  closeSheet(); setTimeout(sendNow, 300);
+}
 async function sendNow() {
   if (!S) return;
   const p = collect();
@@ -750,7 +807,7 @@ async function sendNow() {
     limit: `오늘은 이 번호로 의뢰를 더 받을 수 없어요. 급하시면 전화 ${TEL}로 연락해 주세요.`,
     full: `지금 의뢰가 많아 잠시 받을 수 없어요. 전화 ${TEL}로 연락해 주세요.`,
     busy: '지금 접속이 많아요. 잠시 후 다시 눌러 주세요.',
-    agree: '맨 아래 동의 칸을 눌러 주세요.', bad: '작업 지역과 연락처를 확인해 주세요.',
+    agree: '맨 아래 동의 칸을 눌러 주세요.', terms: '이용 안내에 동의해 주세요.', bad: '작업 지역과 연락처를 확인해 주세요.',
     'bad-plan': '관리 횟수를 골라 주세요.', 'bad-work': '어떤 작업인지 골라 주시거나 적어 주세요.'
   }[r && r.msg];
   toast(m || `보내지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요. (급하시면 ${TEL})`, 5200);
@@ -851,6 +908,26 @@ setInterval(() => { if (S && !$('vbar').classList.contains('hidden')) draftSave(
 // 📍 [패치 #128] 지역 안내 페이지(/area/…)에서 오면 작업 지역 칸을 미리 채움: /home.html?area=경기 수원시#single
 const AREA_HINT = (() => { try { return String(new URLSearchParams(location.search).get('area') || '').replace(/[^가-힣0-9 ]/g, '').slice(0, 30).trim(); } catch (e) { return ''; } })();
 if (AREA_HINT) { const rf0 = renderForm; renderForm = function () { rf0.apply(this, arguments); const a = $('fAddr'); if (a && !a.value.trim()) a.value = AREA_HINT + ' '; }; }
+// 📲 [패치 #131] 홈 화면 아이콘: 안드로이드 크롬은 설치 창, 그 밖에는 그림 안내
+let instEvt = null;
+const IS_APP = (() => { try { return matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; } catch (e) { return false; } })();
+function instShow() { document.querySelectorAll('[data-inst]').forEach(b => b.classList.toggle('hidden', IS_APP)); }
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); instEvt = e; instShow(); });
+window.addEventListener('appinstalled', () => { instEvt = null; document.querySelectorAll('[data-inst]').forEach(b => b.classList.add('hidden')); toast("홈 화면에 '조경의뢰' 아이콘이 생겼어요."); });
+try { if ('serviceWorker' in navigator) navigator.serviceWorker.register('/home-sw.js', { scope: '/home' }).catch(() => {}); } catch (e) {}
+async function instOpen() {
+  if (instEvt) { try { instEvt.prompt(); const c = await instEvt.userChoice; if (c && c.outcome === 'accepted') instEvt = null; return; } catch (e) {} }
+  const ua = navigator.userAgent || '';
+  const step = (n, t) => `<div><i>${n}</i><span>${t}</span></div>`;
+  let h;
+  if (/iPhone|iPad|iPod/i.test(ua)) h = step(1, '화면 아래(또는 위) <b>공유 버튼 ⬆️</b>을 누르세요.') + step(2, '<b>홈 화면에 추가</b>를 누르세요.') + step(3, '오른쪽 위 <b>추가</b>를 누르면 끝!');
+  else if (/SamsungBrowser/i.test(ua)) h = step(1, '화면 아래 <b>≡ (메뉴)</b>를 누르세요.') + step(2, '<b>현재 페이지 추가</b> → <b>홈 화면</b>을 누르세요.') + step(3, '<b>추가</b>를 누르면 끝!');
+  else if (/KAKAOTALK|NAVER/i.test(ua)) h = step(1, '오른쪽 위(또는 아래) <b>⋮ / ···</b> 를 누르세요.') + step(2, '<b>다른 브라우저로 열기</b>를 누르세요.') + step(3, '열린 화면에서 이 버튼을 다시 누르세요.');
+  else h = step(1, '오른쪽 위 <b>⋮ (점 3개)</b>를 누르세요.') + step(2, '<b>홈 화면에 추가</b>(또는 <b>앱 설치</b>)를 누르세요.') + step(3, '<b>추가</b>를 누르면 끝!');
+  $('instHow').innerHTML = h; openSheet('shInst');
+}
+instShow();
+
 // 블로그 링크로 바로 신청서 열기: /home.html#single · #regular · #build
 (function start() {
   // 카톡 안에서 열면 휴대폰 인터넷 앱으로 넘김 (말로 쓰기가 훨씬 편함). 안 넘어가면 그대로 이 화면 사용.

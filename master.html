@@ -2588,7 +2588,9 @@
     switchTab = function (tabId) {
         const prev = PMB.cur; PMB.cur = tabId;
         const r = pmbSwitchTab0.apply(this, arguments);
-        if (tabId !== prev) pmbPush({ k: 'tab', prev });   // 뒤로가기 처리 중(fromPop)에는 pmbPush가 알아서 안 만듦
+        // ↩️ [패치 #131] 메뉴를 여러 번 옮겨도 뒤로가기 칸은 하나만 → 어디서든 뒤로 한 번이면 대시보드, 한 번 더면 '닫혀요' 안내
+        const top = PMB.entries[PMB.entries.length - 1];
+        if (tabId !== prev && tabId !== 'dashboard' && !(top && top.k === 'tab')) pmbPush({ k: 'tab', prev: 'dashboard' });
         return r;
     };
     // 창이 '열릴 때'만 칸 하나 (대표님이 누른 직후라 크롬이 건너뛰지 않음). 닫힘 버튼으로 닫은 창의 칸은 뒤로가기 때 자동으로 넘김.
@@ -2662,7 +2664,8 @@
     function hmHistLine(h) {
         if (h.decline) return '↩️ ' + hmE(h.toName) + ' 못 함' + (h.memo ? ' · ' + hmE(h.memo) : '');
         if (h.sms) return '💬 ' + hmE(HM_SMS[h.sms] || '문자') + ' 문자';
-        if (h.feeAgree) return '💰 ' + hmE(h.toName) + ' 수수료 ' + Number(h.feeAgree).toLocaleString('ko-KR') + 'P 동의';
+        if (h.feeAgree) return '💰 ' + hmE(h.toName) + ' 수수료 ' + Number(h.feeAgree).toLocaleString('ko-KR') + 'P · 이용 조건 동의';
+        if (h.terms) return '📋 ' + hmE(h.toName) + ' 중개 이용 조건 동의';   // 📋 [패치 #131]
         if (h.feeRefund) return '↩ ' + hmE(h.toName) + ' 수수료 ' + Number(h.feeRefund).toLocaleString('ko-KR') + 'P 돌려줌';
         if (h.stage === 'sched') return '📅 ' + hmE(h.toName) + ' 작업일 안내 · ' + hmE(hmDate(h.date, h.slot));
         if (h.stage === 'booked') return '🤝 ' + hmE(h.toName) + ' 예약 확정 · ' + hmE(hmDate(h.date, h.slot)) + (h.amount ? ' · ' + hmE(hmWon(h.amount)) : '');
@@ -2954,6 +2957,7 @@
           ${r.status === 'declined' ? `<div class="rounded-[16px] bg-amber-400/15 border border-amber-400/40 p-3.5 text-[15px] font-bold text-amber-200 leading-relaxed">↩️ ${hmE(r.declinedName || '')} 업체가 못 한대요${r.declineReason ? ' · ' + hmE(r.declineReason) : ''}. 다른 업체로 연결해 주세요.</div>` : ''}
           ${(r.status === 'sent' || r.status === 'booked' || r.coStage === 'done') ? `<div class="rounded-[16px] bg-[#84CC16]/15 border border-[#84CC16]/40 p-3.5 text-[15px] font-bold text-[#D9F99D] leading-relaxed">✅ ${hmE(r.sentName || '')} 업체에 연결했어요 (${hmTime(r.sentAt)})${r.memo ? '<br>메모: ' + hmE(r.memo) : ''}<br><span class="text-[16px] font-black ${r.coStage === 'booked' ? 'text-[#BEF264]' : 'text-white'}">진행: ${hmE(hmStageLine(r))}</span><br><span class="${r.custNotifiedAt ? '' : 'text-amber-300'}">${r.custNotifiedAt ? '고객에게 연결 안내 문자 보냄 ✓' : '아직 고객에게 [업체 연결 안내] 문자를 안 보냈어요'}</span></div>` : ''}
 
+          ${hmTermsBox(r)}
           ${hmFeeBox(r)}
           ${hmSurveyBox(r)}
           <div class="pt-1">
@@ -2997,6 +3001,11 @@
           ${hist.length ? `<div class="pt-1"><div class="text-[14px] font-black text-[#94A3B8] mb-1.5">기록</div>${hist.map(h => `<div class="text-[13.5px] font-bold text-[#CBD5E1] py-1">${hmTime(h.at)} · ${hmHistLine(h)}</div>`).join('')}</div>` : ''}`;
         const memo = document.getElementById('hmMemo'); if (memo && r.memo && HM.pick === r.sentTo) memo.value = r.memo;
         if (HM.feeLive) hmFeeSet(HM.fee);
+    }
+    function hmTermsBox(r) {   // 📋 [패치 #131] 이용 안내(고객)·중개 조건(업체) 동의 기록
+        const t = r.terms || {}, cu = t.at ? `✅ ${hmTime(t.at)} 동의 <span style="color:#94A3B8">(${hmE(t.v || '')})</span>` : (r.termsMissing ? '<span style="color:#B45309">기록 없음 (예전 화면에서 보냄)</span>' : '<span style="color:#94A3B8">기록 없음 (#131 전 의뢰)</span>');
+        const co = r.sentTo ? (r.coTermsAt ? `✅ ${hmTime(r.coTermsAt)} 동의 · ${hmE(r.sentName || '')}` : '<span style="color:#B45309">업체가 아직 동의 전 (의뢰 내용 잠김)</span>') : '<span style="color:#94A3B8">아직 업체 연결 전</span>';
+        return `<div class="rounded-[16px] p-3.5 text-[14.5px] font-bold leading-relaxed" style="background:#F8FAFC;border:1.5px solid #E2E8F0;color:#334155"><div class="text-[13px] font-black text-[#475569] mb-1">📋 동의 기록</div><div>고객 이용 안내: ${cu}</div><div>업체 중개 조건: ${co}</div></div>`;
     }
     function hmFeeBox(r) {   // 💰 [패치 #125] 이 의뢰의 연결 수수료 상태 + 돌려주기
         const fee = Number(r.fee) || 0; if (!fee || !r.sentTo) return '';
