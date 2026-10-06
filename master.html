@@ -2616,7 +2616,14 @@
         try { if (window.navigation && navigation.entries) { const cur = navigation.currentEntry, es = navigation.entries(); let i = es.findIndex(e => cur && e.key === cur.key); while (i > 0 && /\/master/.test(new URL(es[i - 1].url).pathname)) i--; const first = es[i]; if (first && cur && first.key !== cur.key) { navigation.traverseTo(first.key); return true; } } } catch (e) {}
         return false;
     }
-    try { if (!(history.state && (history.state.pmb || history.state.mqGuard))) history.pushState({ mqGuard: 1 }, ''); } catch (e) {}   // 잠금 번호·로그인 화면에서 뒤로 → 한 번에 나가기용 칸
+    // ↩️ [패치 #132] 뒤로가기로 '예전에 열린 관리자 화면'(로그인 전 = 잠금 번호 화면)에 도착하면 → 기다리지 않고 맨 처음 관리자 화면까지 한 번에 넘어감
+    //  (크롬은 페이지가 스스로 만든 칸을 뒤로가기 때 건너뛰기도 해서, 잠금 번호 화면이 여러 번 쌓여 보이던 문제)
+    function mqArrivedBack() { try { const n = performance.getEntriesByType('navigation')[0]; return !!(n && n.type === 'back_forward'); } catch (e) { return false; } }
+    function mqSkipOld() { if (pmbLoggedIn()) return false; return mqJumpOut(); }
+    let mqSkipped = false;
+    try { if (mqArrivedBack()) mqSkipped = mqSkipOld(); } catch (e) {}
+    window.addEventListener('pageshow', function (ev) { if (ev.persisted) { try { mqSkipOld(); } catch (e) {} } });
+    try { if (!mqSkipped && !(history.state && (history.state.pmb || history.state.mqGuard))) history.pushState({ mqGuard: 1 }, ''); } catch (e) {}   // 잠금 번호·로그인 화면에서 뒤로 → 한 번에 나가기용 칸
     window.addEventListener('popstate', function (ev) {
         if (!pmbLoggedIn()) { if (!(ev.state && ev.state.mqGuard)) { if (!mqJumpOut()) history.back(); } return; }
         { const hm = document.getElementById('hmModal'); if (typeof HM !== 'undefined' && HM.closing) { HM.closing = false; return; } if ((hm && !hm.classList.contains('hidden')) || (ev.state && ev.state.hmOpen)) return; }   // 🏡 [패치 #107] Home 의뢰 창·사진은 자기 뒤로가기만 처리
