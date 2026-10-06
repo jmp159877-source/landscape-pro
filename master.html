@@ -2639,20 +2639,34 @@
         if (lv0) new MutationObserver(() => { if (!PMB.homeDone && pmbLoggedIn()) { PMB.homeDone = true; pmbPush({ k: 'home' }); } }).observe(lv0, { attributes: true, attributeFilter: ['class'] });
     } catch (e) {}
     // ↩️ [패치 #131] 알림을 누를 때마다 관리자 화면이 새로 열려 기록이 쌓이면, 뒤로가기마다 잠금 번호 화면이 또 나옴 → 맨 처음 화면으로 한 번에 건너뜀
-    function mqJumpOut() {
-        try { if (window.navigation && navigation.entries) { const cur = navigation.currentEntry, es = navigation.entries(); let i = es.findIndex(e => cur && e.key === cur.key); while (i > 0 && /\/master/.test(new URL(es[i - 1].url).pathname)) i--; const first = es[i]; if (first && cur && first.key !== cur.key) { navigation.traverseTo(first.key); return true; } } } catch (e) {}
-        return false;
+    // ↩️ [패치 #133] 관리자 화면에서 '나가기' = 쌓여 있는 관리자 화면들을 건너뛰고 한 번에 뒤로
+    //  - 몇 칸 뒤로 갈지 세어서 history.go(-n) (traverseTo는 휴대폰에서 조용히 실패할 때가 있어 안 씀)
+    //  - 예전 관리자 화면(로그인 전)에 뒤로가기로 도착하면 그 화면도 바로 한 칸 더 뒤로 → 연달아 넘어감
+    //  - 더 갈 곳이 없으면(맨 처음 화면) 잠금 번호 화면을 보여 주고, 거기서 뒤로 한 번이면 앱이 닫힘
+    let mqLeaving = false;
+    window.addEventListener('pagehide', function () { mqLeaving = true; });
+    function mqStepsOut() {   // 지금 칸에서 관리자 화면이 아닌 곳까지 몇 칸?
+        try { if (window.navigation && navigation.entries) { const cur = navigation.currentEntry, es = navigation.entries(); let i = es.findIndex(e => cur && e.key === cur.key), j = i;
+            if (i > 0) { while (j > 0 && /\/master/.test(new URL(es[j - 1].url).pathname)) j--; return Math.max(1, i - j + (j > 0 ? 1 : 0)); } } } catch (e) {}
+        return 1;
     }
-    // ↩️ [패치 #132] 뒤로가기로 '예전에 열린 관리자 화면'(로그인 전 = 잠금 번호 화면)에 도착하면 → 기다리지 않고 맨 처음 관리자 화면까지 한 번에 넘어감
-    //  (크롬은 페이지가 스스로 만든 칸을 뒤로가기 때 건너뛰기도 해서, 잠금 번호 화면이 여러 번 쌓여 보이던 문제)
+    function mqJumpOut() { try { history.go(-mqStepsOut()); } catch (e) { try { history.back(); } catch (x) {} } return true; }
     function mqArrivedBack() { try { const n = performance.getEntriesByType('navigation')[0]; return !!(n && n.type === 'back_forward'); } catch (e) { return false; } }
-    function mqSkipOld() { if (pmbLoggedIn()) return false; return mqJumpOut(); }
+    function mqSkipOld() {
+        if (pmbLoggedIn()) return false;
+        try { history.back(); } catch (e) { return false; }
+        setTimeout(function () {   // 뒤로 갈 곳이 없었음(맨 처음 화면) → 잠금 번호 화면 그대로 보여 주기
+            if (mqLeaving || pmbLoggedIn()) return; mqSkipped = false;
+            try { if (mqLoad() && window.crypto && crypto.subtle) mqShow('unlock'); } catch (e) {}
+        }, 900);
+        return true;
+    }
     let mqSkipped = false;
     try { if (mqArrivedBack()) mqSkipped = mqSkipOld(); } catch (e) {}
-    window.addEventListener('pageshow', function (ev) { if (ev.persisted) { try { mqSkipOld(); } catch (e) {} } });
-    try { if (!mqSkipped && !(history.state && (history.state.pmb || history.state.mqGuard))) history.pushState({ mqGuard: 1 }, ''); } catch (e) {}   // 잠금 번호·로그인 화면에서 뒤로 → 한 번에 나가기용 칸
+    window.addEventListener('pageshow', function (ev) { if (ev.persisted) { mqLeaving = false; try { if (!pmbLoggedIn()) { mqSkipped = true; mqSkipOld(); } } catch (e) {} } });
+    try { if (!mqSkipped && history.length > 1 && !(history.state && (history.state.pmb || history.state.mqGuard))) history.pushState({ mqGuard: 1 }, ''); } catch (e) {}   // 잠금 번호·로그인 화면에서 뒤로 → 한 번에 나가기용 칸
     window.addEventListener('popstate', function (ev) {
-        if (!pmbLoggedIn()) { if (!(ev.state && ev.state.mqGuard)) { if (!mqJumpOut()) history.back(); } return; }
+        if (!pmbLoggedIn()) { if (!(ev.state && ev.state.mqGuard)) mqJumpOut(); return; }
         { const hm = document.getElementById('hmModal'); if (typeof HM !== 'undefined' && HM.closing) { HM.closing = false; return; } if ((hm && !hm.classList.contains('hidden')) || (ev.state && ev.state.hmOpen)) return; }   // 🏡 [패치 #107] Home 의뢰 창·사진은 자기 뒤로가기만 처리
         const target = (ev.state && ev.state.pmb) || 0;
         let acted = false, tabTo = null;
@@ -2668,7 +2682,7 @@
         } finally { PMB.fromPop = false; }
         if (!acted && PMB.entries.length > 0) { history.back(); return; }   // 이미 닫힌 창의 칸 → 한 칸 더 (새 칸은 만들지 않음)
         if (PMB.entries.length === 0) {   // ↩️ [패치 #131] 안내 뒤 한 번 더 → 예전에 쌓인 관리자 화면(잠금 번호 화면)들을 건너뛰고 한 번에
-            if (PMB.toastAt && Date.now() - PMB.toastAt < 5000) { PMB.toastAt = 0; if (!mqJumpOut()) history.back(); }
+            if (PMB.toastAt && Date.now() - PMB.toastAt < 5000) { PMB.toastAt = 0; mqJumpOut(); }
             else { PMB.toastAt = Date.now(); pmbToast('뒤로가기를 한 번 더 누르면 관리자 화면이 닫혀요.'); }
         }
     });
