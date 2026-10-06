@@ -54,7 +54,7 @@
       padding-right: 4px !important;
       border-radius: 22px !important;
     }
-    #tabCalendar span, #tabAdmin span, #tabClient span, #tabQuote span, #tabQuoteList span, #tabContacts span,
+    #tabCalendar span, #tabAdmin span, #tabClient span, #tabQuote span, #tabQuoteList span, #tabLogList span, #tabContacts span,
     #mainCategoryWrapper nav button span.btn-title {
       font-size: 17px !important;
       letter-spacing: -0.04em !important;
@@ -71,23 +71,23 @@
     }
 
     /* 💡 [스타일 B 확정] 상단 6개 버튼: 모던 다크 티타늄 + 선명한 실버 테두리 + 야외 시인성 강화 */
-    #tabCalendar, #tabAdmin, #tabClient, #tabQuote, #tabQuoteList, #tabContacts {
+    #tabCalendar, #tabAdmin, #tabClient, #tabQuote, #tabQuoteList, #tabLogList, #tabContacts {
       background: linear-gradient(145deg, #242C37 0%, #323D4D 52%, #1C222B 100%) !important;
       border: 1.5px solid rgba(255, 255, 255, 0.38) !important;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55), inset 0 1px 1px rgba(255, 255, 255, 0.28) !important;
     }
-    #tabCalendar span, #tabAdmin span, #tabClient span, #tabQuote span, #tabQuoteList span, #tabContacts span {
+    #tabCalendar span, #tabAdmin span, #tabClient span, #tabQuote span, #tabQuoteList span, #tabLogList span, #tabContacts span {
       color: #FFFFFF !important;
       text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6) !important;
     }
-    #tabCalendar svg, #tabAdmin svg, #tabClient svg, #tabQuote svg, #tabQuoteList svg, #tabContacts svg {
+    #tabCalendar svg, #tabAdmin svg, #tabClient svg, #tabQuote svg, #tabQuoteList svg, #tabLogList svg, #tabContacts svg {
       color: #84CC16 !important;
       stroke-width: 2.4px !important;
       filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4)) !important;
     }
 
     /* 🌞 [패치 #21] 야외 시인성 보강: 어두운 고급 화면은 유지하고 테두리·회색 글씨만 밝게 */
-    #tabCalendar, #tabAdmin, #tabClient, #tabQuote, #tabQuoteList, #tabContacts { border: 1.5px solid rgba(255, 255, 255, 0.58) !important; }
+    #tabCalendar, #tabAdmin, #tabClient, #tabQuote, #tabQuoteList, #tabLogList, #tabContacts { border: 1.5px solid rgba(255, 255, 255, 0.58) !important; }
     #tabLedger, #tabLounge, #tabAiChat { border-width: 2px !important; }
     .menu-sec span.text-white\/60 { color: rgba(255, 255, 255, 0.88) !important; }
     #homeView > div.rounded-\[28px\] { border-color: rgba(255, 255, 255, 0.24) !important; }
@@ -153,10 +153,10 @@
     html.outdoor .sec-bar.sec-white { background: #14261E !important; }
     html.outdoor .sec-bar.sec-gold { background: #D97706 !important; }
     
-    html.outdoor #tabCalendar, html.outdoor #tabAdmin, html.outdoor #tabClient, html.outdoor #tabQuote, html.outdoor #tabQuoteList, html.outdoor #tabContacts {
+    html.outdoor #tabCalendar, html.outdoor #tabAdmin, html.outdoor #tabClient, html.outdoor #tabQuote, html.outdoor #tabQuoteList, html.outdoor #tabLogList, html.outdoor #tabContacts {
       background: #FFFFFF !important; border: 1.5px solid #C9D2C2 !important; box-shadow: 0 3px 8px rgba(20,38,30,0.08) !important; }
-    html.outdoor #tabCalendar span, html.outdoor #tabAdmin span, html.outdoor #tabClient span, html.outdoor #tabQuote span, html.outdoor #tabQuoteList span, html.outdoor #tabContacts span { color: #14261E !important; text-shadow: none !important; }
-    html.outdoor #tabCalendar svg, html.outdoor #tabAdmin svg, html.outdoor #tabClient svg, html.outdoor #tabQuote svg, html.outdoor #tabQuoteList svg, html.outdoor #tabContacts svg { color: #3F6212 !important; filter: none !important; }
+    html.outdoor #tabCalendar span, html.outdoor #tabAdmin span, html.outdoor #tabClient span, html.outdoor #tabQuote span, html.outdoor #tabQuoteList span, html.outdoor #tabLogList span, html.outdoor #tabContacts span { color: #14261E !important; text-shadow: none !important; }
+    html.outdoor #tabCalendar svg, html.outdoor #tabAdmin svg, html.outdoor #tabClient svg, html.outdoor #tabQuote svg, html.outdoor #tabQuoteList svg, html.outdoor #tabLogList svg, html.outdoor #tabContacts svg { color: #3F6212 !important; filter: none !important; }
     
     html.outdoor #tabEncyclopedia, html.outdoor #tabLens, html.outdoor #tabWeather { background: #F4FBEA !important; border: 1.5px solid #A3D65C !important; box-shadow: 0 3px 8px rgba(20,38,30,0.08) !important; }
     
@@ -217,6 +217,9 @@
     html.outdoor #loungeView span.rounded-full[style*="background:#F8FAFC"] { background: #14261E !important; }
     html.outdoor #loungeView span.rounded-full[style*="background:#84CC16"] { background: #65A30D !important; }
     
+  /* 👆 [패치 #130] 고객 유형 버튼: 휴대폰 브라우저에 상관없이 고른 쪽이 진하게 보이게 */
+  input + .ct-face { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; border-radius: 14px; }
+  input:checked + .ct-face { background: #151E2D; color: #84CC16; }
   </style>
 </head>
 <body class="text-white antialiased min-h-screen pb-24 selection:bg-[#84CC16] selection:text-white">
@@ -470,13 +473,14 @@
         <div id="mainCategoryWrapper" class="max-w-md mx-auto" style="margin-top: 22px !important; padding-top: 22px !important; border-top: 1px solid rgba(255, 255, 255, 0.12) !important;">
             <!-- 🎨 [패치 #15] 메뉴 C안: 업무 관리 / 현장 도구 / 대표님 전용 3묶음 -->
             <div class="menu-sec flex items-center gap-2 mb-2.5 mt-0 ml-1"><span class="sec-bar sec-lime w-1.5 h-5 rounded-full"></span><span class="sec-title sec-lime text-[16px] font-black tracking-tight">업무 관리</span><span class="text-[14.5px] font-bold text-white/60"></span></div>
-            <nav class="grid grid-cols-3 gap-3">
+            <nav class="grid grid-cols-3 gap-3"><!-- 📋 [패치 #130] 일지 작성 옆에 일지·리포트 목록, 거래처 목록은 아래 줄로 -->
                 <button id="tabCalendar" onclick="switchView('calendar')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="calendar-days" class="w-6 h-6"></i><span class="btn-title">작업 일정표</span></button>
                 <button id="tabAdmin" onclick="switchView('admin')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="pen-tool" class="w-6 h-6"></i><span class="btn-title">작업 일지 작성</span></button>
-                <button id="tabClient" onclick="switchView('clients')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="building-2" class="w-6 h-6"></i><span class="btn-title">거래처 목록</span></button>
+                <button id="tabLogList" onclick="switchView('logList')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="clipboard-list" class="w-6 h-6"></i><span class="btn-title">일지·리포트</span></button><!-- 📋 [패치 #130] -->
                 <button id="tabQuote" onclick="switchView('quote')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="calculator" class="w-6 h-6"></i><span class="btn-title">견적서 작성</span></button>
                 <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="folder-open" class="w-6 h-6"></i><span class="btn-title">견적 보관함</span></button>
-                <button id="tabContacts" onclick="switchView('contacts')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="users" class="w-6 h-6"></i><span class="btn-title">연락처</span></button>
+                <button id="tabClient" onclick="switchView('clients')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="building-2" class="w-6 h-6"></i><span class="btn-title">거래처 목록</span></button>
+                <button id="tabContacts" style="grid-column:span 3;flex-direction:row;padding-top:14px;padding-bottom:14px" onclick="switchView('contacts')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="users" class="w-6 h-6"></i><span class="btn-title">연락처</span></button>
             </nav>
             <!-- 📝 [패치 #46] AI 메모장 (업무 관리 아래 넓은 버튼) -->
             <button type="button" id="tabMemo" onclick="openMemoView()" class="w-full mt-3 text-left rounded-[22px] px-4 py-3.5 flex items-center gap-3.5 active:scale-[0.98] transition-all" style="background:#84CC16; box-shadow: 0 8px 20px rgba(132,204,22,0.3);">
@@ -669,13 +673,13 @@
         </div>
 
         <div class="relative z-10 mt-3 pt-4 border-t-2 border-[#F1F5F9]">
-          <label class="block text-[16.5px] font-black text-[#151E2D] mb-2.5">신규 고객 등록 시 유형 지정 <span class="text-[#64748B] text-[14px] font-bold block sm:inline mt-0.5 sm:mt-0">(기존 고객은 자동 무시됨)</span></label>
+          <label class="block text-[16.5px] font-black text-[#151E2D] mb-2.5">신규 고객 등록 시 유형 지정 <span class="text-[#64748B] text-[14px] font-bold block sm:inline mt-0.5 sm:mt-0">(기존 고객도 여기서 바꿀 수 있어요)</span></label>
           <div class="flex gap-2.5">
-            <label class="flex-1 flex items-center justify-center gap-2 py-4 rounded-[14px] bg-[#F4F5F4] border-[1.5px] border-[#CBD5E1] text-[#151E2D] cursor-pointer has-[:checked]:bg-[#151E2D] has-[:checked]:text-[#84CC16] has-[:checked]:border-[#151E2D] transition-all shadow-sm">
-                <input type="radio" name="newClientTypeReport" value="정기 관리" checked class="hidden"><span class="text-[16px] font-black">정기 관리처</span>
+            <label class="relative overflow-hidden flex-1 flex items-center justify-center gap-2 py-4 rounded-[14px] bg-[#F4F5F4] border-[1.5px] border-[#CBD5E1] text-[#151E2D] cursor-pointer has-[:checked]:bg-[#151E2D] has-[:checked]:text-[#84CC16] has-[:checked]:border-[#151E2D] transition-all shadow-sm">
+                <input type="radio" name="newClientTypeReport" value="정기 관리" checked class="hidden"><span class="ct-face text-[16px] font-black">정기 관리처</span>
             </label>
-            <label class="flex-1 flex items-center justify-center gap-2 py-4 rounded-[14px] bg-[#F4F5F4] border-[1.5px] border-[#CBD5E1] text-[#151E2D] cursor-pointer has-[:checked]:bg-[#151E2D] has-[:checked]:text-[#84CC16] has-[:checked]:border-[#151E2D] transition-all shadow-sm">
-                <input type="radio" name="newClientTypeReport" value="개별 고객" class="hidden"><span class="text-[16px] font-black">개별 고객처</span>
+            <label class="relative overflow-hidden flex-1 flex items-center justify-center gap-2 py-4 rounded-[14px] bg-[#F4F5F4] border-[1.5px] border-[#CBD5E1] text-[#151E2D] cursor-pointer has-[:checked]:bg-[#151E2D] has-[:checked]:text-[#84CC16] has-[:checked]:border-[#151E2D] transition-all shadow-sm">
+                <input type="radio" name="newClientTypeReport" value="개별 고객" class="hidden"><span class="ct-face text-[16px] font-black">개별 고객처</span>
             </label>
           </div>
         </div>
@@ -889,6 +893,18 @@
       </div>
     </section>
 
+    <!-- 📋 [패치 #130] 일지·리포트 목록: 보냄 여부·고객 열어봄·바로 수정/삭제/보내기 -->
+    <section id="logListView" class="hidden space-y-4">
+      <div class="bg-white rounded-[28px] p-5 luxury-shadow space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b-2 border-[#F1F5F9]">
+          <h2 class="text-[22px] font-black text-[#151E2D] flex items-center gap-2 tracking-tight"><i data-lucide="clipboard-list" class="w-6 h-6 text-[#84CC16] stroke-[2.5]"></i> 일지·리포트 목록</h2>
+          <span id="llCount" class="text-[15px] font-black bg-[#151E2D] text-[#84CC16] px-3.5 py-1.5 rounded-xl">0건</span>
+        </div>
+        <div id="llTabs" class="grid grid-cols-3 gap-1.5 bg-[#F1F5F9] p-1.5 rounded-[16px]"></div>
+        <div id="llList" class="space-y-3"></div>
+      </div>
+    </section>
+
     <!-- ================= [4. 거래처 관리 화면] ================= -->
     <section id="clientsView" class="hidden space-y-4">
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-6">
@@ -904,11 +920,11 @@
             <input type="tel" id="newClientPhone" oninput="autoHyphen(this)" placeholder="연락처 입력" autocomplete="off" class="w-full bg-white border-[1.5px] border-[#CBD5E1] rounded-[14px] px-4 py-4 text-[17px] font-black text-[#151E2D] placeholder:text-[#94A3B8] placeholder:font-bold placeholder:text-[14px] focus:outline-none focus:border-[#84CC16]">
             <input type="text" id="newClientAddress" placeholder="주소 입력" autocomplete="off" class="w-full bg-white border-[1.5px] border-[#CBD5E1] rounded-[14px] px-4 py-4 text-[17px] font-black text-[#151E2D] placeholder:text-[#94A3B8] placeholder:font-bold placeholder:text-[14px] focus:outline-none focus:border-[#84CC16]">
             <div class="flex gap-2.5 w-full pt-1">
-                <label class="flex-1 flex items-center justify-center py-4 rounded-[14px] bg-white border-[1.5px] border-[#CBD5E1] text-[#151E2D] cursor-pointer has-[:checked]:bg-[#151E2D] has-[:checked]:text-[#84CC16] has-[:checked]:border-[#151E2D] transition-all shadow-sm">
-                    <input type="radio" name="newClientType" value="정기 관리" checked class="hidden"><span class="text-[16.5px] font-black">정기 관리처</span>
+                <label class="relative overflow-hidden flex-1 flex items-center justify-center py-4 rounded-[14px] bg-white border-[1.5px] border-[#CBD5E1] text-[#151E2D] cursor-pointer has-[:checked]:bg-[#151E2D] has-[:checked]:text-[#84CC16] has-[:checked]:border-[#151E2D] transition-all shadow-sm">
+                    <input type="radio" name="newClientType" value="정기 관리" checked class="hidden"><span class="ct-face text-[16.5px] font-black">정기 관리처</span>
                 </label>
-                <label class="flex-1 flex items-center justify-center py-4 rounded-[14px] bg-white border-[1.5px] border-[#CBD5E1] text-[#151E2D] cursor-pointer has-[:checked]:bg-[#151E2D] has-[:checked]:text-[#84CC16] has-[:checked]:border-[#151E2D] transition-all shadow-sm">
-                    <input type="radio" name="newClientType" value="개별 고객" class="hidden"><span class="text-[16.5px] font-black">개별 고객처</span>
+                <label class="relative overflow-hidden flex-1 flex items-center justify-center py-4 rounded-[14px] bg-white border-[1.5px] border-[#CBD5E1] text-[#151E2D] cursor-pointer has-[:checked]:bg-[#151E2D] has-[:checked]:text-[#84CC16] has-[:checked]:border-[#151E2D] transition-all shadow-sm">
+                    <input type="radio" name="newClientType" value="개별 고객" class="hidden"><span class="ct-face text-[16.5px] font-black">개별 고객처</span>
                 </label>
             </div>
           </div>
@@ -1814,6 +1830,23 @@
                     현장명 및 작업 내용 <span class="text-[14.5px] font-extrabold text-[#65A30D] ml-1">*필수</span>
                 </label>
                 <input type="text" id="scheduleTitle" placeholder="예: 일산 주택 소나무 전지 및 방제" autocomplete="off" class="w-full h-[54px] bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 text-[17px] font-black text-[#151E2D] placeholder:text-[#94A3B8] placeholder:font-bold focus:outline-none focus:border-[#151E2D] focus:bg-white transition-colors">
+            </div>
+
+            <!-- 📞 [패치 #130] 고객 이름·전화번호 (복사한 번호 넣기 · 연락처에서 고르기) -->
+            <div class="grid grid-cols-12 gap-3">
+                <div class="col-span-5">
+                    <label for="scheduleCust" class="block text-[16px] font-black text-[#151E2D] mb-2">고객 이름</label>
+                    <input type="text" id="scheduleCust" placeholder="예: 홍길동" autocomplete="off" class="w-full h-[54px] bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-3.5 text-[16px] font-black text-[#151E2D] placeholder:text-[#94A3B8] placeholder:font-bold focus:outline-none focus:border-[#151E2D] focus:bg-white">
+                </div>
+                <div class="col-span-7">
+                    <label for="schedulePhone" class="block text-[16px] font-black text-[#151E2D] mb-2">전화번호</label>
+                    <input type="tel" id="schedulePhone" inputmode="tel" oninput="autoHyphen(this)" placeholder="010-0000-0000" autocomplete="off" class="w-full h-[54px] bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-3.5 text-[17px] font-black text-[#1D4ED8] placeholder:text-[#94A3B8] placeholder:font-bold focus:outline-none focus:border-[#151E2D] focus:bg-white">
+                </div>
+                <div class="col-span-12 grid grid-cols-2 gap-2 -mt-1">
+                    <button type="button" onclick="jnPastePhone()" class="h-[46px] rounded-[14px] bg-[#151E2D] text-[#D9F99D] text-[14.5px] font-black active:scale-95">📋 복사한 번호 넣기</button>
+                    <button type="button" id="jnPickContactBtn" onclick="jnPickContact()" class="h-[46px] rounded-[14px] bg-white border-[1.5px] border-[#CBD5E1] text-[#151E2D] text-[14.5px] font-black active:scale-95">📒 연락처에서 고르기</button>
+                </div>
+                <p class="col-span-12 text-[13.5px] font-bold text-[#64748B] -mt-1 leading-relaxed break-keep">전화 앱 최근 기록에서 번호를 <b>길게 눌러 복사</b>한 뒤 [복사한 번호 넣기]를 누르세요.</p>
             </div>
 
             <!-- 📍 [패치 #114] 현장 주소 (길찾기·주소 복사) -->
@@ -2761,7 +2794,7 @@
       list.forEach((src, idx) => { 
         const div = document.createElement('div'); 
         div.className = "relative flex-shrink-0 w-24 h-24 rounded-[18px] overflow-hidden border border-[#EAEBEA] shadow-sm group"; 
-        div.innerHTML = `<img src="${src}" class="w-full h-full object-cover"><button type="button" onclick="removeThumb('${type}', ${idx})" class="absolute top-1.5 right-1.5 bg-[#1A1D1A]/70 text-white w-5 h-5 rounded-full flex items-center justify-center text-[11.5px] backdrop-blur-sm">✕</button>`; 
+        div.innerHTML = `<img src="${src}" class="w-full h-full object-cover"><button type="button" aria-label="이 사진 빼기" onclick="thumbDel(event, '${type}', ${idx})" class="absolute top-1 right-1 bg-[#DC2626] text-white w-8 h-8 rounded-full flex items-center justify-center text-[16px] font-black shadow-md border-2 border-white">✕</button>`; 
         listContainer.appendChild(div); 
       }); 
       lucide.createIcons();
@@ -2776,7 +2809,7 @@
     function removeQuoteThumb(idx) { quoteImages.splice(idx, 1); renderQuoteThumbList(); }
     function renderQuoteThumbList() {
       const listContainer = document.getElementById('quoteThumbList'); if (!listContainer) return; listContainer.innerHTML = '';
-      quoteImages.forEach((src, idx) => { const div = document.createElement('div'); div.className = "relative flex-shrink-0 w-24 h-24 rounded-[18px] overflow-hidden border border-[#EAEBEA] shadow-sm group"; div.innerHTML = `<img src="${src}" class="w-full h-full object-cover"><button type="button" onclick="removeQuoteThumb(${idx})" class="absolute top-1.5 right-1.5 bg-[#1A1D1A]/70 text-white w-5 h-5 rounded-full flex items-center justify-center text-[11.5px] backdrop-blur-sm">✕</button>`; listContainer.appendChild(div); }); lucide.createIcons();
+      quoteImages.forEach((src, idx) => { const div = document.createElement('div'); div.className = "relative flex-shrink-0 w-24 h-24 rounded-[18px] overflow-hidden border border-[#EAEBEA] shadow-sm group"; div.innerHTML = `<img src="${src}" class="w-full h-full object-cover"><button type="button" aria-label="이 사진 빼기" onclick="thumbDel(event, 'quote', ${idx})" class="absolute top-1 right-1 bg-[#DC2626] text-white w-8 h-8 rounded-full flex items-center justify-center text-[16px] font-black shadow-md border-2 border-white">✕</button>`; listContainer.appendChild(div); }); lucide.createIcons();
     }
 
     function showLoadingOverlay(msg) {
@@ -3043,8 +3076,8 @@
 
         document.getElementById('docTypeLabel').innerHTML = `<i data-lucide="shield-check" class="w-5 h-5 text-[#84CC16]"></i> 스마트 조경 관리 솔루션`; document.getElementById('docStatusLabel').innerText = "완료";
         const issueBlock = document.getElementById('viewIssueBlock'); const issueTextEl = document.getElementById('viewIssue'); const issueGallery = document.getElementById('viewIssueGallery');
-        if (data.issue && typeof data.issue === 'string' && data.issue.trim() !== '') {
-          issueBlock.classList.remove('hidden'); issueTextEl.innerText = data.issue; issueGallery.innerHTML = ''; const iArr = data.imgsIssue ? data.imgsIssue.split(',') : []; currentGalleryI = iArr;
+        if ((data.issue && typeof data.issue === 'string' && data.issue.trim() !== '') || String(data.imgsIssue || '').replace(/,/g, '').trim()) { /* 📸 [패치 #130] 사진만 있어도 */
+          issueBlock.classList.remove('hidden'); issueTextEl.innerText = String(data.issue || '').trim(); issueTextEl.classList.toggle('hidden', !String(data.issue || '').trim()); issueGallery.innerHTML = ''; const iArr = data.imgsIssue ? data.imgsIssue.split(',') : []; currentGalleryI = iArr;
           if (iArr.length > 0 && iArr[0] !== '') { issueGallery.classList.remove('hidden'); iArr.forEach((src, idx) => { if(!src) return; issueGallery.innerHTML += `<div class="h-40 rounded-[20px] overflow-hidden bg-white/80 border border-[#C5A880]/40 cursor-pointer shadow-sm relative group"><img src="${escHtml(src)}" onerror="this.parentElement.style.display='none'" onclick="openModal('i', ${idx})" class="w-full h-full object-cover transition-transform hover:scale-105 duration-700"><div class="absolute bottom-2 right-2 bg-black/60 text-white p-1.5 rounded-full pointer-events-none"><i data-lucide="zoom-in" class="w-3 h-3"></i></div></div>`; }); } else { issueGallery.classList.add('hidden'); }
         } else { issueBlock.classList.add('hidden'); }
         document.getElementById('viewDiagnosis').innerText = data.d || '-'; document.getElementById('viewCategories').innerHTML = '';
@@ -3054,7 +3087,8 @@
           const arr = Array.isArray(urls) ? urls : (typeof urls === 'string' && urls ? urls.split(',') : []);
           const cleanArr = arr.filter(src => src && src.trim() !== '');
           if(typeCode === 'b') currentGalleryB = cleanArr; else if(typeCode === 'dur') currentGalleryD = cleanArr; else currentGalleryA = cleanArr;
-          if (cleanArr.length === 0) { container.innerHTML = `<div class="col-span-2 text-[13.5px] text-[#4E5968] font-bold py-3 text-center bg-white/50 rounded-[16px] border border-dashed border-[#EAEBEA]">등록된 사진 없음</div>`; } 
+          if (container.parentElement) container.parentElement.classList.toggle('hidden', cleanArr.length === 0); /* 📸 [패치 #130] 사진 없는 칸(작업 전 등)은 리포트에서 숨김 */
+          if (cleanArr.length === 0) { } 
           else { cleanArr.forEach((src, idx) => { let bd = 'border-[#EAEBEA]'; if(typeCode === 'dur') bd = 'border-[#3B82F6]/40'; else if(typeCode === 'a') bd = 'border-[#84CC16]/40'; const imgDiv = document.createElement('div'); imgDiv.className = `h-40 rounded-[20px] overflow-hidden bg-white/80 border ${bd} cursor-pointer shadow-sm relative group`; imgDiv.innerHTML = `<img src="${escHtml(src)}" onerror="this.parentElement.style.display='none'" onclick="openModal('${typeCode}', ${idx})" class="w-full h-full object-cover transition-transform hover:scale-105 duration-700"><div class="absolute bottom-2 right-2 bg-black/60 text-white p-1.5 rounded-full pointer-events-none"><i data-lucide="zoom-in" class="w-3 h-3"></i></div>`; container.appendChild(imgDiv); }); }
         };
         renderGallery('viewBeforeGallery', data.b, 'b'); 
@@ -3419,7 +3453,7 @@
             }
 
             grid.innerHTML += `
-                <div onclick="selectDate(${year}, ${month}, ${i})" class="h-[58px] rounded-[16px] ${boxStyle} flex flex-col items-center justify-center cursor-pointer transition-all select-none">
+                <div onclick="calTap(${year}, ${month}, ${i})" class="h-[58px] rounded-[16px] ${boxStyle} flex flex-col items-center justify-center cursor-pointer transition-all select-none">
                     <span class="text-[16.5px] font-black leading-none ${numColor}">${i}</span>
                     ${badgeHtml}
                 </div>
@@ -3516,7 +3550,9 @@
             id: id, date: date, title: title,
             color: document.getElementById('scheduleColor').value,
             tag: document.getElementById('scheduleTagText').value, // 🔥 직접 작성한 태그명 저장
-            memo: document.getElementById('scheduleMemo').value
+            memo: document.getElementById('scheduleMemo').value,
+            cust: (document.getElementById('scheduleCust') ? document.getElementById('scheduleCust').value.trim().slice(0, 30) : ''), // 📞 [패치 #130]
+            phone: (document.getElementById('schedulePhone') ? document.getElementById('schedulePhone').value.replace(/[^0-9]/g, '').slice(0, 11) : '')
         ,
             addr: (document.getElementById('scheduleAddr') ? document.getElementById('scheduleAddr').value.trim() : '') // 📍 [패치 #114]
         };
@@ -4025,10 +4061,10 @@
     }
 
     function switchView(mode, pushHistory = true) {
-      const views = ['homeView', 'adminView', 'quoteAdminView', 'quoteListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView', 'calendarView', 'ledgerView', 'encyclopediaView', 'loungeView', 'aiChatView'];
+      const views = ['homeView', 'adminView', 'quoteAdminView', 'quoteListView', 'logListView', 'clientsView', 'historyView', 'clientView', 'lensView', 'contactsView', 'calendarView', 'ledgerView', 'encyclopediaView', 'loungeView', 'aiChatView'];
       views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
       
-      const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient', 'tabContacts', 'tabCalendar'];
+      const mainTabs = ['tabAdmin', 'tabQuote', 'tabQuoteList', 'tabClient', 'tabContacts', 'tabCalendar', 'tabLogList'];
       mainTabs.forEach(t => { 
           const el = document.getElementById(t); 
           if(el) {
@@ -4038,7 +4074,7 @@
               if(span) span.className = "text-[15px] font-black text-white tracking-tight";
               if(icon) {
                   icon.className = icon.className.replace(/text-\S+/g, '');
-                  if(t === 'tabAdmin' || t === 'tabQuoteList') icon.classList.add('text-[#84CC16]');
+                  if(t === 'tabAdmin' || t === 'tabQuoteList' || t === 'tabLogList') icon.classList.add('text-[#84CC16]');
                   else if(t === 'tabLedger') icon.classList.add('text-yellow-400');
                   else if(t === 'tabInquiry') icon.classList.add('text-[#F59E0B]');
                   else icon.classList.add('text-white/80');
@@ -4050,6 +4086,7 @@
       if (mode === 'admin') { document.getElementById('adminView').classList.remove('hidden'); activeTabId = 'tabAdmin'; }
       else if (mode === 'quote') { document.getElementById('quoteAdminView').classList.remove('hidden'); activeTabId = 'tabQuote'; }
       else if (mode === 'quoteList') { document.getElementById('quoteListView').classList.remove('hidden'); activeTabId = 'tabQuoteList'; renderQuoteList(); }
+      else if (mode === 'logList') { document.getElementById('logListView').classList.remove('hidden'); activeTabId = 'tabLogList'; if (typeof renderLogList === 'function') renderLogList(); } // 📋 [패치 #130]
       else if (mode === 'clients') { document.getElementById('clientsView').classList.remove('hidden'); activeTabId = 'tabClient'; }
       else if (mode === 'contacts') { document.getElementById('contactsView').classList.remove('hidden'); activeTabId = 'tabContacts'; renderContactsList(); }
       else if (mode === 'history') { document.getElementById('historyView').classList.remove('hidden'); activeTabId = 'tabClient'; }
@@ -7256,7 +7293,7 @@ ${AI_COMMON_RULES}
 - clientName: 고객명 또는 현장명(예: "김철수", "영통 푸른아파트"). 존칭(고객님, 사장님, 댁)은 뺀다.
 - phone, address: 말한 경우만.
 - workDate: 작업 날짜 YYYY-MM-DD (말 안 했으면 오늘).
-- round: 작업 제목 한 줄(예: "9월 소나무 전지·방제").
+- round: 작업 제목 한 줄. 대표님이 제목을 말했으면 그 말 그대로, 안 했으면 한 일만 짧게(예: "소나무 전지·방제"). 고객 이름·날짜·꾸밈말은 넣지 않는다.
 - cats: 아래 작업 버튼 중 해당하는 것만 정확히 같은 글자로 골라 배열에: ${JSON.stringify(cats)}
 - treePruning: 소나무가 아닌 다른 나무 가지치기를 했으면 나무 이름(예: "느티나무 3주"), 아니면 "".
 - extra: 위 버튼에 없는 다른 작업이 있으면 짧게, 없으면 "".
@@ -7287,33 +7324,37 @@ ${AI_COMMON_RULES}
         alert('AI 정리에 실패했습니다. (' + (e && e.message ? e.message : '통신 오류') + ')\n' + keep);
       }
     }
-    function showLogPreview() {
+    function showLogPreview() {   // ✍️ [패치 #130] 고객명·작업 제목·주소·특이사항·코멘트도 이 자리에서 바로 고침 (예전: 보여 주기만)
       const d = aiLogDraft;
       const chips = d.cats.concat(d.treePruning ? ['수목가지치기 (' + d.treePruning + ')'] : [], d.extra ? [d.extra] : []);
-      const body = `${fpField('고객명 / 현장명', `<div class="flex items-center justify-between gap-2 bg-[#F4FBEA] border-l-[7px] border-[#84CC16] rounded-[14px] px-3 py-2.5"><span class="text-[19px] font-black text-[#0F172A] break-keep">${escHtml(d.clientName || '(말씀 안 하셨어요)')}</span>${d.found ? '<span class="text-[13.5px] font-black text-[#3F6212] bg-[#D9F99D] px-2 py-0.5 rounded-md shrink-0">기존 거래처</span>' : (d.clientName ? '<span class="text-[13.5px] font-black text-[#475569] bg-[#E2E8F0] px-2 py-0.5 rounded-md shrink-0">새 고객</span>' : '')}</div>`)}
-        <div class="bg-[#FEF9C3] border-2 border-[#EAB308] rounded-[16px] px-3.5 py-3 flex flex-col gap-2.5">${FP_CHECK_TITLE}
+      const ta = (id, label, v, ph) => `<div class="flex flex-col gap-1"><label for="${id}" class="text-[16px] font-extrabold text-[#334155]">${escHtml(label)}</label><textarea id="${id}" rows="3" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" placeholder="${escHtml(ph)}" class="rounded-[12px] border-[1.5px] border-[#CBD5E1] bg-white px-3 py-2.5 text-[16.5px] font-bold text-[#151E2D] leading-relaxed resize-none focus:outline-none focus:border-[#84CC16]">${escHtml(v)}</textarea></div>`;
+      const body = `<div class="bg-[#FEF9C3] border-2 border-[#EAB308] rounded-[16px] px-3.5 py-3 flex flex-col gap-2.5">${FP_CHECK_TITLE}
+          ${fpInputRow('fpLogName', '고객명 / 현장명' + (d.found ? '  (등록된 거래처)' : ''), d.clientName, { placeholder: '고객 이름이나 현장 이름' })}
+          ${fpInputRow('fpLogRound', '작업 제목', d.round, { placeholder: '예: 소나무 전지·방제' })}
           ${fpInputRow('fpLogDate', '작업 날짜  ' + ymdLabel(d.workDate), d.workDate, { type: 'date' })}
-          ${fpInputRow('fpLogPhone', '연락처', fmtPhone(d.phone), { type: 'tel', oninput: 'autoHyphen(this)', color: 'text-[#1D4ED8]', warn: d.phoneWarn, placeholder: '말씀 안 하셨어요 (비워 둬도 됩니다)' })}</div>
-        ${fpField('작업 제목', fpText(d.round, '없음'))}
-        ${d.address ? fpField('현장 주소', fpText(d.address)) : ''}
+          ${fpInputRow('fpLogPhone', '연락처', fmtPhone(d.phone), { type: 'tel', oninput: 'autoHyphen(this)', color: 'text-[#1D4ED8]', warn: d.phoneWarn, placeholder: '말씀 안 하셨어요 (비워 둬도 됩니다)' })}
+          ${fpInputRow('fpLogAddr', '현장 주소', d.address, { placeholder: '비워 둬도 돼요' })}</div>
         ${fpField('당일 작업 내역', chips.length ? `<div class="flex flex-wrap gap-1.5">${chips.map(c => `<span class="text-[15px] font-black bg-[#151E2D] text-[#84CC16] px-3 py-1.5 rounded-[10px]">${escHtml(c)}</span>`).join('')}</div>` : fpText('', '고른 작업이 없어요 (칸에서 눌러 주세요)'))}
-        ${fpField('특이사항', fpText(d.issue, '없음'))}
-        ${fpField('현장 작업자 코멘트 (고객님께 보이는 글)', fpText(d.diagnosis, '없음'))}
-        <span class="text-[14.5px] font-bold text-[#475569] leading-relaxed">사진은 칸에 채운 뒤 직접 넣어 주세요.</span>`;
-      formPreviewShow({ badge: '작업일지', title: '이렇게 채울까요?', bodyHtml: body, primaryLabel: '칸에 채우고 사진 넣으러 가기', onPrimary: logFillForm, onRetry: startLogVoice });
+        ${ta('fpLogIssue', '특이사항', d.issue, '없으면 비워 두세요')}
+        ${ta('fpLogDiag', '현장 작업자 코멘트 (고객님께 보이는 글)', d.diagnosis, '고객님께 보일 글')}
+        <span class="text-[14.5px] font-bold text-[#475569] leading-relaxed">작업 내역 버튼과 사진은 칸에 채운 뒤 직접 고르고 넣어 주세요.</span>`;
+      formPreviewShow({ badge: '작업일지', title: '이렇게 채울까요? (눌러서 고칠 수 있어요)', bodyHtml: body, primaryLabel: '칸에 채우고 사진 넣으러 가기', onPrimary: logFillForm, onRetry: startLogVoice });
+      setTimeout(() => { ['fpLogIssue', 'fpLogDiag'].forEach(id => { const t = document.getElementById(id); if (t) { t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; } }); }, 50);
     }
     function logFillForm() {
       const d = aiLogDraft; if (!d) return false;
       const date = document.getElementById('fpLogDate').value;
       if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) { alert('작업 날짜를 확인해 주세요.'); return false; }
+      const g = id => { const el = document.getElementById(id); return el ? String(el.value || '').trim() : ''; };
+      d.clientName = g('fpLogName'); d.round = g('fpLogRound'); d.address = g('fpLogAddr'); d.issue = g('fpLogIssue'); d.diagnosis = g('fpLogDiag');   // ✍️ [패치 #130] 고친 글 그대로
       const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
-      if (d.clientName) set('clientSelect', d.clientName);
+      set('clientSelect', d.clientName);
       set('inputClientPhone', document.getElementById('fpLogPhone').value.trim());
-      if (d.address) set('inputClientAddress', d.address);
-      if (d.round) set('inputRound', d.round);
+      set('inputClientAddress', d.address);
+      set('inputRound', d.round);
       set('inputWorkDate', date);
-      if (d.issue) set('inputIssue', d.issue);
-      if (d.diagnosis) set('inputDiagnosis', d.diagnosis);
+      set('inputIssue', d.issue);
+      set('inputDiagnosis', d.diagnosis);
       if (d.treePruning) set('inputTreePruning', d.treePruning);
       if (d.extra) set('inputExtraCategory', d.extra);
       // 작업 내역 버튼: 기존 toggleBadge 그대로 사용해서 켜고 끔
@@ -10476,7 +10517,7 @@ ${AI_COMMON_RULES}
     window.jnSchedOpen = function(id){
       let s = null; try { s = schedules.find(x => x && String(x.id) === String(id)); } catch(e) {} if (!s) return;
       const memo = String(s.memo || ''), mk = memo.match(/\(조경노트 홈 의뢰 ([A-Za-z0-9_-]{1,60})\)/), rid = mk ? mk[1] : '';
-      let phone = ((memo.match(/연락처\s*[:：]\s*([0-9][0-9\- ]{6,})/) || [])[1] || '').replace(/[^0-9]/g, '');
+      let phone = String(s.phone || '').replace(/[^0-9]/g, '') || ((memo.match(/연락처\s*[:：]\s*([0-9][0-9\- ]{6,})/) || [])[1] || '').replace(/[^0-9]/g, '');   // 📞 [패치 #130] 일정에 저장한 번호 먼저
       if (!phone) { try { const c = (clients || []).find(c => c && c.name && String(c.name).trim().length >= 2 && String(s.title || '').includes(String(c.name).trim()) && c.phone); if (c) phone = String(c.phone).replace(/[^0-9]/g, ''); } catch(e) {} }
       const memoShow = memo.replace(/\n?\(조경노트 홈 의뢰 [^)]*\)/, '').trim();
       const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s.date || '')); let dateKo = s.date || '';
@@ -10495,7 +10536,7 @@ ${AI_COMMON_RULES}
         <div style="font-size:15px;font-weight:900;color:#4D7C0F;margin-top:12px">📅 ${E(dateKo)}</div>
         <div style="font-size:20px;font-weight:900;color:#151E2D;line-height:1.35;margin-top:4px;word-break:keep-all">${E(s.title || '')}</div>
         ${addr ? sec('현장 주소', `<div style="font-size:16px;font-weight:800;color:#151E2D;word-break:keep-all">📍 ${E(addr)}</div>${jnAddrRow(addr)}`) : ''}
-        ${phone ? sec('고객 연락처', `<div style="font-size:17px;font-weight:900;color:#151E2D">${E(phFmt)}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px"><a href="tel:${phone}" onclick="event.stopPropagation()" style="${btn};background:#151E2D;color:#fff">📞 전화</a><a href="sms:${phone}" onclick="event.stopPropagation()" style="${btn};background:#fff;color:#151E2D;border:1.5px solid #CBD5E1">💬 문자</a></div>`) : ''}
+        ${phone ? sec(s.cust ? '고객 · ' + s.cust : '고객 연락처', `<div style="font-size:17px;font-weight:900;color:#151E2D">${E(phFmt)}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px"><a href="tel:${phone}" onclick="event.stopPropagation()" style="${btn};background:#151E2D;color:#fff">📞 전화</a><a href="sms:${phone}" onclick="event.stopPropagation()" style="${btn};background:#fff;color:#151E2D;border:1.5px solid #CBD5E1">💬 문자</a></div>`) : ''}
         ${memoShow ? sec('메모', `<div style="font-size:15.5px;font-weight:700;color:#334155;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:14px;padding:12px 14px;line-height:1.6;white-space:pre-wrap;word-break:keep-all">${E(memoShow)}</div>`) : ''}
         ${rid ? `<button type="button" onclick="jnSchedReq(${E(JSON.stringify(rid))})" style="${btn};width:100%;margin-top:16px;background:#84CC16;color:#12261E;box-shadow:inset 0 0 0 2px #151E2D">🏡 의뢰 내용 보기 (사진·요청사항)</button>` : ''}
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:${rid ? 8 : 16}px">
@@ -10613,5 +10654,217 @@ ${AI_COMMON_RULES}
     }
   })();
   </script>
+<script>
+/* ============================================================
+   📋 [패치 #130] 현장 테스트 반영 (10/6)
+   - 일지·리포트 목록 (보냄 표시 · 고객 열어봄 횟수 · 바로 보기/수정/삭제/보내기)
+   - 리포트 발행 직후에도 [수정] · 보낸 기록 남기기
+   - 사진 X 크게 + 연속 눌림 막기
+   - 일정: 고객 이름·전화번호 (복사한 번호 넣기 · 연락처에서 고르기) · 달력 칸 누르면 그날 일정 창
+   - 고객이 리포트 링크를 열면 횟수 기록 (서버 home.gs: home_doc_view)
+   ============================================================ */
+(function () {
+  const E = v => String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  const DB = 'https://shinhwa-landnote-default-rtdb.firebaseio.com';
+  const API = 'https://script.google.com/macros/s/AKfycbysZFaBJt9Iu964hP9rJVjmYHDMMo_TQAocjih4h8q0_im414WA6-23LS6Wm4xQvTJRQw/exec';
+  const toast = m => { try { if (typeof jnToast === 'function') return jnToast(m); } catch (e) {} alert(m); };
+  const recs = () => (Array.isArray(records) ? records : (records && typeof records === 'object' ? Object.values(records) : [])).filter(r => r && r.id);
+  const saveRecs = () => { try { updateData('records', records); } catch (e) {} try { localStorage.setItem('shinhwa_pro_records', JSON.stringify(records)); } catch (e) {} };
+  const idTs = id => { const m = /^doc_(\d{10,14})_/.exec(String(id || '')); return m ? Number(m[1]) : 0; };
+  const md = ms => { const d = new Date(Number(ms) || 0); return `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
+  const docIdFromUrl = u => { try { return new URL(u).searchParams.get('id') || ''; } catch (e) { return ''; } };
+
+  /* ---------- 사진 X: 한 번 누르면 딱 한 장 (0.5초 안에 또 눌리는 건 무시) ---------- */
+  let thumbLock = 0;
+  window.thumbDel = function (ev, type, idx) {
+    if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+    if (Date.now() < thumbLock) return; thumbLock = Date.now() + 500;
+    if (type === 'quote') removeQuoteThumb(idx); else removeThumb(type, idx);
+  };
+
+  /* ---------- 보낸 기록 ---------- */
+  function markSent(via) {
+    const pnl = document.getElementById('adminControlsPanel');
+    if (!pnl || pnl.style.display === 'none') return;   // 고객 화면에서는 기록 안 함
+    const id = docIdFromUrl(generatedShareUrl) || currentLoadedRecordId; if (!id) return;
+    const r = recs().find(x => x.id === id); if (!r) return;
+    r.sentAt = Date.now(); r.sentVia = via; r.sentN = (Number(r.sentN) || 0) + 1; if (!r.url && generatedShareUrl) r.url = generatedShareUrl;
+    saveRecs();
+  }
+  ['shareKakaoTalk', 'sendSMS', 'copyReportText'].forEach((fn, i) => {
+    if (typeof window[fn] !== 'function') return;
+    const o = window[fn]; const via = ['kakao', 'sms', 'copy'][i];
+    window[fn] = function () { try { markSent(via); } catch (e) {} return o.apply(this, arguments); };
+  });
+
+  /* ---------- 리포트·견적 발행 직후에도 [수정] 버튼 ---------- */
+  if (typeof renderClientView === 'function') {
+    const rcv0 = renderClientView;
+    renderClientView = function (data, viewMode) {
+      const r = rcv0.apply(this, arguments);
+      try {
+        if (viewMode === 'admin_preview') {
+          const id = docIdFromUrl(generatedShareUrl);
+          if (id && recs().some(x => x.id === id)) {
+            currentLoadedRecordId = id;
+            const q = document.getElementById('editQuoteBtnBox'), w = document.getElementById('editReportBtnBox');
+            if (q) q.style.display = data && data.isQuote ? 'flex' : 'none';
+            if (w) w.style.display = data && !data.isQuote ? 'flex' : 'none';
+          }
+        }
+        if (viewMode === 'admin_history' && LL.from) {   // 목록에서 열었으면 '목록으로'가 일지·리포트 목록으로
+          const b = document.getElementById('btnBackFromReport'); if (b) { b.innerText = '일지·리포트 목록으로'; b.onclick = () => switchView('logList'); }
+        }
+      } catch (e) {}
+      return r;
+    };
+  }
+
+  /* ---------- 일지·리포트 목록 ---------- */
+  const LL = { tab: 'all', more: 0, views: {}, from: false, loading: {} };
+  window.LL = LL;
+  function sortKey(r) { return idTs(r.id) || Date.parse(String(r.date || '').replace(/\.\s*/g, '-').replace(/-$/, '')) || 0; }
+  window.renderLogList = function () {
+    const all = recs().filter(r => r.clientName).sort((a, b) => sortKey(b) - sortKey(a));
+    const cnt = { all: all.length, report: all.filter(r => r.type !== 'quote').length, quote: all.filter(r => r.type === 'quote').length };
+    const tabs = [['all', '전체'], ['report', '작업일지'], ['quote', '견적서']];
+    document.getElementById('llTabs').innerHTML = tabs.map(([k, t]) => `<button type="button" onclick="LL.tab='${k}';LL.more=0;renderLogList()" class="h-[46px] rounded-[12px] text-[15.5px] font-black ${LL.tab === k ? 'bg-[#151E2D] text-[#84CC16] shadow' : 'text-[#475569]'}">${t} ${cnt[k]}</button>`).join('');
+    const list = all.filter(r => LL.tab === 'all' || (LL.tab === 'quote' ? r.type === 'quote' : r.type !== 'quote'));
+    document.getElementById('llCount').innerText = list.length + '건';
+    const box = document.getElementById('llList');
+    if (!list.length) { box.innerHTML = emptyStateHtml('clipboard-list', '아직 발행한 문서가 없습니다', '작업일지나 견적서를 발행하면 최근 것부터 여기 모여요.', '작업일지 쓰기', "switchView('admin')"); try { lucide.createIcons(); } catch (e) {} return; }
+    const show = list.slice(0, 40 + LL.more);
+    const btn = 'h-[44px] rounded-[12px] text-[14.5px] font-black flex items-center justify-center active:scale-95';
+    box.innerHTML = show.map(r => {
+      const q = r.type === 'quote', id = E(r.id), v = LL.views[r.id];
+      const sent = r.sentAt ? `<span class="text-[14px] font-black text-[#166534] bg-[#DCFCE7] rounded-[8px] px-2 py-1">✅ ${q ? '견적서' : '리포트'} 보냄 · ${md(r.sentAt)}</span>` : `<span class="text-[14px] font-black text-[#9A3412] bg-[#FFEDD5] rounded-[8px] px-2 py-1">🟠 아직 안 보냄</span>`;
+      const seen = v && v.n ? `<span class="text-[14px] font-black text-[#1D4ED8] bg-[#DBEAFE] rounded-[8px] px-2 py-1">👀 고객이 ${v.n}번 열어봄</span>` : '';
+      return `<div class="bg-white rounded-[18px] border-[1.5px] ${r.sentAt ? 'border-[#BBF7D0]' : 'border-[#FED7AA]'} p-4 flex flex-col gap-2">
+        <div class="flex items-center justify-between gap-2"><span class="text-[13px] font-black px-2 py-0.5 rounded-md ${q ? 'bg-[#E0F2FE] text-[#0369A1]' : 'bg-[#ECFCCB] text-[#3F6212]'}">${q ? '견적서' : '작업일지'}</span><span class="text-[14px] font-bold text-[#64748B]">${E(r.date || '')}</span></div>
+        <button type="button" onclick="llOpen('${id}')" class="text-left"><span class="block text-[18px] font-black text-[#151E2D] leading-snug break-keep">${E(r.clientName)}</span><span class="block text-[15px] font-bold text-[#475569] break-keep mt-0.5">${E(r.round || (q ? '견적서' : '작업 리포트'))}</span></button>
+        <div class="flex flex-wrap gap-1.5">${sent}${seen}</div>
+        <div class="grid grid-cols-4 gap-1.5 mt-1">
+          <button type="button" onclick="llOpen('${id}')" class="${btn} bg-[#F1F5F9] text-[#151E2D]">보기</button>
+          <button type="button" onclick="llEdit('${id}')" class="${btn} bg-[#D9F99D] text-[#1A2E05]">수정</button>
+          <button type="button" onclick="llOpen('${id}')" class="${btn} bg-[#151E2D] text-[#D9F99D]">${r.sentAt ? '또 보내기' : '보내기'}</button>
+          <button type="button" onclick="llDel('${id}')" class="${btn} bg-white border border-[#E2E8F0] text-[#DC2626]">삭제</button>
+        </div></div>`;
+    }).join('') + (list.length > show.length ? `<button type="button" onclick="LL.more+=40;renderLogList()" class="w-full h-[52px] rounded-[14px] bg-[#F1F5F9] text-[#334155] text-[16px] font-black">더 보기 (${list.length - show.length}건 더)</button>` : '');
+    loadViews(show.map(r => r.id));
+  };
+  async function loadViews(ids) {
+    const need = ids.filter(id => /^[A-Za-z0-9_-]{6,80}$/.test(id) && !LL.views[id] && !LL.loading[id]).slice(0, 40);
+    if (!need.length) return;
+    need.forEach(id => LL.loading[id] = 1);
+    const got = await Promise.all(need.map(id => fetch(`${DB}/pro_shared_docs/${id}__v.json`).then(r => r.ok ? r.json() : null).catch(() => null)));
+    let changed = false;
+    need.forEach((id, i) => { const v = got[i]; LL.views[id] = v && typeof v === 'object' ? { n: Number(v.n) || 0, last: Number(v.last) || 0 } : { n: 0 }; if (LL.views[id].n) changed = true; delete LL.loading[id]; });
+    const view = document.getElementById('logListView');
+    if (changed && view && !view.classList.contains('hidden')) renderLogList();
+  }
+  window.llOpen = function (id) {
+    const r = recs().find(x => x.id === id); if (!r) return;
+    LL.from = true; loadHistoryRecord(r.id, r.type === 'quote', r);
+  };
+  window.llEdit = async function (id) {
+    const r = recs().find(x => x.id === id); if (!r) return;
+    if (!r.payload) { toast('예전 문서라 바로 고칠 수 없어요. [보기]로 연 다음 [수정]을 눌러 주세요.'); return; }
+    currentLoadedRecordId = r.id; if (r.url) generatedShareUrl = r.url;
+    if (r.type === 'quote') editCurrentQuote(); else editCurrentReport();
+  };
+  window.llDel = function (id) {
+    const r = recs().find(x => x.id === id); if (!r) return;
+    if (!confirm(`'${r.clientName}${r.round ? ' · ' + r.round : ''}'\n이 ${r.type === 'quote' ? '견적서' : '작업일지'}를 지울까요?\n(고객이 받은 링크는 그대로 열려요)`)) return;
+    records = recs().filter(x => x.id !== id); saveRecs(); renderLogList(); toast('지웠어요.');
+  };
+  // 다른 화면으로 가면 '목록에서 열었음' 표시 지움
+  if (typeof switchView === 'function') {
+    const sv0 = switchView;
+    switchView = function (mode) { if (mode !== 'client' && mode !== 'logList') LL.from = false; return sv0.apply(this, arguments); };
+  }
+
+  /* ---------- 고객이 리포트 링크를 열면 횟수 기록 (주인 본인은 빼고) ---------- */
+  try {
+    const p = new URLSearchParams(location.search), id = p.get('id');
+    if (id && /^[A-Za-z0-9_-]{6,80}$/.test(id)) {
+      setTimeout(async () => {
+        try {
+          const own = await fetch(`${DB}/pro_shared_docs/${id}/ownerId.json`).then(r => r.ok ? r.json() : null).catch(() => null);
+          const me = String(localStorage.getItem('shinhwa_pro_logged_in_id') || '').toLowerCase();
+          if (own && me && String(own).toLowerCase() === me) return;
+          fetch(API, { method: 'POST', body: JSON.stringify({ action: 'home_doc_view', id }) }).catch(() => {});
+        } catch (e) {}
+      }, 2500);
+    }
+  } catch (e) {}
+
+  /* ---------- 일정: 고객 이름·전화번호 ---------- */
+  const PH = /(01[016789]|02|0[3-6][1-5]|070)[-.\s]?\d{3,4}[-.\s]?\d{4}/;
+  window.jnPastePhone = async function () {
+    const inp = document.getElementById('schedulePhone'); if (!inp) return;
+    let t = '';
+    try { if (navigator.clipboard && navigator.clipboard.readText) t = await navigator.clipboard.readText(); } catch (e) { t = ''; }
+    const m = String(t || '').match(PH);
+    if (m) { inp.value = m[0].replace(/[^0-9]/g, ''); autoHyphen(inp); toast('📋 ' + inp.value + ' 넣었어요.'); const c = document.getElementById('scheduleCust'); if (c && !c.value.trim()) c.focus(); return; }
+    inp.focus(); toast(t ? '복사한 글에 전화번호가 없어요. 전화 앱 최근 기록에서 번호를 길게 눌러 [복사]한 뒤 다시 눌러 주세요.' : '전화 앱 최근 기록에서 번호를 길게 눌러 [복사]한 뒤 다시 눌러 주세요. (안 되면 칸을 길게 눌러 [붙여넣기])');
+  };
+  window.jnPickContact = async function () {
+    if (!(navigator.contacts && navigator.contacts.select)) { toast('이 휴대폰에서는 연락처 고르기가 안 돼요. [복사한 번호 넣기]를 써 주세요.'); return; }
+    try {
+      const got = await navigator.contacts.select(['name', 'tel'], { multiple: false }); const c = got && got[0]; if (!c) return;
+      const tel = (c.tel || [])[0] || ''; const name = (c.name || [])[0] || '';
+      if (tel) { const i = document.getElementById('schedulePhone'); i.value = String(tel).replace(/[^0-9]/g, ''); autoHyphen(i); }
+      if (name) { const n = document.getElementById('scheduleCust'); if (n && !n.value.trim()) n.value = String(name).slice(0, 30); }
+    } catch (e) {}
+  };
+  setTimeout(() => { const b = document.getElementById('jnPickContactBtn'); if (b && !(navigator.contacts && navigator.contacts.select)) { b.style.display = 'none'; const g = b.parentElement; if (g) g.style.gridTemplateColumns = '1fr'; } }, 500);
+  const setV = (id, v) => { const e = document.getElementById(id); if (e) e.value = v; };
+  if (typeof openScheduleModal === 'function') { const o = openScheduleModal; openScheduleModal = function () { const r = o.apply(this, arguments); setV('scheduleCust', ''); setV('schedulePhone', ''); return r; }; }
+  if (typeof openScheduleEdit === 'function') {
+    const o = openScheduleEdit;
+    openScheduleEdit = function (id) { const r = o.apply(this, arguments); try { const s = schedules.find(x => String(x.id) === String(id)); if (s) { setV('scheduleCust', s.cust || ''); const p = document.getElementById('schedulePhone'); if (p) { p.value = s.phone || ''; autoHyphen(p); } } } catch (e) {} return r; };
+  }
+  if (typeof reqToSchedule === 'function') {   // 의뢰함에서 일정 잡을 때 고객 이름·번호도 채움
+    const o = reqToSchedule;
+    reqToSchedule = function () { const r = o.apply(this, arguments); try { if (RV && RV.cur) { setV('scheduleCust', RV.cur.noName ? '' : (RV.cur.name || '')); const p = document.getElementById('schedulePhone'); if (p && RV.cur.phone) { p.value = RV.cur.phone; autoHyphen(p); } } } catch (e) {} return r; };
+  }
+  // 저장할 때 원래 있던 다른 정보(조경노트 홈 의뢰 표시 등)는 그대로 둠
+  if (typeof saveSchedule === 'function') {
+    const o = saveSchedule;
+    saveSchedule = function () {
+      const id = (document.getElementById('scheduleId') || {}).value; const before = (schedules || []).find(s => String(s.id) === String(id));
+      const keep = before ? Object.assign({}, before) : null;
+      const r = o.apply(this, arguments);
+      try { if (keep) { const s = schedules.find(x => String(x.id) === String(id)); if (s) { Object.keys(keep).forEach(k => { if (!(k in s)) s[k] = keep[k]; }); updateData('schedules', schedules); } } } catch (e) {}
+      return r;
+    };
+  }
+  /* ---------- 달력: 칸 아무 데나 누르면 그날 일정 창 ---------- */
+  window.calTap = function (y, m, d) {
+    selectDate(y, m, d);
+    const ds = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const list = (schedules || []).filter(s => s && s.date === ds);
+    if (!list.length) return;
+    if (list.length === 1) { jnSchedOpen(list[0].id); return; }
+    let box = document.getElementById('calDaySheet');
+    if (!box) { box = document.createElement('div'); box.id = 'calDaySheet'; box.style.cssText = 'position:fixed;inset:0;z-index:9050;background:rgba(15,23,42,.55);display:flex;align-items:flex-end;justify-content:center'; box.onclick = e => { if (e.target === box) calDayClose(); }; document.body.appendChild(box); }
+    const dt = new Date(y, m, d);
+    box.innerHTML = `<div style="background:#fff;width:100%;max-width:480px;max-height:80vh;overflow-y:auto;border-radius:26px 26px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom))">
+      <div style="display:flex;align-items:center;justify-content:space-between"><b style="font-size:20px;font-weight:900;color:#151E2D">📅 ${m + 1}월 ${d}일 (${'일월화수목금토'[dt.getDay()]}) · 일정 ${list.length}건</b><button type="button" onclick="calDayClose()" style="width:40px;height:40px;border-radius:99px;background:#F1F5F9;font-size:20px;font-weight:900;color:#151E2D">✕</button></div>
+      ${list.map(s => `<button type="button" onclick="calDayGo(${E(JSON.stringify(String(s.id)))})" style="display:block;width:100%;text-align:left;margin-top:10px;background:#F8FAFC;border:1.5px solid #E2E8F0;border-left:6px solid #84CC16;border-radius:16px;padding:13px 14px">
+        <span style="display:inline-block;background:#151E2D;color:#84CC16;font-size:13px;font-weight:900;padding:3px 10px;border-radius:99px">${E(s.tag || '현장 작업')}</span>
+        <span style="display:block;font-size:17px;font-weight:900;color:#151E2D;margin-top:6px;word-break:keep-all">${E(s.title || '')}</span>
+        ${s.cust || s.phone ? `<span style="display:block;font-size:14.5px;font-weight:800;color:#1D4ED8;margin-top:3px">${E(s.cust || '')}${s.cust && s.phone ? ' · ' : ''}${E(s.phone ? reqPhoneFmt(s.phone) : '')}</span>` : ''}
+      </button>`).join('')}
+      <button type="button" onclick="calDayClose();setTimeout(openScheduleModal,350)" style="width:100%;height:52px;margin-top:12px;border-radius:14px;background:#84CC16;color:#12261E;font-size:16px;font-weight:900">＋ 이날 일정 추가</button></div>`;
+    box.style.display = 'flex';
+    if (!(history.state && history.state.calDay)) history.pushState({ calDay: true }, '', '');
+  };
+  window.calDayGo = function (id) { const b = document.getElementById('calDaySheet'); if (b) b.style.display = 'none'; try { if (history.state && history.state.calDay) history.replaceState({ jnSched: true }, '', ''); } catch (e) {} jnSchedOpen(id); };   // 그날 창 → 일정 자세히 (뒤로가기 한 번이면 달력)
+  window.calDayClose = function (fromPop) { const b = document.getElementById('calDaySheet'); if (!b || b.style.display === 'none') return; b.style.display = 'none'; if (!fromPop && history.state && history.state.calDay) history.back(); };
+  window.addEventListener('popstate', () => { const b = document.getElementById('calDaySheet'); if (b && b.style.display !== 'none') calDayClose(true); });
+})();
+</script>
 </body>
+
 </html>
