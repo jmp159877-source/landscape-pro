@@ -2428,7 +2428,7 @@
 
     function openTextEditor(inputId) { activeTextEditorId = inputId; const inputEl = document.getElementById(inputId); const modalInput = document.getElementById('modalTextInput'); modalInput.value = inputEl.value; const modal = document.getElementById('textEditorModal'); const box = document.getElementById('textEditorBox'); modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); modalInput.focus(); }, 10); history.pushState({ modalOpen: true }, "", ""); }
     function closeTextEditor(fromPopstate = false) { const modal = document.getElementById('textEditorModal'); const box = document.getElementById('textEditorBox'); if(modal) modal.classList.add('opacity-0'); if(box) box.classList.add('scale-95'); setTimeout(() => { if(modal) modal.classList.add('hidden'); activeTextEditorId = null; }, 200); if(!fromPopstate && history.state && history.state.modalOpen) history.back(); }
-    function saveTextEditor() { if(activeTextEditorId) { const val = document.getElementById('modalTextInput').value; document.getElementById(activeTextEditorId).value = val; if (/^quoteDesc_/.test(activeTextEditorId) && typeof quoteDescFit === 'function') quoteDescFit(document.getElementById(activeTextEditorId)); } closeTextEditor(); } // 🧾 [패치 #60] 줄 수에 맞춰 칸 높이
+    function saveTextEditor() { if(activeTextEditorId) { const val = document.getElementById('modalTextInput').value; document.getElementById(activeTextEditorId).value = val; if (/^quoteDesc_/.test(activeTextEditorId) && typeof quoteDescFit === 'function') quoteDescFit(document.getElementById(activeTextEditorId)); if (/^quoteDesc_/.test(activeTextEditorId)) { quoteRowAutoOn(document.getElementById(activeTextEditorId)); try { calculateQuoteTotal(); } catch (e) {} } } closeTextEditor(); } // 🧾 [패치 #60] 줄 수에 맞춰 칸 높이
 
     let currentLensImg = "";
     
@@ -2666,6 +2666,14 @@
       container.insertAdjacentHTML('beforeend', itemHtml);
     }
 
+    // 🧾 [패치 #142] 내역이나 금액을 적으면 그 줄 번호 버튼을 저절로 켬 (예전: 조경공사처럼 빈 줄로 시작하면 번호를 눌러 켜야만 합계에 들어갔음)
+    function quoteRowAutoOn(el) {
+      try { const m = /^quote(?:Price|Desc)_(\d+)$/.exec(el && el.id || ''); if (!m) return; const val = String(el.value || '').replace(/[\s0,원]/g, ''); if (!val) return;
+        const row = document.getElementById('quotePrice_' + m[1]); const btn = row && row.closest('.flex').parentElement.querySelector('.quote-month-btn');
+        if (btn && !btn.classList.contains('bg-[#151E2D]')) btn.className = "quote-month-btn w-12 flex-shrink-0 text-center font-black text-[14.5px] bg-[#151E2D] text-[#84CC16] py-3 rounded-[10px] shadow-sm transition-all";
+      } catch (e) {}
+    }
+    document.addEventListener('input', e => { if (e.target && /^quotePrice_\d+$/.test(e.target.id || '')) quoteRowAutoOn(e.target); }, true);
     function calculateQuoteTotal() {
       if (typeof quoteDescFit === 'function') document.querySelectorAll('textarea[id^="quoteDesc_"]').forEach(quoteDescFit); // 🧾 [패치 #60] 내용 줄 수에 맞춰 칸 높이 (AI로 채울 때 포함)
       let sum = 0;
@@ -3069,7 +3077,8 @@
             const lines = String(rawItem.d || '').split(/\n|, (?=[^)]*(?:\(|$))/).map(t => t.replace(/^[·•\-\s]+/, '').trim()).filter(Boolean);
             const body = isTpl ? descHtml : (lines.length > 1 ? lines.map(t => `<div class="relative pl-3 text-[16px] font-bold text-[#0F172A] leading-[1.55] break-keep"><span class="absolute left-0 top-[11px] w-1 h-1 rounded-full bg-[#84CC16]"></span>${escHtml(t)}</div>`).join('') : `<div class="text-[16.5px] font-extrabold text-[#0F172A] leading-[1.45] break-keep whitespace-pre-wrap">${item.d}</div>`);
             quoteShownNo++; /* 🧾 [패치 #66] 번호·금액을 항목 가운데 높이에 (여러 줄 항목 전체가 이 금액) */ const shownLabel = /^\d+$/.test(String(rawItem.m || '').trim()) ? String(quoteShownNo).padStart(2, '0') : item.m;
-            mHtml += `<div class="grid grid-cols-[40px_1fr_auto] gap-2.5 py-3.5 border-b border-[#E2E8F0] items-center"><span class="text-[14px] font-black text-[#65A30D] break-keep">${shownLabel}</span><div class="min-w-0">${body}</div><span class="text-[16.5px] font-black text-[#0F172A] whitespace-nowrap text-right tabular-nums">${item.p ? item.p.toLocaleString('ko-KR') + '원' : ''}</span></div>`; }
+            /* 📱 [패치 #143] 금액은 내용 아래 오른쪽 → 글자를 크게 한 휴대폰에서도 내용이 한 줄 폭을 다 씀 */
+            mHtml += `<div class="grid grid-cols-[34px_1fr] gap-2 py-3.5 border-b border-[#E2E8F0] items-start"><span class="text-[14px] font-black text-[#65A30D] break-keep pt-[3px]">${shownLabel}</span><div class="min-w-0 flex flex-col gap-1.5">${body}${item.p ? `<div class="self-end text-[17px] font-black text-[#0F172A] whitespace-nowrap tabular-nums pt-1">${item.p.toLocaleString('ko-KR')}원</div>` : ''}</div></div>`; }
         });
         document.getElementById('viewQuoteMonths').innerHTML = (mHtml ? '<div class="flex justify-between text-[13.5px] font-black text-[#64748B] px-0.5 pb-2 border-b-2 border-[#151E2D]"><span>번호 · 내용</span><span>금액</span></div>' : '') + mHtml; document.getElementById('viewQuoteSubtotal').className = "ml-auto font-extrabold text-white tabular-nums whitespace-nowrap"; document.getElementById('viewQuoteSubtotal').innerText = (data.s || 0).toLocaleString('ko-KR') + "원"; document.getElementById('viewQuoteVatLabel').innerText = "부가가치세"; document.getElementById('viewQuoteVat').innerHTML = '<span class="font-extrabold text-white">별도 (요청 시)</span>'; document.getElementById('viewQuoteGrandTotal').innerText = (data.s || 0).toLocaleString('ko-KR') + "원";
         if(data.memo && String(data.memo).trim() !== '') { document.getElementById('viewQuoteMemoBlock').innerHTML = `<div class="border-[1.5px] border-[#E2E8F0] rounded-[16px] px-4 py-3.5 text-left"><div class="text-[17px] font-black text-[#151E2D] flex items-center gap-2 mb-2"><span class="w-[4px] h-[17px] rounded-full bg-[#84CC16]"></span>참고 및 특이사항</div><p class="text-[15.5px] leading-[1.75] text-[#1E293B] font-bold whitespace-pre-wrap break-keep">${escHtml(data.memo)}</p></div>`; /* 🧾 [패치 #62] */ } else { document.getElementById('viewQuoteMemoBlock').innerHTML = ''; }
@@ -6819,7 +6828,7 @@ ${HELP_EXTRA.join('\n')}`;
       VX.paused = false; VX.active = true; VX.startAt = Date.now();
       document.getElementById('voiceMicDot').classList.add('animate-pulse');
       document.getElementById('voiceGuide').innerText = '이어서 말씀하세요.';
-      clearInterval(VX.timer); VX.timer = setInterval(() => { voiceRender(); if (VX.active && Date.now() - VX.startAt > VOICE_MAX_SEC * 1000) voiceFinish(); }, 500);
+      clearInterval(VX.timer); VX.timer = setInterval(() => { voiceRender(); try { memoDraftTick(); } catch (e) {} if (VX.active && Date.now() - VX.startAt > VOICE_MAX_SEC * 1000) voiceFinish(); }, 500);
       voiceRender(); voiceStartRec();
     }
     function voiceBegin() {
@@ -6832,7 +6841,7 @@ ${HELP_EXTRA.join('\n')}`;
       if (iab) { VX.single = true; document.getElementById('voiceGuide').innerText = '천천히 말씀하세요.\n마이크 허용 창이 뜨면 [허용]을 눌러 주세요.'; } // 🎤 [패치 #59] 앱 안 브라우저도 바로 듣기 먼저 시도 (원래: 바로 키보드로 전환)
       VX.active = true; VX.startAt = Date.now();
       document.getElementById('voiceMicDot').classList.add('animate-pulse');
-      clearInterval(VX.timer); VX.timer = setInterval(() => { voiceRender(); if (VX.active && Date.now() - VX.startAt > VOICE_MAX_SEC * 1000) voiceFinish(); }, 500);
+      clearInterval(VX.timer); VX.timer = setInterval(() => { voiceRender(); try { memoDraftTick(); } catch (e) {} if (VX.active && Date.now() - VX.startAt > VOICE_MAX_SEC * 1000) voiceFinish(); }, 500);
       voiceRender(); voiceStartRec();
     }
     function voiceOpen(opts) {
@@ -7693,6 +7702,7 @@ ${AI_COMMON_RULES}
       renderMemoList(true);
       try { await loadMemos(); renderMemoList(); }
       catch (e) { document.getElementById('memoCount').innerText = '메모를 불러오지 못했습니다. 인터넷 연결을 확인해 주세요.'; }
+      setTimeout(() => { try { memoDraftRestore(); } catch (e) {} }, 300);   // 💾 [패치 #141]
     }
     function renderMemoList(loading) {
       const cnt = document.getElementById('memoCount'); const box = document.getElementById('memoList');
@@ -7807,7 +7817,33 @@ ${AI_COMMON_RULES}
     let memoVoiceMode = 'new';
     function startMemoVoice() { memoVoiceMode = 'new'; voiceOpen({ title: '말로 메모하기', chip: 'AI 메모장', hints: ['현장', '치수·수량', '할 일'], guide: VOICE_GUIDES.memo, onDone: runMemoAi }); }
     function startMemoVoiceMore() { if (!memoCur) return; memoReadEditor(); memoVoiceMode = 'more'; voiceOpen({ title: '이어서 더 말하기', chip: 'AI 메모장', hints: ['치수·수량', '할 일'], guide: VOICE_GUIDES.memo, onDone: runMemoAi }); }
+    // 💾 [패치 #141] 말로 한 메모를 절대 잃지 않게: 말하는 중에도 휴대폰에 임시 보관 → AI 정리 끝나면 바로 자동 저장 → 못 했으면 다음에 열 때 되살리기
+    const MEMO_DRAFT_KEY = () => 'jn_memo_draft_' + (currentUserId || '');
+    function memoDraftSave(text) { try { if (text && text.trim().length >= 4) localStorage.setItem(MEMO_DRAFT_KEY(), JSON.stringify({ text: text.slice(0, MEMO_RAW_MAX), at: Date.now() })); } catch (e) {} }
+    function memoDraftClear() { try { localStorage.removeItem(MEMO_DRAFT_KEY()); } catch (e) {} }
+    function memoDraftTick() { try { if (VX.onDone === runMemoAi && memoVoiceMode === 'new' && VX.active) memoDraftSave(VX.fallback ? (document.getElementById('voiceText').value || '') : voiceText()); } catch (e) {} }
+    async function memoAutoSave() {
+      if (!memoCur) return;
+      try { await memoPersist(memoCur); memoSnap = memoSnapOf(memoCur); memoDraftClear();
+        document.getElementById('memoEditHead').innerText = 'AI가 정리했어요 · 자동 저장됨 ✓'; document.getElementById('memoDeleteBtn').classList.remove('hidden');
+      } catch (e) { alert('인터넷이 약해서 아직 저장하지 못했어요.\n말씀하신 내용은 휴대폰에 보관해 두었어요.\n연결되면 [이대로 메모 저장]을 눌러 주세요.'); }
+    }
+    async function memoDraftRestore() {
+      let d = null; try { d = JSON.parse(localStorage.getItem(MEMO_DRAFT_KEY()) || 'null'); } catch (e) {}
+      if (!d || !d.text) return;
+      const when = new Date(d.at || Date.now()), t = `${when.getMonth() + 1}월 ${when.getDate()}일 ${when.getHours()}:${String(when.getMinutes()).padStart(2, '0')}`;
+      if (!confirm(`저장되지 않은 말 메모가 있어요 (${t}).\n\n"${d.text.slice(0, 60)}${d.text.length > 60 ? '…' : ''}"\n\n되살려서 저장할까요?`)) { if (confirm('이 메모를 지울까요?')) memoDraftClear(); return; }
+      memoVoiceMode = 'new'; memoShowEdit({ id: '', title: '', lines: [], raw: d.text, createdAt: 0 }, { head: '되살린 메모', showRaw: true, unsaved: true });
+      history.pushState({ memoEdit: true }, '', '');
+      document.getElementById('memoLinesView').innerHTML = '<span class="text-[15px] font-bold text-[#64748B]">AI가 다시 정리하는 중…</span>';
+      let lines = [], title = '';
+      try { const j = await voiceAskAiJson(MEMO_AI_PROMPT, d.text); title = String(j.title || '').trim().slice(0, 40); lines = (Array.isArray(j.lines) ? j.lines : []).map(x => String(x == null ? '' : x).trim().slice(0, MEMO_LINE_MAX)).filter(Boolean).slice(0, MEMO_MAX_LINES); } catch (e) {}
+      if (!lines.length) lines = [d.text.slice(0, MEMO_LINE_MAX * 5)];
+      memoCur.title = title; memoCur.lines = lines; document.getElementById('memoTitleInput').value = title; memoSetEditing(false);
+      await memoAutoSave();
+    }
     async function runMemoAi(text) {
+      if (memoVoiceMode === 'new') memoDraftSave(text);
       voiceShowThinking(['군말 · 발음 실수 고치기', '치수 · 숫자 정리', '줄별로 나누기']);
       let title = '', lines = [], failed = false;
       try {
@@ -7821,11 +7857,12 @@ ${AI_COMMON_RULES}
         memoCur.raw = ((memoCur.raw ? memoCur.raw + '\n' : '') + text).slice(0, MEMO_RAW_MAX);
         if (!memoCur.title && title) memoCur.title = title;
         voiceHide(false); // 메모 보기 화면으로 한 칸 돌아감
-        const keepSnap = memoSnap; memoShowEdit(memoCur, { head: '덧붙여 정리했어요', showRaw: true }); memoSnap = keepSnap; // 덧붙인 내용은 저장 전까지 '안 저장됨'
+        memoShowEdit(memoCur, { head: '덧붙여 정리했어요', showRaw: true }); await memoAutoSave();   // 💾 [패치 #141] 덧붙인 내용도 바로 저장
       } else {
         voiceHide(true);
         memoShowEdit({ id: '', title, lines, raw: text.slice(0, MEMO_RAW_MAX), createdAt: 0 }, { showRaw: true, unsaved: true });
         history.replaceState({ memoEdit: true }, '', ''); // 음성 화면 자리를 메모 보기 화면으로 바꿈
+        await memoAutoSave();   // 💾 [패치 #141] [저장]을 안 눌러도 바로 저장
       }
       if (failed) alert('AI 정리에 실패해서 말씀하신 그대로 넣어 두었습니다.\n[글자 고치기]로 다듬거나 그대로 저장하셔도 됩니다.');
     }
