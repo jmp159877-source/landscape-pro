@@ -1,7 +1,7 @@
 {
   "id": "/home.html",
   "name": "조경노트 홈 · 조경 의뢰",
-  "short_name": "조경의뢰",
+  "short_name": "조경노트 홈",
   "description": "전화·방문 없이 조경 견적과 상담(무료). 사진 한 장이면 조경 업체를 연결해 드려요.",
   "start_url": "/home.html?from=app",
   "scope": "/home",
