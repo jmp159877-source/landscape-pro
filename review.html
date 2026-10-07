@@ -47,6 +47,12 @@
   .msg b { display:block; font-size:22px; font-weight:800; margin-top:10px; }
   .msg p { font-size:15.5px; color:var(--sub); line-height:1.6; margin:10px 0 0; }
   .home { display:block; text-align:center; margin-top:22px; font-size:15px; font-weight:800; color:var(--lime-d); text-decoration:none; }
+  .pms { display:flex; flex-direction:column; gap:8px; }
+  .pms button { display:flex; align-items:center; gap:10px; width:100%; min-height:54px; padding:10px 14px; border-radius:14px; background:#fff; box-shadow:inset 0 0 0 1.5px var(--line); font-size:16.5px; font-weight:700; color:#292524; text-align:left; line-height:1.35; }
+  .pms button i { font-style:normal; font-size:22px; }
+  .pms button.on { background:#ECFCCB; color:var(--ink); box-shadow:inset 0 0 0 2.5px var(--ink); font-weight:800; }
+  .pms button.on[data-v="broke"] { background:#FEE2E2; }
+  .need { text-align:center; font-size:14.5px; font-weight:700; color:#57534E; margin-top:8px; min-height:18px; }
   .err { color:#B91C1C; font-size:14px; text-align:center; margin-top:10px; min-height:18px; }
 </style>
 </head>
@@ -58,12 +64,20 @@
 
   <div id="vForm" class="hidden">
     <h1>작업은 만족스러우셨나요?</h1>
-    <p class="lead">별점만 눌러 주셔도 충분해요. 1분이면 끝나요.</p>
+    <p class="lead">별점과 질문 하나면 끝나요. 1분이면 충분해요.</p>
     <div class="card job"><b id="jTitle"></b><span id="jSub"></span></div>
     <div class="card">
       <p class="q">별점을 눌러 주세요</p>
       <div class="stars" id="stars"></div>
       <div class="slabel" id="slabel"></div>
+    </div>
+    <div class="card" id="pmCard">
+      <p class="q">약속한 날짜에 왔나요?</p>
+      <div class="pms" id="pms">
+        <button type="button" data-v="ok"><i>👍</i>네, 약속한 날 왔어요</button>
+        <button type="button" data-v="moved"><i>📞</i>날짜가 바뀌었지만 미리 연락받았어요</button>
+        <button type="button" data-v="broke"><i>😞</i>아니요, 약속을 안 지켰어요</button>
+      </div>
     </div>
     <div class="card">
       <p class="q">하고 싶은 말씀 <span style="font-weight:600;color:var(--mute);font-size:14px">(안 쓰셔도 돼요)</span></p>
@@ -72,6 +86,7 @@
     </div>
     <div class="lock"><i>🔒</i><div>남겨 주신 평가는 <b>업체에 알려 드리지 않아요.</b><br>조경노트 홈이 더 좋은 업체를 연결해 드리는 데만 써요.</div></div>
     <button class="go" id="go" disabled onclick="send()">평가 보내기</button>
+    <div class="need" id="need"></div>
     <div class="err" id="err"></div>
   </div>
 
@@ -101,12 +116,14 @@ const API = 'https://script.google.com/macros/s/AKfycbysZFaBJt9Iu964hP9rJVjmYHDM
 async function api(p) { const r = await fetch(API, { method: 'POST', body: JSON.stringify(p) }); return r.json(); }
 const T = (new URLSearchParams(location.search).get('t') || '').toLowerCase();
 const LABEL = ['', '많이 아쉬웠어요', '아쉬웠어요', '보통이에요', '만족해요', '아주 만족해요'];
-let STARS = 0, busy = false;
+let STARS = 0, PROM = '', busy = false;
 function show(id) { ['vLoad','vForm','vDone','vAlready','vBad'].forEach(v => document.getElementById(v).classList.toggle('hidden', v !== id)); }
 function paint() {
   document.querySelectorAll('#stars button').forEach((b, i) => b.classList.toggle('on', i < STARS));
   document.getElementById('slabel').textContent = LABEL[STARS] || '';
-  document.getElementById('go').disabled = !STARS || busy;
+  document.querySelectorAll('#pms button').forEach(b => b.classList.toggle('on', b.dataset.v === PROM));
+  document.getElementById('go').disabled = !STARS || !PROM || busy;
+  const nd = document.getElementById('need'); if (nd) nd.textContent = busy ? '' : !STARS && !PROM ? '별점과 약속 질문을 골라 주세요' : !STARS ? '별점을 눌러 주세요' : !PROM ? '약속한 날짜 질문을 골라 주세요' : '';
 }
 (function build() {
   const box = document.getElementById('stars');
@@ -114,6 +131,7 @@ function paint() {
     const b = document.createElement('button'); b.type = 'button'; b.textContent = '★'; b.setAttribute('aria-label', i + '점');
     b.onclick = () => { STARS = i; paint(); }; box.appendChild(b);
   }
+  document.querySelectorAll('#pms button').forEach(b => { b.onclick = () => { PROM = b.dataset.v; paint(); }; });
   const cm = document.getElementById('cm');
   cm.addEventListener('input', () => { document.getElementById('cnt').textContent = cm.value.length; });
 })();
@@ -130,12 +148,12 @@ async function load() {
   } catch (e) { show('vBad'); }
 }
 async function send() {
-  if (!STARS || busy) return;
+  if (!STARS || !PROM || busy) return;
   busy = true; paint();
   const go = document.getElementById('go'); go.textContent = '보내는 중…';
   document.getElementById('err').textContent = '';
   try {
-    const r = await api({ action: 'home_survey_send', t: T, stars: STARS, comment: document.getElementById('cm').value.trim() });
+    const r = await api({ action: 'home_survey_send', t: T, stars: STARS, promise: PROM, comment: document.getElementById('cm').value.trim() });
     if (r && r.ok) { show('vDone'); return; }
     if (r && r.msg === 'done') { show('vAlready'); return; }
     document.getElementById('err').textContent = '보내지 못했어요. 잠시 뒤 다시 눌러 주세요.';

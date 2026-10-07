@@ -2849,7 +2849,7 @@
         const sv = r.survey || {};
         if (done) { if (sv.at) {} else if (sv.sentAt) wait.push('⭐ 만족도 보냄 · 답 기다리는 중'); else todo.push('⭐ 만족도 조사 보내기'); }
         if (todo.length) return `<span class="hm-todo">${todo.map(t => `<span>${hmE(t)}<i>→</i></span>`).join('')}</span>`;
-        if (done && sv.at) { const n = Number(sv.stars) || 0; return `<span class="hm-good"><span>모두 끝났어요</span><span><b>${'★★★★★'.slice(0, n)}</b><span style="color:#CBD5E1">${'★★★★★'.slice(n)}</span> ${n}점</span></span>`; }
+        if (done && sv.at) { const n = Number(sv.stars) || 0; return `<span class="hm-good"><span>모두 끝났어요</span><span style="white-space:nowrap"><b>${'★★★★★'.slice(0, n)}</b><span style="color:#CBD5E1">${'★★★★★'.slice(n)}</span> ${n}점</span></span>${sv.promise === 'broke' ? '<span class="hm-todo" style="background:#FEF2F2;border:1.5px solid #FCA5A5;color:#DC2626">❗ 고객: 약속한 날짜를 안 지켰어요</span>' : ''}`; }
         if (wait.length) return `<span class="hm-wait">${wait.map(t => `<span>${hmE(t)}</span>`).join('')}</span>`;
         return '';
     }
@@ -2883,6 +2883,11 @@
         if (d && d.length === q.replace(/[\s-]/g, '').length) return d.length >= 3 ? ph.includes(d) : true;   // 숫자만 → 전화번호
         const hay = [r.name, r.area, r.addr, r.sentName, hmWorks(r)].map(x => String(x || '')).join(' ').toLowerCase().replace(/\s+/g, '');
         return q.split(/\s+/).filter(Boolean).every(w => hay.includes(w));
+    }
+    const HM_PROM = { ok: '👍 약속한 날 왔어요', moved: '📞 날짜 바뀜 · 미리 연락받음', broke: '❗ 약속을 안 지켰어요' };   // 📅 [패치 #147] 만족도 조사 '약속한 날짜에 왔나요?'
+    function hmCoRec(cid) {   // 업체별 고객 평가 모음 (업체 고를 때 보임)
+        const g = HM.list.filter(r => r.sentTo === cid && r.survey && r.survey.at), broke = g.filter(r => r.survey.promise === 'broke').length;
+        return { n: g.length, avg: hmStarsAvg(g), broke };
     }
     function hmStarsAvg(list) { const s = list.map(r => Number((r.survey || {}).stars) || 0).filter(Boolean); return s.length ? (s.reduce((a, b) => a + b, 0) / s.length).toFixed(1) : ''; }
     function hmGo(v) { HM.view = v; if (v === 'cal' && !HM.calM) { const t = hmYmd(Date.now()); HM.calM = t.slice(0, 7); HM.calD = t; } hmRender(); try { document.getElementById('hmList').scrollIntoView({ block: 'nearest' }); } catch (e) {} }
@@ -3127,7 +3132,7 @@
             <div class="flex flex-col gap-2">${cos.length ? cos.map(c => `<button onclick="HM.pick=${jsArg(c.id)}; hmPaint()" class="text-left flex items-center gap-3 rounded-[14px] px-3.5 py-3 border-2 ${HM.pick === c.id ? 'border-[#84CC16] bg-[#84CC16]/10' : 'border-white/10 bg-white/5'} ${c.ok ? '' : 'opacity-60'}">
                 <span class="w-5 h-5 rounded-full shrink-0 ${HM.pick === c.id ? 'border-[6px] border-[#84CC16]' : 'border-2 border-[#64748B]'}"></span>
                 <span class="flex-1 min-w-0"><span class="block text-[16px] font-black text-white">${hmE(c.name)}${r.sentTo === c.id ? ' <span class="text-[12px] text-[#BEF264]">(지금 연결된 곳)</span>' : ''}${r.declinedBy === c.id ? ' <span class="text-[12px] text-amber-300">(못 한다고 함)</span>' : ''}</span>
-                <span class="block text-[13px] font-bold text-[#94A3B8]">${c.set ? '갈 수 있는 곳: ' + hmE(c.areas.join('·')) + (c.guess ? ' (활동 지역 기준)' : '') : '작업 가능 지역 미설정'}${c.region ? ' · 활동 ' + hmE(c.region) : ''}</span>${HM.push ? `<span class="block text-[13px] font-black mt-0.5 ${hmPushOn(c.id) ? 'text-[#BEF264]' : 'text-amber-300'}">${hmPushOn(c.id) ? '🔔 휴대폰 알림 켜짐' : '🔕 휴대폰 알림 꺼짐 · 보낸 뒤 따로 연락해 주세요'}</span>` : ''}</span></button>`).join('') : '<div class="text-[14px] font-bold text-[#94A3B8]">승인된 업체가 없어요.</div>'}</div>
+                <span class="block text-[13px] font-bold text-[#94A3B8]">${c.set ? '갈 수 있는 곳: ' + hmE(c.areas.join('·')) + (c.guess ? ' (활동 지역 기준)' : '') : '작업 가능 지역 미설정'}${c.region ? ' · 활동 ' + hmE(c.region) : ''}</span>${(rc => rc.n ? `<span class="block text-[13px] font-black mt-0.5 ${rc.broke ? 'text-red-400' : 'text-[#CBD5E1]'}">⭐ 고객 평가 ${rc.avg}점 (${rc.n}건)${rc.broke ? ' · ❗ 약속 어김 ' + rc.broke + '회' : ''}</span>` : '')(hmCoRec(c.id))}${HM.push ? `<span class="block text-[13px] font-black mt-0.5 ${hmPushOn(c.id) ? 'text-[#BEF264]' : 'text-amber-300'}">${hmPushOn(c.id) ? '🔔 휴대폰 알림 켜짐' : '🔕 휴대폰 알림 꺼짐 · 보낸 뒤 따로 연락해 주세요'}</span>` : ''}</span></button>`).join('') : '<div class="text-[14px] font-bold text-[#94A3B8]">승인된 업체가 없어요.</div>'}</div>
             ${HM.feeLive ? `<div class="mt-3 rounded-[16px] p-3.5" style="background:#FEF9C3;border:1.5px solid #EAB308">
               <div class="text-[15.5px] font-black text-[#713F12]">💰 연결 수수료 <span class="text-[13px] font-bold">(부가세 포함 · 1P = 1원)</span></div>
               <div class="flex flex-wrap gap-1.5 mt-2">${[30000, 50000, 100000, 300000, 1000000, 0].map(v => `<button type="button" data-fee="${v}" onclick="hmFeeSet(${v})" class="h-[38px] px-3.5 rounded-full border-[1.5px] text-[14.5px] font-black" style="background:#fff;color:#334155;border-color:#CBD5E1">${v ? (v / 10000) + '만' : '0원'}</button>`).join('')}</div>
@@ -3196,7 +3201,7 @@
     function hmSurveyBox(r) {   // ⭐ [패치 #125] 작업 완료 뒤 고객 만족도
         if (!(r.status === 'done' || r.coStage === 'done')) return '';
         const sv = r.survey || {}, stars = n => '★★★★★'.slice(0, n) + '<span style="color:#CBD5E1">' + '★★★★★'.slice(n) + '</span>';
-        const res = sv.at ? `<div class="mt-2.5 rounded-[14px] bg-white p-3" style="border:1px solid #E2E8F0"><div class="text-[20px] font-black" style="color:#EAB308">${stars(Number(sv.stars) || 0)} <span class="text-[15px] text-[#0F172A]">${Number(sv.stars) || 0}점</span></div><div class="text-[13px] font-bold text-[#64748B]">${hmTime(sv.at)} 응답${sv.bonusAt ? ' · 보너스 ' + (Number(sv.bonus) || 0).toLocaleString('ko-KR') + 'P 지급됨' : ''}</div>${sv.comment ? `<div class="text-[15px] font-bold text-[#0F172A] mt-1.5 leading-relaxed break-keep">"${hmE(sv.comment)}"</div>` : ''}</div>`
+        const res = sv.at ? `<div class="mt-2.5 rounded-[14px] bg-white p-3" style="border:1px solid #E2E8F0"><div class="text-[20px] font-black" style="color:#EAB308">${stars(Number(sv.stars) || 0)} <span class="text-[15px] text-[#0F172A]">${Number(sv.stars) || 0}점</span></div><div class="text-[13px] font-bold text-[#64748B]">${hmTime(sv.at)} 응답${sv.bonusAt ? ' · 보너스 ' + (Number(sv.bonus) || 0).toLocaleString('ko-KR') + 'P 지급됨' : ''}</div>${sv.promise ? `<div class="text-[15px] font-black mt-1.5" style="color:${sv.promise === 'broke' ? '#DC2626' : '#0F172A'}">📅 약속 날짜: ${hmE(HM_PROM[sv.promise] || '')}</div>` : ''}${sv.comment ? `<div class="text-[15px] font-bold text-[#0F172A] mt-1.5 leading-relaxed break-keep">"${hmE(sv.comment)}"</div>` : ''}</div>`
             : sv.sentAt ? `<div class="mt-2 text-[14px] font-black text-[#B45309]">📨 ${hmTime(sv.sentAt)} 보냄 · 아직 답이 없어요</div>` : '';
         return `<div class="rounded-[16px] p-3.5" style="background:#F7FEE7;border:1.5px solid #84CC16"><div class="text-[15.5px] font-black text-[#3F6212]">⭐ 고객 만족도</div>
           ${sv.at ? '' : `<button onclick="hmSurveySend()" class="mt-2 w-full h-[52px] rounded-[14px] text-[16px] font-black" style="background:#84CC16;color:#12261E;box-shadow:inset 0 0 0 2px #151E2D">${sv.sentAt ? '⭐ 만족도 조사 다시 보내기' : '⭐ 고객에게 만족도 조사 보내기'}</button>`}${res}</div>`;
