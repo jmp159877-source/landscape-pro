@@ -220,7 +220,11 @@
   /* 👆 [패치 #130] 고객 유형 버튼: 휴대폰 브라우저에 상관없이 고른 쪽이 진하게 보이게 */
   input + .ct-face { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; border-radius: 14px; }
   input:checked + .ct-face { background: #151E2D; color: #84CC16; }
-  </style>
+    /* 🎨 [패치 #144] 견적 템플릿 선택 표시 */
+  .quote-tpl.tpl-on { background:#DBEAFE !important; border-color:#3B82F6 !important; box-shadow:0 0 0 3px rgba(59,130,246,.22) !important; position:relative; }
+  .quote-tpl.tpl-on span { color:#1E3A8A !important; } .quote-tpl.tpl-on svg, .quote-tpl.tpl-on i { color:#1E3A8A !important; }
+  .quote-tpl.tpl-on::after { content:'✓ 선택'; position:absolute; top:-10px; right:-6px; background:#2563EB; color:#fff; font-size:12.5px; font-weight:900; padding:3px 8px; border-radius:999px; }
+</style>
 </head>
 <body class="text-white antialiased min-h-screen pb-24 selection:bg-[#84CC16] selection:text-white">
 
@@ -820,25 +824,25 @@
 
         <!-- 💡 맞춤형 견적 템플릿 (흐릿한 파스텔톤 제거 -> 선명한 고대비 테두리 & 17px 굵은 글씨) -->
         <div class="pt-4 border-t-2 border-[#F1F5F9] relative z-10">
-          <label class="block text-[17px] font-black text-[#151E2D] mb-3 flex items-center gap-1.5">
-            <i data-lucide="sparkles" class="w-5 h-5 text-[#65A30D]"></i> 맞춤형 견적 템플릿 <span class="text-[15px] font-extrabold text-[#65A30D]">(터치 시 자동 작성)</span>
+          <label class="block text-[17px] font-black text-[#151E2D] mb-3 flex flex-wrap items-center gap-1.5">
+            <i data-lucide="sparkles" class="w-5 h-5 text-[#3B82F6]"></i> 견적 양식 선택 <span class="basis-full w-full block text-[15px] font-bold text-[#64748B] mt-0.5">누르면 아래 칸이 자동으로 채워져요</span>
           </label>
           <div class="grid grid-cols-2 gap-2.5">
             <button onclick="switchQuoteTemplate('single', this)" data-tpl="single" class="quote-tpl py-4 bg-white text-[#151E2D] border-2 border-[#CBD5E1] rounded-[16px] font-black text-[17px] hover:border-[#84CC16] transition-all flex flex-col items-center justify-center shadow-sm active:scale-95">
               <i data-lucide="file-text" class="w-6 h-6 text-[#65A30D] mb-1"></i><span>단건 의뢰</span>
-              <span class="text-[15px] font-extrabold mt-0.5 text-[#64748B]">(VAT 별도)</span>
-            </button>
-            <button onclick="switchQuoteTemplate('residential', this)" data-tpl="residential" class="quote-tpl !border-[#84CC16] !bg-[#F4FBEA] ring-2 ring-[#84CC16]/30 py-4 bg-white text-[#151E2D] border-2 border-[#CBD5E1] rounded-[16px] font-black text-[17px] hover:border-[#84CC16] transition-all flex flex-col items-center justify-center shadow-sm active:scale-95">
-              <i data-lucide="home" class="w-6 h-6 text-[#65A30D] mb-1"></i><span>개인주택</span>
-              <span class="text-[15px] font-extrabold mt-0.5 text-[#64748B]">(VAT 면제)</span>
-            </button>
-            <button onclick="switchQuoteTemplate('commercial', this)" data-tpl="commercial" class="quote-tpl py-4 bg-white text-[#151E2D] border-2 border-[#CBD5E1] rounded-[16px] font-black text-[17px] hover:border-[#84CC16] transition-all flex flex-col items-center justify-center shadow-sm active:scale-95">
-              <i data-lucide="building-2" class="w-6 h-6 text-[#65A30D] mb-1"></i><span>상업/빌딩</span>
-              <span class="text-[15px] font-extrabold mt-0.5 text-[#64748B]">(VAT 10%)</span>
+              <span class="text-[15px] font-extrabold mt-0.5 text-[#64748B]">한 번 작업 · VAT 별도</span>
             </button>
             <button onclick="switchQuoteTemplate('construction', this)" data-tpl="construction" class="quote-tpl py-4 bg-white text-[#151E2D] border-2 border-[#CBD5E1] rounded-[16px] font-black text-[17px] hover:border-[#84CC16] transition-all flex flex-col items-center justify-center shadow-sm active:scale-95">
               <i data-lucide="shovel" class="w-6 h-6 text-[#65A30D] mb-1"></i><span>조경공사</span>
-              <span class="text-[15px] font-extrabold mt-0.5 text-[#64748B]">(맞춤 견적)</span>
+              <span class="text-[15px] font-extrabold mt-0.5 text-[#64748B]">공사 · 맞춤 견적</span>
+            </button>
+            <button onclick="switchQuoteTemplate('residential', this)" data-tpl="residential" class="quote-tpl py-4 bg-white text-[#151E2D] border-2 border-[#CBD5E1] rounded-[16px] font-black text-[17px] hover:border-[#84CC16] transition-all flex flex-col items-center justify-center shadow-sm active:scale-95">
+              <i data-lucide="home" class="w-6 h-6 text-[#65A30D] mb-1"></i><span>개인주택</span>
+              <span class="text-[14.5px] font-extrabold mt-0.5 text-[#64748B]">연간 관리 · VAT 면제</span>
+            </button>
+            <button onclick="switchQuoteTemplate('commercial', this)" data-tpl="commercial" class="quote-tpl py-4 bg-white text-[#151E2D] border-2 border-[#CBD5E1] rounded-[16px] font-black text-[17px] hover:border-[#84CC16] transition-all flex flex-col items-center justify-center shadow-sm active:scale-95">
+              <i data-lucide="building-2" class="w-6 h-6 text-[#65A30D] mb-1"></i><span>상업/빌딩</span>
+              <span class="text-[14.5px] font-extrabold mt-0.5 text-[#64748B]">연간 관리 · VAT 10%</span>
             </button>
           </div>
           <p id="quoteTplNote" class="hidden mt-3 text-[15.5px] font-black text-[#3F6212] bg-[#F4FBEA] border-l-[5px] border-[#84CC16] rounded-[10px] px-3 py-2.5 break-keep"></p><!-- 🧾 [패치 #67] -->
@@ -2630,10 +2634,11 @@
       if (note) { note.innerText = `작성한 내용은 그대로 두고, 견적 종류만 '${(typeof QUOTE_TPL_NAMES !== 'undefined' && QUOTE_TPL_NAMES[type]) || type}'(으)로 바꿨어요.`; note.classList.remove('hidden'); clearTimeout(note._t); note._t = setTimeout(() => note.classList.add('hidden'), 4000); }
     }
     // 🎨 [패치 #14] 선택한 견적 템플릿 표시
-    function markQuoteTemplate(btn) {
-        document.querySelectorAll('.quote-tpl').forEach(b => { b.classList.remove('!border-[#84CC16]', '!bg-[#F4FBEA]', 'ring-2', 'ring-[#84CC16]/30'); });
-        if (btn) btn.classList.add('!border-[#84CC16]', '!bg-[#F4FBEA]', 'ring-2', 'ring-[#84CC16]/30');
+    function markQuoteTemplate(btn) {   // 🎨 [패치 #144] 고른 템플릿을 노랑 바탕 + 진한 테두리 + '✓ 선택'으로 또렷하게
+        document.querySelectorAll('.quote-tpl').forEach(b => { b.classList.remove('!border-[#84CC16]', '!bg-[#F4FBEA]', 'ring-2', 'ring-[#84CC16]/30', 'tpl-on'); });
+        if (btn) btn.classList.add('tpl-on');
     }
+    function quoteResetDefault() { loadQuoteTemplate('single'); markQuoteTemplate(document.querySelector('.quote-tpl[data-tpl="single"]')); }   // 🧾 [패치 #144] 기본 = 단건 의뢰
     function loadQuoteTemplate(type) {
       const template = quoteTemplates[type]; currentVatRate = template.vat; document.getElementById('quoteInputRound').value = template.title;
       const container = document.getElementById('quoteItemsContainer'); container.innerHTML = ''; currentQuoteRowCount = template.rows.length;
@@ -2923,7 +2928,7 @@
         if(document.getElementById('quoteInputClientAddress')) document.getElementById('quoteInputClientAddress').value = '';
         document.getElementById('quoteInputRound').value = '연간 정기 조경 관리 견적서';
         if(document.getElementById('quoteInputMemo')) document.getElementById('quoteInputMemo').value = '';
-        loadQuoteTemplate('residential'); quoteImages = []; renderQuoteThumbList(); 
+        quoteResetDefault(); quoteImages = []; renderQuoteThumbList(); 
       } catch (e) { alert("오류가 발생했습니다."); } finally { document.getElementById('loadingOverlay')?.remove(); lucide.createIcons(); }
     }
 
@@ -4177,7 +4182,7 @@
     function toggleBadge(btn) { if(btn.classList.contains('bg-[#151E2D]')) { btn.className = "cat-btn p-4 text-[15px] rounded-[16px] font-black text-left bg-white border-[1.5px] border-[#CBD5E1] text-[#151E2D] transition-all"; btn.innerText = "+ " + btn.getAttribute('data-val'); } else { btn.className = "cat-btn p-4 text-[15px] rounded-[16px] font-black text-left bg-[#151E2D] text-[#84CC16] shadow-md border-[1.5px] border-[#151E2D] transition-all"; btn.innerText = "✓ " + btn.getAttribute('data-val'); } }
 
     window.addEventListener('DOMContentLoaded', async () => {
-      loadQuoteTemplate('residential'); 
+      quoteResetDefault(); 
       setTimeout(() => { const splash = document.getElementById('splashScreen'); if(splash) { splash.style.opacity = '0'; setTimeout(() => splash.remove(), 600); } }, 2000);
       
       const params = new URLSearchParams(window.location.search);
