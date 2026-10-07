@@ -2724,6 +2724,7 @@
         if (r.coStage === 'booked') return `🤝 예약 확정 · ${hmDate(r.coDate, r.coSlot)}${r.coAmount ? ' · 예상 ' + hmWon(r.coAmount) : ''}`;
         if (r.coStage === 'sched') return `📅 업체가 작업일 안내함 · ${hmDate(r.coDate, r.coSlot)}`;
         if (r.status !== 'sent') return '';
+        if (r.coQuoteAt) return '💰 업체가 견적서 보냄 · 날짜 정하기 전';   // [패치 #139]
         if (r.coContactAt) return '📞 업체가 고객에게 연락함 · 날짜 정하기 전';   // [패치 #137]
         if (r.coSeenAt) return '👀 업체가 봤어요 · 날짜 정하기 전';
         return r.unseenAlertAt ? '⚠️ 업체가 2시간째 안 봤어요 · 전화해 보세요' : '업체 확인 전';
@@ -2733,6 +2734,7 @@
         if (h.sms) return '💬 ' + hmE(HM_SMS[h.sms] || '문자') + ' 문자';
         if (h.feeAgree) return '💰 ' + hmE(h.toName) + ' 수수료 ' + Number(h.feeAgree).toLocaleString('ko-KR') + 'P · 이용 조건 동의';
         if (h.terms) return '📋 ' + hmE(h.toName) + ' 중개 이용 조건 동의';
+        if (h.quote) return '💰 ' + hmE(h.toName) + ' 견적서 보냄' + (h.amount ? ' · ' + hmE(hmWon(h.amount)) : '') + ` <a href="https://www.jogyeongnote.com/?id=${encodeURIComponent(h.quote)}&adm=1" target="_blank" rel="noopener" style="color:#BEF264;text-decoration:underline">견적서 보기</a>`;   // [패치 #139]
         if (h.contact) return '📞 ' + hmE(h.toName) + ' 고객에게 첫 연락 (' + ({ sms: '문자', tel: '전화', quote: '견적서' }[h.contact] || '문자') + ')';   // [패치 #137]   // 📋 [패치 #131]
         if (h.feeRefund) return '↩ ' + hmE(h.toName) + ' 수수료 ' + Number(h.feeRefund).toLocaleString('ko-KR') + 'P 돌려줌';
         if (h.stage === 'sched') return '📅 ' + hmE(h.toName) + ' 작업일 안내 · ' + hmE(hmDate(h.date, h.slot));
@@ -2838,6 +2840,7 @@
         if (r.status === 'sent' && !r.coStage) {
             if (r.unseenAlertAt && !r.coSeenAt) todo.push('⚠️ 업체가 2시간째 안 봤어요 · 전화해 보세요');
             else if (!r.coContactAt && sentAgo > 24 * 3600000) todo.push('⚠️ 업체가 하루째 고객에게 연락 안 했어요 · 전화해 보세요');
+            else if (r.coQuoteAt) wait.push('💰 업체가 견적서 보냄 (' + (r.coQuoteAmt ? hmWon(r.coQuoteAmt) + ' · ' : '') + hmMD(r.coQuoteAt) + ') · 고객 답 기다리는 중');   // [패치 #139]
             else if (r.coContactAt) wait.push('✅ 업체가 고객에게 연락함 (' + (HOW[r.coContactHow] || '문자') + ' · ' + hmMD(r.coContactAt) + ') · 날짜 정하기 기다리는 중');
             else wait.push(r.coSeenAt ? '👀 업체가 봤어요 · 고객 연락 기다리는 중' : '업체 확인 기다리는 중');
         }
@@ -3113,7 +3116,7 @@
           </div>
           ${(r.imgs || []).length ? `<div class="grid grid-cols-3 gap-2">${r.imgs.map((u, i) => `<button type="button" onclick="hmLbOpen(${i})" class="block aspect-square rounded-[12px] overflow-hidden bg-white/5"><img src="${hmE(u)}" class="w-full h-full object-cover" loading="lazy"></button>`).join('')}</div><div class="text-[13px] font-bold text-[#94A3B8] -mt-2">사진을 누르면 크게 보고 옆으로 넘길 수 있어요</div>` : '<div class="text-[14px] font-bold text-amber-300">사진 없이 보낸 의뢰예요.</div>'}
           ${r.status === 'declined' ? `<div class="rounded-[16px] bg-amber-400/15 border border-amber-400/40 p-3.5 text-[15px] font-bold text-amber-200 leading-relaxed">↩️ ${hmE(r.declinedName || '')} 업체가 못 한대요${r.declineReason ? ' · ' + hmE(r.declineReason) : ''}. 다른 업체로 연결해 주세요.</div>` : ''}
-          ${(r.status === 'sent' || r.status === 'booked' || r.coStage === 'done') ? `<div class="rounded-[16px] bg-[#84CC16]/15 border border-[#84CC16]/40 p-3.5 text-[15px] font-bold text-[#D9F99D] leading-relaxed">✅ ${hmE(r.sentName || '')} 업체에 연결했어요 (${hmTime(r.sentAt)})${r.memo ? '<br>메모: ' + hmE(r.memo) : ''}<br><span class="text-[16px] font-black ${r.coStage === 'booked' ? 'text-[#BEF264]' : 'text-white'}">진행: ${hmE(hmStageLine(r))}</span><br><span>${r.coContactAt ? '📞 업체가 고객에게 첫 연락 ✓ (' + hmTime(r.coContactAt) + ')' : '업체가 고객에게 아직 연락 전'}${r.custNotifiedAt ? ' · 관리자 안내 문자도 보냄' : ''}</span></div>` : ''}
+          ${(r.status === 'sent' || r.status === 'booked' || r.coStage === 'done') ? `<div class="rounded-[16px] bg-[#84CC16]/15 border border-[#84CC16]/40 p-3.5 text-[15px] font-bold text-[#D9F99D] leading-relaxed">✅ ${hmE(r.sentName || '')} 업체에 연결했어요 (${hmTime(r.sentAt)})${r.memo ? '<br>메모: ' + hmE(r.memo) : ''}<br><span class="text-[16px] font-black ${r.coStage === 'booked' ? 'text-[#BEF264]' : 'text-white'}">진행: ${hmE(hmStageLine(r))}</span><br><span>${r.coContactAt ? '📞 업체가 고객에게 첫 연락 ✓ (' + hmTime(r.coContactAt) + ')' : '업체가 고객에게 아직 연락 전'}${r.custNotifiedAt ? ' · 관리자 안내 문자도 보냄' : ''}</span>${r.coQuoteId ? `<br><a href="https://www.jogyeongnote.com/?id=${encodeURIComponent(r.coQuoteId)}&adm=1" target="_blank" rel="noopener" class="inline-block mt-2 px-3 py-2 rounded-[10px] bg-white text-[#12261E] font-black text-[14.5px]" style="text-decoration:none">📄 업체 견적서 보기${r.coQuoteAmt ? ' · ' + hmE(hmWon(r.coQuoteAmt)) : ''}</a>` : ''}</div>` : ''}
 
           ${hmTermsBox(r)}
           ${hmFeeBox(r)}

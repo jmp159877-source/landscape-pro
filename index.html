@@ -2907,6 +2907,7 @@
         generatedShareUrl = await createShortCloudLink(payloadData, editingRecordId);
         if (!generatedShareUrl) { document.getElementById('loadingOverlay')?.remove(); return; }
         
+        try { const rq = REQ_QUOTE, m = /[?&]id=([A-Za-z0-9_-]{6,80})/.exec(generatedShareUrl || ''); if (rq && rq.via === 'home' && rq.rid && rq.client === clientName && m) requestPoints({ action: 'push_home_progress', reqId: rq.rid, stage: 'quote', docId: m[1], amount: sum }).catch(() => {}); } catch (e) {}   // 💰 [패치 #139] 조경노트 홈 의뢰 견적서 → 관리자 기록
         alert("저장 완료!"); editingRecordId = null; REQ_QUOTE = null; /* 🏡 [패치 #106] */ let genBtn = document.getElementById('btnGenerateQuote'); if(genBtn) genBtn.innerHTML = '<i data-lucide="file-check-2" class="w-6 h-6 stroke-[2.5]"></i> 견적서 발행 및 보관함 저장';
         renderClientView(payloadData, 'admin_preview');
         
@@ -9329,7 +9330,7 @@ ${AI_COMMON_RULES}
     reqToQuote = function () {
       const r = RV.cur; if (!r) return;
       reqToQuoteH0();
-      REQ_QUOTE = { via: r.via === 'home' ? 'home' : 'req', client: r.name };
+      REQ_QUOTE = { via: r.via === 'home' ? 'home' : 'req', client: r.name, rid: r.via === 'home' ? r.id : '' };   // 💰 [패치 #139] rid = 관리자에게 '견적서 보냄' 알리기용
       try {   // 📷 [패치 #109] 고객이 보낸 사진을 견적서 사진에 자동으로 넣기
         if (Array.isArray(r.imgs) && r.imgs.length) { quoteImages = r.imgs.slice(0, 5); renderQuoteThumbList(); }
       } catch (e) {}
@@ -10924,7 +10925,7 @@ ${AI_COMMON_RULES}
   /* ---------- 고객이 리포트 링크를 열면 횟수 기록 (주인 본인은 빼고) ---------- */
   try {
     const p = new URLSearchParams(location.search), id = p.get('id');
-    if (id && /^[A-Za-z0-9_-]{6,80}$/.test(id)) {
+    if (id && /^[A-Za-z0-9_-]{6,80}$/.test(id) && !p.has('adm')) {   // 👀 [패치 #139] 관리자가 열어 본 건 고객 열람으로 안 셈
       setTimeout(async () => {
         try {
           const own = await fetch(`${DB}/pro_shared_docs/${id}/ownerId.json`).then(r => r.ok ? r.json() : null).catch(() => null);
