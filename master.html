@@ -3201,14 +3201,19 @@
         return `<div class="rounded-[16px] p-3.5" style="background:#F7FEE7;border:1.5px solid #84CC16"><div class="text-[15.5px] font-black text-[#3F6212]">⭐ 고객 만족도</div>
           ${sv.at ? '' : `<button onclick="hmSurveySend()" class="mt-2 w-full h-[52px] rounded-[14px] text-[16px] font-black" style="background:#84CC16;color:#12261E;box-shadow:inset 0 0 0 2px #151E2D">${sv.sentAt ? '⭐ 만족도 조사 다시 보내기' : '⭐ 고객에게 만족도 조사 보내기'}</button>`}${res}</div>`;
     }
+    // 💬 [패치 #140] 문자 창 열기: 휴대폰 = 문자 앱 / PC = 윈도우 '휴대폰과 연결'이 번호·내용 채워 열림 (문구는 혹시 몰라 복사도 해 둠)
+    function hmSmsOpen(num, text) {
+        const ios = /iPhone|iPad|iPod/i.test(navigator.userAgent), mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        if (!mobile) { try { navigator.clipboard && navigator.clipboard.writeText(text).catch(() => {}); } catch (e) {} try { pmbToast('휴대폰과 연결 창이 열려요 · 안 열리면 복사된 문구를 붙여 넣으세요'); } catch (e) {} }
+        location.href = 'sms:' + num + (ios ? '&' : '?') + 'body=' + encodeURIComponent(text);
+    }
     async function hmSurveySend() {
         const r = HM.cur; if (!r || HM.busy) return;
         HM.busy = true; const res = await adminPush({ action: 'admin_home_survey', hid: r.id }); HM.busy = false;
         if (!res || !res.ok) return alert('링크를 만들지 못했어요. ' + (res && res.msg === 'unknown' ? '구글 스크립트(home.gs) 최신 배포를 확인해 주세요.' : '잠시 후 다시 눌러 주세요.'));
         const text = `[🌿 조경노트 홈] ${r.name ? r.name + ' 고객님' : '고객님'}, 조경노트 홈을 이용해 주셔서 감사합니다.\n\n작업은 만족스러우셨나요? 1분이면 끝나는 만족도 조사에 참여해 주세요.\n\n🔒 남겨 주신 평가와 의견은 작업한 업체에 알려지지 않아요. 편하게, 솔직하게 남겨 주세요.\n\n평가는 다음 의뢰 때 잘 맞는 업체를 우선 연결해 드리는 데 쓰이고, 아쉬우셨던 점은 더 나은 업체로 연결해 드리는 데 반영됩니다.\n\n▶ ${res.url}\n\n🌿 조경노트 홈 드림`;
         const num = String(r.phone || '').replace(/[^0-9]/g, ''), ios = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-        if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) location.href = 'sms:' + num + (ios ? '&' : '?') + 'body=' + encodeURIComponent(text);
-        else (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).then(() => alert('PC에서는 문자를 바로 보낼 수 없어요.\n문구를 복사했어요. 휴대폰 문자에 붙여 넣어 ' + hmTel(num) + '로 보내 주세요.')).catch(() => prompt('이 문구를 복사해 문자로 보내 주세요.', text));
+        hmSmsOpen(num, text);
         setTimeout(() => hmLoad(), 1500);
     }
     async function hmSend() {
@@ -3247,8 +3252,7 @@
         const num = String(r.phone || '').replace(/[^0-9]/g, ''), ios = /iPhone|iPad|iPod/i.test(navigator.userAgent);
         const text = hmSmsText(kind, r);
         if (kind === 'budget') alert('문자 창이 열리면 "○○만~○○만 원" 부분에 참고 금액을 넣어 보내 주세요.');
-        if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) { location.href = 'sms:' + num + (ios ? '&' : '?') + 'body=' + encodeURIComponent(text); }
-        else { (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).then(() => alert('PC에서는 문자를 바로 보낼 수 없어요.\n문구를 복사했어요. 휴대폰 문자에 붙여 넣어 ' + hmTel(num) + '로 보내 주세요.')).catch(() => prompt('이 문구를 복사해서 ' + hmTel(num) + '로 보내 주세요.', text)); }
+        hmSmsOpen(num, text);
         hmSmsLog(kind, r);
     }
     async function hmSet(st) {
