@@ -265,6 +265,20 @@
   .faq summary::after { content:'+'; font-size:22px; font-weight:700; color:var(--lime-d); flex-shrink:0; }
   .faq[open] summary::after { content:'−'; }
   .faq p { margin:0 0 15px; font-size:15.5px; line-height:1.7; color:var(--sub); font-weight:500; }
+  .pr { padding:4px 16px; }
+  .pi { display:flex; gap:12px; align-items:flex-start; padding:14px 0; border-bottom:1px solid #ECEBE6; }
+  .pi:last-child { border-bottom:0; }
+  .pi .n { width:30px; height:30px; border-radius:50%; background:var(--ink); color:#D9F99D; font-weight:800; font-size:15px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .pi b { display:block; font-size:19px; font-weight:800; letter-spacing:-0.03em; }
+  .pi b { display:inline !important; background:linear-gradient(transparent 80%, #A3E635 80%, #A3E635 100%); padding:0 2px; -webkit-box-decoration-break:clone; box-decoration-break:clone; }
+  .pi b u { text-decoration:none; color:var(--lime-d); }
+  .pi > div > span { margin-top:6px; }
+  .pi span { display:block; font-size:16px; color:#292524; font-weight:600; line-height:1.5; margin-top:3px; }
+  .badges div { padding:14px 4px; }
+  .badges b { font-size:17.5px; letter-spacing:-0.04em; }
+  .badges span { font-size:14.5px; color:#292524; font-weight:700; margin-top:4px; }
+  .htext p { color:#292524; font-weight:600; font-size:16.5px; }
+  .htext h1 .ul { background:linear-gradient(transparent 82%, #A3E635 82%, #A3E635 100%); padding:0 3px; -webkit-box-decoration-break:clone; box-decoration-break:clone; }
 </style>
 </head>
 <body>
@@ -275,11 +289,21 @@
   <div class="bar"><span class="logo"><i>LEAF</i>조경노트 <b>홈</b></span><a class="callmini" href="tel:16683936">ICON_PHONE_INK 전화 상담</a></div>
   <div class="hero"><img src="/home-hero2.jpg" alt="잘 가꾼 정원과 판석 길" fetchpriority="high"><div class="fade"></div></div>
   <section class="htext">
-    <div class="tags"><span class="free">상담 무료</span><span class="pill">스마트한 조경 견적</span></div>
-    <h1>전화하지 않고,<br>만나지 않고도<br><em>조경 견적과 상담<small>(무료)</small></em>을<br>원스톱으로 받아 보세요</h1>
-    <p>말 한마디, 사진 한 장이면 충분합니다.<br>사업자등록이 확인된 조경 전문 업체가<br>빠르고 정확하게 답해 드립니다.</p>
+    <div class="tags"><span class="free">상담·견적 무료</span><span class="pill">약속을 지키는 조경</span></div>
+    <h1><span class="ul">말로 한 약속 말고,</span><br><em>기록으로 남는 약속</em>.<br>조경은 이렇게 맡기세요</h1>
+    <p>견적서도, 작업 날짜도, 작업 사진도<br>모두 기록으로 남는 업체만 연결해 드려요.</p>
   </section>
-  <div class="badges"><div><b>사업자 확인</b><span>조경 전문 업체만</span></div><div><b>말로 의뢰</b><span>AI가 알아서 정리</span></div><div><b>상담 무료</b><span>가입 필요 없음</span></div></div>
+  <div class="badges"><div><b>업체 한 곳만</b><span>전화 폭탄 없음</span></div><div><b>견적서 먼저</b><span>항목별 금액</span></div><div><b>상담 무료</b><span>가입 필요 없음</span></div></div>
+  <section class="sec" id="promise">
+    <p class="sh">조경노트 홈의 5가지 약속</p>
+    <div class="card pr">
+      <div class="pi"><span class="n">1</span><div><b>확인된 업체 <u>한 곳만</u> 연결해요</b><span>사업자 확인된 조경 전문 업체만. 여러 곳에서 전화가 쏟아지지 않아요.</span></div></div>
+      <div class="pi"><span class="n">2</span><div><b>오기 전에 <u>견적서 먼저</u></b><span>항목별 금액이 적힌 정식 견적서를 문자 링크로 받아 보세요.</span></div></div>
+      <div class="pi"><span class="n">3</span><div><b><u>24시간 안에</u> 연락드려요</b><span>업체 연락이 늦으면 조경노트 홈이 먼저 챙기고, 다른 업체로 다시 연결해 드려요.</span></div></div>
+      <div class="pi"><span class="n">4</span><div><b>정한 날짜는 <u>기록으로</u> 남아요</b><span>예약 날짜가 문자로 남고, 약속을 어긴 업체는 다음 연결에서 빠져요.</span></div></div>
+      <div class="pi"><span class="n">5</span><div><b>작업 <u>전·후 사진</u>으로 확인</b><span>현장 일지를 쓰는 업체라 끝난 모습을 사진으로 받아 보실 수 있어요. 마지막엔 고객님이 별점을 매겨요.</span></div></div>
+    </div>
+  </section>
   <section class="sec">
     <p class="sh">무엇을 맡기실까요?</p>
     <button type="button" class="card rq main" onclick="openForm('single')"><span class="ic">ICON_SCISSORS</span><span><span class="t">단건 의뢰하기</span><span class="d">전지, 가지치기, 예초 등 한 번 작업</span></span><span class="ar">›</span></button>
