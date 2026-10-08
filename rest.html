@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#0F172A">
 <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<!-- 🎮 [패치 #150·#151 소리·배경음악·#152 윷놀이 한 화면·갈 자리 누르기·#153 윷 던지기 연출·말 한 칸씩·#154 소나무 말·AI 빨간 윷·느린 템포·판 종류 띄우기·#155 오목 AI 천천히·#156 Kenney 녹음 효과음·#157 Kenney 징글(승리·패배·윷모·잡기·나기)·#158 나가면 음악 멈춤·#159 장기] 대표님 휴식방: 앱 본체와 따로 불러오는 가벼운 게임 화면 (돈·포인트 없음 · 기록은 이 휴대폰에만) -->
+<!-- 🎮 [패치 #150·#151 소리·배경음악·#152 윷놀이 한 화면·갈 자리 누르기·#153 윷 던지기 연출·말 한 칸씩·#154 소나무 말·AI 빨간 윷·느린 템포·판 종류 띄우기·#155 오목 AI 천천히·#156 Kenney 녹음 효과음·#157 Kenney 징글(승리·패배·윷모·잡기·나기)·#158 나가면 음악 멈춤·#159 장기·#160 바둑 사활(맞고 뺌)·#161 사활 271문제(중급 77·고급 77)] 대표님 휴식방: 앱 본체와 따로 불러오는 가벼운 게임 화면 (돈·포인트 없음 · 기록은 이 휴대폰에만) -->
 <style>
   :root { --bg:#0F172A; --card:#1E293B; --line:#475569; --lime:#84CC16; --lime2:#BEF264; --sky:#38BDF8; --ink:#151E2D; --sub:#CBD5E1; }
   * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -32,6 +32,7 @@
   .gc b { display:block; font-size:21px; font-weight:900; margin-top:10px; }
   .gc span { display:block; font-size:14.5px; font-weight:700; color:var(--sub); margin-top:4px; line-height:1.35; }
   .gc i { position:absolute; top:12px; right:12px; font-style:normal; font-size:12.5px; font-weight:900; background:var(--lime2); color:#1A2E05; border-radius:999px; padding:3px 9px; }
+  .grid .gc:last-child:nth-child(odd) { grid-column:span 2; min-height:120px; }
   .gc.soon { opacity:.55; } .gc.soon i { background:#475569; color:#E2E8F0; }
   .note { background:var(--card); border-radius:18px; padding:14px 16px; font-size:14.5px; font-weight:700; color:var(--sub); margin-top:14px; line-height:1.55; }
   .note b { color:#fff; }
@@ -63,6 +64,16 @@
   .jgsheet { position:fixed; inset:0; z-index:42; background:rgba(15,23,42,.6); display:flex; align-items:flex-end; justify-content:center; }
   .jgsheet .sheet { width:100%; max-width:480px; background:var(--card); border-radius:24px 24px 0 0; padding:20px 16px 28px; display:flex; flex-direction:column; gap:10px; }
   .jgsheet b { font-size:20px; } .jgsheet p { margin:0; color:var(--sub); font-weight:700; font-size:14.5px; }
+  /* 바둑 사활 */
+  #bdBoard { width:100%; display:block; background:#E3B868; border-radius:16px; touch-action:manipulation; cursor:pointer; }
+  .bdq { background:var(--card); border-radius:16px; padding:11px 14px; margin:10px 0 8px; }
+  .bdq small { color:var(--lime2); font-weight:900; font-size:13.5px; } .bdq small em { font-style:normal; color:#7DD3FC; }
+  .bdq div { font-size:19px; font-weight:900; margin-top:3px; } .bdq span { display:block; font-size:14px; color:var(--sub); font-weight:700; margin-top:2px; }
+  .bdnav { display:flex; gap:8px; margin:0 0 8px; } .bdnav .btn { min-height:42px; font-size:15px; }
+  .bdrec { margin-top:12px; } .bdrec b { font-size:18px; }
+  .bdnew { animation:bdpop .22s ease-out; transform-box:fill-box; transform-origin:center; }
+  @keyframes bdpop { 0% { transform:scale(1.25); opacity:.6; } 100% { transform:scale(1); opacity:1; } }
+  .bdhint { animation:bdblink 1s ease-in-out infinite; } @keyframes bdblink { 50% { opacity:.25; } }
   /* 윷놀이 */
   #yutBoard { width:min(100%, calc(100vh - 370px), calc(100dvh - 370px)); min-width:250px; aspect-ratio:360/378; display:block; margin:0 auto; background:#FEF3C7; border-radius:18px; }
   #vYut .top { padding:10px 2px 8px; }
@@ -116,11 +127,10 @@
     </div>
     <div class="grid">
       <button class="gc" onclick="go('janggi')"><i>AI 대국</i><div class="e">🐘</div><b>장기</b><span>초급·중급·고급<br>AI와 한 판</span></button>
-      <button class="gc soon" onclick="soon('바둑 사활')"><i>준비 중</i><div class="e">⚫</div><b>바둑 사활</b><span>하루 한 문제<br>흑 먼저, 살려 보세요</span></button>
+      <button class="gc" onclick="go('baduk')"><i>하루 한 문제</i><div class="e">⚫</div><b>바둑 사활</b><span>흑 먼저<br>잡거나 살리기</span></button>
       <button class="gc" onclick="go('omok')"><i>AI 대국</i><div class="e">⭕</div><b>오목</b><span>다섯 개 먼저<br>놓으면 승리</span></button>
       <button class="gc" onclick="go('shisen')"><i>혼자</i><div class="e">🀄</div><b>사천성</b><span>같은 그림<br>짝 맞추기</span></button>
       <button class="gc" onclick="go('yut')"><i>AI 대국</i><div class="e">🎲</div><b>윷놀이</b><span>윷 던지고<br>말 먼저 다 내기</span></button>
-      <button class="gc soon" onclick="soon('맞고')"><i>준비 중</i><div class="e">🎴</div><b>맞고</b><span>AI와 2인 화투<br>점수만, 돈 없음</span></button>
     </div>
     <div class="note">🌿 휴식방 게임은 <b>돈이나 포인트를 걸지 않는 순수 휴식용</b>이에요. 승수 같은 기록만 이 휴대폰에 남아요.</div>
   </section>
@@ -152,6 +162,17 @@
     <div class="bar"><button class="btn" id="jgUndo" onclick="jgUndoMove()">↩ 무르기</button><button class="btn" onclick="jgSetupOpen()">상차림 바꾸기</button><button class="btn pri" onclick="if (!JG.counted || JG.over || confirm('지금 하던 판을 그만두고 새 판으로 시작할까요?')) jgNew()">새 판</button></div>
     <div id="jgSetup" class="jgsheet hidden"></div>
   </section>
+  <section id="vBaduk" class="hidden">
+    <div class="top"><button class="back" onclick="history.back()" aria-label="뒤로">‹</button><h1>⚫ 바둑 사활</h1></div>
+    <div class="seg" id="bdTab"><button data-t="day" class="on" onclick="bdSetTab('day')">오늘 문제</button><button data-t="1" onclick="bdSetTab('1')">초급</button><button data-t="2" onclick="bdSetTab('2')">중급</button><button data-t="3" onclick="bdSetTab('3')">고급</button></div>
+    <div class="bdq" id="bdQ"></div>
+    <div class="bdnav hidden" id="bdNavRow"><button class="btn" onclick="bdNav(-1)">‹ 이전 문제</button><button class="btn" onclick="bdNav(1)">다음 문제 ›</button></div>
+    <svg id="bdBoard" viewBox="0 0 300 250" onclick="bdTap(event)"></svg>
+    <div class="msg jgmsg" id="bdMsg"></div>
+    <div class="bar"><button class="btn" id="bdHint" onclick="bdHintShow()">💡 힌트</button><button class="btn" onclick="bdReset()">↺ 처음부터</button><button class="btn" id="bdAns" onclick="bdAnswer()">정답 보기</button></div>
+    <button class="btn pri hidden" id="bdNext" onclick="bdNext()" style="width:100%">다음 문제 ›</button>
+    <div class="rec bdrec"><div>푼 문제<b id="bdRSolved">0</b></div><div>연속으로 푼 날<b id="bdRStreak">0일</b></div><div>오늘의 문제<b id="bdRToday">아직</b></div></div>
+  </section>
   <section id="vYut" class="hidden">
     <div class="top"><button class="back" onclick="history.back()" aria-label="뒤로">‹</button><h1>🎲 윷놀이</h1></div>
     <div class="ystat"><span>🔵 대표님 대기 <b id="yutWaitMe">2</b> · 남은 <b id="yutLeftMe">2</b></span><span>🔴 AI 대기 <b id="yutWaitAi">2</b> · 남은 <b id="yutLeftAi">2</b></span></div>
@@ -168,7 +189,7 @@
 <script>
 /* ---------- 공통 ---------- */
 const $ = id => document.getElementById(id);
-const VIEWS = { hub:'vHub', omok:'vOmok', shisen:'vShisen', yut:'vYut', janggi:'vJanggi' };
+const VIEWS = { hub:'vHub', omok:'vOmok', shisen:'vShisen', yut:'vYut', janggi:'vJanggi', baduk:'vBaduk' };
 let REC = {};
 try { REC = JSON.parse(localStorage.getItem('jn_rest_rec') || '{}') || {}; } catch (e) { REC = {}; }
 function today() { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
@@ -185,7 +206,7 @@ function soon(n) { sfx('fail'); toast(n + '은(는) 지금 만들고 있어요. 
 function goApp() { try { musicStop(); if (SND.ctx) SND.ctx.suspend(); } catch (e) {} if (document.referrer && document.referrer.indexOf(location.origin) === 0 && history.length > 1) history.back(); else location.href = '/'; }
 let CUR_VIEW = 'hub';
 function show(v) { CUR_VIEW = v; Object.keys(VIEWS).forEach(k => $(VIEWS[k]).classList.toggle('hidden', k !== v)); window.scrollTo(0, 0); if (v === 'hub') recPaint(); if (typeof musicStart === 'function') { if (SND.ctx) musicStart(VIEW_MUSIC[v]); else SND.want = VIEW_MUSIC[v]; } }
-function go(v) { try { actx(); } catch (e) {} sfx('tap'); history.pushState({ v }, '', '#' + v); show(v); if (v === 'omok' && !OM.started) omokNew(); if (v === 'shisen' && !SS.tiles) ssNew(); if (v === 'yut' && !Y.started) yutNew(); if (v === 'janggi' && !JG.started) jgNew(); }
+function go(v) { try { actx(); } catch (e) {} sfx('tap'); history.pushState({ v }, '', '#' + v); show(v); if (v === 'omok' && !OM.started) omokNew(); if (v === 'shisen' && !SS.tiles) ssNew(); if (v === 'yut' && !Y.started) yutNew(); if (v === 'janggi' && !JG.started) jgNew(); if (v === 'baduk' && !BD.started) bdNew(); }
 window.addEventListener('popstate', () => { const v = (location.hash || '').slice(1); show(VIEWS[v] ? v : 'hub'); });
 
 
@@ -285,7 +306,7 @@ const MUSIC = {
       if (k === 'T') noiz(0.04, 3500, 1.5, 0.35, t, SND.mg);
       const m = this.mel[s % this.len]; if (m !== null) pluck(deg(m), t, 0.45, SND.mg, 0.7); } }
 };
-const VIEW_MUSIC = { hub: null, janggi: 'calm', omok: 'calm', shisen: 'light', yut: 'lively' }; // 🔇 [패치 #158] 첫 화면(게임 고르기)에서는 음악 멈춤
+const VIEW_MUSIC = { hub: null, baduk: 'calm', janggi: 'calm', omok: 'calm', shisen: 'light', yut: 'lively' }; // 🔇 [패치 #158] 첫 화면(게임 고르기)에서는 음악 멈춤
 function musicStart(kind) {
   SND.want = kind; musicStop(true); if (!SND.bgm || !kind) return; const c = actx(); if (!c) return;
   const M = MUSIC[kind], d = 60 / M.bpm / 2; let s = 0, next = c.currentTime + 0.15;
@@ -837,7 +858,243 @@ function jgUndoMove() {
 function jgSetupOpen() { const s = $('jgSetup'); s.innerHTML = '<div class="sheet"><b>상차림 고르기</b><p>왼쪽부터 마·상 순서예요. 고르면 새 판으로 시작해요.</p>' + SETUPS.map(x => `<button class="btn${x === JG.setup ? ' pri' : ''}" onclick="jgSetupPick('${x}')">${x}</button>`).join('') + '<button class="btn" onclick="$(\'jgSetup\').classList.add(\'hidden\')">닫기</button></div>'; s.classList.remove('hidden'); }
 function jgSetupPick(x) { if (JG.counted && !JG.over && !confirm('지금 하던 판을 그만두고 새 판으로 시작할까요?')) return; JG.setup = x; try { localStorage.setItem('jn_rest_jg_setup', x); } catch (e) {} $('jgSetup').classList.add('hidden'); jgNew(); }
 
-(function () { const v = (location.hash || '').slice(1); if (VIEWS[v] && v !== 'hub') { history.replaceState({ v: 'hub' }, '', location.pathname); history.pushState({ v }, '', '#' + v); go2(v); } else show('hub'); function go2(x) { show(x); if (x === 'omok') omokNew(); if (x === 'shisen') ssNew(); if (x === 'yut') yutNew(); if (x === 'janggi') jgNew(); } })();
+
+// 바둑 사활 엔진 (브라우저·node 공용)
+var GO = (function () {
+  var N = 9;
+  function nb(i) { var r = (i / N) | 0, c = i % N, a = []; if (r > 0) a.push(i - N); if (r < N - 1) a.push(i + N); if (c > 0) a.push(i - 1); if (c < N - 1) a.push(i + 1); return a; }
+  var NB = []; for (var i = 0; i < N * N; i++) NB.push(nb(i));
+  function group(b, i) {
+    var col = b[i], st = [i], seen = {}, g = [], libs = {}, nl = 0; seen[i] = 1;
+    while (st.length) { var p = st.pop(); g.push(p); var ns = NB[p];
+      for (var k = 0; k < ns.length; k++) { var q = ns[k];
+        if (b[q] === 0) { if (!libs[q]) { libs[q] = 1; nl++; } }
+        else if (b[q] === col && !seen[q]) { seen[q] = 1; st.push(q); } } }
+    return { g: g, nl: nl, libs: libs };
+  }
+  // 둘 수 있으면 {b, ko, cap} 아니면 null
+  function play(b, ko, i, col) {
+    if (b[i] !== 0 || i === ko) return null;
+    var nbb = b.slice(); nbb[i] = col; var opp = 3 - col, cap = [], ns = NB[i];
+    for (var k = 0; k < ns.length; k++) { var q = ns[k];
+      if (nbb[q] === opp) { var gr = group(nbb, q); if (gr.nl === 0) for (var t = 0; t < gr.g.length; t++) { nbb[gr.g[t]] = 0; cap.push(gr.g[t]); } } }
+    var me = group(nbb, i); if (me.nl === 0) return null; // 자충 금지
+    var nko = -1;
+    if (cap.length === 1 && me.g.length === 1 && me.nl === 1) nko = cap[0];
+    return { b: nbb, ko: nko, cap: cap };
+  }
+  function parse(rows) {
+    var b = new Array(N * N).fill(0), reg = [], out = new Array(N * N).fill(1);
+    for (var r = 0; r < rows.length; r++) for (var c = 0; c < rows[r].length; c++) {
+      var ch = rows[r][c], i = r * N + c; out[i] = 0;
+      if (ch === 'X') b[i] = 1; else if (ch === 'O') b[i] = 2; else if (ch === '.') reg.push(i);
+    }
+    // 화면 밖은 '-' 취급(빈 곳, 못 둠)
+    return { b: b, reg: reg, H: rows.length, W: rows[0].length };
+  }
+  // 흑이 이기면 true. goal: 'kill'(tgt 백 잡기) | 'live'(tgt 흑 살기)
+  function Solver(P) {
+    this.P = P; this.tt = new Map(); this.nodes = 0;
+  }
+  Solver.prototype.done = function (b) {
+    var P = this.P;
+    if (P.goal === 'kill') return b[P.tgt] !== 2 ? 1 : 0; // 1 = 흑 승 확정
+    return b[P.tgt] !== 1 ? -1 : 0; // -1 = 흑 패 확정
+  };
+  Solver.prototype.moves = function (b, ko, col) {
+    var r = [], reg = this.P.reg;
+    for (var k = 0; k < reg.length; k++) { var nx = play(b, ko, reg[k], col); if (nx) r.push([reg[k], nx]); }
+    return r;
+  };
+  Solver.prototype.win = function (b, ko, col, passes, d) {
+    var dn = this.done(b); if (dn === 1) return true; if (dn === -1) return false;
+    var P = this.P;
+    if (d <= 0 || passes >= 2) return P.goal === 'live';
+    var key = b.join('') + col + ko + passes + ',' + d;
+    var hit = this.tt.get(key); if (hit !== undefined) return hit;
+    this.nodes++; if (this.nodes > 3e6) throw new Error('too big');
+    var ms = this.moves(b, ko, col), res;
+    if (col === 1) { res = false;
+      for (var k = 0; k < ms.length && !res; k++) if (this.win(ms[k][1].b, ms[k][1].ko, 2, 0, d - 1)) res = true;
+      if (!res && this.win(b, -1, 2, passes + 1, d - 1)) res = true;
+    } else { res = true;
+      for (var k2 = 0; k2 < ms.length && res; k2++) if (!this.win(ms[k2][1].b, ms[k2][1].ko, 1, 0, d - 1)) res = false;
+      if (res && !this.win(b, -1, 1, passes + 1, d - 1)) res = false;
+    }
+    this.tt.set(key, res); return res;
+  };
+  Solver.prototype.depth = function () { return this.P.reg.length * 3 + 4 + (this.extra || 0); };
+  // 흑 차례 위치에서 이기는 수 목록 (-1 = 패스)
+  Solver.prototype.goodMoves = function (b, ko) {
+    var d = this.depth(), g = [], ms = this.moves(b, ko, 1);
+    for (var k = 0; k < ms.length; k++) if (this.win(ms[k][1].b, ms[k][1].ko, 2, 0, d - 1)) g.push(ms[k][0]);
+    return g;
+  };
+  // 흑이 둔 뒤(백 차례): 백이 두 번 연달아 둬도 흑이 이기면 '끝난 모양'
+  Solver.prototype.settled = function (b, ko) {
+    if (this.done(b) === 1) return true;
+    if (this.P.goal === 'live' && this.done(b) === 0) { /* 계속 */ }
+    var d = this.depth(), ms = this.moves(b, ko, 2); ms.push([-1, { b: b, ko: -1 }]);
+    for (var k = 0; k < ms.length; k++) { var nx = ms[k][1];
+      if (this.done(nx.b) === -1) return false;
+      if (!this.win(nx.b, nx.ko, 2, 0, d - 2)) return false; }
+    return true;
+  };
+  // 백의 응수: 흑이 지는 수가 있으면 그것, 아니면 흑의 정답 수가 가장 적어지는(버티는) 수
+  Solver.prototype.reply = function (b, ko) {
+    var d = this.depth(), ms = this.moves(b, ko, 2), best = null, bs = 1e9;
+    for (var k = 0; k < ms.length; k++) { var nx = ms[k][1];
+      if (!this.win(nx.b, nx.ko, 1, 0, d - 1)) return { mv: ms[k][0], nx: nx, refute: true };
+      var gm = this.goodMoves(nx.b, nx.ko).length - (nx.cap.length ? 0.5 : 0);
+      if (gm < bs) { bs = gm; best = { mv: ms[k][0], nx: nx, refute: false }; } }
+    if (!this.win(b, -1, 1, 1, d - 1)) return { mv: -1, nx: { b: b, ko: -1, cap: [] }, refute: true };
+    return best || { mv: -1, nx: { b: b, ko: -1, cap: [] }, refute: false };
+  };
+  Solver.prototype.settledAfterWhite = function (nx) { return false; };
+  return { N: N, play: play, parse: parse, group: group, Solver: Solver, NB: NB };
+})();
+const BD_P = [["..OX-/O.OX-/OOOX-/XXXX-/-----","k",0,2,1],["..XO-/X.XO-/XXXO-/OOOO-/-----","l",0,2,1],["..OX-/.OOX-/OOXX-/XXX--/-----","k",0,2,1],["..XO-/.XXO-/XXOO-/OOO--/-----","l",0,2,1],["..OOX-/O.OOX-/OOOXX-/XXXX--/------","k",0,2,1],["..XXO-/X.XXO-/XXXOO-/OOOO--/------","l",0,2,1],["O..OX-/OO.OX-/XOOOX-/XXXXX-/------","k",0,0,1],["X..XO-/XX.XO-/OXXXO-/OOOOO-/------","l",0,0,1],["O.OX-/..OX-/OOOX-/XXXX-/-----","k",0,2,1],["X.XO-/..XO-/XXXO-/OOOO-/-----","l",0,2,1],["OOXX-/.OOX-/..OX-/OOOX-/XXXX-/-----","k",0,0,1],["XXOO-/.XXO-/..XO-/XXXO-/OOOO-/-----","l",0,0,1],["O..OOX-/O.OOOX-/OOOXXX-/XXXX---/-------","k",0,0,1],["X..XXO-/X.XXXO-/XXXOOO-/OOOO---/-------","l",0,0,1],["O...OX-/OOOOOX-/XXXXXX-/-------","k",0,0,1],["X...XO-/XXXXXO-/OOOOOO-/-------","l",0,0,1],["...OX-/OOOOX-/XXXXX-/------","k",0,3,1],["...XO-/XXXXO-/OOOOO-/------","l",0,3,1],["XO...OX-/XOOOOOX-/XXXXXXX-/--------","k",0,1,1],["OX...XO-/OXXXXXO-/OOOOOOO-/--------","l",0,1,1],["OOOX-/..OX-/.OOX-/OOXX-/XXX--/-----","k",0,0,1],["XXXO-/..XO-/.XXO-/XXOO-/OOO--/-----","l",0,0,1],[".OOX-/..OX-/OOOX-/XXXX-/-----","k",0,1,1],[".XXO-/..XO-/XXXO-/OOOO-/-----","l",0,1,1],["OOOOX-/...OX-/OOOOX-/XXXXX-/------","k",0,0,1],["XXXXO-/...XO-/XXXXO-/OOOOO-/------","l",0,0,1],["OOOX-/..OX-/O.OX-/OOOX-/XXXX-/-----","k",0,0,1],["XXXO-/..XO-/X.XO-/XXXO-/OOOO-/-----","l",0,0,1],[".OX-/.OX-/.OX-/OOX-/XXX-/----","k",0,1,1],[".XO-/.XO-/.XO-/XXO-/OOO-/----","l",0,1,1],["XO..OX-/XOO.OX-/XXOOOX-/-XXXXX-/-------","k",0,1,1],["OX..XO-/OXX.XO-/OOXXXO-/-OOOOO-/-------","l",0,1,1],[".OOX-/..OX-/OOOX-/OOXX-/XXX--/-----","k",0,1,1],[".XXO-/..XO-/XXXO-/XXOO-/OOO--/-----","l",0,1,1],[".OXX-/.OOX-/.OOX-/OOOX-/XXXX-/-----","k",0,1,1],[".XOO-/.XXO-/.XXO-/XXXO-/OOOO-/-----","l",0,1,1],["OOOOOX-/O...OX-/OOOOOX-/XXXXXX-/-------","k",0,0,1],["XXXXXO-/X...XO-/XXXXXO-/OOOOOO-/-------","l",0,0,1],["XO.OOX-/XO..OX-/XOOOOX-/XXXXXX-/-------","k",0,1,1],["OX.XXO-/OX..XO-/OXXXXO-/OOOOOO-/-------","l",0,1,1],["..OX-/.OOX-/OOOX-/XXXX-/-----","k",0,2,1],["..XO-/.XXO-/XXXO-/OOOO-/-----","l",0,2,1],[".OOX-/..OX-/.OOX-/OOXX-/XXX--/-----","k",0,1,1],[".XXO-/..XO-/.XXO-/XXOO-/OOO--/-----","l",0,1,1],["O...OX-/OO.OOX-/XOOOXX-/XXXXX--/-------","k",0,0,1],["X...XO-/XX.XXO-/OXXXOO-/OOOOO--/-------","l",0,0,1],["OOOOX-/...OX-/O.OOX-/OOOXX-/XXXX--/------","k",0,0,1],["XXXXO-/...XO-/X.XXO-/XXXOO-/OOOO--/------","l",0,0,1],["...OX-/O.OOX-/OOOXX-/XXXX--/------","k",0,3,1],["...XO-/X.XXO-/XXXOO-/OOOO--/------","l",0,3,1],["-XO.OOX-/-XO..OX-/-XO.OOX-/-XOOOXX-/-XXXXX--/--------","k",0,2,1],["-OX.XXO-/-OX..XO-/-OX.XXO-/-OXXXOO-/-OOOOO--/--------","l",0,2,1],["O.OOX-/O..OX-/OOO.X-/XXXXX-/------","k",0,0,1],["X.XXO-/X..XO-/XXX.O-/OOOOO-/------","l",0,0,1],["XO.XOX-/XO.XOX-/XO..OX-/XOOOXX-/XXXXX--/-------","k",0,1,1],["OX.OXO-/OX.OXO-/OX..XO-/OXXXOO-/OOOOO--/-------","l",0,1,1],["OX...OX-/.OOOOOX-/OOXXXXX-/XXX-----/--------","k",0,5,1],["XX.XXO-/XX..XO-/X.XXXO-/OOOOOO-/-------","l",0,3,1],["OO.OOX-/OO..OX-/O.OOOX-/XXXXXX-/-------","k",0,3,1],["X.OO.O-/O.XXXO-/X.XOOO-/XXXO---/OOOO---/-------","l",1,2,1],["...OX-/O.OOX-/OOOOX-/XXXXX-/------","k",0,3,1],["...XO-/X.XXO-/XXXXO-/OOOOO-/------","l",0,3,1],["OO.OX-/O..OX-/OO.OX-/XXXXX-/------","k",0,0,1],["XX.XO-/X..XO-/XX.XO-/OOOOO-/------","l",0,0,1],[".O..OX-/XOO.OX-/XOOOOX-/XXXXXX-/-------","k",0,1,1],[".X..XO-/OXX.XO-/OXXXXO-/OOOOOO-/-------","l",0,1,1],["OX..OX-/.OO.OX-/XXOOOX-/-XOOOX-/-XXXXX-/-------","k",0,4,1],["OXO..XO-/O..XXXO-/OXXXOOO-/OOOOO---/--------","l",0,5,1],["XOX..OX-/X..OOOX-/XOOOXXX-/XXXXX---/--------","k",0,5,1],["O.O.XXXO-/OXXX..XO-/OOXXXXXO-/-OOOOOOO-/---------","l",0,4,1],["X.X.OOOX-/XOOO..OX-/XXOOOOOX-/-XXXXXXX-/---------","k",0,4,1],["X.X.O-/OOXXO-/X..XO-/XXXXO-/OOOOO-/------","l",0,2,1],["O.O.X-/XXOOX-/O..OX-/OOOOX-/XXXXX-/------","k",0,2,1],["...XO-/XXXXO-/XXOXO-/O.XXO-/OOOOO-/------","l",0,3,1],["...OX-/OOOOX-/OOXOX-/X.OOX-/XXXXX-/------","k",0,3,1],["..XO-/X.XO-/.XXO-/OOOO-/-----","l",0,2,1],["..OX-/O.OX-/.OOX-/XXXX-/-----","k",0,2,1],["OX..XO-/OXX.XO-/O.XXXO-/OOOOOO-/-------","l",0,1,1],["XO..OX-/XOO.OX-/X.OOOX-/XXXXXX-/-------","k",0,1,1],["XX.XXXO-/X.OX.XO-/XX.XXXO-/OXOXXOO-/OOOOOO--/--------","l",0,3,1],["OO.OOOX-/O.XO.OX-/OO.OOOX-/XOXOOXX-/XXXXXX--/--------","k",0,3,1],["X...XO-/XXXOXO-/OOX.XO-/-OOOOO-/-------","l",0,0,1],["O...OX-/OOOXOX-/XXO.OX-/-XXXXX-/-------","k",0,0,1],["X..XO-/O.XXO-/O.XOO-/XXXO--/OOOO--/------","l",0,3,1],["O..OX-/X.OOX-/X.OXX-/OOOX--/XXXX--/------","k",0,3,1],["XXXXO-/...XO-/XXX.O-/OOOOO-/------","l",0,0,1],["OOOOX-/...OX-/OOO.X-/XXXXX-/------","k",0,0,1],["X.XO-/O.XO-/O.XO-/.XXO-/XXOO-/OOO--/-----","l",0,2,1],["OOX.OOX-/O.O..OX-/XXOOOOX-/-XXXXXX-/--------","k",0,4,1],[".XXO-/..XO-/.XXO-/XXXO-/XXOO-/OOO--/-----","l",0,1,1],["O.OX-/X.OX-/X.OX-/.OOX-/OOXX-/XXX--/-----","k",0,2,1],["..XXO-/XX.XO-/XX.XO-/OOOOO-/------","l",0,2,1],[".OOX-/..OX-/.OOX-/OOOX-/OOXX-/XXX--/-----","k",0,1,1],["XXOXO-/...XO-/.OXXO-/XXOOO-/OOO---/------","l",0,3,1],["..OOX-/OO.OX-/OO.OX-/XXXXX-/------","k",0,2,1],["OO...XO-/OXX.XXO-/OOXXXXO-/-OOOOOO-/--------","l",0,5,1],["OOXOX-/...OX-/.XOOX-/OOXXX-/XXX---/------","k",0,3,1],["..XO-/..XO-/.XXO-/XXXO-/OOOO-/-----","l",0,2,1],["XX...OX-/XOO.OOX-/XXOOOOX-/-XXXXXX-/--------","k",0,5,1],[".XOXO-/...OO-/XX.XO-/OXXXO-/OOOOO-/------","l",2,0,1],["..OX-/..OX-/.OOX-/OOOX-/XXXX-/-----","k",0,2,1],["....O-/X.XXO-/XXXOO-/OOOO--/------","l",1,0,1],[".OXOX-/...XX-/OO.OX-/XOOOX-/XXXXX-/------","k",2,0,1],["XO.XOO-/.O.XXO-/XX..XO-/XXXXXO-/OOOOOO-/-------","l",0,3,1],["....X-/O.OOX-/OOOXX-/XXXX--/------","k",1,0,1],["X.OO.XO-/O...XXO-/XXXXXOO-/OOOOOO--/--------","l",0,5,1],["OXOXOX-/O...OX-/..OOOX-/OOOXXX-/XXXX---/-------","k",0,4,1],["XXXO-/X.XO-/...O-/X.XO-/XXXO-/OOOO-/-----","l",0,0,1],["OX.OXX-/.X.OOX-/OO..OX-/OOOOOX-/XXXXXX-/-------","k",0,3,1],["X.XXO-/O..XO-/.X.XO-/XXXXO-/OOOOO-/------","l",0,2,1],["OOOX-/O.OX-/...X-/O.OX-/OOOX-/XXXX-/-----","k",0,0,1],[".XXO-/..XO-/.XXO-/XX.O-/OOO--/-----","l",0,1,1],["O.OOX-/X..OX-/.O.OX-/OOOOX-/XXXXX-/------","k",0,2,1],[".XOXO-/.O.XO-/..XXO-/XXXOO-/OOOO--/------","l",0,3,1],[".OOX-/..OX-/.OOX-/OO.X-/XXX--/-----","k",0,1,1],["OX.XXO-/OX..XO-/OX.XXO-/OX.XXO-/OOOOOO-/-------","l",0,3,1],["XO.OOX-/XO..OX-/XO.OOX-/XO.OOX-/XXXXXX-/-------","k",0,3,1],["...OX-/..OOX-/OOOXX-/XXXX--/------","k",0,3,2],["..OOX-/..OOX-/.OOXX-/OOXX--/XXX---/------","k",0,2,2],["...XO-/..XXO-/XXXOO-/OOOO--/------","l",0,3,2],["..OX-/..OX-/.OOX-/OOXX-/XXX--/-----","k",0,2,2],["..OOX-/..OOX-/.OOOX-/OOXXX-/XXX---/------","k",0,2,2],["..XXO-/..XXO-/.XXOO-/XXOO--/OOO---/------","l",0,2,2],["..XOX-/.XOOX-/..XOX-/OOO.X-/XXXXX-/------","k",0,3,2],["..OX-/..OX-/.OOX-/OO.X-/XXX--/-----","k",0,2,2],["..XO-/..XO-/.XXO-/XXOO-/OOO--/-----","l",0,2,2],["XO..OX-/.X.OOX-/.OO.XX-/OOXXX--/XXX----/-------","k",2,1,2],["O...XOX-/OO.XOOX-/XOOOXXX-/XXXXX---/--------","k",0,0,2],["..XXO-/..XXO-/.XXXO-/XXOOO-/OOO---/------","l",0,2,2],["..OOOX-/X.OO.X-/OOOXXX-/XXXX---/-------","k",0,2,2],[".X.OX-/..XOX-/OOOOX-/XXXXX-/------","k",0,3,2],["...XXO-/...OXO-/XXOXXO-/OOOOOO-/-------","l",0,3,2],["..OOX-/X..OX-/OOOOX-/XXXXX-/------","k",0,2,2],["..X.OX-/O.OOOX-/XXXXXX-/-------","k",0,4,2],["..XO-/..XO-/.XXO-/XX.O-/OOO--/-----","l",0,2,2],[".X.OX-/..OOX-/XOOXX-/OOXX--/XXX---/------","k",0,3,2],["O..XOOX-/OXX..OX-/OOOOOOX-/XXXXXXX-/--------","k",0,0,2],["XOXXOOO-/...XXXO-/.....XO-/XXXOXXO-/OOOOOOO-/--------","l",0,2,2],["-XO...OX-/-XOO.XOX-/-XXXOOOX-/---XOOOX-/---XXXXX-/---------","k",0,6,2],["O.X.OX-/OX..OX-/XOOXOX-/XXOOOX-/-XXXXX-/-------","k",0,4,2],["O.XO-/..XO-/.OXO-/OXXO-/OOOO-/-----","l",0,2,2],[".X.OX-/..OOX-/OOOXX-/XXXX--/------","k",0,3,2],["...OX-/.XOOX-/OOOXX-/XXXX--/------","k",0,3,2],["...XO-/O.XXO-/XOXOO-/OOOO--/------","l",0,3,2],["X.OX-/X..X-/O.OX-/OOOX-/XXXX-/-----","k",2,0,2],["OO..OX-/O.X.OX-/XOOOOX-/XXXXXX-/-------","k",0,4,2],["OX..XXO-/OXX..XO-/OXXOXXO-/OOOOOOO-/--------","l",0,1,2],[".XOOX-/...OX-/OOOOX-/XXXXX-/------","k",0,2,2],["X...X-/.XOOX-/OOOOX-/XXXXX-/------","k",1,2,2],[".OXO-/O.XO-/..XO-/XXXO-/OOOO-/-----","l",0,2,2],["-XO.X.OX-/-XO.OX.X-/-XOOOOOX-/-XXXXXXX-/---------","k",0,2,2],[".XOX-/...X-/XOOX-/OOXX-/XXX--/-----","k",2,1,2],["...O-/.OXO-/XOXO-/XXXO-/OOOO-/-----","l",1,2,2],["O..OOX-/OX.OOX-/.OOOXX-/XXXXX--/-------","k",0,3,2],[".XOX-/X.OX-/O.OX-/OOOX-/XX.X-/-----","k",0,2,2],["X.O.O-/..XXO-/XXXOO-/OOOO--/------","l",1,2,2],["O.XO.OX-/OOX..OX-/XOOOXOX-/XXXXXXX-/--------","k",0,0,2],["O..OX-/O..OX-/OOOOX-/XXX.X-/------","k",0,0,2],["OX..XXO-/OX...XO-/OXOXXXO-/OOOOOOO-/--------","l",0,4,2],["O..OX-/O..OX-/OOOO.-/XXXXX-/------","k",0,0,2],["OX.OX-/...OX-/O.OOX-/OOOXX-/XXXX--/------","k",0,3,2],["X...XO-/XXX..O-/XXXXXO-/OOXXXO-/-OOOOO-/-------","l",0,0,2],["...OOX-/X.X.OX-/OOOOOX-/XXXXXX-/-------","k",0,3,2],["O..OOX-/OO..OX-/XO.OOX-/XOXOXX-/XXXXX--/-------","k",0,3,2],["X.XO-/..XO-/X.XO-/X.XO-/OOOO-/-----","l",0,2,2],["O.OOX-/...OX-/.OOOX-/OOXXX-/XXX---/------","k",0,2,2],["XO..OOX-/XOO..OX-/XXO.OOX-/-XOXOXX-/-XXXXX--/--------","k",0,4,2],[".OXO-/..XO-/..XO-/XOXO-/OOOO-/-----","l",0,2,2],["O..OX-/O..OX-/OOOOX-/.XXXX-/------","k",0,0,2],["..OOX-/...OX-/XXOOX-/OOOXX-/XXXX--/------","k",0,2,2],[".OXXO-/...XO-/.OOXO-/XXXXO-/OOOOO-/------","l",0,2,2],["O...OX-/..OOOX-/OOOXXX-/XXXX---/-------","k",0,4,2],["XO.X..OX-/X..XOOOX-/XOOOOXXX-/XXXXXX---/---------","k",0,6,2],["...O-/.XXO-/.XXO-/XXOO-/OOO--/-----","l",1,1,2],["OOOOX-/...OX-/.X.OX-/.OOOX-/XXXXX-/------","k",0,0,2],[".O.OOOX-/..XX.OX-/O.OOOOX-/XXXXXXX-/--------","k",0,3,2],["OX...XO-/OX.O.XO-/OX.XXXO-/OOOOOOO-/--------","l",0,5,2],["XO..OOX-/XO..OOX-/XO.OOXX-/X.OOXX--/XXXXX---/--------","k",0,4,2],["XO...OX-/XO..OOX-/X.OOOXX-/XXXXXX--/--------","k",0,5,2],["X...O.XO-/XXO..XXO-/OOXXXXOO-/-OOOOOO--/---------","l",0,6,2],["O...OOX-/OO.OOOX-/XO..XXX-/XOOOX---/XXXXX---/--------","k",0,0,2],["O.OOX-/...OX-/..OOX-/OOOXX-/XXXX--/------","k",0,2,2],["OX.XXO-/O...XO-/OX..XO-/OXXXXO-/OOOOOO-/-------","l",0,3,2],[".XOX-/..OX-/..OX-/O.OX-/XXXX-/-----","k",0,2,2],["XOO..OX-/XO...OX-/XOOOO.X-/XXXXXXX-/--------","k",0,1,2],["...X.XO-/..OXXXO-/OXXOOOO-/XXOO----/OOO-----/--------","l",0,3,2],["...OOX-/X.X.OX-/.OOOOX-/OOXXXX-/XXX----/-------","k",0,3,2],["..OOX-/.X.OX-/.X.OX-/OOOOX-/XXXXX-/------","k",0,2,2],["O...OX-/O..OOX-/.OOOXX-/XXXXX--/-------","k",0,4,2],["...OX-/.OO.X-/.OXXX-/OOX---/XXX---/------","k",1,1,2],["XOX...OX-/XX...OOX-/XOOOOOXX-/XXXXXXX--/---------","k",0,6,2],["-XO...OX-/-X..O.OX-/-XOOOOOX-/-XXXXXXX-/---------","k",0,6,2],["XO..OX-/XO..OX-/X.O.OX-/XXOOOX-/-XXXXX-/-------","k",0,4,2],[".OX.OX-/....OX-/OOOOOX-/XXXXXX-/-------","k",0,4,2],["O..OX-/..OOX-/OOOXX-/XXXX--/------","k",0,3,3],["O.OX-/..OX-/.OOX-/OOXX-/XXX--/-----","k",0,2,3],["..O.XO-/O..XXO-/..OXOO-/XXXOO--/OOOO---/-------","l",0,4,3],["O.OOX-/..OOX-/.OOOX-/OOXXX-/XXX---/------","k",0,2,3],["..OOX-/...OX-/OOOOX-/OOXXX-/XXX---/------","k",0,2,3],["X...OO-/X...XO-/XX.XXO-/XXXXOO-/OOOOO--/-------","l",0,0,3],["..OOX-/...OX-/OOOOX-/XXXXX-/------","k",0,2,3],["O..OX-/..OOX-/O.OOX-/OOOXX-/XXXX--/------","k",0,3,3],["...O.XO-/OO..XXO-/XXXXX.O-/OOOOOO--/--------","l",0,5,3],["..OOX-/...OX-/O.OOX-/OOOXX-/XXXX--/------","k",0,2,3],["...XOX-/.O..OX-/.OOOXX-/OOXXX--/XXX----/-------","k",1,1,3],["X.....XO-/XX..X.XO-/OXXOXXXO-/OOOOOOOO-/---------","l",0,6,3],["..OOX-/...OX-/O..OX-/OOOXX-/XXXX--/------","k",0,2,3],["..OOX-/..OOX-/...OX-/O.OOX-/XXXXX-/------","k",0,2,3],["X.....XO-/X...XXXO-/XXXOXXOO-/OOOOOOO--/---------","l",0,6,3],["O....OX-/O..X..X-/OOOXOOX-/XXOOOOX-/-XXXXXX-/--------","k",0,0,3],["O.OOX-/...OX-/..OOX-/O..OX-/OXOOX-/XXXXX-/------","k",0,2,3],[".O..XO-/..OXXO-/.X..OO-/XXXXO--/OOOOO--/-------","l",2,1,3],[".XO.OX-/....OX-/..O.OX-/OOOXXX-/XXXX---/-------","k",2,2,3],["...X.OX-/...OOOX-/..XOXXX-/OOOXX---/XXXX----/--------","k",0,5,3],["O..OO-/...XO-/...XO-/XXXXO-/OOOOO-/------","l",1,3,3],["XO.XOX-/X...OX-/XO.OOX-/XOOOXX-/XXXXX--/-------","k",0,4,3],["..XOOX-/X..O.X-/OOOOOX-/XXXXXX-/-------","k",0,3,3],["XOXO--/..OOO-/.OXXO-/X..XO-/XXXXO-/OOOOO-/------","l",2,2,3],["...OX-/X..OX-/OOOOX-/OOOXX-/XXXX--/------","k",0,3,3],["...OX-/X..OX-/XOOOX-/OOXXX-/XXX---/------","k",0,3,3],["..XXO-/...OO-/X.XXO-/XXXOO-/OOOO--/------","l",2,0,3],["O.XOX-/...OX-/.OOOX-/OOXXX-/XXX---/------","k",0,3,3],["..OOX-/..XOX-/O.OOX-/XXXXX-/------","k",0,2,3],["..XO-/..XO-/.XXO-/.XOO-/OOO--/-----","l",0,2,3],["..OX-/.XOX-/..OX-/OOOX-/XXXX-/-----","k",0,2,3],["...OX-/.OOOX-/.XOXX-/O.OX--/XXXX--/------","k",0,3,3],[".O..XO-/...OXO-/OOXXOO-/XXXOO--/OOOO---/-------","l",2,2,3],[".OOOX-/...OX-/.X.OX-/OOOXX-/XXXX--/------","k",0,1,3],["...XX-/...OX-/OXOOX-/OOOXX-/XXXX--/------","k",1,3,3],["X..XXO-/O..XXO-/..XXOO-/XXXOO--/OOOO---/-------","l",0,3,3],["O...OX-/O.OOOX-/O.XOXX-/OO.OX--/XXXXX--/-------","k",0,4,3],["....OX-/.X.OOX-/OOOOXX-/XXXXX--/-------","k",0,4,3],["...XXXO-/XO.O.XO-/.XXXOXO-/XXOOOOO-/OOO-----/--------","l",0,3,3],["XO.O.OX-/XO...XX-/XOO.OOX-/XOOOOXX-/XXXXXX--/--------","k",0,1,3],["....OX-/X..OOX-/OOOOXX-/XXXXX--/-------","k",0,4,3],["....O-/...XO-/XXXXO-/OOOOO-/------","l",1,3,3],["O...OX-/....OX-/OOOOOX-/XXXXXX-/-------","k",0,4,3],[".....OX-/.O.OOOX-/OOXXXXX-/XXX-----/--------","k",0,5,3],["X....XO-/X...XXO-/XXOXXOO-/OOOOOO--/--------","l",0,5,3],["O..XOX-/O...OX-/O.O.OX-/OOOXXX-/XXXX---/-------","k",0,0,3],["OXX.OX-/....OX-/O.O.OX-/OOOOOX-/XXXXXX-/-------","k",0,4,3],["...XO-/..O.O-/.XXXO-/XXXOO-/OOOO--/------","l",2,1,3],["..XOX-/...OX-/.XO.X-/OOOXX-/XXXX--/------","k",2,2,3],["...OOX-/.O..OX-/OOO.OX-/XXXXXX-/-------","k",0,3,3],["X.XXO-/O..XO-/...XO-/XX.XO-/OOOOO-/------","l",0,2,3],["...OX-/..OOX-/..OOX-/.OOXX-/XXXX--/------","k",0,3,3],["....X-/...OX-/.OOOX-/OOOOX-/XXXXX-/------","k",1,3,3],["X.XXXO-/....XO-/..XOXO-/XXXOOO-/OOOO---/-------","l",0,2,3],["..XOXXX-/O...OOX-/OO...OX-/XOOOOOX-/XXXXXXX-/--------","k",1,0,3],["..OX-/.OOX-/.OOX-/OOXX-/XXX--/-----","k",0,2,3],["....XO-/O..XXO-/XX.XOO-/OOOOO--/-------","l",0,4,3],["...OX-/.OOOX-/OOXXX-/XXX---/------","k",0,3,3],["...OX-/.OOOX-/OOXXX-/OOX---/XXX---/------","k",0,3,3],[".....XO-/.O.XXXO-/XX.XOOO-/OOOOO---/--------","l",0,5,3],["...OX-/.OOOX-/OOOOX-/XXXXX-/------","k",0,3,3],["..OX-/.OOX-/.OXX-/OOX--/XXX--/-----","k",0,2,3],["....XO-/.O.XXO-/X..XOO-/OXXXO--/OOOOO--/-------","l",0,4,3],["O...OX-/...OOX-/OOOOXX-/XXXXX--/-------","k",0,4,3],["O..OOX-/....OX-/OOOOOX-/XXXXXX-/-------","k",0,3,3],["..XXO-/O..XO-/.X.OO-/XXXXO-/OOOOO-/------","l",2,1,3],["....X-/O..OX-/OOOOX-/XXXXX-/------","k",1,0,3],["..O.X-/..OOX-/..OXX-/OOOX--/XXXX--/------","k",0,2,3],[".O.XO-/...XO-/O..XO-/.XXXO-/OOOOO-/------","l",0,3,3],["..O.X-/..XOX-/..OOX-/OOOXX-/XXXX--/------","k",1,3,3],["XX....OX-/XOO...OX-/XXOOO.OX-/-XXXOOOX-/---XXXXX-/---------","k",0,6,3],["O....OX-/O...XOX-/OOO.OOX-/XXXXXXX-/--------","k",0,0,3],[".....OX-/X.XOOOX-/O.OOXXX-/.OOXX---/XXXX----/--------","k",0,5,3],["...OOX-/..X.OX-/...OOX-/OOOOXX-/XXXXX--/-------","k",0,3,3],["O..OXXX-/..XOOOX-/.....OX-/OOOOOOX-/XXXXXXX-/--------","k",0,3,3],["....OX-/..OOOX-/..OXXX-/.XOX---/XOOX---/XXXX---/-------","k",0,4,3],["...OOX-/....OX-/OOO.OX-/XXXXXX-/-------","k",0,3,3]];
+/* ---------- 바둑 사활 (#160) ---------- */
+// 문제: [판 모양('/'로 줄 구분 · X 흑 · O 백 · . 둘 수 있는 빈 곳 · - 상관없는 곳), k 잡기 / l 살기, 목표 돌 줄, 칸, 난이도]
+const BD_LVN = { 1: '초급', 2: '중급', 3: '고급' };
+const BD = { tab: 'day', idx: 0, P: null, S: null, b: null, ko: -1, hist: [], ghost: -1, hint: -1, busy: false, over: '', last: -1, started: false, show: false, timer: 0 };
+function bdDayNum() { const d = new Date(); return Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - Date.UTC(2026, 0, 1)) / 864e5); }
+function bdDailyIdx() { const d = bdDayNum(), L = bdLvList(d % 2 ? 3 : 2), k = Math.floor(d / 2); return L[((k * 31) % L.length + L.length) % L.length]; } // 오늘 문제: 중급·고급 하루씩 번갈아
+function bdLvList(lv) { const a = []; BD_P.forEach((p, i) => { if (p[4] === lv) a.push(i); }); return a; }
+function bdSolved() { return Array.isArray(REC.bdSolved) ? REC.bdSolved : (REC.bdSolved = []); }
+function bdSetTab(t) {
+  if (BD.busy) return; BD.tab = t; sfx('tap');
+  document.querySelectorAll('#bdTab button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+  if (t === 'day') bdLoad(bdDailyIdx());
+  else { const L = bdLvList(+t), pos = (REC.bdPos || {})[t] || 0; bdLoad(L[Math.min(pos, L.length - 1)]); }
+}
+function bdNav(d) {
+  if (BD.busy || BD.tab === 'day') return; const L = bdLvList(+BD.tab); let p = L.indexOf(BD.idx) + d;
+  if (p < 0 || p >= L.length) { toast(d > 0 ? '이 단계 마지막 문제예요.' : '첫 문제예요.'); return; }
+  REC.bdPos = REC.bdPos || {}; REC.bdPos[BD.tab] = p; recSave(); sfx('tap'); bdLoad(L[p]);
+}
+function bdLoad(i) {
+  clearTimeout(BD.timer); BD.idx = i; const p = BD_P[i];
+  const rows = p[0].split('/'), pr = GO.parse(rows);
+  BD.P = { goal: p[1] === 'k' ? 'kill' : 'live', reg: pr.reg, tgt: p[2] * GO.N + p[3], H: rows.length, W: rows[0].length, lv: p[4], init: pr.b };
+  BD.S = new GO.Solver(BD.P); BD.started = true; bdReset(true);
+}
+function bdReset(quiet) {
+  clearTimeout(BD.timer); BD.b = BD.P.init.slice(); BD.ko = -1; BD.hist = []; BD.ghost = -1; BD.hint = -1; BD.busy = false; BD.over = ''; BD.last = -1; BD.show = false;
+  if (!quiet) sfx('tap'); bdHead(); bdMsg('놓을 곳을 한 번 누르면 흐린 돌, 한 번 더 누르면 둬요.'); bdDraw(); bdBtns();
+}
+function bdHead() {
+  const P = BD.P, kill = P.goal === 'kill', solved = bdSolved().indexOf(BD.idx) >= 0, d = new Date();
+  const top = BD.tab === 'day' ? '📅 ' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일 오늘의 문제 · ' + BD_LVN[P.lv] : BD_LVN[P.lv] + ' · ' + (bdLvList(P.lv).indexOf(BD.idx) + 1) + ' / ' + bdLvList(P.lv).length;
+  $('bdQ').innerHTML = '<small>' + top + (solved ? ' · <em>✔ 푼 문제</em>' : '') + '</small><div>' + (kill ? '흑 차례 · 백을 잡으세요' : '흑 차례 · 흑을 살리세요') + '</div><span>' +
+    (P.lv === 3 ? '한 수로 끝나지 않아요. 백이 버티면 계속 두세요.' : kill ? '백이 두 집을 못 내게 급소를 찾아보세요.' : '흑이 두 집을 낼 자리를 찾아보세요.') + '</span>';
+  $('bdNavRow').classList.toggle('hidden', BD.tab === 'day');
+}
+function bdMsg(t, cls) { const m = $('bdMsg'); m.className = 'msg jgmsg' + (cls ? ' ' + cls : ''); m.textContent = t; }
+function bdBtns() {
+  const done = !!BD.over; $('bdHint').disabled = done || BD.busy; $('bdAns').disabled = BD.busy && !BD.show;
+  $('bdNext').classList.toggle('hidden', BD.over !== 'ok' && BD.over !== 'show');
+  $('bdNext').textContent = BD.tab === 'day' ? '연습 문제 더 풀기 ›' : '다음 문제 ›';
+}
+function bdDraw() {
+  const P = BD.P, H = P.H, W = P.W, C = 46, M = 27, N = GO.N;
+  const X = c => M + c * C, Y = r => M + r * C, R = X(W - 1) + C * 0.62, B = Y(H - 1) + C * 0.62;
+  const sv = $('bdBoard'); sv.setAttribute('viewBox', '0 0 ' + R + ' ' + B);
+  let s = '<defs><radialGradient id="bdgB" cx=".36" cy=".3" r=".75"><stop offset="0" stop-color="#6B6B6B"/><stop offset=".5" stop-color="#222"/><stop offset="1" stop-color="#050505"/></radialGradient><radialGradient id="bdgW" cx=".36" cy=".3" r=".8"><stop offset="0" stop-color="#fff"/><stop offset=".7" stop-color="#ECECEC"/><stop offset="1" stop-color="#C8C8CC"/></radialGradient></defs>';
+  for (let r = 0; r < H; r++) s += '<line x1="' + X(0) + '" y1="' + Y(r) + '" x2="' + R + '" y2="' + Y(r) + '" stroke="#5C3A1A" stroke-width="' + (r ? 1.4 : 2.8) + '"/>';
+  for (let c = 0; c < W; c++) s += '<line x1="' + X(c) + '" y1="' + Y(0) + '" x2="' + X(c) + '" y2="' + B + '" stroke="#5C3A1A" stroke-width="' + (c ? 1.4 : 2.8) + '"/>';
+  if (H > 3 && W > 3) s += '<circle cx="' + X(3) + '" cy="' + Y(3) + '" r="4.2" fill="#5C3A1A"/>';
+  for (let r = 0; r < H; r++) for (let c = 0; c < W; c++) {
+    const i = r * N + c, v = BD.b[i]; if (!v) continue;
+    const isT = i === P.tgt || (BD.b[P.tgt] === v && GO.group(BD.b, P.tgt).g.indexOf(i) >= 0);
+    s += '<circle cx="' + X(c) + '" cy="' + Y(r) + '" r="' + (C * 0.47) + '" fill="url(#bdg' + (v === 1 ? 'B' : 'W') + ')"' + (v === 2 ? ' stroke="#9CA3AF" stroke-width="1"' : '') + (i === BD.last ? ' class="bdnew"' : '') + '/>';
+    if (i === BD.last) s += '<circle cx="' + X(c) + '" cy="' + Y(r) + '" r="7" fill="none" stroke="' + (v === 1 ? '#fff' : '#111') + '" stroke-width="2.6"/>';
+    else if (isT && !BD.hist.length) s += '<circle cx="' + X(c) + '" cy="' + Y(r) + '" r="4" fill="' + (v === 1 ? '#F87171' : '#DC2626') + '" opacity=".9"/>';
+  }
+  if (BD.ghost >= 0) { const r = (BD.ghost / N) | 0, c = BD.ghost % N; s += '<circle cx="' + X(c) + '" cy="' + Y(r) + '" r="' + (C * 0.47) + '" fill="#111" opacity=".38"/><circle cx="' + X(c) + '" cy="' + Y(r) + '" r="' + (C * 0.5) + '" fill="none" stroke="#2563EB" stroke-width="3" stroke-dasharray="5 4"/>'; }
+  if (BD.hint >= 0) { const r = (BD.hint / N) | 0, c = BD.hint % N; s += '<circle cx="' + X(c) + '" cy="' + Y(r) + '" r="' + (C * 0.42) + '" fill="none" stroke="#FACC15" stroke-width="5" class="bdhint"/>'; }
+  sv.innerHTML = s;
+}
+function bdTap(ev) {
+  if (!BD.started || BD.busy || BD.over) { if (BD.over === 'fail') toast('↺ 처음부터 를 눌러 다시 해 보세요.'); return; }
+  const sv = $('bdBoard'), rc = sv.getBoundingClientRect(), vb = sv.viewBox.baseVal, P = BD.P, C = 46, M = 27;
+  const x = (ev.clientX - rc.left) * vb.width / rc.width, y = (ev.clientY - rc.top) * vb.height / rc.height;
+  const c = Math.round((x - M) / C), r = Math.round((y - M) / C);
+  if (r < 0 || c < 0 || r >= P.H || c >= P.W) return;
+  const i = r * GO.N + c;
+  if (BD.b[i]) { sfx('tick'); return; }
+  if (P.reg.indexOf(i) < 0) { sfx('fail'); toast('문제와 상관없는 곳이에요. 돌이 모인 곳에 두세요.'); return; }
+  if (i === BD.ko) { sfx('fail'); toast('패예요. 바로 다시 따낼 수는 없어요.'); return; }
+  if (BD.ghost !== i) { BD.ghost = i; sfx('tick'); bdDraw(); return; }
+  const nx = GO.play(BD.b, BD.ko, i, 1);
+  if (!nx) { BD.ghost = -1; bdDraw(); sfx('fail'); toast('거기는 둘 수 없어요 (자충수).'); return; }
+  BD.ghost = -1; BD.hint = -1; bdApply(i, nx, 1);
+  const P2 = BD.P, S = BD.S;
+  if (S.done(BD.b) === 1) return bdWin();
+  BD.busy = true; bdBtns(); bdMsg('백이 생각 중이에요…');
+  BD.timer = setTimeout(() => {
+    const ok = S.win(BD.b, BD.ko, 2, 0, S.depth() - 1);
+    if (ok && S.settled(BD.b, BD.ko)) { BD.busy = false; return bdWin(); }
+    const rp = S.reply(BD.b, BD.ko);
+    BD.busy = false;
+    if (rp.mv >= 0) bdApply(rp.mv, rp.nx, 2); else { BD.ko = -1; BD.hist.push({ mv: -1, col: 2 }); }
+    if (!ok) return bdFail(rp.mv < 0);
+    bdMsg(rp.mv < 0 ? '백이 손을 뺐어요. 계속 두세요.' : '👍 좋아요! 백이 버티네요. 계속 두세요.'); bdBtns();
+  }, 750);
+}
+function bdApply(i, nx, col) {
+  BD.hist.push({ mv: i, col, b: BD.b, ko: BD.ko }); BD.b = nx.b; BD.ko = nx.ko; BD.last = i;
+  sfx(col === 1 ? 'stone' : 'stone2'); if (nx.cap && nx.cap.length) setTimeout(() => sfx('capture'), 120);
+  bdDraw();
+}
+function bdWin() {
+  const kill = BD.P.goal === 'kill', cap = BD.S.done(BD.b) === 1;
+  if (BD.show) { BD.over = 'show'; BD.busy = false; bdMsg('이렇게 두면 정답이에요. 다음엔 직접 풀어 보세요!'); bdBtns(); return; }
+  BD.over = 'ok'; BD.busy = false;
+  const sv = bdSolved(), first = sv.indexOf(BD.idx) < 0; if (first) sv.push(BD.idx);
+  if (BD.tab === 'day' && REC.bdDay !== today()) { const y = new Date(Date.now() - 864e5), yd = y.getFullYear() + '-' + (y.getMonth() + 1) + '-' + y.getDate(); REC.bdStreak = (REC.bdDay === yd ? (REC.bdStreak || 0) : 0) + 1; REC.bdDay = today(); }
+  recPlay(); recSave();
+  setTimeout(() => sfx('win'), 200);
+  bdMsg(cap ? '🎉 정답! 백을 다 잡았어요.' : kill ? '🎉 정답! 백은 이제 두 집을 못 내요.' : '🎉 정답! 이제 흑은 두 집으로 살았어요.', 'win');
+  bdHead(); bdRec(); bdBtns();
+}
+function bdFail(passed) {
+  BD.over = 'fail'; const kill = BD.P.goal === 'kill', dead = BD.S.done(BD.b) === -1;
+  setTimeout(() => sfx('lose'), 150);
+  bdMsg(dead ? '😢 흑이 잡혔어요. 다른 곳을 찾아보세요.' : kill ? '😢 아쉬워요! 이렇게 되면 백이 살아요.' : '😢 아쉬워요! 이렇게 되면 흑이 못 살아요.', 'lose');
+  bdBtns();
+}
+function bdHintShow() {
+  if (BD.busy || BD.over) return; const g = BD.S.goodMoves(BD.b, BD.ko).filter(x => x >= 0);
+  if (!g.length) { toast('지금은 힌트가 없어요. 처음부터 다시 해 보세요.'); return; }
+  BD.hint = g[0]; BD.ghost = -1; sfx('hint'); bdMsg('💡 노란 동그라미 자리가 급소예요. 두 번 눌러 두세요.'); bdDraw();
+}
+function bdAnswer() {
+  if (BD.busy && !BD.show) return; bdReset(true); BD.show = true; BD.busy = true; bdBtns(); bdMsg('정답을 보여 드릴게요…'); sfx('hint');
+  let n = 0; const S = BD.S;
+  const step = () => {
+    if (!BD.show) return;
+    const g = S.goodMoves(BD.b, BD.ko).filter(x => x >= 0); if (!g.length || n > 8) { BD.busy = false; BD.over = 'show'; bdBtns(); return; }
+    bdApply(g[0], GO.play(BD.b, BD.ko, g[0], 1), 1); n++;
+    if (S.done(BD.b) === 1 || S.settled(BD.b, BD.ko)) { BD.busy = false; return bdWin(); }
+    BD.timer = setTimeout(() => { const rp = S.reply(BD.b, BD.ko); if (rp.mv >= 0) bdApply(rp.mv, rp.nx, 2); else BD.ko = -1; n++; BD.timer = setTimeout(step, 900); }, 900);
+  };
+  BD.timer = setTimeout(step, 700);
+}
+function bdNext() {
+  if (BD.tab === 'day') { const lv = String(BD.P.lv); bdSetTab(lv); return; }
+  bdNav(1);
+}
+function bdRec() {
+  const sv = bdSolved(), today0 = REC.bdDay === today();
+  $('bdRSolved').textContent = sv.length + ' / ' + BD_P.length;
+  const y = new Date(Date.now() - 864e5), yd = y.getFullYear() + '-' + (y.getMonth() + 1) + '-' + y.getDate();
+  $('bdRStreak').textContent = ((REC.bdDay === today() || REC.bdDay === yd) ? (REC.bdStreak || 0) : 0) + '일';
+  $('bdRToday').textContent = today0 ? '⭕' : '아직';
+}
+function bdNew() { bdRec(); bdSetTab(BD.tab || 'day'); }
+
+(function () { const v = (location.hash || '').slice(1); if (VIEWS[v] && v !== 'hub') { history.replaceState({ v: 'hub' }, '', location.pathname); history.pushState({ v }, '', '#' + v); go2(v); } else show('hub'); function go2(x) { show(x); if (x === 'omok') omokNew(); if (x === 'shisen') ssNew(); if (x === 'yut') yutNew(); if (x === 'janggi') jgNew(); if (x === 'baduk') bdNew(); } })();
 recPaint();
 </script>
 </body>
