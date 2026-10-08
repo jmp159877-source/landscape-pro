@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#0F172A">
 <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<!-- 🎮 [패치 #150] 대표님 휴식방: 앱 본체와 따로 불러오는 가벼운 게임 화면 (돈·포인트 없음 · 기록은 이 휴대폰에만) -->
+<!-- 🎮 [패치 #150·#151 소리·배경음악·#152 윷놀이 한 화면·갈 자리 누르기] 대표님 휴식방: 앱 본체와 따로 불러오는 가벼운 게임 화면 (돈·포인트 없음 · 기록은 이 휴대폰에만) -->
 <style>
   :root { --bg:#0F172A; --card:#1E293B; --line:#475569; --lime:#84CC16; --lime2:#BEF264; --sky:#38BDF8; --ink:#151E2D; --sub:#CBD5E1; }
   * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -19,6 +19,9 @@
   .back { width:48px; height:48px; border-radius:16px; background:var(--card); border:1.5px solid var(--line); font-size:26px; font-weight:900; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .top h1 { font-size:23px; font-weight:900; margin:0; flex:1; }
   .hidden { display:none !important; }
+  .sndb { width:44px; height:44px; border-radius:14px; background:var(--card); border:1.5px solid var(--line); font-size:20px; flex-shrink:0; padding:0; }
+  .sndb { position:relative; } .sndb.off { opacity:.5; }
+  .sndb.off::after { content:''; position:absolute; left:7px; right:7px; top:50%; height:3px; margin-top:-1.5px; background:#EF4444; border-radius:2px; transform:rotate(-45deg); }
   .rec { display:flex; gap:8px; margin:4px 0 14px; }
   .rec div { flex:1; background:var(--card); border-radius:16px; padding:10px 6px; text-align:center; font-size:13.5px; font-weight:800; color:var(--sub); }
   .rec b { display:block; font-size:21px; color:var(--lime2); margin-top:2px; }
@@ -52,7 +55,15 @@
   .tile.gone { visibility:hidden; }
   .ssline { position:fixed; pointer-events:none; z-index:20; }
   /* 윷놀이 */
-  #yutBoard { width:100%; aspect-ratio:360/378; display:block; background:#FEF3C7; border-radius:18px; }
+  #yutBoard { width:min(100%, calc(100vh - 370px), calc(100dvh - 370px)); min-width:250px; aspect-ratio:360/378; display:block; margin:0 auto; background:#FEF3C7; border-radius:18px; }
+  #vYut .top { padding:10px 2px 8px; }
+  .ystat { display:flex; gap:8px; } .ystat span { flex:1; background:var(--card); border-radius:12px; padding:7px 8px; font-size:13.5px; font-weight:800; color:var(--sub); text-align:center; } .ystat b { color:#fff; }
+  .ymsg { margin:6px 0; font-size:16.5px; min-height:24px; }
+  .yrow { display:flex; align-items:center; justify-content:center; gap:12px; margin:6px 0 2px; }
+  .yrow .sticks { margin:0; gap:6px; } .yrow .stick { width:18px; height:54px; border-width:2px; }
+  .yrow .chips { justify-content:flex-start; min-height:44px; flex:1; }
+  #vYut .bar { margin:6px 0; }
+  .dst { cursor:pointer; }
   .sticks { display:flex; justify-content:center; gap:10px; margin:8px 0 4px; }
   .stick { width:26px; height:84px; border-radius:13px; background:#D6A15A; border:3px solid #78350F; position:relative; transition:transform .25s; }
   .stick.flat { background:#FEF3C7; }
@@ -60,7 +71,7 @@
   .chips { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; min-height:46px; }
   .chip { min-width:64px; min-height:44px; border-radius:14px; background:var(--card); border:2px solid var(--line); font-size:18px; font-weight:900; padding:0 12px; }
   .chip.on { background:var(--lime); color:var(--ink); border-color:var(--lime); }
-  .wait { display:flex; justify-content:space-between; gap:10px; margin-top:8px; }
+  .wait { display:none; justify-content:space-between; gap:10px; margin-top:8px; }
   .wait div { flex:1; background:var(--card); border-radius:16px; padding:10px; font-size:14.5px; font-weight:800; color:var(--sub); }
   .wait button { margin-top:6px; width:100%; min-height:46px; border-radius:12px; background:#1D4ED8; font-size:16px; font-weight:900; }
   .wait button.ai { background:#B91C1C; }
@@ -108,16 +119,12 @@
   <!-- 윷놀이 -->
   <section id="vYut" class="hidden">
     <div class="top"><button class="back" onclick="history.back()" aria-label="뒤로">‹</button><h1>🎲 윷놀이</h1></div>
-    <div class="seg" id="yutCnt"><button data-n="2" onclick="yutSetN(2)">빠른 판 (말 2개)</button><button data-n="4" onclick="yutSetN(4)">보통 판 (말 4개)</button></div>
-    <div class="msg" id="yutMsg">대표님(파랑) 차례예요. 윷을 던지세요!</div>
+    <div class="ystat"><span>🔵 대표님 대기 <b id="yutWaitMe">2</b> · 남은 <b id="yutLeftMe">2</b></span><span>🔴 AI 대기 <b id="yutWaitAi">2</b> · 남은 <b id="yutLeftAi">2</b></span></div>
+    <div class="msg ymsg" id="yutMsg">대표님(파랑) 차례예요. 윷을 던지세요!</div>
     <svg id="yutBoard" viewBox="0 0 360 378"></svg>
-    <div class="sticks" id="yutSticks"></div>
-    <div class="chips" id="yutChips"></div>
-    <div class="bar"><button class="btn pri" id="yutThrowBtn" onclick="yutThrow()">윷 던지기</button><button class="btn" onclick="yutNew()">새 판</button></div>
-    <div class="wait">
-      <div>🔵 대표님 대기 <b id="yutWaitMe" style="color:#fff">4</b>개 · 남은 말 <b id="yutLeftMe" style="color:#fff">4</b><button id="yutNewPiece" onclick="yutPick('new')">새 말 내보내기</button></div>
-      <div>🔴 AI 대기 <b id="yutWaitAi" style="color:#fff">4</b>개 · 남은 말 <b id="yutLeftAi" style="color:#fff">4</b></div>
-    </div>
+    <div class="yrow"><div class="sticks" id="yutSticks"></div><div class="chips" id="yutChips"></div></div>
+    <div class="bar"><button class="btn pri" id="yutThrowBtn" onclick="yutThrow()" style="flex:2">🎲 윷 던지기</button><button class="btn" onclick="yutNew()">새 판</button></div>
+    <div class="seg" id="yutCnt"><button data-n="2" onclick="yutSetN(2)">빠른 판 (말 2개)</button><button data-n="4" onclick="yutSetN(4)">보통 판 (말 4개)</button></div>
   </section>
 </div>
 <div id="toast" class="toast hidden"></div>
@@ -138,11 +145,86 @@ function recPaint() {
 }
 let toastT = 0;
 function toast(t) { const el = $('toast'); el.textContent = t; el.classList.remove('hidden'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.add('hidden'), 2200); }
-function soon(n) { toast(n + '은(는) 지금 만들고 있어요. 곧 열려요!'); }
+function soon(n) { sfx('fail'); toast(n + '은(는) 지금 만들고 있어요. 곧 열려요!'); }
 function goApp() { if (document.referrer && document.referrer.indexOf(location.origin) === 0 && history.length > 1) history.back(); else location.href = '/'; }
-function show(v) { Object.keys(VIEWS).forEach(k => $(VIEWS[k]).classList.toggle('hidden', k !== v)); window.scrollTo(0, 0); if (v === 'hub') recPaint(); }
-function go(v) { history.pushState({ v }, '', '#' + v); show(v); if (v === 'omok' && !OM.started) omokNew(); if (v === 'shisen' && !SS.tiles) ssNew(); if (v === 'yut' && !Y.started) yutNew(); }
+function show(v) { Object.keys(VIEWS).forEach(k => $(VIEWS[k]).classList.toggle('hidden', k !== v)); window.scrollTo(0, 0); if (v === 'hub') recPaint(); if (typeof musicStart === 'function') { if (SND.ctx) musicStart(VIEW_MUSIC[v]); else SND.want = VIEW_MUSIC[v]; } }
+function go(v) { try { actx(); } catch (e) {} sfx('tap'); history.pushState({ v }, '', '#' + v); show(v); if (v === 'omok' && !OM.started) omokNew(); if (v === 'shisen' && !SS.tiles) ssNew(); if (v === 'yut' && !Y.started) yutNew(); }
 window.addEventListener('popstate', () => { const v = (location.hash || '').slice(1); show(VIEWS[v] ? v : 'hub'); });
+
+
+/* ---------- 🔊 소리 (파일 없이 휴대폰이 직접 만드는 소리 · 저작권 걱정 없음) ---------- */
+const SND = { ctx: null, sfx: true, bgm: true, want: null, timer: null };
+try { const o = JSON.parse(localStorage.getItem('jn_rest_snd') || '{}'); if (o.sfx === false) SND.sfx = false; if (o.bgm === false) SND.bgm = false; } catch (e) {}
+function sndSave() { try { localStorage.setItem('jn_rest_snd', JSON.stringify({ sfx: SND.sfx, bgm: SND.bgm })); } catch (e) {} sndPaint(); }
+function actx() {
+  if (!SND.ctx) { const C = window.AudioContext || window.webkitAudioContext; if (!C) return null;
+    const c = SND.ctx = new C(); SND.master = c.createGain(); SND.master.gain.value = 0.9; SND.master.connect(c.destination);
+    SND.sg = c.createGain(); SND.sg.gain.value = 0.85; SND.sg.connect(SND.master);
+    SND.mg = c.createGain(); SND.mg.gain.value = 0.32; SND.mg.connect(SND.master);
+    const len = c.sampleRate * 0.5, buf = c.createBuffer(1, len, c.sampleRate), d = buf.getChannelData(0); for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1; SND.noise = buf; }
+  if (SND.ctx.state === 'suspended') SND.ctx.resume();
+  return SND.ctx;
+}
+function env(g, t, a, peak, dur) { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + dur); }
+function tone(f, dur, type, vol, when, out, bend) { const c = SND.ctx; if (!c) return; const t = when || c.currentTime, o = c.createOscillator(), g = c.createGain();
+  o.type = type || 'sine'; o.frequency.setValueAtTime(f, t); if (bend) o.frequency.exponentialRampToValueAtTime(bend, t + dur); env(g, t, 0.008, vol, dur); o.connect(g); g.connect(out || SND.sg); o.start(t); o.stop(t + dur + 0.05); }
+function noiz(dur, freq, q, vol, when, out, type) { const c = SND.ctx; if (!c) return; const t = when || c.currentTime, s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+  s.buffer = SND.noise; f.type = type || 'bandpass'; f.frequency.value = freq; f.Q.value = q; env(g, t, 0.003, vol, dur); s.connect(f); f.connect(g); g.connect(out || SND.sg); s.start(t); s.stop(t + dur + 0.05); }
+function pluck(f, when, vol, out, dur) { tone(f, dur || 0.9, 'triangle', vol, when, out); tone(f * 2, (dur || 0.9) * 0.5, 'sine', vol * 0.35, when, out); }
+function bell(f, when, vol, out) { tone(f, 1.1, 'sine', vol, when, out); tone(f * 2.76, 0.5, 'sine', vol * 0.25, when, out); tone(f * 5.4, 0.25, 'sine', vol * 0.1, when, out); }
+function vib(p) { if (SND.sfx && navigator.vibrate) try { navigator.vibrate(p); } catch (e) {} }
+const SCALE = [0, 2, 4, 7, 9]; // 오음계 (도 레 미 솔 라)
+function deg(d, base) { const o = Math.floor(d / 5), i = ((d % 5) + 5) % 5; return (base || 261.63) * Math.pow(2, o + SCALE[i] / 12); }
+function sfx(name, n) {
+  if (!SND.sfx) return; const c = actx(); if (!c) return; const t = c.currentTime;
+  switch (name) {
+    case 'stone': noiz(0.05, 2400, 1.2, 0.9, t); tone(1100, 0.06, 'sine', 0.35, t); break;
+    case 'stone2': noiz(0.05, 1900, 1.2, 0.7, t); tone(900, 0.06, 'sine', 0.28, t); break;
+    case 'tap': tone(1250, 0.05, 'sine', 0.25, t); break;
+    case 'tick': tone(700, 0.04, 'square', 0.08, t); break;
+    case 'match': bell(1046.5, t, 0.32); bell(1568, t + 0.09, 0.28); break;
+    case 'fail': tone(180, 0.18, 'square', 0.12, t, null, 120); break;
+    case 'hint': bell(1318.5, t, 0.2); break;
+    case 'shuffle': for (let i = 0; i < 8; i++) noiz(0.04, 1500 + Math.random() * 1500, 2, 0.4, t + i * 0.045); break;
+    case 'throw': for (let i = 0; i < 7; i++) { const w = t + i * 0.07 + Math.random() * 0.03; noiz(0.05, 900 + Math.random() * 700, 3, 0.7, w); tone(500 + Math.random() * 300, 0.05, 'triangle', 0.2, w); } break;
+    case 'yutSmall': tone(660, 0.12, 'triangle', 0.3, t); tone(880, 0.16, 'triangle', 0.25, t + 0.08); break;
+    case 'yutBig': [0, 2, 4, 5].forEach((d, i) => pluck(deg(d + 5), t + i * 0.09, 0.32, null, 0.5)); bell(deg(10), t + 0.38, 0.3); break;
+    case 'step': for (let i = 0; i < (n || 1); i++) { noiz(0.04, 1400, 2, 0.45, t + i * 0.11); tone(620 + i * 40, 0.05, 'sine', 0.18, t + i * 0.11); } break;
+    case 'capture': tone(160, 0.35, 'sine', 0.8, t, null, 55); noiz(0.18, 600, 0.8, 0.9, t, null, 'lowpass'); tone(880, 0.12, 'square', 0.1, t + 0.12); vib([60, 40, 90]); break;
+    case 'finish': bell(1318.5, t, 0.3); bell(1760, t + 0.12, 0.3); break;
+    case 'win': [0, 2, 3, 4, 5].forEach((d, i) => pluck(deg(d + 5), t + i * 0.12, 0.35, null, 0.6)); [5, 7, 9].forEach(d => bell(deg(d + 5), t + 0.65, 0.18)); vib([80, 50, 80, 50, 160]); break;
+    case 'lose': [4, 2, 0].forEach((d, i) => pluck(deg(d), t + i * 0.22, 0.3, null, 0.8)); break;
+  }
+}
+/* 배경음악: 우리 가락 느낌(오음계) 직접 만든 곡 · 낮은 소리로 반복 */
+const N_ = null;
+const MUSIC = {
+  calm: { bpm: 76, len: 32, mel: [4,N_,5,N_,7,N_,5,4, 2,N_,N_,N_,4,N_,2,0, 2,N_,4,N_,5,N_,7,9, 7,N_,5,N_,4,N_,N_,N_],
+    play(s, t, d) { const m = this.mel[s % this.len]; if (m !== null) pluck(deg(m), t, 0.55, SND.mg, 1.4); if (s % 8 === 0) { tone(deg([-5, -3, -4, -5][(s / 8) % 4]), d * 7, 'sine', 0.4, t, SND.mg); } } },
+  light: { bpm: 104, len: 32, mel: [0,2,4,7, 4,2,0,2, 1,3,5,8, 5,3,1,3, 2,4,6,9, 6,4,2,4, 0,2,4,7, 9,7,4,2],
+    play(s, t, d) { const m = this.mel[s % this.len]; tone(deg(m + 5), 0.28, 'sine', 0.42, t, SND.mg); tone(deg(m + 5) * 4, 0.06, 'sine', 0.06, t, SND.mg); if (s % 4 === 0) tone(deg([0, 1, 2, 0][Math.floor(s / 8) % 4] - 5), d * 3.5, 'triangle', 0.3, t, SND.mg); } },
+  lively: { bpm: 120, len: 48,
+    drum: 'D..K.TD.TK.T',
+    mel: [5,N_,N_,7,N_,8, 9,N_,8,7,N_,5, 7,N_,N_,5,N_,4, 2,N_,N_,N_,N_,N_, 4,N_,N_,5,N_,7, 9,N_,10,9,N_,7, 5,N_,7,4,N_,2, 0,N_,N_,N_,N_,N_],
+    play(s, t, d) { const k = this.drum[s % 12];
+      if (k === 'D') { tone(110, 0.3, 'sine', 0.7, t, SND.mg, 60); noiz(0.06, 3000, 1, 0.25, t, SND.mg); }
+      if (k === 'K') tone(95, 0.25, 'sine', 0.55, t, SND.mg, 55);
+      if (k === 'T') noiz(0.04, 3500, 1.5, 0.35, t, SND.mg);
+      const m = this.mel[s % this.len]; if (m !== null) pluck(deg(m), t, 0.45, SND.mg, 0.7); } }
+};
+const VIEW_MUSIC = { hub: 'calm', omok: 'calm', shisen: 'light', yut: 'lively' };
+function musicStart(kind) {
+  SND.want = kind; musicStop(true); if (!SND.bgm || !kind) return; const c = actx(); if (!c) return;
+  const M = MUSIC[kind], d = 60 / M.bpm / 2; let s = 0, next = c.currentTime + 0.15;
+  SND.timer = setInterval(() => { if (!SND.ctx) return; while (next < SND.ctx.currentTime + 0.35) { M.play(s, next, d); s++; next += d; } }, 70);
+}
+function musicStop(keep) { if (SND.timer) clearInterval(SND.timer); SND.timer = null; if (!keep) SND.want = null; }
+function sndToggle(k) { SND[k] = !SND[k]; actx(); if (k === 'bgm') { if (SND.bgm) musicStart(SND.want || 'calm'); else musicStop(true); } else if (SND.sfx) sfx('tap'); sndSave(); }
+function sndPaint() { document.querySelectorAll('.sndb').forEach(b => { const on = SND[b.dataset.k]; b.textContent = b.dataset.k === 'sfx' ? '🔊' : '🎵'; b.classList.toggle('off', !on); b.setAttribute('aria-label', (b.dataset.k === 'sfx' ? '효과음 ' : '배경음악 ') + (on ? '끄기' : '켜기')); }); }
+document.querySelectorAll('.top').forEach(tp => { tp.insertAdjacentHTML('beforeend', '<button class="sndb" data-k="bgm" onclick="sndToggle(\'bgm\')"></button><button class="sndb" data-k="sfx" onclick="sndToggle(\'sfx\')"></button>'); });
+sndPaint();
+document.addEventListener('pointerdown', () => { actx(); if (SND.bgm && SND.want && !SND.timer) musicStart(SND.want); }, { passive: true });
+document.addEventListener('visibilitychange', () => { if (!SND.ctx) return; if (document.hidden) SND.ctx.suspend(); else SND.ctx.resume(); });
 
 /* ---------- 오목 ---------- */
 const N = 15;
@@ -178,11 +260,11 @@ $('omokBoard').addEventListener('click', e => {
 });
 const DIRS = [[0,1],[1,0],[1,1],[1,-1]];
 function omokPut(y, x, p) {
-  OM.b[y][x] = p; OM.hist.push([y, x, p]); OM.winLine = null;
+  OM.b[y][x] = p; OM.hist.push([y, x, p]); OM.winLine = null; sfx(p === 1 ? 'stone' : 'stone2');
   const w = omokWin(y, x, p);
   if (w) { OM.over = true; OM.winLine = w;
-    if (p === 1) { REC.omokWin = (REC.omokWin || 0) + 1; recSave(); $('omokMsg').className = 'msg win'; $('omokMsg').textContent = '🎉 대표님 승리! 축하드려요.'; }
-    else { $('omokMsg').className = 'msg lose'; $('omokMsg').textContent = 'AI가 이겼어요. 한 판 더 하실래요?'; } }
+    if (p === 1) { REC.omokWin = (REC.omokWin || 0) + 1; recSave(); $('omokMsg').className = 'msg win'; $('omokMsg').textContent = '🎉 대표님 승리! 축하드려요.'; setTimeout(() => sfx('win'), 150); }
+    else { $('omokMsg').className = 'msg lose'; $('omokMsg').textContent = 'AI가 이겼어요. 한 판 더 하실래요?'; setTimeout(() => sfx('lose'), 150); } }
   else if (OM.hist.length >= N * N) { OM.over = true; $('omokMsg').textContent = '무승부예요.'; }
   omokDraw();
 }
@@ -196,7 +278,7 @@ function omokWin(y, x, p) {
 function omokUndo() {
   if (OM.busy || !OM.hist.length) return;
   let k = 0; while (OM.hist.length && k < 2) { const [y, x, p] = OM.hist.pop(); OM.b[y][x] = 0; k++; if (p === 1) break; }
-  OM.over = false; OM.winLine = null; $('omokMsg').className = 'msg'; $('omokMsg').textContent = '한 수 물렀어요. 대표님 차례예요.'; omokDraw();
+  sfx('tick'); OM.over = false; OM.winLine = null; $('omokMsg').className = 'msg'; $('omokMsg').textContent = '한 수 물렀어요. 대표님 차례예요.'; omokDraw();
 }
 function lineScore(y, x, p) {
   let total = 0;
@@ -255,17 +337,17 @@ function ssDraw() {
 function ssTap(r, c) {
   if (!SS.tiles[r][c]) return;
   if (!SS.counted) { SS.counted = true; recPlay(); }
-  if (!SS.sel) { SS.sel = [r, c]; ssDraw(); return; }
+  if (!SS.sel) { SS.sel = [r, c]; sfx('tap'); ssDraw(); return; }
   const [r0, c0] = SS.sel;
-  if (r0 === r && c0 === c) { SS.sel = null; ssDraw(); return; }
-  if (SS.tiles[r0][c0] !== SS.tiles[r][c]) { SS.sel = [r, c]; ssDraw(); return; }
+  if (r0 === r && c0 === c) { SS.sel = null; sfx('tick'); ssDraw(); return; }
+  if (SS.tiles[r0][c0] !== SS.tiles[r][c]) { SS.sel = [r, c]; sfx('tap'); ssDraw(); return; }
   const path = ssPath(r0, c0, r, c);
-  if (!path) { toast('길이 막혀 있어요. 꺾이는 곳은 두 번까지예요.'); SS.sel = [r, c]; ssDraw(); return; }
-  ssShowPath(path);
+  if (!path) { sfx('fail'); toast('길이 막혀 있어요. 꺾이는 곳은 두 번까지예요.'); SS.sel = [r, c]; ssDraw(); return; }
+  ssShowPath(path); sfx('match');
   SS.tiles[r0][c0] = null; SS.tiles[r][c] = null; SS.sel = null; SS.left -= 2;
   setTimeout(() => {
     ssDraw();
-    if (!SS.left) { const sec = Math.round((Date.now() - SS.t0) / 1000); $('ssMsg').className = 'msg win'; $('ssMsg').textContent = '🎉 다 맞췄어요! ' + Math.floor(sec / 60) + '분 ' + (sec % 60) + '초';
+    if (!SS.left) { const sec = Math.round((Date.now() - SS.t0) / 1000); sfx('win'); $('ssMsg').className = 'msg win'; $('ssMsg').textContent = '🎉 다 맞췄어요! ' + Math.floor(sec / 60) + '분 ' + (sec % 60) + '초';
       if (!REC.ssBest || sec < REC.ssBest) { REC.ssBest = sec; recSave(); toast('최고 기록이에요!'); } return; }
     if (!ssFindPair()) { if (SS.shuf > 0) { toast('더 이을 곳이 없어서 자동으로 섞었어요.'); ssShuffle(false); } else { $('ssMsg').className = 'msg lose'; $('ssMsg').textContent = '더 이을 곳이 없어요. 새 판을 눌러 주세요.'; } }
   }, 260);
@@ -303,12 +385,12 @@ function ssFindPair() {
   for (let i = 0; i < L.length; i++) for (let j = i + 1; j < L.length; j++) { const a = L[i], b = L[j]; if (SS.tiles[a[0]][a[1]] === SS.tiles[b[0]][b[1]] && ssPath(a[0], a[1], b[0], b[1])) return [a, b]; }
   return null;
 }
-function ssHint() { const p = ssFindPair(); if (!p) { toast('이을 곳이 없어요. 섞기를 눌러 보세요.'); return; } ssDraw(); p.forEach(([r, c]) => { const el = document.querySelector(`#ssBoard .tile[data-r="${r}"][data-c="${c}"]`); if (el) el.classList.add('hint'); }); }
+function ssHint() { const p = ssFindPair(); if (p) sfx('hint'); if (!p) { toast('이을 곳이 없어요. 섞기를 눌러 보세요.'); return; } ssDraw(); p.forEach(([r, c]) => { const el = document.querySelector(`#ssBoard .tile[data-r="${r}"][data-c="${c}"]`); if (el) el.classList.add('hint'); }); }
 function ssShuffle(byUser) {
   if (byUser) { if (SS.shuf <= 0) { toast('섞기를 다 썼어요.'); return; } SS.shuf--; $('ssShufBtn').textContent = '🔀 섞기 (' + SS.shuf + ')'; if (!SS.shuf) $('ssShufBtn').disabled = true; }
   const pos = [], vals = []; for (let r = 1; r <= SR; r++) for (let c = 1; c <= SC; c++) if (SS.tiles[r][c]) { pos.push([r, c]); vals.push(SS.tiles[r][c]); }
   for (let tries = 0; tries < 30; tries++) { vals.sort(() => Math.random() - 0.5); pos.forEach(([r, c], i) => SS.tiles[r][c] = vals[i]); if (ssFindPair()) break; }
-  SS.sel = null; ssDraw();
+  SS.sel = null; sfx('shuffle'); ssDraw();
 }
 
 /* ---------- 윷놀이 ---------- */
@@ -355,10 +437,10 @@ function yutThrow() {
 }
 function yutDoThrow() {
   const f = [0, 0, 0, 0].map(() => Math.random() < 0.5 ? 1 : 0), n = f.reduce((a, b) => a + b, 0);
-  const v = n === 0 ? 5 : n; yutSticks(f); Y.throws--; Y.res.push(v);
+  const v = n === 0 ? 5 : n; yutSticks(f); Y.throws--; Y.res.push(v); sfx('throw'); setTimeout(() => sfx(v >= 4 ? 'yutBig' : 'yutSmall'), 520);
   if (v >= 4) Y.throws++;
   Y.selRes = Y.res.length - 1;
-  $('yutMsg').className = 'msg'; $('yutMsg').textContent = (Y.turn === 'me' ? '대표님: ' : 'AI: ') + YNAME[v] + '!' + (v >= 4 ? ' 한 번 더 던져요.' : (Y.turn === 'me' ? ' 움직일 말을 누르세요.' : ''));
+  $('yutMsg').className = 'msg'; $('yutMsg').textContent = (Y.turn === 'me' ? '대표님: ' : 'AI: ') + YNAME[v] + '!' + (v >= 4 ? ' 한 번 더 던져요.' : (Y.turn === 'me' ? ' 점선 동그라미(갈 자리)를 누르세요.' : ''));
   yutPaint();
 }
 function yutPick(which) { // 내 차례에 말 고르기
@@ -368,16 +450,16 @@ function yutPick(which) { // 내 차례에 말 고르기
   yutMove(p, Y.res[Y.selRes]); Y.res.splice(Y.selRes, 1); Y.selRes = 0; yutAfterMove();
 }
 function yutMove(p, steps) {
-  const g = yutGroup(p), d = yutDest(p, steps);
-  g.forEach(q => { q.pos = d.pos; q.via = d.via; if (d.pos === 'END') { q.done = true; q.pos = 'END'; } });
+  const g = yutGroup(p), d = yutDest(p, steps); sfx('step', steps);
+  g.forEach(q => { q.pos = d.pos; q.via = d.via; if (d.pos === 'END') { q.done = true; q.pos = 'END'; } }); if (d.pos === 'END') setTimeout(() => sfx('finish'), steps * 110);
   Y.lastCap = false;
-  if (d.pos !== 'END') { const foes = Y.pcs.filter(q => q.o !== p.o && !q.done && q.pos === d.pos); if (foes.length) { foes.forEach(q => { q.pos = null; q.via = ''; }); Y.throws++; Y.lastCap = true; toast((p.o === 'me' ? '잡았어요! ' : 'AI가 잡았어요! ') + '한 번 더 던져요.'); } }
+  if (d.pos !== 'END') { const foes = Y.pcs.filter(q => q.o !== p.o && !q.done && q.pos === d.pos); if (foes.length) { foes.forEach(q => { q.pos = null; q.via = ''; }); Y.throws++; setTimeout(() => sfx('capture'), steps * 110); Y.lastCap = true; toast((p.o === 'me' ? '잡았어요! ' : 'AI가 잡았어요! ') + '한 번 더 던져요.'); } }
 }
 function yutAfterMove() {
   yutPaint();
   const left = o => Y.pcs.filter(q => q.o === o && !q.done).length;
-  if (!left('me')) { Y.over = true; REC.yutWin = (REC.yutWin || 0) + 1; recSave(); $('yutMsg').className = 'msg win'; $('yutMsg').textContent = '🎉 대표님 승리! 말이 다 났어요.'; yutPaint(); return; }
-  if (!left('ai')) { Y.over = true; $('yutMsg').className = 'msg lose'; $('yutMsg').textContent = 'AI가 이겼어요. 한 판 더 하실래요?'; yutPaint(); return; }
+  if (!left('me')) { Y.over = true; REC.yutWin = (REC.yutWin || 0) + 1; recSave(); setTimeout(() => sfx('win'), 400); $('yutMsg').className = 'msg win'; $('yutMsg').textContent = '🎉 대표님 승리! 말이 다 났어요.'; yutPaint(); return; }
+  if (!left('ai')) { Y.over = true; setTimeout(() => sfx('lose'), 400); $('yutMsg').className = 'msg lose'; $('yutMsg').textContent = 'AI가 이겼어요. 한 판 더 하실래요?'; yutPaint(); return; }
   if (Y.throws > 0 || Y.res.length) { if (Y.turn === 'ai') setTimeout(yutAIStep, 650); else if (Y.throws > 0) $('yutMsg').textContent = '한 번 더 던지세요!'; return; }
   Y.turn = Y.turn === 'me' ? 'ai' : 'me'; Y.throws = 1;
   if (Y.turn === 'ai') { $('yutMsg').className = 'msg'; $('yutMsg').textContent = 'AI(빨강) 차례예요…'; Y.busy = true; yutPaint(); setTimeout(yutAIStep, 700); }
@@ -428,19 +510,28 @@ function yutPaint() {
   Y.pcs.filter(p => !p.done && p.pos !== null).forEach(p => { const k = p.o + '|' + p.pos; (groups[k] = groups[k] || []).push(p); });
   Object.keys(groups).forEach(k => { const g = groups[k], p = g[0], [x, y] = YP[p.pos]; const dx = p.o === 'me' ? -7 : 7;
     h += `<g data-k="${k}" style="cursor:pointer"><circle cx="${x + dx}" cy="${y - 4}" r="15" fill="${p.o === 'me' ? '#2563EB' : '#DC2626'}" stroke="#fff" stroke-width="3"/>` + (g.length > 1 ? `<text x="${x + dx}" y="${y + 1}" text-anchor="middle" font-size="15" font-weight="900" fill="#fff">${g.length}</text>` : '') + `</g>`; });
-  // 내 말 목적지 미리 표시
-  if (Y.turn === 'me' && !Y.over && Y.throws === 0 && Y.res.length) { const v = Y.res[Y.selRes];
-    Y.pcs.filter(p => p.o === 'me' && !p.done && p.pos !== null).forEach(p => { const d = yutDest(p, v); if (d.pos !== 'END') { const [x, y] = YP[d.pos]; h += `<circle cx="${x}" cy="${y}" r="20" fill="none" stroke="#2563EB" stroke-width="3" stroke-dasharray="4 4"/>`; } }); }
+  // 🎯 [패치 #152] 갈 자리(점선 동그라미)를 누르면 그 말이 옮겨 감 · 새 말은 '새' 표시 · 잡을 수 있으면 빨간 테두리
+  Y.cand = [];
+  if (Y.turn === 'me' && !Y.over && !Y.busy && Y.throws === 0 && Y.res.length) { const v = Y.res[Y.selRes], seenPos = new Set(), seenDst = new Set();
+    const mine = Y.pcs.filter(p => p.o === 'me' && !p.done);
+    mine.filter(p => p.pos !== null).concat(mine.filter(p => p.pos === null).slice(0, 1)).forEach(p => {
+      const key = p.pos === null ? 'new' : String(p.pos); if (seenPos.has(key)) return; seenPos.add(key);
+      const d = yutDest(p, v), dk = String(d.pos); if (seenDst.has(dk)) return; seenDst.add(dk);
+      const i = Y.cand.push({ p, d }) - 1;
+      const [x, y] = YP[d.pos === 'END' ? 0 : d.pos], cap = d.pos !== 'END' && Y.pcs.some(q => q.o === 'ai' && !q.done && q.pos === d.pos);
+      const lab = d.pos === 'END' ? '나기' : p.pos === null ? '새' : '';
+      h += `<g class="dst" data-i="${i}"><circle cx="${x}" cy="${y}" r="23" fill="rgba(37,99,235,.18)" stroke="${cap ? '#DC2626' : '#2563EB'}" stroke-width="3.5" stroke-dasharray="5 4"/>` + (lab ? `<rect x="${x - 19}" y="${y - 44}" width="38" height="20" rx="10" fill="#2563EB"/><text x="${x}" y="${y - 29}" text-anchor="middle" font-size="13" font-weight="900" fill="#fff">${lab}</text>` : '') + `<circle cx="${x}" cy="${y}" r="26" fill="transparent"/></g>`;
+    }); }
   svg.innerHTML = h;
+  svg.querySelectorAll('g.dst').forEach(g => g.addEventListener('click', () => { const c = Y.cand[Number(g.dataset.i)]; if (c) yutPick(c.p); }));
   svg.querySelectorAll('g[data-k]').forEach(g => g.addEventListener('click', () => { const [o, pos] = g.dataset.k.split('|'); if (o !== 'me') return; const p = Y.pcs.find(q => q.o === 'me' && !q.done && String(q.pos) === pos); if (p) yutPick(p); }));
   // 결과 칩
   $('yutChips').innerHTML = Y.res.map((v, i) => `<button class="chip${i === Y.selRes && Y.turn === 'me' ? ' on' : ''}" onclick="yutSel(${i})">${YNAME[v]}</button>`).join('');
   const wait = o => Y.pcs.filter(q => q.o === o && !q.done && q.pos === null).length, left = o => Y.pcs.filter(q => q.o === o && !q.done).length;
   $('yutWaitMe').textContent = wait('me'); $('yutWaitAi').textContent = wait('ai'); $('yutLeftMe').textContent = left('me'); $('yutLeftAi').textContent = left('ai');
   $('yutThrowBtn').disabled = Y.over || Y.turn !== 'me' || Y.throws <= 0;
-  $('yutNewPiece').disabled = Y.over || Y.turn !== 'me' || Y.throws > 0 || !Y.res.length || !wait('me');
 }
-function yutSel(i) { if (Y.turn !== 'me') return; Y.selRes = i; yutPaint(); }
+function yutSel(i) { if (Y.turn !== 'me') return; sfx('tick'); Y.selRes = i; yutPaint(); }
 
 (function () { const v = (location.hash || '').slice(1); if (VIEWS[v] && v !== 'hub') { history.replaceState({ v: 'hub' }, '', location.pathname); history.pushState({ v }, '', '#' + v); go2(v); } else show('hub'); function go2(x) { show(x); if (x === 'omok') omokNew(); if (x === 'shisen') ssNew(); if (x === 'yut') yutNew(); } })();
 recPaint();
