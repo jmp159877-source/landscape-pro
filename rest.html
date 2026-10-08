@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#0F172A">
 <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<!-- 🎮 [패치 #150·#151 소리·배경음악·#152 윷놀이 한 화면·갈 자리 누르기] 대표님 휴식방: 앱 본체와 따로 불러오는 가벼운 게임 화면 (돈·포인트 없음 · 기록은 이 휴대폰에만) -->
+<!-- 🎮 [패치 #150·#151 소리·배경음악·#152 윷놀이 한 화면·갈 자리 누르기·#153 윷 던지기 연출·말 한 칸씩] 대표님 휴식방: 앱 본체와 따로 불러오는 가벼운 게임 화면 (돈·포인트 없음 · 기록은 이 휴대폰에만) -->
 <style>
   :root { --bg:#0F172A; --card:#1E293B; --line:#475569; --lime:#84CC16; --lime2:#BEF264; --sky:#38BDF8; --ink:#151E2D; --sub:#CBD5E1; }
   * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -64,6 +64,17 @@
   .yrow .chips { justify-content:flex-start; min-height:44px; flex:1; }
   #vYut .bar { margin:6px 0; }
   .dst { cursor:pointer; }
+  .ythrow { position:fixed; inset:0; z-index:40; background:rgba(15,23,42,.55); overflow:hidden; transition:opacity .25s; }
+  .ythrow.out { opacity:0; }
+  .ythrow .mat { position:absolute; left:50%; top:46%; width:min(86vw,380px); height:min(52vw,230px); transform:translate(-50%,-50%); border-radius:50%; background:repeating-linear-gradient(90deg,#C08A4A 0 6px,#A9733A 6px 12px); box-shadow:inset 0 0 30px rgba(0,0,0,.45), 0 10px 30px rgba(0,0,0,.4); }
+  .ythrow .ys { position:absolute; left:-17px; top:-80px; width:34px; height:160px; border-radius:17px; background:linear-gradient(90deg,#8B5A2B,#C68B4E 45%,#8B5A2B); border:3px solid #5C3A1A; box-shadow:0 8px 14px rgba(0,0,0,.45); will-change:transform; }
+  .ythrow .ys.flat { background:#FFF3D6; }
+  .ythrow .ys.flat::before, .ythrow .ys.flat::after { content:'✕'; position:absolute; left:50%; transform:translateX(-50%); color:#7C2D12; font-weight:900; font-size:16px; }
+  .ythrow .ys.flat::before { top:30%; } .ythrow .ys.flat::after { top:58%; }
+  .ythrow .yres { position:absolute; left:50%; top:16%; transform:translate(-50%,-50%) scale(0); font-size:92px; font-weight:900; color:#FDE047; text-shadow:0 6px 0 #92400E, 0 10px 30px rgba(0,0,0,.6); text-align:center; line-height:1; }
+  .ythrow .yres small { display:block; font-size:26px; color:#fff; text-shadow:0 2px 6px rgba(0,0,0,.6); margin-top:8px; }
+  .ythrow .yres.on { animation:ypop .55s cubic-bezier(.2,1.6,.4,1) forwards; }
+  @keyframes ypop { 0% { transform:translate(-50%,-50%) scale(0) rotate(-12deg); } 100% { transform:translate(-50%,-50%) scale(1) rotate(0); } }
   .sticks { display:flex; justify-content:center; gap:10px; margin:8px 0 4px; }
   .stick { width:26px; height:84px; border-radius:13px; background:#D6A15A; border:3px solid #78350F; position:relative; transition:transform .25s; }
   .stick.flat { background:#FEF3C7; }
@@ -189,6 +200,9 @@ function sfx(name, n) {
     case 'throw': for (let i = 0; i < 7; i++) { const w = t + i * 0.07 + Math.random() * 0.03; noiz(0.05, 900 + Math.random() * 700, 3, 0.7, w); tone(500 + Math.random() * 300, 0.05, 'triangle', 0.2, w); } break;
     case 'yutSmall': tone(660, 0.12, 'triangle', 0.3, t); tone(880, 0.16, 'triangle', 0.25, t + 0.08); break;
     case 'yutBig': [0, 2, 4, 5].forEach((d, i) => pluck(deg(d + 5), t + i * 0.09, 0.32, null, 0.5)); bell(deg(10), t + 0.38, 0.3); break;
+    case 'whoosh': noiz(0.55, 700, 0.7, 0.5, t, null, 'bandpass'); tone(220, 0.5, 'sine', 0.12, t, null, 520); break;
+    case 'clack': noiz(0.05, 1100 + Math.random() * 600, 3, 0.9, t); tone(380 + Math.random() * 120, 0.07, 'triangle', 0.35, t); break;
+    case 'hop': noiz(0.06, 900, 1.5, 0.75, t); tone(170 + (n || 0) * 12, 0.12, 'sine', 0.6, t, null, 90); tone(520, 0.04, 'square', 0.06, t); break;
     case 'step': for (let i = 0; i < (n || 1); i++) { noiz(0.04, 1400, 2, 0.45, t + i * 0.11); tone(620 + i * 40, 0.05, 'sine', 0.18, t + i * 0.11); } break;
     case 'capture': tone(160, 0.35, 'sine', 0.8, t, null, 55); noiz(0.18, 600, 0.8, 0.9, t, null, 'lowpass'); tone(880, 0.12, 'square', 0.1, t + 0.12); vib([60, 40, 90]); break;
     case 'finish': bell(1318.5, t, 0.3); bell(1760, t + 0.12, 0.3); break;
@@ -433,34 +447,94 @@ function yutSticks(arr) { $('yutSticks').innerHTML = arr.map(f => `<div class="s
 function yutThrow() {
   if (Y.over || Y.busy || Y.turn !== 'me' || Y.throws <= 0) return;
   if (!Y.counted) { Y.counted = true; recPlay(); }
-  yutDoThrow();
+  Y.busy = true; yutPaint();
+  yutDoThrow(() => { Y.busy = false; yutPaint(); });
 }
-function yutDoThrow() {
+/* 🎲 [패치 #153] 윷 던지기 연출: 화면 가운데 멍석 위로 윷가락 4개가 휙 솟았다가 빙글빙글 돌며 떨어져 탁탁 엎어짐 → 결과 크게 */
+function yutDoThrow(cb) {
   const f = [0, 0, 0, 0].map(() => Math.random() < 0.5 ? 1 : 0), n = f.reduce((a, b) => a + b, 0);
-  const v = n === 0 ? 5 : n; yutSticks(f); Y.throws--; Y.res.push(v); sfx('throw'); setTimeout(() => sfx(v >= 4 ? 'yutBig' : 'yutSmall'), 520);
-  if (v >= 4) Y.throws++;
-  Y.selRes = Y.res.length - 1;
-  $('yutMsg').className = 'msg'; $('yutMsg').textContent = (Y.turn === 'me' ? '대표님: ' : 'AI: ') + YNAME[v] + '!' + (v >= 4 ? ' 한 번 더 던져요.' : (Y.turn === 'me' ? ' 점선 동그라미(갈 자리)를 누르세요.' : ''));
-  yutPaint();
+  const v = n === 0 ? 5 : n;
+  yutThrowAnim(f, v, () => {
+    yutSticks(f); Y.throws--; Y.res.push(v); if (v >= 4) Y.throws++;
+    Y.selRes = Y.res.length - 1;
+    $('yutMsg').className = 'msg'; $('yutMsg').textContent = (Y.turn === 'me' ? '대표님: ' : 'AI: ') + YNAME[v] + '!' + (v >= 4 ? ' 한 번 더 던져요.' : (Y.turn === 'me' ? ' 점선 동그라미(갈 자리)를 누르세요.' : ''));
+    yutPaint(); cb && cb();
+  });
+}
+function yutThrowAnim(f, v, done) {
+  const ov = document.createElement('div'); ov.className = 'ythrow';
+  ov.innerHTML = '<div class="mat"></div>' + f.map(() => '<div class="ys"></div>').join('') + `<div class="yres">${YNAME[v]}<small>${v >= 4 ? '한 번 더!' : v + '칸'}</small></div>`;
+  document.body.appendChild(ov);
+  const W = innerWidth, H = innerHeight, cx = W / 2, cy = H * 0.46;
+  const sticks = [...ov.querySelectorAll('.ys')];
+  sfx('whoosh');
+  const flick = setInterval(() => sticks.forEach((st, i) => st.classList.toggle('flat', st.dataset.done ? !!f[i] : Math.random() < 0.5)), 80);
+  const land = [];
+  sticks.forEach((st, i) => {
+    const xs = cx + (i - 1.5) * 26, ys = H + 40, xf = cx + (i - 1.5) * (W * 0.16) + (Math.random() - 0.5) * 30, yf = cy + (Math.random() - 0.5) * 70;
+    const r0 = (Math.random() - 0.5) * 40, rf = (Math.random() - 0.5) * 70 + (i % 2 ? 8 : -8), spin = 540 + Math.random() * 540;
+    const peakY = H * 0.08 + Math.random() * 60, t = 1250 + i * 70;
+    land.push(t * 0.74);
+    st.animate([
+      { transform: `translate(${xs}px,${ys}px) rotate(${r0}deg) scale(.7)` },
+      { transform: `translate(${(xs + xf) / 2}px,${peakY}px) rotate(${r0 + spin * 0.6}deg) scale(1.25)`, offset: 0.42 },
+      { transform: `translate(${xf}px,${yf}px) rotate(${rf + spin}deg) scale(1)`, offset: 0.74 },
+      { transform: `translate(${xf + 6}px,${yf - 22}px) rotate(${rf + spin + 10}deg) scale(1.03)`, offset: 0.85 },
+      { transform: `translate(${xf}px,${yf}px) rotate(${rf + spin}deg) scale(1)` }
+    ], { duration: t, easing: 'cubic-bezier(.25,.7,.35,1)', fill: 'forwards' });
+    setTimeout(() => { st.classList.toggle('flat', !!f[i]); st.dataset.done = '1'; sfx('clack'); }, t * 0.74);
+  });
+  const tEnd = 1250 + 3 * 70;
+  setTimeout(() => { clearInterval(flick); sticks.forEach((st, i) => st.classList.toggle('flat', !!f[i])); const r = ov.querySelector('.yres'); r.classList.add('on'); sfx(v >= 4 ? 'yutBig' : 'yutSmall'); if (v >= 4) vib([40, 30, 60]); }, tEnd + 60);
+  setTimeout(() => { ov.classList.add('out'); }, tEnd + 1050);
+  setTimeout(() => { ov.remove(); done(); }, tEnd + 1300);
 }
 function yutPick(which) { // 내 차례에 말 고르기
-  if (Y.over || Y.busy || Y.turn !== 'me' || Y.throws > 0 || !Y.res.length) { if (Y.turn === 'me' && Y.throws > 0 && !Y.over) toast('먼저 윷을 던지세요.'); return; }
+  if (Y.over || Y.busy || Y.turn !== 'me' || Y.throws > 0 || !Y.res.length) { if (Y.turn === 'me' && Y.throws > 0 && !Y.over && !Y.busy) toast('먼저 윷을 던지세요.'); return; }
   let p = which === 'new' ? Y.pcs.find(q => q.o === 'me' && !q.done && q.pos === null) : which;
   if (!p) { toast('대기 중인 말이 없어요.'); return; }
-  yutMove(p, Y.res[Y.selRes]); Y.res.splice(Y.selRes, 1); Y.selRes = 0; yutAfterMove();
+  const v = Y.res[Y.selRes]; Y.res.splice(Y.selRes, 1); Y.selRes = 0; Y.busy = true;
+  yutMove(p, v, () => { Y.busy = false; yutAfterMove(); });
 }
-function yutMove(p, steps) {
-  const g = yutGroup(p), d = yutDest(p, steps); sfx('step', steps);
-  g.forEach(q => { q.pos = d.pos; q.via = d.via; if (d.pos === 'END') { q.done = true; q.pos = 'END'; } }); if (d.pos === 'END') setTimeout(() => sfx('finish'), steps * 110);
-  Y.lastCap = false;
-  if (d.pos !== 'END') { const foes = Y.pcs.filter(q => q.o !== p.o && !q.done && q.pos === d.pos); if (foes.length) { foes.forEach(q => { q.pos = null; q.via = ''; }); Y.throws++; setTimeout(() => sfx('capture'), steps * 110); Y.lastCap = true; toast((p.o === 'me' ? '잡았어요! ' : 'AI가 잡았어요! ') + '한 번 더 던져요.'); } }
+/* 🐎 [패치 #153] 말이 한 칸씩 "척, 척, 척" 깡충 뛰어서 이동 */
+function yutMove(p, steps, done) {
+  const g = yutGroup(p), path = []; let pos = p.pos, via = p.via;
+  for (let i = 0; i < steps; i++) { const st = yutStep(pos, via, i === 0); pos = st.pos; via = st.via; path.push(pos); if (pos === 'END') break; }
+  const d = { pos, via };
+  Y.moving = g; yutPaint();
+  const svg = $('yutBoard'), NS = 'http://www.w3.org/2000/svg', col = p.o === 'me' ? '#2563EB' : '#DC2626', dx = p.o === 'me' ? -7 : 7;
+  const tok = document.createElementNS(NS, 'g');
+  tok.innerHTML = `<ellipse class="sh" cx="0" cy="13" rx="13" ry="4" fill="rgba(0,0,0,.25)"/><g class="bd"><circle cx="0" cy="0" r="16" fill="${col}" stroke="#fff" stroke-width="3"/>${g.length > 1 ? `<text x="0" y="5.5" text-anchor="middle" font-size="15" font-weight="900" fill="#fff">${g.length}</text>` : ''}</g>`;
+  svg.appendChild(tok);
+  const at = q => { const k = q === null ? 'START' : q === 'END' ? 0 : q; if (k === 'START') return [YP[0][0] + 26, YP[0][1] + 22]; return [YP[k][0] + dx, YP[k][1] - 4]; };
+  let cur = at(p.pos), i = 0;
+  tok.setAttribute('transform', `translate(${cur[0]},${cur[1]})`);
+  const hop = () => {
+    if (i >= path.length) { svg.removeChild(tok); finish(); return; }
+    const nx = at(path[i]), from = cur, t0 = performance.now(), D = 330;
+    const fr = now => { const k = Math.min(1, (now - t0) / D), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+      const x = from[0] + (nx[0] - from[0]) * e, y = from[1] + (nx[1] - from[1]) * e, lift = Math.sin(Math.PI * k) * 26;
+      tok.setAttribute('transform', `translate(${x},${y})`); tok.querySelector('.bd').setAttribute('transform', `translate(0,${-lift}) scale(${1 + Math.sin(Math.PI * k) * 0.12})`);
+      tok.querySelector('.sh').setAttribute('rx', 13 - lift * 0.2);
+      if (k < 1) requestAnimationFrame(fr); else { cur = nx; sfx('hop', i); i++; setTimeout(hop, 70); } };
+    requestAnimationFrame(fr);
+  };
+  const finish = () => {
+    Y.moving = null;
+    g.forEach(q => { q.pos = d.pos; q.via = d.via; if (d.pos === 'END') { q.done = true; q.pos = 'END'; } });
+    if (d.pos === 'END') sfx('finish');
+    Y.lastCap = false;
+    if (d.pos !== 'END') { const foes = Y.pcs.filter(q => q.o !== p.o && !q.done && q.pos === d.pos); if (foes.length) { foes.forEach(q => { q.pos = null; q.via = ''; }); Y.throws++; sfx('capture'); Y.lastCap = true; toast((p.o === 'me' ? '잡았어요! ' : 'AI가 잡았어요! ') + '한 번 더 던져요.'); } }
+    yutPaint(); setTimeout(() => done && done(), 250);
+  };
+  setTimeout(hop, 120);
 }
 function yutAfterMove() {
   yutPaint();
   const left = o => Y.pcs.filter(q => q.o === o && !q.done).length;
-  if (!left('me')) { Y.over = true; REC.yutWin = (REC.yutWin || 0) + 1; recSave(); setTimeout(() => sfx('win'), 400); $('yutMsg').className = 'msg win'; $('yutMsg').textContent = '🎉 대표님 승리! 말이 다 났어요.'; yutPaint(); return; }
-  if (!left('ai')) { Y.over = true; setTimeout(() => sfx('lose'), 400); $('yutMsg').className = 'msg lose'; $('yutMsg').textContent = 'AI가 이겼어요. 한 판 더 하실래요?'; yutPaint(); return; }
-  if (Y.throws > 0 || Y.res.length) { if (Y.turn === 'ai') setTimeout(yutAIStep, 650); else if (Y.throws > 0) $('yutMsg').textContent = '한 번 더 던지세요!'; return; }
+  if (!left('me')) { Y.over = true; REC.yutWin = (REC.yutWin || 0) + 1; recSave(); setTimeout(() => sfx('win'), 300); $('yutMsg').className = 'msg win'; $('yutMsg').textContent = '🎉 대표님 승리! 말이 다 났어요.'; yutPaint(); return; }
+  if (!left('ai')) { Y.over = true; setTimeout(() => sfx('lose'), 300); $('yutMsg').className = 'msg lose'; $('yutMsg').textContent = 'AI가 이겼어요. 한 판 더 하실래요?'; yutPaint(); return; }
+  if (Y.throws > 0 || Y.res.length) { if (Y.turn === 'ai') setTimeout(yutAIStep, 500); else if (Y.throws > 0) { $('yutMsg').className = 'msg'; $('yutMsg').textContent = '한 번 더 던지세요!'; } return; }
   Y.turn = Y.turn === 'me' ? 'ai' : 'me'; Y.throws = 1;
   if (Y.turn === 'ai') { $('yutMsg').className = 'msg'; $('yutMsg').textContent = 'AI(빨강) 차례예요…'; Y.busy = true; yutPaint(); setTimeout(yutAIStep, 700); }
   else { Y.busy = false; $('yutMsg').className = 'msg'; $('yutMsg').textContent = '대표님 차례예요. 윷을 던지세요!'; yutPaint(); }
@@ -468,7 +542,7 @@ function yutAfterMove() {
 function yutAIStep() {
   if (Y.over) return;
   Y.busy = true;
-  if (Y.throws > 0) { yutDoThrow(); setTimeout(yutAIStep, 700); return; }
+  if (Y.throws > 0) { yutDoThrow(() => setTimeout(yutAIStep, 450)); return; }
   if (!Y.res.length) { yutAfterMove(); return; }
   // 가장 좋은 (결과, 말) 고르기
   let best = null;
@@ -483,7 +557,6 @@ function yutAIStep() {
         const foes = Y.pcs.filter(q => q.o === 'me' && !q.done && q.pos === d.pos).length; s += foes * 90;
         if (Y.pcs.some(q => q.o === 'ai' && !q.done && q !== p && q.pos === d.pos)) s += 15;
         if (d.pos === 5 || d.pos === 10 || d.pos === 'C') s += 18;
-        // 상대 말 바로 앞(1~3칸)에 서면 위험
         const risk = Y.pcs.filter(q => q.o === 'me' && !q.done).some(q => [1, 2, 3].some(k => { const dd = yutDest(q, k); return dd.pos === d.pos; }));
         if (risk) s -= 25 * g;
         s += v;
@@ -494,9 +567,8 @@ function yutAIStep() {
   });
   if (!best) { Y.res = []; yutAfterMove(); return; }
   const v = Y.res[best.ri]; Y.res.splice(best.ri, 1);
-  yutMove(best.p, v);
-  $('yutMsg').textContent = 'AI: ' + YNAME[v] + '(으)로 말을 옮겼어요.';
-  yutPaint(); setTimeout(yutAfterMove, 600);
+  $('yutMsg').className = 'msg'; $('yutMsg').textContent = 'AI: ' + YNAME[v] + '(으)로 말을 옮겨요.';
+  yutMove(best.p, v, () => setTimeout(yutAfterMove, 250));
 }
 function yutPaint() {
   const svg = $('yutBoard'); let h = '';
@@ -507,7 +579,7 @@ function yutPaint() {
   h += `<text x="${YP[0][0] - 6}" y="${YP[0][1] + 38}" text-anchor="middle" font-size="13" font-weight="900" fill="#92400E">출발·도착</text>`;
   // 말
   const groups = {};
-  Y.pcs.filter(p => !p.done && p.pos !== null).forEach(p => { const k = p.o + '|' + p.pos; (groups[k] = groups[k] || []).push(p); });
+  Y.pcs.filter(p => !p.done && p.pos !== null && !(Y.moving && Y.moving.includes(p))).forEach(p => { const k = p.o + '|' + p.pos; (groups[k] = groups[k] || []).push(p); });
   Object.keys(groups).forEach(k => { const g = groups[k], p = g[0], [x, y] = YP[p.pos]; const dx = p.o === 'me' ? -7 : 7;
     h += `<g data-k="${k}" style="cursor:pointer"><circle cx="${x + dx}" cy="${y - 4}" r="15" fill="${p.o === 'me' ? '#2563EB' : '#DC2626'}" stroke="#fff" stroke-width="3"/>` + (g.length > 1 ? `<text x="${x + dx}" y="${y + 1}" text-anchor="middle" font-size="15" font-weight="900" fill="#fff">${g.length}</text>` : '') + `</g>`; });
   // 🎯 [패치 #152] 갈 자리(점선 동그라미)를 누르면 그 말이 옮겨 감 · 새 말은 '새' 표시 · 잡을 수 있으면 빨간 테두리
@@ -529,7 +601,7 @@ function yutPaint() {
   $('yutChips').innerHTML = Y.res.map((v, i) => `<button class="chip${i === Y.selRes && Y.turn === 'me' ? ' on' : ''}" onclick="yutSel(${i})">${YNAME[v]}</button>`).join('');
   const wait = o => Y.pcs.filter(q => q.o === o && !q.done && q.pos === null).length, left = o => Y.pcs.filter(q => q.o === o && !q.done).length;
   $('yutWaitMe').textContent = wait('me'); $('yutWaitAi').textContent = wait('ai'); $('yutLeftMe').textContent = left('me'); $('yutLeftAi').textContent = left('ai');
-  $('yutThrowBtn').disabled = Y.over || Y.turn !== 'me' || Y.throws <= 0;
+  $('yutThrowBtn').disabled = Y.over || Y.busy || Y.turn !== 'me' || Y.throws <= 0;
 }
 function yutSel(i) { if (Y.turn !== 'me') return; sfx('tick'); Y.selRes = i; yutPaint(); }
 
