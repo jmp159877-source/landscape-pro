@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#0F172A">
 <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<!-- 🎮 [패치 #150·#151 소리·배경음악·#152 윷놀이 한 화면·갈 자리 누르기·#153 윷 던지기 연출·말 한 칸씩·#154 소나무 말·AI 빨간 윷·느린 템포·판 종류 띄우기·#155 오목 AI 천천히·#156 Kenney 녹음 효과음·#157 Kenney 징글(승리·패배·윷모·잡기·나기)·#158 나가면 음악 멈춤] 대표님 휴식방: 앱 본체와 따로 불러오는 가벼운 게임 화면 (돈·포인트 없음 · 기록은 이 휴대폰에만) -->
+<!-- 🎮 [패치 #150·#151 소리·배경음악·#152 윷놀이 한 화면·갈 자리 누르기·#153 윷 던지기 연출·말 한 칸씩·#154 소나무 말·AI 빨간 윷·느린 템포·판 종류 띄우기·#155 오목 AI 천천히·#156 Kenney 녹음 효과음·#157 Kenney 징글(승리·패배·윷모·잡기·나기)·#158 나가면 음악 멈춤·#159 장기] 대표님 휴식방: 앱 본체와 따로 불러오는 가벼운 게임 화면 (돈·포인트 없음 · 기록은 이 휴대폰에만) -->
 <style>
   :root { --bg:#0F172A; --card:#1E293B; --line:#475569; --lime:#84CC16; --lime2:#BEF264; --sky:#38BDF8; --ink:#151E2D; --sub:#CBD5E1; }
   * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -54,6 +54,15 @@
   .tile.hint { background:#BAE6FD; }
   .tile.gone { visibility:hidden; }
   .ssline { position:fixed; pointer-events:none; z-index:20; }
+  /* 장기 */
+  #jgBoard { width:100%; display:block; background:#E8C27A; border-radius:16px; touch-action:manipulation; }
+  #jgBoard .jp { cursor:pointer; }
+  .jgmsg { min-height:50px; display:flex; align-items:center; justify-content:center; margin:4px 0; font-size:16.5px; line-height:1.35; }
+  .jgwho { display:flex; justify-content:space-between; margin:10px 0 2px; font-size:14px; font-weight:800; } .jgwho span { background:var(--card); border-radius:12px; padding:7px 10px; }
+  .jgban { position:fixed; left:50%; top:42%; transform:translate(-50%,-50%); z-index:45; font-size:64px; font-weight:900; color:#FDE047; text-shadow:0 5px 0 #7F1D1D, 0 10px 30px rgba(0,0,0,.6); white-space:nowrap; animation:ypop .5s cubic-bezier(.2,1.6,.4,1) forwards; pointer-events:none; }
+  .jgsheet { position:fixed; inset:0; z-index:42; background:rgba(15,23,42,.6); display:flex; align-items:flex-end; justify-content:center; }
+  .jgsheet .sheet { width:100%; max-width:480px; background:var(--card); border-radius:24px 24px 0 0; padding:20px 16px 28px; display:flex; flex-direction:column; gap:10px; }
+  .jgsheet b { font-size:20px; } .jgsheet p { margin:0; color:var(--sub); font-weight:700; font-size:14.5px; }
   /* 윷놀이 */
   #yutBoard { width:min(100%, calc(100vh - 370px), calc(100dvh - 370px)); min-width:250px; aspect-ratio:360/378; display:block; margin:0 auto; background:#FEF3C7; border-radius:18px; }
   #vYut .top { padding:10px 2px 8px; }
@@ -106,7 +115,7 @@
       <div>윷놀이 승리<b id="rYut">0승</b></div>
     </div>
     <div class="grid">
-      <button class="gc soon" onclick="soon('장기')"><i>준비 중</i><div class="e">🐘</div><b>장기</b><span>초급·중급·고급<br>AI와 한 판</span></button>
+      <button class="gc" onclick="go('janggi')"><i>AI 대국</i><div class="e">🐘</div><b>장기</b><span>초급·중급·고급<br>AI와 한 판</span></button>
       <button class="gc soon" onclick="soon('바둑 사활')"><i>준비 중</i><div class="e">⚫</div><b>바둑 사활</b><span>하루 한 문제<br>흑 먼저, 살려 보세요</span></button>
       <button class="gc" onclick="go('omok')"><i>AI 대국</i><div class="e">⭕</div><b>오목</b><span>다섯 개 먼저<br>놓으면 승리</span></button>
       <button class="gc" onclick="go('shisen')"><i>혼자</i><div class="e">🀄</div><b>사천성</b><span>같은 그림<br>짝 맞추기</span></button>
@@ -134,6 +143,15 @@
   </section>
 
   <!-- 윷놀이 -->
+  <section id="vJanggi" class="hidden">
+    <div class="top"><button class="back" onclick="history.back()" aria-label="뒤로">‹</button><h1>🐘 장기</h1></div>
+    <div class="seg" id="jgLv"><button data-lv="1" onclick="jgSetLv(1)">초급</button><button data-lv="2" onclick="jgSetLv(2)">중급</button><button data-lv="3" onclick="jgSetLv(3)">고급</button></div>
+    <div class="jgwho"><span style="color:#FCA5A5">🔴 한 (AI)</span><span style="color:#86EFAC">🟢 초 (대표님 · 먼저)</span></div>
+    <div class="msg jgmsg" id="jgMsg">대표님(초·초록) 먼저예요.</div>
+    <svg id="jgBoard" viewBox="0 0 380 420"></svg>
+    <div class="bar"><button class="btn" id="jgUndo" onclick="jgUndoMove()">↩ 무르기</button><button class="btn" onclick="jgSetupOpen()">상차림 바꾸기</button><button class="btn pri" onclick="if (!JG.counted || JG.over || confirm('지금 하던 판을 그만두고 새 판으로 시작할까요?')) jgNew()">새 판</button></div>
+    <div id="jgSetup" class="jgsheet hidden"></div>
+  </section>
   <section id="vYut" class="hidden">
     <div class="top"><button class="back" onclick="history.back()" aria-label="뒤로">‹</button><h1>🎲 윷놀이</h1></div>
     <div class="ystat"><span>🔵 대표님 대기 <b id="yutWaitMe">2</b> · 남은 <b id="yutLeftMe">2</b></span><span>🔴 AI 대기 <b id="yutWaitAi">2</b> · 남은 <b id="yutLeftAi">2</b></span></div>
@@ -150,7 +168,7 @@
 <script>
 /* ---------- 공통 ---------- */
 const $ = id => document.getElementById(id);
-const VIEWS = { hub:'vHub', omok:'vOmok', shisen:'vShisen', yut:'vYut' };
+const VIEWS = { hub:'vHub', omok:'vOmok', shisen:'vShisen', yut:'vYut', janggi:'vJanggi' };
 let REC = {};
 try { REC = JSON.parse(localStorage.getItem('jn_rest_rec') || '{}') || {}; } catch (e) { REC = {}; }
 function today() { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
@@ -167,7 +185,7 @@ function soon(n) { sfx('fail'); toast(n + '은(는) 지금 만들고 있어요. 
 function goApp() { try { musicStop(); if (SND.ctx) SND.ctx.suspend(); } catch (e) {} if (document.referrer && document.referrer.indexOf(location.origin) === 0 && history.length > 1) history.back(); else location.href = '/'; }
 let CUR_VIEW = 'hub';
 function show(v) { CUR_VIEW = v; Object.keys(VIEWS).forEach(k => $(VIEWS[k]).classList.toggle('hidden', k !== v)); window.scrollTo(0, 0); if (v === 'hub') recPaint(); if (typeof musicStart === 'function') { if (SND.ctx) musicStart(VIEW_MUSIC[v]); else SND.want = VIEW_MUSIC[v]; } }
-function go(v) { try { actx(); } catch (e) {} sfx('tap'); history.pushState({ v }, '', '#' + v); show(v); if (v === 'omok' && !OM.started) omokNew(); if (v === 'shisen' && !SS.tiles) ssNew(); if (v === 'yut' && !Y.started) yutNew(); }
+function go(v) { try { actx(); } catch (e) {} sfx('tap'); history.pushState({ v }, '', '#' + v); show(v); if (v === 'omok' && !OM.started) omokNew(); if (v === 'shisen' && !SS.tiles) ssNew(); if (v === 'yut' && !Y.started) yutNew(); if (v === 'janggi' && !JG.started) jgNew(); }
 window.addEventListener('popstate', () => { const v = (location.hash || '').slice(1); show(VIEWS[v] ? v : 'hub'); });
 
 
@@ -267,7 +285,7 @@ const MUSIC = {
       if (k === 'T') noiz(0.04, 3500, 1.5, 0.35, t, SND.mg);
       const m = this.mel[s % this.len]; if (m !== null) pluck(deg(m), t, 0.45, SND.mg, 0.7); } }
 };
-const VIEW_MUSIC = { hub: null, omok: 'calm', shisen: 'light', yut: 'lively' }; // 🔇 [패치 #158] 첫 화면(게임 고르기)에서는 음악 멈춤
+const VIEW_MUSIC = { hub: null, janggi: 'calm', omok: 'calm', shisen: 'light', yut: 'lively' }; // 🔇 [패치 #158] 첫 화면(게임 고르기)에서는 음악 멈춤
 function musicStart(kind) {
   SND.want = kind; musicStop(true); if (!SND.bgm || !kind) return; const c = actx(); if (!c) return;
   const M = MUSIC[kind], d = 60 / M.bpm / 2; let s = 0, next = c.currentTime + 0.15;
@@ -659,7 +677,167 @@ function yutPaint() {
 }
 function yutSel(i) { if (Y.turn !== 'me') return; sfx('tick'); Y.selRes = i; yutPaint(); }
 
-(function () { const v = (location.hash || '').slice(1); if (VIEWS[v] && v !== 'hub') { history.replaceState({ v: 'hub' }, '', location.pathname); history.pushState({ v }, '', '#' + v); go2(v); } else show('hub'); function go2(x) { show(x); if (x === 'omok') omokNew(); if (x === 'shisen') ssNew(); if (x === 'yut') yutNew(); } })();
+/* ---------- 🐘 장기 [패치 #159] (대표님 = 초·초록·먼저 / AI = 한·빨강) ---------- */
+const JG = { b: null, turn: 'cho', hist: [], sel: null, tg: [], over: false, busy: false, lv: 2, setup: '마상마상', last: null, counted: false, started: false };
+try { JG.lv = Number(localStorage.getItem('jn_rest_jg_lv')) || 2; JG.setup = localStorage.getItem('jn_rest_jg_setup') || '마상마상'; } catch (e) {}
+const JGV = { K: 0, R: 13, C: 7, H: 5, E: 3, A: 3, P: 2 };
+const JGCH = { cho: { K: '楚', R: '車', C: '包', H: '馬', E: '象', A: '士', P: '卒' }, han: { K: '漢', R: '車', C: '包', H: '馬', E: '象', A: '士', P: '兵' } };
+const JGNAME = { K: '궁', R: '차', C: '포', H: '마', E: '상', A: '사', P: '졸' };
+const SETUPS = ['마상마상', '상마상마', '마상상마', '상마마상'];
+const JGM = 30, JGC = 40;
+function jgSetLv(l) { JG.lv = l; try { localStorage.setItem('jn_rest_jg_lv', l); } catch (e) {} document.querySelectorAll('#jgLv button').forEach(b => b.classList.toggle('on', Number(b.dataset.lv) === l)); }
+function jgPlace(b, side, setup) {
+  const back = side === 'han' ? 0 : 9, kr = side === 'han' ? 1 : 8, cr = side === 'han' ? 2 : 7, pr = side === 'han' ? 3 : 6;
+  const put = (r, c, t) => { b[r][c] = { t, s: side }; };
+  put(back, 0, 'R'); put(back, 8, 'R'); put(back, 3, 'A'); put(back, 5, 'A'); put(kr, 4, 'K'); put(cr, 1, 'C'); put(cr, 7, 'C');
+  [0, 2, 4, 6, 8].forEach(c => put(pr, c, 'P'));
+  const m = { '마': 'H', '상': 'E' }; [1, 2, 6, 7].forEach((c, i) => put(back, c, m[setup[i]]));
+}
+function jgNew() {
+  JG.b = Array.from({ length: 10 }, () => Array(9).fill(null));
+  jgPlace(JG.b, 'cho', JG.setup); jgPlace(JG.b, 'han', SETUPS[Math.floor(Math.random() * 4)]);
+  JG.turn = 'cho'; JG.hist = []; JG.sel = null; JG.tg = []; JG.over = false; JG.busy = false; JG.last = null; JG.counted = false; JG.started = true;
+  jgSetLv(JG.lv); jgMsg('대표님(초·초록) 먼저예요. 움직일 알을 누르세요.'); jgDraw();
+}
+function jgMsg(t, cls) { const m = $('jgMsg'); m.className = 'msg jgmsg' + (cls ? ' ' + cls : ''); m.textContent = t; }
+const onB = (r, c) => r >= 0 && r < 10 && c >= 0 && c < 9;
+const inPal = (r, c) => c >= 3 && c <= 5 && (r <= 2 || r >= 7);
+const ownPal = (s, r, c) => c >= 3 && c <= 5 && (s === 'han' ? r <= 2 : r >= 7);
+function palCenter(r) { return r <= 2 ? [1, 4] : [8, 4]; }
+function isCorner(r, c) { return (c === 3 || c === 5) && (r === 0 || r === 2 || r === 7 || r === 9); }
+function diagSteps(r, c) { if (!inPal(r, c)) return []; const [cr, cc] = palCenter(r);
+  if (r === cr && c === cc) { const t = r === 1 ? 0 : 7; return [[t, 3], [t, 5], [t + 2, 3], [t + 2, 5]]; }
+  if (isCorner(r, c)) return [[cr, cc]]; return []; }
+function diagRays(r, c) { if (!inPal(r, c)) return []; const [cr, cc] = palCenter(r);
+  if (r === cr && c === cc) return diagSteps(r, c).map(p => [p]);
+  if (isCorner(r, c)) return [[[cr, cc], [2 * cr - r, 2 * cc - c]]]; return []; }
+const ORTH = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+function jgGen(b, r, c) {
+  const p = b[r][c], s = p.s, out = [], add = (r2, c2) => { if (!onB(r2, c2)) return false; const q = b[r2][c2]; if (q && q.s === s) return false; out.push([r2, c2]); return !q; };
+  if (p.t === 'K' || p.t === 'A') {
+    ORTH.forEach(([dr, dc]) => { const r2 = r + dr, c2 = c + dc; if (ownPal(s, r2, c2)) add(r2, c2); });
+    diagSteps(r, c).forEach(([r2, c2]) => { if (ownPal(s, r2, c2)) add(r2, c2); });
+  } else if (p.t === 'R') {
+    ORTH.forEach(([dr, dc]) => { let r2 = r + dr, c2 = c + dc; while (onB(r2, c2)) { if (!add(r2, c2)) break; r2 += dr; c2 += dc; } });
+    diagRays(r, c).forEach(ray => { for (const [r2, c2] of ray) { if (!add(r2, c2)) break; } });
+  } else if (p.t === 'C') {
+    ORTH.forEach(([dr, dc]) => { let r2 = r + dr, c2 = c + dc, jumped = false;
+      while (onB(r2, c2)) { const q = b[r2][c2];
+        if (!jumped) { if (q) { if (q.t === 'C') break; jumped = true; } }
+        else { if (!q) out.push([r2, c2]); else { if (q.s !== s && q.t !== 'C') out.push([r2, c2]); break; } }
+        r2 += dr; c2 += dc; } });
+    diagRays(r, c).forEach(ray => { if (ray.length === 2) { const [m, t] = ray, q = b[m[0]][m[1]], q2 = b[t[0]][t[1]];
+      if (q && q.t !== 'C' && (!q2 || (q2.s !== s && q2.t !== 'C'))) out.push(t); } });
+  } else if (p.t === 'H') {
+    ORTH.forEach(([dr, dc]) => { const r1 = r + dr, c1 = c + dc; if (!onB(r1, c1) || b[r1][c1]) return;
+      if (dr) { add(r + 2 * dr, c - 1); add(r + 2 * dr, c + 1); } else { add(r - 1, c + 2 * dc); add(r + 1, c + 2 * dc); } });
+  } else if (p.t === 'E') {
+    ORTH.forEach(([dr, dc]) => { const r1 = r + dr, c1 = c + dc; if (!onB(r1, c1) || b[r1][c1]) return;
+      [-1, 1].forEach(sg => { let m2, t; if (dr) { m2 = [r + 2 * dr, c + sg]; t = [r + 3 * dr, c + 2 * sg]; } else { m2 = [r + sg, c + 2 * dc]; t = [r + 2 * sg, c + 3 * dc]; }
+        if (!onB(m2[0], m2[1]) || b[m2[0]][m2[1]]) return; add(t[0], t[1]); }); });
+  } else if (p.t === 'P') {
+    const f = s === 'cho' ? -1 : 1; add(r + f, c); add(r, c - 1); add(r, c + 1);
+    diagSteps(r, c).forEach(([r2, c2]) => { if (r2 === r + f) add(r2, c2); });
+  }
+  return out;
+}
+function jgKing(b, s) { for (let r = 0; r < 10; r++) for (let c = 0; c < 9; c++) { const p = b[r][c]; if (p && p.t === 'K' && p.s === s) return [r, c]; } return null; }
+function jgAttacked(b, s) { const k = jgKing(b, s); if (!k) return true; const e = s === 'cho' ? 'han' : 'cho';
+  for (let r = 0; r < 10; r++) for (let c = 0; c < 9; c++) { const p = b[r][c]; if (p && p.s === e) { const ms = jgGen(b, r, c); for (const [r2, c2] of ms) if (r2 === k[0] && c2 === k[1]) return true; } } return false; }
+function jgDo(b, m) { const [r, c, r2, c2] = m, cap = b[r2][c2]; b[r2][c2] = b[r][c]; b[r][c] = null; return cap; }
+function jgUndo(b, m, cap) { const [r, c, r2, c2] = m; b[r][c] = b[r2][c2]; b[r2][c2] = cap; }
+function jgPseudo(b, s) { const L = []; for (let r = 0; r < 10; r++) for (let c = 0; c < 9; c++) { const p = b[r][c]; if (p && p.s === s) jgGen(b, r, c).forEach(([r2, c2]) => L.push([r, c, r2, c2])); } return L; }
+function jgLegal(b, s) { return jgPseudo(b, s).filter(m => { const cap = jgDo(b, m); const ok = !jgAttacked(b, s); jgUndo(b, m, cap); return ok; }); }
+function jgEval(b, s) { let v = 0;
+  for (let r = 0; r < 10; r++) for (let c = 0; c < 9; c++) { const p = b[r][c]; if (!p) continue; let x = JGV[p.t] * 10;
+    if (p.t === 'P') x += (p.s === 'cho' ? 6 - r : r - 3) * 0.6 + (c === 4 ? 0.4 : 0);
+    if (p.t === 'H' || p.t === 'C' || p.t === 'R') x += 0.6 - Math.abs(c - 4) * 0.15;
+    v += p.s === s ? x : -x; }
+  return v; }
+function jgSearch(b, s, d, a, be) {
+  const e = s === 'cho' ? 'han' : 'cho';
+  if (d === 0) return jgEval(b, s);
+  const ms = jgPseudo(b, s); if (!ms.length) return -9000;
+  ms.sort((x, y) => (b[y[2]][y[3]] ? JGV[b[y[2]][y[3]].t] + 1 : 0) - (b[x[2]][x[3]] ? JGV[b[x[2]][x[3]].t] + 1 : 0));
+  let best = -1e9;
+  for (const m of ms) { const cap = b[m[2]][m[3]]; if (cap && cap.t === 'K') return 10000 + d;
+    jgDo(b, m); const v = -jgSearch(b, e, d - 1, -be, -a); jgUndo(b, m, cap);
+    if (v > best) best = v; if (v > a) a = v; if (a >= be) break; }
+  return best; }
+function jgAI() {
+  const b = JG.b, s = 'han', e = 'cho', ms = jgLegal(b, s); if (!ms.length) return null;
+  const depth = JG.lv === 1 ? 1 : JG.lv === 2 ? 3 : 4, noise = JG.lv === 1 ? 12 : JG.lv === 2 ? 1.5 : 0.3;
+  let best = null, bv = -1e9;
+  ms.sort((x, y) => (b[y[2]][y[3]] ? JGV[b[y[2]][y[3]].t] : 0) - (b[x[2]][x[3]] ? JGV[b[x[2]][x[3]].t] : 0));
+  for (const m of ms) { const cap = jgDo(b, m); let v = -jgSearch(b, e, depth - 1, -1e9, 1e9); jgUndo(b, m, cap); v += Math.random() * noise; if (v > bv) { bv = v; best = m; } }
+  return best;
+}
+function jgXY(r, c) { return [JGM + c * JGC, JGM + r * JGC]; }
+function jgDraw() {
+  const svg = $('jgBoard'); let h = ''; const L = (a, b2) => { const [x1, y1] = jgXY(...a), [x2, y2] = jgXY(...b2); return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#5C3A1A" stroke-width="1.6"/>`; };
+  for (let r = 0; r < 10; r++) h += L([r, 0], [r, 8]); for (let c = 0; c < 9; c++) h += L([0, c], [9, c]);
+  [0, 7].forEach(t => { h += L([t, 3], [t + 2, 5]) + L([t, 5], [t + 2, 3]); });
+  if (JG.last) { const [r, c, r2, c2] = JG.last; [[r, c], [r2, c2]].forEach(([y, x], i) => { const [X, Y] = jgXY(y, x); h += `<circle cx="${X}" cy="${Y}" r="${i ? 21 : 7}" fill="${i ? 'rgba(253,224,71,.35)' : 'rgba(92,58,26,.35)'}"/>`; }); }
+  const chk = !JG.over && jgAttacked(JG.b, JG.turn) ? jgKing(JG.b, JG.turn) : null;
+  for (let r = 0; r < 10; r++) for (let c = 0; c < 9; c++) { const p = JG.b[r][c]; if (!p) continue; const [X, Y] = jgXY(r, c);
+    const R = p.t === 'K' ? 19 : (p.t === 'A' || p.t === 'P') ? 14 : 16.5, col = p.s === 'han' ? '#B91C1C' : '#15803D';
+    const pts = []; for (let k = 0; k < 8; k++) { const a = Math.PI / 8 + k * Math.PI / 4; pts.push((R * Math.cos(a)).toFixed(1) + ',' + (R * Math.sin(a)).toFixed(1)); }
+    const sel = JG.sel && JG.sel[0] === r && JG.sel[1] === c, ck = chk && chk[0] === r && chk[1] === c;
+    h += `<g class="jp" id="jp${r}_${c}" transform="translate(${X},${Y})">` + (ck ? `<circle r="${R + 6}" fill="rgba(239,68,68,.45)"/>` : '') + (sel ? `<circle r="${R + 5}" fill="none" stroke="#FDE047" stroke-width="4"/>` : '') +
+      `<polygon points="${pts.join(' ')}" fill="#FFFBEB" stroke="${col}" stroke-width="2.4"/><text y="${p.t === 'K' ? 7 : 6}" text-anchor="middle" font-size="${p.t === 'K' ? 20 : (p.t === 'A' || p.t === 'P') ? 14 : 17}" font-weight="900" fill="${col}" font-family="'Noto Serif CJK KR','Noto Sans CJK KR',serif">${JGCH[p.s][p.t]}</text></g>`; }
+  JG.tg.forEach(([r, c]) => { const [X, Y] = jgXY(r, c), cap = JG.b[r][c];
+    h += cap ? `<circle cx="${X}" cy="${Y}" r="21" fill="none" stroke="#DC2626" stroke-width="3.5" stroke-dasharray="5 3"/>` : `<circle cx="${X}" cy="${Y}" r="9" fill="#2563EB" opacity=".85"/>`; });
+  svg.innerHTML = h;
+  $('jgUndo').disabled = JG.busy || !JG.hist.length;
+}
+$('jgBoard').addEventListener('click', e => {
+  if (JG.over || JG.busy || JG.turn !== 'cho') return;
+  const svg = $('jgBoard'), rc = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal, sx = vb.width / rc.width, sy = vb.height / rc.height;
+  const x = (e.clientX - rc.left) * sx, y = (e.clientY - rc.top) * sy, c = Math.round((x - JGM) / JGC), r = Math.round((y - JGM) / JGC);
+  if (!onB(r, c)) return;
+  const p = JG.b[r][c];
+  if (JG.sel && JG.tg.some(([a, b2]) => a === r && b2 === c)) { jgMoveAnim([JG.sel[0], JG.sel[1], r, c], 'cho'); return; }
+  if (p && p.s === 'cho') {
+    const legal = jgLegal(JG.b, 'cho').filter(m => m[0] === r && m[1] === c).map(m => [m[2], m[3]]);
+    JG.sel = [r, c]; JG.tg = legal; sfx('tap');
+    jgMsg(legal.length ? JGNAME[p.t] + '(' + JGCH.cho[p.t] + ')를 골랐어요. ' + (legal.some(([a, b2]) => JG.b[a][b2]) ? '빨간 동그라미는 잡을 수 있는 알이에요.' : '파란 점으로 옮기세요.') : '그 알은 지금 움직일 수 없어요.');
+    jgDraw(); return;
+  }
+  JG.sel = null; JG.tg = []; jgDraw();
+});
+function jgMoveAnim(m, side) {
+  JG.busy = true; JG.sel = null; JG.tg = []; jgDraw();
+  if (!JG.counted && side === 'cho') { JG.counted = true; recPlay(); }
+  const g = $('jp' + m[0] + '_' + m[1]), [X, Y] = jgXY(m[2], m[3]); const capd = JG.b[m[2]][m[3]];
+  if (g) { g.parentNode.appendChild(g); g.style.transition = 'transform .32s cubic-bezier(.3,.7,.4,1)'; requestAnimationFrame(() => g.setAttribute('transform', `translate(${X},${Y}) scale(1.12)`)); }
+  setTimeout(() => {
+    JG.hist.push({ b: JG.b.map(row => row.map(p => p && { ...p })), last: JG.last, turn: JG.turn });
+    jgDo(JG.b, m); JG.last = m;
+    sfx(capd ? 'capture' : (side === 'cho' ? 'stone' : 'stone2'));
+    const e = side === 'cho' ? 'han' : 'cho'; JG.turn = e;
+    const inChk = jgAttacked(JG.b, e), any = jgLegal(JG.b, e).length;
+    jgDraw();
+    if (!any) { JG.over = true; JG.busy = false;
+      if (side === 'cho') { REC.jgWin = (REC.jgWin || 0) + 1; recSave(); setTimeout(() => sfx('win'), 250); jgMsg(inChk ? '🎉 외통! 대표님 승리예요.' : '🎉 한이 둘 수가 없어요. 대표님 승리!', 'win'); }
+      else { setTimeout(() => sfx('lose'), 250); jgMsg(inChk ? '외통이에요. AI가 이겼어요.' : '둘 수가 없어요. AI가 이겼어요.', 'lose'); }
+      jgDraw(); return; }
+    if (inChk) { jgBanner(side === 'cho' ? '장군!' : '장군! (멍군 하세요)'); }
+    if (e === 'han') { JG.busy = true; jgMsg(inChk ? '장군! AI가 피할 수를 찾는 중…' : (capd ? JGNAME[capd.t] + '를 잡았어요! ' : '') + 'AI가 생각 중…'); jgDraw(); setTimeout(jgAITurn, 700 + Math.random() * 500); }
+    else { JG.busy = false; jgMsg(inChk ? '장군이에요! 궁을 지키세요.' : (capd ? 'AI가 ' + JGNAME[capd.t] + '를 잡았어요. ' : '') + '대표님 차례예요.', inChk ? 'lose' : ''); jgDraw(); }
+  }, 340);
+}
+function jgAITurn() { const m = jgAI(); if (!m) { JG.over = true; JG.busy = false; jgMsg('AI가 둘 수가 없어요. 대표님 승리!', 'win'); return; } jgMoveAnim(m, 'han'); }
+function jgBanner(t) { sfx('hint'); play('jCap', 0.6, 0, 1); const d = document.createElement('div'); d.className = 'jgban'; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 1400); }
+function jgUndoMove() {
+  if (JG.busy || !JG.hist.length) return;
+  let h = JG.hist.pop(); while (h && h.turn !== 'cho' && JG.hist.length) h = JG.hist.pop();
+  if (!h || h.turn !== 'cho') return;
+  JG.b = h.b; JG.last = h.last; JG.turn = 'cho'; JG.over = false; JG.sel = null; JG.tg = []; sfx('tick'); jgMsg('한 수 물렀어요. 대표님 차례예요.'); jgDraw();
+}
+function jgSetupOpen() { const s = $('jgSetup'); s.innerHTML = '<div class="sheet"><b>상차림 고르기</b><p>왼쪽부터 마·상 순서예요. 고르면 새 판으로 시작해요.</p>' + SETUPS.map(x => `<button class="btn${x === JG.setup ? ' pri' : ''}" onclick="jgSetupPick('${x}')">${x}</button>`).join('') + '<button class="btn" onclick="$(\'jgSetup\').classList.add(\'hidden\')">닫기</button></div>'; s.classList.remove('hidden'); }
+function jgSetupPick(x) { if (JG.counted && !JG.over && !confirm('지금 하던 판을 그만두고 새 판으로 시작할까요?')) return; JG.setup = x; try { localStorage.setItem('jn_rest_jg_setup', x); } catch (e) {} $('jgSetup').classList.add('hidden'); jgNew(); }
+
+(function () { const v = (location.hash || '').slice(1); if (VIEWS[v] && v !== 'hub') { history.replaceState({ v: 'hub' }, '', location.pathname); history.pushState({ v }, '', '#' + v); go2(v); } else show('hub'); function go2(x) { show(x); if (x === 'omok') omokNew(); if (x === 'shisen') ssNew(); if (x === 'yut') yutNew(); if (x === 'janggi') jgNew(); } })();
 recPaint();
 </script>
 </body>
