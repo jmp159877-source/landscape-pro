@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>대표님 휴식방 · 조경노트 PRO</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0F172A">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<!-- 🎮 [패치 #150] 대표님 휴식방: 앱 본체와 따로 불러오는 가벼운 게임 화면 (돈·포인트 없음 · 기록은 이 휴대폰에만) -->
+<style>
+  :root { --bg:#0F172A; --card:#1E293B; --line:#475569; --lime:#84CC16; --lime2:#BEF264; --sky:#38BDF8; --ink:#151E2D; --sub:#CBD5E1; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body { margin:0; background:var(--bg); color:#fff; font-family:'Pretendard Variable',Pretendard,-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif; letter-spacing:-0.02em; word-break:keep-all; -webkit-user-select:none; user-select:none; }
+  button { font-family:inherit; cursor:pointer; border:0; color:inherit; letter-spacing:inherit; }
+  .app { max-width:480px; margin:0 auto; min-height:100vh; padding:0 14px 40px; }
+  .top { position:sticky; top:0; z-index:5; background:var(--bg); display:flex; align-items:center; gap:10px; padding:14px 2px 12px; }
+  .back { width:48px; height:48px; border-radius:16px; background:var(--card); border:1.5px solid var(--line); font-size:26px; font-weight:900; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .top h1 { font-size:23px; font-weight:900; margin:0; flex:1; }
+  .hidden { display:none !important; }
+  .rec { display:flex; gap:8px; margin:4px 0 14px; }
+  .rec div { flex:1; background:var(--card); border-radius:16px; padding:10px 6px; text-align:center; font-size:13.5px; font-weight:800; color:var(--sub); }
+  .rec b { display:block; font-size:21px; color:var(--lime2); margin-top:2px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .gc { position:relative; text-align:left; background:var(--card); border:1.5px solid var(--line); border-radius:22px; padding:16px 14px; min-height:150px; }
+  .gc:active { transform:scale(.97); }
+  .gc .e { font-size:38px; line-height:1; }
+  .gc b { display:block; font-size:21px; font-weight:900; margin-top:10px; }
+  .gc span { display:block; font-size:14.5px; font-weight:700; color:var(--sub); margin-top:4px; line-height:1.35; }
+  .gc i { position:absolute; top:12px; right:12px; font-style:normal; font-size:12.5px; font-weight:900; background:var(--lime2); color:#1A2E05; border-radius:999px; padding:3px 9px; }
+  .gc.soon { opacity:.55; } .gc.soon i { background:#475569; color:#E2E8F0; }
+  .note { background:var(--card); border-radius:18px; padding:14px 16px; font-size:14.5px; font-weight:700; color:var(--sub); margin-top:14px; line-height:1.55; }
+  .note b { color:#fff; }
+  .bar { display:flex; gap:8px; margin:10px 0; }
+  .btn { flex:1; min-height:52px; border-radius:16px; background:var(--card); border:1.5px solid var(--line); font-size:16.5px; font-weight:900; }
+  .btn.pri { background:var(--lime); color:var(--ink); border-color:var(--lime); }
+  .btn:disabled { opacity:.4; }
+  .msg { text-align:center; font-size:18px; font-weight:900; min-height:28px; margin:8px 0; }
+  .msg.win { color:var(--lime2); } .msg.lose { color:#FCA5A5; }
+  .toast { position:fixed; left:50%; bottom:40px; transform:translateX(-50%); background:#fff; color:var(--ink); font-weight:900; font-size:16px; padding:14px 22px; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.4); z-index:50; max-width:90vw; text-align:center; }
+  .seg { display:flex; gap:6px; background:var(--card); border-radius:14px; padding:4px; }
+  .seg button { flex:1; min-height:42px; border-radius:11px; background:transparent; font-size:15.5px; font-weight:900; color:var(--sub); }
+  .seg button.on { background:var(--lime); color:var(--ink); }
+  /* 오목 */
+  #omokBoard { width:100%; aspect-ratio:1; display:block; background:#E9C98F; border-radius:14px; touch-action:manipulation; }
+  /* 사천성 */
+  #ssBoard { display:grid; gap:4px; background:#14261E; border-radius:16px; padding:8px; }
+  .tile { aspect-ratio:3/4; border-radius:10px; background:#FFFBEB; box-shadow:inset 0 -3px 0 #D6D3D1; font-size:26px; display:flex; align-items:center; justify-content:center; padding:0; }
+  .tile.sel { background:#FDE047; box-shadow:0 0 0 3px #1C1917 inset; }
+  .tile.hint { background:#BAE6FD; }
+  .tile.gone { visibility:hidden; }
+  .ssline { position:fixed; pointer-events:none; z-index:20; }
+  /* 윷놀이 */
+  #yutBoard { width:100%; aspect-ratio:360/378; display:block; background:#FEF3C7; border-radius:18px; }
+  .sticks { display:flex; justify-content:center; gap:10px; margin:8px 0 4px; }
+  .stick { width:26px; height:84px; border-radius:13px; background:#D6A15A; border:3px solid #78350F; position:relative; transition:transform .25s; }
+  .stick.flat { background:#FEF3C7; }
+  .stick.flat::after { content:'✕'; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); color:#78350F; font-weight:900; font-size:14px; }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; min-height:46px; }
+  .chip { min-width:64px; min-height:44px; border-radius:14px; background:var(--card); border:2px solid var(--line); font-size:18px; font-weight:900; padding:0 12px; }
+  .chip.on { background:var(--lime); color:var(--ink); border-color:var(--lime); }
+  .wait { display:flex; justify-content:space-between; gap:10px; margin-top:8px; }
+  .wait div { flex:1; background:var(--card); border-radius:16px; padding:10px; font-size:14.5px; font-weight:800; color:var(--sub); }
+  .wait button { margin-top:6px; width:100%; min-height:46px; border-radius:12px; background:#1D4ED8; font-size:16px; font-weight:900; }
+  .wait button.ai { background:#B91C1C; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- 휴식방 첫 화면 -->
+  <section id="vHub">
+    <div class="top"><button class="back" onclick="goApp()" aria-label="나가기">‹</button><h1>🎮 대표님 휴식방</h1></div>
+    <div class="rec">
+      <div>오늘 한 판<b id="rToday">0판</b></div>
+      <div>오목 승리<b id="rOmok">0승</b></div>
+      <div>윷놀이 승리<b id="rYut">0승</b></div>
+    </div>
+    <div class="grid">
+      <button class="gc soon" onclick="soon('장기')"><i>준비 중</i><div class="e">🐘</div><b>장기</b><span>초급·중급·고급<br>AI와 한 판</span></button>
+      <button class="gc soon" onclick="soon('바둑 사활')"><i>준비 중</i><div class="e">⚫</div><b>바둑 사활</b><span>하루 한 문제<br>흑 먼저, 살려 보세요</span></button>
+      <button class="gc" onclick="go('omok')"><i>AI 대국</i><div class="e">⭕</div><b>오목</b><span>다섯 개 먼저<br>놓으면 승리</span></button>
+      <button class="gc" onclick="go('shisen')"><i>혼자</i><div class="e">🀄</div><b>사천성</b><span>같은 그림<br>짝 맞추기</span></button>
+      <button class="gc" onclick="go('yut')"><i>AI 대국</i><div class="e">🎲</div><b>윷놀이</b><span>윷 던지고<br>말 먼저 다 내기</span></button>
+      <button class="gc soon" onclick="soon('맞고')"><i>준비 중</i><div class="e">🎴</div><b>맞고</b><span>AI와 2인 화투<br>점수만, 돈 없음</span></button>
+    </div>
+    <div class="note">🌿 휴식방 게임은 <b>돈이나 포인트를 걸지 않는 순수 휴식용</b>이에요. 승수 같은 기록만 이 휴대폰에 남아요.</div>
+  </section>
+
+  <!-- 오목 -->
+  <section id="vOmok" class="hidden">
+    <div class="top"><button class="back" onclick="history.back()" aria-label="뒤로">‹</button><h1>⭕ 오목</h1></div>
+    <div class="seg" id="omokLv"><button data-lv="1" onclick="omokSetLv(1)">쉬움</button><button data-lv="2" onclick="omokSetLv(2)">보통</button></div>
+    <div class="msg" id="omokMsg">대표님이 흑(먼저)이에요. 아무 칸이나 눌러 시작하세요.</div>
+    <canvas id="omokBoard" width="720" height="720"></canvas>
+    <div class="bar"><button class="btn" id="omokUndo" onclick="omokUndo()">↩ 한 수 무르기</button><button class="btn pri" onclick="omokNew()">새 판</button></div>
+  </section>
+
+  <!-- 사천성 -->
+  <section id="vShisen" class="hidden">
+    <div class="top"><button class="back" onclick="history.back()" aria-label="뒤로">‹</button><h1>🀄 사천성</h1></div>
+    <div class="msg" id="ssMsg">같은 그림 두 개를 이어 보세요. 꺾이는 곳은 두 번까지!</div>
+    <div id="ssBoard"></div>
+    <div class="bar"><button class="btn" onclick="ssHint()">💡 힌트</button><button class="btn" id="ssShufBtn" onclick="ssShuffle(true)">🔀 섞기 (3)</button><button class="btn pri" onclick="ssNew()">새 판</button></div>
+  </section>
+
+  <!-- 윷놀이 -->
+  <section id="vYut" class="hidden">
+    <div class="top"><button class="back" onclick="history.back()" aria-label="뒤로">‹</button><h1>🎲 윷놀이</h1></div>
+    <div class="seg" id="yutCnt"><button data-n="2" onclick="yutSetN(2)">빠른 판 (말 2개)</button><button data-n="4" onclick="yutSetN(4)">보통 판 (말 4개)</button></div>
+    <div class="msg" id="yutMsg">대표님(파랑) 차례예요. 윷을 던지세요!</div>
+    <svg id="yutBoard" viewBox="0 0 360 378"></svg>
+    <div class="sticks" id="yutSticks"></div>
+    <div class="chips" id="yutChips"></div>
+    <div class="bar"><button class="btn pri" id="yutThrowBtn" onclick="yutThrow()">윷 던지기</button><button class="btn" onclick="yutNew()">새 판</button></div>
+    <div class="wait">
+      <div>🔵 대표님 대기 <b id="yutWaitMe" style="color:#fff">4</b>개 · 남은 말 <b id="yutLeftMe" style="color:#fff">4</b><button id="yutNewPiece" onclick="yutPick('new')">새 말 내보내기</button></div>
+      <div>🔴 AI 대기 <b id="yutWaitAi" style="color:#fff">4</b>개 · 남은 말 <b id="yutLeftAi" style="color:#fff">4</b></div>
+    </div>
+  </section>
+</div>
+<div id="toast" class="toast hidden"></div>
+
+<script>
+/* ---------- 공통 ---------- */
+const $ = id => document.getElementById(id);
+const VIEWS = { hub:'vHub', omok:'vOmok', shisen:'vShisen', yut:'vYut' };
+let REC = {};
+try { REC = JSON.parse(localStorage.getItem('jn_rest_rec') || '{}') || {}; } catch (e) { REC = {}; }
+function today() { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+function recSave() { try { localStorage.setItem('jn_rest_rec', JSON.stringify(REC)); } catch (e) {} recPaint(); }
+function recPlay() { if (REC.day !== today()) { REC.day = today(); REC.today = 0; } REC.today = (REC.today || 0) + 1; recSave(); }
+function recPaint() {
+  $('rToday').textContent = (REC.day === today() ? (REC.today || 0) : 0) + '판';
+  $('rOmok').textContent = (REC.omokWin || 0) + '승';
+  $('rYut').textContent = (REC.yutWin || 0) + '승';
+}
+let toastT = 0;
+function toast(t) { const el = $('toast'); el.textContent = t; el.classList.remove('hidden'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.add('hidden'), 2200); }
+function soon(n) { toast(n + '은(는) 지금 만들고 있어요. 곧 열려요!'); }
+function goApp() { if (document.referrer && document.referrer.indexOf(location.origin) === 0 && history.length > 1) history.back(); else location.href = '/'; }
+function show(v) { Object.keys(VIEWS).forEach(k => $(VIEWS[k]).classList.toggle('hidden', k !== v)); window.scrollTo(0, 0); if (v === 'hub') recPaint(); }
+function go(v) { history.pushState({ v }, '', '#' + v); show(v); if (v === 'omok' && !OM.started) omokNew(); if (v === 'shisen' && !SS.tiles) ssNew(); if (v === 'yut' && !Y.started) yutNew(); }
+window.addEventListener('popstate', () => { const v = (location.hash || '').slice(1); show(VIEWS[v] ? v : 'hub'); });
+
+/* ---------- 오목 ---------- */
+const N = 15;
+const OM = { b: [], hist: [], over: false, lv: 2, started: false, busy: false };
+try { OM.lv = Number(localStorage.getItem('jn_rest_omok_lv')) || 2; } catch (e) {}
+function omokSetLv(l) { OM.lv = l; try { localStorage.setItem('jn_rest_omok_lv', l); } catch (e) {} omokPaintLv(); }
+function omokPaintLv() { document.querySelectorAll('#omokLv button').forEach(b => b.classList.toggle('on', Number(b.dataset.lv) === OM.lv)); }
+function omokNew() { OM.b = Array.from({ length: N }, () => Array(N).fill(0)); OM.hist = []; OM.over = false; OM.started = true; OM.busy = false; $('omokMsg').className = 'msg'; $('omokMsg').textContent = '대표님이 흑(먼저)이에요. 아무 칸이나 눌러 시작하세요.'; omokPaintLv(); omokDraw(); }
+function omokDraw() {
+  const cv = $('omokBoard'), c = cv.getContext('2d'), W = cv.width, m = 30, s = (W - m * 2) / (N - 1);
+  c.clearRect(0, 0, W, W); c.fillStyle = '#E9C98F'; c.fillRect(0, 0, W, W);
+  c.strokeStyle = '#6B4F1D'; c.lineWidth = 2;
+  for (let i = 0; i < N; i++) { c.beginPath(); c.moveTo(m, m + i * s); c.lineTo(W - m, m + i * s); c.stroke(); c.beginPath(); c.moveTo(m + i * s, m); c.lineTo(m + i * s, W - m); c.stroke(); }
+  [[3,3],[3,11],[7,7],[11,3],[11,11]].forEach(([y,x]) => { c.fillStyle = '#6B4F1D'; c.beginPath(); c.arc(m + x * s, m + y * s, 6, 0, 7); c.fill(); });
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) { const v = OM.b[y][x]; if (!v) continue;
+    const g = c.createRadialGradient(m + x * s - 6, m + y * s - 6, 3, m + x * s, m + y * s, s * .46);
+    if (v === 1) { g.addColorStop(0, '#555'); g.addColorStop(1, '#0B0B0B'); } else { g.addColorStop(0, '#fff'); g.addColorStop(1, '#C8C8C8'); }
+    c.fillStyle = g; c.beginPath(); c.arc(m + x * s, m + y * s, s * .45, 0, 7); c.fill(); }
+  const L = OM.hist[OM.hist.length - 1];
+  if (L) { c.fillStyle = '#EF4444'; c.beginPath(); c.arc(m + L[1] * s, m + L[0] * s, 7, 0, 7); c.fill(); }
+  if (OM.winLine) { c.strokeStyle = '#EF4444'; c.lineWidth = 7; c.beginPath(); c.moveTo(m + OM.winLine[0][1] * s, m + OM.winLine[0][0] * s); c.lineTo(m + OM.winLine[1][1] * s, m + OM.winLine[1][0] * s); c.stroke(); }
+}
+$('omokBoard').addEventListener('click', e => {
+  if (OM.over || OM.busy) return;
+  const r = e.target.getBoundingClientRect(), W = r.width, m = 30 * W / 720, s = (W - m * 2) / (N - 1);
+  const x = Math.round((e.clientX - r.left - m) / s), y = Math.round((e.clientY - r.top - m) / s);
+  if (x < 0 || y < 0 || x >= N || y >= N || OM.b[y][x]) return;
+  if (!OM.hist.length) recPlay();
+  omokPut(y, x, 1);
+  if (OM.over) return;
+  OM.busy = true; $('omokMsg').textContent = 'AI가 생각 중…';
+  setTimeout(() => { const [ay, ax] = omokAI(); omokPut(ay, ax, 2); OM.busy = false; if (!OM.over) $('omokMsg').textContent = '대표님 차례예요.'; }, 280);
+});
+const DIRS = [[0,1],[1,0],[1,1],[1,-1]];
+function omokPut(y, x, p) {
+  OM.b[y][x] = p; OM.hist.push([y, x, p]); OM.winLine = null;
+  const w = omokWin(y, x, p);
+  if (w) { OM.over = true; OM.winLine = w;
+    if (p === 1) { REC.omokWin = (REC.omokWin || 0) + 1; recSave(); $('omokMsg').className = 'msg win'; $('omokMsg').textContent = '🎉 대표님 승리! 축하드려요.'; }
+    else { $('omokMsg').className = 'msg lose'; $('omokMsg').textContent = 'AI가 이겼어요. 한 판 더 하실래요?'; } }
+  else if (OM.hist.length >= N * N) { OM.over = true; $('omokMsg').textContent = '무승부예요.'; }
+  omokDraw();
+}
+function omokWin(y, x, p) {
+  for (const [dy, dx] of DIRS) { let a = [y, x], b = [y, x], n = 1;
+    for (let k = 1; k < 6; k++) { const yy = y + dy * k, xx = x + dx * k; if (yy < 0 || xx < 0 || yy >= N || xx >= N || OM.b[yy][xx] !== p) break; n++; b = [yy, xx]; }
+    for (let k = 1; k < 6; k++) { const yy = y - dy * k, xx = x - dx * k; if (yy < 0 || xx < 0 || yy >= N || xx >= N || OM.b[yy][xx] !== p) break; n++; a = [yy, xx]; }
+    if (n >= 5) return [a, b]; }
+  return null;
+}
+function omokUndo() {
+  if (OM.busy || !OM.hist.length) return;
+  let k = 0; while (OM.hist.length && k < 2) { const [y, x, p] = OM.hist.pop(); OM.b[y][x] = 0; k++; if (p === 1) break; }
+  OM.over = false; OM.winLine = null; $('omokMsg').className = 'msg'; $('omokMsg').textContent = '한 수 물렀어요. 대표님 차례예요.'; omokDraw();
+}
+function lineScore(y, x, p) {
+  let total = 0;
+  for (const [dy, dx] of DIRS) {
+    let n = 1, open = 0;
+    let k = 1; while (true) { const yy = y + dy * k, xx = x + dx * k; if (yy < 0 || xx < 0 || yy >= N || xx >= N) break; if (OM.b[yy][xx] === p) { n++; k++; continue; } if (OM.b[yy][xx] === 0) open++; break; }
+    k = 1; while (true) { const yy = y - dy * k, xx = x - dx * k; if (yy < 0 || xx < 0 || yy >= N || xx >= N) break; if (OM.b[yy][xx] === p) { n++; k++; continue; } if (OM.b[yy][xx] === 0) open++; break; }
+    if (n >= 5) total += 1000000;
+    else if (n === 4) total += open === 2 ? 100000 : open === 1 ? 12000 : 0;
+    else if (n === 3) total += open === 2 ? 9000 : open === 1 ? 900 : 0;
+    else if (n === 2) total += open === 2 ? 600 : open === 1 ? 80 : 0;
+    else total += open === 2 ? 12 : open;
+  }
+  return total;
+}
+function omokAI() {
+  let best = -1, cand = [];
+  const any = OM.hist.length;
+  if (!any) return [7, 7];
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+    if (OM.b[y][x]) continue;
+    let near = false; for (let dy = -2; dy <= 2 && !near; dy++) for (let dx = -2; dx <= 2; dx++) { const yy = y + dy, xx = x + dx; if (yy >= 0 && xx >= 0 && yy < N && xx < N && OM.b[yy][xx]) { near = true; break; } }
+    if (!near) continue;
+    const atk = lineScore(y, x, 2), def = lineScore(y, x, 1);
+    let sc = OM.lv === 1 ? atk * 0.8 + def * 0.6 + Math.random() * 400 : atk * 1.05 + def * 0.95 + Math.random() * 5;
+    sc += 7 - Math.max(Math.abs(y - 7), Math.abs(x - 7)) * 0.3;
+    if (sc > best) { best = sc; cand = [[y, x]]; } else if (sc === best) cand.push([y, x]);
+  }
+  return cand[Math.floor(Math.random() * cand.length)];
+}
+
+/* ---------- 사천성 ---------- */
+const SS_ICONS = ['🌲','🌷','🌻','🍁','🍀','🌵','🌸','🍄','🌳','🌼','🍂','🌹'];
+const SR = 8, SC = 6; // 8줄 × 6칸 = 48장 (12종 × 4장)
+const SS = { tiles: null, sel: null, left: 0, shuf: 3, t0: 0 };
+function ssNew() {
+  let arr = []; SS_ICONS.forEach(ic => { for (let i = 0; i < 4; i++) arr.push(ic); });
+  arr.sort(() => Math.random() - 0.5);
+  SS.tiles = Array.from({ length: SR + 2 }, () => Array(SC + 2).fill(null));
+  let k = 0; for (let r = 1; r <= SR; r++) for (let c = 1; c <= SC; c++) SS.tiles[r][c] = arr[k++];
+  SS.sel = null; SS.left = SR * SC; SS.shuf = 3; SS.t0 = Date.now(); SS.counted = false;
+  $('ssMsg').className = 'msg'; $('ssMsg').textContent = '같은 그림 두 개를 이어 보세요. 꺾이는 곳은 두 번까지!';
+  $('ssShufBtn').textContent = '🔀 섞기 (3)'; $('ssShufBtn').disabled = false;
+  if (!ssFindPair()) ssShuffle(false);
+  ssDraw();
+}
+function ssDraw() {
+  const B = $('ssBoard'); B.style.gridTemplateColumns = 'repeat(' + SC + ',1fr)'; B.innerHTML = '';
+  for (let r = 1; r <= SR; r++) for (let c = 1; c <= SC; c++) {
+    const t = SS.tiles[r][c], el = document.createElement('button');
+    el.className = 'tile' + (t ? '' : ' gone') + (SS.sel && SS.sel[0] === r && SS.sel[1] === c ? ' sel' : '');
+    el.textContent = t || ''; el.dataset.r = r; el.dataset.c = c;
+    el.onclick = () => ssTap(r, c); B.appendChild(el);
+  }
+}
+function ssTap(r, c) {
+  if (!SS.tiles[r][c]) return;
+  if (!SS.counted) { SS.counted = true; recPlay(); }
+  if (!SS.sel) { SS.sel = [r, c]; ssDraw(); return; }
+  const [r0, c0] = SS.sel;
+  if (r0 === r && c0 === c) { SS.sel = null; ssDraw(); return; }
+  if (SS.tiles[r0][c0] !== SS.tiles[r][c]) { SS.sel = [r, c]; ssDraw(); return; }
+  const path = ssPath(r0, c0, r, c);
+  if (!path) { toast('길이 막혀 있어요. 꺾이는 곳은 두 번까지예요.'); SS.sel = [r, c]; ssDraw(); return; }
+  ssShowPath(path);
+  SS.tiles[r0][c0] = null; SS.tiles[r][c] = null; SS.sel = null; SS.left -= 2;
+  setTimeout(() => {
+    ssDraw();
+    if (!SS.left) { const sec = Math.round((Date.now() - SS.t0) / 1000); $('ssMsg').className = 'msg win'; $('ssMsg').textContent = '🎉 다 맞췄어요! ' + Math.floor(sec / 60) + '분 ' + (sec % 60) + '초';
+      if (!REC.ssBest || sec < REC.ssBest) { REC.ssBest = sec; recSave(); toast('최고 기록이에요!'); } return; }
+    if (!ssFindPair()) { if (SS.shuf > 0) { toast('더 이을 곳이 없어서 자동으로 섞었어요.'); ssShuffle(false); } else { $('ssMsg').className = 'msg lose'; $('ssMsg').textContent = '더 이을 곳이 없어요. 새 판을 눌러 주세요.'; } }
+  }, 260);
+}
+function ssPath(r1, c1, r2, c2) { // 꺾임 2번 이하 · 바깥 테두리로 돌아가기 가능 (BFS)
+  const H = SR + 2, W = SC + 2, D = [[-1,0],[1,0],[0,-1],[0,1]];
+  const best = Array.from({ length: H }, () => Array.from({ length: W }, () => [9, 9, 9, 9]));
+  const q = [];
+  for (let d = 0; d < 4; d++) { q.push([r1, c1, d, 0, [[r1, c1]]]); }
+  while (q.length) {
+    const [r, c, d, t, p] = q.shift();
+    const nr = r + D[d][0], nc = c + D[d][1];
+    if (nr < 0 || nc < 0 || nr >= H || nc >= W) continue;
+    if (nr === r2 && nc === c2) return p.concat([[nr, nc]]);
+    if (SS.tiles[nr][nc]) continue;
+    for (let nd = 0; nd < 4; nd++) {
+      const nt = t + (nd === d ? 0 : 1); if (nt > 2) continue;
+      if (best[nr][nc][nd] <= nt) continue; best[nr][nc][nd] = nt;
+      q.push([nr, nc, nd, nt, nd === d ? p : p.concat([[nr, nc]])]);
+    }
+  }
+  return null;
+}
+function ssShowPath(p) {
+  const B = $('ssBoard').getBoundingClientRect(), cw = (B.width - 16 - 4 * (SC - 1)) / SC, ch = cw * 4 / 3;
+  const pt = ([r, c]) => [B.left + 8 + (c - 1) * (cw + 4) + cw / 2, B.top + 8 + (r - 1) * (ch + 4) + ch / 2];
+  const sv = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); sv.setAttribute('class', 'ssline');
+  sv.style.left = '0'; sv.style.top = '0'; sv.setAttribute('width', innerWidth); sv.setAttribute('height', innerHeight);
+  const pl = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+  pl.setAttribute('points', p.map(pt).map(a => a.join(',')).join(' ')); pl.setAttribute('fill', 'none'); pl.setAttribute('stroke', '#FDE047'); pl.setAttribute('stroke-width', '6'); pl.setAttribute('stroke-linecap', 'round'); pl.setAttribute('stroke-linejoin', 'round');
+  sv.appendChild(pl); document.body.appendChild(sv); setTimeout(() => sv.remove(), 300);
+}
+function ssFindPair() {
+  const L = []; for (let r = 1; r <= SR; r++) for (let c = 1; c <= SC; c++) if (SS.tiles[r][c]) L.push([r, c]);
+  for (let i = 0; i < L.length; i++) for (let j = i + 1; j < L.length; j++) { const a = L[i], b = L[j]; if (SS.tiles[a[0]][a[1]] === SS.tiles[b[0]][b[1]] && ssPath(a[0], a[1], b[0], b[1])) return [a, b]; }
+  return null;
+}
+function ssHint() { const p = ssFindPair(); if (!p) { toast('이을 곳이 없어요. 섞기를 눌러 보세요.'); return; } ssDraw(); p.forEach(([r, c]) => { const el = document.querySelector(`#ssBoard .tile[data-r="${r}"][data-c="${c}"]`); if (el) el.classList.add('hint'); }); }
+function ssShuffle(byUser) {
+  if (byUser) { if (SS.shuf <= 0) { toast('섞기를 다 썼어요.'); return; } SS.shuf--; $('ssShufBtn').textContent = '🔀 섞기 (' + SS.shuf + ')'; if (!SS.shuf) $('ssShufBtn').disabled = true; }
+  const pos = [], vals = []; for (let r = 1; r <= SR; r++) for (let c = 1; c <= SC; c++) if (SS.tiles[r][c]) { pos.push([r, c]); vals.push(SS.tiles[r][c]); }
+  for (let tries = 0; tries < 30; tries++) { vals.sort(() => Math.random() - 0.5); pos.forEach(([r, c], i) => SS.tiles[r][c] = vals[i]); if (ssFindPair()) break; }
+  SS.sel = null; ssDraw();
+}
+
+/* ---------- 윷놀이 ---------- */
+// 칸 번호: 0=출발/도착(참먹이) · 바깥 1~19 · 5·10·15 모서리 · A1 A2 C A3 A4 (5→15 지름길) · B1 B2 C B3 B4 (10→참먹이 지름길)
+const YP = (() => { const P = {}; const S = 300 / 5, o = 30;
+  // 바깥: 오른쪽 아래(0)에서 위로, 왼쪽으로, 아래로, 오른쪽으로
+  for (let i = 0; i <= 5; i++) P[i] = [o + 300, o + 300 - i * S];
+  for (let i = 6; i <= 10; i++) P[i] = [o + 300 - (i - 5) * S, o];
+  for (let i = 11; i <= 15; i++) P[i] = [o, o + (i - 10) * S];
+  for (let i = 16; i <= 19; i++) P[i] = [o + (i - 15) * S, o + 300];
+  const C = [o + 150, o + 150];
+  P.A1 = [o + 300 - 50, o + 50]; P.A2 = [o + 300 - 100, o + 100]; P.C = C; P.A3 = [o + 100, o + 300 - 100]; P.A4 = [o + 50, o + 300 - 50];
+  P.B1 = [o + 50, o + 50]; P.B2 = [o + 100, o + 100]; P.B3 = [o + 300 - 100, o + 300 - 100]; P.B4 = [o + 300 - 50, o + 300 - 50];
+  return P; })();
+const YNAME = { 1: '도', 2: '개', 3: '걸', 4: '윷', 5: '모' };
+const Y = { n: 2, pcs: [], turn: 'me', res: [], selRes: 0, throws: 0, started: false, over: false, busy: false, counted: false };
+try { Y.n = Number(localStorage.getItem('jn_rest_yut_n')) || 2; } catch (e) {}
+function yutSetN(n) { Y.n = n; try { localStorage.setItem('jn_rest_yut_n', n); } catch (e) {} yutNew(); }
+function yutNew() {
+  Y.pcs = []; ['me', 'ai'].forEach(o => { for (let i = 0; i < Y.n; i++) Y.pcs.push({ o, pos: null, via: '', done: false }); });
+  Y.turn = 'me'; Y.res = []; Y.selRes = 0; Y.throws = 1; Y.started = true; Y.over = false; Y.busy = false; Y.counted = false;
+  document.querySelectorAll('#yutCnt button').forEach(b => b.classList.toggle('on', Number(b.dataset.n) === Y.n));
+  $('yutMsg').className = 'msg'; $('yutMsg').textContent = '대표님(파랑) 차례예요. 윷을 던지세요!';
+  yutSticks([0, 0, 0, 0]); yutPaint();
+}
+function yutStep(pos, via, first) { // 한 칸 앞으로 (first = 이번 이동의 첫 걸음)
+  if (pos === null) return { pos: 1, via: '' };
+  if (pos === 5 && first) return { pos: 'A1', via: 'A' };
+  if (pos === 10 && first) return { pos: 'B1', via: 'B' };
+  if (pos === 'C' && first) return { pos: 'B3', via: 'B' };
+  const nx = { A1: 'A2', A2: 'C', A3: 'A4', A4: 15, B1: 'B2', B2: 'C', B3: 'B4', B4: 'END' };
+  if (pos === 'C') return { pos: via === 'A' ? 'A3' : 'B3', via };
+  if (nx[pos] !== undefined) return { pos: nx[pos], via: pos === 'A4' ? '' : via };
+  if (pos === 19) return { pos: 'END', via: '' };
+  return { pos: pos + 1, via };
+}
+function yutDest(p, steps) { let pos = p.pos, via = p.via; for (let i = 0; i < steps; i++) { const s = yutStep(pos, via, i === 0); pos = s.pos; via = s.via; if (pos === 'END') break; } return { pos, via }; }
+function yutGroup(p) { return p.pos === null ? [p] : Y.pcs.filter(q => q.o === p.o && !q.done && q.pos === p.pos && q.pos !== null); }
+function yutSticks(arr) { $('yutSticks').innerHTML = arr.map(f => `<div class="stick${f ? ' flat' : ''}"></div>`).join(''); }
+function yutThrow() {
+  if (Y.over || Y.busy || Y.turn !== 'me' || Y.throws <= 0) return;
+  if (!Y.counted) { Y.counted = true; recPlay(); }
+  yutDoThrow();
+}
+function yutDoThrow() {
+  const f = [0, 0, 0, 0].map(() => Math.random() < 0.5 ? 1 : 0), n = f.reduce((a, b) => a + b, 0);
+  const v = n === 0 ? 5 : n; yutSticks(f); Y.throws--; Y.res.push(v);
+  if (v >= 4) Y.throws++;
+  Y.selRes = Y.res.length - 1;
+  $('yutMsg').className = 'msg'; $('yutMsg').textContent = (Y.turn === 'me' ? '대표님: ' : 'AI: ') + YNAME[v] + '!' + (v >= 4 ? ' 한 번 더 던져요.' : (Y.turn === 'me' ? ' 움직일 말을 누르세요.' : ''));
+  yutPaint();
+}
+function yutPick(which) { // 내 차례에 말 고르기
+  if (Y.over || Y.busy || Y.turn !== 'me' || Y.throws > 0 || !Y.res.length) { if (Y.turn === 'me' && Y.throws > 0 && !Y.over) toast('먼저 윷을 던지세요.'); return; }
+  let p = which === 'new' ? Y.pcs.find(q => q.o === 'me' && !q.done && q.pos === null) : which;
+  if (!p) { toast('대기 중인 말이 없어요.'); return; }
+  yutMove(p, Y.res[Y.selRes]); Y.res.splice(Y.selRes, 1); Y.selRes = 0; yutAfterMove();
+}
+function yutMove(p, steps) {
+  const g = yutGroup(p), d = yutDest(p, steps);
+  g.forEach(q => { q.pos = d.pos; q.via = d.via; if (d.pos === 'END') { q.done = true; q.pos = 'END'; } });
+  Y.lastCap = false;
+  if (d.pos !== 'END') { const foes = Y.pcs.filter(q => q.o !== p.o && !q.done && q.pos === d.pos); if (foes.length) { foes.forEach(q => { q.pos = null; q.via = ''; }); Y.throws++; Y.lastCap = true; toast((p.o === 'me' ? '잡았어요! ' : 'AI가 잡았어요! ') + '한 번 더 던져요.'); } }
+}
+function yutAfterMove() {
+  yutPaint();
+  const left = o => Y.pcs.filter(q => q.o === o && !q.done).length;
+  if (!left('me')) { Y.over = true; REC.yutWin = (REC.yutWin || 0) + 1; recSave(); $('yutMsg').className = 'msg win'; $('yutMsg').textContent = '🎉 대표님 승리! 말이 다 났어요.'; yutPaint(); return; }
+  if (!left('ai')) { Y.over = true; $('yutMsg').className = 'msg lose'; $('yutMsg').textContent = 'AI가 이겼어요. 한 판 더 하실래요?'; yutPaint(); return; }
+  if (Y.throws > 0 || Y.res.length) { if (Y.turn === 'ai') setTimeout(yutAIStep, 650); else if (Y.throws > 0) $('yutMsg').textContent = '한 번 더 던지세요!'; return; }
+  Y.turn = Y.turn === 'me' ? 'ai' : 'me'; Y.throws = 1;
+  if (Y.turn === 'ai') { $('yutMsg').className = 'msg'; $('yutMsg').textContent = 'AI(빨강) 차례예요…'; Y.busy = true; yutPaint(); setTimeout(yutAIStep, 700); }
+  else { Y.busy = false; $('yutMsg').className = 'msg'; $('yutMsg').textContent = '대표님 차례예요. 윷을 던지세요!'; yutPaint(); }
+}
+function yutAIStep() {
+  if (Y.over) return;
+  Y.busy = true;
+  if (Y.throws > 0) { yutDoThrow(); setTimeout(yutAIStep, 700); return; }
+  if (!Y.res.length) { yutAfterMove(); return; }
+  // 가장 좋은 (결과, 말) 고르기
+  let best = null;
+  Y.res.forEach((v, ri) => {
+    const seen = new Set();
+    Y.pcs.filter(q => q.o === 'ai' && !q.done).forEach(p => {
+      const key = p.pos === null ? 'new' : String(p.pos); if (seen.has(key)) return; seen.add(key);
+      const d = yutDest(p, v), g = yutGroup(p).length;
+      let s = Math.random() * 3;
+      if (d.pos === 'END') s += 60 * g;
+      else {
+        const foes = Y.pcs.filter(q => q.o === 'me' && !q.done && q.pos === d.pos).length; s += foes * 90;
+        if (Y.pcs.some(q => q.o === 'ai' && !q.done && q !== p && q.pos === d.pos)) s += 15;
+        if (d.pos === 5 || d.pos === 10 || d.pos === 'C') s += 18;
+        // 상대 말 바로 앞(1~3칸)에 서면 위험
+        const risk = Y.pcs.filter(q => q.o === 'me' && !q.done).some(q => [1, 2, 3].some(k => { const dd = yutDest(q, k); return dd.pos === d.pos; }));
+        if (risk) s -= 25 * g;
+        s += v;
+        if (p.pos === null) s += 4;
+      }
+      if (!best || s > best.s) best = { s, ri, p };
+    });
+  });
+  if (!best) { Y.res = []; yutAfterMove(); return; }
+  const v = Y.res[best.ri]; Y.res.splice(best.ri, 1);
+  yutMove(best.p, v);
+  $('yutMsg').textContent = 'AI: ' + YNAME[v] + '(으)로 말을 옮겼어요.';
+  yutPaint(); setTimeout(yutAfterMove, 600);
+}
+function yutPaint() {
+  const svg = $('yutBoard'); let h = '';
+  const ln = (a, b) => `<line x1="${YP[a][0]}" y1="${YP[a][1]}" x2="${YP[b][0]}" y2="${YP[b][1]}" stroke="#B45309" stroke-width="3"/>`;
+  h += `<rect x="30" y="30" width="300" height="300" fill="none" stroke="#B45309" stroke-width="3"/>` + ln(5, 15) + ln(10, 0);
+  Object.keys(YP).forEach(k => { const big = ['0', '5', '10', '15', 'C'].includes(k); const [x, y] = YP[k];
+    h += `<circle cx="${x}" cy="${y}" r="${big ? 17 : 11}" fill="${big ? '#FCD34D' : '#FFFBEB'}" stroke="#92400E" stroke-width="3"/>`; });
+  h += `<text x="${YP[0][0] - 6}" y="${YP[0][1] + 38}" text-anchor="middle" font-size="13" font-weight="900" fill="#92400E">출발·도착</text>`;
+  // 말
+  const groups = {};
+  Y.pcs.filter(p => !p.done && p.pos !== null).forEach(p => { const k = p.o + '|' + p.pos; (groups[k] = groups[k] || []).push(p); });
+  Object.keys(groups).forEach(k => { const g = groups[k], p = g[0], [x, y] = YP[p.pos]; const dx = p.o === 'me' ? -7 : 7;
+    h += `<g data-k="${k}" style="cursor:pointer"><circle cx="${x + dx}" cy="${y - 4}" r="15" fill="${p.o === 'me' ? '#2563EB' : '#DC2626'}" stroke="#fff" stroke-width="3"/>` + (g.length > 1 ? `<text x="${x + dx}" y="${y + 1}" text-anchor="middle" font-size="15" font-weight="900" fill="#fff">${g.length}</text>` : '') + `</g>`; });
+  // 내 말 목적지 미리 표시
+  if (Y.turn === 'me' && !Y.over && Y.throws === 0 && Y.res.length) { const v = Y.res[Y.selRes];
+    Y.pcs.filter(p => p.o === 'me' && !p.done && p.pos !== null).forEach(p => { const d = yutDest(p, v); if (d.pos !== 'END') { const [x, y] = YP[d.pos]; h += `<circle cx="${x}" cy="${y}" r="20" fill="none" stroke="#2563EB" stroke-width="3" stroke-dasharray="4 4"/>`; } }); }
+  svg.innerHTML = h;
+  svg.querySelectorAll('g[data-k]').forEach(g => g.addEventListener('click', () => { const [o, pos] = g.dataset.k.split('|'); if (o !== 'me') return; const p = Y.pcs.find(q => q.o === 'me' && !q.done && String(q.pos) === pos); if (p) yutPick(p); }));
+  // 결과 칩
+  $('yutChips').innerHTML = Y.res.map((v, i) => `<button class="chip${i === Y.selRes && Y.turn === 'me' ? ' on' : ''}" onclick="yutSel(${i})">${YNAME[v]}</button>`).join('');
+  const wait = o => Y.pcs.filter(q => q.o === o && !q.done && q.pos === null).length, left = o => Y.pcs.filter(q => q.o === o && !q.done).length;
+  $('yutWaitMe').textContent = wait('me'); $('yutWaitAi').textContent = wait('ai'); $('yutLeftMe').textContent = left('me'); $('yutLeftAi').textContent = left('ai');
+  $('yutThrowBtn').disabled = Y.over || Y.turn !== 'me' || Y.throws <= 0;
+  $('yutNewPiece').disabled = Y.over || Y.turn !== 'me' || Y.throws > 0 || !Y.res.length || !wait('me');
+}
+function yutSel(i) { if (Y.turn !== 'me') return; Y.selRes = i; yutPaint(); }
+
+(function () { const v = (location.hash || '').slice(1); if (VIEWS[v] && v !== 'hub') { history.replaceState({ v: 'hub' }, '', location.pathname); history.pushState({ v }, '', '#' + v); go2(v); } else show('hub'); function go2(x) { show(x); if (x === 'omok') omokNew(); if (x === 'shisen') ssNew(); if (x === 'yut') yutNew(); } })();
+recPaint();
+</script>
+</body>
+</html>

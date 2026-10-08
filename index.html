@@ -115,6 +115,8 @@
     #tabEncyclopedia, #tabLens, #tabWeather { background: linear-gradient(160deg, #FFFFFF 0%, #EEF2F6 100%) !important; border: 1.5px solid #84CC16 !important; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35) !important; }
     #tabLounge { background: linear-gradient(145deg, #1E293B 0%, #273449 60%, #1E293B 100%) !important; border: 2px solid #E3B341 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important; } /* 🎨 [패치 #105] */
     #tabLounge .lg-t { color: #FFFFFF !important; } #tabLounge .lg-s { color: #CBD5E1 !important; }
+    #tabRest { background: linear-gradient(145deg, #1E293B 0%, #273449 60%, #1E293B 100%) !important; border: 2px solid #38BDF8 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important; } /* 🎮 [패치 #150] */
+    #tabRest .rs-t { color: #FFFFFF !important; } #tabRest .rs-s { color: #CBD5E1 !important; }
     #tabLedger, #tabAiChat { background: linear-gradient(145deg, #1E293B 0%, #273449 60%, #1E293B 100%) !important; border: 1.5px solid #E3B341 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important; }
     #tabStock { background: linear-gradient(145deg, #1E293B 0%, #273449 60%, #1E293B 100%) !important; border: 2px solid #E3B341 !important; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important; }
     .own-t { color: #FFFFFF !important; } .own-i { color: #E3B341 !important; }
@@ -167,6 +169,7 @@
     html.outdoor #tabMemo, html.outdoor #tabClientRequest { box-shadow: 0 4px 12px rgba(63,98,18,0.22) !important; }
     html.outdoor #tabLounge { background: #FFF8E6 !important; border: 2px solid #E3B341 !important; box-shadow: 0 3px 8px rgba(20,38,30,0.08) !important; } /* 🎨 [패치 #105] 위 장부함 칸과 같은 크림색 */
     html.outdoor #tabLounge .lg-t { color: #151E2D !important; } html.outdoor #tabLounge .lg-s { color: #5B4A1E !important; }
+    html.outdoor #tabRest { background: #F0F9FF !important; border: 2px solid #38BDF8 !important; box-shadow: 0 3px 8px rgba(20,38,30,0.08) !important; } html.outdoor #tabRest .rs-t { color: #151E2D !important; } html.outdoor #tabRest .rs-s { color: #0C4A6E !important; } /* 🎮 [패치 #150] */
     
     html.outdoor #bottomNav { background: #FFFFFF !important; border-top: 1px solid #DCE2D6 !important; box-shadow: 0 -4px 14px rgba(20,38,30,0.08) !important; }
     html.outdoor .bnav-btn:not(.is-active):not(.bnav-center) { color: #4B5A52 !important; }
@@ -546,6 +549,11 @@
             <button type="button" id="tabLounge" onclick="switchView('lounge')" class="w-full mt-3 text-left rounded-[22px] px-4 py-3.5 flex items-center gap-3.5 active:scale-[0.98] transition-all"><!-- 🎨 [패치 #105] 금색 통 → 장부함과 같은 남색(야외: 크림색) + 금색 테두리 -->
                 <span class="w-[50px] h-[50px] rounded-[16px] flex items-center justify-center shrink-0" style="background:#E3B341;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#151E2D" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z"></path><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"></path></svg></span>
                 <span class="flex flex-col gap-0.5"><span class="lg-t text-[21px] font-black tracking-tight leading-tight">대표님 소통방</span><span class="lg-s text-[15px] font-bold leading-snug break-keep">일감·장비·노하우를 대표님들과 나눠요</span></span>
+            </button>
+            <!-- 🎮 [패치 #150] 대표님 휴식방: 소통방 아래 따로 · 누르면 rest.html(게임은 따로 불러와서 앱이 무거워지지 않음) -->
+            <button type="button" id="tabRest" onclick="location.href='/rest.html'" class="w-full mt-3 text-left rounded-[22px] px-4 py-3.5 flex items-center gap-3.5 active:scale-[0.98] transition-all">
+                <span class="w-[50px] h-[50px] rounded-[16px] flex items-center justify-center shrink-0" style="background:#38BDF8;font-size:28px;line-height:1;">🎮</span>
+                <span class="flex flex-col gap-0.5"><span class="rs-t text-[21px] font-black tracking-tight leading-tight">대표님 휴식방</span><span class="rs-s text-[15px] font-bold leading-snug break-keep">장기·오목·윷놀이 한 판으로 잠깐 쉬어 가요</span></span>
             </button>
         </div>
                 
@@ -5241,7 +5249,7 @@
     ];
     // AI에게만 주는 추가 설명 (버튼 목록에는 안 나옴)
     const HELP_EXTRA = [
-      '조경노트 PRO: 조경 사업자용 앱. 메인 메뉴 = 업무 관리(작업 일정표·작업 일지 작성·거래처 목록·견적서·견적 보관함·연락처·AI 메모장), 현장 도구(식물 검색·AI 렌즈·날씨), 대표님 전용(개인 장부함·개인 재고함·AI 현장 비서·고객 의뢰함·대표님 소통방).',
+      '조경노트 PRO: 조경 사업자용 앱. 메인 메뉴 = 업무 관리(작업 일정표·작업 일지 작성·거래처 목록·견적서·견적 보관함·연락처·AI 메모장), 현장 도구(식물 검색·AI 렌즈·날씨), 대표님 전용(개인 장부함·개인 재고함·AI 현장 비서·고객 의뢰함·대표님 소통방), 대표님 휴식방(오목·사천성·윷놀이 게임, 돈·포인트 없음, 장기·바둑 사활·맞고는 준비 중).',
       '아래 메뉴줄: 홈 · 일정 · 대표님 소통방 · 일지 · 견적. 위쪽 줄: 문의(이 도움말) · 로그아웃 · 설정.',
       '화면 바꾸기: 메인 화면 맨 위 [야외용]을 누르면 밝은 화면, [실내용]을 누르면 어두운 화면.',
       '★ 대표님 소통방은 지금 준비 중(문 열기 전): 게시판 목록만 보이고 글 보기·글쓰기·출석·1:1 대화·활동 포인트는 아직 쓸 수 없음. 물으면 준비 중이며 열리면 앱 공지로 알려 드린다고 답할 것. (아래는 문을 연 뒤의 설명)', // 🚧 [패치 #105]
