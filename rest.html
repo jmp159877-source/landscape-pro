@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#0F172A">
 <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<!-- 🎮 [패치 #150·#151 소리·배경음악·#152 윷놀이 한 화면·갈 자리 누르기·#153 윷 던지기 연출·말 한 칸씩] 대표님 휴식방: 앱 본체와 따로 불러오는 가벼운 게임 화면 (돈·포인트 없음 · 기록은 이 휴대폰에만) -->
+<!-- 🎮 [패치 #150·#151 소리·배경음악·#152 윷놀이 한 화면·갈 자리 누르기·#153 윷 던지기 연출·말 한 칸씩·#154 소나무 말·AI 빨간 윷·느린 템포·판 종류 띄우기·#155 오목 AI 천천히] 대표님 휴식방: 앱 본체와 따로 불러오는 가벼운 게임 화면 (돈·포인트 없음 · 기록은 이 휴대폰에만) -->
 <style>
   :root { --bg:#0F172A; --card:#1E293B; --line:#475569; --lime:#84CC16; --lime2:#BEF264; --sky:#38BDF8; --ink:#151E2D; --sub:#CBD5E1; }
   * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -64,8 +64,14 @@
   .yrow .chips { justify-content:flex-start; min-height:44px; flex:1; }
   #vYut .bar { margin:6px 0; }
   .dst { cursor:pointer; }
+  .ymode { margin:30px 0 6px; font-size:13.5px; font-weight:800; color:#94A3B8; text-align:center; } .ymode small { font-weight:700; }
   .ythrow { position:fixed; inset:0; z-index:40; background:rgba(15,23,42,.55); overflow:hidden; transition:opacity .25s; }
   .ythrow.out { opacity:0; }
+  .ythrow .who { position:absolute; left:50%; bottom:13%; transform:translateX(-50%); white-space:nowrap; font-size:22px; font-weight:900; color:#fff; background:#1D4ED8; border:3px solid #fff; border-radius:999px; padding:10px 22px; box-shadow:0 8px 20px rgba(0,0,0,.4); }
+  .ythrow.ai .who { background:#DC2626; }
+  .ythrow.ai .ys { background:linear-gradient(90deg,#7F1D1D,#DC2626 45%,#7F1D1D); border-color:#450A0A; }
+  .ythrow.ai .ys.flat { background:#FEE2E2; }
+  .stick.ai { background:#DC2626; border-color:#7F1D1D; } .stick.ai.flat { background:#FEE2E2; }
   .ythrow .mat { position:absolute; left:50%; top:46%; width:min(86vw,380px); height:min(52vw,230px); transform:translate(-50%,-50%); border-radius:50%; background:repeating-linear-gradient(90deg,#C08A4A 0 6px,#A9733A 6px 12px); box-shadow:inset 0 0 30px rgba(0,0,0,.45), 0 10px 30px rgba(0,0,0,.4); }
   .ythrow .ys { position:absolute; left:-17px; top:-80px; width:34px; height:160px; border-radius:17px; background:linear-gradient(90deg,#8B5A2B,#C68B4E 45%,#8B5A2B); border:3px solid #5C3A1A; box-shadow:0 8px 14px rgba(0,0,0,.45); will-change:transform; }
   .ythrow .ys.flat { background:#FFF3D6; }
@@ -134,7 +140,8 @@
     <div class="msg ymsg" id="yutMsg">대표님(파랑) 차례예요. 윷을 던지세요!</div>
     <svg id="yutBoard" viewBox="0 0 360 378"></svg>
     <div class="yrow"><div class="sticks" id="yutSticks"></div><div class="chips" id="yutChips"></div></div>
-    <div class="bar"><button class="btn pri" id="yutThrowBtn" onclick="yutThrow()" style="flex:2">🎲 윷 던지기</button><button class="btn" onclick="yutNew()">새 판</button></div>
+    <div class="bar"><button class="btn pri" id="yutThrowBtn" onclick="yutThrow()" style="flex:2">🎲 윷 던지기</button><button class="btn" onclick="if (!yutInPlay() || confirm('지금 하던 판을 그만두고 새 판으로 시작할까요?')) yutNew()">새 판</button></div>
+    <div class="ymode">판 종류 바꾸기 <small>(누르면 새 판으로 시작해요)</small></div>
     <div class="seg" id="yutCnt"><button data-n="2" onclick="yutSetN(2)">빠른 판 (말 2개)</button><button data-n="4" onclick="yutSetN(4)">보통 판 (말 4개)</button></div>
   </section>
 </div>
@@ -270,7 +277,9 @@ $('omokBoard').addEventListener('click', e => {
   omokPut(y, x, 1);
   if (OM.over) return;
   OM.busy = true; $('omokMsg').textContent = 'AI가 생각 중…';
-  setTimeout(() => { const [ay, ax] = omokAI(); omokPut(ay, ax, 2); OM.busy = false; if (!OM.over) $('omokMsg').textContent = '대표님 차례예요.'; }, 280);
+  // ⏳ [패치 #155] AI가 1초 남짓 '생각'한 뒤 둠 (점 세 개가 깜빡)
+  let dots = 0; const thk = setInterval(() => { dots = (dots + 1) % 4; $('omokMsg').textContent = 'AI가 생각 중' + '.'.repeat(dots); }, 300);
+  setTimeout(() => { clearInterval(thk); const [ay, ax] = omokAI(); omokPut(ay, ax, 2); OM.busy = false; if (!OM.over) $('omokMsg').textContent = '대표님 차례예요.'; }, 1000 + Math.random() * 500);
 });
 const DIRS = [[0,1],[1,0],[1,1],[1,-1]];
 function omokPut(y, x, p) {
@@ -422,7 +431,16 @@ const YP = (() => { const P = {}; const S = 300 / 5, o = 30;
 const YNAME = { 1: '도', 2: '개', 3: '걸', 4: '윷', 5: '모' };
 const Y = { n: 2, pcs: [], turn: 'me', res: [], selRes: 0, throws: 0, started: false, over: false, busy: false, counted: false };
 try { Y.n = Number(localStorage.getItem('jn_rest_yut_n')) || 2; } catch (e) {}
-function yutSetN(n) { Y.n = n; try { localStorage.setItem('jn_rest_yut_n', n); } catch (e) {} yutNew(); }
+
+/* 🌲 [패치 #154] 말 그림: 대표님 = 파란 바탕 소나무, AI = 빨간 말 · 업힌 수는 노란 숫자 */
+function yutTok(o, n) {
+  const pine = '<g fill="#ECFCCB"><path d="M0 -12 L7 -4 L-7 -4Z"/><path d="M0 -7 L9 2 L-9 2Z"/><path d="M0 -1 L11 8 L-11 8Z"/></g><rect x="-2" y="7.5" width="4" height="4.5" rx="1" fill="#A16207"/>';
+  const ai = '<circle cx="0" cy="0" r="6" fill="#FECACA"/><circle cx="0" cy="0" r="2.6" fill="#7F1D1D"/>';
+  return `<circle cx="0" cy="0" r="16.5" fill="${o === 'me' ? '#1D4ED8' : '#DC2626'}" stroke="#fff" stroke-width="3"/>` + (o === 'me' ? pine : ai) +
+    (n > 1 ? `<circle cx="12" cy="-12" r="8.5" fill="#FDE047" stroke="#1C1917" stroke-width="2"/><text x="12" y="-8" text-anchor="middle" font-size="12" font-weight="900" fill="#1C1917">${n}</text>` : '');
+}
+function yutInPlay() { return Y.started && Y.counted && !Y.over; }
+function yutSetN(n) { if (n === Y.n && yutInPlay()) return; if (yutInPlay() && !confirm('지금 하던 판을 그만두고 새 판(말 ' + n + '개)으로 시작할까요?')) return; Y.n = n; try { localStorage.setItem('jn_rest_yut_n', n); } catch (e) {} yutNew(); }
 function yutNew() {
   Y.pcs = []; ['me', 'ai'].forEach(o => { for (let i = 0; i < Y.n; i++) Y.pcs.push({ o, pos: null, via: '', done: false }); });
   Y.turn = 'me'; Y.res = []; Y.selRes = 0; Y.throws = 1; Y.started = true; Y.over = false; Y.busy = false; Y.counted = false;
@@ -443,7 +461,7 @@ function yutStep(pos, via, first) { // 한 칸 앞으로 (first = 이번 이동�
 }
 function yutDest(p, steps) { let pos = p.pos, via = p.via; for (let i = 0; i < steps; i++) { const s = yutStep(pos, via, i === 0); pos = s.pos; via = s.via; if (pos === 'END') break; } return { pos, via }; }
 function yutGroup(p) { return p.pos === null ? [p] : Y.pcs.filter(q => q.o === p.o && !q.done && q.pos === p.pos && q.pos !== null); }
-function yutSticks(arr) { $('yutSticks').innerHTML = arr.map(f => `<div class="stick${f ? ' flat' : ''}"></div>`).join(''); }
+function yutSticks(arr, o) { $('yutSticks').innerHTML = arr.map(f => `<div class="stick${f ? ' flat' : ''}${o === 'ai' ? ' ai' : ''}"></div>`).join(''); }
 function yutThrow() {
   if (Y.over || Y.busy || Y.turn !== 'me' || Y.throws <= 0) return;
   if (!Y.counted) { Y.counted = true; recPlay(); }
@@ -455,15 +473,15 @@ function yutDoThrow(cb) {
   const f = [0, 0, 0, 0].map(() => Math.random() < 0.5 ? 1 : 0), n = f.reduce((a, b) => a + b, 0);
   const v = n === 0 ? 5 : n;
   yutThrowAnim(f, v, () => {
-    yutSticks(f); Y.throws--; Y.res.push(v); if (v >= 4) Y.throws++;
+    yutSticks(f, Y.turn); Y.throws--; Y.res.push(v); if (v >= 4) Y.throws++;
     Y.selRes = Y.res.length - 1;
     $('yutMsg').className = 'msg'; $('yutMsg').textContent = (Y.turn === 'me' ? '대표님: ' : 'AI: ') + YNAME[v] + '!' + (v >= 4 ? ' 한 번 더 던져요.' : (Y.turn === 'me' ? ' 점선 동그라미(갈 자리)를 누르세요.' : ''));
     yutPaint(); cb && cb();
   });
 }
 function yutThrowAnim(f, v, done) {
-  const ov = document.createElement('div'); ov.className = 'ythrow';
-  ov.innerHTML = '<div class="mat"></div>' + f.map(() => '<div class="ys"></div>').join('') + `<div class="yres">${YNAME[v]}<small>${v >= 4 ? '한 번 더!' : v + '칸'}</small></div>`;
+  const ov = document.createElement('div'); ov.className = 'ythrow' + (Y.turn === 'ai' ? ' ai' : '');
+  ov.innerHTML = '<div class="mat"></div>' + f.map(() => '<div class="ys"></div>').join('') + `<div class="who">${Y.turn === 'ai' ? '🔴 AI가 던져요' : '🌲 대표님이 던져요'}</div><div class="yres">${YNAME[v]}<small>${v >= 4 ? '한 번 더!' : v + '칸'}</small></div>`;
   document.body.appendChild(ov);
   const W = innerWidth, H = innerHeight, cx = W / 2, cy = H * 0.46;
   const sticks = [...ov.querySelectorAll('.ys')];
@@ -473,7 +491,7 @@ function yutThrowAnim(f, v, done) {
   sticks.forEach((st, i) => {
     const xs = cx + (i - 1.5) * 26, ys = H + 40, xf = cx + (i - 1.5) * (W * 0.16) + (Math.random() - 0.5) * 30, yf = cy + (Math.random() - 0.5) * 70;
     const r0 = (Math.random() - 0.5) * 40, rf = (Math.random() - 0.5) * 70 + (i % 2 ? 8 : -8), spin = 540 + Math.random() * 540;
-    const peakY = H * 0.08 + Math.random() * 60, t = 1250 + i * 70;
+    const peakY = H * 0.06 + Math.random() * 60, t = 2050 + i * 110;
     land.push(t * 0.74);
     st.animate([
       { transform: `translate(${xs}px,${ys}px) rotate(${r0}deg) scale(.7)` },
@@ -484,10 +502,10 @@ function yutThrowAnim(f, v, done) {
     ], { duration: t, easing: 'cubic-bezier(.25,.7,.35,1)', fill: 'forwards' });
     setTimeout(() => { st.classList.toggle('flat', !!f[i]); st.dataset.done = '1'; sfx('clack'); }, t * 0.74);
   });
-  const tEnd = 1250 + 3 * 70;
+  const tEnd = 2050 + 3 * 110;
   setTimeout(() => { clearInterval(flick); sticks.forEach((st, i) => st.classList.toggle('flat', !!f[i])); const r = ov.querySelector('.yres'); r.classList.add('on'); sfx(v >= 4 ? 'yutBig' : 'yutSmall'); if (v >= 4) vib([40, 30, 60]); }, tEnd + 60);
-  setTimeout(() => { ov.classList.add('out'); }, tEnd + 1050);
-  setTimeout(() => { ov.remove(); done(); }, tEnd + 1300);
+  setTimeout(() => { ov.classList.add('out'); }, tEnd + 1150);
+  setTimeout(() => { ov.remove(); done(); }, tEnd + 1400);
 }
 function yutPick(which) { // 내 차례에 말 고르기
   if (Y.over || Y.busy || Y.turn !== 'me' || Y.throws > 0 || !Y.res.length) { if (Y.turn === 'me' && Y.throws > 0 && !Y.over && !Y.busy) toast('먼저 윷을 던지세요.'); return; }
@@ -504,7 +522,7 @@ function yutMove(p, steps, done) {
   Y.moving = g; yutPaint();
   const svg = $('yutBoard'), NS = 'http://www.w3.org/2000/svg', col = p.o === 'me' ? '#2563EB' : '#DC2626', dx = p.o === 'me' ? -7 : 7;
   const tok = document.createElementNS(NS, 'g');
-  tok.innerHTML = `<ellipse class="sh" cx="0" cy="13" rx="13" ry="4" fill="rgba(0,0,0,.25)"/><g class="bd"><circle cx="0" cy="0" r="16" fill="${col}" stroke="#fff" stroke-width="3"/>${g.length > 1 ? `<text x="0" y="5.5" text-anchor="middle" font-size="15" font-weight="900" fill="#fff">${g.length}</text>` : ''}</g>`;
+  tok.innerHTML = `<ellipse class="sh" cx="0" cy="13" rx="13" ry="4" fill="rgba(0,0,0,.25)"/><g class="bd">${yutTok(p.o, g.length)}</g>`;
   svg.appendChild(tok);
   const at = q => { const k = q === null ? 'START' : q === 'END' ? 0 : q; if (k === 'START') return [YP[0][0] + 26, YP[0][1] + 22]; return [YP[k][0] + dx, YP[k][1] - 4]; };
   let cur = at(p.pos), i = 0;
@@ -581,7 +599,7 @@ function yutPaint() {
   const groups = {};
   Y.pcs.filter(p => !p.done && p.pos !== null && !(Y.moving && Y.moving.includes(p))).forEach(p => { const k = p.o + '|' + p.pos; (groups[k] = groups[k] || []).push(p); });
   Object.keys(groups).forEach(k => { const g = groups[k], p = g[0], [x, y] = YP[p.pos]; const dx = p.o === 'me' ? -7 : 7;
-    h += `<g data-k="${k}" style="cursor:pointer"><circle cx="${x + dx}" cy="${y - 4}" r="15" fill="${p.o === 'me' ? '#2563EB' : '#DC2626'}" stroke="#fff" stroke-width="3"/>` + (g.length > 1 ? `<text x="${x + dx}" y="${y + 1}" text-anchor="middle" font-size="15" font-weight="900" fill="#fff">${g.length}</text>` : '') + `</g>`; });
+    h += `<g data-k="${k}" style="cursor:pointer" transform="translate(${x + dx},${y - 4})">${yutTok(p.o, g.length)}</g>`; });
   // 🎯 [패치 #152] 갈 자리(점선 동그라미)를 누르면 그 말이 옮겨 감 · 새 말은 '새' 표시 · 잡을 수 있으면 빨간 테두리
   Y.cand = [];
   if (Y.turn === 'me' && !Y.over && !Y.busy && Y.throws === 0 && Y.res.length) { const v = Y.res[Y.selRes], seenPos = new Set(), seenDst = new Set();
