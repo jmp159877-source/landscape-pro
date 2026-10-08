@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#0F172A">
 <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<!-- 🎮 [패치 #150·#151 소리·배경음악·#152 윷놀이 한 화면·갈 자리 누르기·#153 윷 던지기 연출·말 한 칸씩·#154 소나무 말·AI 빨간 윷·느린 템포·판 종류 띄우기·#155 오목 AI 천천히] 대표님 휴식방: 앱 본체와 따로 불러오는 가벼운 게임 화면 (돈·포인트 없음 · 기록은 이 휴대폰에만) -->
+<!-- 🎮 [패치 #150·#151 소리·배경음악·#152 윷놀이 한 화면·갈 자리 누르기·#153 윷 던지기 연출·말 한 칸씩·#154 소나무 말·AI 빨간 윷·느린 템포·판 종류 띄우기·#155 오목 AI 천천히·#156 Kenney 녹음 효과음·#157 Kenney 징글(승리·패배·윷모·잡기·나기)] 대표님 휴식방: 앱 본체와 따로 불러오는 가벼운 게임 화면 (돈·포인트 없음 · 기록은 이 휴대폰에만) -->
 <style>
   :root { --bg:#0F172A; --card:#1E293B; --line:#475569; --lime:#84CC16; --lime2:#BEF264; --sky:#38BDF8; --ink:#151E2D; --sub:#CBD5E1; }
   * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -165,7 +165,8 @@ let toastT = 0;
 function toast(t) { const el = $('toast'); el.textContent = t; el.classList.remove('hidden'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.add('hidden'), 2200); }
 function soon(n) { sfx('fail'); toast(n + '은(는) 지금 만들고 있어요. 곧 열려요!'); }
 function goApp() { if (document.referrer && document.referrer.indexOf(location.origin) === 0 && history.length > 1) history.back(); else location.href = '/'; }
-function show(v) { Object.keys(VIEWS).forEach(k => $(VIEWS[k]).classList.toggle('hidden', k !== v)); window.scrollTo(0, 0); if (v === 'hub') recPaint(); if (typeof musicStart === 'function') { if (SND.ctx) musicStart(VIEW_MUSIC[v]); else SND.want = VIEW_MUSIC[v]; } }
+let CUR_VIEW = 'hub';
+function show(v) { CUR_VIEW = v; Object.keys(VIEWS).forEach(k => $(VIEWS[k]).classList.toggle('hidden', k !== v)); window.scrollTo(0, 0); if (v === 'hub') recPaint(); if (typeof musicStart === 'function') { if (SND.ctx) musicStart(VIEW_MUSIC[v]); else SND.want = VIEW_MUSIC[v]; } }
 function go(v) { try { actx(); } catch (e) {} sfx('tap'); history.pushState({ v }, '', '#' + v); show(v); if (v === 'omok' && !OM.started) omokNew(); if (v === 'shisen' && !SS.tiles) ssNew(); if (v === 'yut' && !Y.started) yutNew(); }
 window.addEventListener('popstate', () => { const v = (location.hash || '').slice(1); show(VIEWS[v] ? v : 'hub'); });
 
@@ -181,6 +182,7 @@ function actx() {
     SND.mg = c.createGain(); SND.mg.gain.value = 0.32; SND.mg.connect(SND.master);
     const len = c.sampleRate * 0.5, buf = c.createBuffer(1, len, c.sampleRate), d = buf.getChannelData(0); for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1; SND.noise = buf; }
   if (SND.ctx.state === 'suspended') SND.ctx.resume();
+  if (!sfxLoading) sfxLoad();
   return SND.ctx;
 }
 function env(g, t, a, peak, dur) { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + dur); }
@@ -190,11 +192,43 @@ function noiz(dur, freq, q, vol, when, out, type) { const c = SND.ctx; if (!c) r
   s.buffer = SND.noise; f.type = type || 'bandpass'; f.frequency.value = freq; f.Q.value = q; env(g, t, 0.003, vol, dur); s.connect(f); f.connect(g); g.connect(out || SND.sg); s.start(t); s.stop(t + dur + 0.05); }
 function pluck(f, when, vol, out, dur) { tone(f, dur || 0.9, 'triangle', vol, when, out); tone(f * 2, (dur || 0.9) * 0.5, 'sine', vol * 0.35, when, out); }
 function bell(f, when, vol, out) { tone(f, 1.1, 'sine', vol, when, out); tone(f * 2.76, 0.5, 'sine', vol * 0.25, when, out); tone(f * 5.4, 0.25, 'sine', vol * 0.1, when, out); }
+
+/* 🎧 [패치 #156] 진짜 녹음 효과음 (Kenney CC0 · /sfx/*.mp3) — 처음 터치할 때 불러오고, 못 불러오면 위의 합성 소리로 대신 */
+const SFX_FILES = { tap: ['click1'], sel: ['click3'], tick: ['switch2'], hint: ['rollover2'],
+  stone: ['chip-lay-1'], stone2: ['chip-lay-3'], match: ['chips-stack-1', 'chips-stack-2'], shuffle: ['card-shuffle'],
+  shake: ['dice-shake-1'], land: ['die-throw-1', 'die-throw-2', 'die-throw-3', 'die-throw-4'], hop: ['chip-lay-2', 'chip-lay-1'],
+  capture: ['chips-collide-3', 'chips-collide-1'], finish: ['chips-stack-3'],
+  jWin: ['j-win'], jLose: ['j-lose'], jYutWin: ['j-yutwin'], jYutLose: ['j-yutlose'], jBig: ['j-big'], jFinish: ['j-finish'], jCap: ['j-cap'], jClear: ['j-clear'] };
+const SFX_BUF = {}; let sfxLoading = false;
+function sfxLoad() {
+  if (sfxLoading || !SND.ctx) return; sfxLoading = true;
+  const names = [...new Set(Object.values(SFX_FILES).flat())];
+  names.forEach(n => fetch('/sfx/' + n + '.mp3').then(r => r.ok ? r.arrayBuffer() : Promise.reject()).then(a => new Promise((ok, no) => SND.ctx.decodeAudioData(a, ok, no))).then(b => { SFX_BUF[n] = b; }).catch(() => {}));
+}
+function play(key, vol, delay, rate) {
+  const c = SND.ctx; if (!c) return false; const list = SFX_FILES[key] || [], ok = list.filter(n => SFX_BUF[n]); if (!ok.length) return false;
+  const src = c.createBufferSource(), g = c.createGain(); src.buffer = SFX_BUF[ok[Math.floor(Math.random() * ok.length)]];
+  src.playbackRate.value = rate || (0.94 + Math.random() * 0.12); g.gain.value = vol == null ? 0.9 : vol; src.connect(g); g.connect(SND.sg); src.start(c.currentTime + (delay || 0)); return true;
+}
 function vib(p) { if (SND.sfx && navigator.vibrate) try { navigator.vibrate(p); } catch (e) {} }
 const SCALE = [0, 2, 4, 7, 9]; // 오음계 (도 레 미 솔 라)
 function deg(d, base) { const o = Math.floor(d / 5), i = ((d % 5) + 5) % 5; return (base || 261.63) * Math.pow(2, o + SCALE[i] / 12); }
 function sfx(name, n) {
   if (!SND.sfx) return; const c = actx(); if (!c) return; const t = c.currentTime;
+  // 녹음 소리가 있으면 그걸 먼저 (맞는 것만 바꿈, 축하 가락 등은 그대로)
+  const F = {
+    stone: () => play('stone', 1, 0, 1), stone2: () => play('stone2', 0.85, 0, 0.92), tap: () => play('tap', 0.6), tick: () => play('tick', 0.5),
+    match: () => { const ok = play('match', 0.9); if (ok) bell(1318.5, t + 0.05, 0.12); return ok; }, hint: () => play('hint', 0.7), shuffle: () => play('shuffle', 0.8, 0, 1),
+    whoosh: () => play('shake', 0.8, 0, 1), throw: () => play('shake', 0.8, 0, 1), clack: () => play('land', 0.9),
+    hop: () => play('hop', 0.85, 0, 0.9 + (n || 0) * 0.04), step: () => { let ok = false; for (let i = 0; i < (n || 1); i++) ok = play('hop', 0.8, i * 0.11) || ok; return ok; },
+    capture: () => { const ok = play('capture', 1, 0, 0.9); if (ok) { tone(150, 0.3, 'sine', 0.55, t, null, 55); vib([60, 40, 90]); } return ok; },
+    finish: () => { const ok = play('finish', 0.9); if (ok) play('jFinish', 0.55, 0.12, 1); return ok; },
+    yutBig: () => play('jBig', 0.75, 0, 1),
+    win: () => { const ok = play(CUR_VIEW === 'yut' ? 'jYutWin' : CUR_VIEW === 'shisen' ? 'jClear' : 'jWin', 0.85, 0, 1); if (ok) vib([80, 50, 80, 50, 160]); return ok; },
+    lose: () => play(CUR_VIEW === 'yut' ? 'jYutLose' : 'jLose', 0.7, 0, 1)
+  };
+  if (name === 'capture') play('jCap', 0.45, 0.05, 1);
+  if (F[name] && F[name]()) return;
   switch (name) {
     case 'stone': noiz(0.05, 2400, 1.2, 0.9, t); tone(1100, 0.06, 'sine', 0.35, t); break;
     case 'stone2': noiz(0.05, 1900, 1.2, 0.7, t); tone(900, 0.06, 'sine', 0.28, t); break;
