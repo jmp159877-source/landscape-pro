@@ -2632,7 +2632,12 @@
       const sig = quoteRowsSig();
       const untouched = QTPL.snap !== null && sig === QTPL.snap;
       const empty = !sig.split('\n').some(r => { const x = r.split('|'); return x[2] || x[3]; });
-      if (untouched || empty) { loadQuoteTemplate(type); markQuoteTemplate(btn); return; }
+      if (untouched || empty) { // 🧾 [패치 #162] 대표님이 직접 쓴 제목(예: 화단 정비)은 템플릿을 바꿔도 그대로 둠
+        const tEl = document.getElementById('quoteInputRound'), myTitle = tEl ? tEl.value.trim() : '';
+        const defs = Object.keys(quoteTemplates).map(k => quoteTemplates[k].title);
+        loadQuoteTemplate(type); markQuoteTemplate(btn);
+        if (tEl && myTitle && defs.indexOf(myTitle) === -1) tEl.value = myTitle;
+        return; }
       // 내용 유지: 칸은 그대로, 제목(템플릿 기본 제목이었으면)·부가세만 바꿈
       const titleEl = document.getElementById('quoteInputRound');
       const defaults = Object.keys(quoteTemplates).map(k => quoteTemplates[k].title);
