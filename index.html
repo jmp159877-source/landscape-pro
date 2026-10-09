@@ -11718,7 +11718,7 @@ ${AI_COMMON_RULES}
       <button type="button" class="bk-v" onclick="bulkVoice('${kind}')">🎤 말로 등록하기 <span>(여러 명 한 번에)</span></button>
       <div class="bk-ex">예) "${isC ? '정기 관리처 래미안 아파트 관리소 공일공 일이삼사 오육칠팔, 주소는 수원 영통구… 그리고 개별 고객 김철수 사장님 공일공…' : '업체, 푸른농원 공일공 일이삼사 오육칠팔, 소나무 전문… 그리고 인력, 박기사님 공일공…'}"</div>
       <button type="button" class="bk-p" onclick="bulkPasteOpen('${kind}')">📋 엑셀·문자에서 복사해 붙여넣기</button>
-      ${canPick() ? `<button type="button" class="bk-p" onclick="bulkPhonePick('${kind}')">📱 휴대폰 연락처에서 가져오기</button>` : ''}
+      <button type="button" class="bk-p" onclick="bulkPhonePick('${kind}')">📱 휴대폰 연락처에서 가져오기</button><!-- 📱 [패치 #180] 버튼은 늘 보이고, 안 되는 휴대폰이면 안내 -->
       <div class="bk-or">또는 손으로 입력</div></div>`;
   }
   function mount() {
@@ -11826,6 +11826,11 @@ JSON만 답한다: {"items":[{"group":"","name":"","phone":"","memo":""}]}`;
 
   // ---------- 휴대폰 연락처 ----------
   window.bulkPhonePick = async function (kind) {
+    if (!canPick()) {
+      const ios = /iPhone|iPad|iPod/i.test(navigator.userAgent || '');
+      return alert(ios ? '아이폰에서는 휴대폰 연락처를 바로 가져올 수 없어요.\n\n대신 [📋 복사해 붙여넣기]나 [🎤 말로 등록하기]를 써 주세요.'
+        : '이 화면에서는 휴대폰 연락처를 바로 가져올 수 없어요.\n(삼성 인터넷·카카오톡 안 화면에서는 안 돼요)\n\n크롬(Chrome) 앱으로 조경노트를 열거나, 크롬으로 설치한 조경노트 앱에서 다시 눌러 주세요.\n지금은 [📋 복사해 붙여넣기]나 [🎤 말로 등록하기]를 써도 돼요.');
+    }
     try {
       const list = await navigator.contacts.select(['name', 'tel'], { multiple: true });
       const rows = (list || []).map(c => ({ name: String((c.name && c.name[0]) || '').trim().slice(0, 40), phone: digits((c.tel && c.tel[0]) || '').replace(/^82/, '0').slice(0, 11), extra: '', type: defType(kind), heard: true })).filter(r => r.name || r.phone);
@@ -11883,6 +11888,50 @@ JSON만 답한다: {"items":[{"group":"","name":"","phone":"","memo":""}]}`;
     }
     bulkClose(); setTimeout(() => alert(`✅ ${pick.length}${kind === 'client' ? '명' : '곳'}을 저장했어요.`), 150);
   };
+})();
+</script>
+
+<script>
+/* 📲 [패치 #181] 크롬 창(주소창 보이는 상태)으로 쓰는 대표님께 '앱으로 설치' 띠를 한 번 보여 줌
+   - 크롬 + 설치 가능: [설치하기] → 크롬의 진짜 '앱 설치' 창 (바로가기 선택지 없음)
+   - 크롬 + 이미 설치됨(설치 창이 안 뜸): 앱 목록의 조경노트 아이콘으로 열라고 안내
+   - 삼성 인터넷: 크롬으로 설치 안내(#94·#95 창) · 앱 안 브라우저·아이폰·PC·고객 링크에서는 안 보임
+   - [닫기] 누르면 3일 동안 안 보임 */
+(function () {
+  const KEY = 'jn_install_bar_until';
+  function snoozed() { try { return Number(localStorage.getItem(KEY) || 0) > Date.now(); } catch (e) { return false; } }
+  function snooze() { try { localStorage.setItem(KEY, String(Date.now() + 3 * 86400000)); } catch (e) {} }
+  function bar(html) {
+    if (document.getElementById('instBar')) return;
+    const d = document.createElement('div'); d.id = 'instBar'; d.innerHTML = html;
+    d.style.cssText = 'position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 96px);z-index:45;max-width:456px;margin:0 auto;background:#FFFFFF;border:2px solid #84CC16;border-radius:18px;padding:14px 14px 12px;box-shadow:0 10px 28px rgba(0,0,0,.45);color:#151E2D;';
+    document.body.appendChild(d);
+  }
+  window.instBarClose = function () { snooze(); document.getElementById('instBar')?.remove(); };
+  window.instBarGo = async function () {
+    if (typeof deferredInstallPrompt !== 'undefined' && deferredInstallPrompt) { document.getElementById('instBar')?.remove(); try { await installApp(); } catch (e) {} return; }
+    if (typeof installSheetShow === 'function' && /SamsungBrowser/i.test(navigator.userAgent || '')) { document.getElementById('instBar')?.remove(); installSheetShow('samsung'); }
+  };
+  const T = (t, s, btn) => `<div style="font-size:17px;font-weight:900;line-height:1.35;">${t}</div><div style="font-size:14.5px;font-weight:700;color:#475569;line-height:1.5;margin-top:4px;word-break:keep-all;">${s}</div>
+    <div style="display:flex;gap:8px;margin-top:10px;"><button type="button" onclick="instBarClose()" style="flex:0 0 84px;height:46px;border-radius:12px;background:#E2E8F0;color:#151E2D;font-size:15.5px;font-weight:900;border:0;">닫기</button>${btn ? `<button type="button" onclick="instBarGo()" style="flex:1;height:46px;border-radius:12px;background:#151E2D;color:#BEF264;font-size:16.5px;font-weight:900;border:0;">${btn}</button>` : ''}</div>`;
+  function check() {
+    try {
+      if (typeof isStandaloneApp === 'function' && isStandaloneApp()) return;
+      if (snoozed()) return;
+      const ua = navigator.userAgent || '';
+      if (!/Android/i.test(ua)) return;                                   // 아이폰·PC는 안 보임
+      if (typeof inAppBrowserName === 'function' && inAppBrowserName()) return; // 카톡·네이버 안 화면은 기존 안내
+      if (/[?&](id|reportId|req|blob|data)=/.test(location.search)) return;     // 고객 링크
+      const auth = document.getElementById('authView'); if (auth && !auth.classList.contains('hidden')) return; // 로그인 화면엔 이미 설치 버튼
+      if (/SamsungBrowser/i.test(ua)) return bar(T('📲 크롬으로 설치하면 더 잘 돼요', '주소창 없이 앱처럼 열리고, 뒤로가기·말로 입력·휴대폰 연락처 가져오기가 더 잘 돼요.', '크롬으로 설치하기'));
+      if (typeof deferredInstallPrompt !== 'undefined' && deferredInstallPrompt) return bar(T('📲 앱으로 설치하면 더 깔끔해요', '주소창 없이 일반 앱처럼 열려요. 아래 버튼을 누르고 뜨는 창에서 <b style="color:#3F6212;">[설치]</b>만 누르면 끝이에요.', '설치하기'));
+      bar(T('📲 지금은 크롬 창으로 열려 있어요', '조경노트 앱이 이미 설치돼 있다면 <b style="color:#3F6212;">앱 목록의 \'조경노트\' 아이콘</b>으로 열어 주세요. 주소창 없이 열려요.<br>아이콘이 없으면 오른쪽 위 ⋮ → <b style="color:#3F6212;">[앱 설치]</b>를 누르세요. (바로가기 만들기 X)', ''));
+    } catch (e) {}
+  }
+  window.addEventListener('beforeinstallprompt', () => { const b = document.getElementById('instBar'); if (b && b.textContent.indexOf('크롬 창으로') >= 0) { b.remove(); setTimeout(check, 50); } });
+  window.addEventListener('appinstalled', () => document.getElementById('instBar')?.remove());
+  // 로그인 뒤 홈 화면이 보일 때 한 번 확인 (설치 창 준비를 위해 3초 기다림)
+  let tries = 0; const iv = setInterval(() => { tries++; const h = document.getElementById('homeView'); if (h && !h.classList.contains('hidden')) { clearInterval(iv); setTimeout(check, 3000); } else if (tries > 600) clearInterval(iv); }, 1000);
 })();
 </script>
 
