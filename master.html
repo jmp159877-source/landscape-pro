@@ -457,6 +457,10 @@
             <p class="text-[#94A3B8] text-[12px] leading-relaxed">게시판 4개(작업 지원·협력, 장비·자재 직거래, 정보 교환, 불량 거래처 경보)에 [조경노트 운영팀] 명의의 📌 예시글(게시판별 5개, 총 20개)을 등록합니다. 예시글에는 전화·대화 버튼이 표시되지 않습니다.</p>
             <button onclick="seedOfficialPosts()" class="w-full py-3.5 bg-[#FDE047]/20 text-[#FDE047] font-black rounded-[12px] hover:bg-[#FDE047]/30 border border-[#FDE047]/40">📌 예시글 일괄 등록</button>
             <button onclick="openPostManager()" class="w-full py-3.5 bg-[#3B82F6]/20 text-blue-300 font-black rounded-[12px] hover:bg-[#3B82F6]/30 border border-blue-500/30">📋 전체 게시글 목록 관리 (삭제·마감)</button><!-- 📋 [패치 #11] -->
+            <div class="flex items-center justify-between gap-3 bg-white/5 border border-white/10 rounded-[12px] px-4 py-3"><!-- 🔕 [패치 #194] -->
+                <div><div class="text-white font-black text-[14px]">🔔 소통방 새 글 알림</div><div id="bpStatus" class="text-[#94A3B8] text-[12px] font-bold mt-0.5">확인 중…</div></div>
+                <button id="bpBtn" onclick="boardPushToggle()" class="px-4 py-2.5 rounded-[10px] bg-white/10 text-white font-black text-[13px] border border-white/20 shrink-0">바꾸기</button>
+            </div>
             <button onclick="deleteTestDatePosts()" class="w-full py-3 bg-[#D97706]/15 text-[#FBBF24] font-black rounded-[12px] border border-[#D97706]/40 text-[13.5px]">🧪 날짜 골라 쓴 시험 글 전체 삭제 (댓글 포함)</button><!-- 🧪 [패치 #172] -->
             <button onclick="deleteOfficialPosts()" class="w-full py-3 bg-white/5 text-[#94A3B8] font-bold rounded-[12px] hover:bg-white/10 border border-white/10 text-[13px]">예시글 전체 삭제 (회원 글은 유지)</button>
         </div>
@@ -1012,6 +1016,23 @@
     // ⏳ [패치 #178] 예시글 등록·삭제 진행 표시 (끝날 때까지 "3 / 20" 처럼 보여 줌)
     function pgShow(t) { let o = document.getElementById('pgOverlay'); if (!o) { o = document.createElement('div'); o.id = 'pgOverlay'; o.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;'; o.innerHTML = '<div style="background:#1E293B;border:1.5px solid #475569;border-radius:20px;padding:24px 28px;text-align:center;color:#fff;min-width:240px;"><div style="width:44px;height:44px;margin:0 auto 14px;border:4px solid rgba(132,204,22,.3);border-top-color:#84CC16;border-radius:50%;animation:pgspin 1s linear infinite;"></div><div id="pgText" style="font-size:18px;font-weight:900;"></div><div style="font-size:13.5px;color:#94A3B8;margin-top:6px;font-weight:700;">창을 닫지 말고 잠시 기다려 주세요</div></div><style>@keyframes pgspin{to{transform:rotate(360deg)}}</style>'; document.body.appendChild(o); } document.getElementById('pgText').innerText = t; }
     function pgHide() { document.getElementById('pgOverlay')?.remove(); }
+    // 🔕 [패치 #194] 소통방 새 글 알림 켜기·끄기 (settings/boardPushOff = true 이면 앱이 새 글 알림을 안 보냄 · 댓글·1:1 대화 알림은 그대로)
+    let BP_OFF = null;
+    async function boardPushLoad() {
+        try { const r = await fetch(getAuthUrl(`${SETTINGS_URL}/boardPushOff.json?t=${Date.now()}`)); BP_OFF = r.ok ? (await r.json()) === true : null; } catch (e) { BP_OFF = null; }
+        const st = document.getElementById('bpStatus'), bt = document.getElementById('bpBtn'); if (!st || !bt) return;
+        if (BP_OFF === null) { st.textContent = '상태를 읽지 못했어요'; bt.textContent = '다시 읽기'; return; }
+        st.innerHTML = BP_OFF ? '<span style="color:#FCA5A5;">지금 꺼짐</span> · 새 글이 올라와도 업체들에게 알림이 안 가요' : '<span style="color:#BEF264;">지금 켜짐</span> · 새 글이 올라오면 알림을 켠 업체들에게 알림이 가요';
+        bt.textContent = BP_OFF ? '알림 켜기' : '알림 끄기';
+    }
+    async function boardPushToggle() {
+        if (BP_OFF === null) return boardPushLoad();
+        const next = !BP_OFF;
+        if (!confirm(next ? '소통방 새 글 알림을 끌까요?\n(댓글·1:1 대화 알림은 그대로 가요)' : '소통방 새 글 알림을 다시 켤까요?')) return;
+        pgShow('저장 중…');
+        try { const r = await fetch(getAuthUrl(`${SETTINGS_URL}/boardPushOff.json`), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(next) }); pgHide(); if (!r.ok) throw new Error(); BP_OFF = next; boardPushLoad(); alert(next ? '🔕 새 글 알림을 껐어요.' : '🔔 새 글 알림을 다시 켰어요.'); }
+        catch (e) { pgHide(); alert('저장하지 못했어요. 잠시 후 다시 눌러 주세요.'); }
+    }
     async function seedOfficialPosts() {
         try {
             const res = await fetch(getAuthUrl(`${COMMUNITY_URL}.json`)); const data = await res.json();
@@ -3362,5 +3383,8 @@
 busyWrap({"loginMaster": "로그인 중…", "registerMaster": "등록 중…", "saveGlobalNotice": "공지 저장 중…", "adminDeleteComment": "댓글 삭제 중…", "adminDeletePost": "게시글 삭제 중…", "adminTogglePostStatus": "처리 중…", "saveTermsText": "약관 저장 중…", "sendTargetNotice": "공지 보내는 중…", "saveCompanyEdit": "업체 정보 저장 중…", "resetPassword": "비밀번호 초기화 중…", "resetLedgerPin": "처리 중…", "deleteAccount": "처리 중…", "admPushEnable": "알림 설정 중…", "ptmRejoinSave": "저장 중…", "ptmLiveToggle": "저장 중…", "hmFeeToggle": "저장 중…", "hmDelete": "삭제 중…", "hmFeeRefund": "환불 처리 중…", "hmSurveySend": "보내는 중…", "hmSet": "저장 중…"});
 </script>
 
+<script>/* 🔕 [패치 #194] 설정 탭을 열 때 새 글 알림 상태 읽기 */
+(function(){ const _st = switchTab; switchTab = function (t) { const r = _st.apply(this, arguments); if (t === 'settings') try { boardPushLoad(); } catch (e) {} return r; }; })();
+</script>
 </body>
 </html>

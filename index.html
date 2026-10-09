@@ -6618,7 +6618,7 @@ ${HELP_EXTRA.join('\n')}`;
               });
               if (!postRes.ok) throw new Error('post fail');
               let pk = null;
-              try { pk = (await postRes.clone().json()).name; if (pk) requestPush({ action: 'push_post', postKey: pk }); } catch (e) {} // 🔔 [패치 #33]
+              try { pk = (await postRes.clone().json()).name; if (pk && !postData.testDate) { let off = false; try { const sr = await fetch(`${SETTINGS_URL}/boardPushOff.json?t=${Date.now()}`); off = sr.ok && (await sr.json()) === true; } catch (e) {} if (!off) requestPush({ action: 'push_post', postKey: pk }); } } catch (e) {} /* 🔕 [패치 #194] 관리자가 '새 글 알림 끄기' 해 두면 안 보냄 */ // 🔔 [패치 #33] · 🧪 [패치 #193] 날짜 골라 쓴 시험 글은 알림 안 보냄
               boardWriteImages = [];
               alert("게시글이 등록되었습니다."); // 👍 [패치 #171] 글쓰기 포인트 없음
               closeBoardWrite();
