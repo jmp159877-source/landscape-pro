@@ -3333,5 +3333,34 @@
   <div id="mqPad" style="display:grid;grid-template-columns:repeat(3,84px);gap:14px;"></div>
   <button id="mqAlt" onclick="mqUsePassword()" style="margin-top:26px;color:#94A3B8;font-size:14.5px;font-weight:800;text-decoration:underline;background:none;border:0;">비밀번호로 로그인</button>
 </div>
+<script>
+/* ⏳ [패치 #184] 실행 중 표시 공통: 누르고 0.3초 넘게 걸리면 가운데에 "처리 중…" 동그라미를 띄움
+   - 확인창·알림창(confirm·alert·prompt)이 뜰 때는 잠깐 숨겼다가, 아직 처리 중이면 다시 띄움 → 결과 창이 가려지지 않음
+   - 원래 로딩 표시가 있는 기능은 건드리지 않음 (BUSY_FNS 목록에 있는 것만) */
+(function () {
+  const B = { n: 0, t: null, msg: '' };
+  function el() {
+    let o = document.getElementById('busyOverlay');
+    if (!o) { o = document.createElement('div'); o.id = 'busyOverlay';
+      o.style.cssText = 'position:fixed;inset:0;z-index:10060;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;';
+      o.innerHTML = '<div style="background:#1E293B;border:1.5px solid #475569;border-radius:20px;padding:22px 26px;text-align:center;color:#fff;min-width:200px;"><div style="width:42px;height:42px;margin:0 auto 12px;border:4px solid rgba(132,204,22,.3);border-top-color:#84CC16;border-radius:50%;animation:busyspin 1s linear infinite;"></div><div id="busyText" style="font-size:17px;font-weight:900;"></div><div style="font-size:13px;color:#94A3B8;margin-top:5px;font-weight:700;">잠시만 기다려 주세요</div></div><style>@keyframes busyspin{to{transform:rotate(360deg)}}</style>';
+      document.body.appendChild(o); }
+    return o;
+  }
+  function show() { if (B.n > 0) { const o = el(); o.querySelector('#busyText').textContent = B.msg || '처리 중…'; o.style.display = 'flex'; } }
+  function hide() { clearTimeout(B.t); const o = document.getElementById('busyOverlay'); if (o) o.style.display = 'none'; }
+  function arm() { clearTimeout(B.t); B.t = setTimeout(show, 300); }
+  ['alert', 'confirm', 'prompt'].forEach(k => { const orig = window[k].bind(window); window[k] = function () { hide(); const r = orig.apply(null, arguments); if (B.n > 0) arm(); return r; }; });
+  window.busyWrap = function (map) {
+    Object.keys(map).forEach(name => {
+      const fn = window[name]; if (typeof fn !== 'function' || fn.__busy) return;
+      const w = async function () { B.n++; B.msg = map[name]; arm(); try { return await fn.apply(this, arguments); } finally { B.n = Math.max(0, B.n - 1); if (!B.n) hide(); } };
+      w.__busy = true; window[name] = w;
+    });
+  };
+})();
+busyWrap({"loginMaster": "로그인 중…", "registerMaster": "등록 중…", "saveGlobalNotice": "공지 저장 중…", "adminDeleteComment": "댓글 삭제 중…", "adminDeletePost": "게시글 삭제 중…", "adminTogglePostStatus": "처리 중…", "saveTermsText": "약관 저장 중…", "sendTargetNotice": "공지 보내는 중…", "saveCompanyEdit": "업체 정보 저장 중…", "resetPassword": "비밀번호 초기화 중…", "resetLedgerPin": "처리 중…", "deleteAccount": "처리 중…", "admPushEnable": "알림 설정 중…", "ptmRejoinSave": "저장 중…", "ptmLiveToggle": "저장 중…", "hmFeeToggle": "저장 중…", "hmDelete": "삭제 중…", "hmFeeRefund": "환불 처리 중…", "hmSurveySend": "보내는 중…", "hmSet": "저장 중…"});
+</script>
+
 </body>
 </html>
