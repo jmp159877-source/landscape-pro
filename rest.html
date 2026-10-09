@@ -49,7 +49,9 @@
   /* 오목 */
   #omokBoard { width:100%; aspect-ratio:1; display:block; background:#E9C98F; border-radius:14px; touch-action:manipulation; }
   /* 사천성 */
-  #ssBoard { display:grid; gap:4px; background:#14261E; border-radius:16px; padding:8px; }
+  #ssBoard { display:grid; gap:4px; background:#14261E; border-radius:16px; padding:8px; margin:0 auto; } /* 📐 [패치 #171] 폭은 ssFit()이 화면 높이에 맞춤 */
+  .app:has(#vShisen:not(.hidden)) { padding-bottom:10px; min-height:0; } /* 📐 [패치 #171] 사천성은 아래 여백 줄여 스크롤 없앰 */
+  #vShisen .msg { font-size:16px; min-height:24px; margin:2px 0 8px; }
   .tile { aspect-ratio:3/4; border-radius:10px; background:#FFFBEB; box-shadow:inset 0 -3px 0 #D6D3D1; font-size:26px; display:flex; align-items:center; justify-content:center; padding:0; }
   .tile.sel { background:#FDE047; box-shadow:0 0 0 3px #1C1917 inset; }
   .tile.hint { background:#BAE6FD; }
@@ -205,7 +207,7 @@ function toast(t) { const el = $('toast'); el.textContent = t; el.classList.remo
 function soon(n) { sfx('fail'); toast(n + '은(는) 지금 만들고 있어요. 곧 열려요!'); }
 function goApp() { try { musicStop(); if (SND.ctx) SND.ctx.suspend(); } catch (e) {} if (document.referrer && document.referrer.indexOf(location.origin) === 0 && history.length > 1) history.back(); else location.href = '/'; }
 let CUR_VIEW = 'hub';
-function show(v) { CUR_VIEW = v; Object.keys(VIEWS).forEach(k => $(VIEWS[k]).classList.toggle('hidden', k !== v)); window.scrollTo(0, 0); if (v === 'hub') recPaint(); if (typeof musicStart === 'function') { if (SND.ctx) musicStart(VIEW_MUSIC[v]); else SND.want = VIEW_MUSIC[v]; } }
+function show(v) { CUR_VIEW = v; Object.keys(VIEWS).forEach(k => $(VIEWS[k]).classList.toggle('hidden', k !== v)); window.scrollTo(0, 0); if (v === 'hub') recPaint(); if (v === 'shisen') requestAnimationFrame(ssFit); if (typeof musicStart === 'function') { if (SND.ctx) musicStart(VIEW_MUSIC[v]); else SND.want = VIEW_MUSIC[v]; } }
 function go(v) { try { actx(); } catch (e) {} sfx('tap'); history.pushState({ v }, '', '#' + v); show(v); if (v === 'omok' && !OM.started) omokNew(); if (v === 'shisen' && !SS.tiles) ssNew(); if (v === 'yut' && !Y.started) yutNew(); if (v === 'janggi' && !JG.started) jgNew(); if (v === 'baduk' && !BD.started) bdNew(); }
 window.addEventListener('popstate', () => { const v = (location.hash || '').slice(1); show(VIEWS[v] ? v : 'hub'); });
 
@@ -423,6 +425,18 @@ function ssNew() {
   if (!ssFindPair()) ssShuffle(false);
   ssDraw();
 }
+// 📐 [패치 #171] 사천성 판을 한 화면(스크롤 없이)에 맞춤: 화면 높이에서 위 제목·안내·아래 버튼을 뺀 만큼으로 패 크기 결정
+function ssFit() {
+  const B = $('ssBoard'), V = $('vShisen'); if (!B || V.classList.contains('hidden')) return;
+  const bar = V.querySelector('.bar'), full = B.parentElement.clientWidth;
+  const top = B.getBoundingClientRect().top + window.scrollY, below = (bar ? bar.offsetHeight : 52) + 34;
+  const avail = (window.visualViewport ? window.visualViewport.height : window.innerHeight) - top - below;
+  const tw = Math.max(30, (avail - 16 - (SR - 1) * 4) * 3 / (4 * SR));   // 패 한 장 폭 (패는 3:4)
+  const w = Math.min(full, Math.floor(tw * SC + (SC - 1) * 4 + 16));
+  B.style.width = w + 'px';
+  const real = (w - 16 - (SC - 1) * 4) / SC; B.style.fontSize = ''; B.querySelectorAll('.tile').forEach(t => t.style.fontSize = Math.round(Math.min(26, real * 0.5)) + 'px');
+}
+window.addEventListener('resize', () => { if (CUR_VIEW === 'shisen') ssFit(); });
 function ssDraw() {
   const B = $('ssBoard'); B.style.gridTemplateColumns = 'repeat(' + SC + ',1fr)'; B.innerHTML = '';
   for (let r = 1; r <= SR; r++) for (let c = 1; c <= SC; c++) {
@@ -431,6 +445,7 @@ function ssDraw() {
     el.textContent = t || ''; el.dataset.r = r; el.dataset.c = c;
     el.onclick = () => ssTap(r, c); B.appendChild(el);
   }
+  ssFit();
 }
 function ssTap(r, c) {
   if (!SS.tiles[r][c]) return;
