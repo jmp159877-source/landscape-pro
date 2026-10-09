@@ -30,7 +30,7 @@
 </script><!-- 🔎 [패치 #163] 사이트 이름: 조경노트 PRO = 조경노트 프로 -->
   <link rel="canonical" href="https://www.jogyeongnote.com/"><!-- 🔎 [패치 #28] 네이버 검색: 대표 주소 하나로 -->
   <script>/* 🔎 [패치 #28] 고객 리포트 링크(?id=, ?reportId=)는 검색에 수집되지 않게 (고객 이름·주소·사진 보호) */
-    (function(){ try { var q = new URLSearchParams(location.search); if (q.get('id') || q.get('reportId') || q.get('req')) { /* 📋 [패치 #51] 고객 신청 페이지도 검색 수집 금지 */ var m = document.createElement('meta'); m.name = 'robots'; m.content = 'noindex, nofollow'; document.head.appendChild(m); } } catch(e) {} })();
+    (function(){ try { var q = new URLSearchParams(location.search); if (q.get('id') || q.get('reportId') || q.get('req') || q.get('blob') || q.get('data')) { /* 📋 [패치 #51] 고객 신청 페이지도 검색 수집 금지 */ var m = document.createElement('meta'); m.name = 'robots'; m.content = 'noindex, nofollow'; document.head.appendChild(m);  document.documentElement.classList.add('cust-link'); /* ⚡ [패치 #173] 고객 링크는 첫 화면(2초) 없이 바로 */ } } catch(e) {} })();
   </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@1.47.0"></script>
@@ -113,6 +113,7 @@
     .nav-scroll::-webkit-scrollbar { display: none; }
     .nav-scroll { -ms-overflow-style: none; scrollbar-width: none; }
     #splashScreen { transition: opacity 0.8s ease-out, visibility 0.8s ease-out; }
+    html.cust-link #splashScreen { display:none !important; } /* ⚡ [패치 #173] 고객 리포트·견적서·신청 링크는 로딩 화면 없이 바로 열림 (업체 앱은 그대로 2초) */
 
     /* ☀️ [패치 #57] 메인 메뉴 색을 한곳에 모음 (어두운 기본 모습은 예전과 똑같음 → 야외 모드에서 바꿀 수 있게) */
     .sec-title.sec-lime { color: #84CC16 !important; } .sec-bar.sec-lime { background: #84CC16; }
