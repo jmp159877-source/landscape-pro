@@ -123,6 +123,24 @@
       html.lt #sidebar .nav-btn { padding: 9px 12px !important; font-size: 14.5px !important; }
       html.lt #sidebar .nav-btn i, html.lt #sidebar .nav-btn svg { display: none; }
     }
+    /* 🧭 [패치 #179] 메뉴 순서: 대시보드 → 홈 의뢰 → 가입 승인 → 업체 관리 → 1:1 문의 → 포인트 → 설정 (PC·휴대폰 같게) */
+    #sidebar nav .nav-btn[onclick*="'dashboard'"] { order: 1; } #sidebar nav .nav-btn[onclick*="'home'"] { order: 2; }
+    #sidebar nav .nav-btn[onclick*="'approval'"] { order: 3; } #sidebar nav .nav-btn[onclick*="'companies'"] { order: 4; }
+    #sidebar nav .nav-btn[onclick*="'inquiries'"] { order: 5; } #sidebar nav .nav-btn[onclick*="'points'"] { order: 6; }
+    #sidebar nav .nav-btn[onclick*="'settings'"] { order: 7; } #sidebar nav .nav-btn[onclick^="logoutMaster"] { order: 9; }
+    /* 🧭 [패치 #179] 휴대폰도 PC처럼 왼쪽 세로 메뉴 (좁은 칸: 아이콘 + 두 줄 글자) */
+    @media (max-width: 767px) {
+      html.lt body { flex-direction: row !important; align-items: flex-start; }
+      html.lt #sidebar:not(.hidden) { display: flex !important; }
+      html.lt #sidebar { position: sticky !important; top: 0 !important; left: 0 !important; bottom: auto !important; width: 84px !important; min-width: 84px; height: 100vh !important; height: 100dvh !important; flex-direction: column !important; align-items: stretch !important; gap: 0 !important; padding: 8px 6px 16px !important; border: 0 !important; border-right: 1px solid #DCE2D6 !important; box-shadow: 2px 0 8px rgba(20,38,30,.06) !important; overflow-y: auto; flex-shrink: 0; }
+      html.lt #sidebar nav { flex-direction: column !important; flex-wrap: nowrap !important; overflow-x: visible !important; flex: 0 0 auto !important; gap: 6px !important; }
+      html.lt #sidebar .nav-btn { width: 100% !important; flex: 0 0 auto !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; gap: 3px !important; padding: 10px 2px !important; font-size: 12.5px !important; line-height: 1.2; position: relative !important; border-radius: 12px !important; }
+      html.lt #sidebar .nav-btn > div { flex-direction: column !important; align-items: center !important; gap: 3px !important; }
+      html.lt #sidebar .nav-btn i, html.lt #sidebar .nav-btn svg { display: block !important; width: 22px; height: 22px; }
+      html.lt #sidebar .nav-btn span:not([id^="side"]) { white-space: normal !important; word-break: keep-all; text-align: center; }
+      html.lt #sidebar .nav-btn span[id^="side"] { position: absolute !important; top: 3px !important; right: 3px !important; margin: 0 !important; font-size: 10.5px !important; }
+      html.lt #mainContent { min-width: 0; padding: 14px 12px 40px !important; }
+    }
     /* 제목·카드 또렷하게 */
     html.lt #mainContent h1, html.lt #mainContent h2, html.lt #mainContent h3 { color: #0F172A !important; }
     html.lt #mainContent [class~="bg-[#1E293B]"], html.lt #mainContent .glass-panel { box-shadow: 0 2px 12px rgba(20,38,30,.07); }
@@ -984,13 +1002,16 @@
             const keys = data ? Object.keys(data).filter(k => data[k] && data[k].testDate === true) : [];
             if (!keys.length) return alert('날짜를 골라 쓴 시험 글이 없습니다.');
             if (!confirm(`날짜를 골라 쓴 시험 글 ${keys.length}개와 그 댓글을 삭제할까요?\n(되돌릴 수 없습니다)`)) return;
-            for (const k of keys) {
+            let i = 0; for (const k of keys) { pgShow(`시험 글 삭제 중… ${++i} / ${keys.length}`);
                 await fetch(getAuthUrl(`${COMMUNITY_URL}/${k}.json`), { method: 'DELETE' });
                 await fetch(getAuthUrl(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_comments/${k}.json`), { method: 'DELETE' });
             }
-            alert(`✅ 시험 글 ${keys.length}개를 삭제했습니다.`);
-        } catch (e) { alert('삭제 중 오류가 발생했습니다: ' + e.message); }
+            pgHide(); alert(`✅ 시험 글 ${keys.length}개를 삭제했습니다.`);
+        } catch (e) { pgHide(); alert('삭제 중 오류가 발생했습니다: ' + e.message); }
     }
+    // ⏳ [패치 #178] 예시글 등록·삭제 진행 표시 (끝날 때까지 "3 / 20" 처럼 보여 줌)
+    function pgShow(t) { let o = document.getElementById('pgOverlay'); if (!o) { o = document.createElement('div'); o.id = 'pgOverlay'; o.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;'; o.innerHTML = '<div style="background:#1E293B;border:1.5px solid #475569;border-radius:20px;padding:24px 28px;text-align:center;color:#fff;min-width:240px;"><div style="width:44px;height:44px;margin:0 auto 14px;border:4px solid rgba(132,204,22,.3);border-top-color:#84CC16;border-radius:50%;animation:pgspin 1s linear infinite;"></div><div id="pgText" style="font-size:18px;font-weight:900;"></div><div style="font-size:13.5px;color:#94A3B8;margin-top:6px;font-weight:700;">창을 닫지 말고 잠시 기다려 주세요</div></div><style>@keyframes pgspin{to{transform:rotate(360deg)}}</style>'; document.body.appendChild(o); } document.getElementById('pgText').innerText = t; }
+    function pgHide() { document.getElementById('pgOverlay')?.remove(); }
     async function seedOfficialPosts() {
         try {
             const res = await fetch(getAuthUrl(`${COMMUNITY_URL}.json`)); const data = await res.json();
@@ -998,14 +1019,14 @@
             if (existing > 0) return alert(`이미 예시글 ${existing}개가 등록되어 있습니다.\n다시 등록하려면 먼저 [예시글 전체 삭제]를 눌러주세요.`);
             if (!confirm(`소통방에 예시글 ${OFFICIAL_SAMPLE_POSTS.length}개를 등록하시겠습니까?`)) return;
             const base = Date.now(); const n = OFFICIAL_SAMPLE_POSTS.length;
-            for (let i = 0; i < n; i++) {
+            for (let i = 0; i < n; i++) { pgShow(`예시글 등록 중… ${i + 1} / ${n}`);
                 const p = OFFICIAL_SAMPLE_POSTS[i]; const ts = base - i * 60000; // 환영 글이 맨 위에 보이도록 1분 간격
                 const post = { id: 'official_' + ts, authorId: '__official__', authorName: '조경노트 운영팀', authorRegion: '', isOfficial: true, category: p.category, title: p.title, phone: '', content: p.content, timestamp: ts, dateStr: new Date(ts).toLocaleString('ko-KR', {month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit'}) };
                 const r = await fetch(getAuthUrl(`${COMMUNITY_URL}.json`), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(post) });
                 if (!r.ok) throw new Error('등록 실패 (' + (i + 1) + '번째)');
             }
-            alert(`✅ 예시글 ${n}개가 등록되었습니다. 앱의 [대표님 소통방]에서 확인해 보세요.`);
-        } catch (e) { alert("예시글 등록 중 오류가 발생했습니다: " + e.message); }
+            pgHide(); alert(`✅ 예시글 ${n}개가 등록되었습니다. 앱의 [대표님 소통방]에서 확인해 보세요.`);
+        } catch (e) { pgHide(); alert("예시글 등록 중 오류가 발생했습니다: " + e.message); }
     }
     async function deleteOfficialPosts() {
         try {
@@ -1013,9 +1034,9 @@
             const keys = data ? Object.keys(data).filter(k => data[k] && data[k].isOfficial) : [];
             if (keys.length === 0) return alert("등록된 예시글이 없습니다.");
             if (!confirm(`예시글 ${keys.length}개를 삭제하시겠습니까? (회원이 쓴 글은 삭제되지 않습니다)`)) return;
-            for (const k of keys) { await fetch(getAuthUrl(`${COMMUNITY_URL}/${k}.json`), { method: 'DELETE' }); }
-            alert(`✅ 예시글 ${keys.length}개가 삭제되었습니다.`);
-        } catch (e) { alert("삭제 중 오류가 발생했습니다."); }
+            let i = 0; for (const k of keys) { pgShow(`예시글 삭제 중… ${++i} / ${keys.length}`); await fetch(getAuthUrl(`${COMMUNITY_URL}/${k}.json`), { method: 'DELETE' }); }
+            pgHide(); alert(`✅ 예시글 ${keys.length}개가 삭제되었습니다.`);
+        } catch (e) { pgHide(); alert("삭제 중 오류가 발생했습니다."); }
     }
 
     // 📋 [패치 #11] 라운지 게시글 관리 (관리자 전용: 삭제 · 마감 처리)
