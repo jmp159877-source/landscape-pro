@@ -6391,7 +6391,7 @@ ${HELP_EXTRA.join('\n')}`;
               let data = await res.json();
               // 🔑 [패치 #187] PC를 오래 켜 두면 로그인 열쇠가 만료돼 글이 하나도 안 보였음 → 열쇠를 새로 받아 한 번 더 읽기
               if (!res.ok || (data && data.error)) { if (await refreshIdToken()) { res = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_community.json?auth=${currentIdToken}`); data = await res.json(); } }
-              const container = document.getElementById('boardFeedContainer');
+              const container = document.getElementById('boardFeedContainer'); try { window.newPostBarHide && newPostBarHide(); } catch (e) {}
               if (!res.ok || (data && data.error)) { container.innerHTML = '<div style="background:#fff;border-radius:18px;padding:22px;text-align:center;color:#151E2D;font-size:16px;font-weight:800;line-height:1.6;">글을 불러오지 못했어요.<br><span style="color:#64748B;font-size:14.5px;">로그인이 오래돼서 그럴 수 있어요. 화면을 새로고침(F5)하고 다시 로그인해 주세요.</span>'; console.error('[소통방] 글 읽기 실패', res.status, data); return; }
               
               if(!data) {
@@ -6417,6 +6417,7 @@ ${HELP_EXTRA.join('\n')}`;
                   const acts = [];
                   if (!post.isOfficial && noCmt) { // 함께 일하기: 전화·1:1 대화 (댓글 없음)
                       if (isMyPost) { if (statusLabel) acts.push(`<button onclick="togglePostStatus('${post._key}')" class="bf-bt">${isClosed ? '다시 진행 중으로' : statusLabel + ' 처리하기'}</button>`); }
+                      else if (isClosed) acts.push(`<span class="bf-bt" style="opacity:.55;cursor:default;">🔒 ${statusLabel}된 글이에요</span>`); // 🔒 [패치 #196] 마감·거래완료 글은 전화·1:1 대화 막음
                       else {
                           if (post.phone) acts.push(`<button onclick="callPhone('${escHtml(String(post.phone).replace(/[^0-9-]/g, ''))}')" class="bf-bt"><i data-lucide="phone" class="w-5 h-5"></i> 전화하기</button>`);
                           acts.push(`<button onclick="openBoardChat('${jsId}', '${jsName}')" class="bf-bt pri"><i data-lucide="message-square" class="w-5 h-5"></i> 1:1 대화</button>`);
@@ -11991,6 +11992,45 @@ JSON만 답한다: {"items":[{"group":"","name":"","phone":"","memo":""}]}`;
   };
 })();
 busyWrap({"deleteMemo": "삭제 중…", "deleteStockRow": "삭제 중…", "reqReport": "신고 접수 중…", "reqSetStatus": "저장 중…", "reqDelete": "삭제 중…", "hpCancel": "처리 중…", "ptCancelReq": "취소하는 중…", "waNudgeSave": "저장 중…", "sendRealChatMessage": "보내는 중…", "ptBlogCharge": "포인트 확인 중…"});
+</script>
+
+<script>
+/* 🆕 [패치 #195] 소통방을 보고 있는 동안 30초마다 새 글이 있는지 확인 → 위에 "새 글 N개 · 눌러서 보기" 띠
+   (쓰던 댓글이 지워지지 않게 화면을 마음대로 다시 그리지 않음 · 띠를 누르면 그때 새로 불러옴) */
+(function () {
+  let timer = null, busy = false;
+  function boardOpen() { const b = document.getElementById('boardView'); return b && !b.classList.contains('hidden') && !document.hidden; }
+  function bar(n) {
+    let el = document.getElementById('newPostBar');
+    if (!n) { if (el) el.remove(); return; }
+    if (!el) { el = document.createElement('button'); el.type = 'button'; el.id = 'newPostBar';
+      el.style.cssText = 'position:sticky;top:92px;z-index:41;display:block;margin:6px auto 0;padding:11px 18px;border-radius:999px;background:#84CC16;color:#1A2E05;font-size:16px;font-weight:900;border:0;box-shadow:0 6px 18px rgba(0,0,0,.35);';
+      el.onclick = refreshNow;
+      const box = document.getElementById('boardNoticeBox'); if (box) box.insertAdjacentElement('afterend', el); else return; }
+    el.textContent = `🆕 새 글 ${n}개 · 눌러서 보기`;
+  }
+  async function refreshNow() {
+    bar(0);
+    try { await loadCommunityPosts(); } catch (e) {}
+    const act = document.querySelector('.board-tab-btn.bg-white:not(.hidden)'); const m = act && (act.getAttribute('onclick') || '').match(/filterBoard\('([^']+)'/);
+    if (act && m) filterBoard(m[1], act);
+    document.getElementById('boardView')?.scrollIntoView({ block: 'start' });
+  }
+  async function check() {
+    if (busy || !boardOpen() || typeof currentIdToken === 'undefined' || !currentIdToken) return;
+    busy = true;
+    try {
+      const r = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_community.json?shallow=true&auth=${currentIdToken}`);
+      if (r.ok) { const keys = Object.keys((await r.json()) || {}); const known = (typeof boardPostCache !== 'undefined' && boardPostCache) || {};
+        const n = keys.filter(k => /^[A-Za-z0-9_-]{1,64}$/.test(k) && !known[k]).length; bar(n); }
+    } catch (e) {}
+    busy = false;
+  }
+  function start() { if (!timer) timer = setInterval(check, 30000); }
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) setTimeout(check, 500); });
+  start();
+  window.newPostBarHide = () => bar(0);
+})();
 </script>
 
 </body>
