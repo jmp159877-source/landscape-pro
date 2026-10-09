@@ -11364,6 +11364,183 @@ ${AI_COMMON_RULES}
   }
 })();
 </script>
+<script>
+/* 🧩 [패치 #168] ① 일정 → 작업일지 바로 쓰기 ② 연간관리 일정 한 번에 넣기 */
+(function () {
+  const esc = t => String(t == null ? '' : t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const fmt = p => { try { return reqPhoneFmt(p); } catch (e) { return p; } };
+  const won = n => (Number(n) || 0).toLocaleString('ko-KR');
+  const W = '일월화수목금토';
+  const ymd = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const co = () => (myCompanyProfile && myCompanyProfile.name) || '조경노트';
+  const coTel = () => { const t = String((myCompanyProfile && myCompanyProfile.phone) || '').replace(/[^0-9]/g, ''); return t ? fmt(t) : ''; };
+  function sheet(id, html) {
+    let box = document.getElementById(id);
+    if (!box) { box = document.createElement('div'); box.id = id; box.style.cssText = 'position:fixed;inset:0;z-index:9600;background:rgba(15,23,42,.6);display:flex;align-items:flex-end;justify-content:center'; box.onclick = e => { if (e.target === box) box.style.display = 'none'; }; document.body.appendChild(box); }
+    box.innerHTML = `<div style="background:#fff;color:#151E2D;width:100%;max-width:480px;max-height:92vh;overflow-y:auto;border-radius:26px 26px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom))">${html}</div>`;
+    box.style.display = 'flex'; return box;
+  }
+  const head = (t, closeId) => `<div style="display:flex;align-items:center;justify-content:space-between"><b style="font-size:21px;font-weight:900">${t}</b><button type="button" onclick="document.getElementById('${closeId}').style.display='none'" style="width:40px;height:40px;border-radius:99px;background:#F1F5F9;font-size:20px;font-weight:900">✕</button></div>`;
+  const tip = t => `<div style="margin-top:12px;background:#ECFCCB;border:1.5px solid #84CC16;border-radius:14px;padding:10px 12px;font-size:14.5px;font-weight:800;color:#1A2E05;line-height:1.5">${t}</div>`;
+  const B = 'display:flex;align-items:center;justify-content:center;gap:6px;border-radius:14px;font-weight:900';
+
+  /* ───────── ① 일정 → 작업일지 ───────── */
+  const SJ = { sid: null };
+  const CAT_KEYS = [['소나무', '소나무 전지작업'], ['전지', '소나무 전지작업'], ['병해충', '병해충 방제 및 약제'], ['소독', '병해충 방제 및 약제'], ['방제', '병해충 방제 및 약제'], ['잔디', '잔디깍기, 잡초예초작업'], ['예초', '잔디깍기, 잡초예초작업'], ['화단', '화단관리 (잡초·예초)'], ['관목', '관목전정작업'], ['전정', '관목전정작업'], ['시비', '수목 시비 및 영양'], ['비료', '수목 시비 및 영양'], ['월동', '수목 월동 조치'], ['보온', '수목 월동 조치'], ['부산물', '작업부산물 수거처리'], ['폐기', '작업부산물 수거처리']];
+  window.schedToLog = function (ev, id) {
+    if (ev) { ev.stopPropagation(); ev.preventDefault(); }
+    const s = (schedules || []).find(x => x && String(x.id) === String(id)); if (!s) return;
+    if (s.recId && !confirm('이 일정은 이미 작업일지를 발행했어요.\n새 작업일지를 하나 더 쓸까요?')) return;
+    try { if (document.getElementById('jnSchedSheet')) document.getElementById('jnSchedSheet').style.display = 'none'; } catch (e) {}
+    switchView('admin');
+    const set = (i, v) => { const e = document.getElementById(i); if (e) e.value = v; };
+    const name = String(s.cust || '').trim() || String(s.title || '').split(/[·\-]/)[0].trim();
+    set('clientSelect', name); try { onSelectClient(name); } catch (e) {}
+    const ph = String(s.phone || '').replace(/[^0-9]/g, ''); if (ph) { const e = document.getElementById('inputClientPhone'); if (e) { e.value = ph; try { autoHyphen(e); } catch (x) {} } }
+    const addr = (typeof jnSchedAddr === 'function' ? jnSchedAddr(s) : s.addr) || ''; if (addr) set('inputClientAddress', addr);
+    let round = String(s.title || ''); if (name) round = round.replace(name, ''); round = round.replace(/^[\s·\-]+/, '').trim() || String(s.tag || '');
+    set('inputRound', round.slice(0, 60));
+    set('inputWorkDate', s.date || getTodayStr());
+    const hay = `${s.tag || ''} ${s.title || ''} ${s.memo || ''}`;
+    const want = new Set(CAT_KEYS.filter(k => hay.includes(k[0])).map(k => k[1]));
+    document.querySelectorAll('#categoryContainer .cat-btn').forEach(b => { const on = b.classList.contains('bg-[#151E2D]'); if (want.has(b.getAttribute('data-val')) !== on) { try { toggleBadge(b); } catch (e) {} } });
+    SJ.sid = String(s.id);
+    let bn = document.getElementById('sjBanner');
+    if (!bn) { bn = document.createElement('div'); bn.id = 'sjBanner'; const v = document.getElementById('adminView'); v.insertBefore(bn, v.firstChild); }
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s.date || '');
+    bn.innerHTML = `<div style="background:#ECFCCB;border:2px solid #84CC16;border-radius:20px;padding:14px 16px;color:#1A2E05"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b style="font-size:17px;font-weight:900">📅 일정에서 불러왔어요</b><button type="button" onclick="sjCancel()" style="font-size:14px;font-weight:900;color:#475569;background:#fff;border:1.5px solid #CBD5E1;border-radius:10px;padding:6px 10px">취소</button></div><div style="font-size:15.5px;font-weight:800;margin-top:6px;line-height:1.5;word-break:keep-all">${m ? `${+m[2]}월 ${+m[3]}일 · ` : ''}${esc(name)}${round ? ' · ' + esc(round) : ''}<br>고객 정보와 작업 항목이 채워졌어요. <b>사진만 넣고 발행</b>하세요.</div></div>`;
+    bn.style.display = 'block';
+    window.scrollTo(0, 0);
+  };
+  window.sjCancel = function () { SJ.sid = null; const b = document.getElementById('sjBanner'); if (b) b.style.display = 'none'; };
+  if (typeof linkWorkLogToSchedule === 'function') {
+    const o = linkWorkLogToSchedule;
+    linkWorkLogToSchedule = function (recId, workDate) {
+      if (SJ.sid) {
+        const s = (schedules || []).find(x => x && String(x.id) === SJ.sid);
+        if (s && !s.recId) { s.recId = recId; if (workDate) s.date = workDate; s.done = Date.now(); try { updateData('schedules', schedules); } catch (e) {} sjCancel(); return; }
+        sjCancel();
+      }
+      return o.apply(this, arguments);
+    };
+  }
+
+  /* ───────── ② 연간관리 일정 한 번에 ───────── */
+  const AN = { rec: null };
+  const isAnnual = rec => { const m = (rec && rec.payload && Array.isArray(rec.payload.m)) ? rec.payload.m : []; return m.length > 0 && m.every(x => /^\d{1,2}월$/.test(String(x.m || ''))); };
+  function nthWeekday(y, mo, nth, wd) { const first = new Date(y, mo, 1).getDay(); let d = 1 + ((wd - first + 7) % 7) + (nth - 1) * 7; const last = new Date(y, mo + 1, 0).getDate(); if (nth === 5 || d > last) { d = last - ((new Date(y, mo, last).getDay() - wd + 7) % 7); } return new Date(y, mo, d); }
+  function anDates() {
+    const g = id => (document.getElementById(id) || {}).value;
+    const mode = g('anMode'), nth = +g('anNth'), wd = +g('anWd'), day = +g('anDay') || 1;
+    const t = new Date(); const ty = t.getFullYear(), tm = t.getMonth();
+    return AN.items.map(it => { const mo = parseInt(it.m, 10) - 1; let y = (mo < tm) ? ty + 1 : ty;
+      let d = mode === 'day' ? new Date(y, mo, Math.min(day, new Date(y, mo + 1, 0).getDate())) : nthWeekday(y, mo, nth, wd);
+      if (d < new Date(ty, tm, t.getDate())) { y++; d = mode === 'day' ? new Date(y, mo, Math.min(day, new Date(y, mo + 1, 0).getDate())) : nthWeekday(y, mo, nth, wd); }
+      return d; });
+  }
+  window.anRefresh = function () {
+    const ds = anDates(), box = document.getElementById('anList'); if (!box) return;
+    box.innerHTML = AN.items.map((it, i) => i).sort((a, b) => ds[a] - ds[b]).map(i => { const it = AN.items[i]; const d = ds[i]; const desc = String(it.d || '').split('\n').map(x => x.replace(/^[·•\-\s]+/, '').trim()).filter(Boolean).join(', ');
+      return `<label style="display:flex;gap:10px;align-items:center;border:1.5px solid #E2E8F0;border-radius:14px;padding:10px 12px;margin-top:8px;background:#fff"><input type="checkbox" class="anChk" data-i="${i}" checked style="width:22px;height:22px;accent-color:#65A30D;flex-shrink:0"><input type="date" class="anDate" data-i="${i}" value="${ymd(d)}" style="border:1.5px solid #CBD5E1;border-radius:10px;height:42px;padding:0 6px;font-size:15px;font-weight:900;width:150px;flex-shrink:0"><span style="font-size:14.5px;font-weight:800;color:#334155;line-height:1.35;word-break:keep-all">${+parseInt(it.m, 10)}월 · ${esc(desc || '정기 관리')}</span></label>`; }).join('');
+    const c = document.getElementById('anCount'); if (c) c.textContent = AN.items.length;
+  };
+  window.anModeSet = function (m) { document.getElementById('anMode').value = m; document.getElementById('anRowW').style.display = m === 'wd' ? 'grid' : 'none'; document.getElementById('anRowD').style.display = m === 'day' ? 'flex' : 'none';
+    ['wd', 'day'].forEach(k => { const b = document.getElementById('anTab_' + k); if (b) { b.style.background = k === m ? '#151E2D' : '#fff'; b.style.color = k === m ? '#BEF264' : '#334155'; } }); anRefresh(); };
+  window.quoteAnnual = function (ev, id) {
+    if (ev) { ev.stopPropagation(); ev.preventDefault(); }
+    const rec = (records || []).find(r => r && String(r.id) === String(id)); if (!rec) return; const p = rec.payload || {};
+    if (rec.sched && rec.sched.annual && !confirm(`이 견적은 연간 일정 ${rec.sched.count}건이 이미 들어가 있어요.\n한 번 더 넣을까요?`)) return;
+    AN.rec = rec; AN.items = (p.m || []).slice().sort((a, b) => parseInt(a.m, 10) - parseInt(b.m, 10));
+    const sel = 'height:52px;border:2px solid #84CC16;border-radius:14px;font-size:17px;font-weight:900;padding:0 8px;background:#fff;color:#151E2D;-webkit-appearance:menulist;appearance:menulist;width:100%';
+    sheet('anSheet', `${head('📅 연간 일정 한 번에 넣기', 'anSheet')}
+      ${tip(`<b>${esc(p.c || rec.clientName || '')}</b> 연간관리 견적의 <b>${AN.items.length}개월</b> 작업을 일정표에 한 번에 넣어요. 방문 규칙만 고르세요.`)}
+      <input type="hidden" id="anMode" value="wd">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:14px;background:#F1F5F9;border-radius:14px;padding:4px">
+        <button type="button" id="anTab_wd" onclick="anModeSet('wd')" style="${B};height:46px;font-size:16px">매월 ○째 주 ○요일</button>
+        <button type="button" id="anTab_day" onclick="anModeSet('day')" style="${B};height:46px;font-size:16px">매월 ○일</button>
+      </div>
+      <div id="anRowW" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+        <select id="anNth" onchange="anRefresh()" style="${sel}"><option value="1">첫째 주</option><option value="2" selected>둘째 주</option><option value="3">셋째 주</option><option value="4">넷째 주</option><option value="5">마지막 주</option></select>
+        <select id="anWd" onchange="anRefresh()" style="${sel}">${[1, 2, 3, 4, 5, 6, 0].map(i => `<option value="${i}"${i === 2 ? ' selected' : ''}>${W[i]}요일</option>`).join('')}</select>
+      </div>
+      <div id="anRowD" style="display:none;align-items:center;gap:8px;margin-top:10px"><b style="font-size:17px">매월</b><input id="anDay" type="number" inputmode="numeric" min="1" max="31" value="10" oninput="anRefresh()" style="height:52px;width:90px;border:2px solid #84CC16;border-radius:14px;text-align:center;font-size:20px;font-weight:900"><b style="font-size:17px">일</b></div>
+      <div style="font-size:14px;font-weight:900;color:#475569;margin-top:14px">들어갈 일정 <span id="anCount"></span>건 <span style="font-weight:700;color:#94A3B8">(날짜를 눌러 따로 바꿔도 돼요 · 빼려면 체크 해제)</span></div>
+      <div id="anList"></div>
+      <button type="button" onclick="anSave()" style="${B};width:100%;height:58px;margin-top:14px;background:#151E2D;color:#BEF264;font-size:18px">✓ 일정표에 한 번에 넣기</button>`);
+    anModeSet('wd');
+  };
+  window.anSave = function () {
+    const rec = AN.rec; if (!rec) return; const p = rec.payload || {};
+    const name = String(p.c || rec.clientName || '').trim(), ph = String(p.p || '').replace(/[^0-9]/g, ''), addr = p.addr || '';
+    const rows = [...document.querySelectorAll('#anList .anChk')].filter(c => c.checked).map(c => { const i = +c.dataset.i; return { it: AN.items[i], date: (document.querySelector(`#anList .anDate[data-i="${i}"]`) || {}).value }; }).filter(r => r.date);
+    if (!rows.length) { alert('넣을 일정을 하나 이상 골라 주세요.'); return; }
+    const base = Date.now(); const ids = [];
+    rows.forEach((r, k) => { const desc = String(r.it.d || '').split('\n').map(x => x.replace(/^[·•\-\s]+/, '').trim()).filter(Boolean).join(', ');
+      const id = String(base + k); ids.push(id);
+      schedules.push({ id, date: r.date, title: `${name} ${parseInt(r.it.m, 10)}월 정기관리${desc ? ' · ' + desc : ''}`.slice(0, 80), color: 'border-[#84CC16]', tag: '정기관리', cust: name.slice(0, 30), phone: ph, addr,
+        memo: `[연간관리 ${parseInt(r.it.m, 10)}월] ${desc}${r.it.p ? '\n금액 ' + won(r.it.p) + '원' : ''}`, quoteId: String(rec.id) }); });
+    try { updateData('schedules', schedules); } catch (e) {}
+    const dates = rows.map(r => r.date).sort();
+    rec.sched = { date: dates[0], id: ids[0], annual: true, count: rows.length, last: dates[dates.length - 1], amt: Number(p.t || p.s || 0), at: Date.now() };
+    try { updateData('records', records); } catch (e) {}
+    document.getElementById('anSheet').style.display = 'none';
+    try { renderCalendar(); renderScheduleList(); } catch (e) {}
+    try { if (!document.getElementById('quoteListView').classList.contains('hidden')) renderQuoteList(); } catch (e) {}
+    const mm = d => +d.slice(5, 7);
+    alert(`✅ ${name} 연간 일정 ${rows.length}건을 넣었어요.\n(${mm(dates[0])}월 ~ ${mm(dates[dates.length - 1])}월)`);
+  };
+  if (typeof window.quoteToSchedule === 'function') {
+    const o = window.quoteToSchedule;
+    window.quoteToSchedule = function (ev, id) { const rec = (records || []).find(r => r && String(r.id) === String(id)); if (isAnnual(rec)) return quoteAnnual(ev, id); return o.apply(this, arguments); };
+  }
+  if (typeof renderQuoteList === 'function') {
+    const o = renderQuoteList;
+    renderQuoteList = function () {
+      const r = o.apply(this, arguments);
+      try { const qList = records.filter(x => x && x.type === 'quote').sort((a, b) => b.id.localeCompare(a.id));
+        document.querySelectorAll('#quoteListContainer > div').forEach((card, i) => { const rec = qList[i]; if (!rec || !isAnnual(rec)) return; const bar = card.querySelector('.qs-bar'); if (!bar) return;
+          const main = bar.querySelector('button');
+          if (rec.sched && rec.sched.annual) { const nb = bar.querySelector('.nt-btn'); if (nb) nb.remove(); if (main) { main.textContent = `✅ 연간 일정 ${rec.sched.count}건 · ${+rec.sched.date.slice(5, 7)}월~${+String(rec.sched.last || rec.sched.date).slice(5, 7)}월`; } }
+          else if (main) main.textContent = '📅 고객이 확정했어요 · 연간 일정 한 번에 잡기'; });
+      } catch (e) {}
+      return r;
+    };
+  }
+  if (typeof renderClientView === 'function') {
+    const o = renderClientView;
+    renderClientView = function (data, viewMode) { const r = o.apply(this, arguments);
+      try { const b = document.getElementById('qsViewBtn'); const rec = records.find(x => x && String(x.id) === String(currentLoadedRecordId));
+        if (b && rec && isAnnual(rec) && b.style.display !== 'none') { if (rec.sched && rec.sched.annual) b.textContent = `✅ 연간 일정 ${rec.sched.count}건 들어감 (달력 보기)`; else b.textContent = '📅 고객이 확정했어요 · 연간 일정 한 번에 잡기'; } } catch (e) {}
+      return r; };
+  }
+
+  /* 일정 카드·자세히 창에 [📝 작업일지 쓰기] */
+  function logBtn(s, big) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'sj-btn';
+    b.style.cssText = `width:100%;height:${big ? 54 : 50}px;margin-top:8px;border-radius:14px;font-size:16px;font-weight:900;${s.recId ? 'background:#F1F5F9;color:#475569;border:1.5px solid #CBD5E1' : 'background:#84CC16;color:#1A2E05'}`;
+    b.innerHTML = s.recId ? '✅ 작업일지 발행됨 · 리포트 보기' : '📝 이 일정으로 작업일지 쓰기';
+    b.onclick = e => { e.stopPropagation(); if (s.recId) { try { if (document.getElementById('jnSchedSheet')) document.getElementById('jnSchedSheet').style.display = 'none'; homeOpenReport(s.recId); } catch (x) {} } else schedToLog(e, s.id); };
+    return b;
+  }
+  if (typeof renderScheduleList === 'function') {
+    const o = renderScheduleList;
+    renderScheduleList = function () { const r = o.apply(this, arguments);
+      try { const ds = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
+        const day = schedules.filter(s => s.date === ds); const cards = document.getElementById('scheduleList').children;
+        day.forEach((s, i) => { const c = cards[i]; if (!c || c.querySelector('.sj-btn')) return; const nt = c.querySelector('.nt-btn'); const b = logBtn(s); if (nt) c.insertBefore(b, nt); else c.appendChild(b); });
+      } catch (e) {}
+      return r; };
+  }
+  if (typeof jnSchedOpen === 'function') {
+    const o = jnSchedOpen;
+    jnSchedOpen = function (id) { const r = o.apply(this, arguments);
+      try { const inner = document.getElementById('jnSchedSheet').firstElementChild; const s = schedules.find(x => String(x.id) === String(id));
+        if (inner && s && !inner.querySelector('.sj-btn')) { const nt = inner.querySelector('.nt-btn'); const b = logBtn(s, true); if (nt) inner.insertBefore(b, nt); else inner.appendChild(b); } } catch (e) {}
+      return r; };
+  }
+
+})();
+</script>
 </body>
 
 </html>
