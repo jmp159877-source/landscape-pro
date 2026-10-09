@@ -188,6 +188,22 @@
   html:not(.lt) .hm-cd { background:#0B1120; color:#E2E8F0; } html:not(.lt) .hm-cd.today { background:rgba(132,204,22,.14); }
   html:not(.lt) .hm-cd.sel { background:#84CC16; } html:not(.lt) .hm-cd.sel b { color:#12261E; } html:not(.lt) .hm-cal-lg { color:#94A3B8; }
   html:not(.lt) .hm-sub.b { color:#60A5FA; } html:not(.lt) .hm-sub.g { color:#4ADE80; }
+    /* 🏷 [패치 #200] 업체 분류 바 */
+    .ct-bar { display:flex; flex-direction:column; gap:8px; }
+    .ct-row { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+    .ct-btn { height:38px; padding:0 14px; border-radius:10px; border:1px solid #CBD5E1; background:#fff; color:#1E293B; font-size:14px; font-weight:900; }
+    .ct-btn.sm { height:34px; padding:0 10px; font-size:13px; }
+    .ct-btn.on { background:#1E3A8A; border-color:#1E3A8A; color:#fff !important; }
+    .ct-btn.pri { background:#F59E0B; border-color:#F59E0B; color:#1E293B; }
+    .ct-btn.dim { opacity:.45; }
+    .ct-select { height:38px; border-radius:10px; border:1px solid #CBD5E1; padding:0 8px; font-size:14px; font-weight:800; color:#1E293B; background:#fff; }
+    .ct-sel { font-size:13px; font-weight:800; color:#64748B; }
+    .ct-bulk { background:#F8FAFC; border:1px dashed #CBD5E1; border-radius:12px; padding:8px; }
+    .ct-chips { display:flex; flex-wrap:wrap; gap:4px; margin-bottom:4px; }
+    .ct-chip { font-size:11.5px; font-weight:900; padding:2px 7px; border-radius:6px; background:#E0E7FF; color:#1E3A8A; }
+    .ct-chip.sp { background:#FEF3C7; color:#92400E; }
+    .ct-chip.home { background:#DCFCE7; color:#166534; } .ct-chip.go { background:#E0F2FE; color:#075985; }
+    .ct-group { padding:10px 16px !important; background:#F1F5F9; color:#0F172A !important; font-size:14px; font-weight:900; }
 </style>
 </head>
 <body class="min-h-screen flex flex-col md:flex-row">
@@ -329,6 +345,16 @@
           </div>
       </div>
 
+      <!-- 🏷 [패치 #200] 보기: 전체 · 특별 관리 · 지역별 · 전문 분야 / 체크한 업체 분류에 넣기·빼기 -->
+      <div id="ctBar" class="ct-bar">
+        <div id="ctModes" class="ct-row"></div>
+        <div id="ctSub" class="ct-row"></div>
+        <div class="ct-row ct-bulk"><span id="ctSel" class="ct-sel">체크한 업체 0곳</span>
+          <select id="ctTagPick" class="ct-select"></select>
+          <button type="button" onclick="ctBulk(true)" class="ct-btn pri">분류에 넣기</button>
+          <button type="button" onclick="ctBulk(false)" class="ct-btn">분류에서 빼기</button>
+          <button type="button" onclick="ctManage()" class="ct-btn">✏️ 분야 이름 관리</button></div>
+      </div>
       <div class="glass-panel rounded-[24px] overflow-hidden shadow-lg">
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse whitespace-nowrap">
@@ -1176,7 +1202,7 @@
     // 🚀 [패치 #99] 관리자 화면 자료 가볍게: 예전엔 10초마다 모든 업체 자료(일지·장부·기록 전체)를 통째로 받았음
     //  → 업체 목록(이름만) 받고, 업체마다 필요한 칸(업체 정보·문의·충전 신청·환불·의뢰 신고)만 받음. 화면에 보이는 내용은 같음
     let ACC_LAST = null, ACC_BUSY = false;
-    const ACC_PARTS = ['profile', 'inquiries', 'wallet/reqs', 'wallet/refund', 'wallet/reqOpens'];
+    const ACC_PARTS = ['profile', 'inquiries', 'wallet/reqs', 'wallet/refund', 'wallet/reqOpens', 'adminTags']; // 🏷 [패치 #200] adminTags = 관리자 분류
     async function accGet(path) {
         const r = await fetch(getAuthUrl(`${DB_BASE_URL}/${path}.json`));
         if (!r.ok) throw new Error('load ' + r.status);
@@ -1190,8 +1216,8 @@
         for (let i = 0; i < keys.length; i += 6) {
             await Promise.all(keys.slice(i, i + 6).map(async id => {
                 const e = encodeURIComponent(id);
-                const [profile, inquiries, reqs, refund, reqOpens] = await Promise.all(ACC_PARTS.map(p => accGet(`${e}/${p}`)));
-                const acc = { profile, inquiries, wallet: { reqs, refund, reqOpens } };
+                const [profile, inquiries, reqs, refund, reqOpens, adminTags] = await Promise.all(ACC_PARTS.map(p => accGet(`${e}/${p}`)));
+                const acc = { profile, inquiries, wallet: { reqs, refund, reqOpens }, adminTags };
                 const want = Object.keys(reqOpens || {}).filter(q => reqOpens[q] && reqOpens[q].report && reqOpens[q].report.status === 'wait');
                 if (want.length) { acc.requests = {}; await Promise.all(want.map(async q => { acc.requests[q] = await accGet(`${e}/requests/${encodeURIComponent(q)}`); })); }
                 out[id] = acc;
@@ -1209,7 +1235,7 @@
             allAccounts = [];
             if (data && !data.error) {
                 for (const accId in data) {
-                    if (data[accId].profile) allAccounts.push(data[accId].profile);
+                    if (data[accId].profile) { data[accId].profile._tags = (data[accId].adminTags && typeof data[accId].adminTags === 'object') ? data[accId].adminTags : {}; data[accId].profile._key = accId; allAccounts.push(data[accId].profile); }
                 }
                 try { ptmCollect(data); } catch (e) {} // 💰 [패치 #71] 충전 신청 모으기
             }
@@ -1377,12 +1403,16 @@
             return name.includes(query) || id.includes(query) || ceo.includes(query) || region.includes(query) || rawPhone.includes(rawQuery);
         });
 
-        if (filteredAccounts.length === 0) {
+        // 🏷 [패치 #200] 보기 방식으로 거르고 가나다순 (지역별은 시·군으로 묶음)
+        let viewList = ctFilter(filteredAccounts);
+        ctPaint(filteredAccounts);
+        if (viewList.length === 0) {
             tbody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-[#94A3B8] font-bold">조건에 일치하는 업체가 없습니다.</td></tr>`;
             return;
         }
-
-        filteredAccounts.forEach(acc => {
+        let lastGroup = null;
+        viewList.forEach(acc => {
+            if (CT.mode === 'region' && CT.sido) { const g = ctCity(acc); if (g !== lastGroup) { lastGroup = g; const gr = document.createElement('tr'); gr.innerHTML = `<td colspan="7" class="ct-group">📍 ${pmEsc(CT.sido)} ${pmEsc(g)}</td>`; tbody.appendChild(gr); } }
             const tr = document.createElement('tr');
             tr.className = "hover:bg-white/5 transition-colors border-b border-white/5";
             
@@ -1400,7 +1430,7 @@
                     <input type="checkbox" class="company-check w-4 h-4 cursor-pointer accent-[#F59E0B]" value="${pmEsc(acc.id)}" onchange="handleCompanyCheck(this, ${jsArg(acc.id)})" ${isChecked}>
                 </td>
                 <td class="p-4">${statusHtml}</td>
-                <td class="p-4 font-black ${textStyle} text-[15px]">${acc.withdrawRequestedAt ? `<span class="block w-fit mb-1 bg-red-500/20 text-red-300 border border-red-500/40 text-[12px] font-black px-2 py-0.5 rounded">🚪 탈퇴 요청 ${pmEsc(acc.withdrawRequestedAt.slice(0,10))} · ${Math.max(0, 30 - Math.floor((Date.now() - new Date(acc.withdrawRequestedAt)) / 86400000))}일 후 삭제 대상</span>` : ''}${acc.region ? `<span class="text-[#84CC16] text-[12px] mr-1">[${pmEsc(acc.region)}]</span>` : ''}${pmEsc(acc.name)}<br class="md:hidden">${(acc.phone||'').replace(/[^0-9]/g,'') ? `<a href="tel:${(acc.phone||'').replace(/[^0-9]/g,'')}" onclick="event.stopPropagation()" class="md:hidden mt-1.5 inline-flex items-center gap-1 h-[34px] px-3 rounded-[10px] text-[14px] font-black whitespace-nowrap" style="background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE">📞 ${pmEsc(acc.phone)}</a>` : ''}</td>
+                <td class="p-4 font-black ${textStyle} text-[15px]">${ctChips(acc)}${acc.withdrawRequestedAt ? `<span class="block w-fit mb-1 bg-red-500/20 text-red-300 border border-red-500/40 text-[12px] font-black px-2 py-0.5 rounded">🚪 탈퇴 요청 ${pmEsc(acc.withdrawRequestedAt.slice(0,10))} · ${Math.max(0, 30 - Math.floor((Date.now() - new Date(acc.withdrawRequestedAt)) / 86400000))}일 후 삭제 대상</span>` : ''}${acc.region ? `<span class="text-[#84CC16] text-[12px] mr-1">[${pmEsc(acc.region)}]</span>` : ''}${pmEsc(acc.name)}<br class="md:hidden">${(acc.phone||'').replace(/[^0-9]/g,'') ? `<a href="tel:${(acc.phone||'').replace(/[^0-9]/g,'')}" onclick="event.stopPropagation()" class="md:hidden mt-1.5 inline-flex items-center gap-1 h-[34px] px-3 rounded-[10px] text-[14px] font-black whitespace-nowrap" style="background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE">📞 ${pmEsc(acc.phone)}</a>` : ''}</td>
                 <td class="p-4 ${idStyle} font-bold tracking-wide">${pmEsc(acc.id)}</td>
                 <td class="p-4 ${textStyle}">${pmEsc(acc.ceo)}</td>
                 <td class="p-4 ${textStyle} whitespace-nowrap">${(acc.phone||'').replace(/[^0-9]/g,'') ? `<a href="tel:${(acc.phone||'').replace(/[^0-9]/g,'')}" onclick="event.stopPropagation()" class="inline-flex items-center gap-1 font-black underline underline-offset-2" style="color:#1D4ED8;text-decoration-color:#93C5FD">📞 ${pmEsc(acc.phone)}</a>` : pmEsc(acc.phone)}</td><!-- 📞 [패치 #123] 누르면 전화 -->
@@ -1425,6 +1455,59 @@
         lucide.createIcons();
     }
 
+    // 🏷 [패치 #200] 업체 분류(관리자만): accounts/{아이디}/adminTags = { '⭐ 특별 관리': true, '소나무 전지': true } · 분야 이름 목록 = settings/companyTags
+    const CT = { mode: 'all', sido: '', tag: '', tags: ['⭐ 특별 관리', '소나무 전지', '데크·펜스', '조적', '잔디', '예초'] };
+    const CT_SPECIAL = '⭐ 특별 관리';
+    async function ctLoadTags() { try { const r = await fetch(getAuthUrl(`${SETTINGS_URL}/companyTags.json?t=${Date.now()}`)); const v = r.ok ? await r.json() : null; if (Array.isArray(v) && v.length) CT.tags = v.filter(x => typeof x === 'string' && x.trim()); } catch (e) {} if (!CT.tags.includes(CT_SPECIAL)) CT.tags.unshift(CT_SPECIAL); }
+    function ctSido(acc) { return regionSido(acc.region) || ''; }
+    function ctAreas(acc) { const a = Array.isArray(acc.workAreas) ? acc.workAreas : []; return a.length ? a : (ctSido(acc) ? [ctSido(acc)] : []); }
+    function ctCity(acc) { if (ctSido(acc) !== CT.sido) return '🚚 다른 지역 업체 (갈 수 있음)'; const ws = String(acc.region || '').replace(/[,·]/g, ' ').trim().split(/\s+/).filter(Boolean).filter(w => !HM_SIDO.includes(w.replace(/(특별자치시|특별자치도|특별시|광역시|도)$/, ''))); return (ws[0] || '기타').replace(/(시|군)$/, w => ws[0].length > 2 ? '' : w); }
+    function ctHas(acc, t) { return !!(acc._tags && acc._tags[t]); }
+    function ctFilter(list) {
+        let L = list.slice();
+        if (CT.mode === 'special') L = L.filter(a => ctHas(a, CT_SPECIAL));
+        else if (CT.mode === 'tag' && CT.tag) L = L.filter(a => ctHas(a, CT.tag));
+        else if (CT.mode === 'region' && CT.sido) L = L.filter(a => ctAreas(a).includes(CT.sido));
+        const nm = a => String(a.name || a.id || '');
+        L.sort((a, b) => (a.status === 'suspended') - (b.status === 'suspended') || !!a.withdrawRequestedAt - !!b.withdrawRequestedAt || (CT.mode === 'region' && CT.sido ? ((ctSido(a) === CT.sido ? 0 : 1) - (ctSido(b) === CT.sido ? 0 : 1)) || ctCity(a).localeCompare(ctCity(b), 'ko') : 0) || nm(a).localeCompare(nm(b), 'ko'));
+        return L;
+    }
+    function ctChips(acc) { const t = Object.keys(acc._tags || {}).filter(k => acc._tags[k]); const home = CT.mode === 'region' && CT.sido ? (ctSido(acc) === CT.sido ? '<span class="ct-chip home">📍 본사</span>' : '<span class="ct-chip go">🚚 갈 수 있음</span>') : ''; return (t.length || home) ? `<span class="ct-chips">${home}${t.map(x => `<span class="ct-chip${x === CT_SPECIAL ? ' sp' : ''}">${pmEsc(x)}</span>`).join('')}</span>` : ''; }
+    function ctPaint(list) {
+        const m = document.getElementById('ctModes'); if (!m) return;
+        const nSp = list.filter(a => ctHas(a, CT_SPECIAL)).length;
+        const B = (on, label, js) => `<button type="button" onclick="${js}" class="ct-btn ${on ? 'on' : ''}">${label}</button>`;
+        m.innerHTML = B(CT.mode === 'all', `전체 ${list.length}`, "ctMode('all')") + B(CT.mode === 'special', `⭐ 특별 관리 ${nSp}`, "ctMode('special')") + B(CT.mode === 'region', '📍 지역별', "ctMode('region')") + B(CT.mode === 'tag', '🏷 전문 분야', "ctMode('tag')");
+        const sub = document.getElementById('ctSub');
+        if (CT.mode === 'region') sub.innerHTML = HM_SIDO.map(s => { const n = list.filter(a => ctAreas(a).includes(s)).length; return `<button type="button" onclick="ctPickSido('${s}')" class="ct-btn sm ${CT.sido === s ? 'on' : ''} ${n ? '' : 'dim'}">${s} ${n}</button>`; }).join('');
+        else if (CT.mode === 'tag') sub.innerHTML = CT.tags.filter(t => t !== CT_SPECIAL).map(t => { const n = list.filter(a => ctHas(a, t)).length; return `<button type="button" onclick="ctPickTag(${jsArg(t)})" class="ct-btn sm ${CT.tag === t ? 'on' : ''}">${pmEsc(t)} ${n}</button>`; }).join('') || '<span class="ct-sel">[✏️ 분야 이름 관리]에서 분야를 만들어 주세요</span>';
+        else sub.innerHTML = '';
+        sub.style.display = sub.innerHTML ? '' : 'none';
+        const pick = document.getElementById('ctTagPick'); const cur = pick.value; pick.innerHTML = CT.tags.map(t => `<option value="${pmEsc(t)}">${pmEsc(t)}</option>`).join(''); if (CT.tags.includes(cur)) pick.value = cur;
+        document.getElementById('ctSel').textContent = `체크한 업체 ${globalCheckedCompanies.size}곳`;
+    }
+    function ctMode(m) { CT.mode = m; if (m === 'region' && !CT.sido) CT.sido = '경기'; if (m === 'tag' && !CT.tag) CT.tag = CT.tags.find(t => t !== CT_SPECIAL) || ''; renderActiveList(); }
+    function ctPickSido(s) { CT.sido = s; renderActiveList(); }
+    function ctPickTag(t) { CT.tag = t; renderActiveList(); }
+    async function ctBulk(add) {
+        const ids = Array.from(globalCheckedCompanies), tag = document.getElementById('ctTagPick').value;
+        if (!ids.length) return alert('먼저 업체 앞의 체크칸을 눌러 업체를 골라 주세요.');
+        if (!tag) return alert('분류를 골라 주세요.');
+        if (!confirm(`체크한 ${ids.length}곳을 [${tag}] ${add ? '에 넣을까요?' : '에서 뺄까요?'}`)) return;
+        pgShow(add ? '분류에 넣는 중…' : '분류에서 빼는 중…');
+        let ok = 0;
+        for (const id of ids) { const body = {}; body[tag] = add ? true : null; try { const r = await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(id)}/adminTags.json`), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }); if (r.ok) { ok++; const a = allAccounts.find(x => x.id === id || x._key === id); if (a) { a._tags = a._tags || {}; if (add) a._tags[tag] = true; else delete a._tags[tag]; } } } catch (e) {} }
+        pgHide(); renderActiveList(); alert(`✅ ${ok}곳을 [${tag}] ${add ? '에 넣었어요.' : '에서 뺐어요.'}`);
+    }
+    async function ctManage() {
+        const cur = CT.tags.filter(t => t !== CT_SPECIAL).join(', ');
+        const v = prompt('전문 분야 이름을 쉼표(,)로 나눠 적어 주세요.\n(⭐ 특별 관리는 늘 있어요)\n\n예) 소나무 전지, 데크·펜스, 조적, 잔디, 예초', cur);
+        if (v === null) return;
+        const list = [CT_SPECIAL].concat(v.split(',').map(x => x.trim().slice(0, 20)).filter(Boolean).filter((x, i, a) => a.indexOf(x) === i && x !== CT_SPECIAL)).slice(0, 30);
+        pgShow('저장 중…');
+        try { const r = await fetch(getAuthUrl(`${SETTINGS_URL}/companyTags.json`), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(list) }); pgHide(); if (!r.ok) throw new Error(); CT.tags = list; renderActiveList(); alert('✅ 분야 이름을 저장했어요.\n(이름을 지워도 업체에 붙은 분류는 남아 있어요)'); }
+        catch (e) { pgHide(); alert('저장하지 못했어요.'); }
+    }
     function toggleAllCompanies() {
         const isChecked = document.getElementById('selectAllCompanies').checked;
         const checkboxes = document.querySelectorAll('.company-check');
@@ -1436,6 +1519,7 @@
     }
 
     function getSelectedCompanies() { return Array.from(globalCheckedCompanies); }
+    document.addEventListener('change', e => { if (e.target && e.target.classList && (e.target.classList.contains('company-check') || e.target.id === 'selectAllCompanies')) { const el = document.getElementById('ctSel'); if (el) el.textContent = `체크한 업체 ${globalCheckedCompanies.size}곳`; } }); // 🏷 [패치 #200]
 
     function openTargetNoticeModal() {
         currentTargetNoticeIds = getSelectedCompanies();
@@ -3384,7 +3468,7 @@ busyWrap({"loginMaster": "로그인 중…", "registerMaster": "등록 중…", 
 </script>
 
 <script>/* 🔕 [패치 #194] 설정 탭을 열 때 새 글 알림 상태 읽기 */
-(function(){ const _st = switchTab; switchTab = function (t) { const r = _st.apply(this, arguments); if (t === 'settings') try { boardPushLoad(); } catch (e) {} return r; }; })();
+(function(){ const _st = switchTab; switchTab = function (t) { const r = _st.apply(this, arguments); if (t === 'settings') try { boardPushLoad(); } catch (e) {} if (t === 'companies') ctLoadTags().then(() => { try { renderActiveList(); } catch (e) {} }); return r; }; })();
 </script>
 </body>
 </html>
