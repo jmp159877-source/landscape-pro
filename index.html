@@ -83,6 +83,7 @@
     #mainCategoryWrapper nav button { min-width: 0; }
     html.mode-switch *, html.mode-switch *::before, html.mode-switch *::after { transition: none !important; animation-duration: 0s !important; } /* 🎨 [패치 #175] */
     #mainCategoryWrapper nav button { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; } /* 🎨 [패치 #175] 버튼 뒤 흐림 효과 끔 (보이는 차이 없음 · 휴대폰 부담 줄임) */
+    html.outdoor #boardNoticeBox { background:#FFFFFF !important; border-color:#CBD5E1 !important; } html.outdoor #boardNoticeText, html.outdoor #boardNoticeText * { color:#334155 !important; } /* 🎨 [패치 #188] 밝은 화면에서 안내 글씨가 안 보이던 것 */
     #tabContacts span.ct-sub { font-size: 14px !important; font-weight: 800 !important; opacity: .7; white-space: nowrap !important; letter-spacing: -0.02em !important; }
     /* 💡 [스타일 B 확정] 상단 6개 버튼: 모던 다크 티타늄 + 선명한 실버 테두리 + 야외 시인성 강화 */
     #tabCalendar, #tabAdmin, #tabClient, #tabQuote, #tabQuoteList, #tabLogList, #tabContacts {
@@ -6316,6 +6317,21 @@ ${HELP_EXTRA.join('\n')}`;
           }
       }
 
+      // 🐞 [패치 #189] 글 목록은 앱이 열린 뒤 1.2초에 한 번만 불러왔음 → PC처럼 로그인이 늦으면 열쇠 없이 불러와 빈 화면으로 남았음.
+      //    이제 게시판을 열 때마다 새로 불러오고, 다 불러온 뒤 지금 보고 있는 게시판으로 다시 거름 (새 글도 바로 보임)
+      { const _ob = openBoard;
+        openBoard = function (title) {
+          const r = _ob.apply(this, arguments);
+          if (LOUNGE_OPEN && currentIdToken && document.getElementById('boardView') && !document.getElementById('boardView').classList.contains('hidden')) {
+            loadCommunityPosts().then(() => {
+              const act = document.querySelector('.board-tab-btn.bg-white:not(.hidden)');
+              const m = act && (act.getAttribute('onclick') || '').match(/filterBoard\('([^']+)'/);
+              if (act && m) filterBoard(m[1], act);
+            });
+          }
+          return r;
+        };
+      }
       let currentChatRoom = "";
       let chatTargetId = "";
       let chatRefreshTimer = null;
@@ -6336,6 +6352,7 @@ ${HELP_EXTRA.join('\n')}`;
 
       // 👍 [패치 #171] 정보 교환 글 엄지척·나빠요 (포인트는 서버가 확인 · 내 글은 못 누름)
       const LIKE_BOARDS_APP = ['정보교환'];
+      function postYmd(p) { const t = Number(p && p.timestamp); if (!t) return String((p && p.dateStr) || ''); const d = new Date(t); return d.getFullYear() + '. ' + (d.getMonth() + 1) + '. ' + d.getDate() + '.'; } // 📅 [패치 #186] 소통방 글은 년·월·일만 (시간 뺌)
       function myVoteKey() { return String(currentUserId || '').toLowerCase().replace(/[^a-z0-9_-]/g, '_'); }
       function voteInner(post) {
           const own = post.authorId === currentUserId, my = (post.votes || {})[myVoteKey()] || 0, k = escHtml(post._key);
@@ -6366,9 +6383,12 @@ ${HELP_EXTRA.join('\n')}`;
 
       async function loadCommunityPosts() {
           try {
-              const res = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_community.json?auth=${currentIdToken}`);
-              const data = await res.json();
+              let res = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_community.json?auth=${currentIdToken}`);
+              let data = await res.json();
+              // 🔑 [패치 #187] PC를 오래 켜 두면 로그인 열쇠가 만료돼 글이 하나도 안 보였음 → 열쇠를 새로 받아 한 번 더 읽기
+              if (!res.ok || (data && data.error)) { if (await refreshIdToken()) { res = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_community.json?auth=${currentIdToken}`); data = await res.json(); } }
               const container = document.getElementById('boardFeedContainer');
+              if (!res.ok || (data && data.error)) { container.innerHTML = '<div style="background:#fff;border-radius:18px;padding:22px;text-align:center;color:#151E2D;font-size:16px;font-weight:800;line-height:1.6;">글을 불러오지 못했어요.<br><span style="color:#64748B;font-size:14.5px;">로그인이 오래돼서 그럴 수 있어요. 화면을 새로고침(F5)하고 다시 로그인해 주세요.</span>'; console.error('[소통방] 글 읽기 실패', res.status, data); return; }
               
               if(!data) {
                   container.innerHTML = emptyStateHtml('messages-square', '아직 올라온 글이 없습니다', '첫 글을 남겨 보세요.', '글쓰기', 'openBoardWrite()'); /* 🗂 [패치 #23] */
@@ -6380,7 +6400,8 @@ ${HELP_EXTRA.join('\n')}`;
               boardPostCache = {}; // 📷 [패치 #11] 게시글 키 보존 (마감 처리·사진 보기용)
               const posts = Object.entries(data).filter(([k, p]) => p && typeof p === 'object' && /^[A-Za-z0-9_-]{1,64}$/.test(k)) /* 🔐 [패치 #40] 이상한 키 차단 */.map(([k, p]) => { p._key = k; boardPostCache[k] = p; return p; }).sort((a,b) => b.timestamp - a.timestamp);
 
-              posts.forEach(post => { // 🎨 [패치 #171] 깔끔한 카드: 분류 이름(회색) · 제목 · 본문 · 사진 · 작성자·날짜 · 버튼
+              posts.forEach(post => { try { // 🛡️ [패치 #188] 글 하나가 이상해도 나머지는 보이게
+              (() => { // 🎨 [패치 #171] 깔끔한 카드: 분류 이름(회색) · 제목 · 본문 · 사진 · 작성자·날짜 · 버튼
                   const CATN = { '정보교환': '정보 교환·업체 공유', '불량거래처': '불량 거래처 경보', '현장협력': '작업 지원·협력', '장비자재': '장비·자재 직거래', '자유소통': '자유 소통', '노하우': '실무 노하우', '일감양도': '작업 양도·양수', '견적단가': '견적·단가 자문' };
                   const displayName = (post.authorRegion ? post.authorRegion + ' ' : '') + (post.authorName || '');
                   const statusLabel = BOARD_STATUS_LABEL[post.category]; const isClosed = !!statusLabel && post.status === 'closed';
@@ -6404,12 +6425,13 @@ ${HELP_EXTRA.join('\n')}`;
                       <h3 class="bf-tt">${escHtml(post.title)}</h3>
                       <p class="bf-bd">${escHtml(post.content).replace(/\n/g, '<br>')}</p>
                       ${imgsHtml}
-                      <div class="bf-meta">${who} · ${escHtml(post.dateStr || '')}</div>
+                      <div class="bf-meta">${who}${post.isOfficial ? '' : ' · ' + escHtml(postYmd(post))}</div><!-- 📌 [패치 #185] 운영팀 예시글은 날짜·시간 안 보임 -->
                       ${acts.length ? `<div class="bf-ac">${acts.join('')}</div>` : ''}
                       ${noCmt ? '' : `<div id="cmt_${escHtml(post._key)}" class="mt-3">${commentSectionHtml(post._key)}</div>`}
                   </div>`;
                   
                   container.insertAdjacentHTML('beforeend', cardHtml);
+              })(); } catch (err) { console.error('게시글 표시 실패', post && post._key, err); }
               });
               if(typeof lucide !== 'undefined') lucide.createIcons();
           } catch(e) { console.error("게시글 로드 실패", e); }
@@ -11938,6 +11960,34 @@ JSON만 답한다: {"items":[{"group":"","name":"","phone":"","memo":""}]}`;
 })();
 </script>
 
+<script>
+/* ⏳ [패치 #184] 실행 중 표시 공통: 누르고 0.3초 넘게 걸리면 가운데에 "처리 중…" 동그라미를 띄움
+   - 확인창·알림창(confirm·alert·prompt)이 뜰 때는 잠깐 숨겼다가, 아직 처리 중이면 다시 띄움 → 결과 창이 가려지지 않음
+   - 원래 로딩 표시가 있는 기능은 건드리지 않음 (BUSY_FNS 목록에 있는 것만) */
+(function () {
+  const B = { n: 0, t: null, msg: '' };
+  function el() {
+    let o = document.getElementById('busyOverlay');
+    if (!o) { o = document.createElement('div'); o.id = 'busyOverlay';
+      o.style.cssText = 'position:fixed;inset:0;z-index:10060;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;';
+      o.innerHTML = '<div style="background:#1E293B;border:1.5px solid #475569;border-radius:20px;padding:22px 26px;text-align:center;color:#fff;min-width:200px;"><div style="width:42px;height:42px;margin:0 auto 12px;border:4px solid rgba(132,204,22,.3);border-top-color:#84CC16;border-radius:50%;animation:busyspin 1s linear infinite;"></div><div id="busyText" style="font-size:17px;font-weight:900;"></div><div style="font-size:13px;color:#94A3B8;margin-top:5px;font-weight:700;">잠시만 기다려 주세요</div></div><style>@keyframes busyspin{to{transform:rotate(360deg)}}</style>';
+      document.body.appendChild(o); }
+    return o;
+  }
+  function show() { if (B.n > 0) { const o = el(); o.querySelector('#busyText').textContent = B.msg || '처리 중…'; o.style.display = 'flex'; } }
+  function hide() { clearTimeout(B.t); const o = document.getElementById('busyOverlay'); if (o) o.style.display = 'none'; }
+  function arm() { clearTimeout(B.t); B.t = setTimeout(show, 300); }
+  ['alert', 'confirm', 'prompt'].forEach(k => { const orig = window[k].bind(window); window[k] = function () { hide(); const r = orig.apply(null, arguments); if (B.n > 0) arm(); return r; }; });
+  window.busyWrap = function (map) {
+    Object.keys(map).forEach(name => {
+      const fn = window[name]; if (typeof fn !== 'function' || fn.__busy) return;
+      const w = async function () { B.n++; B.msg = map[name]; arm(); try { return await fn.apply(this, arguments); } finally { B.n = Math.max(0, B.n - 1); if (!B.n) hide(); } };
+      w.__busy = true; window[name] = w;
+    });
+  };
+})();
+busyWrap({"deleteMemo": "삭제 중…", "deleteStockRow": "삭제 중…", "reqReport": "신고 접수 중…", "reqSetStatus": "저장 중…", "reqDelete": "삭제 중…", "hpCancel": "처리 중…", "ptCancelReq": "취소하는 중…", "waNudgeSave": "저장 중…", "sendRealChatMessage": "보내는 중…", "ptBlogCharge": "포인트 확인 중…"});
+</script>
 
 </body>
 
