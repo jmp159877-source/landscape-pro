@@ -76,6 +76,14 @@
       font-weight: 900 !important;
     }
 
+    /* 🔠 [패치 #174] 휴대폰 '글자 크게'를 쓰면 버튼 글자가 칸 밖으로 나가던 문제: 넘치면 두 줄로 (보통 크기에선 지금처럼 한 줄) */
+    #mainCategoryWrapper nav button span:not(.ct-sub) {
+      white-space: normal !important; word-break: keep-all !important; overflow-wrap: anywhere; text-align: center !important; max-width: 100%;
+    }
+    #mainCategoryWrapper nav button { min-width: 0; }
+    html.mode-switch *, html.mode-switch *::before, html.mode-switch *::after { transition: none !important; animation-duration: 0s !important; } /* 🎨 [패치 #175] */
+    #mainCategoryWrapper nav button { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; } /* 🎨 [패치 #175] 버튼 뒤 흐림 효과 끔 (보이는 차이 없음 · 휴대폰 부담 줄임) */
+    #tabContacts span.ct-sub { font-size: 14px !important; font-weight: 800 !important; opacity: .7; white-space: nowrap !important; letter-spacing: -0.02em !important; }
     /* 💡 [스타일 B 확정] 상단 6개 버튼: 모던 다크 티타늄 + 선명한 실버 테두리 + 야외 시인성 강화 */
     #tabCalendar, #tabAdmin, #tabClient, #tabQuote, #tabQuoteList, #tabLogList, #tabContacts {
       background: linear-gradient(145deg, #242C37 0%, #323D4D 52%, #1C222B 100%) !important;
@@ -512,14 +520,14 @@
         <div id="mainCategoryWrapper" class="max-w-md mx-auto" style="margin-top: 22px !important; padding-top: 22px !important; border-top: 1px solid rgba(255, 255, 255, 0.12) !important;">
             <!-- 🎨 [패치 #15] 메뉴 C안: 업무 관리 / 현장 도구 / 대표님 전용 3묶음 -->
             <div class="menu-sec flex items-center gap-2 mb-2.5 mt-0 ml-1"><span class="sec-bar sec-lime w-1.5 h-5 rounded-full"></span><span class="sec-title sec-lime text-[16px] font-black tracking-tight">업무 관리</span><span class="text-[14.5px] font-bold text-white/60"></span></div>
-            <nav class="grid grid-cols-3 gap-3"><!-- 📋 [패치 #130] 일지 작성 옆에 일지·리포트 목록, 거래처 목록은 아래 줄로 -->
+            <nav class="grid grid-cols-3 gap-3"><!-- 📋 [패치 #130] 일지 작성 옆에 일지·리포트 목록, 고객 목록은 아래 줄로 -->
                 <button id="tabCalendar" onclick="switchView('calendar')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="calendar-days" class="w-6 h-6"></i><span class="btn-title">작업 일정표</span></button>
                 <button id="tabAdmin" onclick="switchView('admin')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="pen-tool" class="w-6 h-6"></i><span class="btn-title">작업 일지 작성</span></button>
                 <button id="tabLogList" onclick="switchView('logList')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="clipboard-list" class="w-6 h-6"></i><span class="btn-title" style="line-height:1.25;text-align:center">작업 일지<br>목록 보기</span></button><!-- 📋 [패치 #130] -->
                 <button id="tabQuote" onclick="switchView('quote')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="calculator" class="w-6 h-6"></i><span class="btn-title">견적서 작성</span></button>
                 <button id="tabQuoteList" onclick="switchView('quoteList')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="folder-open" class="w-6 h-6"></i><span class="btn-title">견적 보관함</span></button>
-                <button id="tabClient" onclick="switchView('clients')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="building-2" class="w-6 h-6"></i><span class="btn-title">거래처 목록</span></button>
-                <button id="tabContacts" style="grid-column:span 3;flex-direction:row;padding-top:14px;padding-bottom:14px" onclick="switchView('contacts')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="users" class="w-6 h-6"></i><span class="btn-title">연락처</span></button>
+                <button id="tabClient" onclick="switchView('clients')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="building-2" class="w-6 h-6"></i><span class="btn-title">고객 목록</span></button>
+                <button id="tabContacts" style="grid-column:span 3;flex-direction:row;padding-top:14px;padding-bottom:14px" onclick="switchView('contacts')" class="w-full transition-all flex flex-col items-center justify-center gap-2.5"><i data-lucide="users" class="w-6 h-6"></i><span class="btn-title">업체 연락처</span><span class="ct-sub">농원·자재상·장비·인력</span></button><!-- 📇 [패치 #174] 고객 연락처로 헷갈리지 않게 -->
             </nav>
             <!-- 📝 [패치 #46] AI 메모장 (업무 관리 아래 넓은 버튼) -->
             <button type="button" id="tabMemo" onclick="openMemoView()" class="w-full mt-3 text-left rounded-[22px] px-4 py-3.5 flex items-center gap-3.5 active:scale-[0.98] transition-all" style="background:#84CC16; box-shadow: 0 8px 20px rgba(132,204,22,0.3);">
@@ -691,7 +699,7 @@
 
         <div class="relative z-10">
           <label class="block text-[17px] font-black text-[#151E2D] mb-2">고객명 / 현장명</label>
-          <input type="text" id="clientSelect" oninput="onSelectClient(this.value)" placeholder="기존 거래처 선택 또는 새 고객명 직접 입력" autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" class="w-full bg-[#F9F9F8] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 py-4 text-[17px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16] placeholder:text-[#7C8A9E] placeholder:font-bold placeholder:text-[15px]">
+          <input type="text" id="clientSelect" oninput="onSelectClient(this.value)" placeholder="기존 고객 선택 또는 새 고객 이름 직접 입력" autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" class="w-full bg-[#F9F9F8] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 py-4 text-[17px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16] placeholder:text-[#7C8A9E] placeholder:font-bold placeholder:text-[15px]">
         </div>
 
         <div class="grid grid-cols-2 gap-3 relative z-10">
@@ -947,11 +955,11 @@
       </div>
     </section>
 
-    <!-- ================= [4. 거래처 관리 화면] ================= -->
+    <!-- ================= [4. 고객 관리 화면] ================= -->
     <section id="clientsView" class="hidden space-y-4">
       <div class="bg-white rounded-[28px] p-6 luxury-shadow space-y-6">
         <div class="flex items-center justify-between pb-3 border-b-2 border-[#F1F5F9]">
-          <h2 class="text-[22px] font-black text-[#151E2D] flex items-center gap-2 tracking-tight"><i data-lucide="building-2" class="w-6 h-6 text-[#84CC16] stroke-[2.5]"></i> 거래처 데이터베이스</h2>
+          <h2 class="text-[22px] font-black text-[#151E2D] flex items-center gap-2 tracking-tight"><i data-lucide="building-2" class="w-6 h-6 text-[#84CC16] stroke-[2.5]"></i> 고객 목록</h2>
           <span id="clientCountBadge" class="text-[15px] font-black bg-[#151E2D] text-[#84CC16] px-3.5 py-1.5 rounded-xl shadow-sm">0건</span>
         </div>
 
@@ -981,8 +989,8 @@
               <div class="absolute inset-y-0 left-3.5 flex items-center pointer-events-none"><i data-lucide="search" class="w-5 h-5 text-[#64748B]"></i></div>
               <input type="text" id="clientSearchInput" oninput="renderClientsList()" placeholder="고객명, 연락처, 주소로 수기 검색" class="w-full bg-[#F4F5F4] border-[1.5px] border-[#CBD5E1] rounded-[14px] pl-11 pr-4 py-3.5 text-[16.5px] font-black text-[#151E2D] placeholder:text-[#64748B] placeholder:font-bold placeholder:text-[14px] focus:outline-none focus:border-[#84CC16]">
           </div>
-          <!-- 🎤 [패치 #43] 말로 거래처 찾기 (정기·개별 전체에서 찾음) -->
-          <button type="button" id="clientMicBtn" onclick="toggleClientVoice()" class="w-full h-[56px] mb-3 rounded-[14px] bg-[#84CC16] text-[#1A2E05] text-[17.5px] font-black flex items-center justify-center gap-2.5 shadow-sm active:scale-[0.98] transition-all"><span class="w-9 h-9 rounded-full bg-[#151E2D] flex items-center justify-center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#BEF264" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10v1a7 7 0 0 0 14 0v-1"></path><path d="M12 18v4"></path></svg></span><span id="clientMicText">말로 거래처 찾기</span></button>
+          <!-- 🎤 [패치 #43] 말로 고객 찾기 (정기·개별 전체에서 찾음) -->
+          <button type="button" id="clientMicBtn" onclick="toggleClientVoice()" class="w-full h-[56px] mb-3 rounded-[14px] bg-[#84CC16] text-[#1A2E05] text-[17.5px] font-black flex items-center justify-center gap-2.5 shadow-sm active:scale-[0.98] transition-all"><span class="w-9 h-9 rounded-full bg-[#151E2D] flex items-center justify-center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#BEF264" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10v1a7 7 0 0 0 14 0v-1"></path><path d="M12 18v4"></path></svg></span><span id="clientMicText">말로 고객 찾기</span></button>
           <div id="clientVoiceBanner" class="hidden mb-3 bg-[#F4FBEA] border-[1.5px] border-[#84CC16] rounded-[14px] px-3.5 py-3 flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-[#84CC16] shrink-0 animate-pulse"></span><span class="text-[16px] font-extrabold text-[#3F6212] leading-snug">듣고 있어요 · 고객 이름, 전화번호, 동네 중 하나를 말씀하세요</span></div>
           <div class="flex bg-[#F1F5F9] p-1.5 rounded-[16px] border border-[#CBD5E1]">
             <button id="btnFilterRegular" onclick="setClientFilter('정기 관리')" class="flex-1 py-3.5 rounded-[12px] bg-white shadow-sm text-[#151E2D] font-black text-[16.5px] transition-all border border-[#CBD5E1]">정기 관리처</button>
@@ -1002,8 +1010,8 @@
         </div>
 
         <div class="flex bg-[#F1F5F9] p-1.5 rounded-[16px] border border-[#CBD5E1] mb-4">
-          <button id="btnContactClient" onclick="switchContactTab('clients')" class="flex-1 py-3.5 rounded-[12px] bg-white shadow-sm text-[#151E2D] font-black text-[16.5px] transition-all border border-[#CBD5E1]">거래처 연락처</button>
-          <button id="btnContactLabor" onclick="switchContactTab('labors')" class="flex-1 py-3.5 rounded-[12px] text-[#4E5968] font-black text-[16.5px] hover:text-[#151E2D] transition-all border border-transparent bg-transparent">인력 전화번호</button>
+          <button id="btnContactClient" onclick="switchContactTab('clients')" class="flex-1 py-3.5 rounded-[12px] bg-white shadow-sm text-[#151E2D] font-black text-[16.5px] transition-all border border-[#CBD5E1]">업체 연락처</button>
+          <button id="btnContactLabor" onclick="switchContactTab('labors')" class="flex-1 py-3.5 rounded-[12px] text-[#4E5968] font-black text-[16.5px] hover:text-[#151E2D] transition-all border border-transparent bg-transparent">인력 연락처</button>
         </div>
 
         <div class="bg-[#F9F9F8] p-5 rounded-[22px] border-[1.5px] border-[#CBD5E1] space-y-4">
@@ -1029,7 +1037,7 @@
         <div class="flex items-start justify-between pb-4 border-b border-[#F4F5F4] gap-3">
             <h2 class="text-[18px] font-black text-[#151E2D] flex items-start gap-2 flex-1 break-keep leading-snug">
                 <i data-lucide="history" class="w-6 h-6 text-[#84CC16] shrink-0 mt-0.5"></i> 
-                <span id="historyClientName" class="text-[#151E2D]">거래처명</span>
+                <span id="historyClientName" class="text-[#151E2D]">고객 이름</span>
             </h2>
             <!-- ✨ 기존 텍스트를 지우고, 고객 정보를 물고 일지 작성 화면으로 넘어가는 터치 버튼으로 교체 ✨ -->
             <button onclick="const cName = document.getElementById('historyClientName').innerText; const c = clients.find(x => x.name === cName); if(c) { createNewReportFromClient(c.id); } else { switchView('admin'); }" class="text-[13.5px] font-black bg-[#151E2D] text-white px-3 py-2 rounded-[10px] shrink-0 whitespace-nowrap mt-0.5 cursor-pointer hover:bg-black shadow-md active:scale-95 flex items-center gap-1.5 transition-all">
@@ -1037,7 +1045,7 @@
             </button>
         </div>
         <div id="historyListContainer" class="space-y-3 max-h-[60vh] overflow-y-auto pr-1"></div>
-        <button onclick="switchView('clients')" class="w-full py-4 bg-[#F4F5F4] text-[#4E5968] rounded-[16px] font-black text-[15px] hover:bg-[#EAEBEA]">거래처 목록으로 돌아가기</button>
+        <button onclick="switchView('clients')" class="w-full py-4 bg-[#F4F5F4] text-[#4E5968] rounded-[16px] font-black text-[15px] hover:bg-[#EAEBEA]">고객 목록으로 돌아가기</button>
       </div>
     </section>
 
@@ -1895,7 +1903,7 @@
             <div>
                 <label class="block text-[16px] font-black text-[#151E2D] mb-2">현장 주소 <span class="text-[14px] font-extrabold text-[#64748B] ml-1">길찾기·주소 복사에 쓰여요</span></label>
                 <input type="text" id="scheduleAddr" placeholder="예: 서울 서초구 서초동 ○○로 12" autocomplete="off" class="w-full h-[54px] bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 text-[16px] font-black text-[#151E2D] placeholder:text-[#94A3B8] placeholder:font-bold focus:outline-none focus:border-[#151E2D] focus:bg-white transition-colors">
-                <select id="scheduleAddrPick" onchange="jnPickClientAddr(this)" class="hidden w-full h-[48px] mt-2 bg-white border-[1.5px] border-[#CBD5E1] rounded-[14px] px-3 text-[15px] font-black text-[#334155] focus:outline-none focus:border-[#151E2D]"><option value="">📒 거래처 주소 불러오기</option></select>
+                <select id="scheduleAddrPick" onchange="jnPickClientAddr(this)" class="hidden w-full h-[48px] mt-2 bg-white border-[1.5px] border-[#CBD5E1] rounded-[14px] px-3 text-[15px] font-black text-[#334155] focus:outline-none focus:border-[#151E2D]"><option value="">📒 고객 주소 불러오기</option></select>
                 <p id="scheduleAddrHint" class="hidden text-[14px] font-extrabold text-[#4D7C0F] mt-1.5"></p>
             </div>
 
@@ -3288,12 +3296,12 @@
       renderClientsList();
     }
 
-    // 🎤 [패치 #43] 말로 거래처 찾기: 한 번 말하면 검색칸에 넣고 바로 찾음 (정기·개별 전체)
+    // 🎤 [패치 #43] 말로 고객 찾기: 한 번 말하면 검색칸에 넣고 바로 찾음 (정기·개별 전체)
     const CLV = { rec: null, active: false };
     function clientVoiceUI() {
       const btn = document.getElementById('clientMicBtn'); const ban = document.getElementById('clientVoiceBanner'); const t = document.getElementById('clientMicText');
       if (btn) btn.classList.toggle('animate-pulse', CLV.active);
-      if (t) t.innerText = CLV.active ? '듣는 중 · 누르면 멈춤' : '말로 거래처 찾기';
+      if (t) t.innerText = CLV.active ? '듣는 중 · 누르면 멈춤' : '말로 고객 찾기';
       if (ban) ban.classList.toggle('hidden', !CLV.active);
     }
     function clientVoiceStop() { CLV.active = false; const r = CLV.rec; CLV.rec = null; if (r) { try { r.stop(); } catch (e) {} } clientVoiceUI(); }
@@ -3326,10 +3334,10 @@
       if(query) { const qDigits = query.replace(/[-\s]/g, ''); filtered = filtered.filter(c => (c.name&&c.name.toLowerCase().includes(query)) || (c.name&&c.name.toLowerCase().replace(/\s/g, '').includes(query.replace(/\s/g, ''))) || (c.phone&&/^\d+$/.test(qDigits)&&c.phone.replace(/[-\s]/g, '').includes(qDigits)) || (c.phone&&c.phone.replace(/-/g, '').includes(query.replace(/-/g, ''))) || (c.address&&c.address.toLowerCase().includes(query))); }
       document.getElementById('clientCountBadge').innerText = `${filtered.length}건`;
       if (query) { // 🔎 [패치 #43]
-        if (filtered.length === 0) { container.innerHTML = emptyStateHtml('search', '찾는 거래처가 없습니다', '정기 관리처·개별 고객처 전체에서 찾아봤어요. 이름이나 번호를 다시 확인해 주세요.'); return; }
+        if (filtered.length === 0) { container.innerHTML = emptyStateHtml('search', '찾는 고객이 없습니다', '정기 관리처·개별 고객처 전체에서 찾아봤어요. 이름이나 번호를 다시 확인해 주세요.'); return; }
         container.insertAdjacentHTML('beforeend', `<div class="text-[15.5px] font-extrabold text-[#3F6212] bg-[#F4FBEA] border border-[#84CC16]/50 rounded-[12px] px-3.5 py-2.5">정기·개별 전체에서 찾은 결과 ${filtered.length}건</div>`);
       }
-      if (filtered.length === 0) { container.innerHTML = emptyStateHtml('building-2', '거래처가 없습니다', '작업일지에서 새 고객명을 입력해 리포트를 보내면 거래처로 자동 등록됩니다.', '작업일지 쓰기', "switchView('admin')"); /* 🗂 [패치 #23] */ return; }
+      if (filtered.length === 0) { container.innerHTML = emptyStateHtml('building-2', '고객이 없습니다', '작업일지에서 새 고객 이름을 입력해 리포트를 보내면 고객으로 자동 등록됩니다.', '작업일지 쓰기', "switchView('admin')"); /* 🗂 [패치 #23] */ return; }
       
       filtered.forEach((c) => {
         const div = document.createElement('div'); 
@@ -3403,7 +3411,7 @@
         document.getElementById('newClientName').value = client.name; document.getElementById('newClientPhone').value = client.phone; document.getElementById('newClientAddress').value = client.address || ''; 
         let r1 = document.querySelector('input[name="newClientType"][value="정기 관리"]'); let r2 = document.querySelector('input[name="newClientType"][value="개별 고객"]');
         if (client.type === '개별 고객') { if(r2) r2.checked = true; } else { if(r1) r1.checked = true; }
-        document.getElementById('clientFormTitle').innerHTML = `<i data-lucide="edit-3" class="w-6 h-6 text-[#65A30D]"></i> <span>거래처 정보 수정</span>`; document.getElementById('saveClientBtn').innerText = "수정 완료"; document.getElementById('cancelEditBtn').classList.remove('hidden'); lucide.createIcons(); window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.getElementById('clientFormTitle').innerHTML = `<i data-lucide="edit-3" class="w-6 h-6 text-[#65A30D]"></i> <span>고객 정보 수정</span>`; document.getElementById('saveClientBtn').innerText = "수정 완료"; document.getElementById('cancelEditBtn').classList.remove('hidden'); lucide.createIcons(); window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function cancelEdit() {
@@ -3429,7 +3437,7 @@
     function showHistory(clientName) {
       document.getElementById('historyClientName').innerText = clientName; const container = document.getElementById('historyListContainer'); container.innerHTML = '';
       const list = records.filter(r => r && r.clientName === clientName && r.type !== 'quote').sort((a, b) => b.id.localeCompare(a.id));
-      if (list.length === 0) { container.innerHTML = emptyStateHtml('clipboard-list', '이 거래처의 작업일지가 아직 없습니다', '작업일지를 쓰고 리포트를 발행하면 여기에 쌓입니다.', '작업일지 쓰기', "switchView('admin')"); /* 🗂 [패치 #23] */ } 
+      if (list.length === 0) { container.innerHTML = emptyStateHtml('clipboard-list', '이 고객의 작업일지가 아직 없습니다', '작업일지를 쓰고 리포트를 발행하면 여기에 쌓입니다.', '작업일지 쓰기', "switchView('admin')"); /* 🗂 [패치 #23] */ } 
       else {
         list.forEach((r) => {
           const div = document.createElement('div'); div.className = "bg-white p-5 rounded-[16px] border border-[#EAEBEA] shadow-sm cursor-pointer hover:border-[#84CC16] hover:shadow-md transition-all flex flex-col gap-1.5 relative";
@@ -5258,13 +5266,13 @@
         { q: '조경노트 홈 연결 의뢰는 어떻게 해요?', s: [   // 🎬 [패치 #138]
           ['① 열기', '[고객 의뢰함]에서 [이용 조건 확인하고 의뢰 보기]를 누르세요. 처음 한 번만 중개 이용 조건이 나와요.'],
           ['② 연락', '맨 위 [지금 할 일] 칸에서 [문자하기]나 [전화하기]. 금액 안내가 먼저면 [💰 견적서 먼저 보내기].'],
-          ['③ 날짜 확정', '고객과 날짜가 정해지면 [📅 날짜 정했어요] → 날짜·오전/오후 → 예약 문자 보내기. 일정표·거래처는 알아서 들어가요.'],
+          ['③ 날짜 확정', '고객과 날짜가 정해지면 [📅 날짜 정했어요] → 날짜·오전/오후 → 예약 문자 보내기. 일정표·고객은 알아서 들어가요.'],
           ['④ 완료', '작업이 끝나면 [✅ 작업 끝났어요] → 받을 금액 확인. 개인 장부에 수입으로 들어가요.'],
           ['못 맡을 때', '아래 [그 밖에] → [이번엔 못 해요]. 조경노트 홈이 다른 업체로 연결해 드려요.']] },
         { q: '고객 의뢰가 오면 어떻게 해요?', s: [
           ['알림', '"새 고객 의뢰" 알림을 누르면 그 의뢰가 바로 열려요.'],
           ['내용 열기', '의뢰를 누르고 [1,000P로 내용 보기]를 누르면 전화·문자·지도·사진이 열려요.'],
-          ['이어서 일하기', '[거래처로 등록]·[방문 일정 잡기]·[견적서 쓰기]로 바로 이어서 일할 수 있어요.'],
+          ['이어서 일하기', '[고객으로 등록]·[방문 일정 잡기]·[견적서 쓰기]로 바로 이어서 일할 수 있어요.'],
           ['상태 바꾸기', '새 의뢰 → 상담 중 → 끝난 의뢰로 바꿔 정리하세요.']] },
         { q: '장난 의뢰가 왔어요', s: [
           ['신고하고 돌려받기', '포인트를 내고 연 의뢰가 장난이면, 연 날부터 7일 안에 의뢰 자세히 화면의 [장난 의뢰 신고]를 누르세요. 관리자가 확인하면 1,000P를 돌려드리고 알림으로 알려 드려요.'],
@@ -5277,7 +5285,7 @@
         { q: '일정 금액이 장부에 들어가요?', s: [
           ['자동 기록', '일정에 받을 돈·나갈 돈을 적으면 개인 장부에 자동으로 들어가요.']] },
         { q: '내 자료를 따로 보관하고 싶어요', s: [
-          ['엑셀 백업', '[설정] → [내 자료 내려받기 (엑셀 백업)]을 누르면 일지·견적·거래처·일정·장부 등이 엑셀 파일 하나로 저장돼요.']] },
+          ['엑셀 백업', '[설정] → [내 자료 내려받기 (엑셀 백업)]을 누르면 일지·견적·고객·일정·장부 등이 엑셀 파일 하나로 저장돼요.']] },
         { q: 'AI 비서·렌즈가 안 된다고 나와요', s: [
           ['하루 횟수', 'AI 비서와 AI 렌즈는 각각 하루 30번까지 무료예요. 다 쓰면 다음 날 0시에 다시 쓸 수 있어요.'],
           ['가입 승인 전', 'AI 기능은 관리자가 가입을 승인한 뒤부터 쓸 수 있어요.']] }
@@ -5285,13 +5293,13 @@
     ];
     // AI에게만 주는 추가 설명 (버튼 목록에는 안 나옴)
     const HELP_EXTRA = [
-      '조경노트 PRO: 조경 사업자용 앱. 메인 메뉴 = 업무 관리(작업 일정표·작업 일지 작성·거래처 목록·견적서·견적 보관함·연락처·AI 메모장), 현장 도구(식물 검색·AI 렌즈·날씨), 대표님 전용(개인 장부함·개인 재고함·AI 현장 비서·고객 의뢰함·대표님 소통방), 대표님 휴식방(오목·사천성·윷놀이·장기·바둑 사활 게임, 돈·포인트 없음).',
+      '조경노트 PRO: 조경 사업자용 앱. 메인 메뉴 = 업무 관리(작업 일정표·작업 일지 작성·고객 목록·견적서·견적 보관함·연락처·AI 메모장), 현장 도구(식물 검색·AI 렌즈·날씨), 대표님 전용(개인 장부함·개인 재고함·AI 현장 비서·고객 의뢰함·대표님 소통방), 대표님 휴식방(오목·사천성·윷놀이·장기·바둑 사활 게임, 돈·포인트 없음).',
       '아래 메뉴줄: 홈 · 일정 · 대표님 소통방 · 일지 · 견적. 위쪽 줄: 문의(이 도움말) · 로그아웃 · 설정.',
       '화면 바꾸기: 메인 화면 맨 위 [야외용]을 누르면 밝은 화면, [실내용]을 누르면 어두운 화면.',
       '대표님 소통방: 전국 업체끼리 인력·장비·업체 정보를 나누는 게시판 4개(작업 지원·협력, 장비·자재 직거래, 정보 교환·업체 공유, 불량 거래처 경보). 함께 일하기(작업 지원·협력, 장비·자재 직거래)는 댓글 없이 1:1 대화·전화, 정보 나누기(정보 교환, 불량 거래처 경보)는 댓글로 묻고 답함. 소통방 맨 아래에 대표님 휴식방(게임) 버튼. 출석·글쓰기 포인트는 없음. 정보 교환 글에 다른 대표님이 👍를 누르면 1개당 300P(본인 글 X, 같은 사람끼리 하루 1번, 하루 최대 3,000P), 👎는 숫자만. 글마다 [1:1 대화하기]와 댓글. 글을 말로 쓰는 [말로 쓰기] 버튼 있음.',
       'AI 메모장: 현장에서 치수·수량을 말로 남기면 줄별로 정리. 견적서 화면 [메모장 참고하기]로 견적을 채울 수 있음.',
       '개인 재고함: 비품·자재 / 수목·식물 / 차계부를 표로 기록, 말로 입력 가능.',
-      '말로 입력 버튼이 있는 곳: 일정 등록, 작업일지, 견적서, 개인 장부, 식물 검색, 거래처 찾기, 소통방 글쓰기, 1:1 대화, AI 메모장, 재고함.',
+      '말로 입력 버튼이 있는 곳: 일정 등록, 작업일지, 견적서, 개인 장부, 식물 검색, 고객 찾기, 소통방 글쓰기, 1:1 대화, AI 메모장, 재고함.',
       '가입: 사업자등록번호 1개당 계정 1개. 관리자가 사업자등록증을 확인하고 승인해야 쓸 수 있음. 가입 승인 때 가입 축하 5,000P(1개월).',
       '회원 탈퇴: [설정] 맨 아래 [회원 탈퇴]. 자료는 30일 보관 뒤 삭제되며 따로 보내 주지 않으니 탈퇴 전에 [내 자료 내려받기]로 백업. 탈퇴 후 같은 사업자번호로 재가입은 일정 기간(기본 7일) 뒤에 가능.',
       '상호명·대표자·연락처·사업자번호 변경은 직접 못 바꾸고 관리자에게 문의해야 함. 활동 지역은 [설정]에서 직접 바꿀 수 있음.',
@@ -7411,7 +7419,7 @@ ${AI_COMMON_RULES}
       const chips = d.cats.concat(d.treePruning ? ['수목가지치기 (' + d.treePruning + ')'] : [], d.extra ? [d.extra] : []);
       const ta = (id, label, v, ph) => `<div class="flex flex-col gap-1"><label for="${id}" class="text-[16px] font-extrabold text-[#334155]">${escHtml(label)}</label><textarea id="${id}" rows="3" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" placeholder="${escHtml(ph)}" class="rounded-[12px] border-[1.5px] border-[#CBD5E1] bg-white px-3 py-2.5 text-[16.5px] font-bold text-[#151E2D] leading-relaxed resize-none focus:outline-none focus:border-[#84CC16]">${escHtml(v)}</textarea></div>`;
       const body = `<div class="bg-[#FEF9C3] border-2 border-[#EAB308] rounded-[16px] px-3.5 py-3 flex flex-col gap-2.5">${FP_CHECK_TITLE}
-          ${fpInputRow('fpLogName', '고객명 / 현장명' + (d.found ? '  (등록된 거래처)' : ''), d.clientName, { placeholder: '고객 이름이나 현장 이름' })}
+          ${fpInputRow('fpLogName', '고객 이름 / 현장명' + (d.found ? '  (등록된 고객)' : ''), d.clientName, { placeholder: '고객 이름이나 현장 이름' })}
           ${fpInputRow('fpLogRound', '작업 제목', d.round, { placeholder: '예: 소나무 전지·방제' })}
           ${fpInputRow('fpLogDate', '작업 날짜  ' + ymdLabel(d.workDate), d.workDate, { type: 'date' })}
           ${fpInputRow('fpLogPhone', '연락처', fmtPhone(d.phone), { type: 'tel', oninput: 'autoHyphen(this)', color: 'text-[#1D4ED8]', warn: d.phoneWarn, placeholder: '말씀 안 하셨어요 (비워 둬도 됩니다)' })}
@@ -7550,7 +7558,7 @@ ${AI_COMMON_RULES}
       const tplOpts = Object.keys(QUOTE_TPL_NAMES).map(k => `<option value="${k}" ${k === d.template ? 'selected' : ''}>${QUOTE_TPL_NAMES[k]}</option>`).join('');
       const defTitle = (quoteTemplates[d.template] || {}).title || '';
       const rows = d.items.map(it => fpqRowHtml(it.label, it.desc, it.price)).join('');
-      const body = `<div class="flex flex-col gap-1"><label for="fpQName" class="text-[16px] font-extrabold text-[#334155]">고객명 / 현장명${d.found ? ' <span class="text-[13.5px] font-black text-[#3F6212] bg-[#D9F99D] px-2 py-0.5 rounded-md">기존 거래처</span>' : ''}</label><input id="fpQName" autocomplete="off" value="${escHtml(d.clientName)}" placeholder="말씀 안 하셨어요" class="${FPQ_IN} h-[52px] !text-[19px]"></div>
+      const body = `<div class="flex flex-col gap-1"><label for="fpQName" class="text-[16px] font-extrabold text-[#334155]">고객 이름 / 현장명${d.found ? ' <span class="text-[13.5px] font-black text-[#3F6212] bg-[#D9F99D] px-2 py-0.5 rounded-md">기존 고객</span>' : ''}</label><input id="fpQName" autocomplete="off" value="${escHtml(d.clientName)}" placeholder="말씀 안 하셨어요" class="${FPQ_IN} h-[52px] !text-[19px]"></div>
         <div class="flex items-center gap-2"><label for="fpQTpl" class="text-[15px] font-extrabold text-[#475569] shrink-0">견적 종류</label><select id="fpQTpl" onchange="fpqTplChanged(this)" class="flex-1 min-w-0 h-[48px] rounded-[12px] border-[1.5px] border-[#84CC16] bg-[#ECFCCB] px-3 text-[16px] font-black text-[#3F6212]">${tplOpts}</select></div>
         <div class="flex flex-col gap-1"><label for="fpQTitle" class="text-[16px] font-extrabold text-[#334155]">견적 제목 <span class="text-[14px] font-bold text-[#64748B]">(눌러서 고칠 수 있어요)</span></label><input id="fpQTitle" data-default="${escHtml(defTitle)}" autocomplete="off" value="${escHtml(d.title || defTitle)}" placeholder="견적 제목" class="${FPQ_IN} h-[52px]"></div>
         <div class="bg-[#FEF9C3] border-2 border-[#EAB308] rounded-[16px] px-3.5 py-3 flex flex-col gap-2.5"><span class="text-[15px] font-black text-[#854D0E]">세부 견적 내역 · 내용과 금액을 눌러서 고칠 수 있어요</span>
@@ -7621,7 +7629,7 @@ ${AI_COMMON_RULES}
       </ul>
       <!-- 💾 [패치 #76] 탈퇴 전 백업 -->
       <div class="mt-4 rounded-[14px] p-3.5 space-y-2.5" style="background:#F4FBEA; border:2px solid #84CC16;">
-        <div class="text-[15.5px] font-black leading-relaxed break-keep" style="color:#3F6212;">탈퇴 전에 꼭 백업하세요. 일지·견적서·거래처·일정·장부·메모·고객 의뢰를 엑셀 파일 하나로 내려받아요.</div>
+        <div class="text-[15.5px] font-black leading-relaxed break-keep" style="color:#3F6212;">탈퇴 전에 꼭 백업하세요. 일지·견적서·고객·일정·장부·메모·고객 의뢰를 엑셀 파일 하나로 내려받아요.</div>
         <button type="button" onclick="downloadMyBackup(this)" class="w-full h-[54px] rounded-[14px] text-[17px] font-black" style="background:#151E2D; color:#BEF264;">내 자료 내려받기 (엑셀)</button>
       </div>
       <!-- 💰 [패치 #75] 재가입 제한 · 포인트 환불 -->
@@ -8020,6 +8028,8 @@ ${AI_COMMON_RULES}
       const m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', on ? '#FFFFFF' : '#151E2D');
     }
     function setOutdoor(on) {
+      const H = document.documentElement; H.classList.add('mode-switch'); // 🎨 [패치 #175] 바꾸는 순간엔 움직임 효과 끔 → 휴대폰이 버튼을 다시 그리느라 잠깐 사라지던 문제
+      clearTimeout(setOutdoor._t); setOutdoor._t = setTimeout(() => H.classList.remove('mode-switch'), 400);
       document.documentElement.classList.toggle('outdoor', !!on);
       try { localStorage.setItem('jn_outdoor', on ? '1' : '0'); } catch (e) {}
       paintOutdoorBtn();
@@ -8762,7 +8772,7 @@ ${AI_COMMON_RULES}
         </div>
         <span class="text-[17px] font-black text-[#BEF264] mt-1">이 의뢰로 바로 하기</span>
         <div class="flex flex-col gap-2">
-          ${btn('reqToClient()', '거래처로 등록', 'h-14 rounded-[16px] bg-white text-[#0F172A] text-[17px] font-black')}
+          ${btn('reqToClient()', '고객으로 등록', 'h-14 rounded-[16px] bg-white text-[#0F172A] text-[17px] font-black')}
           ${btn('reqToSchedule()', '방문 일정 잡기', 'h-14 rounded-[16px] bg-white text-[#0F172A] text-[17px] font-black')}
           ${btn('reqToQuote()', '견적서 쓰기 (고객 정보 자동 입력)', 'h-14 rounded-[16px] bg-white text-[#0F172A] text-[17px] font-black')}
         </div>
@@ -8921,10 +8931,10 @@ ${AI_COMMON_RULES}
     }
     function reqToClient() {
       const r = RV.cur; if (!r) return;
-      if (clients.find(c => c && c.name === r.name && String(c.phone || '').replace(/[^0-9]/g, '') === r.phone)) return alert('이미 거래처에 등록된 고객입니다.');
+      if (clients.find(c => c && c.name === r.name && String(c.phone || '').replace(/[^0-9]/g, '') === r.phone)) return alert('이미 고객 목록에 등록된 고객입니다.');
       clients.push({ id: Date.now().toString(), name: r.name, phone: reqPhoneFmt(r.phone), address: r.addr, type: '개별 고객' });
       updateData('clients', clients); renderClientSelect(); renderClientsList();
-      alert(`✅ [${r.name}] 고객님을 거래처(개별 고객처)에 등록했습니다.`);
+      alert(`✅ [${r.name}] 고객님을 고객 목록에 등록했습니다.`);
     }
     function reqLeave(fn) { // 의뢰함을 닫고 다른 화면으로 이동 (뒤로가기 칸 정리)
       document.getElementById('reqView').classList.add('hidden'); // ↩️ [패치 #56] 되감지 않음: 견적서에서 뒤로가기 → 이 의뢰로 돌아옴
@@ -9065,7 +9075,7 @@ ${AI_COMMON_RULES}
     // ==========================================
     // 🤝 [패치 #109] 조경노트 홈 의뢰 — 버튼 하나로 (시니어도 쉽게)
     //  ① [📅 날짜 정하고 진행하기] → 날짜·오전/오후·금액(선택) → [확정하고 고객에게 문자 보내기]
-    //     = 거래처 자동 등록 + 방문 일정 자동 저장 + 운영팀에 거래 성사 + 확정 안내 문자 창
+    //     = 고객 자동 등록 + 방문 일정 자동 저장 + 운영팀에 거래 성사 + 확정 안내 문자 창
     //  ② [✅ 작업 끝났어요] → 금액 확인 → 개인 장부에 수입 + 운영팀에 작업 완료
     //  ③ [📝 작업일지 쓰기] (선택)
     //  화면에는 지금 할 일 버튼 하나만 크게, 맨 위에 진행 줄
@@ -9117,7 +9127,7 @@ ${AI_COMMON_RULES}
       document.getElementById('hpAmtLbl').textContent = book ? '예상 금액' : '받을 금액';
       document.getElementById('hpAmtNote').textContent = book ? '작업이 끝나면 장부에 들어가요. 고객에게는 안 보여요.' : '이 금액이 개인 장부에 수입으로 들어가요.';
       document.getElementById('hpAmt').value = h.amount ? Number(h.amount).toLocaleString('ko-KR') : '';
-      document.getElementById('hpAuto').innerHTML = book ? '누르면 한 번에: <b>거래처 등록</b> · <b>방문 일정 저장</b> · <b>조경노트 홈에 알림</b> · <b>문자 창 열기</b> (문자 앱에서 [보내기]만 누르세요)' : '누르면 한 번에: <b>개인 장부에 수입</b> · <b>조경노트 홈에 작업 완료 알림</b>';
+      document.getElementById('hpAuto').innerHTML = book ? '누르면 한 번에: <b>고객 등록</b> · <b>방문 일정 저장</b> · <b>조경노트 홈에 알림</b> · <b>문자 창 열기</b> (문자 앱에서 [보내기]만 누르세요)' : '누르면 한 번에: <b>개인 장부에 수입</b> · <b>조경노트 홈에 작업 완료 알림</b>';
       document.getElementById('hpGo').textContent = book ? (change ? '바꾸고 고객에게 문자 보내기' : '확정하고 고객에게 문자 보내기') : '장부에 넣고 완료하기';
       if (book) document.getElementById('hpAuto').innerHTML += `<div style="margin-top:8px;padding:10px 12px;border-radius:12px;background:#F1F5F9;border:1.5px solid #CBD5E1;color:#334155;font-weight:800;line-height:1.55">📋 확정하면 고객과 <b>직접 계약</b>하는 거예요. 작업·하자·대금은 업체 책임이고, 조경노트 홈은 연결만 해요.</div>`;   // 📋 [패치 #131]
       if (book && h.fee > 0 && !h.feeChargedAt) document.getElementById('hpAuto').innerHTML += `<div style="margin-top:8px;padding:10px 12px;border-radius:12px;background:#FFF7ED;border:1.5px solid #FB923C;color:#9A3412;font-weight:900">💰 확정하면 연결 수수료 ${ptNum(h.fee)}P가 포인트에서 빠져요</div>`;   // 💰 [패치 #125]
@@ -9130,7 +9140,7 @@ ${AI_COMMON_RULES}
     // ✂️ [패치 #137] 작업이 여러 개면 '소나무 전지 외 5건' · 성함이 없으면 주소 대신 '방배동 고객님'
     function hpWorksShort(r) { const w = (r && r.works || []).filter(x => x && x !== '기타'); return w.length ? w[0] + (w.length > 1 ? ' 외 ' + (w.length - 1) + '건' : '') : '조경 작업'; }
     function hpWho(r) { const a = reqArea(r.addr); return r.noName ? (a ? a + ' 고객님' : '고객님') : `${a ? a + ' ' : ''}${r.name} 고객님`; }
-    function hpAutoClient(r) {   // 처음 고객이면 거래처에 조용히 등록
+    function hpAutoClient(r) {   // 처음 고객이면 고객에 조용히 등록
       try {
         if (clients.find(c => c && String(c.phone || '').replace(/[^0-9]/g, '') === r.phone)) return false;
         clients.push({ id: Date.now().toString(), name: r.name, phone: reqPhoneFmt(r.phone), address: r.addr, type: '개별 고객' });
@@ -9223,12 +9233,12 @@ ${AI_COMMON_RULES}
       const big = (fn, label) => `<button type="button" onclick="${fn}" class="w-full h-[64px] rounded-[18px] bg-[#84CC16] text-[#12261E] text-[19px] font-black active:scale-[0.98]" style="box-shadow:inset 0 0 0 2px #151E2D;">${label}</button>`;
       const small = (fn, label, color) => `<button type="button" onclick="${fn}" class="h-[46px] rounded-[12px] bg-white text-[15px] font-black border border-[#CBD5E1]" style="color:${color || '#151E2D'}">${label}</button>`;
       let body;
-      if (step === 1) body = big("hpOpen('book')", '📅 날짜 정하고 진행하기') + `<span class="text-[14.5px] font-bold text-center text-[#475569] break-keep leading-relaxed">위의 <b>[문자하기]·[전화하기]</b>로 고객과 날짜를 먼저 정하고,<br>마지막에 눌러 주세요. 예약 안내 문자·일정·거래처가 한 번에 정리돼요.</span>`;
+      if (step === 1) body = big("hpOpen('book')", '📅 날짜 정하고 진행하기') + `<span class="text-[14.5px] font-bold text-center text-[#475569] break-keep leading-relaxed">위의 <b>[문자하기]·[전화하기]</b>로 고객과 날짜를 먼저 정하고,<br>마지막에 눌러 주세요. 예약 안내 문자·일정·고객이 한 번에 정리돼요.</span>`;
       else if (step === 2) body = `<span class="text-[17px] font-black text-[#151E2D] text-center">📅 ${escHtml(hpDateKo(h.date, h.slot))} 작업${h.amount ? ' · ' + escHtml(homeWon(h.amount)) : ''}</span>` + big("hpOpen('done')", '✅ 작업 끝났어요') + `<span class="grid grid-cols-2 gap-2">${small("hpOpen('book')", '날짜 바꾸기')}${small('hpCancel()', '진행 취소', '#B91C1C')}</span>`;
       else body = `<span class="text-[17px] font-black text-[#3F6212] text-center">✅ 작업 완료${h.amount ? ' · ' + escHtml(homeWon(h.amount)) + ' 장부에 넣음' : ''}</span>` + big('hpReport()', '📝 작업일지 쓰기 (선택)');
       const feeLine = h.fee > 0 ? `<span class="text-[14px] font-black text-center rounded-[12px] px-3 py-2" style="background:#FFF7ED;color:#9A3412">💰 연결 수수료 ${ptNum(h.fee)}P · ${h.feeRefundedAt ? '돌려받음' : h.feeChargedAt ? '확정 때 차감됨' : '예약 확정할 때 빠져요'}</span>` : '';   // 💰 [패치 #125]
       card.insertAdjacentHTML('afterend', `<div id="hpActions" class="flex flex-col gap-2.5 mt-1"><span class="text-[17px] font-black text-[#BEF264]">진행하기</span><div class="rounded-[18px] p-4 flex flex-col gap-3" style="background:#F7FEE7;border:2px solid #151E2D;">${line}${body}${feeLine}</div></div>`);   // 🧹 [패치 #119] 의뢰 내용을 다 본 뒤 맨 아래에서 진행   // 🧹 [패치 #119] 의뢰 내용을 다 본 뒤 맨 아래에서 진행
-      // 예전 버튼(거래처 등록·방문 일정·상태 바꾸기)은 자동으로 되니 숨기고, 견적서는 작게
+      // 예전 버튼(고객 등록·방문 일정·상태 바꾸기)은 자동으로 되니 숨기고, 견적서는 작게
       pane.querySelectorAll('button').forEach(bt => {
         const oc = bt.getAttribute('onclick') || '';
         if (/^reqToClient\(\)|^reqToSchedule\(\)|^reqSetStatus/.test(oc)) bt.style.display = 'none';
@@ -9379,12 +9389,12 @@ ${AI_COMMON_RULES}
             `<div class="grid grid-cols-2 gap-2">${tel}${sms}</div>` +
             `<button type="button" onclick="nxQuote()" class="w-full min-h-[56px] rounded-[15px] bg-white text-[#151E2D] text-[17px] font-black active:scale-[0.98] leading-tight px-2" style="box-shadow:inset 0 0 0 2px #151E2D">💰 견적서 먼저 보내기<span class="block text-[13px] font-bold text-[#64748B] mt-0.5">금액 안내가 필요할 때</span></button>` +
             nxBig("hpOpen('book')", '📅 날짜 정했어요') +
-            '<span class="text-[14px] font-bold text-center text-[#475569] leading-relaxed break-keep">누르면 날짜·오전/오후만 고르면 끝.<br>예약 문자·일정·거래처는 알아서 정리돼요.</span>' + feeLine);
+            '<span class="text-[14px] font-bold text-center text-[#475569] leading-relaxed break-keep">누르면 날짜·오전/오후만 고르면 끝.<br>예약 문자·일정·고객은 알아서 정리돼요.</span>' + feeLine);
           more = ['DEC', 'DEL']; moreLbl = '못 해요 · 지우기';
         } else if (step === 4) {
           box = nxBox('지금 할 일 · 작업하러 가기', nxDots(4) +
             `<span class="text-[18px] font-black text-[#151E2D] text-center">📅 ${escHtml(hpDateKo(h.date, h.slot))} 작업${h.amount ? ' · ' + escHtml(homeWon(h.amount)) : ''}</span>` +
-            '<span class="text-[14px] font-black rounded-[12px] bg-white px-3 py-2 text-[#3F6212] leading-relaxed break-keep">✓ 예약 문자 · ✓ 일정표에 넣음 · ✓ 거래처 등록</span>' +
+            '<span class="text-[14px] font-black rounded-[12px] bg-white px-3 py-2 text-[#3F6212] leading-relaxed break-keep">✓ 예약 문자 · ✓ 일정표에 넣음 · ✓ 고객 등록</span>' +
             nxBig("hpOpen('done')", '✅ 작업 끝났어요') + feeLine);
           more = [nxMoreBtn("hpOpen('book')", '📅 날짜 바꾸기'), nxMoreBtn('hpCancel()', '진행 취소', '#B91C1C'), 'DEL']; moreLbl = '날짜 바꾸기 · 취소 · 지우기';
         } else {
@@ -10536,7 +10546,7 @@ ${AI_COMMON_RULES}
         const S = {};
         S['작업일지'] = reports.map(r => { const p = r.payload || {}; return { '작업일': p.wd || r.date || '', '고객명': p.c || r.clientName || '', '연락처': p.p || r.clientPhone || '', '현장 주소': p.addr || '', '제목·회차': p.r || r.round || '', '작업 항목': p.cat || r.cat || '', '특이사항': bkCut(p.issue || r.issue), '작업자 코멘트': bkCut(p.d || r.diagnosis), '고객용 링크': r.id ? bkBase() + '?id=' + r.id : '', '사진 링크 (작업 전·중·후·특이사항)': bkCut(bkImgs(p.b || r.b, p.dur, p.a || r.a, p.imgsIssue || r.imgsIssue)) }; });
         S['견적서'] = quotes.map(r => { const p = r.payload || {}; const items = bkArr(p.m).map(x => `${x.m || ''} ${String(x.d || '').replace(/\n/g, ' / ')} : ${(Number(x.p) || 0).toLocaleString('ko-KR')}원`).join('\n'); return { '발행일': r.date || '', '고객명': p.c || r.clientName || '', '연락처': p.p || r.clientPhone || '', '현장 주소': p.addr || '', '제목': p.r || r.round || '', '항목': bkCut(items), '합계(원)': Number(p.s) || 0, '메모': bkCut(p.memo), '고객용 링크': r.id ? bkBase() + '?id=' + r.id : '', '사진 링크': bkCut(bkImgs(p.imgs)) }; });
-        S['거래처'] = bkArr(d.clients).map(c => ({ '이름': c.name || '', '연락처': c.phone || '', '주소': c.address || '', '구분': c.type || '' }));
+        S['고객'] = bkArr(d.clients).map(c => ({ '이름': c.name || '', '연락처': c.phone || '', '주소': c.address || '', '구분': c.type || '' }));
         S['일정'] = bkArr(d.schedules).map(x => ({ '날짜': x.date || '', '제목': x.title || '', '구분': x.tag || '', '메모': bkCut(x.memo) })).sort((a, b) => String(a['날짜']).localeCompare(String(b['날짜'])));
         S['장부'] = bkArr(d.ledgers).map(x => ({ '날짜': x.date || '', '내용': x.title || '', '수입(원)': Number(x.income) || 0, '지출(원)': Number(x.expense) || 0, '부가세(원)': Number(x.vat) || 0, '메모': bkCut(x.memo) })).sort((a, b) => String(a['날짜']).localeCompare(String(b['날짜'])));
         const ct = d.contacts || {};
@@ -10635,7 +10645,7 @@ ${AI_COMMON_RULES}
     // 🎬 [패치 #101] 유튜브 영상 주소 (영상을 바꾸면 여기 아이디만 바꾸면 됨)
     const GUIDE_VIDEOS = {
       main: { id: 'paxt4U0WFqY', title: '조경노트 PRO 사용 안내 (9분)',
-        ch: [['처음부터', 0], ['특별한 점', 35], ['설치·가입', 106], ['첫 화면', 196], ['말로 일정', 252], ['말로 일지·리포트', 317], ['고객 화면', 382], ['블로그', 404], ['거래처', 464], ['마무리', 512]] },
+        ch: [['처음부터', 0], ['특별한 점', 35], ['설치·가입', 106], ['첫 화면', 196], ['말로 일정', 252], ['말로 일지·리포트', 317], ['고객 화면', 382], ['블로그', 404], ['고객', 464], ['마무리', 512]] },
       promo: { id: 'stTLZi9BT-o', title: '조경노트 PRO 1분 소개' },
       // 기능별 짧은 영상 (아이디가 비어 있으면 버튼이 안 보임 → 유튜브에 올린 뒤 아이디만 넣으면 됨)
       f1: { id: 'sqExhB4m0To', title: '사용법 01 · 앱 설치와 가입' },
@@ -10651,7 +10661,7 @@ ${AI_COMMON_RULES}
       f11: { id: 'ql8nZNDyLtY', title: '사용법 11 · AI 렌즈 · 현장 비서' },
       f12: { id: 'wTW-dTetNRA', title: '사용법 12 · 도움말과 문의' },
       f13: { id: 'Imurf_EMCbU', title: '사용법 13 · PC · 휴대폰 분실' },
-      f14: { id: '1q_OCowbR08', title: '사용법 14 · 거래처 미리 등록' }, // 🎬 [패치 #102] 03-7~03-14 아이디 넣음
+      f14: { id: '1q_OCowbR08', title: '사용법 14 · 고객 미리 등록' }, // 🎬 [패치 #102] 03-7~03-14 아이디 넣음
       f15: { id: 'YdgnuRQKvgI', title: '사용법 15 · 조경노트 홈 연결 의뢰 받기' } // 🎬 [패치 #138]
     };
     // 도움말 챗봇: 주제별로 답 아래에 [영상으로 보기] (주제 이름 첫 글자로 찾음)
@@ -10790,14 +10800,14 @@ ${AI_COMMON_RULES}
     window.jnSchedReq = function(rid){ jnSchedClose(); setTimeout(() => { try { openReqView(rid); } catch(e) {} }, 300); };
     window.addEventListener('popstate', () => { const box = document.getElementById('jnSchedSheet'); if (box && box.style.display !== 'none') jnSchedClose(true); });
 
-    /* 일정 창: 주소 칸 + 거래처 주소 불러오기 + 제목에 거래처 이름 있으면 자동 */
+    /* 일정 창: 주소 칸 + 고객 주소 불러오기 + 제목에 고객 이름 있으면 자동 */
     const addrInp = () => document.getElementById('scheduleAddr');
     const clientList = () => { try { return (Array.isArray(clients) ? clients : []).filter(c => c && c.name && c.address && String(c.address).trim()); } catch(e) { return []; } };
     function hint(t){ const h = document.getElementById('scheduleAddrHint'); if (!h) return; h.textContent = t || ''; h.classList.toggle('hidden', !t); }
     function fillPick(){
       const sel = document.getElementById('scheduleAddrPick'); if (!sel) return;
       const list = clientList();
-      sel.innerHTML = '<option value="">📒 거래처 주소 불러오기</option>' + list.map((c, i) => `<option value="${i}">${E(c.name)} · ${E(String(c.address).slice(0, 24))}</option>`).join('');
+      sel.innerHTML = '<option value="">📒 고객 주소 불러오기</option>' + list.map((c, i) => `<option value="${i}">${E(c.name)} · ${E(String(c.address).slice(0, 24))}</option>`).join('');
       sel.classList.toggle('hidden', !list.length); sel.value = '';
     }
     window.jnPickClientAddr = function(sel){
@@ -10819,7 +10829,7 @@ ${AI_COMMON_RULES}
     document.addEventListener('change', e => {
       if (!e.target || e.target.id !== 'scheduleTitle' || !addrInp() || addrInp().value.trim()) return;
       const t = e.target.value || ''; const c = clientList().find(c => String(c.name).trim().length >= 2 && t.includes(String(c.name).trim()));
-      if (c) { addrInp().value = String(c.address).trim(); hint(`✔ 거래처 '${c.name}' 주소를 넣었어요. 아니면 지우고 고쳐 주세요.`); }
+      if (c) { addrInp().value = String(c.address).trim(); hint(`✔ 고객 '${c.name}' 주소를 넣었어요. 아니면 지우고 고쳐 주세요.`); }
     });
 
     /* 날씨: 다른 지역 검색 + 최근 지역 5개 */
@@ -11578,7 +11588,7 @@ ${AI_COMMON_RULES}
 })();
 </script>
 <script>
-/* 🔍 [패치 #169] 일정표 '지난 일정 찾기': 년·월 고르고 고객·거래처 이름(또는 작업)으로 검색 → 일정·작업일지 목록 → 누르면 그날로 이동 */
+/* 🔍 [패치 #169] 일정표 '지난 일정 찾기': 년·월 고르고 고객 이름(또는 작업)으로 검색 → 일정·작업일지 목록 → 누르면 그날로 이동 */
 (function () {
   const esc = t => String(t == null ? '' : t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const W = '일월화수목금토';
@@ -11594,7 +11604,7 @@ ${AI_COMMON_RULES}
           <select id="sfYear" onchange="sfRun()" style="height:52px;border:1.5px solid #CBD5E1;border-radius:14px;font-size:17px;font-weight:900;padding:0 10px;background:#fff;color:#151E2D;-webkit-appearance:menulist;appearance:menulist"></select>
           <select id="sfMon" onchange="sfRun()" style="height:52px;border:1.5px solid #CBD5E1;border-radius:14px;font-size:17px;font-weight:900;padding:0 10px;background:#fff;color:#151E2D;-webkit-appearance:menulist;appearance:menulist"><option value="0">전체 달</option>${Array.from({ length: 12 }, (_, i) => `<option value="${i + 1}">${i + 1}월</option>`).join('')}</select>
         </div>
-        <input id="sfQ" type="search" oninput="sfRun()" placeholder="고객·거래처 이름 또는 작업 (예: 홍길동, 전지)" autocomplete="off" style="width:100%;height:52px;margin-top:8px;border:2px solid #84CC16;border-radius:14px;padding:0 14px;font-size:16.5px;font-weight:800;background:#fff;color:#151E2D">
+        <input id="sfQ" type="search" oninput="sfRun()" placeholder="고객 이름 또는 작업 (예: 홍길동, 전지)" autocomplete="off" style="width:100%;height:52px;margin-top:8px;border:2px solid #84CC16;border-radius:14px;padding:0 14px;font-size:16.5px;font-weight:800;background:#fff;color:#151E2D">
         <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
           <button type="button" onclick="sfQuick(-1)" style="height:38px;padding:0 12px;border-radius:99px;background:#fff;border:1.5px solid #CBD5E1;font-size:14.5px;font-weight:900;color:#334155">작년 이번 달</button>
           <button type="button" onclick="sfQuick(0)" style="height:38px;padding:0 12px;border-radius:99px;background:#fff;border:1.5px solid #CBD5E1;font-size:14.5px;font-weight:900;color:#334155">올해 전체</button>
