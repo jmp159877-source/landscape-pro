@@ -9,7 +9,7 @@
   <meta name="keywords" content="조경노트, 조경노트 프로, 조경관리, 조경일지, 조경견적, 조경앱, 스마트조경, 수목식별">
   <meta property="og:type" content="website">
   <meta property="og:title" content="조경노트 PRO(조경노트 프로)">
-  <meta property="og:description" content="프리미엄 조경 현장 관리 솔루션">
+  <meta property="og:description" content="조경 업체 대표님을 위한 현장 관리 앱 · 견적서·작업 리포트 문자로 바로 발송"><!-- 🔎 [패치 #166] 링크 카드 설명 -->
   <meta property="og:url" content="https://www.jogyeongnote.com/">
   <meta property="og:site_name" content="조경노트 PRO">
   <meta name="apple-mobile-web-app-title" content="조경노트PRO">
@@ -671,11 +671,11 @@
         </div>
 
         <div class="grid grid-cols-2 gap-3 relative z-10">
-          <div>
+          <div class="col-span-2"><!-- 📞 [패치 #166] 전화번호가 잘리지 않게 한 줄 전체 -->
             <label class="block text-[17px] font-black text-[#151E2D] mb-2">연락처</label>
             <input type="tel" id="inputClientPhone" oninput="autoHyphen(this)" placeholder="연락처 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 py-4 text-[17px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16] placeholder:text-[#7C8A9E] placeholder:font-bold placeholder:text-[15px]">
           </div>
-          <div>
+          <div class="col-span-2">
             <label class="block text-[17px] font-black text-[#151E2D] mb-2">작업 제목</label>
             <input type="text" id="inputRound" placeholder="예: 10월 정기 전정" autocomplete="off" class="w-full bg-[#F9F9F8] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 py-4 text-[17px] font-black text-[#151E2D] focus:outline-none focus:border-[#84CC16] placeholder:text-[#7C8A9E] placeholder:font-bold placeholder:text-[15px]">
           </div>
@@ -821,7 +821,7 @@
         </div>
 
         <div class="grid grid-cols-2 gap-3 relative z-10 mt-3">
-          <div>
+          <div class="col-span-2"><!-- 📞 [패치 #166] -->
             <label class="block text-[17px] font-black text-[#151E2D] mb-2">연락처</label>
             <input type="tel" id="quoteInputClientPhone" oninput="autoHyphen(this)" placeholder="연락처 입력" autocomplete="off" class="w-full bg-[#F9F9F8] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-4 py-4 text-[17px] font-black text-[#151E2D] placeholder:text-[#7C8A9E] placeholder:font-bold placeholder:text-[15px] focus:outline-none focus:border-[#84CC16]">
           </div>
@@ -1852,11 +1852,11 @@
 
             <!-- 📞 [패치 #130] 고객 이름·전화번호 (복사한 번호 넣기 · 연락처에서 고르기) -->
             <div class="grid grid-cols-12 gap-3">
-                <div class="col-span-5">
+                <div class="col-span-12"><!-- 📞 [패치 #166] -->
                     <label for="scheduleCust" class="block text-[16px] font-black text-[#151E2D] mb-2">고객 이름</label>
                     <input type="text" id="scheduleCust" placeholder="예: 홍길동" autocomplete="off" class="w-full h-[54px] bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-3.5 text-[16px] font-black text-[#151E2D] placeholder:text-[#94A3B8] placeholder:font-bold focus:outline-none focus:border-[#151E2D] focus:bg-white">
                 </div>
-                <div class="col-span-7">
+                <div class="col-span-12">
                     <label for="schedulePhone" class="block text-[16px] font-black text-[#151E2D] mb-2">전화번호</label>
                     <input type="tel" id="schedulePhone" inputmode="tel" oninput="autoHyphen(this)" placeholder="010-0000-0000" autocomplete="off" class="w-full h-[54px] bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-[16px] px-3.5 text-[17px] font-black text-[#1D4ED8] placeholder:text-[#94A3B8] placeholder:font-bold focus:outline-none focus:border-[#151E2D] focus:bg-white">
                 </div>
@@ -11226,6 +11226,138 @@ ${AI_COMMON_RULES}
           if (rec && rec.sched && rec.sched.date) { b.innerHTML = `✅ 일정 확정됨 · ${md(rec.sched.date)} (달력 보기)`; b.onclick = e => quoteSchedGo(e, rec.id); }
           else { b.innerHTML = '📅 고객이 확정했어요 · 이 견적으로 일정 잡기'; b.onclick = e => quoteToSchedule(e, currentLoadedRecordId); }
         }
+      } catch (e) {}
+      return r;
+    };
+  }
+})();
+</script>
+<script>
+/* 📨 [패치 #167] 일정 안내 보내기: 일정(달력·일정 자세히·견적 보관함) → 고객 번호·안내 문구 자동 → 월·일·시만 확인 → 문자 / 카카오톡 */
+(function () {
+  const NT = { sid: null };
+  const esc = t => String(t == null ? '' : t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const W = '일월화수목금토';
+  function ntPhone(s) {
+    const memo = String(s.memo || '');
+    let ph = String(s.phone || '').replace(/[^0-9]/g, '') || ((memo.match(/연락처\s*[:：]\s*([0-9][0-9\- ]{6,})/) || [])[1] || '').replace(/[^0-9]/g, '');
+    if (!ph) { try { const c = (clients || []).find(c => c && c.name && String(c.name).trim().length >= 2 && String(s.title || '').includes(String(c.name).trim()) && c.phone); if (c) ph = String(c.phone).replace(/[^0-9]/g, ''); } catch (e) {} }
+    return ph;
+  }
+  const fmt = p => { try { return reqPhoneFmt(p); } catch (e) { return p; } };
+  function ntWhat(s) { // 작업 이름: 작업 분류 → 없으면 제목에서 고객 이름 뺀 것
+    const t = String(s.tag || '').trim(); if (t && !/^(현장 작업|견적방문)$/.test(t)) return t;
+    let w = String(s.title || ''); if (s.cust) w = w.replace(s.cust, ''); return w.replace(/\s+/g, ' ').trim() || '조경';
+  }
+  function ntMsg() {
+    const g = id => (document.getElementById(id) || {}).value || '';
+    const mo = +g('ntMon'), d = +g('ntDay'), y = NT.year || new Date().getFullYear();
+    let day = ''; if (mo && d) { const dt = new Date(y, mo - 1, d); if (dt.getMonth() === mo - 1) day = ` (${W[dt.getDay()]})`; }
+    const h = g('ntHour').trim(), mi = g('ntMin').trim();
+    const time = h ? ` ${g('ntAp')} ${+h}시${mi && +mi ? ' ' + +mi + '분' : ''}` : '';
+    const co = (myCompanyProfile && myCompanyProfile.name) || '조경노트', tel = (myCompanyProfile && myCompanyProfile.phone) || '';
+    return [`[${co}] 작업 일정 안내`, '', `📅 ${mo && d ? `${mo}월 ${d}일${day}` : '○월 ○일'}${time} 방문 예정`, '',
+      '날씨 등으로 일정이 바뀌면 미리 연락드리겠습니다.', tel ? `문의: ${fmt(String(tel).replace(/[^0-9]/g, ''))}` : '', '감사합니다.'].filter(x => x !== null).join('\n').replace(/\n+$/, '');
+  }
+  window.ntRefresh = function () { const t = document.getElementById('ntText'); if (t && !NT.edited) t.value = ntMsg(); };
+  window.schedNotify = function (ev, id) {
+    if (ev) { ev.stopPropagation(); ev.preventDefault(); }
+    const s = (schedules || []).find(x => x && String(x.id) === String(id)); if (!s) return;
+    try { if (typeof jnSchedClose === 'function' && document.getElementById('jnSchedSheet') && document.getElementById('jnSchedSheet').style.display !== 'none') jnSchedClose(); } catch (e) {}
+    NT.sid = String(s.id); NT.edited = false;
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s.date || '')); NT.year = m ? +m[1] : new Date().getFullYear();
+    let box = document.getElementById('ntSheet');
+    if (!box) { box = document.createElement('div'); box.id = 'ntSheet'; box.style.cssText = 'position:fixed;inset:0;z-index:9600;background:rgba(15,23,42,.6);display:flex;align-items:flex-end;justify-content:center'; box.onclick = e => { if (e.target === box) ntClose(); }; document.body.appendChild(box); }
+    const inp = 'width:100%;height:52px;border:1.5px solid #CBD5E1;border-radius:14px;padding:0 12px;font-size:17px;font-weight:900;color:#151E2D;background:#F8FAFC';
+    const num = 'height:56px;border:2px solid #84CC16;border-radius:14px;text-align:center;font-size:22px;font-weight:900;color:#151E2D;background:#fff;width:100%';
+    const lab = 'display:block;font-size:14px;font-weight:900;color:#475569;margin:12px 0 6px';
+    const ph = ntPhone(s);
+    box.innerHTML = `<div style="background:#fff;width:100%;max-width:480px;color:#151E2D;max-height:92vh;overflow-y:auto;border-radius:26px 26px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom))">
+      <div style="display:flex;align-items:center;justify-content:space-between"><b style="font-size:21px;font-weight:900;color:#151E2D">📨 일정 안내 보내기</b><button type="button" onclick="ntClose()" style="width:40px;height:40px;border-radius:99px;background:#F1F5F9;font-size:20px;font-weight:900">✕</button></div>
+      <div style="margin-top:12px;background:#ECFCCB;border:1.5px solid #84CC16;border-radius:14px;padding:10px 12px;font-size:14.5px;font-weight:800;color:#1A2E05;line-height:1.5">날짜와 <b>방문 시간</b>만 확인하세요. 아래 문구가 자동으로 바뀌어요.</div>
+      <label style="${lab}">받는 분 휴대폰 번호${s.cust ? ' · ' + esc(s.cust) : ''}</label><input id="ntTo" type="tel" inputmode="tel" oninput="try{autoHyphen(this)}catch(e){}" value="${esc(ph ? fmt(ph) : '')}" placeholder="010-0000-0000" style="${inp}">
+      <label style="${lab}">방문 날짜 · 시간 <span style="color:#4D7C0F">(숫자만 누르세요)</span></label>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr auto;gap:6px;align-items:center">
+        <input id="ntMon" type="number" inputmode="numeric" min="1" max="12" value="${m ? +m[2] : ''}" oninput="ntRefresh()" style="${num}"><b style="font-size:18px">월</b>
+        <input id="ntDay" type="number" inputmode="numeric" min="1" max="31" value="${m ? +m[3] : ''}" oninput="ntRefresh()" style="${num}"><b style="font-size:18px">일</b>
+      </div>
+      <div style="display:grid;grid-template-columns:1.1fr 1fr auto 1fr auto;gap:6px;align-items:center;margin-top:8px">
+        <select id="ntAp" onchange="ntRefresh()" style="height:56px;border:2px solid #84CC16;border-radius:14px;font-size:18px;font-weight:900;padding:0 6px;background:#fff;color:#151E2D;-webkit-appearance:menulist;appearance:menulist"><option>오전</option><option>오후</option></select>
+        <input id="ntHour" type="number" inputmode="numeric" min="1" max="12" placeholder="9" oninput="ntRefresh()" style="${num}"><b style="font-size:18px">시</b>
+        <input id="ntMin" type="number" inputmode="numeric" min="0" max="59" placeholder="00" oninput="ntRefresh()" style="${num}"><b style="font-size:18px">분</b>
+      </div>
+      <label style="${lab}">보낼 문구 <span style="font-weight:700;color:#94A3B8">(눌러서 직접 고쳐도 돼요)</span></label>
+      <textarea id="ntText" rows="8" oninput="ntEdited()" style="width:100%;border:1.5px solid #CBD5E1;border-radius:14px;padding:12px;font-size:15.5px;font-weight:700;line-height:1.6;color:#151E2D;background:#F8FAFC"></textarea>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+        <button type="button" onclick="ntSend('sms')" style="height:58px;border-radius:16px;background:#84CC16;color:#1A2E05;font-size:17.5px;font-weight:900">💬 문자로 보내기</button>
+        <button type="button" onclick="ntSend('kakao')" style="height:58px;border-radius:16px;background:#FEE500;color:#3C1E1E;font-size:17.5px;font-weight:900">카카오톡으로</button>
+      </div>
+      <button type="button" onclick="ntSend('copy')" style="width:100%;height:48px;margin-top:8px;border-radius:14px;background:#fff;border:1.5px solid #CBD5E1;color:#334155;font-size:15.5px;font-weight:900">📋 문구만 복사하기</button>
+    </div>`;
+    box.style.display = 'flex'; ntRefresh();
+    if (!(history.state && history.state.ntSheet)) history.pushState({ ntSheet: true }, '', '');
+    setTimeout(() => { const h = document.getElementById('ntHour'); if (h) h.focus(); }, 300);
+  };
+  window.ntEdited = function () { NT.edited = true; };
+  window.ntClose = function (fromPop) { const b = document.getElementById('ntSheet'); if (b) b.style.display = 'none'; if (!fromPop && history.state && history.state.ntSheet) history.back(); };
+  window.addEventListener('popstate', () => { const b = document.getElementById('ntSheet'); if (b && b.style.display !== 'none') ntClose(true); });
+  function ntMark(how) {
+    try { const s = schedules.find(x => String(x.id) === NT.sid); if (s) { s.notified = { at: Date.now(), how }; updateData('schedules', schedules); } } catch (e) {}
+    try { renderScheduleList(); } catch (e) {}
+    try { if (!document.getElementById('quoteListView').classList.contains('hidden')) renderQuoteList(); } catch (e) {}
+  }
+  window.ntSend = function (how) {
+    const text = (document.getElementById('ntText') || {}).value || '', to = ((document.getElementById('ntTo') || {}).value || '').replace(/[^0-9]/g, '');
+    if (!((document.getElementById('ntHour') || {}).value || '').trim() && !NT.edited && how !== 'copy' && !confirm('방문 시간이 비어 있어요. 시간 없이 보낼까요?')) { const h = document.getElementById('ntHour'); if (h) h.focus(); return; }
+    if (how === 'sms') {
+      if (!to) { alert('휴대폰 번호를 넣어 주세요.'); return; }
+      const ios = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      location.href = 'sms:' + to + (ios ? '&' : '?') + 'body=' + encodeURIComponent(text);
+      ntMark('sms'); setTimeout(() => ntClose(), 600); return;
+    }
+    if (how === 'kakao' && navigator.share) { navigator.share({ text }).then(() => { ntMark('kakao'); ntClose(); }).catch(() => {}); return; }
+    try { navigator.clipboard.writeText(text).then(() => { alert(how === 'kakao' ? '문구를 복사했어요. 카카오톡 대화방에 붙여 넣어 주세요.' : '문구를 복사했어요.'); if (how === 'kakao') ntMark('kakao'); }); } catch (e) { alert('복사가 안 돼요. 문구를 길게 눌러 복사해 주세요.'); }
+  };
+  const sentChip = s => s && s.notified ? (() => { const d = new Date(s.notified.at); return `<span style="display:inline-block;background:#DCFCE7;color:#166534;font-size:13px;font-weight:900;border-radius:8px;padding:3px 8px;margin-left:6px">✅ 안내 보냄 ${d.getMonth() + 1}/${d.getDate()}</span>`; })() : '';
+  // 달력 아래 일정 카드에 [📨 일정 안내] 버튼
+  if (typeof renderScheduleList === 'function') {
+    const o = renderScheduleList;
+    renderScheduleList = function () {
+      const r = o.apply(this, arguments);
+      try {
+        const ds = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
+        const day = schedules.filter(s => s.date === ds); const cards = document.getElementById('scheduleList').children;
+        day.forEach((s, i) => { const c = cards[i]; if (!c || c.querySelector('.nt-btn')) return;
+          const b = document.createElement('button'); b.type = 'button'; b.className = 'nt-btn';
+          b.style.cssText = 'width:100%;height:50px;margin-top:12px;border-radius:14px;background:#151E2D;color:#D9F99D;font-size:16px;font-weight:900';
+          b.innerHTML = `📨 고객에게 일정 안내 보내기${sentChip(s)}`; b.onclick = e => schedNotify(e, s.id); c.appendChild(b); });
+      } catch (e) {}
+      return r;
+    };
+  }
+  // 일정 자세히 보기 창에도
+  if (typeof jnSchedOpen === 'function') {
+    const o = jnSchedOpen;
+    jnSchedOpen = function (id) {
+      const r = o.apply(this, arguments);
+      try { const box = document.getElementById('jnSchedSheet'); const s = schedules.find(x => String(x.id) === String(id)); const inner = box && box.firstElementChild;
+        if (inner && s && !inner.querySelector('.nt-btn')) { const b = document.createElement('button'); b.type = 'button'; b.className = 'nt-btn';
+          b.style.cssText = 'width:100%;height:54px;margin-top:14px;border-radius:14px;background:#151E2D;color:#D9F99D;font-size:16.5px;font-weight:900';
+          b.innerHTML = `📨 고객에게 일정 안내 보내기${sentChip(s)}`; b.onclick = e => schedNotify(e, s.id); inner.appendChild(b); } } catch (e) {}
+      return r;
+    };
+  }
+  // 견적 보관함: 일정 확정된 견적에 [📨 일정 안내]
+  if (typeof renderQuoteList === 'function') {
+    const o = renderQuoteList;
+    renderQuoteList = function () {
+      const r = o.apply(this, arguments);
+      try { document.querySelectorAll('#quoteListContainer .qs-bar').forEach((bar, i) => {
+          const qList = records.filter(x => x && x.type === 'quote').sort((a, b) => b.id.localeCompare(a.id)); const rec = qList[i];
+          if (!rec || !rec.sched || bar.querySelector('.nt-btn')) return; const s = schedules.find(x => String(x.id) === String(rec.sched.id)); if (!s) return;
+          const b = document.createElement('button'); b.type = 'button'; b.className = 'nt-btn flex-1 min-h-[48px] rounded-[14px] text-[15.5px] font-black';
+          b.style.cssText = 'background:#151E2D;color:#D9F99D;flex:0 0 36%'; b.innerHTML = s.notified ? '✅ 안내 보냄' : '📨 일정 안내';
+          b.onclick = e => schedNotify(e, s.id); bar.appendChild(b); });
       } catch (e) {}
       return r;
     };
