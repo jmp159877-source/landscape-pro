@@ -267,6 +267,40 @@
   .bf-bt.down { border-color:#94A3B8; background:#F1F5F9; color:#334155; }
   .bf-bt:disabled { opacity:.6; }
   .bf-vt { display:flex; gap:8px; }
+    /* 🏢 [패치 #176] 고객 목록 버튼 강조 (연두 테두리) */
+    #mainCategoryWrapper #tabClient { border: 2.5px solid #84CC16 !important; box-shadow: 0 0 0 3px rgba(132,204,22,0.18), 0 8px 20px rgba(0,0,0,0.45) !important; }
+    #mainCategoryWrapper #tabClient svg, #mainCategoryWrapper #tabClient i { color: #BEF264 !important; }
+    html.outdoor #mainCategoryWrapper #tabClient { border: 2.5px solid #65A30D !important; box-shadow: 0 0 0 3px rgba(101,163,13,0.16), 0 3px 8px rgba(20,38,30,0.08) !important; }
+    html.outdoor #mainCategoryWrapper #tabClient svg, html.outdoor #mainCategoryWrapper #tabClient i { color: #3F6212 !important; }
+    /* 🎤 [패치 #176] 한 번에 등록 버튼 · 확인 화면 */
+    .bk-btns { display:flex; flex-direction:column; gap:8px; margin-bottom:6px; }
+    .bk-v { min-height:58px; border-radius:14px; background:#84CC16; color:#1A2E05; font-size:17.5px; font-weight:900; border:0; }
+    .bk-v span { font-size:14.5px; font-weight:800; }
+    .bk-ex { background:#F4FBEA; border-radius:12px; padding:10px 12px; font-size:14px; color:#3F6212; font-weight:700; line-height:1.5; word-break:keep-all; }
+    .bk-p { min-height:52px; border-radius:14px; background:#fff; border:1.5px solid #CBD5E1; color:#151E2D; font-size:16px; font-weight:900; }
+    .bk-or { font-size:13.5px; color:#64748B; font-weight:800; text-align:center; margin-top:4px; }
+    #bkSheet, #bkPaste { position:fixed; inset:0; z-index:9800; background:rgba(0,0,0,.7); display:flex; align-items:flex-end; justify-content:center; }
+    #bkSheet.hidden, #bkPaste.hidden { display:none; }
+    .bk-box { background:#fff; width:100%; max-width:480px; max-height:92vh; overflow-y:auto; border-radius:24px 24px 0 0; padding:16px 16px 0; color:#151E2D; }
+    .bk-hd { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+    .bk-hd b { font-size:20px; font-weight:900; }
+    .bk-hd button { width:40px; height:40px; border-radius:50%; background:#F1F5F9; font-size:18px; font-weight:900; border:0; }
+    .bk-tip { font-size:14.5px; font-weight:700; color:#475569; line-height:1.5; margin:0 0 10px; word-break:keep-all; }
+    #bkPasteText { width:100%; border:2px solid #94A3B8; border-radius:14px; padding:12px; font-size:16px; font-weight:700; color:#151E2D; resize:vertical; }
+    .bk-row { display:flex; gap:10px; border:1.5px solid #E2E8F0; border-radius:14px; padding:10px; margin-bottom:8px; }
+    .bk-row.on { border-color:#84CC16; background:#FBFEF5; }
+    .bk-ck { width:30px; height:30px; flex-shrink:0; border-radius:8px; border:2px solid #CBD5E1; background:#fff; color:#BEF264; font-size:18px; font-weight:900; margin-top:6px; }
+    .bk-row.on .bk-ck { background:#151E2D; border-color:#151E2D; }
+    .bk-f { flex:1; min-width:0; display:flex; flex-direction:column; gap:6px; }
+    .bk-in { width:100%; height:44px; border:1.5px solid #CBD5E1; border-radius:10px; padding:0 10px; font-size:16px; font-weight:800; color:#151E2D; background:#fff; }
+    .bk-in.bk-nm { font-weight:900; font-size:16.5px; }
+    .bk-tg { display:flex; gap:6px; } .bk-tg button { flex:1; height:38px; border-radius:10px; border:1.5px solid #CBD5E1; background:#fff; font-size:14.5px; font-weight:900; color:#475569; }
+    .bk-tg button.sel { background:#151E2D; border-color:#151E2D; color:#BEF264; }
+    .bk-w { font-size:14px; font-weight:900; color:#B45309; }
+    .bk-ft { position:sticky; bottom:0; background:#fff; display:flex; gap:8px; padding:12px 0 16px; }
+    .bk-cancel { flex:0 0 96px; height:56px; border-radius:14px; background:#E2E8F0; font-size:17px; font-weight:900; border:0; color:#151E2D; }
+    .bk-save { flex:1; height:56px; border-radius:14px; background:#151E2D; color:#BEF264; font-size:18px; font-weight:900; border:0; }
+    .bk-save:disabled { opacity:.5; }
 </style>
 </head>
 <body class="text-white antialiased min-h-screen pb-24 selection:bg-[#84CC16] selection:text-white">
@@ -11670,6 +11704,188 @@ ${AI_COMMON_RULES}
   try { ensure(); } catch (e) {}
 })();
 </script>
+<script>
+/* 🎤📋📱 [패치 #176] 고객 목록 · 업체 연락처 한 번에 등록 (말로 / 붙여넣기 / 휴대폰 연락처) → 확인 화면에서 골라 저장 */
+(function () {
+  const BK = { kind: 'client', rows: [] };
+  const esc = s => (typeof escHtml === 'function' ? escHtml(s) : String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])));
+  const digits = v => String(v || '').replace(/[^0-9]/g, '');
+  const fmt = v => { const d = digits(v); if (d.length === 11) return d.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3'); if (d.length === 10) return d.startsWith('02') ? d.replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3') : d.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3'); if (d.length === 9) return d.replace(/(\d{2})(\d{3})(\d{4})/, '$1-$2-$3'); return d; };
+  const canPick = () => !!(navigator.contacts && navigator.contacts.select) && !/SamsungBrowser/i.test(navigator.userAgent || '');
+  function btnsHtml(kind) {
+    const isC = kind === 'client';
+    return `<div class="bk-btns">
+      <button type="button" class="bk-v" onclick="bulkVoice('${kind}')">🎤 말로 등록하기 <span>(여러 명 한 번에)</span></button>
+      <div class="bk-ex">예) "${isC ? '정기 관리처 래미안 아파트 관리소 공일공 일이삼사 오육칠팔, 주소는 수원 영통구… 그리고 개별 고객 김철수 사장님 공일공…' : '업체, 푸른농원 공일공 일이삼사 오육칠팔, 소나무 전문… 그리고 인력, 박기사님 공일공…'}"</div>
+      <button type="button" class="bk-p" onclick="bulkPasteOpen('${kind}')">📋 엑셀·문자에서 복사해 붙여넣기</button>
+      ${canPick() ? `<button type="button" class="bk-p" onclick="bulkPhonePick('${kind}')">📱 휴대폰 연락처에서 가져오기</button>` : ''}
+      <div class="bk-or">또는 손으로 입력</div></div>`;
+  }
+  function mount() {
+    const cf = document.getElementById('clientFormTitle'); if (cf && !document.getElementById('bkClientBox')) { const d = document.createElement('div'); d.id = 'bkClientBox'; d.innerHTML = btnsHtml('client'); cf.insertAdjacentElement('afterend', d); }
+    const kf = document.getElementById('contactFormTitle'); if (kf && !document.getElementById('bkContactBox')) { const d = document.createElement('div'); d.id = 'bkContactBox'; d.innerHTML = btnsHtml('contact'); kf.insertAdjacentElement('afterend', d); }
+    if (!document.getElementById('bkSheet')) {
+      const s = document.createElement('div'); s.id = 'bkSheet'; s.className = 'hidden';
+      s.innerHTML = `<div class="bk-box"><div class="bk-hd"><b id="bkTitle">확인</b><button type="button" onclick="bulkClose()" aria-label="닫기">✕</button></div>
+        <p class="bk-tip">체크된 것만 저장돼요. 이름·번호를 눌러 바로 고칠 수 있어요.</p>
+        <div id="bkList"></div>
+        <div class="bk-ft"><button type="button" class="bk-cancel" onclick="bulkClose()">취소</button><button type="button" id="bkSave" class="bk-save" onclick="bulkSave()">저장</button></div></div>`;
+      document.body.appendChild(s);
+      const p = document.createElement('div'); p.id = 'bkPaste'; p.className = 'hidden';
+      p.innerHTML = `<div class="bk-box"><div class="bk-hd"><b>복사해 붙여넣기</b><button type="button" onclick="bulkPasteClose()" aria-label="닫기">✕</button></div>
+        <p class="bk-tip">엑셀에서 이름·전화번호·주소 칸을 드래그해 복사한 뒤, 아래 칸을 길게 눌러 [붙여넣기] 하세요. 문자·메모장에 적어 둔 명단도 돼요. (한 줄에 한 명)</p>
+        <textarea id="bkPasteText" rows="9" placeholder="예)&#10;래미안 관리소	010-1234-5678	수원 영통구&#10;김철수 010-2222-3333 화성 동탄"></textarea>
+        <div class="bk-ft"><button type="button" class="bk-cancel" onclick="bulkPasteClose()">취소</button><button type="button" class="bk-save" onclick="bulkPasteGo()">정리하기</button></div></div>`;
+      document.body.appendChild(p);
+    }
+  }
+  document.addEventListener('DOMContentLoaded', mount); if (document.readyState !== 'loading') mount();
+
+  // ---------- 말로 ----------
+  window.bulkVoice = function (kind) {
+    BK.kind = kind;
+    voiceOpen({ title: kind === 'client' ? '말로 고객 등록' : '말로 업체 연락처 등록', chip: kind === 'client' ? '고객 목록' : '업체 연락처',
+      hints: kind === 'client' ? ['이름', '전화번호', '주소', '정기·개별'] : ['업체·인력', '이름', '전화번호', '메모'],
+      onDone: text => bulkAi(kind, text) });
+  };
+  async function askAi(prompt, text) {
+    const res = await fetch(GOOGLE_PROXY_URL_PUSH, { redirect: 'follow', method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ idToken: currentIdToken, userId: currentUserId, model: 'gpt-4o', messages: [{ role: 'system', content: prompt }, { role: 'user', content: text }], max_tokens: 2500, temperature: 0.1 }) });
+    const data = await res.json(); if (data.error) throw new Error(data.error.message || 'AI 오류');
+    const raw = String(data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content || '');
+    const m = raw.match(/\{[\s\S]*\}/); if (!m) throw new Error('AI 답을 읽지 못했습니다.'); return JSON.parse(m[0]);
+  }
+  function aiPrompt(kind) {
+    return kind === 'client'
+      ? `너는 조경 업체 대표님의 고객 명단 정리 도우미다. 대표님이 말하거나 붙여 넣은 내용에서 고객을 한 명(한 곳)씩 나눈다.
+- name: 고객명 또는 현장명 (예: "래미안 아파트 관리소", "김철수"). "사장님·소장님·님" 같은 호칭은 뺀다.
+- phone: 전화번호 숫자만. "공일공 일이삼사…"처럼 한글로 읽은 숫자도 숫자로 바꾼다. 모르면 "".
+- address: 주소나 지역. 없으면 "".
+- type: "정기 관리" 또는 "개별 고객". 정기·연간·관리처·아파트 관리 같은 말이면 "정기 관리", 한 번 작업·개인 고객이면 "개별 고객". 말이 없으면 "${'${DEF}'}".
+- 지어내지 말 것. 들은 것만 쓴다.
+JSON만 답한다: {"items":[{"name":"","phone":"","address":"","type":""}]}`
+      : `너는 조경 업체 대표님의 업체·인력 전화번호부 정리 도우미다. 말하거나 붙여 넣은 내용에서 연락처를 하나씩 나눈다.
+- group: 농원·자재상·장비·운송·폐기물 같은 업체면 "업체", 사람(기사님·반장님·일용 인력)이면 "인력". 말이 없으면 "${'${DEF}'}".
+- name: 업체명 또는 이름 (호칭 "님"은 뺌, "기사·반장"은 남겨도 됨).
+- phone: 전화번호 숫자만 (한글로 읽은 숫자도 숫자로). 모르면 "".
+- memo: 주소·단가·특징 등 나머지. 없으면 "".
+- 지어내지 말 것.
+JSON만 답한다: {"items":[{"group":"","name":"","phone":"","memo":""}]}`;
+  }
+  function defType(kind) {
+    if (kind === 'client') { const el = document.querySelector('input[name="newClientType"]:checked'); return el ? el.value : '정기 관리'; }
+    return (typeof currentContactTab !== 'undefined' && currentContactTab === 'labors') ? '인력' : '업체';
+  }
+  async function bulkAi(kind, text) {
+    try { voiceShowThinking(['이름 나누기', '전화번호 찾기', kind === 'client' ? '주소·정기/개별 정리' : '업체/인력·메모 정리']); } catch (e) {}
+    try {
+      const j = await askAi(aiPrompt(kind).split('${DEF}').join(defType(kind)), text);
+      const items = (Array.isArray(j.items) ? j.items : []).slice(0, 100);
+      voiceHide(false);
+      const rows = items.map(it => kind === 'client'
+        ? { name: String(it.name || '').trim().slice(0, 40), phone: digits(it.phone).slice(0, 11), extra: String(it.address || '').trim().slice(0, 100), type: it.type === '개별 고객' ? '개별 고객' : (it.type === '정기 관리' ? '정기 관리' : defType('client')), heard: !digits(it.phone) || digits(text).includes(digits(it.phone)) }
+        : { name: String(it.name || '').trim().slice(0, 40), phone: digits(it.phone).slice(0, 11), extra: String(it.memo || '').trim().slice(0, 200), type: it.group === '인력' ? '인력' : (it.group === '업체' ? '업체' : defType('contact')), heard: !digits(it.phone) || digits(text).includes(digits(it.phone)) })
+        .filter(r => r.name || r.phone);
+      if (!rows.length) return alert('이름과 전화번호를 알아듣지 못했어요. 다시 말씀해 주세요.');
+      bulkShow(kind, rows);
+    } catch (e) { try { voiceHide(false); } catch (x) {} alert('AI 정리에 실패했어요. (' + (e && e.message ? e.message : '통신 오류') + ')\n잠시 후 다시 해 주세요.'); }
+  }
+
+  // ---------- 붙여넣기 ----------
+  window.bulkPasteOpen = function (kind) { BK.kind = kind; mount(); document.getElementById('bkPasteText').value = ''; document.getElementById('bkPaste').classList.remove('hidden'); };
+  window.bulkPasteClose = function () { document.getElementById('bkPaste').classList.add('hidden'); };
+  const PH = /(0\d{1,2})[-.\s)]*(\d{3,4})[-.\s]*(\d{4})/;
+  function localParse(kind, text) {
+    const rows = [];
+    String(text || '').split(/\r?\n/).forEach(line => {
+      const l = line.trim(); if (!l) return;
+      const m = l.match(PH); if (!m) return;
+      const phone = m[1] + m[2] + m[3];
+      let cells = l.split('\t').map(c => c.trim()).filter(Boolean);
+      let name = '', rest = [];
+      if (cells.length > 1) { const pi = cells.findIndex(c => PH.test(c)); name = cells.filter((c, i) => i !== pi)[0] || ''; rest = cells.filter((c, i) => i !== pi).slice(1); }
+      else { const before = l.slice(0, m.index).replace(/[,:·\-]+$/, '').trim(), after = l.slice(m.index + m[0].length).replace(/^[,:·\-\s]+/, '').trim(); name = before || after; rest = before ? [after] : []; }
+      name = name.replace(/\s*(사장님|소장님|님)$/, '').slice(0, 40);
+      if (/^(이름|성명|고객명|업체명|상호)$/.test(name)) return; // 머리글 줄
+      rows.push({ name, phone, extra: rest.filter(Boolean).join(' ').slice(0, kind === 'client' ? 100 : 200), type: defType(kind), heard: true });
+    });
+    return rows;
+  }
+  window.bulkPasteGo = async function () {
+    const kind = BK.kind, text = document.getElementById('bkPasteText').value;
+    if (!text.trim()) return alert('붙여 넣은 내용이 없어요.');
+    const rows = localParse(kind, text);
+    bulkPasteClose();
+    if (rows.length) return bulkShow(kind, rows);
+    if (typeof showLoadingOverlay === 'function') showLoadingOverlay('AI가 명단을 정리하는 중...');
+    try { const j = await askAi(aiPrompt(kind).split('${DEF}').join(defType(kind)), text); document.getElementById('loadingOverlay')?.remove();
+      const r2 = (Array.isArray(j.items) ? j.items : []).map(it => ({ name: String(it.name || '').trim().slice(0, 40), phone: digits(it.phone).slice(0, 11), extra: String((kind === 'client' ? it.address : it.memo) || '').trim().slice(0, 200), type: kind === 'client' ? (it.type === '개별 고객' ? '개별 고객' : '정기 관리') : (it.group === '인력' ? '인력' : '업체'), heard: true })).filter(r => r.name || r.phone);
+      if (!r2.length) return alert('전화번호가 들어 있는 줄을 찾지 못했어요.'); bulkShow(kind, r2);
+    } catch (e) { document.getElementById('loadingOverlay')?.remove(); alert('정리하지 못했어요. 한 줄에 한 명씩 [이름 전화번호 주소] 순서로 붙여 넣어 주세요.'); }
+  };
+
+  // ---------- 휴대폰 연락처 ----------
+  window.bulkPhonePick = async function (kind) {
+    try {
+      const list = await navigator.contacts.select(['name', 'tel'], { multiple: true });
+      const rows = (list || []).map(c => ({ name: String((c.name && c.name[0]) || '').trim().slice(0, 40), phone: digits((c.tel && c.tel[0]) || '').replace(/^82/, '0').slice(0, 11), extra: '', type: defType(kind), heard: true })).filter(r => r.name || r.phone);
+      if (!rows.length) return; bulkShow(kind, rows);
+    } catch (e) { alert('휴대폰 연락처를 열지 못했어요. 크롬 앱에서 열었는지 확인해 주세요.'); }
+  };
+
+  // ---------- 확인 화면 ----------
+  function isDup(kind, r) {
+    const d = digits(r.phone);
+    if (kind === 'client') return (clients || []).some(c => (d && digits(c.phone) === d) || (r.name && c.name === r.name));
+    const g = r.type === '인력' ? 'labors' : 'clients';
+    return ((contactsData && contactsData[g]) || []).some(c => (d && digits(c.phone) === d) || (r.name && c.name === r.name));
+  }
+  function bulkShow(kind, rows) {
+    mount(); BK.kind = kind;
+    const seen = {};
+    BK.rows = rows.map(r => { const d = digits(r.phone), key = d || r.name; const dup = isDup(kind, r) || !!seen[key]; seen[key] = 1; return Object.assign({}, r, { dup, on: !dup && !!r.name && digits(r.phone).length >= 9 }); });
+    bulkRender(); document.getElementById('bkSheet').classList.remove('hidden');
+    try { history.pushState({ bkOpen: true }, '', ''); } catch (e) {}
+  }
+  function bulkRender() {
+    const kind = BK.kind, T = kind === 'client' ? ['정기 관리', '개별 고객'] : ['업체', '인력'], TL = kind === 'client' ? { '정기 관리': '정기 관리처', '개별 고객': '개별 고객처' } : { '업체': '업체', '인력': '인력' };
+    document.getElementById('bkTitle').innerText = `${BK.rows.length}${kind === 'client' ? '명' : '곳'}을 찾았어요`;
+    document.getElementById('bkList').innerHTML = BK.rows.map((r, i) => {
+      const bad = digits(r.phone).length < 9;
+      const warn = r.dup ? '⚠ 이미 등록돼 있어요 (빼 둠)' : bad ? '⚠ 전화번호를 확인해 주세요' : !r.heard ? '⚠ 번호를 한 번 더 확인해 주세요' : '';
+      return `<div class="bk-row ${r.on ? 'on' : ''}">
+        <button type="button" class="bk-ck" onclick="bulkToggle(${i})" aria-label="선택">${r.on ? '✓' : ''}</button>
+        <div class="bk-f">
+          <input class="bk-in bk-nm" value="${esc(r.name)}" placeholder="${kind === 'client' ? '고객명·현장명' : '업체명·이름'}" oninput="bulkEdit(${i},'name',this.value)">
+          <input class="bk-in" type="tel" value="${esc(fmt(r.phone))}" placeholder="전화번호" oninput="autoHyphen(this);bulkEdit(${i},'phone',this.value)">
+          <input class="bk-in" value="${esc(r.extra)}" placeholder="${kind === 'client' ? '주소' : '메모 (주소·단가·특징)'}" oninput="bulkEdit(${i},'extra',this.value)">
+          <div class="bk-tg">${T.map(t => `<button type="button" class="${r.type === t ? 'sel' : ''}" onclick="bulkEdit(${i},'type','${t}');bulkRenderKeep()">${TL[t]}</button>`).join('')}</div>
+          ${warn ? `<div class="bk-w">${warn}</div>` : ''}
+        </div></div>`;
+    }).join('');
+    bulkCount();
+  }
+  window.bulkRenderKeep = function () { const y = document.querySelector('#bkSheet .bk-box').scrollTop; bulkRender(); document.querySelector('#bkSheet .bk-box').scrollTop = y; };
+  function bulkCount() { const n = BK.rows.filter(r => r.on).length; const b = document.getElementById('bkSave'); b.innerText = n ? `선택한 ${n}${BK.kind === 'client' ? '명' : '곳'} 저장` : '선택한 것이 없어요'; b.disabled = !n; }
+  window.bulkToggle = function (i) { const r = BK.rows[i]; if (!r) return; r.on = !r.on; bulkRenderKeep(); };
+  window.bulkEdit = function (i, k, v) { const r = BK.rows[i]; if (!r) return; r[k] = k === 'phone' ? digits(v) : v; if (k !== 'type' && !r.on && r.name && digits(r.phone).length >= 9 && !r.dup) { r.on = true; const ck = document.querySelectorAll('#bkList .bk-ck')[i]; if (ck) { ck.innerText = '✓'; ck.parentElement.classList.add('on'); } } bulkCount(); };
+  window.bulkClose = function (fromPop) { document.getElementById('bkSheet').classList.add('hidden'); if (!fromPop && history.state && history.state.bkOpen) { try { history.back(); } catch (e) {} } };
+  window.addEventListener('popstate', () => { const s = document.getElementById('bkSheet'); if (s && !s.classList.contains('hidden')) bulkClose(true); });
+  window.bulkSave = function () {
+    const kind = BK.kind, pick = BK.rows.filter(r => r.on && r.name && digits(r.phone).length >= 9);
+    if (!pick.length) return alert('저장할 것을 골라 주세요. (이름과 전화번호가 있어야 해요)');
+    if (kind === 'client') {
+      const t0 = Date.now(); pick.forEach((r, i) => clients.push({ id: String(t0 + i), name: r.name.trim(), phone: fmt(r.phone), address: String(r.extra || '').trim(), type: r.type === '개별 고객' ? '개별 고객' : '정기 관리' }));
+      updateData('clients', clients); try { renderClientSelect(); renderClientsList(); } catch (e) {}
+    } else {
+      pick.forEach(r => { const g = r.type === '인력' ? 'labors' : 'clients'; if (!contactsData[g]) contactsData[g] = []; contactsData[g].push({ name: r.name.trim(), phone: fmt(r.phone), memo: String(r.extra || '').trim() }); });
+      updateData('contacts', contactsData); try { renderContactsList(); } catch (e) {}
+    }
+    bulkClose(); setTimeout(() => alert(`✅ ${pick.length}${kind === 'client' ? '명' : '곳'}을 저장했어요.`), 150);
+  };
+})();
+</script>
+
 </body>
 
 </html>
