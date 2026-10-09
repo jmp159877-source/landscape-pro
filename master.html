@@ -436,9 +436,10 @@
 
         <div class="glass-panel rounded-[24px] p-6 space-y-4 border-[#FDE047]/30"><!-- 📌 [패치 #10] 라운지 예시글 관리 -->
             <h3 class="text-white font-black text-[16px] flex items-center gap-2 mb-2"><i data-lucide="pin" class="w-5 h-5 text-[#FDE047]"></i> 소통방 게시판 관리</h3>
-            <p class="text-[#94A3B8] text-[12px] leading-relaxed">게시판 4개(작업 지원·협력, 장비·자재 직거래, 정보 교환, 불량 거래처 경보)에 [조경노트 운영팀] 명의의 📌 예시글(게시판별 3개, 총 12개)을 등록합니다. 예시글에는 전화·대화 버튼이 표시되지 않습니다.</p>
+            <p class="text-[#94A3B8] text-[12px] leading-relaxed">게시판 4개(작업 지원·협력, 장비·자재 직거래, 정보 교환, 불량 거래처 경보)에 [조경노트 운영팀] 명의의 📌 예시글(게시판별 5개, 총 20개)을 등록합니다. 예시글에는 전화·대화 버튼이 표시되지 않습니다.</p>
             <button onclick="seedOfficialPosts()" class="w-full py-3.5 bg-[#FDE047]/20 text-[#FDE047] font-black rounded-[12px] hover:bg-[#FDE047]/30 border border-[#FDE047]/40">📌 예시글 일괄 등록</button>
             <button onclick="openPostManager()" class="w-full py-3.5 bg-[#3B82F6]/20 text-blue-300 font-black rounded-[12px] hover:bg-[#3B82F6]/30 border border-blue-500/30">📋 전체 게시글 목록 관리 (삭제·마감)</button><!-- 📋 [패치 #11] -->
+            <button onclick="deleteTestDatePosts()" class="w-full py-3 bg-[#D97706]/15 text-[#FBBF24] font-black rounded-[12px] border border-[#D97706]/40 text-[13.5px]">🧪 날짜 골라 쓴 시험 글 전체 삭제 (댓글 포함)</button><!-- 🧪 [패치 #172] -->
             <button onclick="deleteOfficialPosts()" class="w-full py-3 bg-white/5 text-[#94A3B8] font-bold rounded-[12px] hover:bg-white/10 border border-white/10 text-[13px]">예시글 전체 삭제 (회원 글은 유지)</button>
         </div>
 
@@ -953,21 +954,43 @@
     }
 
     // 📌 [패치 #10] 라운지 예시글 등록/삭제
-    const OFFICIAL_SAMPLE_POSTS = [ // 📌 [패치 #171] 소통방 게시판 4개 기준 예시글 12개 (게시판별 3개 · 서울·경기·충청)
-      { category: '현장협력', title: "[인력 구함] 10/18(토) 수원 아파트 단지 교목 전정 2명", content: "📅 10월 18일(토) 오전 8시 ~ 오후 5시\n📍 경기 수원 영통구 아파트 단지\n👷 전정 경험 있으신 분 2명\n🛠 느티나무·벚나무 교목 전정, 잔가지 정리\n💰 일당 협의 (점심 제공)\n\n연락은 1:1 대화로 주세요." },
-      { category: '현장협력', title: "[장비 구함] 고소작업차(스카이) 기사님 포함 반나절", content: "충남 천안 서북구 공장 부지 은행나무 6주 수형 조절입니다.\n고소작업차 기사님 포함 반나절(4시간) 필요합니다.\n\n날짜는 다음 주 중 조율 가능하고, 진입로는 대형차 들어옵니다." },
-      { category: '현장협력', title: "[협력 제안] 서울 강남 주택 정원, 조경석 쌓기 같이 하실 업체", content: "서울 강남구 단독주택 정원 리모델링 현장입니다.\n식재와 잔디는 저희가 맡고, 조경석 쌓기·디딤석 시공을 함께 하실 업체를 찾습니다.\n\n11월 첫째 주 착공 예정, 약 3일 작업입니다." },
+    const OFFICIAL_SAMPLE_POSTS = [ // 📌 [패치 #172] 소통방 게시판 4개 기준 예시글 20개 (게시판별 5개 · 서울·경기·인천·충청)
+      { category: '현장협력', title: "[인력 구함] 수원 아파트 단지 교목 전정 2명", content: "📅 이번 주 토요일 오전 8시 ~ 오후 5시\n📍 경기 수원 영통구 아파트 단지\n👷 전정 경험 있으신 분 2명\n🛠 느티나무·벚나무 교목 전정, 잔가지 정리\n💰 일당 협의 (점심 제공)\n\n연락은 1:1 대화로 주세요." },
+      { category: '현장협력', title: "[장비 구함] 고소작업차(스카이) 기사님 포함 반나절", content: "충남 천안 서북구 공장 부지 은행나무 6주 수형 조절입니다.\n고소작업차 기사님 포함 반나절(4시간) 필요합니다.\n\n날짜는 다음 주 중 조율 가능하고, 대형차 진입 됩니다." },
+      { category: '현장협력', title: "[협력 제안] 서울 강남 주택 정원, 조경석 쌓기 함께 하실 업체", content: "서울 강남구 단독주택 정원 리모델링 현장입니다.\n식재와 잔디는 저희가 맡고, 조경석 쌓기·디딤석 시공을 함께 하실 업체를 찾습니다.\n\n착공은 다음 달 첫째 주, 약 3일 작업 예정입니다." },
+      { category: '현장협력', title: "[인력 구함] 세종 상가 화단 정비 1명 (반나절)", content: "📍 세종시 나성동 상가 앞 화단\n🛠 묵은 관목 정리, 멀칭, 초화 식재\n👷 1명, 오전 반나절\n\n초화 식재 해 보신 분이면 좋겠습니다." },
+      { category: '현장협력', title: "[협력 제안] 용인·광주 쪽 연간관리 현장 나눠 맡으실 업체", content: "경기 용인 수지에 연간관리 현장이 몰려서 일정이 빡빡합니다.\n용인·경기 광주 쪽에서 방제나 잔디 깎기를 나눠 맡아 주실 업체와 꾸준히 협력하고 싶습니다.\n\n조건은 1:1 대화로 상의드릴게요." },
       { category: '장비자재', title: "[판매] 엔진톱 중고 (2년 사용, 정상 작동)", content: "🏷 엔진톱 중고, 2년 사용\n📍 충북 청주 직거래\n🔧 체인 새로 교체, 시동 잘 걸립니다\n💰 가격은 1:1 대화로 문의 주세요" },
-      { category: '장비자재', title: "[나눔] 들잔디 약 30㎡ 남았습니다", content: "경기 가평 현장 마치고 들잔디가 30㎡ 정도 남았습니다.\n이번 주 금요일까지 가져가실 분께 무료로 드립니다.\n\n가평읍 현장에서 직접 실어 가셔야 합니다." },
+      { category: '장비자재', title: "[나눔] 들잔디 약 30㎡ 남았습니다", content: "경기 가평 현장 마치고 들잔디가 30㎡ 정도 남았습니다.\n이번 주 안에 가져가실 분께 무료로 드립니다.\n\n가평읍 현장에서 직접 실어 가셔야 합니다." },
       { category: '장비자재', title: "[구매] 충전식 전정기 중고 구합니다", content: "서울·경기 남부에서 충전식 전정기 중고 구합니다.\n배터리 2개 포함이면 좋겠습니다.\n상태 좋은 제품 있으시면 1:1 대화 주세요." },
+      { category: '장비자재', title: "[판매] 바크 마사토 남은 것 정리합니다", content: "📍 경기 남양주 별내 창고\n🪵 바크 20포, 마사토 1톤백 2개\n💰 구입가보다 싸게 넘깁니다\n\n직접 가져가실 분 우선입니다." },
+      { category: '장비자재', title: "[판매] 1톤 트럭 적재함 사다리 거치대", content: "충남 아산 직거래입니다.\n1톤 트럭 적재함에 다는 사다리 거치대, 차를 바꾸면서 떼어 냈습니다.\n볼트까지 같이 드립니다." },
       { category: '정보교환', title: "화성·오산 쪽 전지목 받아 주는 곳 있을까요?", content: "경기 화성 동탄 현장에서 전정 가지가 2톤 정도 나옵니다.\n화성·오산 근처에서 전지목 받아 주는 처리장이나 수거 업체 아시는 분 계시면 댓글 부탁드립니다." },
       { category: '정보교환', title: "대전·세종 소나무 좋은 농원 추천 부탁드립니다", content: "대전 유성구 주택 정원에 반송(H1.5) 2주 심으려고 합니다.\n대전·세종 쪽에서 소나무 상태 좋은 농원 이용하시는 곳 있으면 알려 주세요." },
-      { category: '정보교환', title: "10월 방제, 응애 약 어떤 거 쓰세요?", content: "서울 노원구 아파트 단지 회양목·사철에 응애가 심하게 올라왔습니다.\n요즘 응애에 잘 듣는 약제 쓰시는 거 있으면 댓글로 공유 부탁드립니다.\n(약제는 꼭 라벨 확인하고 쓰겠습니다)" },
+      { category: '정보교환', title: "가을 방제, 응애 약 어떤 거 쓰세요?", content: "서울 노원구 아파트 단지 회양목·사철에 응애가 심하게 올라왔습니다.\n요즘 응애에 잘 듣는 약제 쓰시는 거 있으면 댓글로 공유 부탁드립니다.\n(약제는 꼭 라벨 확인하고 쓰겠습니다)" },
+      { category: '정보교환', title: "인천·부천 쪽 조경석 자재상 아시는 분", content: "인천 남동구 주택 정원에 자연석 경계석이 필요합니다.\n인천·부천 쪽에서 소량도 배송해 주는 조경석 자재상 아시면 알려 주세요." },
+      { category: '정보교환', title: "겨울 전에 새끼감기, 다들 언제 시작하세요?", content: "충북 충주 쪽은 11월 중순부터 시작하려고 합니다.\n지역마다 시작 시기랑 쓰시는 재료(새끼·녹화마대 등) 궁금합니다. 댓글로 나눠 주세요." },
       { category: '불량거래처', title: "[필독] 불량 거래처 경보 게시판 이용 수칙", content: "이 게시판의 글과 댓글은 모두 익명으로 표시됩니다.\n\n• 거래처의 상호, 실명, 전화번호, 상세 주소처럼 특정할 수 있는 정보는 쓰지 마세요.\n• 겪은 사실만 적어 주세요. 사실이라도 특정인을 깎아내리는 글은 명예훼손이 될 수 있습니다.\n• 허위·비방 글은 관리자가 삭제합니다." },
       { category: '불량거래처', title: "이렇게 써 주세요: 대금 미지급 사례", content: "📍 지역: 경기 남부\n🏢 업종: 상가 건물 조경 공사 발주처\n⚠️ 내용: 공사 끝나고 3개월째 잔금 미지급, 하자 핑계로 계속 미룸\n💡 주의 팁: 착공 전 계약서와 단계별 기성금 약정을 꼭 해 두세요." },
+      { category: '불량거래처', title: "이렇게 써 주세요: 작업 범위 계속 늘리기", content: "📍 지역: 충남 북부\n🏢 업종: 개인 주택\n⚠️ 내용: 전정만 하기로 했는데 현장에서 제초·잔디까지 추가 요구, 추가 금액은 못 준다고 함\n💡 주의 팁: 견적서에 작업 범위를 구체적으로 적고, 추가 작업은 시작 전에 금액부터 정하세요." },
+      { category: '불량거래처', title: "이렇게 써 주세요: 하자 핑계 대금 깎기", content: "📍 지역: 서울 동부\n🏢 업종: 소규모 건물 관리 업체\n⚠️ 내용: 식재 후 한 달 지나 고사 핑계로 대금 절반만 지급하겠다고 함 (관수 관리는 건물 측 담당이었음)\n💡 주의 팁: 하자 보수 범위와 관리 책임을 계약서에 미리 적어 두세요." },
       { category: '불량거래처', title: "계약 전에 확인하면 좋은 것들", content: "✔ 작은 공사라도 작업 범위·금액·지급 시기를 적은 계약서\n✔ 규모가 큰 공사는 선금이나 단계별 기성금 약정\n✔ 작업 끝나면 작업 전·후 사진으로 확인 받기\n\n💡 조경노트 작업 리포트를 보내 두면 나중에 작업 내용을 증명하기 좋습니다." },
     ];
     const COMMUNITY_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_community";
+    // 🧪 [패치 #172] 시험용 게시 날짜(testDate)로 쓴 글과 그 댓글 전체 삭제
+    async function deleteTestDatePosts() {
+        try {
+            const res = await fetch(getAuthUrl(`${COMMUNITY_URL}.json`)); const data = await res.json();
+            const keys = data ? Object.keys(data).filter(k => data[k] && data[k].testDate === true) : [];
+            if (!keys.length) return alert('날짜를 골라 쓴 시험 글이 없습니다.');
+            if (!confirm(`날짜를 골라 쓴 시험 글 ${keys.length}개와 그 댓글을 삭제할까요?\n(되돌릴 수 없습니다)`)) return;
+            for (const k of keys) {
+                await fetch(getAuthUrl(`${COMMUNITY_URL}/${k}.json`), { method: 'DELETE' });
+                await fetch(getAuthUrl(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_comments/${k}.json`), { method: 'DELETE' });
+            }
+            alert(`✅ 시험 글 ${keys.length}개를 삭제했습니다.`);
+        } catch (e) { alert('삭제 중 오류가 발생했습니다: ' + e.message); }
+    }
     async function seedOfficialPosts() {
         try {
             const res = await fetch(getAuthUrl(`${COMMUNITY_URL}.json`)); const data = await res.json();

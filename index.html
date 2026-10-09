@@ -5989,6 +5989,12 @@ ${HELP_EXTRA.join('\n')}`;
               </button>
               <div class="bg-[#F4FBEA] rounded-[14px] px-3.5 py-3 text-[15px] font-bold text-[#3F6212] leading-relaxed break-keep">예) "남은 소나무 세 그루 팔아요. 수고 3미터, 그루당 30만 원, 서울 서초, 연락은 010…"</div> <!-- ✏️ [패치 #89] 예시 문구 서초동·홍길동 -->
               <div class="flex items-center gap-2.5"><div class="flex-1 h-px bg-[#CBD5E1]"></div><span class="text-[15px] font-extrabold text-[#475569]">또는 손으로 입력</span><div class="flex-1 h-px bg-[#CBD5E1]"></div></div>
+              <!-- 🧪 [패치 #172] 시험용 게시 날짜 (BOARD_TEST_DATE_ON 스위치 · 시험 끝나면 false) -->
+              <div id="bwTestDateBox" class="hidden rounded-[14px] px-3.5 py-3" style="background:#FEF3C7;border:1.5px dashed #D97706;">
+                  <label for="bwTestDate" class="block text-[16px] font-black text-[#92400E] mb-1.5">🧪 게시 날짜 (시험용)</label>
+                  <input type="date" id="bwTestDate" class="w-full bg-white border-2 border-[#D97706] rounded-[12px] px-3 py-3 text-[17px] font-black text-[#151E2D]">
+                  <p class="m-0 mt-1.5 text-[13.5px] font-bold text-[#92400E] leading-snug">비워 두면 오늘 날짜로 올라가요. 이 날짜로 쓴 글은 관리자 화면에서 한 번에 지울 수 있어요.</p>
+              </div>
               <div>
                   <label class="block text-[17.5px] font-black text-[#151E2D] mb-2">1. 카테고리 선택</label>
                   <select id="bwCategory" onchange="boardPrefillPhone()" class="w-full bg-[#F8FAFC] border-2 border-[#94A3B8] rounded-[16px] px-4 py-4 text-[18px] font-black text-[#151E2D] focus:outline-none focus:border-[#151E2D]">
@@ -6517,6 +6523,13 @@ ${HELP_EXTRA.join('\n')}`;
               timestamp: new Date().getTime(),
               dateStr: new Date().toLocaleString('ko-KR', {month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit'})
           };
+          // 🧪 [패치 #172] 시험용 게시 날짜: 고른 날 + 지금 시각 · testDate 표시(관리자 화면에서 한 번에 삭제)
+          const tdEl = document.getElementById('bwTestDate');
+          if (BOARD_TEST_DATE_ON && tdEl && tdEl.value) {
+              const now = new Date(), [yy, mm, dd] = tdEl.value.split('-').map(Number), d = new Date(yy, mm - 1, dd, now.getHours(), now.getMinutes(), now.getSeconds());
+              if (d.getTime() > now.getTime()) return alert('게시 날짜는 오늘이나 지난 날짜만 고를 수 있어요.');
+              postData.timestamp = d.getTime(); postData.dateStr = d.toLocaleString('ko-KR', {month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit'}); postData.testDate = true;
+          }
 
           showLoadingOverlay(boardWriteImages.length ? `사진 ${boardWriteImages.length}장 업로드 중...` : "클라우드 서버에 등록 중...");
           try {
@@ -6634,7 +6647,9 @@ ${HELP_EXTRA.join('\n')}`;
           if (BOARD_PHONE_PREFILL.includes(cat)) { if (!ph.value.trim()) ph.value = myProfilePhone(); }
           else if (ph.value.trim() === myProfilePhone()) ph.value = ''; // 다른 게시판으로 바꾸면 자동으로 넣은 번호는 빼 줌
       }
+      const BOARD_TEST_DATE_ON = true; // 🧪 [패치 #172] 시험용 게시 날짜 달력 (시험 끝나면 false로 → 달력 사라짐)
       function openBoardWrite() {
+          try { const bx = document.getElementById('bwTestDateBox'), ti = document.getElementById('bwTestDate'); if (bx) bx.classList.toggle('hidden', !BOARD_TEST_DATE_ON); if (ti) ti.max = seoulToday(); } catch (e) {}
           document.getElementById('bwTitle').value = ''; 
           document.getElementById('bwPhone').value = ''; 
           document.getElementById('bwContent').value = '';
