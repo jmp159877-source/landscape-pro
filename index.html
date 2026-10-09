@@ -11938,34 +11938,6 @@ JSON만 답한다: {"items":[{"group":"","name":"","phone":"","memo":""}]}`;
 })();
 </script>
 
-<script>
-/* ⏳ [패치 #184] 실행 중 표시 공통: 누르고 0.3초 넘게 걸리면 가운데에 "처리 중…" 동그라미를 띄움
-   - 확인창·알림창(confirm·alert·prompt)이 뜰 때는 잠깐 숨겼다가, 아직 처리 중이면 다시 띄움 → 결과 창이 가려지지 않음
-   - 원래 로딩 표시가 있는 기능은 건드리지 않음 (BUSY_FNS 목록에 있는 것만) */
-(function () {
-  const B = { n: 0, t: null, msg: '' };
-  function el() {
-    let o = document.getElementById('busyOverlay');
-    if (!o) { o = document.createElement('div'); o.id = 'busyOverlay';
-      o.style.cssText = 'position:fixed;inset:0;z-index:10060;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;';
-      o.innerHTML = '<div style="background:#1E293B;border:1.5px solid #475569;border-radius:20px;padding:22px 26px;text-align:center;color:#fff;min-width:200px;"><div style="width:42px;height:42px;margin:0 auto 12px;border:4px solid rgba(132,204,22,.3);border-top-color:#84CC16;border-radius:50%;animation:busyspin 1s linear infinite;"></div><div id="busyText" style="font-size:17px;font-weight:900;"></div><div style="font-size:13px;color:#94A3B8;margin-top:5px;font-weight:700;">잠시만 기다려 주세요</div></div><style>@keyframes busyspin{to{transform:rotate(360deg)}}</style>';
-      document.body.appendChild(o); }
-    return o;
-  }
-  function show() { if (B.n > 0) { const o = el(); o.querySelector('#busyText').textContent = B.msg || '처리 중…'; o.style.display = 'flex'; } }
-  function hide() { clearTimeout(B.t); const o = document.getElementById('busyOverlay'); if (o) o.style.display = 'none'; }
-  function arm() { clearTimeout(B.t); B.t = setTimeout(show, 300); }
-  ['alert', 'confirm', 'prompt'].forEach(k => { const orig = window[k].bind(window); window[k] = function () { hide(); const r = orig.apply(null, arguments); if (B.n > 0) arm(); return r; }; });
-  window.busyWrap = function (map) {
-    Object.keys(map).forEach(name => {
-      const fn = window[name]; if (typeof fn !== 'function' || fn.__busy) return;
-      const w = async function () { B.n++; B.msg = map[name]; arm(); try { return await fn.apply(this, arguments); } finally { B.n = Math.max(0, B.n - 1); if (!B.n) hide(); } };
-      w.__busy = true; window[name] = w;
-    });
-  };
-})();
-busyWrap({"deleteMemo": "삭제 중…", "deleteStockRow": "삭제 중…", "reqReport": "신고 접수 중…", "reqSetStatus": "저장 중…", "reqDelete": "삭제 중…", "hpCancel": "처리 중…", "ptCancelReq": "취소하는 중…", "waNudgeSave": "저장 중…", "sendRealChatMessage": "보내는 중…", "ptBlogCharge": "포인트 확인 중…"});
-</script>
 
 </body>
 
