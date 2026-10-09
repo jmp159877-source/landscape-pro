@@ -84,6 +84,9 @@
     html.mode-switch *, html.mode-switch *::before, html.mode-switch *::after { transition: none !important; animation-duration: 0s !important; } /* 🎨 [패치 #175] */
     #mainCategoryWrapper nav button { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; } /* 🎨 [패치 #175] 버튼 뒤 흐림 효과 끔 (보이는 차이 없음 · 휴대폰 부담 줄임) */
     html.outdoor #boardNoticeBox { background:#FFFFFF !important; border-color:#CBD5E1 !important; } html.outdoor #boardNoticeText, html.outdoor #boardNoticeText * { color:#334155 !important; } /* 🎨 [패치 #188] 밝은 화면에서 안내 글씨가 안 보이던 것 */
+    /* 🖥️ [패치 #190] PC에서도 소통방 게시판을 휴대폰 화면처럼 가운데 좁은 폭으로 (앱 본문 max-w-md = 28rem 과 같게) */
+    #boardView { left: 0 !important; right: 0 !important; margin-left: auto !important; margin-right: auto !important; max-width: 28rem !important; }
+    #boardView > button.fixed { right: max(16px, calc(50% - 14rem + 16px)) !important; }
     #tabContacts span.ct-sub { font-size: 14px !important; font-weight: 800 !important; opacity: .7; white-space: nowrap !important; letter-spacing: -0.02em !important; }
     /* 💡 [스타일 B 확정] 상단 6개 버튼: 모던 다크 티타늄 + 선명한 실버 테두리 + 야외 시인성 강화 */
     #tabCalendar, #tabAdmin, #tabClient, #tabQuote, #tabQuoteList, #tabLogList, #tabContacts {
