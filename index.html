@@ -83,6 +83,7 @@
     #mainCategoryWrapper nav button { min-width: 0; }
     html.mode-switch *, html.mode-switch *::before, html.mode-switch *::after { transition: none !important; animation-duration: 0s !important; } /* 🎨 [패치 #175] */
     #mainCategoryWrapper nav button { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; } /* 🎨 [패치 #175] 버튼 뒤 흐림 효과 끔 (보이는 차이 없음 · 휴대폰 부담 줄임) */
+    html.outdoor #boardNoticeBox { background:#FFFFFF !important; border-color:#CBD5E1 !important; } html.outdoor #boardNoticeText, html.outdoor #boardNoticeText * { color:#334155 !important; } /* 🎨 [패치 #188] 밝은 화면에서 안내 글씨가 안 보이던 것 */
     #tabContacts span.ct-sub { font-size: 14px !important; font-weight: 800 !important; opacity: .7; white-space: nowrap !important; letter-spacing: -0.02em !important; }
     /* 💡 [스타일 B 확정] 상단 6개 버튼: 모던 다크 티타늄 + 선명한 실버 테두리 + 야외 시인성 강화 */
     #tabCalendar, #tabAdmin, #tabClient, #tabQuote, #tabQuoteList, #tabLogList, #tabContacts {
@@ -6367,9 +6368,12 @@ ${HELP_EXTRA.join('\n')}`;
 
       async function loadCommunityPosts() {
           try {
-              const res = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_community.json?auth=${currentIdToken}`);
-              const data = await res.json();
+              let res = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_community.json?auth=${currentIdToken}`);
+              let data = await res.json();
+              // 🔑 [패치 #187] PC를 오래 켜 두면 로그인 열쇠가 만료돼 글이 하나도 안 보였음 → 열쇠를 새로 받아 한 번 더 읽기
+              if (!res.ok || (data && data.error)) { if (await refreshIdToken()) { res = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_community.json?auth=${currentIdToken}`); data = await res.json(); } }
               const container = document.getElementById('boardFeedContainer');
+              if (!res.ok || (data && data.error)) { container.innerHTML = '<div style="background:#fff;border-radius:18px;padding:22px;text-align:center;color:#151E2D;font-size:16px;font-weight:800;line-height:1.6;">글을 불러오지 못했어요.<br><span style="color:#64748B;font-size:14.5px;">로그인이 오래돼서 그럴 수 있어요. 화면을 새로고침(F5)하고 다시 로그인해 주세요.</span></div>'; return; }
               
               if(!data) {
                   container.innerHTML = emptyStateHtml('messages-square', '아직 올라온 글이 없습니다', '첫 글을 남겨 보세요.', '글쓰기', 'openBoardWrite()'); /* 🗂 [패치 #23] */
@@ -6381,7 +6385,8 @@ ${HELP_EXTRA.join('\n')}`;
               boardPostCache = {}; // 📷 [패치 #11] 게시글 키 보존 (마감 처리·사진 보기용)
               const posts = Object.entries(data).filter(([k, p]) => p && typeof p === 'object' && /^[A-Za-z0-9_-]{1,64}$/.test(k)) /* 🔐 [패치 #40] 이상한 키 차단 */.map(([k, p]) => { p._key = k; boardPostCache[k] = p; return p; }).sort((a,b) => b.timestamp - a.timestamp);
 
-              posts.forEach(post => { // 🎨 [패치 #171] 깔끔한 카드: 분류 이름(회색) · 제목 · 본문 · 사진 · 작성자·날짜 · 버튼
+              posts.forEach(post => { try { // 🛡️ [패치 #188] 글 하나가 이상해도 나머지는 보이게
+              (() => { // 🎨 [패치 #171] 깔끔한 카드: 분류 이름(회색) · 제목 · 본문 · 사진 · 작성자·날짜 · 버튼
                   const CATN = { '정보교환': '정보 교환·업체 공유', '불량거래처': '불량 거래처 경보', '현장협력': '작업 지원·협력', '장비자재': '장비·자재 직거래', '자유소통': '자유 소통', '노하우': '실무 노하우', '일감양도': '작업 양도·양수', '견적단가': '견적·단가 자문' };
                   const displayName = (post.authorRegion ? post.authorRegion + ' ' : '') + (post.authorName || '');
                   const statusLabel = BOARD_STATUS_LABEL[post.category]; const isClosed = !!statusLabel && post.status === 'closed';
@@ -6411,6 +6416,7 @@ ${HELP_EXTRA.join('\n')}`;
                   </div>`;
                   
                   container.insertAdjacentHTML('beforeend', cardHtml);
+              })(); } catch (err) { console.error('게시글 표시 실패', post && post._key, err); }
               });
               if(typeof lucide !== 'undefined') lucide.createIcons();
           } catch(e) { console.error("게시글 로드 실패", e); }
