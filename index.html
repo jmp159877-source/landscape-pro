@@ -6698,7 +6698,7 @@ ${HELP_EXTRA.join('\n')}`;
           document.getElementById('bwContent').value = '';
           boardWriteImages = []; renderBoardThumbs(); // 📷 [패치 #11]
           
-          const activeTab = document.querySelector('.board-tab-btn.bg-\\[\\#84CC16\\]');
+          const activeTab = document.querySelector('.board-tab-btn.bg-white:not(.hidden)'); // 🐞 [패치 #177] #171 탭 색을 바꾸면서 '지금 보는 게시판' 찾기가 깨졌던 것 고침
           if (activeTab) {
               const catSelect = document.getElementById('bwCategory'); // 💬 [패치 #20] 탭의 내부 분류값으로 선택
               const m = (activeTab.getAttribute('onclick') || '').match(/filterBoard\('([^']+)'/);
