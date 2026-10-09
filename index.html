@@ -6356,7 +6356,8 @@ ${HELP_EXTRA.join('\n')}`;
       // 👍 [패치 #171] 정보 교환 글 엄지척·나빠요 (포인트는 서버가 확인 · 내 글은 못 누름)
       const LIKE_BOARDS_APP = ['정보교환'];
       const EXAMPLES_ON_TOP = true; // 📌 [패치 #191] 운영팀 예시글을 게시판 맨 위에 고정 (글이 많아지면 false → 시간순으로 섞임)
-      function postYmd(p) { const t = Number(p && p.timestamp); if (!t) return String((p && p.dateStr) || ''); const d = new Date(t); return d.getFullYear() + '. ' + (d.getMonth() + 1) + '. ' + d.getDate() + '.'; } // 📅 [패치 #186] 소통방 글은 년·월·일만 (시간 뺌)
+      const POST_TIME_FROM = Date.UTC(2026, 9, 9, 19, 40); // 🕒 [패치 #199] 2026-10-10 04:40(한국)부터 올린 글은 시간도 표시 (그 전 글은 년·월·일만)
+      function postYmd(p) { const t = Number(p && p.timestamp); if (!t) return String((p && p.dateStr) || ''); const d = new Date(t); const ymd = d.getFullYear() + '. ' + (d.getMonth() + 1) + '. ' + d.getDate() + '.'; if (t < POST_TIME_FROM || (p && p.testDate)) return ymd; const h = d.getHours(); return ymd + ' ' + (h < 12 ? '오전' : '오후') + ' ' + ((h % 12) || 12) + ':' + String(d.getMinutes()).padStart(2, '0'); } // 📅 [패치 #186] 소통방 글은 년·월·일만 (시간 뺌)
       function myVoteKey() { return String(currentUserId || '').toLowerCase().replace(/[^a-z0-9_-]/g, '_'); }
       function voteInner(post) {
           const own = post.authorId === currentUserId, my = (post.votes || {})[myVoteKey()] || 0, k = escHtml(post._key);
@@ -6720,7 +6721,7 @@ ${HELP_EXTRA.join('\n')}`;
           if (BOARD_PHONE_PREFILL.includes(cat)) { if (!ph.value.trim()) ph.value = myProfilePhone(); }
           else if (ph.value.trim() === myProfilePhone()) ph.value = ''; // 다른 게시판으로 바꾸면 자동으로 넣은 번호는 빼 줌
       }
-      const BOARD_TEST_DATE_ON = true; // 🧪 [패치 #172] 시험용 게시 날짜 달력 (시험 끝나면 false로 → 달력 사라짐)
+      const BOARD_TEST_DATE_ON = false; // 🧪 [패치 #198] 시험 끝 → 달력 끔 (#172) 시험용 게시 날짜 달력 (시험 끝나면 false로 → 달력 사라짐)
       function openBoardWrite() {
           try { const bx = document.getElementById('bwTestDateBox'), ti = document.getElementById('bwTestDate'); if (bx) bx.classList.toggle('hidden', !BOARD_TEST_DATE_ON); if (ti) ti.max = seoulToday(); } catch (e) {}
           document.getElementById('bwTitle').value = ''; 
