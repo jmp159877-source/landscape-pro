@@ -6355,6 +6355,7 @@ ${HELP_EXTRA.join('\n')}`;
 
       // 👍 [패치 #171] 정보 교환 글 엄지척·나빠요 (포인트는 서버가 확인 · 내 글은 못 누름)
       const LIKE_BOARDS_APP = ['정보교환'];
+      const EXAMPLES_ON_TOP = true; // 📌 [패치 #191] 운영팀 예시글을 게시판 맨 위에 고정 (글이 많아지면 false → 시간순으로 섞임)
       function postYmd(p) { const t = Number(p && p.timestamp); if (!t) return String((p && p.dateStr) || ''); const d = new Date(t); return d.getFullYear() + '. ' + (d.getMonth() + 1) + '. ' + d.getDate() + '.'; } // 📅 [패치 #186] 소통방 글은 년·월·일만 (시간 뺌)
       function myVoteKey() { return String(currentUserId || '').toLowerCase().replace(/[^a-z0-9_-]/g, '_'); }
       function voteInner(post) {
@@ -6401,7 +6402,7 @@ ${HELP_EXTRA.join('\n')}`;
               try { const cr = await fetch(`https://shinhwa-landnote-default-rtdb.firebaseio.com/pro_comments.json?auth=${currentIdToken}`); boardCommentsCache = (cr.ok ? await cr.json() : null) || {}; } catch (e) { boardCommentsCache = {}; } // 💬 [패치 #40] 댓글
               container.innerHTML = ''; 
               boardPostCache = {}; // 📷 [패치 #11] 게시글 키 보존 (마감 처리·사진 보기용)
-              const posts = Object.entries(data).filter(([k, p]) => p && typeof p === 'object' && /^[A-Za-z0-9_-]{1,64}$/.test(k)) /* 🔐 [패치 #40] 이상한 키 차단 */.map(([k, p]) => { p._key = k; boardPostCache[k] = p; return p; }).sort((a,b) => b.timestamp - a.timestamp);
+              const posts = Object.entries(data).filter(([k, p]) => p && typeof p === 'object' && /^[A-Za-z0-9_-]{1,64}$/.test(k)) /* 🔐 [패치 #40] 이상한 키 차단 */.map(([k, p]) => { p._key = k; boardPostCache[k] = p; return p; }).sort((a,b) => (EXAMPLES_ON_TOP ? (b.isOfficial ? 1 : 0) - (a.isOfficial ? 1 : 0) : 0) || (b.timestamp - a.timestamp)); // 📌 [패치 #191] 예시글은 공지처럼 맨 위
 
               posts.forEach(post => { try { // 🛡️ [패치 #188] 글 하나가 이상해도 나머지는 보이게
               (() => { // 🎨 [패치 #171] 깔끔한 카드: 분류 이름(회색) · 제목 · 본문 · 사진 · 작성자·날짜 · 버튼
@@ -6430,7 +6431,7 @@ ${HELP_EXTRA.join('\n')}`;
                       ${imgsHtml}
                       <div class="bf-meta">${who}${post.isOfficial ? '' : ' · ' + escHtml(postYmd(post))}</div><!-- 📌 [패치 #185] 운영팀 예시글은 날짜·시간 안 보임 -->
                       ${acts.length ? `<div class="bf-ac">${acts.join('')}</div>` : ''}
-                      ${noCmt ? '' : `<div id="cmt_${escHtml(post._key)}" class="mt-3">${commentSectionHtml(post._key)}</div>`}
+                      ${(noCmt || post.isOfficial) ? '' : `<div id="cmt_${escHtml(post._key)}" class="mt-3">${commentSectionHtml(post._key)}</div>`}<!-- 📌 [패치 #192] 예시글엔 댓글 없음 -->
                   </div>`;
                   
                   container.insertAdjacentHTML('beforeend', cardHtml);
