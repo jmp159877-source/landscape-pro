@@ -392,7 +392,7 @@
           <input type="tel" id="obCompanyPhone" oninput="autoHyphen(this)" placeholder="예: 010-0000-0000" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] placeholder:text-white/35 placeholder:font-medium placeholder:text-[15px]">
         </div>
         <div><label for="obCompanyBizNum" class="block text-[15px] font-black text-[#D9F99D] mb-1.5 ml-1">사업자등록번호</label>
-          <input type="text" id="obCompanyBizNum" placeholder="예: 123-45-67890" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] mb-1 placeholder:text-white/35 placeholder:font-medium placeholder:text-[15px]">
+          <input type="text" inputmode="numeric" maxlength="12" oninput="bizHyphen(this)" id="obCompanyBizNum" placeholder="예: 123-45-67890" autocomplete="off" class="w-full bg-[#0F1722] border border-white/20 rounded-[14px] px-4 py-4 text-white text-[16px] font-black focus:outline-none focus:border-[#84CC16] mb-1 placeholder:text-white/35 placeholder:font-medium placeholder:text-[15px]">
         </div>
 
         <div class="bg-[#0F1722] border border-[#84CC16]/40 rounded-[14px] p-3.5 flex items-center justify-between shadow-sm">
@@ -2103,6 +2103,7 @@
     }
     // 휴대폰에서 앱을 오래 백그라운드에 뒀다가 다시 열었을 때 즉시 갱신
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && currentRefreshToken && Date.now() - tokenIssuedAt > 40 * 60 * 1000) refreshIdToken(); });
+    function bizHyphen(t) { const d = t.value.replace(/[^0-9]/g, '').slice(0, 10); t.value = d.length > 5 ? d.slice(0, 3) + '-' + d.slice(3, 5) + '-' + d.slice(5) : d.length > 3 ? d.slice(0, 3) + '-' + d.slice(3) : d; } // 🔢 [패치 #183] 사업자번호 123-45-67890 자동 하이픈 (숫자 자판)
     function autoHyphen(target) { let str = target.value.replace(/[^0-9]/g, ''); let tmp = ''; if (str.length < 4) { target.value = str; return; } else if (str.length < 7) { tmp += str.substr(0, 3) + '-' + str.substr(3); } else if (str.length < 11) { tmp += str.substr(0, 3) + '-' + str.substr(3, 3) + '-' + str.substr(6); } else { tmp += str.substr(0, 3) + '-' + str.substr(3, 4) + '-' + str.substr(7); } target.value = tmp; }
 
     async function uploadToFirebaseStorage(base64Data, folder="images") {
@@ -2159,7 +2160,7 @@
         if (!id || !pw || !name || !ceo || !phone || !bizNum) return alert("항목을 모두 입력해 주세요.");
         if (/[^a-zA-Z0-9]/.test(id)) return alert("아이디는 영문과 숫자만 사용해 주세요."); if (id.length < 2) return alert("아이디는 2글자 이상 입력해 주세요."); if (pw.length < 6) return alert("비밀번호는 6자리 이상 입력해 주세요.");
         if (!obBizLicenseBase64) return alert("사업자등록증 사진을 첨부해 주세요."); if (!document.getElementById('obPrivacyCheck').checked || !document.getElementById('obTermsCheck').checked) return alert("필수 약관에 모두 동의해 주세요.");
-        showLoadingOverlay("인증 중...");
+        showLoadingOverlay("가입 신청 중입니다..."); // ⏳ [패치 #182]
         try {
             const authRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: id + '@jogyeongnote.com', password: pw, returnSecureToken: true }) });
             const authData = await authRes.json(); let tempToken = authData.idToken;
@@ -2184,6 +2185,7 @@
                 currentIdToken = ""; document.getElementById('loadingOverlay')?.remove();
                 return alert("이 사업자번호로 이미 가입된 계정이 있습니다.\n사업자번호 1개당 계정은 1개만 만들 수 있어요.\n\n아이디나 비밀번호가 기억나지 않으시면 조경노트 운영본부로 문의해 주세요.");
             }
+            { const t = document.querySelector('#loadingOverlay .text-white'); if (t) t.textContent = '사업자등록증 올리는 중...'; } // ⏳ [패치 #182]
             let licenseUrl = await uploadToFirebaseStorage(obBizLicenseBase64, "licenses");
             
             // ✨ [법적 증빙] 약관 동의 버튼을 누른 정확한 시간(Timestamp) 생성
@@ -2194,7 +2196,8 @@
             { const wa = (typeof OB_AREAS !== 'undefined' && OB_AREAS.length) ? SIDO_LIST.filter(s => OB_AREAS.includes(s)) : (regionSido(region) ? [regionSido(region)] : []); if (wa.length) profileData.workAreas = wa; } // 🗺️ [패치 #121]
             await fetch(getAuthUrl(`${DB_BASE_URL}/${safeKey}/profile.json`), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(profileData) });
             requestPush({ action: 'push_signup', userId: id }); // 🔔 [패치 #73] 관리자 휴대폰에 가입 신청 알림
-            alert("가입이 완료되었습니다. 관리자 승인을 기다려주세요.");
+            document.getElementById('loadingOverlay')?.remove(); // ⏳ [패치 #182]
+            alert("가입 신청이 완료되었습니다. 관리자 승인을 기다려 주세요.");
             // 🔔 [패치 #33] 승인되면 휴대폰 알림으로 알려드리기
             if (pushConfigured() && pushBrowserOk() && !pushIsIphoneBrowser() && confirm('관리자가 승인하면 휴대폰 알림으로 바로 알려드릴까요?\n(다음 화면에서 [허용]을 눌러주세요)')) {
                 try { if (await Notification.requestPermission() === 'granted') await savePushToken(id, currentIdToken, true); } catch (e) {}
@@ -2914,7 +2917,7 @@
     }
 
     function showLoadingOverlay(msg) {
-      const overlay = document.createElement('div'); overlay.id = 'loadingOverlay'; overlay.className = 'fixed inset-0 z-[200] bg-black/80 flex flex-col items-center justify-center backdrop-blur-sm';
+      const overlay = document.createElement('div'); overlay.id = 'loadingOverlay'; overlay.className = 'fixed inset-0 bg-black/80 flex flex-col items-center justify-center backdrop-blur-sm'; overlay.style.zIndex = '10050'; /* ⏳ [패치 #182] 가입 화면(z 2000)·창들 위로 → 전에는 가입 신청 중 로딩이 화면 뒤에 숨어 멈춘 것처럼 보였음 */
       overlay.innerHTML = `<div class="w-12 h-12 border-4 border-[#84CC16]/30 border-t-[#84CC16] rounded-full animate-spin mb-4"></div><div class="text-white font-bold text-[15px] mb-1">${msg}</div><div class="text-[#84CC16] text-[12.5px] font-medium">데이터를 처리 중입니다.</div>`;
       document.body.appendChild(overlay);
     }

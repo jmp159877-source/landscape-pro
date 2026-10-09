@@ -1516,14 +1516,16 @@
 
     async function approveAccount(id) {
         if(!confirm(`플랫폼 이용을 최종 승인하시겠습니까?`)) return;
+        pgShow('승인 처리 중…'); // ⏳ [패치 #182]
         try {
             // 💰 [패치 #71] 서버가 승인 + 가입 축하 5,000P (사업자번호당 1번). 서버가 예전 버전이면 기존 방식으로 승인
             let ar = await adminPush({ action: "admin_approve", targetId: id });
             if (ar && !ar.ok && ar.msg === 'dup-biz') { // 🧾 [패치 #73] 같은 사업자번호로 가입된 계정이 있음
+                pgHide();
                 if (!confirm(`같은 사업자번호로 가입된 계정이 이미 있습니다.\n\n${ar.otherName || ''} (아이디: ${ar.other})\n\n사업자번호 1개당 계정 1개가 원칙입니다.\n그래도 승인할까요? (보통은 [반려 및 삭제]를 눌러 주세요)`)) return;
-                ar = await adminPush({ action: "admin_approve", targetId: id, force: true });
+                pgShow('승인 처리 중…'); ar = await adminPush({ action: "admin_approve", targetId: id, force: true });
             }
-            if (ar && !ar.ok && ar.msg !== 'unknown') return alert("승인하지 못했습니다. (" + (ar.msg || '연결 오류') + ")\n잠시 후 다시 눌러 주세요.");
+            if (ar && !ar.ok && ar.msg !== 'unknown') { pgHide(); return alert("승인하지 못했습니다. (" + (ar.msg || '연결 오류') + ")\n잠시 후 다시 눌러 주세요."); }
             let welcomeMsg = "";
             if (ar && ar.ok) welcomeMsg = ar.welcome ? "\n가입 축하 5,000P를 지급했습니다 (1개월 사용)." : (ar.welcomeBefore ? "\n이 사업자번호는 예전에 가입 축하 포인트를 받아서 이번에는 지급하지 않았습니다." : "\n사업자번호가 없어 가입 축하 포인트는 지급하지 않았습니다.");
             else {
@@ -1535,14 +1537,15 @@
             welcomeMsg = "\n(가입 축하 포인트는 지급되지 않았습니다. 포인트 관리에서 직접 지급해 주세요.)";
             }
             const pr = await adminPush({ action: "push_approved", targetId: id }); // 🔔 [패치 #33]
-            alert("✅ 승인되었습니다." + welcomeMsg + (pr && pr.sent ? "\n📱 업체 휴대폰으로 승인 알림을 보냈습니다." : ""));
+            pgHide(); alert("✅ 승인되었습니다." + welcomeMsg + (pr && pr.sent ? "\n📱 업체 휴대폰으로 승인 알림을 보냈습니다." : ""));
             fetchAccounts();
-        } catch(e) { alert("오류가 발생했습니다."); }
+        } catch(e) { pgHide(); alert("오류가 발생했습니다."); }
     }
 
     async function updateAccountStatus(id, newStatus) {
         let msg = newStatus === 'suspended' ? "앱 접속을 차단하시겠습니까?" : "정지를 해제하시겠습니까?";
         if(!confirm(msg)) return;
+        pgShow('처리 중…'); // ⏳ [패치 #182]
         try {
             await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(id)}/profile.json`), {
                 method: 'PATCH',
@@ -1550,7 +1553,7 @@
                 body: JSON.stringify({ status: newStatus })
             });
             fetchAccounts();
-        } catch(e) {}
+        } catch(e) {} finally { pgHide(); }
     }
 
     async function resetPassword(id) {
