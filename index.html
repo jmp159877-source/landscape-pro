@@ -11101,6 +11101,137 @@ ${AI_COMMON_RULES}
     };
   })();
 </script>
+<script>
+/* 📅 [패치 #165] 견적 보관함 → [일정 확정]: 견적서 내용(현장·고객·연락처·주소·작업 분류·견적 내역)을 일정 등록 창에 채움 → 대표님은 날짜·확정 금액만 확인 */
+(function () {
+  const QS = { recId: null };
+  const won = n => (Number(n) || 0).toLocaleString('ko-KR');
+  const md = d => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d || ''); return m ? `${+m[2]}월 ${+m[3]}일` : d; };
+  function qsTag(p) {
+    const r = String(p.r || '');
+    if (/공사/.test(r)) return '조경공사';
+    if (/연간|정기/.test(r)) return '정기관리';
+    const first = (Array.isArray(p.m) && p.m[0]) ? String(p.m[0].d || '').split('\n')[0].replace(/^[·•\-\s]+/, '').trim() : '';
+    return (first || '현장 작업').slice(0, 14);
+  }
+  function qsNote(on) {
+    let n = document.getElementById('qsNote');
+    if (!n) {
+      const anchor = document.getElementById('scheduleDate'); if (!anchor) return;
+      n = document.createElement('div'); n.id = 'qsNote';
+      n.className = 'bg-[#ECFCCB] border-[1.5px] border-[#84CC16] rounded-[14px] px-3.5 py-3 mb-3 text-[15px] font-bold text-[#1A2E05] leading-relaxed break-keep';
+      n.innerHTML = '🧾 <b>견적서 내용을 불러왔어요.</b><br>① <b>작업 날짜</b>를 고르고 ② <b>받을 돈(확정 금액)</b>만 확인하세요. 금액이 바뀌었으면 고쳐 주세요.';
+      const wrap = anchor.closest('div'); (wrap && wrap.parentElement ? wrap.parentElement : anchor.parentElement).insertBefore(n, wrap || anchor);
+    }
+    n.classList.toggle('hidden', !on);
+    const d = document.getElementById('scheduleDate'); if (d) d.style.borderColor = on ? '#84CC16' : '';
+    const inc = document.getElementById('scheduleIncome'); if (inc && inc.parentElement) inc.parentElement.style.boxShadow = on ? '0 0 0 3px #BEF264' : '';
+  }
+  window.quoteToSchedule = function (ev, id) {
+    if (ev) { ev.stopPropagation(); ev.preventDefault(); }
+    const rec = (records || []).find(r => r && String(r.id) === String(id)); if (!rec) return;
+    const p = rec.payload || {};
+    if (rec.sched && rec.sched.date && !confirm(`이 견적은 ${md(rec.sched.date)}로 일정이 이미 잡혀 있어요.\n일정을 하나 더 만들까요?\n(같은 일정을 고치려면 달력에서 그 일정을 누르세요)`)) return;
+    openScheduleModal();
+    const set = (i, v) => { const e = document.getElementById(i); if (e) e.value = v; };
+    const name = String(p.c || rec.clientName || '').trim();
+    const what = String(p.r || rec.round || '').replace(/\s*견적서\s*$/, '').trim();
+    set('scheduleDate', '');
+    set('scheduleTitle', `${name}${what ? ' ' + what : ''}`.slice(0, 80));
+    set('scheduleCust', name.slice(0, 30));
+    const ph = document.getElementById('schedulePhone'); if (ph) { ph.value = String(p.p || '').replace(/[^0-9]/g, ''); try { autoHyphen(ph); } catch (e) {} }
+    set('scheduleAddr', p.addr || '');
+    set('scheduleTagText', qsTag(p));
+    set('scheduleColor', 'border-[#84CC16]');
+    const total = Number(p.t || p.s || 0);
+    set('scheduleIncome', total ? won(total) : '');
+    set('scheduleExpense', '');
+    const items = (Array.isArray(p.m) ? p.m : []).map(x => `· ${String(x.d || '').split('\n').map(t => t.replace(/^[·•\-\s]+/, '').trim()).filter(Boolean).join(', ')}${x.p ? ' : ' + won(x.p) + '원' : ''}`);
+    set('scheduleMemo', ['[견적 내용] ' + (rec.date || ''), ...items, total ? `견적 합계 ${won(total)}원` : '', p.memo ? '\n[견적 메모]\n' + p.memo : ''].filter(Boolean).join('\n').slice(0, 1500));
+    QS.recId = rec.id; qsNote(true);
+    const m = document.getElementById('scheduleModal'); if (m) m.style.zIndex = '9550';
+    setTimeout(() => { const d = document.getElementById('scheduleDate'); if (d) { try { d.focus(); if (d.showPicker) d.showPicker(); } catch (e) {} } }, 350);
+  };
+  if (typeof saveSchedule === 'function') {
+    const o = saveSchedule;
+    saveSchedule = function () {
+      if (QS.recId) {
+        const d = (document.getElementById('scheduleDate') || {}).value;
+        if (!d) { alert('작업 날짜를 먼저 골라 주세요.'); const e = document.getElementById('scheduleDate'); if (e) e.focus(); return; }
+      }
+      const recId = QS.recId, sid = (document.getElementById('scheduleId') || {}).value, date = (document.getElementById('scheduleDate') || {}).value;
+      const inc = ((document.getElementById('scheduleIncome') || {}).value || '').replace(/[^0-9]/g, '');
+      const r = o.apply(this, arguments);
+      if (recId) {
+        try {
+          const rec = records.find(x => x && String(x.id) === String(recId));
+          if (rec && (schedules || []).some(s => String(s.id) === String(sid))) {
+            rec.sched = { date: date, id: String(sid), amt: inc ? parseInt(inc, 10) : 0, at: Date.now() };
+            updateData('records', records);
+            const s = schedules.find(x => String(x.id) === String(sid)); if (s) { s.quoteId = String(recId); updateData('schedules', schedules); }
+            if (!document.getElementById('quoteListView').classList.contains('hidden')) renderQuoteList();
+            const b = document.getElementById('qsViewBtn'); if (b) b.innerHTML = `✅ 일정 확정됨 · ${md(date)}`;
+          }
+        } catch (e) {}
+        QS.recId = null; qsNote(false);
+      }
+      return r;
+    };
+  }
+  if (typeof closeScheduleModal === 'function') {
+    const c = closeScheduleModal;
+    closeScheduleModal = function () { const r = c.apply(this, arguments); QS.recId = null; qsNote(false); return r; };
+  }
+  // 견적 보관함 카드에 [일정 확정] 버튼 · 확정 표시
+  if (typeof renderQuoteList === 'function') {
+    const o = renderQuoteList;
+    renderQuoteList = function () {
+      const r = o.apply(this, arguments);
+      try {
+        const qList = records.filter(x => x && x.type === 'quote').sort((a, b) => b.id.localeCompare(a.id));
+        const cards = document.getElementById('quoteListContainer').children;
+        qList.forEach((rec, i) => {
+          const card = cards[i]; if (!card || card.querySelector('.qs-bar')) return;
+          const bar = document.createElement('div'); bar.className = 'qs-bar flex gap-2 mt-1';
+          if (rec.sched && rec.sched.date) {
+            bar.innerHTML = `<button type="button" class="flex-1 min-h-[48px] rounded-[14px] bg-[#ECFCCB] border-[1.5px] border-[#84CC16] text-[#1A2E05] text-[15.5px] font-black" onclick="quoteSchedGo(event,'${rec.id}')">✅ 일정 확정 · ${md(rec.sched.date)}${rec.sched.amt ? ' · ' + won(rec.sched.amt) + '원' : ''}</button>`;
+          } else {
+            bar.innerHTML = `<button type="button" class="flex-1 min-h-[50px] rounded-[14px] bg-[#84CC16] text-[#1A2E05] text-[16.5px] font-black shadow-sm" onclick="quoteToSchedule(event,'${rec.id}')">📅 고객이 확정했어요 · 일정 잡기</button>`;
+          }
+          card.appendChild(bar);
+        });
+      } catch (e) {}
+      return r;
+    };
+  }
+  window.quoteSchedGo = function (ev, id) {
+    if (ev) { ev.stopPropagation(); ev.preventDefault(); }
+    const rec = records.find(x => x && String(x.id) === String(id)); if (!rec || !rec.sched) return;
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(rec.sched.date || ''); switchView('calendar');
+    if (m) { try { selectDate(+m[1], +m[2] - 1, +m[3]); } catch (e) {} }
+  };
+  // 견적서를 열어 본 화면에도 같은 버튼 (현재 견적서 수정하기 위)
+  if (typeof renderClientView === 'function') {
+    const o = renderClientView;
+    renderClientView = function (data, viewMode) {
+      const r = o.apply(this, arguments);
+      try {
+        const edit = document.getElementById('editQuoteBtnBox'); if (!edit) return r;
+        let b = document.getElementById('qsViewBtn');
+        if (!b) { b = document.createElement('button'); b.id = 'qsViewBtn'; b.type = 'button'; b.className = 'w-full py-4 bg-[#84CC16] text-[#1A2E05] rounded-[16px] font-black text-[16px] shadow-lg mt-3'; edit.parentElement.insertBefore(b, edit); }
+        const show = viewMode === 'admin_history' && data && data.isQuote;
+        b.style.display = show ? 'block' : 'none';
+        if (show) {
+          const rec = records.find(x => x && String(x.id) === String(currentLoadedRecordId));
+          if (rec && rec.sched && rec.sched.date) { b.innerHTML = `✅ 일정 확정됨 · ${md(rec.sched.date)} (달력 보기)`; b.onclick = e => quoteSchedGo(e, rec.id); }
+          else { b.innerHTML = '📅 고객이 확정했어요 · 이 견적으로 일정 잡기'; b.onclick = e => quoteToSchedule(e, currentLoadedRecordId); }
+        }
+      } catch (e) {}
+      return r;
+    };
+  }
+})();
+</script>
 </body>
 
 </html>
