@@ -2066,6 +2066,23 @@
     function getAuthUrl(url) { if (!currentIdToken) return url; const sep = url.includes('?') ? '&' : '?'; return `${url}${sep}auth=${currentIdToken}`; }
     // 📍 [패치 #10] 활동 지역 도우미 (예: '수원시' → '수원', '서울특별시' → '서울')
     // ✏️ [패치 #32] 띄어쓰기 한 칸 허용: '서울 강남', '경기 수원시' → '경기 수원' (단어마다 특별시·광역시·시·군·구 정리)
+    // 👣 [패치 #201] 접속 기록: profile.lastSeenAt(마지막 접속, 5분마다 갱신) · visitCount(방문 횟수, 30분 안에 다시 연 건 1번)
+    async function seenTouch() {
+      if (!currentUserId || !currentIdToken || !myCompanyProfile) return;
+      const now = Date.now(), K = 'jn_seen_' + currentUserId, KC = 'jn_seen_cnt_' + currentUserId;
+      let lastW = 0, lastC = 0; try { lastW = Number(localStorage.getItem(K)) || 0; lastC = Number(localStorage.getItem(KC)) || 0; } catch (e) {}
+      if (now - lastW < 5 * 60 * 1000) return;
+      const count = now - lastC >= 30 * 60 * 1000;
+      try { localStorage.setItem(K, String(now)); if (count) localStorage.setItem(KC, String(now)); } catch (e) {}
+      const url = `${DB_BASE_URL}/${getSafeKey(currentUserId)}/profile`;
+      try {
+        const body = { lastSeenAt: now };
+        if (count) { const r = await fetch(getAuthUrl(`${url}/visitCount.json`)); const v = r.ok ? Number(await r.json()) || 0 : (Number(myCompanyProfile.visitCount) || 0); body.visitCount = v + 1; }
+        await fetch(getAuthUrl(`${url}.json`), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+        Object.assign(myCompanyProfile, body); try { localStorage.setItem('shinhwa_pro_my_profile', JSON.stringify(myCompanyProfile)); } catch (e) {}
+      } catch (e) {}
+    }
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) setTimeout(() => { try { seenTouch(); } catch (e) {} }, 1500); });
     function normalizeRegion(v) { return (v || '').replace(/[,·]/g, ' ').trim().split(/\s+/).filter(Boolean).slice(0, 2).map(w => { w = w.replace(/(특별자치시|특별자치도|특별시|광역시)$/, ''); if (w.length >= 3) w = w.replace(/(시|군|구)$/, ''); return w; }).join(' ').slice(0, 12); }
     function isValidRegion(r) { return /^[가-힣]{2,8}( [가-힣]{2,8})?$/.test(r); }
     function escHtml(v) { return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
@@ -2271,7 +2288,7 @@
                 if (document.getElementById('autoLoginCheck').checked) { localStorage.setItem('shinhwa_pro_logged_in_id', id); localStorage.setItem('shinhwa_pro_save_id', '1'); }
                 else { localStorage.removeItem('shinhwa_pro_logged_in_id'); localStorage.removeItem('shinhwa_pro_save_id'); }
                 
-                applyCompanyProfile(); 
+                applyCompanyProfile(); try { seenTouch(); } catch (e) {} // 👣 [패치 #201] 접속 기록
                 document.getElementById('authView').classList.add('hidden'); 
                 document.getElementById('mainHeader').style.display = 'block';
                 await syncWithCloud(); 
