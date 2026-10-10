@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" class="lt"><!-- 배포 #200b 2026-10-10 -->
+<html lang="ko" class="lt">
 <head>
   <meta charset="UTF-8">
   <meta name="robots" content="noindex, nofollow"><!-- 🔎 [패치 #28] 관리자 센터는 검색에 나오지 않게 -->
@@ -204,6 +204,10 @@
     .ct-chip.sp { background:#FEF3C7; color:#92400E; }
     .ct-chip.home { background:#DCFCE7; color:#166534; } .ct-chip.go { background:#E0F2FE; color:#075985; }
     .ct-seen { margin-top:6px; font-size:12px; font-weight:800; color:#475569; line-height:1.45; white-space:nowrap; }
+    .ct-memo { display:flex; align-items:center; gap:6px; margin-top:4px; white-space:normal; }
+    .ct-memo-t { font-size:12.5px; font-weight:700; color:#64748B; line-height:1.4; }
+    .ct-memo-b { flex-shrink:0; height:26px; padding:0 8px; border-radius:8px; border:1px solid #CBD5E1; background:#fff; font-size:12px; font-weight:900; color:#475569; }
+    .ct-memo-b.add { color:#94A3B8; border-style:dashed; }
     .ct-group { padding:10px 16px !important; background:#F1F5F9; color:#0F172A !important; font-size:14px; font-weight:900; }
 </style>
 </head>
@@ -1226,17 +1230,34 @@
         }
         return out;
     }
+    // 🔒 [패치 #202] 관리자 전용 칸: admin_meta/{아이디} = { tags: { '⭐ 특별 관리': true, … }, memo: '메모' } (보안 규칙: 마스터만 읽기·쓰기)
+    const META_URL = "https://shinhwa-landnote-default-rtdb.firebaseio.com/admin_meta";
+    let ADMIN_META = {}, META_OK = null;
+    async function metaLoad() {
+        try { const r = await fetch(getAuthUrl(`${META_URL}.json?t=${Date.now()}`)); if (!r.ok) throw new Error(r.status); ADMIN_META = (await r.json()) || {}; META_OK = true; }
+        catch (e) { META_OK = false; }
+        return META_OK;
+    }
+    function metaKey(id) { return String(id || '').replace(/[.#$\[\]\/]/g, '_'); }
+    async function metaMigrate(data) { // 예전 자리(accounts/{id}/adminTags)의 분류를 관리자 전용 칸으로 옮기고 예전 것은 지움
+        if (!META_OK) return;
+        for (const id in data) { const old = data[id] && data[id].adminTags; if (!old || typeof old !== 'object' || !Object.keys(old).length) continue;
+            const k = metaKey(id), cur = (ADMIN_META[k] && ADMIN_META[k].tags) || {}, merged = Object.assign({}, old, cur);
+            try { const r = await fetch(getAuthUrl(`${META_URL}/${encodeURIComponent(k)}/tags.json`), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(merged) });
+                if (r.ok) { ADMIN_META[k] = Object.assign({}, ADMIN_META[k] || {}, { tags: merged }); await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(id)}/adminTags.json`), { method: 'DELETE' }); delete data[id].adminTags; } } catch (e) {} }
+    }
     async function fetchAccounts() {
         if (!currentIdToken || ACC_BUSY) return;
         ACC_BUSY = true;
         try {
             const data = await loadAccountsLite();
             ACC_LAST = data;
+            await metaLoad(); await metaMigrate(data); // 🔒 [패치 #202]
             
             allAccounts = [];
             if (data && !data.error) {
                 for (const accId in data) {
-                    if (data[accId].profile) { data[accId].profile._tags = (data[accId].adminTags && typeof data[accId].adminTags === 'object') ? data[accId].adminTags : {}; data[accId].profile._key = accId; allAccounts.push(data[accId].profile); }
+                    if (data[accId].profile) { const mk = ADMIN_META[metaKey(accId)] || {}; data[accId].profile._tags = META_OK ? (mk.tags || {}) : ((data[accId].adminTags && typeof data[accId].adminTags === 'object') ? data[accId].adminTags : {}); data[accId].profile._memo = String(mk.memo || ''); data[accId].profile._key = accId; allAccounts.push(data[accId].profile); }
                 }
                 try { ptmCollect(data); } catch (e) {} // 💰 [패치 #71] 충전 신청 모으기
             }
@@ -1401,7 +1422,7 @@
             const region = (acc.region||'').toLowerCase(); // 📍 [패치 #10]
             const rawPhone = (acc.phone||'').replace(/-/g, '');
             const rawQuery = query.replace(/-/g, '');
-            return name.includes(query) || id.includes(query) || ceo.includes(query) || region.includes(query) || rawPhone.includes(rawQuery);
+            return name.includes(query) || id.includes(query) || ceo.includes(query) || region.includes(query) || rawPhone.includes(rawQuery) || String(acc._memo || '').toLowerCase().includes(query); // 📝 [패치 #202] 메모로도 검색
         });
 
         // 🏷 [패치 #200] 보기 방식으로 거르고 가나다순 (지역별은 시·군으로 묶음)
@@ -1453,6 +1474,10 @@
                     <button onclick="deleteAccount(${jsArg(acc.id)}, '영구 강제 탈퇴')" class="px-3 py-2 bg-red-500/10 text-red-500 border border-red-500/20 rounded-[8px] text-[11px] font-bold hover:bg-red-500/20 transition-all"><i data-lucide="trash-2" class="w-3.5 h-3.5 inline"></i></button>
                 </td>
             `;
+            // 📝 [패치 #202] 상호명 칸 맨 아래에 메모 줄
+            try { const nameTd = tr.children[2]; if (nameTd) { const mm = String(acc._memo || '').trim(); const d = document.createElement('div'); d.className = 'ct-memo';
+                d.innerHTML = mm ? `<span class="ct-memo-t">📝 ${pmEsc(mm.split('\n')[0]).slice(0, 60)}${mm.includes('\n') || mm.length > 60 ? ' …' : ''}</span><button type="button" class="ct-memo-b" onclick="memoOpen(${jsArg(acc.id)})">✏️</button>` : `<button type="button" class="ct-memo-b add" onclick="memoOpen(${jsArg(acc.id)})">+ 메모</button>`;
+                nameTd.appendChild(d); } } catch (e) {}
             tbody.appendChild(tr);
         });
         lucide.createIcons();
@@ -1464,7 +1489,7 @@
     async function ctLoadTags() { try { const r = await fetch(getAuthUrl(`${SETTINGS_URL}/companyTags.json?t=${Date.now()}`)); const v = r.ok ? await r.json() : null; if (Array.isArray(v) && v.length) CT.tags = v.filter(x => typeof x === 'string' && x.trim()); } catch (e) {} if (!CT.tags.includes(CT_SPECIAL)) CT.tags.unshift(CT_SPECIAL); }
     function ctSido(acc) { return regionSido(acc.region) || ''; }
     function ctAreas(acc) { const a = Array.isArray(acc.workAreas) ? acc.workAreas : []; return a.length ? a : (ctSido(acc) ? [ctSido(acc)] : []); }
-    function ctCity(acc) { if (ctSido(acc) !== CT.sido) return '🚚 다른 지역 업체 (갈 수 있음)'; const ws = String(acc.region || '').replace(/[,·]/g, ' ').trim().split(/\s+/).filter(Boolean).filter(w => !HM_SIDO.includes(w.replace(/(특별자치시|특별자치도|특별시|광역시|도)$/, ''))); return (ws[0] || '기타').replace(/(시|군)$/, w => ws[0].length > 2 ? '' : w); }
+    function ctCity(acc) { if (ctSido(acc) !== CT.sido) return '다른 지역 업체'; const ws = String(acc.region || '').replace(/[,·]/g, ' ').trim().split(/\s+/).filter(Boolean).filter(w => !HM_SIDO.includes(w.replace(/(특별자치시|특별자치도|특별시|광역시|도)$/, ''))); return (ws[0] || '기타').replace(/(시|군)$/, w => ws[0].length > 2 ? '' : w); }
     function ctHas(acc, t) { return !!(acc._tags && acc._tags[t]); }
     function ctFilter(list) {
         let L = list.slice();
@@ -1476,7 +1501,7 @@
         L.sort((a, b) => (a.status === 'suspended') - (b.status === 'suspended') || !!a.withdrawRequestedAt - !!b.withdrawRequestedAt || (CT.mode === 'region' && CT.sido ? ((ctSido(a) === CT.sido ? 0 : 1) - (ctSido(b) === CT.sido ? 0 : 1)) || ctCity(a).localeCompare(ctCity(b), 'ko') : 0) || nm(a).localeCompare(nm(b), 'ko'));
         return L;
     }
-    function ctChips(acc) { const t = Object.keys(acc._tags || {}).filter(k => acc._tags[k]); const home = CT.mode === 'region' && CT.sido ? (ctSido(acc) === CT.sido ? '<span class="ct-chip home">📍 본사</span>' : '<span class="ct-chip go">🚚 갈 수 있음</span>') : ''; return (t.length || home) ? `<span class="ct-chips">${home}${t.map(x => `<span class="ct-chip${x === CT_SPECIAL ? ' sp' : ''}">${pmEsc(x)}</span>`).join('')}</span>` : ''; }
+    function ctChips(acc) { return ''; } // 🏷 [패치 #202] 분류 딱지·본사/갈 수 있음 표시 숨김 (분류는 위 버튼으로 찾기)
     function ctPaint(list) {
         const m = document.getElementById('ctModes'); if (!m) return;
         const nSp = list.filter(a => ctHas(a, CT_SPECIAL)).length;
@@ -1489,6 +1514,28 @@
         sub.style.display = sub.innerHTML ? '' : 'none';
         const pick = document.getElementById('ctTagPick'); const cur = pick.value; pick.innerHTML = CT.tags.map(t => `<option value="${pmEsc(t)}">${pmEsc(t)}</option>`).join(''); if (CT.tags.includes(cur)) pick.value = cur;
         document.getElementById('ctSel').textContent = `체크한 업체 ${globalCheckedCompanies.size}곳`;
+    }
+    // 📝 [패치 #202] 업체 메모 (관리자만 · 여러 줄)
+    function memoOpen(id) {
+        if (META_OK === false) return alert('메모를 쓰려면 보안 규칙에 관리자 전용 칸(admin_meta)을 먼저 추가해 주세요.');
+        const acc = allAccounts.find(a => a.id === id || a._key === id); if (!acc) return;
+        let m = document.getElementById('memoModal');
+        if (!m) { m = document.createElement('div'); m.id = 'memoModal'; m.style.cssText = 'position:fixed;inset:0;z-index:9990;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:16px;';
+            m.innerHTML = '<div style="background:#fff;border-radius:18px;width:100%;max-width:440px;padding:18px;color:#0F172A;"><div id="memoTitle" style="font-size:18px;font-weight:900;margin-bottom:4px;"></div><div style="font-size:12.5px;font-weight:700;color:#64748B;margin-bottom:10px;">관리자만 볼 수 있어요. 업체에는 보이지 않아요.</div><textarea id="memoText" rows="7" maxlength="2000" placeholder="예) 50대 · 꼼꼼함 · 오전 통화 선호 · 소나무 전지 경험 많음" style="width:100%;border:2px solid #CBD5E1;border-radius:12px;padding:10px;font-size:15.5px;font-weight:700;resize:vertical;"></textarea><div style="display:flex;gap:8px;margin-top:10px;"><button type="button" onclick="memoClose()" style="flex:0 0 90px;height:48px;border-radius:12px;background:#E2E8F0;font-weight:900;border:0;">취소</button><button type="button" id="memoSave" style="flex:1;height:48px;border-radius:12px;background:#1E3A8A;color:#fff;font-weight:900;border:0;">저장</button></div></div>';
+            document.body.appendChild(m); }
+        document.getElementById('memoTitle').textContent = `📝 ${acc.name || acc.id} 메모`;
+        document.getElementById('memoText').value = acc._memo || '';
+        document.getElementById('memoSave').onclick = () => memoSave(acc);
+        m.style.display = 'flex'; setTimeout(() => document.getElementById('memoText').focus(), 50);
+    }
+    function memoClose() { const m = document.getElementById('memoModal'); if (m) m.style.display = 'none'; }
+    async function memoSave(acc) {
+        const v = document.getElementById('memoText').value.trim().slice(0, 2000);
+        pgShow('메모 저장 중…');
+        try { const r = await fetch(getAuthUrl(`${META_URL}/${encodeURIComponent(metaKey(acc._key || acc.id))}/memo.json`), { method: v ? 'PUT' : 'DELETE', headers: { 'Content-Type': 'application/json' }, body: v ? JSON.stringify(v) : undefined });
+            pgHide(); if (!r.ok) throw new Error(r.status);
+            acc._memo = v; const k = metaKey(acc._key || acc.id); ADMIN_META[k] = Object.assign({}, ADMIN_META[k] || {}, { memo: v }); memoClose(); renderActiveList(); }
+        catch (e) { pgHide(); alert('메모를 저장하지 못했어요.\n보안 규칙에 관리자 전용 칸(admin_meta)이 추가됐는지 확인해 주세요.'); }
     }
     function ctSort() { CT.sort = CT.sort === 'seen' ? 'name' : 'seen'; renderActiveList(); }
     function ctSeen(acc) {
@@ -1510,8 +1557,8 @@
         if (!confirm(`체크한 ${ids.length}곳을 [${tag}] ${add ? '에 넣을까요?' : '에서 뺄까요?'}`)) return;
         pgShow(add ? '분류에 넣는 중…' : '분류에서 빼는 중…');
         let ok = 0;
-        for (const id of ids) { const body = {}; body[tag] = add ? true : null; try { const r = await fetch(getAuthUrl(`${DB_BASE_URL}/${encodeURIComponent(id)}/adminTags.json`), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }); if (r.ok) { ok++; const a = allAccounts.find(x => x.id === id || x._key === id); if (a) { a._tags = a._tags || {}; if (add) a._tags[tag] = true; else delete a._tags[tag]; } } } catch (e) {} }
-        pgHide(); renderActiveList(); alert(`✅ ${ok}곳을 [${tag}] ${add ? '에 넣었어요.' : '에서 뺐어요.'}`);
+        for (const id of ids) { const body = {}; body[tag] = add ? true : null; try { if (META_OK === false) throw new Error('rules'); const r = await fetch(getAuthUrl(`${META_URL}/${encodeURIComponent(metaKey(id))}/tags.json`), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }); if (r.ok) { ok++; const a = allAccounts.find(x => x.id === id || x._key === id); if (a) { a._tags = a._tags || {}; if (add) a._tags[tag] = true; else delete a._tags[tag]; } } } catch (e) {} }
+        pgHide(); renderActiveList(); if (META_OK === false) return alert('보안 규칙에 관리자 전용 칸(admin_meta)을 먼저 추가해 주세요.'); alert(`✅ ${ok}곳을 [${tag}] ${add ? '에 넣었어요.' : '에서 뺐어요.'}`);
     }
     async function ctManage() {
         const cur = CT.tags.filter(t => t !== CT_SPECIAL).join(', ');
